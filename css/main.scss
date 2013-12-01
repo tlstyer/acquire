@@ -1,0 +1,136 @@
+$color-background: rgb(246, 244, 242);
+
+$color-none: rgb(255, 255, 192);
+$color-luxor: rgb(255, 0, 0);
+$color-tower: rgb(255, 255, 0);
+$color-american: rgb(0, 0, 255);
+$color-festival: rgb(0, 255, 0);
+$color-worldwide: rgb(128, 64, 0);
+$color-continental: rgb(0, 255, 255);
+$color-imperial: rgb(255, 0, 255);
+$color-nothing-yet: rgb(0, 0, 0);
+$color-cant-play-ever: rgb(128, 128, 128);
+$color-i-have-this: rgb(255, 224, 160);
+
+$color-will-put-lonely-tile-down: rgb(192, 192, 192);
+$color-have-neighboring-tile-too: rgb(192, 255, 192);
+$color-will-form-new-chain: rgb(255, 255, 255);
+$color-cant-play-now: rgb(96, 96, 96);
+
+$color-player: rgb(192, 192, 255);
+$color-cash: rgb(0, 128, 0);
+$color-available-chain-size-price: rgb(192, 255, 255);
+
+$color-my-turn: rgb(255, 192, 192);
+$color-safe-chain: rgb(255, 192, 128);
+
+body {
+	background-color: $color-background;
+	color: black;
+}
+
+.board {
+	position: absolute;
+	text-align: center;
+	font-weight: bold;
+	td {
+		border: 2px solid $color-background;
+		width: percentage(1 / 12);
+		height: percentage(1 / 9);
+		background-color: $color-none;
+	}
+	td.luxor {
+		background-color: $color-luxor;
+	}
+	td.tower {
+		background-color: $color-tower;
+	}
+	td.american {
+		background-color: $color-american;
+	}
+	td.festival {
+		background-color: $color-festival;
+	}
+	td.worldwide {
+		background-color: $color-worldwide;
+	}
+	td.continental {
+		background-color: $color-continental;
+	}
+	td.imperial {
+		background-color: $color-imperial;
+	}
+	td.nothing-yet {
+		background-color: $color-nothing-yet;
+		color: white;
+	}
+	td.cant-play-ever {
+		background-color: $color-cant-play-ever;
+	}
+	td.i-have-this {
+		background-color: $color-i-have-this;
+	}
+}
+
+.score {
+	position: absolute;
+	font-weight: bold;
+	td {
+		border: 2px solid $color-background;
+	}
+	td.name {
+		width: percentage(5 / 18);
+		text-align: left;
+		padding-left: .5em;
+	}
+	td.luxor, td.tower, td.american, td.festival, td.worldwide, td.continental, td.imperial {
+		width: percentage(1 / 18);
+		text-align: center;
+	}
+	td.cash, td.net {
+		width: percentage(3 / 18);
+		text-align: right;
+		padding-right: .5em;
+	}
+}
+
+.score-header {
+	.name {
+		background-color: $color-player;
+	}
+	.luxor {
+		background-color: $color-luxor;
+	}
+	.tower {
+		background-color: $color-tower;
+	}
+	.american {
+		background-color: $color-american;
+	}
+	.festival {
+		background-color: $color-festival;
+	}
+	.worldwide {
+		background-color: $color-worldwide;
+	}
+	.continental {
+		background-color: $color-continental;
+	}
+	.imperial {
+		background-color: $color-imperial;
+	}
+	.cash, .net {
+		background-color: $color-cash;
+	}
+}
+
+.score-player-1, .score-player-2, .score-player-3, .score-player-4, .score-player-5, .score-player-6 {
+	background-color: white;
+}
+
+.score-available, .score-chain-size, .score-price {
+	background-color: $color-available-chain-size-price;
+	.cash, .net {
+		background-color: $color-background;
+	}
+}
