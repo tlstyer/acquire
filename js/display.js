@@ -21,17 +21,26 @@ define(function(require) {
 			moveElement($score, half_window_width, 0, cell_width * 18 + 2, cell_width * 10 + 2);
 			$score.find('tr').css('height', cell_width + 'px');
 		},
-		commandBoard = function(row, col, type) {
+		commandSetBoardCell = function(row, col, board_type) {
 			var $cell = $('.board .row-' + row + ' .col-' + col);
 
-			$cell.attr('class', 'col-' + col + ' ' + type);
-			$cell.html('');
+			$cell.attr('class', 'col-' + col + ' ' + board_type);
+		},
+		commandSetBoard = function(row_to_col_to_board_type) {
+			var row, col;
+
+			for (row = 0; row < 9; row++) {
+				for (col = 0; col < 12; col++) {
+					commandSetBoardCell(row, col, row_to_col_to_board_type[row][col]);
+				}
+			}
 		};
 
 	resize();
 	$(window).resize(resize);
 
-	pubsub.subscribe('board', commandBoard);
+	pubsub.subscribe('set-board-cell', commandSetBoardCell);
+	pubsub.subscribe('set-board', commandSetBoard);
 
 	return null;
 });
