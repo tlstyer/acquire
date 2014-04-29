@@ -1,7 +1,7 @@
 requirejs.config({
     'baseUrl': 'js',
     'paths': {
-      'jquery': 'http://code.jquery.com/jquery-1.10.2.min'
+      'jquery': 'http://code.jquery.com/jquery-2.1.0.min'
     }
 });
 
