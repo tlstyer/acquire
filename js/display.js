@@ -27,11 +27,15 @@ define(function(require) {
 			$cell.attr('class', 'col-' + col + ' ' + board_type);
 		},
 		commandSetBoard = function(row_to_col_to_board_type) {
-			var row, col;
+			var num_rows, row, col_to_board_type, num_cols, col, board_type;
 
-			for (row = 0; row < 9; row++) {
-				for (col = 0; col < 12; col++) {
-					commandSetBoardCell(row, col, row_to_col_to_board_type[row][col]);
+			num_rows = row_to_col_to_board_type.length;
+			for (row = 0; row < num_rows; row++) {
+				col_to_board_type = row_to_col_to_board_type[row];
+				num_cols = col_to_board_type.length;
+				for (col = 0; col < num_cols; col++) {
+					board_type = col_to_board_type[col];
+					commandSetBoardCell(row, col, board_type);
 				}
 			}
 		};
