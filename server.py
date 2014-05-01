@@ -25,16 +25,18 @@ random_game = None
 
 class AcquireServerProtocol(WebSocketServerProtocol):
     def onOpen(self):
+        super().onOpen()
         print('connected:', self.peer)
         peer_to_client[self.peer] = self
         send_messages_to_clients([['set-board', random_game.game_board.row_to_col_to_board_type]], [self])
 
     def onClose(self, wasClean, code, reason):
+        super().onClose(wasClean, code, reason)
         print('disconnected:', self.peer)
         del peer_to_client[self.peer]
 
-    def onMessage(self, msg, binary):
-        pass
+    def onMessage(self, payload, isBinary):
+        super().onMessage(payload, isBinary)
 
 
 def send_messages_to_clients(message, clients):
