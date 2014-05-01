@@ -1,12 +1,10 @@
-import json
+import ujson
 import sys
 import random
 import asyncio
 from autobahn.asyncio.websocket import WebSocketServerFactory, WebSocketServerProtocol
 
 
-json_encoder = json.JSONEncoder(separators=(',', ':'))
-json_decoder = json.JSONDecoder()
 peer_to_client = {}
 
 board_types = [
@@ -40,7 +38,7 @@ class AcquireServerProtocol(WebSocketServerProtocol):
 
 
 def send_messages_to_clients(message, clients):
-    message_json = json_encoder.encode(message)
+    message_json = ujson.dumps(message)
     print(message_json)
     message_json_bytes = message_json.encode('utf-8')
     for client in clients:
