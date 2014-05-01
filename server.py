@@ -7,7 +7,7 @@ from autobahn.asyncio.websocket import WebSocketServerFactory, WebSocketServerPr
 
 json_encoder = json.JSONEncoder(separators=(',', ':'))
 json_decoder = json.JSONDecoder()
-clients = {}
+peer_to_client = {}
 
 board_types = [
     'luxor',
@@ -28,15 +28,23 @@ random_game = None
 class AcquireServerProtocol(WebSocketServerProtocol):
     def onOpen(self):
         print('connected:', self.peer)
-        clients[self.peer] = self
-        self.sendMessage(json_encoder.encode([['set-board', random_game.game_board.row_to_col_to_board_type]]).encode('utf-8'))
+        peer_to_client[self.peer] = self
+        send_messages_to_clients([['set-board', random_game.game_board.row_to_col_to_board_type]], [self])
 
     def onClose(self, wasClean, code, reason):
         print('disconnected:', self.peer)
-        del clients[self.peer]
+        del peer_to_client[self.peer]
 
     def onMessage(self, msg, binary):
         pass
+
+
+def send_messages_to_clients(message, clients):
+    message_json = json_encoder.encode(message)
+    print(message_json)
+    message_json_bytes = message_json.encode('utf-8')
+    for client in clients:
+        client.sendMessage(message_json_bytes)
 
 
 class GameBoard:
@@ -88,11 +96,7 @@ def send_random_messages():
             random_game.game_board.set_cell(tile[0], tile[1], board_type)
 
     if len(messages) > 0:
-        messages_json = json_encoder.encode(messages)
-        print(messages_json)
-        messages_json_bytes = messages_json.encode('utf-8')
-        for client in clients.values():
-            client.sendMessage(messages_json_bytes)
+        send_messages_to_clients(messages, peer_to_client.values())
 
         asyncio.get_event_loop().call_later(.5, send_random_messages)
 
