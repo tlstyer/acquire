@@ -28,7 +28,7 @@ class AcquireServerProtocol(WebSocketServerProtocol):
         super().onOpen()
         print('connected:', self.peer)
         peer_to_client[self.peer] = self
-        send_messages_to_clients([['set-board', random_game.game_board.row_to_col_to_board_type]], [self])
+        send_messages_to_clients([['set-board', random_game.game_board.x_to_y_to_board_type]], [self])
 
     def onClose(self, wasClean, code, reason):
         super().onClose(wasClean, code, reason)
@@ -48,20 +48,27 @@ def send_messages_to_clients(messages, clients):
 
 
 class GameBoard:
-    row_to_col_to_board_type = None
+    x_to_y_to_board_type = None
+    board_type_to_coordinates = None
 
     def __init__(self):
-        self.row_to_col_to_board_type = [['none' for x in range(0, 12)] for y in range(0, 9)]
+        self.x_to_y_to_board_type = [['none' for y in range(0, 9)] for x in range(0, 12)]
+        self.board_type_to_coordinates = {'none': set((x, y) for x in range(0, 12) for y in range(0, 9))}
 
-    def set_cell(self, row, col, board_type):
-        self.row_to_col_to_board_type[row][col] = board_type
+    def set_cell(self, coordinates, board_type):
+        old_board_type = self.x_to_y_to_board_type[coordinates[0]][coordinates[1]]
+        self.board_type_to_coordinates[old_board_type].remove(coordinates)
+        self.x_to_y_to_board_type[coordinates[0]][coordinates[1]] = board_type
+        if board_type not in self.board_type_to_coordinates:
+            self.board_type_to_coordinates[board_type] = set()
+        self.board_type_to_coordinates[board_type].add(coordinates)
 
 
 class TileBag:
     tiles = None
 
     def __init__(self):
-        tiles = [(y, x) for y in range(0, 9) for x in range(0, 12)]
+        tiles = [(x, y) for x in range(0, 12) for y in range(0, 9)]
         random.shuffle(tiles)
         self.tiles = tiles
 
@@ -93,12 +100,14 @@ def send_random_messages():
         if tile is not None:
             board_type = random.choice(board_types)
             messages.append(['set-board-cell', tile[0], tile[1], board_type])
-            random_game.game_board.set_cell(tile[0], tile[1], board_type)
+            random_game.game_board.set_cell(tile, board_type)
 
     if len(messages) > 0:
         send_messages_to_clients(messages, peer_to_client.values())
 
         asyncio.get_event_loop().call_later(.5, send_random_messages)
+    else:
+        print(random_game.game_board.board_type_to_coordinates)
 
 
 if __name__ == '__main__':
