@@ -1,29 +1,33 @@
 define(function(require) {
-	var display = require('display'),
-		command_publisher = require('command_publisher'),
-		ws = null;
+	var $ = require('jquery'),
+		network = require('network'),
+		pubsub = require('pubsub'),
+		show_page = function(page) {
+			$('.page').hide();
+			$('#' + page).show();
+		};
 
-	if ('WebSocket' in window) {
-		ws = new WebSocket('ws://localhost:9000');
+	require('display');
+
+	if (network.isBrowserSupported()) {
+		show_page('connecting');
+
+		network.connect();
+
+		pubsub.subscribe('network-connected', function() {
+			show_page('login');
+		});
+		pubsub.subscribe('network-disconnected', function() {
+			show_page('disconnected');
+		});
 	} else {
-		alert('Browser does not support WebSocket!');
+		show_page('websocket-not-supported');
 	}
 
-	if (ws !== null) {
-		ws.onopen = function() {};
+	$('#login-form').submit(function() {
+		network.sendMessage('set-username', $('#login-form-username').val());
+		show_page('lobby');
 
-		ws.onclose = function(e) {
-			// log('Connection closed (wasClean = ' + e.wasClean + ', code = ' + e.code + ', reason = ' + e.reason + ')');
-			ws = null;
-		};
-
-		ws.onmessage = function(e) {
-			var data;
-
-			try {
-				data = JSON.parse(e.data);
-				command_publisher.enqueueCommands(data);
-			} catch (e) {}
-		};
-	}
+		return false;
+	});
 });

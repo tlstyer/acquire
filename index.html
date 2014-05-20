@@ -10,142 +10,172 @@
 		<script data-main="js/main" src="node_modules/requirejs/require.js"></script>
 	</head>
 	<body>
-		<table class="board">
-			<tbody>
-				<tr class="y0"><td class="x0">1A</td><td class="x1">2A</td><td class="x2">3A</td><td class="x3">4A</td><td class="x4">5A</td><td class="x5">6A</td><td class="x6">7A</td><td class="x7">8A</td><td class="x8">9A</td><td class="x9">10A</td><td class="x10">11A</td><td class="x11">12A</td></tr>
-				<tr class="y1"><td class="x0">1B</td><td class="x1">2B</td><td class="x2">3B</td><td class="x3">4B</td><td class="x4">5B</td><td class="x5">6B</td><td class="x6">7B</td><td class="x7">8B</td><td class="x8">9B</td><td class="x9">10B</td><td class="x10">11B</td><td class="x11">12B</td></tr>
-				<tr class="y2"><td class="x0">1C</td><td class="x1">2C</td><td class="x2">3C</td><td class="x3">4C</td><td class="x4">5C</td><td class="x5">6C</td><td class="x6">7C</td><td class="x7">8C</td><td class="x8">9C</td><td class="x9">10C</td><td class="x10">11C</td><td class="x11">12C</td></tr>
-				<tr class="y3"><td class="x0">1D</td><td class="x1">2D</td><td class="x2">3D</td><td class="x3">4D</td><td class="x4">5D</td><td class="x5">6D</td><td class="x6">7D</td><td class="x7">8D</td><td class="x8">9D</td><td class="x9">10D</td><td class="x10">11D</td><td class="x11">12D</td></tr>
-				<tr class="y4"><td class="x0">1E</td><td class="x1">2E</td><td class="x2">3E</td><td class="x3">4E</td><td class="x4">5E</td><td class="x5">6E</td><td class="x6">7E</td><td class="x7">8E</td><td class="x8">9E</td><td class="x9">10E</td><td class="x10">11E</td><td class="x11">12E</td></tr>
-				<tr class="y5"><td class="x0">1F</td><td class="x1">2F</td><td class="x2">3F</td><td class="x3">4F</td><td class="x4">5F</td><td class="x5">6F</td><td class="x6">7F</td><td class="x7">8F</td><td class="x8">9F</td><td class="x9">10F</td><td class="x10">11F</td><td class="x11">12F</td></tr>
-				<tr class="y6"><td class="x0">1G</td><td class="x1">2G</td><td class="x2">3G</td><td class="x3">4G</td><td class="x4">5G</td><td class="x5">6G</td><td class="x6">7G</td><td class="x7">8G</td><td class="x8">9G</td><td class="x9">10G</td><td class="x10">11G</td><td class="x11">12G</td></tr>
-				<tr class="y7"><td class="x0">1H</td><td class="x1">2H</td><td class="x2">3H</td><td class="x3">4H</td><td class="x4">5H</td><td class="x5">6H</td><td class="x6">7H</td><td class="x7">8H</td><td class="x8">9H</td><td class="x9">10H</td><td class="x10">11H</td><td class="x11">12H</td></tr>
-				<tr class="y8"><td class="x0">1I</td><td class="x1">2I</td><td class="x2">3I</td><td class="x3">4I</td><td class="x4">5I</td><td class="x5">6I</td><td class="x6">7I</td><td class="x7">8I</td><td class="x8">9I</td><td class="x9">10I</td><td class="x10">11I</td><td class="x11">12I</td></tr>
-			</tbody>
-		</table>
-		<table class="score">
-			<tbody>
-				<tr class="score-header">
-					<td class="name">Player</td>
-					<td class="luxor">L</td>
-					<td class="tower">T</td>
-					<td class="american">A</td>
-					<td class="festival">F</td>
-					<td class="worldwide">W</td>
-					<td class="continental">C</td>
-					<td class="imperial">I</td>
-					<td class="cash">Cash</td>
-					<td class="net">Net</td>
-				</tr>
-				<tr class="score-player-0">
-					<td class="name"></td>
-					<td class="luxor"></td>
-					<td class="tower"></td>
-					<td class="american"></td>
-					<td class="festival"></td>
-					<td class="worldwide"></td>
-					<td class="continental"></td>
-					<td class="imperial"></td>
-					<td class="cash"></td>
-					<td class="net"></td>
-				</tr>
-				<tr class="score-player-1">
-					<td class="name"></td>
-					<td class="luxor"></td>
-					<td class="tower"></td>
-					<td class="american"></td>
-					<td class="festival"></td>
-					<td class="worldwide"></td>
-					<td class="continental"></td>
-					<td class="imperial"></td>
-					<td class="cash"></td>
-					<td class="net"></td>
-				</tr>
-				<tr class="score-player-2">
-					<td class="name"></td>
-					<td class="luxor"></td>
-					<td class="tower"></td>
-					<td class="american"></td>
-					<td class="festival"></td>
-					<td class="worldwide"></td>
-					<td class="continental"></td>
-					<td class="imperial"></td>
-					<td class="cash"></td>
-					<td class="net"></td>
-				</tr>
-				<tr class="score-player-3">
-					<td class="name"></td>
-					<td class="luxor"></td>
-					<td class="tower"></td>
-					<td class="american"></td>
-					<td class="festival"></td>
-					<td class="worldwide"></td>
-					<td class="continental"></td>
-					<td class="imperial"></td>
-					<td class="cash"></td>
-					<td class="net"></td>
-				</tr>
-				<tr class="score-player-4">
-					<td class="name"></td>
-					<td class="luxor"></td>
-					<td class="tower"></td>
-					<td class="american"></td>
-					<td class="festival"></td>
-					<td class="worldwide"></td>
-					<td class="continental"></td>
-					<td class="imperial"></td>
-					<td class="cash"></td>
-					<td class="net"></td>
-				</tr>
-				<tr class="score-player-5">
-					<td class="name"></td>
-					<td class="luxor"></td>
-					<td class="tower"></td>
-					<td class="american"></td>
-					<td class="festival"></td>
-					<td class="worldwide"></td>
-					<td class="continental"></td>
-					<td class="imperial"></td>
-					<td class="cash"></td>
-					<td class="net"></td>
-				</tr>
-				<tr class="score-available">
-					<td class="name">Available</td>
-					<td class="luxor">25</td>
-					<td class="tower">25</td>
-					<td class="american">25</td>
-					<td class="festival">25</td>
-					<td class="worldwide">25</td>
-					<td class="continental">25</td>
-					<td class="imperial">25</td>
-					<td class="cash"></td>
-					<td class="net"></td>
-				</tr>
-				<tr class="score-chain-size">
-					<td class="name">Chain Size</td>
-					<td class="luxor">-</td>
-					<td class="tower">-</td>
-					<td class="american">-</td>
-					<td class="festival">-</td>
-					<td class="worldwide">-</td>
-					<td class="continental">-</td>
-					<td class="imperial">-</td>
-					<td class="cash"></td>
-					<td class="net"></td>
-				</tr>
-				<tr class="score-price">
-					<td class="name">Price ($00)</td>
-					<td class="luxor">-</td>
-					<td class="tower">-</td>
-					<td class="american">-</td>
-					<td class="festival">-</td>
-					<td class="worldwide">-</td>
-					<td class="continental">-</td>
-					<td class="imperial">-</td>
-					<td class="cash"></td>
-					<td class="net"></td>
-				</tr>
-			</tbody>
-		</table>
+		<div class="page" id="websocket-not-supported">
+			<h1>Welcome to Acquire!</h1>
+			<p>
+				Sorry, your browser doesn't support WebSockets. Please use a supported browser.
+			</p>
+		</div>
+		<div class="page" id="connecting">
+			<h1>Welcome to Acquire!</h1>
+			<p>
+				Connecting to the server...
+			</p>
+		</div>
+		<div class="page" id="disconnected">
+			<h1>Welcome to Acquire!</h1>
+			<p>
+				Disconnected from the server. Please reload this page to reconnect.
+			</p>
+		</div>
+		<div class="page" id="login">
+			<h1>Welcome to Acquire!</h1>
+			<form id="login-form">
+				Please enter your username.<br>
+				<input type="text" id="login-form-username">
+				<input type="submit" value="Login">
+			</form>
+		</div>
+		<div class="page" id="lobby">
+		</div>
+		<div class="page" id="game">
+			<table class="board">
+				<tbody>
+					<tr class="y0"><td class="x0">1A</td><td class="x1">2A</td><td class="x2">3A</td><td class="x3">4A</td><td class="x4">5A</td><td class="x5">6A</td><td class="x6">7A</td><td class="x7">8A</td><td class="x8">9A</td><td class="x9">10A</td><td class="x10">11A</td><td class="x11">12A</td></tr>
+					<tr class="y1"><td class="x0">1B</td><td class="x1">2B</td><td class="x2">3B</td><td class="x3">4B</td><td class="x4">5B</td><td class="x5">6B</td><td class="x6">7B</td><td class="x7">8B</td><td class="x8">9B</td><td class="x9">10B</td><td class="x10">11B</td><td class="x11">12B</td></tr>
+					<tr class="y2"><td class="x0">1C</td><td class="x1">2C</td><td class="x2">3C</td><td class="x3">4C</td><td class="x4">5C</td><td class="x5">6C</td><td class="x6">7C</td><td class="x7">8C</td><td class="x8">9C</td><td class="x9">10C</td><td class="x10">11C</td><td class="x11">12C</td></tr>
+					<tr class="y3"><td class="x0">1D</td><td class="x1">2D</td><td class="x2">3D</td><td class="x3">4D</td><td class="x4">5D</td><td class="x5">6D</td><td class="x6">7D</td><td class="x7">8D</td><td class="x8">9D</td><td class="x9">10D</td><td class="x10">11D</td><td class="x11">12D</td></tr>
+					<tr class="y4"><td class="x0">1E</td><td class="x1">2E</td><td class="x2">3E</td><td class="x3">4E</td><td class="x4">5E</td><td class="x5">6E</td><td class="x6">7E</td><td class="x7">8E</td><td class="x8">9E</td><td class="x9">10E</td><td class="x10">11E</td><td class="x11">12E</td></tr>
+					<tr class="y5"><td class="x0">1F</td><td class="x1">2F</td><td class="x2">3F</td><td class="x3">4F</td><td class="x4">5F</td><td class="x5">6F</td><td class="x6">7F</td><td class="x7">8F</td><td class="x8">9F</td><td class="x9">10F</td><td class="x10">11F</td><td class="x11">12F</td></tr>
+					<tr class="y6"><td class="x0">1G</td><td class="x1">2G</td><td class="x2">3G</td><td class="x3">4G</td><td class="x4">5G</td><td class="x5">6G</td><td class="x6">7G</td><td class="x7">8G</td><td class="x8">9G</td><td class="x9">10G</td><td class="x10">11G</td><td class="x11">12G</td></tr>
+					<tr class="y7"><td class="x0">1H</td><td class="x1">2H</td><td class="x2">3H</td><td class="x3">4H</td><td class="x4">5H</td><td class="x5">6H</td><td class="x6">7H</td><td class="x7">8H</td><td class="x8">9H</td><td class="x9">10H</td><td class="x10">11H</td><td class="x11">12H</td></tr>
+					<tr class="y8"><td class="x0">1I</td><td class="x1">2I</td><td class="x2">3I</td><td class="x3">4I</td><td class="x4">5I</td><td class="x5">6I</td><td class="x6">7I</td><td class="x7">8I</td><td class="x8">9I</td><td class="x9">10I</td><td class="x10">11I</td><td class="x11">12I</td></tr>
+				</tbody>
+			</table>
+			<table class="score">
+				<tbody>
+					<tr class="score-header">
+						<td class="name">Player</td>
+						<td class="luxor">L</td>
+						<td class="tower">T</td>
+						<td class="american">A</td>
+						<td class="festival">F</td>
+						<td class="worldwide">W</td>
+						<td class="continental">C</td>
+						<td class="imperial">I</td>
+						<td class="cash">Cash</td>
+						<td class="net">Net</td>
+					</tr>
+					<tr class="score-player-0">
+						<td class="name"></td>
+						<td class="luxor"></td>
+						<td class="tower"></td>
+						<td class="american"></td>
+						<td class="festival"></td>
+						<td class="worldwide"></td>
+						<td class="continental"></td>
+						<td class="imperial"></td>
+						<td class="cash"></td>
+						<td class="net"></td>
+					</tr>
+					<tr class="score-player-1">
+						<td class="name"></td>
+						<td class="luxor"></td>
+						<td class="tower"></td>
+						<td class="american"></td>
+						<td class="festival"></td>
+						<td class="worldwide"></td>
+						<td class="continental"></td>
+						<td class="imperial"></td>
+						<td class="cash"></td>
+						<td class="net"></td>
+					</tr>
+					<tr class="score-player-2">
+						<td class="name"></td>
+						<td class="luxor"></td>
+						<td class="tower"></td>
+						<td class="american"></td>
+						<td class="festival"></td>
+						<td class="worldwide"></td>
+						<td class="continental"></td>
+						<td class="imperial"></td>
+						<td class="cash"></td>
+						<td class="net"></td>
+					</tr>
+					<tr class="score-player-3">
+						<td class="name"></td>
+						<td class="luxor"></td>
+						<td class="tower"></td>
+						<td class="american"></td>
+						<td class="festival"></td>
+						<td class="worldwide"></td>
+						<td class="continental"></td>
+						<td class="imperial"></td>
+						<td class="cash"></td>
+						<td class="net"></td>
+					</tr>
+					<tr class="score-player-4">
+						<td class="name"></td>
+						<td class="luxor"></td>
+						<td class="tower"></td>
+						<td class="american"></td>
+						<td class="festival"></td>
+						<td class="worldwide"></td>
+						<td class="continental"></td>
+						<td class="imperial"></td>
+						<td class="cash"></td>
+						<td class="net"></td>
+					</tr>
+					<tr class="score-player-5">
+						<td class="name"></td>
+						<td class="luxor"></td>
+						<td class="tower"></td>
+						<td class="american"></td>
+						<td class="festival"></td>
+						<td class="worldwide"></td>
+						<td class="continental"></td>
+						<td class="imperial"></td>
+						<td class="cash"></td>
+						<td class="net"></td>
+					</tr>
+					<tr class="score-available">
+						<td class="name">Available</td>
+						<td class="luxor">25</td>
+						<td class="tower">25</td>
+						<td class="american">25</td>
+						<td class="festival">25</td>
+						<td class="worldwide">25</td>
+						<td class="continental">25</td>
+						<td class="imperial">25</td>
+						<td class="cash"></td>
+						<td class="net"></td>
+					</tr>
+					<tr class="score-chain-size">
+						<td class="name">Chain Size</td>
+						<td class="luxor">-</td>
+						<td class="tower">-</td>
+						<td class="american">-</td>
+						<td class="festival">-</td>
+						<td class="worldwide">-</td>
+						<td class="continental">-</td>
+						<td class="imperial">-</td>
+						<td class="cash"></td>
+						<td class="net"></td>
+					</tr>
+					<tr class="score-price">
+						<td class="name">Price ($00)</td>
+						<td class="luxor">-</td>
+						<td class="tower">-</td>
+						<td class="american">-</td>
+						<td class="festival">-</td>
+						<td class="worldwide">-</td>
+						<td class="continental">-</td>
+						<td class="imperial">-</td>
+						<td class="cash"></td>
+						<td class="net"></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
 	</body>
 </html>

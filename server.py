@@ -20,15 +20,12 @@ board_types = [
     'i-have-this',
 ]
 
-random_game = None
-
 
 class AcquireServerProtocol(WebSocketServerProtocol):
     def onOpen(self):
         super().onOpen()
         print('connected:', self.peer)
         peer_to_client[self.peer] = self
-        send_messages_to_clients([['set-board', random_game.game_board.x_to_y_to_board_type]], [self])
 
     def onClose(self, wasClean, code, reason):
         super().onClose(wasClean, code, reason)
@@ -37,12 +34,20 @@ class AcquireServerProtocol(WebSocketServerProtocol):
 
     def onMessage(self, payload, isBinary):
         super().onMessage(payload, isBinary)
+        if not isBinary:
+            try:
+                message = ujson.decode(payload.decode())
+                print(message)
+            except Exception:
+                self.sendClose()
+        else:
+            self.sendClose()
 
 
 def send_messages_to_clients(messages, clients):
     messages_json = ujson.dumps(messages)
     print(messages_json)
-    messages_json_bytes = messages_json.encode('utf-8')
+    messages_json_bytes = messages_json.encode()
     for client in clients:
         client.sendMessage(messages_json_bytes)
 
@@ -90,26 +95,6 @@ class Game:
         pass
 
 
-random_game = Game()
-
-
-def send_random_messages():
-    messages = []
-    for i in range(1, random.randrange(2, 5)):
-        tile = random_game.tile_bag.get_tile()
-        if tile is not None:
-            board_type = random.choice(board_types)
-            messages.append(['set-board-cell', tile[0], tile[1], board_type])
-            random_game.game_board.set_cell(tile, board_type)
-
-    if len(messages) > 0:
-        send_messages_to_clients(messages, peer_to_client.values())
-
-        asyncio.get_event_loop().call_later(.5, send_random_messages)
-    else:
-        print(random_game.game_board.board_type_to_coordinates)
-
-
 if __name__ == '__main__':
     if len(sys.argv) > 1 and sys.argv[1] == 'debug':
         debug = True
@@ -122,8 +107,6 @@ if __name__ == '__main__':
     loop = asyncio.get_event_loop()
     coro = loop.create_server(factory, '127.0.0.1', 9000)
     server = loop.run_until_complete(coro)
-
-    loop.call_later(3, send_random_messages)
 
     try:
         loop.run_forever()
