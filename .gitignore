@@ -1,4 +1,6 @@
 /.idea/
 /nbproject/
 /node_modules/
+/__pycache__/
 /css/*.css
+/js/enums.js
