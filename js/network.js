@@ -40,8 +40,8 @@ define(function(require) {
 		};
 
 	return {
-		'isBrowserSupported': isBrowserSupported,
-		'connect': connect,
-		'sendMessage': sendMessage
+		isBrowserSupported: isBrowserSupported,
+		connect: connect,
+		sendMessage: sendMessage
 	};
 });

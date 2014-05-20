@@ -18,7 +18,7 @@ define(function(require) {
 		};
 
 	return {
-		'publish': publish,
-		'subscribe': subscribe
+		publish: publish,
+		subscribe: subscribe
 	};
 });

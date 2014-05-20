@@ -25,7 +25,7 @@ define(function(require) {
 		};
 
 	return {
-		'enqueueCommands': function(commands) {
+		enqueueCommands: function(commands) {
 			[].push.apply(command_queue, commands);
 			processCommands();
 		}
