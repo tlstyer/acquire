@@ -3,22 +3,10 @@ import sys
 import random
 import asyncio
 from autobahn.asyncio.websocket import WebSocketServerFactory, WebSocketServerProtocol
+import enums
 
 
 peer_to_client = {}
-
-board_types = [
-    'luxor',
-    'tower',
-    'american',
-    'festival',
-    'worldwide',
-    'continental',
-    'imperial',
-    'nothing-yet',
-    'cant-play-ever',
-    'i-have-this',
-]
 
 
 class AcquireServerProtocol(WebSocketServerProtocol):
@@ -37,11 +25,21 @@ class AcquireServerProtocol(WebSocketServerProtocol):
         if not isBinary:
             try:
                 message = ujson.decode(payload.decode())
-                print(message)
-            except Exception:
+                method = getattr(self, 'onMessage' + enums.CommandsToServer(message[0]).name)
+                arguments = message[1:]
+            except Exception as e:
+                self.sendClose()
+                return
+
+            try:
+                method(arguments)
+            except TypeError:
                 self.sendClose()
         else:
             self.sendClose()
+
+    def onMessageSetUsername(self, username):
+        print('onMessageSetUsername', username)
 
 
 def send_messages_to_clients(messages, clients):

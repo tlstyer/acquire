@@ -1,5 +1,6 @@
 define(function(require) {
 	var $ = require('jquery'),
+		enums = require('enums'),
 		network = require('network'),
 		pubsub = require('pubsub'),
 		show_page = function(page) {
@@ -25,7 +26,7 @@ define(function(require) {
 	}
 
 	$('#login-form').submit(function() {
-		network.sendMessage('set-username', $('#login-form-username').val());
+		network.sendMessage(enums.CommandsToServer.SetUsername, $('#login-form-username').val());
 		show_page('lobby');
 
 		return false;
