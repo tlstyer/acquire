@@ -39,12 +39,12 @@ class AcquireServerProtocol(WebSocketServerProtocol):
         super().onMessage(payload, isBinary)
 
 
-def send_messages_to_clients(message, clients):
-    message_json = ujson.dumps(message)
-    print(message_json)
-    message_json_bytes = message_json.encode('utf-8')
+def send_messages_to_clients(messages, clients):
+    messages_json = ujson.dumps(messages)
+    print(messages_json)
+    messages_json_bytes = messages_json.encode('utf-8')
     for client in clients:
-        client.sendMessage(message_json_bytes)
+        client.sendMessage(messages_json_bytes)
 
 
 class GameBoard:
