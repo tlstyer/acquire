@@ -1,6 +1,6 @@
 define(function(require) {
 	var ws = null,
-		command_publisher = require('command_publisher'),
+		pubsub = require('pubsub'),
 		isBrowserSupported = function() {
 			return 'WebSocket' in window;
 		},
@@ -10,24 +10,23 @@ define(function(require) {
 
 				if (ws !== null) {
 					ws.onopen = function() {
-						command_publisher.enqueueCommands([
-							['network-connected']
-						]);
+						pubsub.publish('network-connected');
 					};
 
 					ws.onclose = function(e) {
 						ws = null;
-						command_publisher.enqueueCommands([
-							['network-disconnected']
-						]);
+						pubsub.publish('network-disconnected');
 					};
 
 					ws.onmessage = function(e) {
-						var data;
+						var data, data_length, i;
 
 						try {
 							data = JSON.parse(e.data);
-							command_publisher.enqueueCommands(data);
+							data_length = data.length;
+							for (i = 0; i < data_length; i++) {
+								pubsub.publish.apply(null, data[i]);
+							}
 						} catch (e) {}
 					};
 				}
