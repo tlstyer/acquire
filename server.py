@@ -32,7 +32,7 @@ class AcquireServerProtocol(WebSocketServerProtocol):
                 return
 
             try:
-                method(arguments)
+                method(*arguments)
             except TypeError:
                 self.sendClose()
         else:
