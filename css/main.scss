@@ -1,4 +1,5 @@
-$color-background: rgb(246, 244, 242);
+$color-background: rgb(255, 255, 255);
+$color-table-border: rgb(246, 244, 242);
 
 $color-none: rgb(255, 255, 192);
 $color-luxor: rgb(255, 0, 0);
@@ -39,7 +40,7 @@ body {
 	text-align: center;
 	font-weight: bold;
 	td {
-		border: 2px solid $color-background;
+		border: 2px solid $color-table-border;
 		width: percentage(1 / 12);
 		height: percentage(1 / 9);
 		background-color: $color-none;
@@ -81,7 +82,7 @@ body {
 	position: absolute;
 	font-weight: bold;
 	td {
-		border: 2px solid $color-background;
+		border: 2px solid $color-table-border;
 	}
 	td.name {
 		width: percentage(5 / 18);
@@ -137,5 +138,6 @@ body {
 	background-color: $color-available-chain-size-price;
 	.cash, .net {
 		background-color: $color-background;
+		border-color: $color-background;
 	}
 }
