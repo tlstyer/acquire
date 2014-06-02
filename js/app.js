@@ -9,7 +9,7 @@ define(function(require) {
 		};
 
 	require('lobby');
-	require('display');
+	require('game');
 
 	if (network.isBrowserSupported()) {
 		show_page('connecting');
