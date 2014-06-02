@@ -6,6 +6,8 @@
 ### RequireJS
     sudo apt-get install npm
     npm install requirejs
+### normalize.css
+    npm install normalize.css
 ### SASS
     sudo apt-get install ruby
     sudo gem install sass
