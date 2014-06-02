@@ -1,19 +1,21 @@
 define(function(require) {
 	var $ = require('jquery'),
-		client_id_to_username = require('client_id_to_username'),
+		common_html = require('common_html'),
 		pubsub = require('pubsub');
 
 	var commandSetClientIdToRoom = function(client_id, room) {
-			var message = client_id_to_username.get(client_id);
+			var $username, message;
+
+			$username = common_html.getUsernameElement(client_id);
 			if (room === null) {
-				message += ' has left.';
+				message = ' has left.';
 			} else if (room === 0) {
-				message += ' has entered the lobby.';
+				message = ' has entered the lobby.';
 			} else {
-				message += ' has entered room #' + room + '.';
+				message = ' has entered room #' + room + '.';
 			}
 
-			$('<div/>').text(message).appendTo('#lobby');
+			$('<div/>').append($username).append(message).appendTo('#lobby');
 		};
 
 	pubsub.subscribe('server-SetClientIdToRoom', commandSetClientIdToRoom);
