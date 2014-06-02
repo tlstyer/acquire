@@ -23,5 +23,10 @@ class BoardTypes(AutoNumber):
     IHaveThis = ()
 
 
+class CommandsToClient(AutoNumber):
+    SetClientIdToUsername = ()
+    SetClientIdToRoom = ()
+
+
 class CommandsToServer(AutoNumber):
     SetUsername = ()
