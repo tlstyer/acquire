@@ -8,6 +8,7 @@ define(function(require) {
 			$('#' + page).show();
 		};
 
+	require('lobby');
 	require('display');
 
 	if (network.isBrowserSupported()) {

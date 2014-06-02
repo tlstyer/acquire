@@ -1,5 +1,6 @@
 define(function(require) {
 	var ws = null,
+		enums = require('enums'),
 		pubsub = require('pubsub'),
 		isBrowserSupported = function() {
 			return 'WebSocket' in window;
@@ -19,13 +20,15 @@ define(function(require) {
 					};
 
 					ws.onmessage = function(e) {
-						var data, data_length, i;
+						var data, data_length, i, command;
 
 						try {
 							data = JSON.parse(e.data);
 							data_length = data.length;
 							for (i = 0; i < data_length; i++) {
-								pubsub.publish.apply(null, data[i]);
+								command = data[i];
+								command[0] = 'server-' + enums.CommandsToClient[command[0]];
+								pubsub.publish.apply(null, command);
 							}
 						} catch (e) {}
 					};
