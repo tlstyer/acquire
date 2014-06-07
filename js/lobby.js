@@ -4,18 +4,18 @@ define(function(require) {
 		pubsub = require('pubsub');
 
 	var commandSetClientIdToRoom = function(client_id, room) {
-			var $username, message;
+			var $username;
 
-			$username = common_html.getUsernameElement(client_id);
+			$('#client-' + client_id).remove();
+
+			$username = $('<div id="client-' + client_id + '"/>').append(common_html.getUsernameElement(client_id));
 			if (room === null) {
-				message = ' has left.';
+				// do nothing
 			} else if (room === 0) {
-				message = ' has entered the lobby.';
+				$('#clients-in-lobby').append($username);
 			} else {
-				message = ' has entered room #' + room + '.';
+				$('#lobby-games').append($username);
 			}
-
-			$('<div/>').append($username).append(message).appendTo('#lobby');
 		};
 
 	pubsub.subscribe('server-SetClientIdToRoom', commandSetClientIdToRoom);

@@ -39,6 +39,13 @@ body {
 	background-color: $color-table-border;
 }
 
+.lobby-section {
+	margin-bottom: 1em;
+	.header {
+		font-weight: bold;
+	}
+}
+
 .board {
 	position: absolute;
 	text-align: center;
