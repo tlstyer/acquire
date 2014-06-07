@@ -22,6 +22,7 @@ class ClientManager:
         self.next_client_id += 1
         self.peer_to_client[client.peer] = client
         self.peer_to_username[client.peer] = None
+        self.peer_to_messages[client.peer].append([enums.CommandsToClient.SetClientId.value, self.peer_to_client_id[client.peer]])
 
     def remove_client(self, client):
         self._change_room(client.peer, None)

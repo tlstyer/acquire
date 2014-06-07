@@ -24,6 +24,7 @@ class BoardTypes(AutoNumber):
 
 
 class CommandsToClient(AutoNumber):
+    SetClientId = ()
     SetClientIdToUsername = ()
     SetClientIdToRoom = ()
 

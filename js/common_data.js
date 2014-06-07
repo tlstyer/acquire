@@ -1,18 +1,23 @@
 define(function(require) {
 	var pubsub = require('pubsub'),
-		client_id_to_username = {};
+		data = {
+			client_id: null,
+			client_id_to_username: {}
+		};
 
-	var setClientIdToUsername = function(client_id, username) {
+	var setClientId = function(client_id) {
+			data.client_id = client_id;
+		},
+		setClientIdToUsername = function(client_id, username) {
 			if (username === null) {
-				delete client_id_to_username[client_id];
+				delete data.client_id_to_username[client_id];
 			} else {
-				client_id_to_username[client_id] = username;
+				data.client_id_to_username[client_id] = username;
 			}
 		};
 
+	pubsub.subscribe('server-SetClientId', setClientId);
 	pubsub.subscribe('server-SetClientIdToUsername', setClientIdToUsername);
 
-	return {
-		client_id_to_username: client_id_to_username
-	};
+	return data;
 });
