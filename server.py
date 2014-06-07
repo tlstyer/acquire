@@ -31,7 +31,10 @@ class ClientManager:
         del self.peer_to_username[client.peer]
 
     def set_username(self, client, username):
-        if username in self.usernames:
+        if len(username) == 0 or len(username) > 32:
+            # todo: tell user that username is too short or too long
+            client.sendClose()
+        elif username in self.usernames:
             # todo: tell user that username is taken
             client.sendClose()
         else:
