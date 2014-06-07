@@ -26,7 +26,7 @@ class BoardTypes(AutoNumber):
 class CommandsToClient(AutoNumber):
     SetClientId = ()
     SetClientIdToUsername = ()
-    SetClientIdToRoom = ()
+    SetClientIdToGameId = ()
 
 
 class CommandsToServer(AutoNumber):

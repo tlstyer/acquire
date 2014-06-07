@@ -13,8 +13,8 @@ class ClientManager:
     peer_to_client = {}
     peer_to_username = {}
     usernames = set()
-    peer_to_room = {}
-    room_to_peers = collections.defaultdict(set)
+    peer_to_game_id = {}
+    game_id_to_peers = collections.defaultdict(set)
     peer_to_messages = collections.defaultdict(list)
 
     def add_client(self, client):
@@ -25,7 +25,7 @@ class ClientManager:
         self.peer_to_messages[client.peer].append([enums.CommandsToClient.SetClientId.value, self.peer_to_client_id[client.peer]])
 
     def remove_client(self, client):
-        self._change_room(client.peer, None)
+        self._change_game_id(client.peer, None)
         del self.peer_to_client_id[client.peer]
         del self.peer_to_client[client.peer]
         self.usernames.discard(self.peer_to_username[client.peer])
@@ -43,39 +43,39 @@ class ClientManager:
             self.peer_to_username[client.peer] = username
             self.usernames.add(username)
 
-            self._change_room(client.peer, 0)
+            self._change_game_id(client.peer, 0)
 
-    def _change_room(self, peer, room):
-        # leave current room
-        current_room = self.peer_to_room.get(peer, None)
-        if current_room is not None:
-            del self.peer_to_room[peer]
-            self.room_to_peers[current_room].remove(peer)
+    def _change_game_id(self, peer, game_id):
+        # leave current game
+        current_game_id = self.peer_to_game_id.get(peer, None)
+        if current_game_id is not None:
+            del self.peer_to_game_id[peer]
+            self.game_id_to_peers[current_game_id].remove(peer)
 
-        # enter new room
-        if room is not None:
-            self.peer_to_room[peer] = room
-            self.room_to_peers[room].add(peer)
+        # enter new game
+        if game_id is not None:
+            self.peer_to_game_id[peer] = game_id
+            self.game_id_to_peers[game_id].add(peer)
 
         # tell clients about this change. also, tell clients about username changes, if applicable.
         enum_set_client_id_to_username = enums.CommandsToClient.SetClientIdToUsername.value
-        enum_set_client_id_to_room = enums.CommandsToClient.SetClientIdToRoom.value
+        enum_set_client_id_to_game_id = enums.CommandsToClient.SetClientIdToGameId.value
         client_id = self.peer_to_client_id[peer]
         username = self.peer_to_username[peer]
 
-        if current_room is None and room is not None:
-            for peer2, room2 in self.peer_to_room.items():
+        if current_game_id is None and game_id is not None:
+            for peer2, game_id2 in self.peer_to_game_id.items():
                 if peer2 != peer:
                     self.peer_to_messages[peer].append([enum_set_client_id_to_username, self.peer_to_client_id[peer2], self.peer_to_username[peer2]])
-                    self.peer_to_messages[peer].append([enum_set_client_id_to_room, self.peer_to_client_id[peer2], room2])
+                    self.peer_to_messages[peer].append([enum_set_client_id_to_game_id, self.peer_to_client_id[peer2], game_id2])
                 self.peer_to_messages[peer2].append([enum_set_client_id_to_username, client_id, username])
 
-        if current_room is not None or room is not None:
-            for peer2 in self.peer_to_room.keys():
-                self.peer_to_messages[peer2].append([enum_set_client_id_to_room, client_id, room])
+        if current_game_id is not None or game_id is not None:
+            for peer2 in self.peer_to_game_id.keys():
+                self.peer_to_messages[peer2].append([enum_set_client_id_to_game_id, client_id, game_id])
 
-        if current_room is not None and room is None:
-            for peer2 in self.peer_to_room.keys():
+        if current_game_id is not None and game_id is None:
+            for peer2 in self.peer_to_game_id.keys():
                 self.peer_to_messages[peer2].append([enum_set_client_id_to_username, client_id, None])
 
     def flush_peer_to_messages(self):
