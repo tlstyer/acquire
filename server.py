@@ -115,13 +115,15 @@ class AcquireServerProtocol(WebSocketServerProtocol):
                 method = getattr(self, 'onMessage' + enums.CommandsToServer(message[0]).name)
                 arguments = message[1:]
             except Exception as e:
+                print(e)
                 self.sendClose()
                 return
 
             try:
                 method(*arguments)
                 client_manager.flush_peer_to_messages()
-            except TypeError:
+            except TypeError as e:
+                print(e)
                 self.sendClose()
         else:
             self.sendClose()
