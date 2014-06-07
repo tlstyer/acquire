@@ -163,7 +163,7 @@ class TileBag:
         else:
             return None
 
-    def get_number_of_tiles_remaining(self):
+    def __len__(self):
         return len(self.tiles)
 
 
