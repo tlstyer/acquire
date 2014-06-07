@@ -1,10 +1,10 @@
 define(function(require) {
 	var $ = require('jquery'),
-		client_id_to_username = require('client_id_to_username');
+		common_data = require('common_data');
 
 	return {
 		getUsernameElement: function(client_id) {
-			return $('<span class="username"/>').text(client_id_to_username.get(client_id));
+			return $('<span class="username"/>').text(common_data.client_id_to_username[client_id]);
 		}
 	};
 });
