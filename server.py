@@ -9,6 +9,7 @@ import enums
 
 class ClientManager:
     next_client_id = 1
+    next_game_id = 1
     peer_to_client_id = {}
     peer_to_client = {}
     peer_to_username = {}
@@ -32,6 +33,7 @@ class ClientManager:
         del self.peer_to_username[client.peer]
 
     def set_username(self, client, username):
+        # todo: assert user didn't set their username already
         username = ' '.join(username.split())
         if len(username) == 0 or len(username) > 32:
             # todo: tell user that username is too short or too long
@@ -44,6 +46,18 @@ class ClientManager:
             self.usernames.add(username)
 
             self._change_game_id(client.peer, 0)
+
+    def create_game(self, client):
+        if self.peer_to_game_id.get(client.peer, None) == 0:
+            game_id = self.next_game_id
+            self.next_game_id += 1
+
+            enum_create_game = enums.CommandsToClient.CreateGame.value
+
+            for peer in self.peer_to_game_id.keys():
+                self.peer_to_messages[peer].append([enum_create_game, game_id])
+
+            self._change_game_id(client.peer, game_id)
 
     def _change_game_id(self, peer, game_id):
         # leave current game
@@ -58,12 +72,16 @@ class ClientManager:
             self.game_id_to_peers[game_id].add(peer)
 
         # tell clients about this change. also, tell clients about username changes, if applicable.
+        enum_create_game = enums.CommandsToClient.CreateGame.value
         enum_set_client_id_to_username = enums.CommandsToClient.SetClientIdToUsername.value
         enum_set_client_id_to_game_id = enums.CommandsToClient.SetClientIdToGameId.value
         client_id = self.peer_to_client_id[peer]
         username = self.peer_to_username[peer]
 
         if current_game_id is None and game_id is not None:
+            for game_id2 in self.game_id_to_peers.keys():
+                if game_id2 != 0:
+                    self.peer_to_messages[peer].append([enum_create_game, game_id2])
             for peer2, game_id2 in self.peer_to_game_id.items():
                 if peer2 != peer:
                     self.peer_to_messages[peer].append([enum_set_client_id_to_username, self.peer_to_client_id[peer2], self.peer_to_username[peer2]])
@@ -130,6 +148,9 @@ class AcquireServerProtocol(WebSocketServerProtocol):
 
     def onMessageSetUsername(self, username):
         client_manager.set_username(self, username)
+
+    def onMessageCreateGame(self):
+        client_manager.create_game(self)
 
 
 class GameBoard:
