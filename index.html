@@ -22,14 +22,9 @@
 				Connecting to the server...
 			</p>
 		</div>
-		<div class="page" id="disconnected">
-			<h1>Welcome to Acquire!</h1>
-			<p>
-				Disconnected from the server. Please reload this page to reconnect.
-			</p>
-		</div>
 		<div class="page" id="login">
 			<h1>Welcome to Acquire!</h1>
+			<div id="login-error-message"></div>
 			<form id="login-form">
 				Please enter your username.<br>
 				<input type="text" id="login-form-username">
@@ -44,6 +39,16 @@
 				</div>
 			</div>
 			<div id="lobby-games">
+				<div class="lobby-section" id="lobby-game-template" style="display: none">
+					<div class="header"></div>
+					<div class="player"></div>
+					<div class="player"></div>
+					<div class="player"></div>
+					<div class="player"></div>
+					<div class="player"></div>
+					<div class="player"></div>
+					<div class="watchers"></div>
+				</div>
 			</div>
 			<div class="lobby-section" id="lobby-section-create-game">
 				<a href="#" id="create-game">Create Game</a>

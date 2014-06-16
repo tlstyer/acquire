@@ -1,134 +1,127 @@
-import ujson
-import sys
-import random
-import collections
 import asyncio
-from autobahn.asyncio.websocket import WebSocketServerFactory, WebSocketServerProtocol
+import autobahn.asyncio.websocket
+import collections
 import enums
+import random
+import sys
+import ujson
 
 
 class ClientManager:
-    next_client_id = 1
-    next_game_id = 1
-    peer_to_client_id = {}
-    peer_to_client = {}
-    peer_to_username = {}
-    usernames = set()
-    peer_to_game_id = {}
-    game_id_to_peers = collections.defaultdict(set)
-    peer_to_messages = collections.defaultdict(list)
+    def __init__(self):
+        self.next_client_id = 1
+        self.client_id_to_client = {}
+        self.usernames = set()
+        self.next_game_id = 1
+        self.game_id_to_game = {}
+        self.pending_messages = []
 
-    def add_client(self, client):
-        self.peer_to_client_id[client.peer] = self.next_client_id
+    def open_client(self, client):
+        client_id = self.next_client_id
         self.next_client_id += 1
-        self.peer_to_client[client.peer] = client
-        self.peer_to_username[client.peer] = None
-        self.peer_to_messages[client.peer].append([enums.CommandsToClient.SetClientId.value, self.peer_to_client_id[client.peer]])
+        client.client_id = client_id
+        self.client_id_to_client[client_id] = client
+        client_pending_messages = [[enums.CommandsToClient.SetClientId.value, client_id]]
 
-    def remove_client(self, client):
-        self._change_game_id(client.peer, None)
-        del self.peer_to_client_id[client.peer]
-        del self.peer_to_client[client.peer]
-        self.usernames.discard(self.peer_to_username[client.peer])
-        del self.peer_to_username[client.peer]
-
-    def set_username(self, client, username):
-        # todo: assert user didn't set their username already
-        username = ' '.join(username.split())
+        username = client.username
         if len(username) == 0 or len(username) > 32:
-            # todo: tell user that username is too short or too long
+            client_pending_messages.append([enums.CommandsToClient.FatalError.value, enums.FatalErrors.InvalidUsername.value])
+            self.pending_messages.append(['client', client_id, client_pending_messages])
+            self.flush_pending_messages()
             client.sendClose()
+            return
         elif username in self.usernames:
-            # todo: tell user that username is taken
+            client_pending_messages.append([enums.CommandsToClient.FatalError.value, enums.FatalErrors.UsernameAlreadyInUse.value])
+            self.pending_messages.append(['client', client_id, client_pending_messages])
+            self.flush_pending_messages()
             client.sendClose()
-        else:
-            self.peer_to_username[client.peer] = username
-            self.usernames.add(username)
+            return
 
-            self._change_game_id(client.peer, 0)
+        self.usernames.add(username)
+
+        all_pending_messages = []
+        enum_set_client_id_to_username = enums.CommandsToClient.SetClientIdToUsername.value
+
+        # tell client about other clients' usernames
+        for client2 in self.client_id_to_client.values():
+            if client2 is not client:
+                client_pending_messages.append([enum_set_client_id_to_username, client2.client_id, client2.username])
+
+        # tell all clients about client's username
+        all_pending_messages.append([enum_set_client_id_to_username, client_id, username])
+
+        self.pending_messages.append(['client', client_id, client_pending_messages])
+        self.pending_messages.append(['all', None, all_pending_messages])
+
+    def close_client(self, client):
+        del self.client_id_to_client[client.client_id]
+        self.usernames.discard(client.username)
 
     def create_game(self, client):
-        if self.peer_to_game_id.get(client.peer, None) == 0:
+        if client.game_id is None:
             game_id = self.next_game_id
             self.next_game_id += 1
 
-            enum_create_game = enums.CommandsToClient.CreateGame.value
+            game = Game(game_id, client.username)
+            self.game_id_to_game[game_id] = game
 
-            for peer in self.peer_to_game_id.keys():
-                self.peer_to_messages[peer].append([enum_create_game, game_id])
+            game.add_player(client)
 
-            self._change_game_id(client.peer, game_id)
+            self.pending_messages.extend(game.get_messages())
 
-    def _change_game_id(self, peer, game_id):
-        # leave current game
-        current_game_id = self.peer_to_game_id.get(peer, None)
-        if current_game_id is not None:
-            del self.peer_to_game_id[peer]
-            self.game_id_to_peers[current_game_id].remove(peer)
-
-        # enter new game
-        if game_id is not None:
-            self.peer_to_game_id[peer] = game_id
-            self.game_id_to_peers[game_id].add(peer)
-
-        # tell clients about this change. also, tell clients about username changes, if applicable.
-        enum_create_game = enums.CommandsToClient.CreateGame.value
-        enum_set_client_id_to_username = enums.CommandsToClient.SetClientIdToUsername.value
-        enum_set_client_id_to_game_id = enums.CommandsToClient.SetClientIdToGameId.value
-        client_id = self.peer_to_client_id[peer]
-        username = self.peer_to_username[peer]
-
-        if current_game_id is None and game_id is not None:
-            for game_id2 in self.game_id_to_peers.keys():
-                if game_id2 != 0:
-                    self.peer_to_messages[peer].append([enum_create_game, game_id2])
-            for peer2, game_id2 in self.peer_to_game_id.items():
-                if peer2 != peer:
-                    self.peer_to_messages[peer].append([enum_set_client_id_to_username, self.peer_to_client_id[peer2], self.peer_to_username[peer2]])
-                    self.peer_to_messages[peer].append([enum_set_client_id_to_game_id, self.peer_to_client_id[peer2], game_id2])
-                self.peer_to_messages[peer2].append([enum_set_client_id_to_username, client_id, username])
-
-        if current_game_id is not None or game_id is not None:
-            for peer2 in self.peer_to_game_id.keys():
-                self.peer_to_messages[peer2].append([enum_set_client_id_to_game_id, client_id, game_id])
-
-        if current_game_id is not None and game_id is None:
-            for peer2 in self.peer_to_game_id.keys():
-                self.peer_to_messages[peer2].append([enum_set_client_id_to_username, client_id, None])
-
-    def flush_peer_to_messages(self):
-        for peer, messages in self.peer_to_messages.items():
+    def flush_pending_messages(self):
+        for target, target_id, messages in self.pending_messages:
             messages_json = ujson.dumps(messages)
-            print(peer, '->', messages_json)
             messages_json_bytes = messages_json.encode()
-            self.peer_to_client[peer].sendMessage(messages_json_bytes)
-        print()
-
-        self.peer_to_messages.clear()
+            if target == 'all':
+                print(target, '<-', messages_json)
+                for client in self.client_id_to_client.values():
+                    client.sendMessage(messages_json_bytes)
+            elif target == 'game':
+                print(target, target_id, '<-', messages_json)
+            elif target == 'client':
+                print(target, target_id, '<-', messages_json)
+                self.client_id_to_client[target_id].sendMessage(messages_json_bytes)
+            else:
+                print('unknown target for messages:', [target, target_id, messages])
+        del self.pending_messages[:]
 
 
 client_manager = ClientManager()
 
 
-class AcquireServerProtocol(WebSocketServerProtocol):
+class AcquireServerProtocol(autobahn.asyncio.websocket.WebSocketServerProtocol):
+    def __init__(self):
+        self.username = None
+        self.client_id = None
+        self.game_id = None
+        self.player_id = None
+
+    def onConnect(self, request):
+        self.username = ' '.join(request.params.get('username', [''])[0].split())
+        print('X', 'connect', self.peer, self.username)
+        print()
+
     def onOpen(self):
         super().onOpen()
-        print(self.peer, 'connected')
-        client_manager.add_client(self)
-        client_manager.flush_peer_to_messages()
+        client_manager.open_client(self)
+        print(self.client_id, 'open', self.peer)
+        client_manager.flush_pending_messages()
+        print()
 
     def onClose(self, wasClean, code, reason):
         super().onClose(wasClean, code, reason)
-        print(self.peer, 'disconnected')
-        client_manager.remove_client(self)
-        client_manager.flush_peer_to_messages()
+        print(self.client_id, 'close')
+        client_manager.close_client(self)
+        client_manager.flush_pending_messages()
+        print()
 
     def onMessage(self, payload, isBinary):
         super().onMessage(payload, isBinary)
         if not isBinary:
             try:
                 message = payload.decode()
-                print(self.peer, '<-', message)
+                print(self.client_id, '->', message)
                 message = ujson.decode(message)
                 method = getattr(self, 'onMessage' + enums.CommandsToServer(message[0]).name)
                 arguments = message[1:]
@@ -139,40 +132,70 @@ class AcquireServerProtocol(WebSocketServerProtocol):
 
             try:
                 method(*arguments)
-                client_manager.flush_peer_to_messages()
+                client_manager.flush_pending_messages()
+                print()
             except TypeError as e:
                 print(e)
                 self.sendClose()
         else:
             self.sendClose()
 
-    def onMessageSetUsername(self, username):
-        client_manager.set_username(self, username)
-
     def onMessageCreateGame(self):
         client_manager.create_game(self)
 
 
 class GameBoard:
-    x_to_y_to_board_type = None
-    board_type_to_coordinates = None
-
     def __init__(self):
-        self.x_to_y_to_board_type = [['none' for y in range(0, 9)] for x in range(0, 12)]
-        self.board_type_to_coordinates = {'none': set((x, y) for x in range(0, 12) for y in range(0, 9))}
+        nothing = enums.BoardTypes.Nothing.value
+        self.x_to_y_to_board_type = [[nothing for y in range(0, 9)] for x in range(0, 12)]
+        self.board_type_to_coordinates = collections.defaultdict(set)
+        self.board_type_to_coordinates[nothing].update((x, y) for x in range(0, 12) for y in range(0, 9))
+
+        self.messages_game = []
 
     def set_cell(self, coordinates, board_type):
-        old_board_type = self.x_to_y_to_board_type[coordinates[0]][coordinates[1]]
+        x, y = coordinates
+        old_board_type = self.x_to_y_to_board_type[x][y]
         self.board_type_to_coordinates[old_board_type].remove(coordinates)
-        self.x_to_y_to_board_type[coordinates[0]][coordinates[1]] = board_type
-        if board_type not in self.board_type_to_coordinates:
-            self.board_type_to_coordinates[board_type] = set()
+        self.x_to_y_to_board_type[x][y] = board_type
         self.board_type_to_coordinates[board_type].add(coordinates)
+        self.messages_game.append([x, y, board_type])
+
+
+class ScoreSheet:
+    def __init__(self, game_id):
+        self.game_id = game_id
+
+        self.player_data = []
+        self.available = [25, 25, 25, 25, 25, 25, 25]
+        self.chain_size = [0, 0, 0, 0, 0, 0, 0]
+        self.price = [0, 0, 0, 0, 0, 0, 0]
+
+        self.messages_all = []
+        self.messages_game = []
+
+    def add_player(self, client, starting_tile):
+        self.player_data.append([0, 0, 0, 0, 0, 0, 0, 6000, 6000, client.username, starting_tile, client])
+        self.player_data.sort(key=lambda x: x[enums.ScoreSheetPlayerIndexes.StartingTile.value])
+
+        client_index = enums.ScoreSheetPlayerIndexes.Client.value
+        username_index = enums.ScoreSheetPlayerIndexes.Username.value
+        set_game_player_username = enums.CommandsToClient.SetGamePlayerUsername.value
+        set_game_player_client_id = enums.CommandsToClient.SetGamePlayerClientId.value
+
+        correct_player_id = 0
+        for player_id, player_datum in enumerate(self.player_data):
+            if player_datum[client_index] is not None:
+                player_datum[client_index].player_id = correct_player_id
+            correct_player_id += 1
+
+        for player_id in range(client.player_id, len(self.player_data)):
+            player_datum = self.player_data[player_id]
+            self.messages_all.append([set_game_player_username, self.game_id, player_id, player_datum[username_index]])
+            self.messages_all.append([set_game_player_client_id, self.game_id, player_id, player_datum[client_index].client_id if player_datum[client_index] is not None else None])
 
 
 class TileBag:
-    tiles = None
-
     def __init__(self):
         tiles = [(x, y) for x in range(0, 12) for y in range(0, 9)]
         random.shuffle(tiles)
@@ -189,11 +212,50 @@ class TileBag:
 
 
 class Game:
-    game_board = GameBoard()
-    tile_bag = TileBag()
+    def __init__(self, game_id, creator_username):
+        self.game_id = game_id
+        self.creator_username = creator_username
 
-    def __init__(self):
-        pass
+        self.game_board = GameBoard()
+        self.score_sheet = ScoreSheet(game_id)
+        self.tile_bag = TileBag()
+
+        self.state = enums.GameStates.PreGame.value
+
+        self.messages_all = []
+        self.client_id_to_messages = collections.defaultdict(list)
+
+    def add_player(self, client):
+        if self.state == enums.GameStates.PreGame.value:
+            client.game_id = self.game_id
+            starting_tile = self.tile_bag.get_tile()
+            self.game_board.set_cell(starting_tile, enums.BoardTypes.NothingYet.value)
+            self.score_sheet.add_player(client, starting_tile)
+            self.messages_all.append([enums.CommandsToClient.CreateGame.value, self.game_id])
+        else:
+            pass
+
+    def get_messages(self):
+        messages = []
+
+        m = self.messages_all + self.score_sheet.messages_all
+        if len(m) > 0:
+            messages.append(['all', None, m])
+
+        m = self.game_board.messages_game + self.score_sheet.messages_game
+        if len(m) > 0:
+            messages.append(['game', self.game_id, m])
+
+        for client_id, m_c in self.client_id_to_messages.items():
+            messages.append(['client', client_id, m_c])
+
+        del self.game_board.messages_game[:]
+        del self.score_sheet.messages_all[:]
+        del self.score_sheet.messages_game[:]
+        del self.messages_all[:]
+        self.client_id_to_messages.clear()
+
+        return messages
 
 
 if __name__ == '__main__':
@@ -202,7 +264,7 @@ if __name__ == '__main__':
     else:
         debug = False
 
-    factory = WebSocketServerFactory('ws://127.0.0.1:9000', debug=debug)
+    factory = autobahn.asyncio.websocket.WebSocketServerFactory('ws://127.0.0.1:9000', debug=debug)
     factory.protocol = AcquireServerProtocol
 
     loop = asyncio.get_event_loop()

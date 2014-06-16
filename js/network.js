@@ -5,18 +5,18 @@ define(function(require) {
 		isBrowserSupported = function() {
 			return 'WebSocket' in window;
 		},
-		connect = function() {
-			if (isBrowserSupported()) {
-				ws = new WebSocket('ws://localhost:9000');
+		connect = function(username) {
+			if (ws === null) {
+				ws = new WebSocket('ws://localhost:9000?username=' + encodeURIComponent(username));
 
 				if (ws !== null) {
 					ws.onopen = function() {
-						pubsub.publish('network-connected');
+						pubsub.publish('network-open');
 					};
 
 					ws.onclose = function(e) {
 						ws = null;
-						pubsub.publish('network-disconnected');
+						pubsub.publish('network-close');
 					};
 
 					ws.onmessage = function(e) {
@@ -31,6 +31,10 @@ define(function(require) {
 								pubsub.publish.apply(null, command);
 							}
 						} catch (e) {}
+					};
+
+					ws.onerror = function(e) {
+						pubsub.publish('network-error');
 					};
 				}
 			}

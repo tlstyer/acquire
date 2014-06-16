@@ -7,34 +7,28 @@ define(function(require) {
 		pubsub = require('pubsub');
 
 	var commandCreateGame = function(game_id) {
-			var $lobby_section = $('<div class="lobby-section" id="lobby-game-' + game_id + '"><div class="header">Game #' + game_id + '</div></div>');
+			var $lobby_section = $('#lobby-game-template').clone();
+			$lobby_section.attr('id', 'lobby-game-' + game_id);
+			$lobby_section.find('.header').text('Game #' + game_id);
+			$lobby_section.show();
 			$('#lobby-games').append($lobby_section);
 		},
-		commandSetClientIdToGameId = function(client_id, game_id) {
-			var $username;
-
-			$('#client-' + client_id).remove();
-
-			$username = $('<div id="client-' + client_id + '"/>').append(common_html.getUsernameElement(client_id));
-			if (game_id === null) {
-				// do nothing
-			} else if (game_id === 0) {
-				$('#clients-in-lobby').append($username);
+		commandSetGamePlayerUsername = function(game_id, player_id, username) {
+			var $player = $('#lobby-game-' + game_id).find('.player').eq(player_id);
+			$player.text(username);
+		},
+		commandSetGamePlayerClientId = function(game_id, player_id, client_id) {
+			var $player = $('#lobby-game-' + game_id).find('.player').eq(player_id);
+			if (client_id === null) {
+				$player.addClass('missing');
 			} else {
-				$('#lobby-game-' + game_id).append($username);
-			}
-
-			if (client_id === common_data.client_id) {
-				if (game_id === 0) {
-					$('#lobby-section-create-game').show();
-				} else {
-					$('#lobby-section-create-game').hide();
-				}
+				$player.removeClass('missing');
 			}
 		};
 
 	pubsub.subscribe('server-CreateGame', commandCreateGame);
-	pubsub.subscribe('server-SetClientIdToGameId', commandSetClientIdToGameId);
+	pubsub.subscribe('server-SetGamePlayerUsername', commandSetGamePlayerUsername);
+	pubsub.subscribe('server-SetGamePlayerClientId', commandSetGamePlayerClientId);
 
 	$('#create-game').click(function() {
 		network.sendMessage(enums.CommandsToServer.CreateGame);

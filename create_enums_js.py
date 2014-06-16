@@ -1,5 +1,5 @@
-import inspect
 import enums
+import inspect
 
 parts = []
 

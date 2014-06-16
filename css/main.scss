@@ -35,6 +35,11 @@ body {
 	padding-left: .5em;
 }
 
+#login-error-message {
+	color: red;
+	font-weight: bold;
+}
+
 .username {
 	background-color: $color-table-border;
 	white-space: nowrap;
@@ -42,8 +47,15 @@ body {
 
 .lobby-section {
 	margin-bottom: 1em;
+	white-space: nowrap;
 	.header {
 		font-weight: bold;
+	}
+	.player {
+		color: green;
+		.missing {
+			color: red;
+		}
 	}
 }
 
