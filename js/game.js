@@ -1,6 +1,7 @@
 define(function(require) {
 	var $ = require('jquery'),
 		common_data = require('common_data'),
+		enums = require('enums'),
 		pubsub = require('pubsub');
 
 	var resize = function() {
@@ -58,10 +59,13 @@ define(function(require) {
 				}
 			}
 		},
-		commandSetBoardCell = function(x, y, board_type) {
-			var $cell = $('.board .y' + y + ' .x' + x);
+		setGameBoardType = function(x, y, game_board_type_id) {
+			var $cell = $('.board .y' + y + ' .x' + x),
+				cell_class = enums.GameBoardTypes[game_board_type_id].replace(/([A-Z])/g, function($1) {
+					return '-' + $1.toLowerCase();
+				}).substring(1);
 
-			$cell.attr('class', 'x' + x + ' ' + board_type);
+			$cell.attr('class', 'x' + x + ' ' + cell_class);
 		},
 		commandSetBoard = function(x_to_y_to_board_type) {
 			var num_x, x, y_to_board_type, num_y, y, board_type;
@@ -82,7 +86,7 @@ define(function(require) {
 
 	pubsub.subscribe('client-JoinGame', joinGame);
 	pubsub.subscribe('server-SetGamePlayerClientId', setGamePlayerClientId);
-	pubsub.subscribe('set-board-cell', commandSetBoardCell);
+	pubsub.subscribe('server-SetGameBoardType', setGameBoardType);
 	pubsub.subscribe('set-board', commandSetBoard);
 
 	return null;

@@ -79,6 +79,8 @@ class ClientManager:
                     client.sendMessage(messages_json_bytes)
             elif target == 'game':
                 print(target, target_id, '<-', messages_json)
+                for client in self.game_id_to_game[target_id].client_id_to_client.values():
+                    client.sendMessage(messages_json_bytes)
             elif target == 'client':
                 print(target, target_id, '<-', messages_json)
                 self.client_id_to_client[target_id].sendMessage(messages_json_bytes)
@@ -146,7 +148,7 @@ class AcquireServerProtocol(autobahn.asyncio.websocket.WebSocketServerProtocol):
 
 class GameBoard:
     def __init__(self):
-        nothing = enums.BoardTypes.Nothing.value
+        nothing = enums.GameBoardTypes.Nothing.value
         self.x_to_y_to_board_type = [[nothing for y in range(0, 9)] for x in range(0, 12)]
         self.board_type_to_coordinates = collections.defaultdict(set)
         self.board_type_to_coordinates[nothing].update((x, y) for x in range(0, 12) for y in range(0, 9))
@@ -159,7 +161,7 @@ class GameBoard:
         self.board_type_to_coordinates[old_board_type].remove(coordinates)
         self.x_to_y_to_board_type[x][y] = board_type
         self.board_type_to_coordinates[board_type].add(coordinates)
-        self.messages_game.append([x, y, board_type])
+        self.messages_game.append([enums.CommandsToClient.SetGameBoardType.value, x, y, board_type])
 
 
 class ScoreSheet:
@@ -217,6 +219,7 @@ class Game:
     def __init__(self, game_id, creator_username):
         self.game_id = game_id
         self.creator_username = creator_username
+        self.client_id_to_client = {}
 
         self.game_board = GameBoard()
         self.score_sheet = ScoreSheet(game_id)
@@ -229,9 +232,10 @@ class Game:
 
     def add_player(self, client):
         if self.state == enums.GameStates.PreGame.value:
+            self.client_id_to_client[client.client_id] = client
             client.game_id = self.game_id
             starting_tile = self.tile_bag.get_tile()
-            self.game_board.set_cell(starting_tile, enums.BoardTypes.NothingYet.value)
+            self.game_board.set_cell(starting_tile, enums.GameBoardTypes.NothingYet.value)
             self.score_sheet.add_player(client, starting_tile)
             self.messages_all.append([enums.CommandsToClient.CreateGame.value, self.game_id])
         else:

@@ -10,7 +10,7 @@ class AutoNumber(enum.Enum):
         return obj
 
 
-class BoardTypes(AutoNumber):
+class GameBoardTypes(AutoNumber):
     Luxor = ()
     Tower = ()
     American = ()
@@ -29,6 +29,7 @@ class CommandsToClient(AutoNumber):
     SetClientId = ()
     SetClientIdToUsername = ()
     CreateGame = ()
+    SetGameBoardType = ()
     SetGamePlayerUsername = ()
     SetGamePlayerClientId = ()
 
