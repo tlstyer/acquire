@@ -79,6 +79,59 @@ define(function(require) {
 					setGameBoardCell(x, y, board_type);
 				}
 			}
+		},
+		setScoreSheetCell = function(row, index, data) {
+			var $row;
+
+			if (row <= enums.ScoreSheetRows.Player5) {
+				if (index <= enums.ScoreSheetPlayerIndexes.Imperial) {
+					if (data === 0) {
+						data = '';
+					}
+				} else {
+					data *= 100;
+				}
+
+				$row = $('.score .score-player:eq(' + row + ')');
+			} else if (row === enums.ScoreSheetRows.Available) {
+				$row = $('.score .score-available');
+			} else if (row === enums.ScoreSheetRows.ChainSize) {
+				if (data === 0) {
+					data = '-';
+				}
+
+				$row = $('.score .score-chain-size');
+			} else if (row === enums.ScoreSheetRows.Price) {
+				if (data === 0) {
+					data = '-';
+				}
+
+				$row = $('.score .score-price');
+			}
+
+			$row.children('.' + enums.ScoreSheetPlayerIndexes[index].toLowerCase()).text(data);
+		},
+		setScoreSheet = function(score_sheet_data) {
+			var num_rows, row, row_data, num_indexes, index;
+
+			// player data
+			num_rows = score_sheet_data[0].length;
+			for (row = 0; row < num_rows; row++) {
+				row_data = score_sheet_data[0][row];
+				num_indexes = row_data.length;
+				for (index = 0; index < num_indexes; index++) {
+					setScoreSheetCell(row, index, row_data[index]);
+				}
+			}
+
+			// available, chain size, price
+			for (row = enums.ScoreSheetRows.Available; row <= enums.ScoreSheetRows.Price; row++) {
+				row_data = score_sheet_data[row - enums.ScoreSheetRows.Available + 1];
+				num_indexes = row_data.length;
+				for (index = 0; index < num_indexes; index++) {
+					setScoreSheetCell(row, index, row_data[index]);
+				}
+			}
 		};
 
 	resize();
@@ -88,6 +141,7 @@ define(function(require) {
 	pubsub.subscribe('server-SetGamePlayerClientId', setGamePlayerClientId);
 	pubsub.subscribe('server-SetGameBoardCell', setGameBoardCell);
 	pubsub.subscribe('server-SetGameBoard', setGameBoard);
+	pubsub.subscribe('server-SetScoreSheet', setScoreSheet);
 
 	return null;
 });

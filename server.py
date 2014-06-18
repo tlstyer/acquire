@@ -346,7 +346,7 @@ class Game:
             self.client_id_to_client[client.client_id] = client
             client.game_id = self.game_id
             self.score_sheet.readd_player(client)
-            self.client_id_to_messages[client.client_id].append([enums.CommandsToClient.SetGameBoard.value, self.game_board.x_to_y_to_board_type])
+            self.send_initialization_messages(client)
 
     def watch_game(self, client):
         if not self.score_sheet.is_username_in_game(client.username):
@@ -354,7 +354,7 @@ class Game:
             self.client_id_to_watcher_client[client.client_id] = client
             client.game_id = self.game_id
             self.messages_all.append([enums.CommandsToClient.SetGameWatcherClientId.value, self.game_id, client.client_id])
-            self.client_id_to_messages[client.client_id].append([enums.CommandsToClient.SetGameBoard.value, self.game_board.x_to_y_to_board_type])
+            self.send_initialization_messages(client)
 
     def remove_client(self, client):
         if client.client_id in self.client_id_to_watcher_client:
@@ -362,6 +362,18 @@ class Game:
             self.messages_all.append([enums.CommandsToClient.ReturnWatcherToLobby.value, self.game_id, client.client_id])
         self.score_sheet.remove_client(client)
         del self.client_id_to_client[client.client_id]
+
+    def send_initialization_messages(self, client):
+        self.client_id_to_messages[client.client_id].append([enums.CommandsToClient.SetGameBoard.value, self.game_board.x_to_y_to_board_type])
+
+        net_index = enums.ScoreSheetPlayerIndexes.Net.value
+        score_sheet_data = [
+            [x[:net_index + 1] for x in self.score_sheet.player_data],
+            self.score_sheet.available,
+            self.score_sheet.chain_size,
+            self.score_sheet.price,
+        ]
+        self.client_id_to_messages[client.client_id].append([enums.CommandsToClient.SetScoreSheet.value, score_sheet_data])
 
     def get_messages(self):
         messages = []
