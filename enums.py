@@ -36,6 +36,9 @@ class CommandsToClient(AutoNumber):
 
 class CommandsToServer(AutoNumber):
     CreateGame = ()
+    JoinGame = ()
+    RejoinGame = ()
+    WatchGame = ()
 
 
 class FatalErrors(AutoNumber):

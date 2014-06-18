@@ -5,6 +5,7 @@ define(function(require) {
 			client_id: null,
 			game_id: null,
 			client_id_to_data: {},
+			game_id_to_game_state: {},
 			game_id_to_player_data: {}
 		};
 
@@ -22,15 +23,20 @@ define(function(require) {
 			}
 		},
 		setGameState = function(game_id, state_id) {
-			if (state_id === enums.GameStates.Starting) {
+			data.game_id_to_game_state[game_id] = state_id;
+			if (!data.game_id_to_player_data.hasOwnProperty(game_id)) {
 				data.game_id_to_player_data[game_id] = {};
 			}
+
+			pubsub.publish('client-UpdateGameState', game_id);
 		},
 		setGamePlayerUsername = function(game_id, player_id, username) {
 			data.game_id_to_player_data[game_id][player_id] = {
 				username: username,
 				client_id: null
 			};
+
+			pubsub.publish('client-UpdateGamePlayer', game_id);
 		},
 		setGamePlayerClientId = function(game_id, player_id, client_id) {
 			var client_id_left_game;
@@ -52,6 +58,8 @@ define(function(require) {
 					pubsub.publish('client-JoinGame');
 				}
 			}
+
+			pubsub.publish('client-UpdateGamePlayer', game_id);
 		};
 
 	pubsub.subscribe('server-SetClientId', setClientId);
