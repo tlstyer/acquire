@@ -84,7 +84,7 @@ define(function(require) {
 			var $row, index_class, mark_chain_as_safe = false;
 
 			if (row <= enums.ScoreSheetRows.Player5) {
-				if (index <= enums.ScoreSheetPlayerIndexes.Imperial) {
+				if (index <= enums.ScoreSheetIndexes.Imperial) {
 					if (data === 0) {
 						data = '';
 					}
@@ -113,7 +113,7 @@ define(function(require) {
 				$row = $('.score .score-price');
 			}
 
-			index_class = enums.ScoreSheetPlayerIndexes[index].toLowerCase();
+			index_class = enums.ScoreSheetIndexes[index].toLowerCase();
 
 			$row.children('.' + index_class).text(data);
 

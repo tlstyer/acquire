@@ -56,7 +56,7 @@ class GameStates(AutoNumber):
     Completed = ()
 
 
-class ScoreSheetPlayerIndexes(AutoNumber):
+class ScoreSheetIndexes(AutoNumber):
     Luxor = ()
     Tower = ()
     American = ()

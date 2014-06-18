@@ -50,8 +50,8 @@ class ClientManager:
 
         # tell client about all games
         set_game_state = enums.CommandsToClient.SetGameState.value
-        client_index = enums.ScoreSheetPlayerIndexes.Client.value
-        username_index = enums.ScoreSheetPlayerIndexes.Username.value
+        client_index = enums.ScoreSheetIndexes.Client.value
+        username_index = enums.ScoreSheetIndexes.Username.value
         set_game_player_username = enums.CommandsToClient.SetGamePlayerUsername.value
         set_game_player_client_id = enums.CommandsToClient.SetGamePlayerClientId.value
         set_game_watcher_client_id = enums.CommandsToClient.SetGameWatcherClientId.value
@@ -235,11 +235,11 @@ class ScoreSheet:
 
     def add_player(self, client, starting_tile):
         self.player_data.append([0, 0, 0, 0, 0, 0, 0, 60, 60, client.username, starting_tile, client])
-        self.player_data.sort(key=lambda x: x[enums.ScoreSheetPlayerIndexes.StartingTile.value])
+        self.player_data.sort(key=lambda x: x[enums.ScoreSheetIndexes.StartingTile.value])
 
-        username_index = enums.ScoreSheetPlayerIndexes.Username.value
-        starting_tile_index = enums.ScoreSheetPlayerIndexes.StartingTile.value
-        client_index = enums.ScoreSheetPlayerIndexes.Client.value
+        username_index = enums.ScoreSheetIndexes.Username.value
+        starting_tile_index = enums.ScoreSheetIndexes.StartingTile.value
+        client_index = enums.ScoreSheetIndexes.Client.value
         nothing_yet = enums.GameBoardTypes.NothingYet.value
         set_game_player_username = enums.CommandsToClient.SetGamePlayerUsername.value
         set_game_player_client_id = enums.CommandsToClient.SetGamePlayerClientId.value
@@ -263,8 +263,8 @@ class ScoreSheet:
                 self.client_id_to_messages[client.client_id].append([set_game_board_cell, starting_tile[0], starting_tile[1], nothing_yet])
 
     def readd_player(self, client):
-        username_index = enums.ScoreSheetPlayerIndexes.Username.value
-        client_index = enums.ScoreSheetPlayerIndexes.Client.value
+        username_index = enums.ScoreSheetIndexes.Username.value
+        client_index = enums.ScoreSheetIndexes.Client.value
         set_game_player_client_id = enums.CommandsToClient.SetGamePlayerClientId.value
 
         for player_id, player_datum in enumerate(self.player_data):
@@ -274,7 +274,7 @@ class ScoreSheet:
                 self.messages_all.append([set_game_player_client_id, self.game_id, player_id, client.client_id])
 
     def remove_client(self, client):
-        client_index = enums.ScoreSheetPlayerIndexes.Client.value
+        client_index = enums.ScoreSheetIndexes.Client.value
         set_game_player_client_id = enums.CommandsToClient.SetGamePlayerClientId.value
         for player_id, player_datum in enumerate(self.player_data):
             if client is player_datum[client_index]:
@@ -284,7 +284,7 @@ class ScoreSheet:
                 self.messages_all.append([set_game_player_client_id, self.game_id, player_id, None])
 
     def is_username_in_game(self, username):
-        username_index = enums.ScoreSheetPlayerIndexes.Username.value
+        username_index = enums.ScoreSheetIndexes.Username.value
         for player_datum in self.player_data:
             if username == player_datum[username_index]:
                 return True
@@ -366,7 +366,7 @@ class Game:
     def send_initialization_messages(self, client):
         self.client_id_to_messages[client.client_id].append([enums.CommandsToClient.SetGameBoard.value, self.game_board.x_to_y_to_board_type])
 
-        net_index = enums.ScoreSheetPlayerIndexes.Net.value
+        net_index = enums.ScoreSheetIndexes.Net.value
         score_sheet_data = [
             [x[:net_index + 1] for x in self.score_sheet.player_data],
             self.score_sheet.available,
