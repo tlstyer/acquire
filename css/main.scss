@@ -52,8 +52,8 @@ body {
 		font-weight: bold;
 	}
 	.player {
-		.missing {
-			color: $color-table-border;
+		&.missing {
+			color: grey;
 		}
 	}
 }
@@ -115,7 +115,7 @@ body {
 		text-align: left;
 		padding-left: .5em;
 		.missing {
-			color: $color-table-border;
+			color: grey;
 		}
 	}
 	td.luxor, td.tower, td.american, td.festival, td.worldwide, td.continental, td.imperial {
