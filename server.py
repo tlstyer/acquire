@@ -260,7 +260,7 @@ class Game:
         self.score_sheet = ScoreSheet(game_id)
         self.tile_bag = TileBag()
 
-        self.state = enums.GameStates.PreGame.value
+        self.state = enums.GameStates.Starting.value
 
         self.messages_all = []
         self.client_id_to_messages = collections.defaultdict(list)
@@ -268,7 +268,7 @@ class Game:
         self.messages_all.append([enums.CommandsToClient.SetGameState.value, self.game_id, self.state])
 
     def add_player(self, client):
-        if self.state == enums.GameStates.PreGame.value:
+        if self.state == enums.GameStates.Starting.value:
             self.client_id_to_client[client.client_id] = client
             client.game_id = self.game_id
             starting_tile = self.tile_bag.get_tile()

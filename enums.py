@@ -44,9 +44,9 @@ class FatalErrors(AutoNumber):
 
 
 class GameStates(AutoNumber):
-    PreGame = ()
-    Started = ()
-    Finished = ()
+    Starting = ()
+    InProgress = ()
+    Completed = ()
 
 
 class ScoreSheetPlayerIndexes(AutoNumber):

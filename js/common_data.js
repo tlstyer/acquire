@@ -22,7 +22,7 @@ define(function(require) {
 			}
 		},
 		setGameState = function(game_id, state_id) {
-			if (state_id === enums.GameStates.PreGame) {
+			if (state_id === enums.GameStates.Starting) {
 				data.game_id_to_player_data[game_id] = {};
 			}
 		},

@@ -17,7 +17,7 @@ define(function(require) {
 			$('<div/>').attr('class', 'client-' + client_id).text(common_data.client_id_to_data[client_id].username).appendTo('#clients-in-lobby');
 		},
 		setGameState = function(game_id, state_id) {
-			if (state_id === enums.GameStates.PreGame) {
+			if (state_id === enums.GameStates.Starting) {
 				var $lobby_section = $('#lobby-game-template').clone();
 				$lobby_section.attr('id', 'lobby-game-' + game_id);
 				$lobby_section.find('.header').text('Game #' + game_id);
