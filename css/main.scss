@@ -115,7 +115,7 @@ body {
 		width: percentage(5 / 18);
 		text-align: left;
 		padding-left: .5em;
-		.missing {
+		&.missing {
 			color: grey;
 		}
 	}
