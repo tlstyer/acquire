@@ -191,8 +191,10 @@ class ScoreSheet:
 
         for player_id in range(client.player_id, len(self.player_data)):
             player_datum = self.player_data[player_id]
-            self.messages_all.append([set_game_player_username, self.game_id, player_id, player_datum[username_index]])
-            self.messages_all.append([set_game_player_client_id, self.game_id, player_id, player_datum[client_index].client_id if player_datum[client_index] is not None else None])
+            if player_datum[client_index] is None:
+                self.messages_all.append([set_game_player_username, self.game_id, player_id, player_datum[username_index]])
+            else:
+                self.messages_all.append([set_game_player_client_id, self.game_id, player_id, player_datum[client_index].client_id])
 
 
 class TileBag:

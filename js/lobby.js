@@ -6,29 +6,31 @@ define(function(require) {
 		network = require('network'),
 		pubsub = require('pubsub');
 
-	var commandCreateGame = function(game_id) {
+	var createGame = function(game_id) {
 			var $lobby_section = $('#lobby-game-template').clone();
 			$lobby_section.attr('id', 'lobby-game-' + game_id);
 			$lobby_section.find('.header').text('Game #' + game_id);
 			$lobby_section.show();
 			$('#lobby-games').append($lobby_section);
 		},
-		commandSetGamePlayerUsername = function(game_id, player_id, username) {
+		setGamePlayerUsername = function(game_id, player_id, username) {
 			var $player = $('#lobby-game-' + game_id).find('.player').eq(player_id);
 			$player.text(username);
+			$player.addClass('missing');
 		},
-		commandSetGamePlayerClientId = function(game_id, player_id, client_id) {
+		setGamePlayerClientId = function(game_id, player_id, client_id) {
 			var $player = $('#lobby-game-' + game_id).find('.player').eq(player_id);
 			if (client_id === null) {
 				$player.addClass('missing');
 			} else {
+				$player.text(common_data.client_id_to_username[client_id]);
 				$player.removeClass('missing');
 			}
 		};
 
-	pubsub.subscribe('server-CreateGame', commandCreateGame);
-	pubsub.subscribe('server-SetGamePlayerUsername', commandSetGamePlayerUsername);
-	pubsub.subscribe('server-SetGamePlayerClientId', commandSetGamePlayerClientId);
+	pubsub.subscribe('server-CreateGame', createGame);
+	pubsub.subscribe('server-SetGamePlayerUsername', setGamePlayerUsername);
+	pubsub.subscribe('server-SetGamePlayerClientId', setGamePlayerClientId);
 
 	$('#create-game').click(function() {
 		network.sendMessage(enums.CommandsToServer.CreateGame);
