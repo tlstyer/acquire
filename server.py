@@ -67,8 +67,20 @@ class ClientManager:
         self.pending_messages.append(['all', None, all_pending_messages])
 
     def close_client(self, client):
+        messages_all = []
+
+        if client.game_id is not None:
+            game = self.game_id_to_game[client.game_id]
+            game.remove_client(client)
+            self.pending_messages.extend(game.get_messages())
+
         del self.client_id_to_client[client.client_id]
         self.usernames.discard(client.username)
+
+        enum_set_client_id_to_data = enums.CommandsToClient.SetClientIdToData.value
+        messages_all.append([enum_set_client_id_to_data, client.client_id, None, None])
+
+        self.pending_messages.append(['all', None, messages_all])
 
     def create_game(self, client):
         if client.game_id is None:
@@ -211,6 +223,16 @@ class ScoreSheet:
             else:
                 self.messages_all.append([set_game_player_client_id, self.game_id, player_id, player_datum[client_index].client_id])
 
+    def remove_client(self, client):
+        client_index = enums.ScoreSheetPlayerIndexes.Client.value
+        set_game_player_client_id = enums.CommandsToClient.SetGamePlayerClientId.value
+        for player_id, player_datum in enumerate(self.player_data):
+            if client is player_datum[client_index]:
+                player_datum[client_index].game_id = None
+                player_datum[client_index].player_id = None
+                player_datum[client_index] = None
+                self.messages_all.append([set_game_player_client_id, self.game_id, player_id, None])
+
 
 class TileBag:
     def __init__(self):
@@ -252,6 +274,10 @@ class Game:
             starting_tile = self.tile_bag.get_tile()
             self.game_board.set_cell(starting_tile, enums.GameBoardTypes.NothingYet.value)
             self.score_sheet.add_player(client, starting_tile)
+
+    def remove_client(self, client):
+        self.score_sheet.remove_client(client)
+        del self.client_id_to_client[client.client_id]
 
     def get_messages(self):
         messages = []
