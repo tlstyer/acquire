@@ -6,12 +6,14 @@ define(function(require) {
 		network = require('network'),
 		pubsub = require('pubsub');
 
-	var createGame = function(game_id) {
-			var $lobby_section = $('#lobby-game-template').clone();
-			$lobby_section.attr('id', 'lobby-game-' + game_id);
-			$lobby_section.find('.header').text('Game #' + game_id);
-			$lobby_section.show();
-			$('#lobby-games').append($lobby_section);
+	var setGameState = function(game_id, state_id) {
+			if (state_id === enums.GameStates.PreGame) {
+				var $lobby_section = $('#lobby-game-template').clone();
+				$lobby_section.attr('id', 'lobby-game-' + game_id);
+				$lobby_section.find('.header').text('Game #' + game_id);
+				$lobby_section.show();
+				$('#lobby-games').append($lobby_section);
+			}
 		},
 		setGamePlayerUsername = function(game_id, player_id, username) {
 			var $player = $('#lobby-game-' + game_id).find('.player').eq(player_id);
@@ -28,7 +30,7 @@ define(function(require) {
 			}
 		};
 
-	pubsub.subscribe('server-CreateGame', createGame);
+	pubsub.subscribe('server-SetGameState', setGameState);
 	pubsub.subscribe('server-SetGamePlayerUsername', setGamePlayerUsername);
 	pubsub.subscribe('server-SetGamePlayerClientId', setGamePlayerClientId);
 

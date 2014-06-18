@@ -1,5 +1,6 @@
 define(function(require) {
-	var pubsub = require('pubsub'),
+	var enums = require('enums'),
+		pubsub = require('pubsub'),
 		data = {
 			client_id: null,
 			game_id: null,
@@ -17,8 +18,10 @@ define(function(require) {
 				data.client_id_to_username[client_id] = username;
 			}
 		},
-		createGame = function(game_id) {
-			data.game_id_to_player_data[game_id] = {};
+		setGameState = function(game_id, state_id) {
+			if (state_id === enums.GameStates.PreGame) {
+				data.game_id_to_player_data[game_id] = {};
+			}
 		},
 		setGamePlayerUsername = function(game_id, player_id, username) {
 			data.game_id_to_player_data[game_id][player_id] = {
@@ -46,7 +49,7 @@ define(function(require) {
 
 	pubsub.subscribe('server-SetClientId', setClientId);
 	pubsub.subscribe('server-SetClientIdToUsername', setClientIdToUsername);
-	pubsub.subscribe('server-CreateGame', createGame);
+	pubsub.subscribe('server-SetGameState', setGameState);
 	pubsub.subscribe('server-SetGamePlayerUsername', setGamePlayerUsername);
 	pubsub.subscribe('server-SetGamePlayerClientId', setGamePlayerClientId);
 
