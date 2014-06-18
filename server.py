@@ -21,19 +21,19 @@ class ClientManager:
         self.next_client_id += 1
         client.client_id = client_id
         self.client_id_to_client[client_id] = client
-        client_pending_messages = [[enums.CommandsToClient.SetClientId.value, client_id]]
-        all_pending_messages = []
+        messages_client = [[enums.CommandsToClient.SetClientId.value, client_id]]
+        messages_all = []
 
         username = client.username
         if len(username) == 0 or len(username) > 32:
-            client_pending_messages.append([enums.CommandsToClient.FatalError.value, enums.FatalErrors.InvalidUsername.value])
-            self.pending_messages.append(['client', client_id, client_pending_messages])
+            messages_client.append([enums.CommandsToClient.FatalError.value, enums.FatalErrors.InvalidUsername.value])
+            self.pending_messages.append(['client', client_id, messages_client])
             self.flush_pending_messages()
             client.sendClose()
             return
         elif username in self.usernames:
-            client_pending_messages.append([enums.CommandsToClient.FatalError.value, enums.FatalErrors.UsernameAlreadyInUse.value])
-            self.pending_messages.append(['client', client_id, client_pending_messages])
+            messages_client.append([enums.CommandsToClient.FatalError.value, enums.FatalErrors.UsernameAlreadyInUse.value])
+            self.pending_messages.append(['client', client_id, messages_client])
             self.flush_pending_messages()
             client.sendClose()
             return
@@ -44,10 +44,10 @@ class ClientManager:
         enum_set_client_id_to_data = enums.CommandsToClient.SetClientIdToData.value
         for client2 in self.client_id_to_client.values():
             if client2 is not client:
-                client_pending_messages.append([enum_set_client_id_to_data, client2.client_id, client2.username, client2.peer])
+                messages_client.append([enum_set_client_id_to_data, client2.client_id, client2.username, client2.peer])
 
         # tell all clients about client's data
-        all_pending_messages.append([enum_set_client_id_to_data, client_id, username, client.peer])
+        messages_all.append([enum_set_client_id_to_data, client_id, username, client.peer])
 
         # tell client about all games
         set_game_state = enums.CommandsToClient.SetGameState.value
@@ -56,15 +56,15 @@ class ClientManager:
         set_game_player_username = enums.CommandsToClient.SetGamePlayerUsername.value
         set_game_player_client_id = enums.CommandsToClient.SetGamePlayerClientId.value
         for game_id, game in self.game_id_to_game.items():
-            client_pending_messages.append([set_game_state, game_id, game.state])
+            messages_client.append([set_game_state, game_id, game.state])
             for player_id, player_datum in enumerate(game.score_sheet.player_data):
                 if player_datum[client_index] is None:
-                    client_pending_messages.append([set_game_player_username, game_id, player_id, player_datum[username_index]])
+                    messages_client.append([set_game_player_username, game_id, player_id, player_datum[username_index]])
                 else:
-                    client_pending_messages.append([set_game_player_client_id, game_id, player_id, player_datum[client_index].client_id])
+                    messages_client.append([set_game_player_client_id, game_id, player_id, player_datum[client_index].client_id])
 
-        self.pending_messages.append(['client', client_id, client_pending_messages])
-        self.pending_messages.append(['all', None, all_pending_messages])
+        self.pending_messages.append(['client', client_id, messages_client])
+        self.pending_messages.append(['all', None, messages_all])
 
     def close_client(self, client):
         messages_all = []
