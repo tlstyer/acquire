@@ -59,7 +59,7 @@ define(function(require) {
 				$score_player.show();
 			}
 		},
-		setGameBoardType = function(x, y, game_board_type_id) {
+		setGameBoardCell = function(x, y, game_board_type_id) {
 			var $cell = $('.board .y' + y + ' .x' + x),
 				cell_class = enums.GameBoardTypes[game_board_type_id].replace(/([A-Z])/g, function($1) {
 					return '-' + $1.toLowerCase();
@@ -67,7 +67,7 @@ define(function(require) {
 
 			$cell.attr('class', 'x' + x + ' ' + cell_class);
 		},
-		setGameBoardTypes = function(x_to_y_to_board_type) {
+		setGameBoard = function(x_to_y_to_board_type) {
 			var num_x, x, y_to_board_type, num_y, y, board_type;
 
 			num_x = x_to_y_to_board_type.length;
@@ -76,7 +76,7 @@ define(function(require) {
 				num_y = y_to_board_type.length;
 				for (y = 0; y < num_y; y++) {
 					board_type = y_to_board_type[y];
-					setGameBoardType(x, y, board_type);
+					setGameBoardCell(x, y, board_type);
 				}
 			}
 		};
@@ -86,8 +86,8 @@ define(function(require) {
 
 	pubsub.subscribe('client-JoinGame', joinGame);
 	pubsub.subscribe('server-SetGamePlayerClientId', setGamePlayerClientId);
-	pubsub.subscribe('server-SetGameBoardType', setGameBoardType);
-	pubsub.subscribe('server-SetGameBoardTypes', setGameBoardTypes);
+	pubsub.subscribe('server-SetGameBoardCell', setGameBoardCell);
+	pubsub.subscribe('server-SetGameBoard', setGameBoard);
 
 	return null;
 });
