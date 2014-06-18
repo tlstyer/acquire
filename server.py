@@ -40,14 +40,14 @@ class ClientManager:
 
         self.usernames.add(username)
 
-        # tell client about other clients' usernames
-        enum_set_client_id_to_username = enums.CommandsToClient.SetClientIdToUsername.value
+        # tell client about other clients' data
+        enum_set_client_id_to_data = enums.CommandsToClient.SetClientIdToData.value
         for client2 in self.client_id_to_client.values():
             if client2 is not client:
-                client_pending_messages.append([enum_set_client_id_to_username, client2.client_id, client2.username])
+                client_pending_messages.append([enum_set_client_id_to_data, client2.client_id, client2.username, client2.peer])
 
-        # tell all clients about client's username
-        all_pending_messages.append([enum_set_client_id_to_username, client_id, username])
+        # tell all clients about client's data
+        all_pending_messages.append([enum_set_client_id_to_data, client_id, username, client.peer])
 
         # tell client about all games
         set_game_state = enums.CommandsToClient.SetGameState.value

@@ -27,7 +27,7 @@ class GameBoardTypes(AutoNumber):
 class CommandsToClient(AutoNumber):
     FatalError = ()
     SetClientId = ()
-    SetClientIdToUsername = ()
+    SetClientIdToData = ()
     SetGameState = ()
     SetGameBoardType = ()
     SetGamePlayerUsername = ()

@@ -25,7 +25,7 @@ define(function(require) {
 			if (client_id === null) {
 				$player.addClass('missing');
 			} else {
-				$player.text(common_data.client_id_to_username[client_id]);
+				$player.text(common_data.client_id_to_data[client_id].username);
 				$player.removeClass('missing');
 			}
 		};

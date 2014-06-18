@@ -54,7 +54,7 @@ define(function(require) {
 				if (client_id === null) {
 					$score_player_name.addClass('missing');
 				} else {
-					$score_player_name.text(common_data.client_id_to_username[client_id]);
+					$score_player_name.text(common_data.client_id_to_data[client_id].username);
 					$score_player_name.removeClass('missing');
 				}
 			}
