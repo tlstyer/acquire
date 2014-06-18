@@ -163,8 +163,14 @@ body {
 .score-player {
 	background-color: white;
 	display: none;
+	.safe {
+		background-color: $color-safe-chain;
+	}
 }
 
 .score-available, .score-chain-size, .score-price {
 	background-color: $color-available-chain-size-price;
+	.safe {
+		background-color: $color-safe-chain;
+	}
 }

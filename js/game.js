@@ -81,7 +81,7 @@ define(function(require) {
 			}
 		},
 		setScoreSheetCell = function(row, index, data) {
-			var $row;
+			var $row, index_class, mark_chain_as_safe = false;
 
 			if (row <= enums.ScoreSheetRows.Player5) {
 				if (index <= enums.ScoreSheetPlayerIndexes.Imperial) {
@@ -96,6 +96,10 @@ define(function(require) {
 			} else if (row === enums.ScoreSheetRows.Available) {
 				$row = $('.score .score-available');
 			} else if (row === enums.ScoreSheetRows.ChainSize) {
+				if (data >= 11) {
+					mark_chain_as_safe = true;
+				}
+
 				if (data === 0) {
 					data = '-';
 				}
@@ -109,7 +113,13 @@ define(function(require) {
 				$row = $('.score .score-price');
 			}
 
-			$row.children('.' + enums.ScoreSheetPlayerIndexes[index].toLowerCase()).text(data);
+			index_class = enums.ScoreSheetPlayerIndexes[index].toLowerCase();
+
+			$row.children('.' + index_class).text(data);
+
+			if (mark_chain_as_safe) {
+				$('.score .' + index_class).addClass('safe');
+			}
 		},
 		setScoreSheet = function(score_sheet_data) {
 			var num_rows, row, row_data, num_indexes, index;
