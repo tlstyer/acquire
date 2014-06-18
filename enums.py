@@ -32,6 +32,8 @@ class CommandsToClient(AutoNumber):
     SetGameBoardType = ()
     SetGamePlayerUsername = ()
     SetGamePlayerClientId = ()
+    SetGameWatcherClientId = ()
+    ReturnWatcherToLobby = ()
 
 
 class CommandsToServer(AutoNumber):

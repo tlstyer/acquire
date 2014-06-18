@@ -1,7 +1,6 @@
 define(function(require) {
 	var $ = require('jquery'),
 		common_data = require('common_data'),
-		common_html = require('common_html'),
 		enums = require('enums'),
 		network = require('network'),
 		pubsub = require('pubsub');
@@ -114,6 +113,14 @@ define(function(require) {
 				$player.text(common_data.client_id_to_data[client_id].username);
 				$player.removeClass('missing');
 			}
+		},
+		setGameWatcherClientId = function(game_id, client_id) {
+			$('#clients-in-lobby .client-' + client_id).remove();
+			$('<div/>').attr('class', 'client-' + client_id).text(common_data.client_id_to_data[client_id].username).appendTo('#lobby-game-' + game_id + ' .watchers');
+		},
+		returnWatcherToLobby = function(game_id, client_id) {
+			$('#lobby-game-' + game_id + ' .watchers .client-' + client_id).remove();
+			clientLeftGame(client_id);
 		};
 
 	pubsub.subscribe('server-SetClientIdToData', setClientIdToData);
@@ -122,6 +129,8 @@ define(function(require) {
 	pubsub.subscribe('client-UpdateGamePlayer', updateGameStateAndLinks);
 	pubsub.subscribe('server-SetGamePlayerUsername', setGamePlayerUsername);
 	pubsub.subscribe('server-SetGamePlayerClientId', setGamePlayerClientId);
+	pubsub.subscribe('server-SetGameWatcherClientId', setGameWatcherClientId);
+	pubsub.subscribe('server-ReturnWatcherToLobby', returnWatcherToLobby);
 
 	$('#create-game').click(function() {
 		network.sendMessage(enums.CommandsToServer.CreateGame);

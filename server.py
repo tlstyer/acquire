@@ -54,6 +54,7 @@ class ClientManager:
         username_index = enums.ScoreSheetPlayerIndexes.Username.value
         set_game_player_username = enums.CommandsToClient.SetGamePlayerUsername.value
         set_game_player_client_id = enums.CommandsToClient.SetGamePlayerClientId.value
+        set_game_watcher_client_id = enums.CommandsToClient.SetGameWatcherClientId.value
         for game_id, game in self.game_id_to_game.items():
             messages_client.append([set_game_state, game_id, game.state])
             for player_id, player_datum in enumerate(game.score_sheet.player_data):
@@ -61,6 +62,8 @@ class ClientManager:
                     messages_client.append([set_game_player_username, game_id, player_id, player_datum[username_index]])
                 else:
                     messages_client.append([set_game_player_client_id, game_id, player_id, player_datum[client_index].client_id])
+            for client_id2 in game.client_id_to_watcher_client.keys():
+                messages_client.append([set_game_watcher_client_id, game_id, client_id2])
 
         self.pending_messages.append(['client', client_id, None, messages_client])
         self.pending_messages.append(['all', None, {client_id}, messages_other])
@@ -89,8 +92,26 @@ class ClientManager:
             game = Game(game_id, client.username)
             self.game_id_to_game[game_id] = game
 
-            game.add_player(client)
+            game.create_game(client)
 
+            self.pending_messages.extend(game.get_messages())
+
+    def join_game(self, client, game_id):
+        if client.game_id is None and game_id in self.game_id_to_game:
+            game = self.game_id_to_game[game_id]
+            game.join_game(client)
+            self.pending_messages.extend(game.get_messages())
+
+    def rejoin_game(self, client, game_id):
+        if client.game_id is None and game_id in self.game_id_to_game:
+            game = self.game_id_to_game[game_id]
+            game.rejoin_game(client)
+            self.pending_messages.extend(game.get_messages())
+
+    def watch_game(self, client, game_id):
+        if client.game_id is None and game_id in self.game_id_to_game:
+            game = self.game_id_to_game[game_id]
+            game.watch_game(client)
             self.pending_messages.extend(game.get_messages())
 
     def flush_pending_messages(self):
@@ -172,13 +193,13 @@ class AcquireServerProtocol(autobahn.asyncio.websocket.WebSocketServerProtocol):
         client_manager.create_game(self)
 
     def onMessageJoinGame(self, game_id):
-        pass
+        client_manager.join_game(self, game_id)
 
     def onMessageRejoinGame(self, game_id):
-        pass
+        client_manager.rejoin_game(self, game_id)
 
     def onMessageWatchGame(self, game_id):
-        pass
+        client_manager.watch_game(self, game_id)
 
 
 class GameBoard:
@@ -210,15 +231,19 @@ class ScoreSheet:
 
         self.messages_all = []
         self.messages_game = []
+        self.client_id_to_messages = collections.defaultdict(list)
 
     def add_player(self, client, starting_tile):
-        self.player_data.append([0, 0, 0, 0, 0, 0, 0, 6000, 6000, client.username, starting_tile, client])
+        self.player_data.append([0, 0, 0, 0, 0, 0, 0, 60, 60, client.username, starting_tile, client])
         self.player_data.sort(key=lambda x: x[enums.ScoreSheetPlayerIndexes.StartingTile.value])
 
-        client_index = enums.ScoreSheetPlayerIndexes.Client.value
         username_index = enums.ScoreSheetPlayerIndexes.Username.value
+        starting_tile_index = enums.ScoreSheetPlayerIndexes.StartingTile.value
+        client_index = enums.ScoreSheetPlayerIndexes.Client.value
+        nothing_yet = enums.GameBoardTypes.NothingYet.value
         set_game_player_username = enums.CommandsToClient.SetGamePlayerUsername.value
         set_game_player_client_id = enums.CommandsToClient.SetGamePlayerClientId.value
+        set_game_board_type = enums.CommandsToClient.SetGameBoardType.value
 
         correct_player_id = 0
         for player_id, player_datum in enumerate(self.player_data):
@@ -226,12 +251,27 @@ class ScoreSheet:
                 player_datum[client_index].player_id = correct_player_id
             correct_player_id += 1
 
-        for player_id in range(client.player_id, len(self.player_data)):
+        for player_id, player_datum in enumerate(self.player_data):
             player_datum = self.player_data[player_id]
-            if player_datum[client_index] is None:
-                self.messages_all.append([set_game_player_username, self.game_id, player_id, player_datum[username_index]])
-            else:
-                self.messages_all.append([set_game_player_client_id, self.game_id, player_id, player_datum[client_index].client_id])
+            if player_id >= client.player_id:
+                if player_datum[client_index] is None:
+                    self.messages_all.append([set_game_player_username, self.game_id, player_id, player_datum[username_index]])
+                else:
+                    self.messages_all.append([set_game_player_client_id, self.game_id, player_id, player_datum[client_index].client_id])
+            if player_id != client.player_id:
+                starting_tile = player_datum[starting_tile_index]
+                self.client_id_to_messages[client.client_id].append([set_game_board_type, starting_tile[0], starting_tile[1], nothing_yet])
+
+    def readd_player(self, client):
+        username_index = enums.ScoreSheetPlayerIndexes.Username.value
+        client_index = enums.ScoreSheetPlayerIndexes.Client.value
+        set_game_player_client_id = enums.CommandsToClient.SetGamePlayerClientId.value
+
+        for player_id, player_datum in enumerate(self.player_data):
+            if client.username == player_datum[username_index]:
+                client.player_id = player_id
+                player_datum[client_index] = client
+                self.messages_all.append([set_game_player_client_id, self.game_id, player_id, client.client_id])
 
     def remove_client(self, client):
         client_index = enums.ScoreSheetPlayerIndexes.Client.value
@@ -242,6 +282,13 @@ class ScoreSheet:
                 player_datum[client_index].player_id = None
                 player_datum[client_index] = None
                 self.messages_all.append([set_game_player_client_id, self.game_id, player_id, None])
+
+    def is_username_in_game(self, username):
+        username_index = enums.ScoreSheetPlayerIndexes.Username.value
+        for player_datum in self.player_data:
+            if username == player_datum[username_index]:
+                return True
+        return False
 
 
 class TileBag:
@@ -265,6 +312,7 @@ class Game:
         self.game_id = game_id
         self.creator_username = creator_username
         self.client_id_to_client = {}
+        self.client_id_to_watcher_client = {}
 
         self.game_board = GameBoard()
         self.score_sheet = ScoreSheet(game_id)
@@ -277,7 +325,7 @@ class Game:
 
         self.messages_all.append([enums.CommandsToClient.SetGameState.value, self.game_id, self.state])
 
-    def add_player(self, client):
+    def create_game(self, client):
         if self.state == enums.GameStates.Starting.value:
             self.client_id_to_client[client.client_id] = client
             client.game_id = self.game_id
@@ -285,7 +333,31 @@ class Game:
             self.game_board.set_cell(starting_tile, enums.GameBoardTypes.NothingYet.value)
             self.score_sheet.add_player(client, starting_tile)
 
+    def join_game(self, client):
+        if self.state == enums.GameStates.Starting.value and not self.score_sheet.is_username_in_game(client.username):
+            self.client_id_to_client[client.client_id] = client
+            client.game_id = self.game_id
+            starting_tile = self.tile_bag.get_tile()
+            self.game_board.set_cell(starting_tile, enums.GameBoardTypes.NothingYet.value)
+            self.score_sheet.add_player(client, starting_tile)
+
+    def rejoin_game(self, client):
+        if self.score_sheet.is_username_in_game(client.username):
+            self.client_id_to_client[client.client_id] = client
+            client.game_id = self.game_id
+            self.score_sheet.readd_player(client)
+
+    def watch_game(self, client):
+        if not self.score_sheet.is_username_in_game(client.username):
+            self.client_id_to_client[client.client_id] = client
+            self.client_id_to_watcher_client[client.client_id] = client
+            client.game_id = self.game_id
+            self.messages_all.append([enums.CommandsToClient.SetGameWatcherClientId.value, self.game_id, client.client_id])
+
     def remove_client(self, client):
+        if client.client_id in self.client_id_to_watcher_client:
+            del self.client_id_to_watcher_client[client.client_id]
+            self.messages_all.append([enums.CommandsToClient.ReturnWatcherToLobby.value, self.game_id, client.client_id])
         self.score_sheet.remove_client(client)
         del self.client_id_to_client[client.client_id]
 
@@ -300,12 +372,19 @@ class Game:
         if len(m) > 0:
             messages.append(['game', self.game_id, None, m])
 
-        for client_id, m in self.client_id_to_messages.items():
+        for client_id, m in self.score_sheet.client_id_to_messages.items():
+            if client_id in self.client_id_to_messages:
+                m.extend(self.client_id_to_messages[client_id])
             messages.append(['client', client_id, None, m])
+
+        for client_id, m in self.client_id_to_messages.items():
+            if client_id not in self.score_sheet.client_id_to_messages:
+                messages.append(['client', client_id, None, m])
 
         del self.game_board.messages_game[:]
         del self.score_sheet.messages_all[:]
         del self.score_sheet.messages_game[:]
+        self.score_sheet.client_id_to_messages.clear()
         del self.messages_all[:]
         self.client_id_to_messages.clear()
 

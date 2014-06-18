@@ -29,15 +29,13 @@ define(function(require) {
 			for (player_id in player_data) {
 				if (player_data.hasOwnProperty(player_id)) {
 					player_datum = player_data[player_id];
+
 					$score_player = $('.score .score-player:eq(' + player_id + ')');
 					$score_player_name = $score_player.children('.name');
 
 					$score_player_name.text(player_datum.username);
-
 					if (player_datum.client_id === null) {
 						$score_player_name.addClass('missing');
-					} else {
-						$score_player_name.removeClass('missing');
 					}
 
 					$score_player.show();
@@ -57,6 +55,8 @@ define(function(require) {
 					$score_player_name.text(common_data.client_id_to_data[client_id].username);
 					$score_player_name.removeClass('missing');
 				}
+
+				$score_player.show();
 			}
 		},
 		setGameBoardType = function(x, y, game_board_type_id) {

@@ -1,12 +1,12 @@
 define(function(require) {
-	var enums = require('enums'),
-		pubsub = require('pubsub'),
+	var pubsub = require('pubsub'),
 		data = {
 			client_id: null,
 			game_id: null,
 			client_id_to_data: {},
 			game_id_to_game_state: {},
-			game_id_to_player_data: {}
+			game_id_to_player_data: {},
+			game_id_to_watcher_client_ids: {}
 		};
 
 	var setClientId = function(client_id) {
@@ -43,6 +43,9 @@ define(function(require) {
 
 			if (client_id === null) {
 				client_id_left_game = data.game_id_to_player_data[game_id][player_id].client_id;
+				if (client_id_left_game === data.client_id) {
+					data.game_id = null;
+				}
 				data.game_id_to_player_data[game_id][player_id].client_id = null;
 				pubsub.publish('client-ClientLeftGame', client_id_left_game);
 			} else {
@@ -60,6 +63,25 @@ define(function(require) {
 			}
 
 			pubsub.publish('client-UpdateGamePlayer', game_id);
+		},
+		setGameWatcherClientId = function(game_id, client_id) {
+			if (!data.game_id_to_watcher_client_ids.hasOwnProperty(game_id)) {
+				data.game_id_to_watcher_client_ids[game_id] = [];
+			}
+			data.game_id_to_watcher_client_ids[game_id].push(client_id);
+
+			if (client_id === data.client_id) {
+				data.game_id = game_id;
+				pubsub.publish('client-JoinGame');
+			}
+		},
+		returnWatcherToLobby = function(game_id, client_id) {
+			var client_ids = data.game_id_to_watcher_client_ids[game_id];
+			data.game_id_to_watcher_client_ids[game_id] = client_ids.splice(client_ids.indexOf(client_id), 1);
+
+			if (client_id === data.client_id) {
+				data.game_id = null;
+			}
 		};
 
 	pubsub.subscribe('server-SetClientId', setClientId);
@@ -67,6 +89,8 @@ define(function(require) {
 	pubsub.subscribe('server-SetGameState', setGameState);
 	pubsub.subscribe('server-SetGamePlayerUsername', setGamePlayerUsername);
 	pubsub.subscribe('server-SetGamePlayerClientId', setGamePlayerClientId);
+	pubsub.subscribe('server-SetGameWatcherClientId', setGameWatcherClientId);
+	pubsub.subscribe('server-ReturnWatcherToLobby', returnWatcherToLobby);
 
 	return data;
 });
