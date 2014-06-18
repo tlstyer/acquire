@@ -22,6 +22,7 @@ class ClientManager:
         client.client_id = client_id
         self.client_id_to_client[client_id] = client
         client_pending_messages = [[enums.CommandsToClient.SetClientId.value, client_id]]
+        all_pending_messages = []
 
         username = client.username
         if len(username) == 0 or len(username) > 32:
@@ -39,16 +40,28 @@ class ClientManager:
 
         self.usernames.add(username)
 
-        all_pending_messages = []
-        enum_set_client_id_to_username = enums.CommandsToClient.SetClientIdToUsername.value
-
         # tell client about other clients' usernames
+        enum_set_client_id_to_username = enums.CommandsToClient.SetClientIdToUsername.value
         for client2 in self.client_id_to_client.values():
             if client2 is not client:
                 client_pending_messages.append([enum_set_client_id_to_username, client2.client_id, client2.username])
 
         # tell all clients about client's username
         all_pending_messages.append([enum_set_client_id_to_username, client_id, username])
+
+        # tell client about all games
+        set_game_state = enums.CommandsToClient.SetGameState.value
+        client_index = enums.ScoreSheetPlayerIndexes.Client.value
+        username_index = enums.ScoreSheetPlayerIndexes.Username.value
+        set_game_player_username = enums.CommandsToClient.SetGamePlayerUsername.value
+        set_game_player_client_id = enums.CommandsToClient.SetGamePlayerClientId.value
+        for game_id, game in self.game_id_to_game.items():
+            client_pending_messages.append([set_game_state, game_id, game.state])
+            for player_id, player_datum in enumerate(game.score_sheet.player_data):
+                if player_datum[client_index] is None:
+                    client_pending_messages.append([set_game_player_username, game_id, player_id, player_datum[username_index]])
+                else:
+                    client_pending_messages.append([set_game_player_client_id, game_id, player_id, player_datum[client_index].client_id])
 
         self.pending_messages.append(['client', client_id, client_pending_messages])
         self.pending_messages.append(['all', None, all_pending_messages])
