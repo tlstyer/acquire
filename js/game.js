@@ -3,23 +3,22 @@ define(function(require) {
 		common_data = require('common_data'),
 		pubsub = require('pubsub');
 
-	var moveElement = function($elements, left, top, width, height) {
-			$elements.css('left', left);
-			$elements.css('top', top);
-			$elements.css('width', width);
-			$elements.css('height', height);
-		},
-		resize = function() {
+	var resize = function() {
 			var half_window_width = Math.floor($(window).width() / 2),
 				$board = $('.board'),
 				$score = $('.score'),
 				cell_width = 0;
 
 			cell_width = Math.floor((half_window_width - 2) / 12);
-			moveElement($board, 0, 0, cell_width * 12 + 2, cell_width * 9 + 2);
+			$board.css('left', 0);
+			$board.css('top', 0);
+			$board.css('width', cell_width * 12 + 2);
+			$board.css('height', cell_width * 9 + 2);
 
 			cell_width = Math.floor((half_window_width - 2) / 18);
-			moveElement($score, half_window_width, 0, cell_width * 18 + 2, cell_width * 10 + 2);
+			$score.css('left', half_window_width);
+			$score.css('top', 0);
+			$score.css('width', cell_width * 18 + 2);
 			$score.find('tr').css('height', cell_width + 'px');
 		},
 		joinGame = function() {

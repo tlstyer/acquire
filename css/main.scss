@@ -104,13 +104,19 @@ body {
 .score {
 	position: absolute;
 	font-weight: bold;
+	table-layout: fixed;
 	td {
 		border: 2px solid $color-table-border;
+		overflow: hidden;
+		white-space: nowrap;
 	}
 	td.name {
 		width: percentage(5 / 18);
 		text-align: left;
 		padding-left: .5em;
+		.missing {
+			color: $color-table-border;
+		}
 	}
 	td.luxor, td.tower, td.american, td.festival, td.worldwide, td.continental, td.imperial {
 		width: percentage(1 / 18);
@@ -155,6 +161,7 @@ body {
 
 .score-player {
 	background-color: white;
+	display: none;
 }
 
 .score-available, .score-chain-size, .score-price {
