@@ -2,6 +2,7 @@ define(function(require) {
 	var pubsub = require('pubsub'),
 		data = {
 			client_id: null,
+			game_id: null,
 			client_id_to_username: {},
 			game_id_to_player_data: {}
 		};
@@ -33,6 +34,13 @@ define(function(require) {
 					username: data.client_id_to_username[client_id],
 					client_id: client_id
 				};
+			}
+
+			if (client_id === data.client_id) {
+				if (game_id !== data.game_id) {
+					data.game_id = game_id;
+					pubsub.publish('client-JoinGame');
+				}
 			}
 		};
 

@@ -1,5 +1,6 @@
 define(function(require) {
 	var $ = require('jquery'),
+		common_data = require('common_data'),
 		pubsub = require('pubsub');
 
 	var moveElement = function($elements, left, top, width, height) {
@@ -20,6 +21,43 @@ define(function(require) {
 			cell_width = Math.floor((half_window_width - 2) / 18);
 			moveElement($score, half_window_width, 0, cell_width * 18 + 2, cell_width * 10 + 2);
 			$score.find('tr').css('height', cell_width + 'px');
+		},
+		joinGame = function() {
+			var player_data, player_id, player_datum, $score_player, $score_player_name;
+
+			player_data = common_data.game_id_to_player_data[common_data.game_id];
+			for (player_id in player_data) {
+				if (player_data.hasOwnProperty(player_id)) {
+					player_datum = player_data[player_id];
+					$score_player = $('.score .score-player:eq(' + player_id + ')');
+					$score_player_name = $score_player.children('.name');
+
+					$score_player_name.text(player_datum.username);
+
+					if (player_datum.client_id === null) {
+						$score_player_name.addClass('missing');
+					} else {
+						$score_player_name.removeClass('missing');
+					}
+
+					$score_player.show();
+				}
+			}
+		},
+		setGamePlayerClientId = function(game_id, player_id, client_id) {
+			var $score_player, $score_player_name;
+
+			if (game_id === common_data.game_id) {
+				$score_player = $('.score .score-player:eq(' + player_id + ')');
+				$score_player_name = $score_player.children('.name');
+
+				if (client_id === null) {
+					$score_player_name.addClass('missing');
+				} else {
+					$score_player_name.text(common_data.client_id_to_username[client_id]);
+					$score_player_name.removeClass('missing');
+				}
+			}
 		},
 		commandSetBoardCell = function(x, y, board_type) {
 			var $cell = $('.board .y' + y + ' .x' + x);
@@ -43,6 +81,8 @@ define(function(require) {
 	resize();
 	$(window).resize(resize);
 
+	pubsub.subscribe('client-JoinGame', joinGame);
+	pubsub.subscribe('server-SetGamePlayerClientId', setGamePlayerClientId);
 	pubsub.subscribe('set-board-cell', commandSetBoardCell);
 	pubsub.subscribe('set-board', commandSetBoard);
 

@@ -48,6 +48,10 @@ define(function(require) {
 		$('#login-error-message').html($message);
 	});
 
+	pubsub.subscribe('client-JoinGame', function() {
+		show_page('game');
+	});
+
 	$('#login-form').submit(function() {
 		show_page('connecting');
 		$('#login-error-message').text('');
