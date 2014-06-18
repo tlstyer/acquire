@@ -11,7 +11,7 @@ define(function(require) {
 	var setClientId = function(client_id) {
 			data.client_id = client_id;
 		},
-		SetClientIdToData = function(client_id, username, ip_and_port) {
+		setClientIdToData = function(client_id, username, ip_and_port) {
 			if (username === null) {
 				delete data.client_id_to_data[client_id];
 			} else {
@@ -33,8 +33,12 @@ define(function(require) {
 			};
 		},
 		setGamePlayerClientId = function(game_id, player_id, client_id) {
+			var client_id_left_game;
+
 			if (client_id === null) {
+				client_id_left_game = data.game_id_to_player_data[game_id][player_id].client_id;
 				data.game_id_to_player_data[game_id][player_id].client_id = null;
+				pubsub.publish('client-ClientLeftGame', client_id_left_game);
 			} else {
 				data.game_id_to_player_data[game_id][player_id] = {
 					username: data.client_id_to_data[client_id].username,
@@ -51,7 +55,7 @@ define(function(require) {
 		};
 
 	pubsub.subscribe('server-SetClientId', setClientId);
-	pubsub.subscribe('server-SetClientIdToData', SetClientIdToData);
+	pubsub.subscribe('server-SetClientIdToData', setClientIdToData);
 	pubsub.subscribe('server-SetGameState', setGameState);
 	pubsub.subscribe('server-SetGamePlayerUsername', setGamePlayerUsername);
 	pubsub.subscribe('server-SetGamePlayerClientId', setGamePlayerClientId);
