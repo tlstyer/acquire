@@ -17,21 +17,28 @@ define(function(require) {
 			$('<div/>').attr('class', 'client-' + client_id).text(common_data.client_id_to_data[client_id].username).appendTo('#clients-in-lobby');
 		},
 		setGameState = function(game_id, state_id) {
+			var $lobby_section;
+
 			if (state_id === enums.GameStates.Starting) {
-				var $lobby_section = $('#lobby-game-template').clone();
+				$lobby_section = $('#lobby-game-template').clone();
 				$lobby_section.attr('id', 'lobby-game-' + game_id);
 				$lobby_section.find('.header').text('Game #' + game_id);
+				$lobby_section.find('.state').text('Starting');
 				$lobby_section.show();
 				$('#lobby-games').append($lobby_section);
+			} else if (state_id === enums.GameStates.InProgress) {
+				$('#lobby-game-' + game_id + ' .state').text('In Progress');
+			} else if (state_id === enums.GameStates.Completed) {
+				$('#lobby-game-' + game_id + ' .state').text('Completed');
 			}
 		},
 		setGamePlayerUsername = function(game_id, player_id, username) {
-			var $player = $('#lobby-game-' + game_id).find('.player:eq(' + player_id + ')');
+			var $player = $('#lobby-game-' + game_id + ' .player:eq(' + player_id + ')');
 			$player.text(username);
 			$player.addClass('missing');
 		},
 		setGamePlayerClientId = function(game_id, player_id, client_id) {
-			var $player = $('#lobby-game-' + game_id).find('.player:eq(' + player_id + ')');
+			var $player = $('#lobby-game-' + game_id + ' .player:eq(' + player_id + ')');
 
 			if (client_id === null) {
 				$player.addClass('missing');
