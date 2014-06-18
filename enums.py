@@ -30,6 +30,7 @@ class CommandsToClient(AutoNumber):
     SetClientIdToData = ()
     SetGameState = ()
     SetGameBoardType = ()
+    SetGameBoardTypes = ()
     SetGamePlayerUsername = ()
     SetGamePlayerClientId = ()
     SetGameWatcherClientId = ()

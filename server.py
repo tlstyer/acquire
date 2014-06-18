@@ -346,6 +346,7 @@ class Game:
             self.client_id_to_client[client.client_id] = client
             client.game_id = self.game_id
             self.score_sheet.readd_player(client)
+            self.client_id_to_messages[client.client_id].append([enums.CommandsToClient.SetGameBoardTypes.value, self.game_board.x_to_y_to_board_type])
 
     def watch_game(self, client):
         if not self.score_sheet.is_username_in_game(client.username):
@@ -353,6 +354,7 @@ class Game:
             self.client_id_to_watcher_client[client.client_id] = client
             client.game_id = self.game_id
             self.messages_all.append([enums.CommandsToClient.SetGameWatcherClientId.value, self.game_id, client.client_id])
+            self.client_id_to_messages[client.client_id].append([enums.CommandsToClient.SetGameBoardTypes.value, self.game_board.x_to_y_to_board_type])
 
     def remove_client(self, client):
         if client.client_id in self.client_id_to_watcher_client:

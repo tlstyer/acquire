@@ -67,7 +67,7 @@ define(function(require) {
 
 			$cell.attr('class', 'x' + x + ' ' + cell_class);
 		},
-		commandSetBoard = function(x_to_y_to_board_type) {
+		setGameBoardTypes = function(x_to_y_to_board_type) {
 			var num_x, x, y_to_board_type, num_y, y, board_type;
 
 			num_x = x_to_y_to_board_type.length;
@@ -76,7 +76,7 @@ define(function(require) {
 				num_y = y_to_board_type.length;
 				for (y = 0; y < num_y; y++) {
 					board_type = y_to_board_type[y];
-					commandSetBoardCell(x, y, board_type);
+					setGameBoardType(x, y, board_type);
 				}
 			}
 		};
@@ -87,7 +87,7 @@ define(function(require) {
 	pubsub.subscribe('client-JoinGame', joinGame);
 	pubsub.subscribe('server-SetGamePlayerClientId', setGamePlayerClientId);
 	pubsub.subscribe('server-SetGameBoardType', setGameBoardType);
-	pubsub.subscribe('set-board', commandSetBoard);
+	pubsub.subscribe('server-SetGameBoardTypes', setGameBoardTypes);
 
 	return null;
 });
