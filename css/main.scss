@@ -1,7 +1,6 @@
 $color-background: rgb(255, 255, 255);
 $color-table-border: rgb(246, 244, 242);
 
-$color-none: rgb(255, 255, 192);
 $color-luxor: rgb(255, 0, 0);
 $color-tower: rgb(255, 255, 0);
 $color-american: rgb(0, 0, 255);
@@ -9,6 +8,7 @@ $color-festival: rgb(0, 255, 0);
 $color-worldwide: rgb(128, 64, 0);
 $color-continental: rgb(0, 255, 255);
 $color-imperial: rgb(255, 0, 255);
+$color-nothing: rgb(255, 255, 192);
 $color-nothing-yet: rgb(0, 0, 0);
 $color-cant-play-ever: rgb(128, 128, 128);
 $color-i-have-this: rgb(255, 224, 160);
@@ -67,7 +67,7 @@ body {
 		border: 2px solid $color-table-border;
 		width: percentage(1 / 12);
 		height: percentage(1 / 9);
-		background-color: $color-none;
+		background-color: $color-nothing;
 	}
 	td.luxor {
 		background-color: $color-luxor;
