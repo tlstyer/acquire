@@ -15,12 +15,14 @@ define(function(require) {
 			$board.css('top', 0);
 			$board.css('width', cell_width * 12 + 2);
 			$board.css('height', cell_width * 9 + 2);
+			$board.css('font-size', Math.floor(cell_width * 2 / 5) + 'px');
 
 			cell_width = Math.floor((half_window_width - 2) / 18);
 			$score.css('left', half_window_width);
 			$score.css('top', 0);
 			$score.css('width', cell_width * 18 + 2);
 			$score.find('tr').css('height', cell_width + 'px');
+			$score.css('font-size', Math.floor(cell_width * 2 / 3) + 'px');
 		},
 		joinGame = function() {
 			var player_data, player_id, player_datum, $score_player, $score_player_name;

@@ -63,11 +63,13 @@ body {
 	position: absolute;
 	text-align: center;
 	font-weight: bold;
+	table-layout: fixed;
 	td {
 		border: 2px solid $color-table-border;
 		width: percentage(1 / 12);
 		height: percentage(1 / 9);
 		background-color: $color-nothing;
+		overflow: hidden;
 	}
 	td.luxor {
 		background-color: $color-luxor;
@@ -114,7 +116,7 @@ body {
 	td.name {
 		width: percentage(5 / 18);
 		text-align: left;
-		padding-left: .5em;
+		padding-left: 3px;
 		&.missing {
 			color: grey;
 		}
@@ -126,7 +128,7 @@ body {
 	td.cash, td.net {
 		width: percentage(3 / 18);
 		text-align: right;
-		padding-right: .5em;
+		padding-right: 3px;
 	}
 }
 
