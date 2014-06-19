@@ -44,6 +44,19 @@ define(function(require) {
 				}
 			}
 		},
+		setGamePlayerUsername = function(game_id, player_id, username) {
+			var $score_player, $score_player_name;
+
+			if (game_id === common_data.game_id) {
+				$score_player = $('.score .score-player:eq(' + player_id + ')');
+				$score_player_name = $score_player.children('.name');
+
+				$score_player_name.text(username);
+				$score_player_name.addClass('missing');
+
+				$score_player.show();
+			}
+		},
 		setGamePlayerClientId = function(game_id, player_id, client_id) {
 			var $score_player, $score_player_name;
 
@@ -150,6 +163,7 @@ define(function(require) {
 	$(window).resize(resize);
 
 	pubsub.subscribe('client-JoinGame', joinGame);
+	pubsub.subscribe('server-SetGamePlayerUsername', setGamePlayerUsername);
 	pubsub.subscribe('server-SetGamePlayerClientId', setGamePlayerClientId);
 	pubsub.subscribe('server-SetGameBoardCell', setGameBoardCell);
 	pubsub.subscribe('server-SetGameBoard', setGameBoard);
