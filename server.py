@@ -7,144 +7,19 @@ import sys
 import ujson
 
 
-class ClientManager:
-    def __init__(self):
-        self.next_client_id = 1
-        self.client_id_to_client = {}
-        self.usernames = set()
-        self.next_game_id = 1
-        self.game_id_to_game = {}
-        self.pending_messages = []
-
-    def open_client(self, client):
-        client_id = self.next_client_id
-        self.next_client_id += 1
-        client.client_id = client_id
-        self.client_id_to_client[client_id] = client
-        messages_client = [[enums.CommandsToClient.SetClientId.value, client_id]]
-        messages_other = []
-
-        username = client.username
-        if len(username) == 0 or len(username) > 32:
-            messages_client.append([enums.CommandsToClient.FatalError.value, enums.FatalErrors.InvalidUsername.value])
-            self.pending_messages.append(['client', client_id, None, messages_client])
-            self.flush_pending_messages()
-            client.sendClose()
-            return
-        elif username in self.usernames:
-            messages_client.append([enums.CommandsToClient.FatalError.value, enums.FatalErrors.UsernameAlreadyInUse.value])
-            self.pending_messages.append(['client', client_id, None, messages_client])
-            self.flush_pending_messages()
-            client.sendClose()
-            return
-
-        self.usernames.add(username)
-
-        # tell client about all clients' data
-        enum_set_client_id_to_data = enums.CommandsToClient.SetClientIdToData.value
-        for client2 in self.client_id_to_client.values():
-            messages_client.append([enum_set_client_id_to_data, client2.client_id, client2.username, client2.peer])
-
-        # tell other clients about client's data
-        messages_other.append([enum_set_client_id_to_data, client_id, username, client.peer])
-
-        # tell client about all games
-        set_game_state = enums.CommandsToClient.SetGameState.value
-        client_index = enums.ScoreSheetIndexes.Client.value
-        username_index = enums.ScoreSheetIndexes.Username.value
-        set_game_player_username = enums.CommandsToClient.SetGamePlayerUsername.value
-        set_game_player_client_id = enums.CommandsToClient.SetGamePlayerClientId.value
-        set_game_watcher_client_id = enums.CommandsToClient.SetGameWatcherClientId.value
-        for game_id, game in self.game_id_to_game.items():
-            messages_client.append([set_game_state, game_id, game.state])
-            for player_id, player_datum in enumerate(game.score_sheet.player_data):
-                if player_datum[client_index] is None:
-                    messages_client.append([set_game_player_username, game_id, player_id, player_datum[username_index]])
-                else:
-                    messages_client.append([set_game_player_client_id, game_id, player_id, player_datum[client_index].client_id])
-            for client_id2 in game.client_id_to_watcher_client.keys():
-                messages_client.append([set_game_watcher_client_id, game_id, client_id2])
-
-        self.pending_messages.append(['client', client_id, None, messages_client])
-        self.pending_messages.append(['all', None, {client_id}, messages_other])
-
-    def close_client(self, client):
-        messages_all = []
-
-        if client.game_id is not None:
-            game = self.game_id_to_game[client.game_id]
-            game.remove_client(client)
-            self.pending_messages.extend(game.get_messages())
-
-        del self.client_id_to_client[client.client_id]
-        self.usernames.discard(client.username)
-
-        enum_set_client_id_to_data = enums.CommandsToClient.SetClientIdToData.value
-        messages_all.append([enum_set_client_id_to_data, client.client_id, None, None])
-
-        self.pending_messages.append(['all', None, None, messages_all])
-
-    def create_game(self, client):
-        if client.game_id is None:
-            game_id = self.next_game_id
-            self.next_game_id += 1
-
-            game = Game(game_id, client.username)
-            self.game_id_to_game[game_id] = game
-
-            game.create_game(client)
-
-            self.pending_messages.extend(game.get_messages())
-
-    def join_game(self, client, game_id):
-        if client.game_id is None and game_id in self.game_id_to_game:
-            game = self.game_id_to_game[game_id]
-            game.join_game(client)
-            self.pending_messages.extend(game.get_messages())
-
-    def rejoin_game(self, client, game_id):
-        if client.game_id is None and game_id in self.game_id_to_game:
-            game = self.game_id_to_game[game_id]
-            game.rejoin_game(client)
-            self.pending_messages.extend(game.get_messages())
-
-    def watch_game(self, client, game_id):
-        if client.game_id is None and game_id in self.game_id_to_game:
-            game = self.game_id_to_game[game_id]
-            game.watch_game(client)
-            self.pending_messages.extend(game.get_messages())
-
-    def flush_pending_messages(self):
-        empty_set = set()
-
-        for target, target_id, exclude, messages in self.pending_messages:
-            messages_json = ujson.dumps(messages)
-            messages_json_bytes = messages_json.encode()
-            print(target, target_id, exclude, '<-', messages_json)
-            if exclude is None:
-                exclude = empty_set
-            if target == 'all':
-                for client_id, client in self.client_id_to_client.items():
-                    if client_id not in exclude:
-                        client.sendMessage(messages_json_bytes)
-            elif target == 'game':
-                for client_id, client in self.game_id_to_game[target_id].client_id_to_client.items():
-                    if client_id not in exclude:
-                        client.sendMessage(messages_json_bytes)
-            elif target == 'client':
-                self.client_id_to_client[target_id].sendMessage(messages_json_bytes)
-        del self.pending_messages[:]
-
-
-client_manager = ClientManager()
-
-
 class AcquireServerProtocol(autobahn.asyncio.websocket.WebSocketServerProtocol):
+    next_client_id = 1
+    client_id_to_client = {}
+    usernames = set()
+    next_game_id = 1
+    game_id_to_game = {}
+
     def __init__(self):
         self.username = None
         self.client_id = None
         self.game_id = None
         self.player_id = None
+        self.pending_messages = []
 
     def onConnect(self, request):
         self.username = ' '.join(request.params.get('username', [''])[0].split())
@@ -152,21 +27,77 @@ class AcquireServerProtocol(autobahn.asyncio.websocket.WebSocketServerProtocol):
         print()
 
     def onOpen(self):
-        super().onOpen()
-        client_manager.open_client(self)
+        client_id = AcquireServerProtocol.next_client_id
+        AcquireServerProtocol.next_client_id += 1
+        self.client_id = client_id
+        AcquireServerProtocol.client_id_to_client[client_id] = self
+        messages_client = [[enums.CommandsToClient.SetClientId.value, client_id]]
+        messages_other = []
+
+        if len(self.username) == 0 or len(self.username) > 32:
+            messages_client.append([enums.CommandsToClient.FatalError.value, enums.FatalErrors.InvalidUsername.value])
+            self.pending_messages.append(['client', client_id, None, messages_client])
+            self.sendClose()
+        elif self.username in AcquireServerProtocol.usernames:
+            messages_client.append([enums.CommandsToClient.FatalError.value, enums.FatalErrors.UsernameAlreadyInUse.value])
+            self.pending_messages.append(['client', client_id, None, messages_client])
+            self.sendClose()
+        else:
+            AcquireServerProtocol.usernames.add(self.username)
+
+            # tell client about all clients' data
+            enum_set_client_id_to_data = enums.CommandsToClient.SetClientIdToData.value
+            for client2 in AcquireServerProtocol.client_id_to_client.values():
+                messages_client.append([enum_set_client_id_to_data, client2.client_id, client2.username, client2.peer])
+
+            # tell other clients about client's data
+            messages_other.append([enum_set_client_id_to_data, client_id, self.username, self.peer])
+
+            # tell client about all games
+            set_game_state = enums.CommandsToClient.SetGameState.value
+            client_index = enums.ScoreSheetIndexes.Client.value
+            username_index = enums.ScoreSheetIndexes.Username.value
+            set_game_player_username = enums.CommandsToClient.SetGamePlayerUsername.value
+            set_game_player_client_id = enums.CommandsToClient.SetGamePlayerClientId.value
+            set_game_watcher_client_id = enums.CommandsToClient.SetGameWatcherClientId.value
+            for game_id, game in AcquireServerProtocol.game_id_to_game.items():
+                messages_client.append([set_game_state, game_id, game.state])
+                for player_id, player_datum in enumerate(game.score_sheet.player_data):
+                    if player_datum[client_index] is None:
+                        messages_client.append([set_game_player_username, game_id, player_id, player_datum[username_index]])
+                    else:
+                        messages_client.append([set_game_player_client_id, game_id, player_id, player_datum[client_index].client_id])
+                for client_id2 in game.client_id_to_watcher_client.keys():
+                    messages_client.append([set_game_watcher_client_id, game_id, client_id2])
+
+            self.pending_messages.append(['client', client_id, None, messages_client])
+            self.pending_messages.append(['all', None, {client_id}, messages_other])
+
         print(self.client_id, 'open', self.peer)
-        client_manager.flush_pending_messages()
-        print()
+
+        self.flush_pending_messages()
 
     def onClose(self, wasClean, code, reason):
-        super().onClose(wasClean, code, reason)
         print(self.client_id, 'close')
-        client_manager.close_client(self)
-        client_manager.flush_pending_messages()
-        print()
+
+        messages_all = []
+
+        if self.game_id is not None:
+            game = AcquireServerProtocol.game_id_to_game[self.game_id]
+            game.remove_client(self)
+            self.pending_messages.extend(game.get_messages())
+
+        del AcquireServerProtocol.client_id_to_client[self.client_id]
+        AcquireServerProtocol.usernames.discard(self.username)
+
+        enum_set_client_id_to_data = enums.CommandsToClient.SetClientIdToData.value
+        messages_all.append([enum_set_client_id_to_data, self.client_id, None, None])
+
+        self.pending_messages.append(['all', None, None, messages_all])
+
+        self.flush_pending_messages()
 
     def onMessage(self, payload, isBinary):
-        super().onMessage(payload, isBinary)
         if not isBinary:
             try:
                 message = payload.decode()
@@ -181,8 +112,7 @@ class AcquireServerProtocol(autobahn.asyncio.websocket.WebSocketServerProtocol):
 
             try:
                 method(*arguments)
-                client_manager.flush_pending_messages()
-                print()
+                self.flush_pending_messages()
             except TypeError as e:
                 print(e)
                 self.sendClose()
@@ -190,16 +120,56 @@ class AcquireServerProtocol(autobahn.asyncio.websocket.WebSocketServerProtocol):
             self.sendClose()
 
     def onMessageCreateGame(self):
-        client_manager.create_game(self)
+        if self.game_id is None:
+            game_id = AcquireServerProtocol.next_game_id
+            AcquireServerProtocol.next_game_id += 1
+
+            game = Game(game_id, self.username)
+            AcquireServerProtocol.game_id_to_game[game_id] = game
+
+            game.create_game(self)
+
+            self.pending_messages.extend(game.get_messages())
 
     def onMessageJoinGame(self, game_id):
-        client_manager.join_game(self, game_id)
+        if self.game_id is None and game_id in AcquireServerProtocol.game_id_to_game:
+            game = AcquireServerProtocol.game_id_to_game[game_id]
+            game.join_game(self)
+            self.pending_messages.extend(game.get_messages())
 
     def onMessageRejoinGame(self, game_id):
-        client_manager.rejoin_game(self, game_id)
+        if self.game_id is None and game_id in AcquireServerProtocol.game_id_to_game:
+            game = AcquireServerProtocol.game_id_to_game[game_id]
+            game.rejoin_game(self)
+            self.pending_messages.extend(game.get_messages())
 
     def onMessageWatchGame(self, game_id):
-        client_manager.watch_game(self, game_id)
+        if self.game_id is None and game_id in AcquireServerProtocol.game_id_to_game:
+            game = AcquireServerProtocol.game_id_to_game[game_id]
+            game.watch_game(self)
+            self.pending_messages.extend(game.get_messages())
+
+    def flush_pending_messages(self):
+        empty_set = set()
+
+        for target, target_id, exclude, messages in self.pending_messages:
+            messages_json = ujson.dumps(messages)
+            messages_json_bytes = messages_json.encode()
+            print(target, target_id, exclude, '<-', messages_json)
+            if exclude is None:
+                exclude = empty_set
+            if target == 'all':
+                for client_id, client in AcquireServerProtocol.client_id_to_client.items():
+                    if client_id not in exclude:
+                        client.sendMessage(messages_json_bytes)
+            elif target == 'game':
+                for client_id, client in AcquireServerProtocol.game_id_to_game[target_id].client_id_to_client.items():
+                    if client_id not in exclude:
+                        client.sendMessage(messages_json_bytes)
+            elif target == 'client':
+                AcquireServerProtocol.client_id_to_client[target_id].sendMessage(messages_json_bytes)
+        del self.pending_messages[:]
+        print()
 
 
 class GameBoard:
