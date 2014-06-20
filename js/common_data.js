@@ -45,6 +45,7 @@ define(function(require) {
 				client_id_left_game = data.game_id_to_player_data[game_id][player_id].client_id;
 				if (client_id_left_game === data.client_id) {
 					data.game_id = null;
+					pubsub.publish('client-LeaveGame');
 				}
 				data.game_id_to_player_data[game_id][player_id].client_id = null;
 				pubsub.publish('client-ClientLeftGame', client_id_left_game);
@@ -81,6 +82,7 @@ define(function(require) {
 
 			if (client_id === data.client_id) {
 				data.game_id = null;
+				pubsub.publish('client-LeaveGame');
 			}
 		};
 

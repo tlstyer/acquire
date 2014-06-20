@@ -52,6 +52,10 @@ define(function(require) {
 		show_page('game');
 	});
 
+	pubsub.subscribe('client-LeaveGame', function() {
+		show_page('lobby');
+	});
+
 	$('#login-form').submit(function() {
 		show_page('connecting');
 		$('#login-error-message').text('');

@@ -2,6 +2,7 @@ define(function(require) {
 	var $ = require('jquery'),
 		common_data = require('common_data'),
 		enums = require('enums'),
+		network = require('network'),
 		pubsub = require('pubsub');
 
 	var resize = function() {
@@ -206,6 +207,12 @@ define(function(require) {
 	pubsub.subscribe('server-SetGameBoardCell', setGameBoardCell);
 	pubsub.subscribe('server-SetGameBoard', setGameBoard);
 	pubsub.subscribe('server-SetScoreSheet', setScoreSheet);
+
+	$('#leave-game').click(function() {
+		network.sendMessage(enums.CommandsToServer.LeaveGame);
+
+		return false;
+	});
 
 	return null;
 });

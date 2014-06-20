@@ -43,6 +43,7 @@ class CommandsToServer(AutoNumber):
     JoinGame = ()
     RejoinGame = ()
     WatchGame = ()
+    LeaveGame = ()
 
 
 class FatalErrors(AutoNumber):

@@ -149,6 +149,12 @@ class AcquireServerProtocol(autobahn.asyncio.websocket.WebSocketServerProtocol):
             game.watch_game(self)
             self.pending_messages.extend(game.get_messages())
 
+    def onMessageLeaveGame(self):
+        if self.game_id is not None:
+            game = AcquireServerProtocol.game_id_to_game[self.game_id]
+            game.remove_client(self)
+            self.pending_messages.extend(game.get_messages())
+
     def flush_pending_messages(self):
         empty_set = set()
 
@@ -248,7 +254,6 @@ class ScoreSheet:
         set_game_player_client_id = enums.CommandsToClient.SetGamePlayerClientId.value
         for player_id, player_datum in enumerate(self.player_data):
             if client is player_datum[client_index]:
-                player_datum[client_index].game_id = None
                 player_datum[client_index].player_id = None
                 player_datum[client_index] = None
                 self.messages_all.append([set_game_player_client_id, self.game_id, player_id, None])
@@ -327,6 +332,7 @@ class Game:
             self.send_initialization_messages(client)
 
     def remove_client(self, client):
+        client.game_id = None
         if client.client_id in self.client_id_to_watcher_client:
             del self.client_id_to_watcher_client[client.client_id]
             self.messages_all.append([enums.CommandsToClient.ReturnWatcherToLobby.value, self.game_id, client.client_id])
