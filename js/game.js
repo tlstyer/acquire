@@ -6,9 +6,15 @@ define(function(require) {
 
 	var resize = function() {
 			var half_window_width = Math.floor($(window).width() / 2),
+				half_window_width_ceil = Math.ceil($(window).width() / 2),
 				$board = $('.board'),
 				$score = $('.score'),
-				cell_width = 0;
+				cell_width = 0,
+				num_rows = 4,
+				row_height = 0,
+				selectors_and_heights = null,
+				$div = null,
+				y = $(window).height();
 
 			cell_width = Math.floor((half_window_width - 2) / 12);
 			$board.css('left', 0);
@@ -23,6 +29,29 @@ define(function(require) {
 			$score.css('width', cell_width * 18 + 2);
 			$score.find('tr').css('height', cell_width + 'px');
 			$score.css('font-size', Math.floor(cell_width * 2 / 3) + 'px');
+
+			$('.score-player').each(function() {
+				if ($(this).css('display') !== 'none') {
+					num_rows++;
+				}
+			});
+
+			row_height = Math.floor(cell_width * 2 / 3);
+			selectors_and_heights = [
+				['.links', row_height],
+				['.action', row_height * 3],
+				['.status', row_height * 2],
+				['.history', $(window).height() - (num_rows * cell_width + 2) - row_height * 6]
+			];
+			$.each(selectors_and_heights, function(index, value) {
+				$div = $(value[0]);
+				$div.css('left', half_window_width);
+				$div.css('top', y - value[1]);
+				$div.css('width', half_window_width_ceil - 6);
+				$div.css('height', value[1]);
+				$div.css('font-size', Math.floor(cell_width / 2) + 'px');
+				y -= value[1];
+			});
 		},
 		joinGame = function() {
 			var player_data, player_id, player_datum, $score_player, $score_player_name;
@@ -40,7 +69,10 @@ define(function(require) {
 						$score_player_name.addClass('missing');
 					}
 
-					$score_player.show();
+					if ($score_player.css('display') === 'none') {
+						$score_player.show();
+						resize();
+					}
 				}
 			}
 		},
@@ -54,7 +86,10 @@ define(function(require) {
 				$score_player_name.text(username);
 				$score_player_name.addClass('missing');
 
-				$score_player.show();
+				if ($score_player.css('display') === 'none') {
+					$score_player.show();
+					resize();
+				}
 			}
 		},
 		setGamePlayerClientId = function(game_id, player_id, client_id) {
@@ -71,7 +106,10 @@ define(function(require) {
 					$score_player_name.removeClass('missing');
 				}
 
-				$score_player.show();
+				if ($score_player.css('display') === 'none') {
+					$score_player.show();
+					resize();
+				}
 			}
 		},
 		setGameBoardCell = function(x, y, game_board_type_id) {

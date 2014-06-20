@@ -176,3 +176,12 @@ body {
 		background-color: $color-safe-chain;
 	}
 }
+
+.history, .status, .action, .links {
+	position: absolute;
+	padding-left: 3px;
+	padding-right: 3px;
+}
+.history {
+	overflow-y: scroll;
+}
