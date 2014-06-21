@@ -123,10 +123,8 @@ class AcquireServerProtocol(autobahn.asyncio.websocket.WebSocketServerProtocol):
             game_id = AcquireServerProtocol.next_game_id
             AcquireServerProtocol.next_game_id += 1
 
-            game = Game(game_id, self.username)
+            game = Game(game_id, self)
             AcquireServerProtocol.game_id_to_game[game_id] = game
-
-            game.create_game(self)
 
             self.pending_messages.extend(game.get_messages())
 
@@ -209,7 +207,7 @@ class ScoreSheet:
         self.client_id_to_messages = collections.defaultdict(list)
 
     def add_player(self, client, starting_tile):
-        self.player_data.append([0, 0, 0, 0, 0, 0, 0, 60, 60, client.username, starting_tile, client])
+        self.player_data.append([0, 0, 0, 0, 0, 0, 0, 60, 60, client.username, starting_tile, client, len(self.player_data) == 0])
         self.player_data.sort(key=lambda x: x[enums.ScoreSheetIndexes.StartingTile.value])
 
         username_index = enums.ScoreSheetIndexes.Username.value
@@ -282,9 +280,8 @@ class TileBag:
 
 
 class Game:
-    def __init__(self, game_id, creator_username):
+    def __init__(self, game_id, client):
         self.game_id = game_id
-        self.creator_username = creator_username
         self.client_id_to_client = {}
         self.client_id_to_watcher_client = {}
 
@@ -299,13 +296,11 @@ class Game:
 
         self.messages_all.append([enums.CommandsToClient.SetGameState.value, self.game_id, self.state])
 
-    def create_game(self, client):
-        if self.state == enums.GameStates.Starting.value:
-            self.client_id_to_client[client.client_id] = client
-            client.game_id = self.game_id
-            starting_tile = self.tile_bag.get_tile()
-            self.game_board.set_cell(starting_tile, enums.GameBoardTypes.NothingYet.value)
-            self.score_sheet.add_player(client, starting_tile)
+        self.client_id_to_client[client.client_id] = client
+        client.game_id = self.game_id
+        starting_tile = self.tile_bag.get_tile()
+        self.game_board.set_cell(starting_tile, enums.GameBoardTypes.NothingYet.value)
+        self.score_sheet.add_player(client, starting_tile)
 
     def join_game(self, client):
         if self.state == enums.GameStates.Starting.value and not self.score_sheet.is_username_in_game(client.username):

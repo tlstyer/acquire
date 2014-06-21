@@ -70,6 +70,7 @@ class ScoreSheetIndexes(AutoNumber):
     Username = ()
     StartingTile = ()
     Client = ()
+    IsCreator = ()
 
 
 class ScoreSheetRows(AutoNumber):
