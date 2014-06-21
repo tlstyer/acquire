@@ -15,7 +15,7 @@ class AcquireServerProtocol(autobahn.asyncio.websocket.WebSocketServerProtocol):
     game_id_to_game = {}
 
     def __init__(self):
-        self.username = None
+        self.username = ''
         self.client_id = None
         self.game_id = None
         self.player_id = None
@@ -27,31 +27,30 @@ class AcquireServerProtocol(autobahn.asyncio.websocket.WebSocketServerProtocol):
         print()
 
     def onOpen(self):
-        client_id = AcquireServerProtocol.next_client_id
+        self.client_id = AcquireServerProtocol.next_client_id
         AcquireServerProtocol.next_client_id += 1
-        self.client_id = client_id
-        AcquireServerProtocol.client_id_to_client[client_id] = self
-        messages_client = [[enums.CommandsToClient.SetClientId.value, client_id]]
+        AcquireServerProtocol.client_id_to_client[self.client_id] = self
+        messages_client = [[enums.CommandsToClient.SetClientId.value, self.client_id]]
         messages_other = []
 
         if len(self.username) == 0 or len(self.username) > 32:
             messages_client.append([enums.CommandsToClient.FatalError.value, enums.FatalErrors.InvalidUsername.value])
-            self.pending_messages.append(['client', client_id, None, messages_client])
+            self.pending_messages.append(['client', self.client_id, None, messages_client])
             self.sendClose()
         elif self.username in AcquireServerProtocol.usernames:
             messages_client.append([enums.CommandsToClient.FatalError.value, enums.FatalErrors.UsernameAlreadyInUse.value])
-            self.pending_messages.append(['client', client_id, None, messages_client])
+            self.pending_messages.append(['client', self.client_id, None, messages_client])
             self.sendClose()
         else:
             AcquireServerProtocol.usernames.add(self.username)
 
             # tell client about all clients' data
             enum_set_client_id_to_data = enums.CommandsToClient.SetClientIdToData.value
-            for client2 in AcquireServerProtocol.client_id_to_client.values():
-                messages_client.append([enum_set_client_id_to_data, client2.client_id, client2.username, client2.peer])
+            for client in AcquireServerProtocol.client_id_to_client.values():
+                messages_client.append([enum_set_client_id_to_data, client.client_id, client.username, client.peer])
 
             # tell other clients about client's data
-            messages_other.append([enum_set_client_id_to_data, client_id, self.username, self.peer])
+            messages_other.append([enum_set_client_id_to_data, self.client_id, self.username, self.peer])
 
             # tell client about all games
             set_game_state = enums.CommandsToClient.SetGameState.value
@@ -67,11 +66,11 @@ class AcquireServerProtocol(autobahn.asyncio.websocket.WebSocketServerProtocol):
                         messages_client.append([set_game_player_username, game_id, player_id, player_datum[username_index]])
                     else:
                         messages_client.append([set_game_player_client_id, game_id, player_id, player_datum[client_index].client_id])
-                for client_id2 in game.client_id_to_watcher_client.keys():
-                    messages_client.append([set_game_watcher_client_id, game_id, client_id2])
+                for client_id in game.client_id_to_watcher_client.keys():
+                    messages_client.append([set_game_watcher_client_id, game_id, client_id])
 
-            self.pending_messages.append(['client', client_id, None, messages_client])
-            self.pending_messages.append(['all', None, {client_id}, messages_other])
+            self.pending_messages.append(['client', self.client_id, None, messages_client])
+            self.pending_messages.append(['all', None, {self.client_id}, messages_other])
 
         print(self.client_id, 'open', self.peer)
 
@@ -156,14 +155,14 @@ class AcquireServerProtocol(autobahn.asyncio.websocket.WebSocketServerProtocol):
             self.pending_messages.extend(game.get_messages())
 
     def flush_pending_messages(self):
-        empty_set = set()
+        empty_list = []
 
         for target, target_id, exclude, messages in self.pending_messages:
             messages_json = ujson.dumps(messages)
             messages_json_bytes = messages_json.encode()
             print(target, target_id, exclude, '<-', messages_json)
             if exclude is None:
-                exclude = empty_set
+                exclude = empty_list
             if target == 'all':
                 for client_id, client in AcquireServerProtocol.client_id_to_client.items():
                     if client_id not in exclude:
