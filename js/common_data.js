@@ -1,13 +1,6 @@
 define(function(require) {
 	var pubsub = require('pubsub'),
-		data = {
-			client_id: null,
-			game_id: null,
-			client_id_to_data: {},
-			game_id_to_game_state: {},
-			game_id_to_player_data: {},
-			game_id_to_watcher_client_ids: {}
-		};
+		data = {};
 
 	var setClientId = function(client_id) {
 			data.client_id = client_id;
@@ -84,6 +77,14 @@ define(function(require) {
 				data.game_id = null;
 				pubsub.publish('client-LeaveGame');
 			}
+		},
+		resetData = function() {
+			data.client_id = null;
+			data.game_id = null;
+			data.client_id_to_data = {};
+			data.game_id_to_game_state = {};
+			data.game_id_to_player_data = {};
+			data.game_id_to_watcher_client_ids = {};
 		};
 
 	pubsub.subscribe('server-SetClientId', setClientId);
@@ -93,6 +94,9 @@ define(function(require) {
 	pubsub.subscribe('server-SetGamePlayerClientId', setGamePlayerClientId);
 	pubsub.subscribe('server-SetGameWatcherClientId', setGameWatcherClientId);
 	pubsub.subscribe('server-ReturnWatcherToLobby', returnWatcherToLobby);
+	pubsub.subscribe('network-close', resetData);
+
+	resetData();
 
 	return data;
 });

@@ -33,28 +33,30 @@
 		</div>
 		<div class="page" id="lobby">
 			<h1>Acquire Lobby</h1>
-			<div class="lobby-section" id="clients-in-lobby">
+			<div class="lobby-section">
 				<div class="header">
 					In Lobby
 				</div>
+				<div id="clients-in-lobby">
+				</div>
+			</div>
+			<div class="lobby-section" id="lobby-game-template" style="display: none">
+				<div>
+					<span class="header"></span>
+					<span class="state"></span>
+					<a href="javascript:" class="join-link" style="display: none">Join</a>
+					<a href="javascript:" class="rejoin-link" style="display: none">Rejoin</a>
+					<a href="javascript:" class="watch-link" style="display: none">Watch</a>
+				</div>
+				<div class="player"></div>
+				<div class="player"></div>
+				<div class="player"></div>
+				<div class="player"></div>
+				<div class="player"></div>
+				<div class="player"></div>
+				<div class="watchers"></div>
 			</div>
 			<div id="lobby-games">
-				<div class="lobby-section" id="lobby-game-template" style="display: none">
-					<div>
-						<span class="header"></span>
-						<span class="state"></span>
-						<a href="javascript:" class="join-link" style="display: none">Join</a>
-						<a href="javascript:" class="rejoin-link" style="display: none">Rejoin</a>
-						<a href="javascript:" class="watch-link" style="display: none">Watch</a>
-					</div>
-					<div class="player"></div>
-					<div class="player"></div>
-					<div class="player"></div>
-					<div class="player"></div>
-					<div class="player"></div>
-					<div class="player"></div>
-					<div class="watchers"></div>
-				</div>
 			</div>
 			<div class="lobby-section" id="lobby-section-create-game">
 				<a href="javascript:" id="create-game">Create Game</a>

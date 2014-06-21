@@ -121,6 +121,10 @@ define(function(require) {
 		returnWatcherToLobby = function(game_id, client_id) {
 			$('#lobby-game-' + game_id + ' .watchers .client-' + client_id).remove();
 			clientLeftGame(client_id);
+		},
+		resetHtml = function() {
+			$('#clients-in-lobby').empty();
+			$('#lobby-games').empty();
 		};
 
 	pubsub.subscribe('server-SetClientIdToData', setClientIdToData);
@@ -131,6 +135,7 @@ define(function(require) {
 	pubsub.subscribe('server-SetGamePlayerClientId', setGamePlayerClientId);
 	pubsub.subscribe('server-SetGameWatcherClientId', setGameWatcherClientId);
 	pubsub.subscribe('server-ReturnWatcherToLobby', returnWatcherToLobby);
+	pubsub.subscribe('network-close', resetHtml);
 
 	$('#create-game').click(function() {
 		network.sendMessage(enums.CommandsToServer.CreateGame);
