@@ -196,6 +196,31 @@ define(function(require) {
 					setScoreSheetCell(row, index, row_data[index]);
 				}
 			}
+		},
+		resetHtml = function() {
+			var x, y;
+			for (x = 0; x < 12; x++) {
+				for (y = 0; y < 9; y++) {
+					setGameBoardCell(x, y, enums.GameBoardTypes.Nothing);
+				}
+			}
+
+			setScoreSheet([
+				[
+					[0, 0, 0, 0, 0, 0, 0, 60, 60],
+					[0, 0, 0, 0, 0, 0, 0, 60, 60],
+					[0, 0, 0, 0, 0, 0, 0, 60, 60],
+					[0, 0, 0, 0, 0, 0, 0, 60, 60],
+					[0, 0, 0, 0, 0, 0, 0, 60, 60],
+					[0, 0, 0, 0, 0, 0, 0, 60, 60]
+				],
+				[25, 25, 25, 25, 25, 25, 25],
+				[0, 0, 0, 0, 0, 0, 0],
+				[0, 0, 0, 0, 0, 0, 0]
+			]);
+			$('.score td').removeClass('safe');
+			$('.score-player .name').text('');
+			$('.score .score-player').hide();
 		};
 
 	resize();
@@ -207,6 +232,8 @@ define(function(require) {
 	pubsub.subscribe('server-SetGameBoardCell', setGameBoardCell);
 	pubsub.subscribe('server-SetGameBoard', setGameBoard);
 	pubsub.subscribe('server-SetScoreSheet', setScoreSheet);
+	pubsub.subscribe('client-LeaveGame', resetHtml);
+	pubsub.subscribe('network-close', resetHtml);
 
 	$('#leave-game').click(function() {
 		network.sendMessage(enums.CommandsToServer.LeaveGame);
