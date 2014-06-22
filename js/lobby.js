@@ -21,10 +21,7 @@ define(function(require) {
 				player_data = null,
 				player_id = null,
 				client_username = common_data.client_id_to_data[common_data.client_id].username,
-				in_this_game = false,
-				show_join_link = true,
-				show_rejoin_link = true,
-				show_watch_link = true;
+				in_this_game = false;
 
 			// create and add lobby section if it doesn't exist
 			if ($lobby_section.length === 0) {
@@ -55,43 +52,20 @@ define(function(require) {
 				}
 			}
 
-			// determine what links to show
-			if (state_id === enums.GameStates.Starting) {
-				if (in_this_game) {
-					show_join_link = false;
-					show_rejoin_link = true;
-					show_watch_link = false;
-				} else {
-					show_join_link = true;
-					show_rejoin_link = false;
-					show_watch_link = true;
-				}
-			} else {
-				if (in_this_game) {
-					show_join_link = false;
-					show_rejoin_link = true;
-					show_watch_link = false;
-				} else {
-					show_join_link = false;
-					show_rejoin_link = false;
-					show_watch_link = true;
-				}
-			}
-
-			// show/hide links
-			if (show_join_link) {
+			// show/hide links as appropriate
+			if (state_id === enums.GameStates.Starting && !in_this_game) {
 				$lobby_section.find('.join-link').show();
 			} else {
 				$lobby_section.find('.join-link').hide();
 			}
 
-			if (show_rejoin_link) {
+			if (in_this_game) {
 				$lobby_section.find('.rejoin-link').show();
 			} else {
 				$lobby_section.find('.rejoin-link').hide();
 			}
 
-			if (show_watch_link) {
+			if (!in_this_game) {
 				$lobby_section.find('.watch-link').show();
 			} else {
 				$lobby_section.find('.watch-link').hide();
