@@ -33,7 +33,6 @@ class AcquireServerProtocol(autobahn.asyncio.websocket.WebSocketServerProtocol):
         AcquireServerProtocol.client_id_to_client[self.client_id] = self
         AcquireServerProtocol.client_ids.add(self.client_id)
         messages_client = [[enums.CommandsToClient.SetClientId.value, self.client_id]]
-        messages_all = []
 
         print(self.client_id, 'open', self.peer)
 
@@ -55,9 +54,11 @@ class AcquireServerProtocol(autobahn.asyncio.websocket.WebSocketServerProtocol):
             for client in AcquireServerProtocol.client_id_to_client.values():
                 if client is not self:
                     messages_client.append([enum_set_client_id_to_data, client.client_id, client.username, client.peer])
+            AcquireServerProtocol.add_pending_messages({self.client_id}, messages_client)
+            messages_client = []
 
             # tell all clients about client's data
-            messages_all.append([enum_set_client_id_to_data, self.client_id, self.username, self.peer])
+            AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, [[enum_set_client_id_to_data, self.client_id, self.username, self.peer]])
 
             # tell client about all games
             set_game_state = enums.CommandsToClient.SetGameState.value
@@ -75,21 +76,19 @@ class AcquireServerProtocol(autobahn.asyncio.websocket.WebSocketServerProtocol):
                         messages_client.append([set_game_player_client_id, game_id, player_id, player_datum[client_index].client_id])
                 for client_id in game.watcher_client_ids:
                     messages_client.append([set_game_watcher_client_id, game_id, client_id])
-
             AcquireServerProtocol.add_pending_messages({self.client_id}, messages_client)
-            AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, messages_all)
 
             self.flush_pending_messages()
 
     def onClose(self, wasClean, code, reason):
         print(self.client_id, 'close')
 
-        AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, [[enums.CommandsToClient.SetClientIdToData.value, self.client_id, None, None]])
-        self.flush_pending_messages()
-
         if self.game_id is not None:
             game = AcquireServerProtocol.game_id_to_game[self.game_id]
             game.remove_client(self)
+
+        AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, [[enums.CommandsToClient.SetClientIdToData.value, self.client_id, None, None]])
+        self.flush_pending_messages()
 
         del AcquireServerProtocol.client_id_to_client[self.client_id]
         AcquireServerProtocol.client_ids.discard(self.client_id)
