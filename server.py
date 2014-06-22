@@ -73,7 +73,7 @@ class AcquireServerProtocol(autobahn.asyncio.websocket.WebSocketServerProtocol):
                         messages_client.append([set_game_player_username, game_id, player_id, player_datum[username_index]])
                     else:
                         messages_client.append([set_game_player_client_id, game_id, player_id, player_datum[client_index].client_id])
-                for client_id in game.client_id_to_watcher_client.keys():
+                for client_id in game.watcher_client_ids:
                     messages_client.append([set_game_watcher_client_id, game_id, client_id])
 
             AcquireServerProtocol.add_pending_messages({self.client_id}, messages_client)
@@ -298,7 +298,7 @@ class Game:
     def __init__(self, game_id, client):
         self.game_id = game_id
         self.client_ids = set()
-        self.client_id_to_watcher_client = {}
+        self.watcher_client_ids = set()
 
         self.game_board = GameBoard(self.client_ids)
         self.score_sheet = ScoreSheet(game_id)
@@ -332,15 +332,15 @@ class Game:
     def watch_game(self, client):
         if not self.score_sheet.is_username_in_game(client.username):
             self.client_ids.add(client.client_id)
-            self.client_id_to_watcher_client[client.client_id] = client
+            self.watcher_client_ids.add(client.client_id)
             client.game_id = self.game_id
             AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, [[enums.CommandsToClient.SetGameWatcherClientId.value, self.game_id, client.client_id]])
             self.send_initialization_messages(client)
 
     def remove_client(self, client):
         client.game_id = None
-        if client.client_id in self.client_id_to_watcher_client:
-            del self.client_id_to_watcher_client[client.client_id]
+        if client.client_id in self.watcher_client_ids:
+            self.watcher_client_ids.discard(client.client_id)
             AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, [[enums.CommandsToClient.ReturnWatcherToLobby.value, self.game_id, client.client_id]])
         self.score_sheet.remove_client(client)
         self.client_ids.discard(client.client_id)
