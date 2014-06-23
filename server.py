@@ -144,6 +144,11 @@ class AcquireServerProtocol(autobahn.asyncio.websocket.WebSocketServerProtocol):
             game = AcquireServerProtocol.game_id_to_game[self.game_id]
             game.remove_client(self)
 
+    def onMessageStartGame(self):
+        if self.game_id is not None:
+            game = AcquireServerProtocol.game_id_to_game[self.game_id]
+            game.start_game(self)
+
     @staticmethod
     def add_pending_messages(client_ids, messages):
         client_ids = client_ids.copy()
@@ -276,6 +281,12 @@ class ScoreSheet:
                 return True
         return False
 
+    def get_creator_player_id(self):
+        is_creator_index = enums.ScoreSheetIndexes.IsCreator.value
+        for player_id, player_datum in enumerate(self.player_data):
+            if player_datum[is_creator_index]:
+                return player_id
+
 
 class TileBag:
     def __init__(self):
@@ -304,6 +315,8 @@ class Game:
         self.tile_bag = TileBag()
 
         self.state = enums.GameStates.Starting.value
+        self.actions = collections.deque()
+        self.player_tiles = [set()]
 
         AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, [[enums.CommandsToClient.SetGameState.value, self.game_id, self.state]])
 
@@ -312,6 +325,10 @@ class Game:
         starting_tile = self.tile_bag.get_tile()
         self.game_board.set_cell(starting_tile, enums.GameBoardTypes.NothingYet.value)
         self.score_sheet.add_player(client, starting_tile)
+        message = [enums.CommandsToClient.AddGameHistoryMessage.value, enums.GameHistoryMessages.DrewStartingTile.value, client.player_id, starting_tile[0], starting_tile[1]]
+        AcquireServerProtocol.add_pending_messages(self.client_ids, [message])
+        self.actions.append([enums.GameActions.StartGame, self.score_sheet.get_creator_player_id()])
+        self.send_action_message(self.client_ids)
 
     def join_game(self, client):
         if self.state == enums.GameStates.Starting.value and not self.score_sheet.is_username_in_game(client.username):
@@ -319,7 +336,18 @@ class Game:
             client.game_id = self.game_id
             starting_tile = self.tile_bag.get_tile()
             self.game_board.set_cell(starting_tile, enums.GameBoardTypes.NothingYet.value)
+            previous_creator_player_id = self.score_sheet.get_creator_player_id()
             self.score_sheet.add_player(client, starting_tile)
+            self.player_tiles.append(set())
+            message = [enums.CommandsToClient.AddGameHistoryMessage.value, enums.GameHistoryMessages.DrewStartingTile.value, client.player_id, starting_tile[0], starting_tile[1]]
+            AcquireServerProtocol.add_pending_messages(self.client_ids, [message])
+            creator_player_id = self.score_sheet.get_creator_player_id()
+            if creator_player_id != previous_creator_player_id:
+                self.actions.clear()
+                self.actions.append([enums.GameActions.StartGame, creator_player_id])
+                self.send_action_message(self.client_ids)
+            else:
+                self.send_action_message({client.client_id})
 
     def rejoin_game(self, client):
         if self.score_sheet.is_username_in_game(client.username):
@@ -344,6 +372,35 @@ class Game:
         self.score_sheet.remove_client(client)
         self.client_ids.discard(client.client_id)
 
+    def start_game(self, client):
+        action = self.actions[0]
+        if action[0] is enums.GameActions.StartGame and action[1] == client.player_id:
+            AcquireServerProtocol.add_pending_messages(self.client_ids, [[enums.CommandsToClient.AddGameHistoryMessage.value, enums.GameHistoryMessages.StartedGame.value, client.player_id]])
+
+            self.state = enums.GameStates.InProgress.value
+            AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, [[enums.CommandsToClient.SetGameState.value, self.game_id, self.state]])
+
+            add_game_history_message = enums.CommandsToClient.AddGameHistoryMessage.value
+            set_game_board_cell = enums.CommandsToClient.SetGameBoardCell.value
+            client_index = enums.ScoreSheetIndexes.Client.value
+            drew_tile = enums.GameHistoryMessages.DrewTile.value
+            i_have_this = enums.GameBoardTypes.IHaveThis.value
+            for player_id, player_datum in enumerate(self.score_sheet.player_data):
+                messages = []
+                for i in range(6):
+                    tile = self.tile_bag.get_tile()
+                    self.player_tiles[player_id].add(tile)
+                    messages.append([add_game_history_message, drew_tile, player_id, tile[0], tile[1]])
+                    messages.append([set_game_board_cell, tile[0], tile[1], i_have_this])
+                client2 = player_datum[client_index]
+                if client2 is not None:
+                    AcquireServerProtocol.add_pending_messages({client2.client_id}, messages)
+
+            self.actions.popleft()
+            self.actions.append([enums.GameActions.PlayTile, 0])
+            self.actions.append([enums.GameActions.PurchaseStock, 0])
+            self.send_action_message(self.client_ids)
+
     def send_initialization_messages(self, client):
         messages = [[enums.CommandsToClient.SetGameBoard.value, self.game_board.x_to_y_to_board_type]]
 
@@ -356,7 +413,19 @@ class Game:
         ]
         messages.append([enums.CommandsToClient.SetScoreSheet.value, score_sheet_data])
 
+        if client.player_id is not None:
+            set_game_board_cell = enums.CommandsToClient.SetGameBoardCell.value
+            i_have_this = enums.GameBoardTypes.IHaveThis.value
+            for tile in self.player_tiles[client.player_id]:
+                messages.append([set_game_board_cell, tile[0], tile[1], i_have_this])
+
         AcquireServerProtocol.add_pending_messages({client.client_id}, messages)
+
+        self.send_action_message({client.client_id})
+
+    def send_action_message(self, client_ids):
+        action = self.actions[0]
+        AcquireServerProtocol.add_pending_messages(client_ids, [[enums.CommandsToClient.SetGameAction.value, action[0].value] + action[1:]])
 
 
 if __name__ == '__main__':

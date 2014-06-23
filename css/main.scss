@@ -185,3 +185,8 @@ body {
 .history {
 	overflow-y: scroll;
 }
+.action {
+	> div {
+		display: none;
+	}
+}

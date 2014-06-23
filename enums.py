@@ -36,6 +36,8 @@ class CommandsToClient(AutoNumber):
     SetGamePlayerClientId = ()
     SetGameWatcherClientId = ()
     ReturnWatcherToLobby = ()
+    AddGameHistoryMessage = ()
+    SetGameAction = ()
 
 
 class CommandsToServer(AutoNumber):
@@ -44,11 +46,24 @@ class CommandsToServer(AutoNumber):
     RejoinGame = ()
     WatchGame = ()
     LeaveGame = ()
+    StartGame = ()
 
 
 class FatalErrors(AutoNumber):
     InvalidUsername = ()
     UsernameAlreadyInUse = ()
+
+
+class GameActions(AutoNumber):
+    StartGame = ()
+    PlayTile = ()
+    PurchaseStock = ()
+
+
+class GameHistoryMessages(AutoNumber):
+    DrewStartingTile = ()
+    StartedGame = ()
+    DrewTile = ()
 
 
 class GameStates(AutoNumber):

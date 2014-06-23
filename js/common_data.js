@@ -38,6 +38,7 @@ define(function(require) {
 				client_id_left_game = data.game_id_to_player_data[game_id][player_id].client_id;
 				if (client_id_left_game === data.client_id) {
 					data.game_id = null;
+					data.player_id = null;
 					pubsub.publish('client-LeaveGame');
 				}
 				data.game_id_to_player_data[game_id][player_id].client_id = null;
@@ -50,6 +51,7 @@ define(function(require) {
 			}
 
 			if (client_id === data.client_id) {
+				data.player_id = player_id;
 				if (game_id !== data.game_id) {
 					data.game_id = game_id;
 					pubsub.publish('client-JoinGame');
@@ -81,6 +83,7 @@ define(function(require) {
 		resetData = function() {
 			data.client_id = null;
 			data.game_id = null;
+			data.player_id = null;
 			data.client_id_to_data = {};
 			data.game_id_to_game_state = {};
 			data.game_id_to_player_data = {};

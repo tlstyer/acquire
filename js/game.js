@@ -196,6 +196,33 @@ define(function(require) {
 				}
 			}
 		},
+		addGameHistoryMessage = function(game_history_message_id, player_id) {
+			var $message = $('#history-' + common_functions.getHyphenatedStringFromEnumName(enums.GameHistoryMessages[game_history_message_id])).clone().removeAttr('id');
+
+			$message.find('.username').text(common_data.game_id_to_player_data[common_data.game_id][player_id].username);
+
+			switch (game_history_message_id) {
+			case enums.GameHistoryMessages.DrewStartingTile:
+			case enums.GameHistoryMessages.DrewTile:
+				$message.find('.tile').text((arguments[2] + 1) + String.fromCharCode(arguments[3] + 65));
+				break;
+			}
+
+			$('.history').append($message);
+		},
+		setGameAction = function(game_action_id, player_id) {
+			var hyphenated_enum_name = common_functions.getHyphenatedStringFromEnumName(enums.GameActions[game_action_id]),
+				$action = $('#status-' + hyphenated_enum_name).clone().removeAttr('id');
+
+			$action.find('.username').text(common_data.game_id_to_player_data[common_data.game_id][player_id].username);
+			$('.status').empty().append($action);
+
+			$('.action > div').hide();
+			if (player_id === common_data.player_id) {
+				$action = $('#action-' + hyphenated_enum_name);
+				$action.show();
+			}
+		},
 		resetHtml = function() {
 			var x, y;
 			for (x = 0; x < 12; x++) {
@@ -220,6 +247,10 @@ define(function(require) {
 			$('.score td').removeClass('safe');
 			$('.score-player .name').text('');
 			$('.score .score-player').hide();
+
+			$('.history').empty();
+			$('.status').empty();
+			$('.action > div').hide();
 		};
 
 	resize();
@@ -231,11 +262,20 @@ define(function(require) {
 	pubsub.subscribe('server-SetGameBoardCell', setGameBoardCell);
 	pubsub.subscribe('server-SetGameBoard', setGameBoard);
 	pubsub.subscribe('server-SetScoreSheet', setScoreSheet);
+	pubsub.subscribe('server-AddGameHistoryMessage', addGameHistoryMessage);
+	pubsub.subscribe('server-SetGameAction', setGameAction);
 	pubsub.subscribe('client-LeaveGame', resetHtml);
 	pubsub.subscribe('network-close', resetHtml);
 
 	$('#leave-game').click(function() {
 		network.sendMessage(enums.CommandsToServer.LeaveGame);
+
+		return false;
+	});
+
+	$('#start-game').click(function() {
+		network.sendMessage(enums.CommandsToServer.StartGame);
+		$('#action-start-game').hide();
 
 		return false;
 	});
