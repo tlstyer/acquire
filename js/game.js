@@ -1,6 +1,7 @@
 define(function(require) {
 	var $ = require('jquery'),
 		common_data = require('common_data'),
+		common_functions = require('common_functions'),
 		enums = require('enums'),
 		network = require('network'),
 		pubsub = require('pubsub');
@@ -115,9 +116,7 @@ define(function(require) {
 		},
 		setGameBoardCell = function(x, y, game_board_type_id) {
 			var $cell = $('.board .y' + y + ' .x' + x),
-				cell_class = enums.GameBoardTypes[game_board_type_id].replace(/([A-Z])/g, function($1) {
-					return '-' + $1.toLowerCase();
-				}).substring(1);
+				cell_class = common_functions.getHyphenatedStringFromEnumName(enums.GameBoardTypes[game_board_type_id]);
 
 			$cell.attr('class', 'x' + x + ' ' + cell_class);
 		},
