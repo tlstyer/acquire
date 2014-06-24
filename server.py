@@ -365,12 +365,13 @@ class Game:
             self.send_initialization_messages(client)
 
     def remove_client(self, client):
-        client.game_id = None
-        if client.client_id in self.watcher_client_ids:
-            self.watcher_client_ids.discard(client.client_id)
-            AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, [[enums.CommandsToClient.ReturnWatcherToLobby.value, self.game_id, client.client_id]])
-        self.score_sheet.remove_client(client)
-        self.client_ids.discard(client.client_id)
+        if client.client_id in self.client_ids:
+            client.game_id = None
+            if client.client_id in self.watcher_client_ids:
+                self.watcher_client_ids.discard(client.client_id)
+                AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, [[enums.CommandsToClient.ReturnWatcherToLobby.value, self.game_id, client.client_id]])
+            self.score_sheet.remove_client(client)
+            self.client_ids.discard(client.client_id)
 
     def start_game(self, client):
         action = self.actions[0]
