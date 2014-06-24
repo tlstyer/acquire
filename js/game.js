@@ -250,7 +250,7 @@ define(function(require) {
 	});
 
 	$('#link-start-game').click(function() {
-		network.sendMessage(enums.CommandsToServer.StartGame);
+		network.sendMessage(enums.CommandsToServer.DoGameAction, enums.GameActions.StartGame);
 		$('#game-action-start-game').hide();
 
 		return false;
