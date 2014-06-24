@@ -59,7 +59,7 @@ body {
 	}
 }
 
-.board {
+#game-board {
 	position: absolute;
 	text-align: center;
 	font-weight: bold;
@@ -104,7 +104,7 @@ body {
 	}
 }
 
-.score {
+#score-sheet {
 	position: absolute;
 	font-weight: bold;
 	table-layout: fixed;
@@ -132,7 +132,7 @@ body {
 	}
 }
 
-.score-header {
+#score-sheet-header {
 	.name {
 		background-color: $color-player;
 	}
@@ -162,7 +162,7 @@ body {
 	}
 }
 
-.score-player {
+.score-sheet-player {
 	background-color: white;
 	display: none;
 	.safe {
@@ -170,22 +170,22 @@ body {
 	}
 }
 
-.score-available, .score-chain-size, .score-price {
+#score-sheet-available, #score-sheet-chain-size, #score-sheet-price {
 	background-color: $color-available-chain-size-price;
 	.safe {
 		background-color: $color-safe-chain;
 	}
 }
 
-.history, .status, .action, .links {
+#game-history, #game-status, #game-action, #game-links {
 	position: absolute;
 	padding-left: 3px;
 	padding-right: 3px;
 }
-.history {
+#game-history {
 	overflow-y: scroll;
 }
-.action {
+#game-action {
 	> div {
 		display: none;
 	}

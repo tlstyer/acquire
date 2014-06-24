@@ -29,7 +29,6 @@ define(function(require) {
 				$lobby_section.attr('id', 'lobby-game-' + game_id);
 				$lobby_section.attr('data-game-id', game_id);
 				$lobby_section.find('.header').text('Game #' + game_id);
-				$lobby_section.show();
 				$('#lobby-games').append($lobby_section);
 			}
 
@@ -54,21 +53,21 @@ define(function(require) {
 
 			// show/hide links as appropriate
 			if (state_id === enums.GameStates.Starting && !in_this_game) {
-				$lobby_section.find('.join-link').show();
+				$lobby_section.find('.link-join').show();
 			} else {
-				$lobby_section.find('.join-link').hide();
+				$lobby_section.find('.link-join').hide();
 			}
 
 			if (in_this_game) {
-				$lobby_section.find('.rejoin-link').show();
+				$lobby_section.find('.link-rejoin').show();
 			} else {
-				$lobby_section.find('.rejoin-link').hide();
+				$lobby_section.find('.link-rejoin').hide();
 			}
 
 			if (!in_this_game) {
-				$lobby_section.find('.watch-link').show();
+				$lobby_section.find('.link-watch').show();
 			} else {
-				$lobby_section.find('.watch-link').hide();
+				$lobby_section.find('.link-watch').hide();
 			}
 		},
 		setGamePlayerUsername = function(game_id, player_id, username) {
@@ -111,7 +110,7 @@ define(function(require) {
 	pubsub.subscribe('server-ReturnWatcherToLobby', returnWatcherToLobby);
 	pubsub.subscribe('network-close', resetHtml);
 
-	$('#create-game').click(function() {
+	$('#link-create-game').click(function() {
 		network.sendMessage(enums.CommandsToServer.CreateGame);
 
 		return false;
@@ -121,11 +120,11 @@ define(function(require) {
 		var $this = $(this),
 			game_id = parseInt($this.closest('.lobby-section').attr('data-game-id'), 10);
 
-		if ($(this).hasClass('join-link')) {
+		if ($(this).hasClass('link-join')) {
 			network.sendMessage(enums.CommandsToServer.JoinGame, game_id);
-		} else if ($(this).hasClass('rejoin-link')) {
+		} else if ($(this).hasClass('link-rejoin')) {
 			network.sendMessage(enums.CommandsToServer.RejoinGame, game_id);
-		} else if ($(this).hasClass('watch-link')) {
+		} else if ($(this).hasClass('link-watch')) {
 			network.sendMessage(enums.CommandsToServer.WatchGame, game_id);
 		}
 

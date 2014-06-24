@@ -10,19 +10,13 @@
 		<script data-main="js/main" src="node_modules/requirejs/require.js"></script>
 	</head>
 	<body>
-		<div class="page" id="websocket-not-supported">
+		<div class="page" id="page-websocket-not-supported">
 			<h1>Welcome to Acquire!</h1>
 			<p>
 				Sorry, your browser doesn't support WebSockets. Please use a supported browser.
 			</p>
 		</div>
-		<div class="page" id="connecting">
-			<h1>Welcome to Acquire!</h1>
-			<p>
-				Connecting to the server...
-			</p>
-		</div>
-		<div class="page" id="login">
+		<div class="page" id="page-login">
 			<h1>Welcome to Acquire!</h1>
 			<div id="login-error-message"></div>
 			<form id="login-form">
@@ -31,7 +25,13 @@
 				<input type="submit" value="Login">
 			</form>
 		</div>
-		<div class="page" id="lobby">
+		<div class="page" id="page-connecting">
+			<h1>Welcome to Acquire!</h1>
+			<p>
+				Connecting to the server...
+			</p>
+		</div>
+		<div class="page" id="page-lobby">
 			<h1>Acquire Lobby</h1>
 			<div class="lobby-section">
 				<div class="header">
@@ -40,30 +40,14 @@
 				<div id="clients-in-lobby">
 				</div>
 			</div>
-			<div class="lobby-section" id="lobby-game-template" style="display: none">
-				<div>
-					<span class="header"></span>
-					<span class="state"></span>
-					<a href="javascript:" class="join-link" style="display: none">Join</a>
-					<a href="javascript:" class="rejoin-link" style="display: none">Rejoin</a>
-					<a href="javascript:" class="watch-link" style="display: none">Watch</a>
-				</div>
-				<div class="player"></div>
-				<div class="player"></div>
-				<div class="player"></div>
-				<div class="player"></div>
-				<div class="player"></div>
-				<div class="player"></div>
-				<div class="watchers"></div>
-			</div>
 			<div id="lobby-games">
 			</div>
-			<div class="lobby-section" id="lobby-section-create-game">
-				<a href="javascript:" id="create-game">Create Game</a>
+			<div class="lobby-section">
+				<a href="javascript:" id="link-create-game">Create Game</a>
 			</div>
 		</div>
-		<div class="page" id="game">
-			<table class="board">
+		<div class="page" id="page-game">
+			<table id="game-board">
 				<tbody>
 					<tr class="y0"><td class="x0">1A</td><td class="x1">2A</td><td class="x2">3A</td><td class="x3">4A</td><td class="x4">5A</td><td class="x5">6A</td><td class="x6">7A</td><td class="x7">8A</td><td class="x8">9A</td><td class="x9">10A</td><td class="x10">11A</td><td class="x11">12A</td></tr>
 					<tr class="y1"><td class="x0">1B</td><td class="x1">2B</td><td class="x2">3B</td><td class="x3">4B</td><td class="x4">5B</td><td class="x5">6B</td><td class="x6">7B</td><td class="x7">8B</td><td class="x8">9B</td><td class="x9">10B</td><td class="x10">11B</td><td class="x11">12B</td></tr>
@@ -76,9 +60,9 @@
 					<tr class="y8"><td class="x0">1I</td><td class="x1">2I</td><td class="x2">3I</td><td class="x3">4I</td><td class="x4">5I</td><td class="x5">6I</td><td class="x6">7I</td><td class="x7">8I</td><td class="x8">9I</td><td class="x9">10I</td><td class="x10">11I</td><td class="x11">12I</td></tr>
 				</tbody>
 			</table>
-			<table class="score">
+			<table id="score-sheet">
 				<tbody>
-					<tr class="score-header">
+					<tr id="score-sheet-header">
 						<td class="name">Player</td>
 						<td class="luxor">L</td>
 						<td class="tower">T</td>
@@ -90,7 +74,7 @@
 						<td class="cash">Cash</td>
 						<td class="net">Net</td>
 					</tr>
-					<tr class="score-player">
+					<tr class="score-sheet-player">
 						<td class="name"></td>
 						<td class="luxor"></td>
 						<td class="tower"></td>
@@ -102,7 +86,7 @@
 						<td class="cash">6000</td>
 						<td class="net">6000</td>
 					</tr>
-					<tr class="score-player">
+					<tr class="score-sheet-player">
 						<td class="name"></td>
 						<td class="luxor"></td>
 						<td class="tower"></td>
@@ -114,7 +98,7 @@
 						<td class="cash">6000</td>
 						<td class="net">6000</td>
 					</tr>
-					<tr class="score-player">
+					<tr class="score-sheet-player">
 						<td class="name"></td>
 						<td class="luxor"></td>
 						<td class="tower"></td>
@@ -126,7 +110,7 @@
 						<td class="cash">6000</td>
 						<td class="net">6000</td>
 					</tr>
-					<tr class="score-player">
+					<tr class="score-sheet-player">
 						<td class="name"></td>
 						<td class="luxor"></td>
 						<td class="tower"></td>
@@ -138,7 +122,7 @@
 						<td class="cash">6000</td>
 						<td class="net">6000</td>
 					</tr>
-					<tr class="score-player">
+					<tr class="score-sheet-player">
 						<td class="name"></td>
 						<td class="luxor"></td>
 						<td class="tower"></td>
@@ -150,7 +134,7 @@
 						<td class="cash">6000</td>
 						<td class="net">6000</td>
 					</tr>
-					<tr class="score-player">
+					<tr class="score-sheet-player">
 						<td class="name"></td>
 						<td class="luxor"></td>
 						<td class="tower"></td>
@@ -162,7 +146,7 @@
 						<td class="cash">6000</td>
 						<td class="net">6000</td>
 					</tr>
-					<tr class="score-available">
+					<tr id="score-sheet-available">
 						<td class="name">Available</td>
 						<td class="luxor">25</td>
 						<td class="tower">25</td>
@@ -172,7 +156,7 @@
 						<td class="continental">25</td>
 						<td class="imperial">25</td>
 					</tr>
-					<tr class="score-chain-size">
+					<tr id="score-sheet-chain-size">
 						<td class="name">Chain Size</td>
 						<td class="luxor">-</td>
 						<td class="tower">-</td>
@@ -182,7 +166,7 @@
 						<td class="continental">-</td>
 						<td class="imperial">-</td>
 					</tr>
-					<tr class="score-price">
+					<tr id="score-sheet-price">
 						<td class="name">Price ($00)</td>
 						<td class="luxor">-</td>
 						<td class="tower">-</td>
@@ -194,24 +178,40 @@
 					</tr>
 				</tbody>
 			</table>
-			<div class="history">
+			<div id="game-history">
 			</div>
-			<div class="status">
+			<div id="game-status">
 			</div>
-			<div class="action">
-				<div id="action-start-game"><a href="javascript:" id="start-game">Start Game</a></div>
-				<div id="action-play-tile">Play a tile</div>
+			<div id="game-action">
+				<div id="game-action-start-game"><a href="javascript:" id="link-start-game">Start Game</a></div>
+				<div id="game-action-play-tile">Play a tile</div>
 			</div>
-			<div class="links">
-				<a href="javascript:" id="leave-game">Leave Game</a>
+			<div id="game-links">
+				<a href="javascript:" id="link-leave-game">Leave Game</a>
 			</div>
 		</div>
 		<div style="display: none">
-			<div id="history-drew-starting-tile"><span class="username"></span> drew starting tile <span class="tile"></span>.</div>
-			<div id="history-started-game"><span class="username"></span> started the game.</div>
-			<div id="history-drew-tile">You drew tile <span class="tile"></span>.</div>
-			<div id="status-start-game">Waiting for <span class="username"></span> to start the game.</div>
-			<div id="status-play-tile">Waiting for <span class="username"></span> to play a tile.</div>
+			<div class="lobby-section" id="lobby-game-template">
+				<div>
+					<span class="header"></span>
+					<span class="state"></span>
+					<a href="javascript:" class="link-join" style="display: none">Join</a>
+					<a href="javascript:" class="link-rejoin" style="display: none">Rejoin</a>
+					<a href="javascript:" class="link-watch" style="display: none">Watch</a>
+				</div>
+				<div class="player"></div>
+				<div class="player"></div>
+				<div class="player"></div>
+				<div class="player"></div>
+				<div class="player"></div>
+				<div class="player"></div>
+				<div class="watchers"></div>
+			</div>
+			<div id="game-history-drew-starting-tile"><span class="username"></span> drew starting tile <span class="tile"></span>.</div>
+			<div id="game-history-started-game"><span class="username"></span> started the game.</div>
+			<div id="game-history-drew-tile">You drew tile <span class="tile"></span>.</div>
+			<div id="game-status-start-game">Waiting for <span class="username"></span> to start the game.</div>
+			<div id="game-status-play-tile">Waiting for <span class="username"></span> to play a tile.</div>
 		</div>
 	</body>
 </html>

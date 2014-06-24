@@ -9,8 +9,8 @@ define(function(require) {
 	var resize = function() {
 			var half_window_width = Math.floor($(window).width() / 2),
 				half_window_width_ceil = Math.ceil($(window).width() / 2),
-				$board = $('.board'),
-				$score = $('.score'),
+				$game_board = $('#game-board'),
+				$score_sheet = $('#score-sheet'),
 				cell_width = 0,
 				num_rows = 4,
 				row_height = 0,
@@ -19,20 +19,20 @@ define(function(require) {
 				y = $(window).height();
 
 			cell_width = Math.floor((half_window_width - 2) / 12);
-			$board.css('left', 0);
-			$board.css('top', 0);
-			$board.css('width', cell_width * 12 + 2);
-			$board.css('height', cell_width * 9 + 2);
-			$board.css('font-size', Math.floor(cell_width * 2 / 5) + 'px');
+			$game_board.css('left', 0);
+			$game_board.css('top', 0);
+			$game_board.css('width', cell_width * 12 + 2);
+			$game_board.css('height', cell_width * 9 + 2);
+			$game_board.css('font-size', Math.floor(cell_width * 2 / 5) + 'px');
 
 			cell_width = Math.floor((half_window_width - 2) / 18);
-			$score.css('left', half_window_width);
-			$score.css('top', 0);
-			$score.css('width', cell_width * 18 + 2);
-			$score.find('tr').css('height', cell_width + 'px');
-			$score.css('font-size', Math.floor(cell_width * 2 / 3) + 'px');
+			$score_sheet.css('left', half_window_width);
+			$score_sheet.css('top', 0);
+			$score_sheet.css('width', cell_width * 18 + 2);
+			$score_sheet.find('tr').css('height', cell_width + 'px');
+			$score_sheet.css('font-size', Math.floor(cell_width * 2 / 3) + 'px');
 
-			$('.score-player').each(function() {
+			$score_sheet.find('.score-sheet-player').each(function() {
 				if ($(this).css('display') !== 'none') {
 					num_rows++;
 				}
@@ -40,10 +40,10 @@ define(function(require) {
 
 			row_height = Math.floor(cell_width * 2 / 3);
 			selectors_and_heights = [
-				['.links', row_height],
-				['.action', row_height * 3],
-				['.status', row_height * 2],
-				['.history', $(window).height() - (num_rows * cell_width + 2) - row_height * 6]
+				['#game-links', row_height],
+				['#game-action', row_height * 3],
+				['#game-status', row_height * 2],
+				['#game-history', $(window).height() - (num_rows * cell_width + 2) - row_height * 6]
 			];
 			$.each(selectors_and_heights, function(index, value) {
 				$div = $(value[0]);
@@ -63,7 +63,7 @@ define(function(require) {
 				if (player_data.hasOwnProperty(player_id)) {
 					player_datum = player_data[player_id];
 
-					$score_player = $('.score .score-player:eq(' + player_id + ')');
+					$score_player = $('#score-sheet .score-sheet-player:eq(' + player_id + ')');
 					$score_player_name = $score_player.children('.name');
 
 					$score_player_name.text(player_datum.username);
@@ -82,7 +82,7 @@ define(function(require) {
 			var $score_player, $score_player_name;
 
 			if (game_id === common_data.game_id) {
-				$score_player = $('.score .score-player:eq(' + player_id + ')');
+				$score_player = $('#score-sheet .score-sheet-player:eq(' + player_id + ')');
 				$score_player_name = $score_player.children('.name');
 
 				$score_player_name.text(username);
@@ -98,7 +98,7 @@ define(function(require) {
 			var $score_player, $score_player_name;
 
 			if (game_id === common_data.game_id) {
-				$score_player = $('.score .score-player:eq(' + player_id + ')');
+				$score_player = $('#score-sheet .score-sheet-player:eq(' + player_id + ')');
 				$score_player_name = $score_player.children('.name');
 
 				if (client_id === null) {
@@ -115,7 +115,7 @@ define(function(require) {
 			}
 		},
 		setGameBoardCell = function(x, y, game_board_type_id) {
-			var $cell = $('.board .y' + y + ' .x' + x),
+			var $cell = $('#game-board .y' + y + ' .x' + x),
 				cell_class = common_functions.getHyphenatedStringFromEnumName(enums.GameBoardTypes[game_board_type_id]);
 
 			$cell.attr('class', 'x' + x + ' ' + cell_class);
@@ -145,9 +145,9 @@ define(function(require) {
 					data *= 100;
 				}
 
-				$row = $('.score .score-player:eq(' + row + ')');
+				$row = $('#score-sheet .score-sheet-player:eq(' + row + ')');
 			} else if (row === enums.ScoreSheetRows.Available) {
-				$row = $('.score .score-available');
+				$row = $('#score-sheet-available');
 			} else if (row === enums.ScoreSheetRows.ChainSize) {
 				if (data >= 11) {
 					mark_chain_as_safe = true;
@@ -157,13 +157,13 @@ define(function(require) {
 					data = '-';
 				}
 
-				$row = $('.score .score-chain-size');
+				$row = $('#score-sheet-chain-size');
 			} else if (row === enums.ScoreSheetRows.Price) {
 				if (data === 0) {
 					data = '-';
 				}
 
-				$row = $('.score .score-price');
+				$row = $('#score-sheet-price');
 			}
 
 			index_class = enums.ScoreSheetIndexes[index].toLowerCase();
@@ -171,7 +171,7 @@ define(function(require) {
 			$row.children('.' + index_class).text(data);
 
 			if (mark_chain_as_safe) {
-				$('.score .' + index_class).addClass('safe');
+				$('#score-sheet .' + index_class).addClass('safe');
 			}
 		},
 		setScoreSheet = function(score_sheet_data) {
@@ -197,7 +197,7 @@ define(function(require) {
 			}
 		},
 		addGameHistoryMessage = function(game_history_message_id, player_id) {
-			var $message = $('#history-' + common_functions.getHyphenatedStringFromEnumName(enums.GameHistoryMessages[game_history_message_id])).clone().removeAttr('id');
+			var $message = $('#game-history-' + common_functions.getHyphenatedStringFromEnumName(enums.GameHistoryMessages[game_history_message_id])).clone().removeAttr('id');
 
 			$message.find('.username').text(common_data.game_id_to_player_data[common_data.game_id][player_id].username);
 
@@ -208,18 +208,18 @@ define(function(require) {
 				break;
 			}
 
-			$('.history').append($message);
+			$('#game-history').append($message);
 		},
 		setGameAction = function(game_action_id, player_id) {
 			var hyphenated_enum_name = common_functions.getHyphenatedStringFromEnumName(enums.GameActions[game_action_id]),
-				$action = $('#status-' + hyphenated_enum_name).clone().removeAttr('id');
+				$action = $('#game-status-' + hyphenated_enum_name).clone().removeAttr('id');
 
 			$action.find('.username').text(common_data.game_id_to_player_data[common_data.game_id][player_id].username);
-			$('.status').empty().append($action);
+			$('#game-status').empty().append($action);
 
-			$('.action > div').hide();
+			$('#game-action > div').hide();
 			if (player_id === common_data.player_id) {
-				$action = $('#action-' + hyphenated_enum_name);
+				$action = $('#game-action-' + hyphenated_enum_name);
 				$action.show();
 			}
 		},
@@ -244,13 +244,13 @@ define(function(require) {
 				[0, 0, 0, 0, 0, 0, 0],
 				[0, 0, 0, 0, 0, 0, 0]
 			]);
-			$('.score td').removeClass('safe');
-			$('.score-player .name').text('');
-			$('.score .score-player').hide();
+			$('#score-sheet td').removeClass('safe');
+			$('#score-sheet .score-sheet-player .name').text('');
+			$('#score-sheet .score-sheet-player').hide();
 
-			$('.history').empty();
-			$('.status').empty();
-			$('.action > div').hide();
+			$('#game-history').empty();
+			$('#game-status').empty();
+			$('#game-action > div').hide();
 		};
 
 	resize();
@@ -267,15 +267,15 @@ define(function(require) {
 	pubsub.subscribe('client-LeaveGame', resetHtml);
 	pubsub.subscribe('network-close', resetHtml);
 
-	$('#leave-game').click(function() {
+	$('#link-leave-game').click(function() {
 		network.sendMessage(enums.CommandsToServer.LeaveGame);
 
 		return false;
 	});
 
-	$('#start-game').click(function() {
+	$('#link-start-game').click(function() {
 		network.sendMessage(enums.CommandsToServer.StartGame);
-		$('#action-start-game').hide();
+		$('#game-action-start-game').hide();
 
 		return false;
 	});

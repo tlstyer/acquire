@@ -5,7 +5,7 @@ define(function(require) {
 		pubsub = require('pubsub'),
 		show_page = function(page) {
 			$('.page').hide();
-			$('#' + page).show();
+			$('#page-' + page).show();
 		};
 
 	require('lobby');
