@@ -5,17 +5,19 @@ define(function(require) {
 		network = require('network'),
 		pubsub = require('pubsub');
 
-	var setClientIdToData = function(client_id, username, ip_and_port) {
-			if (username === null) {
-				$('#clients-in-lobby .client-' + client_id).remove();
-			} else {
-				$('<div/>').attr('class', 'client-' + client_id).text(username).appendTo('#clients-in-lobby');
-			}
+	var addLobbyClient = function(client_id) {
+			var $div = $('<div/>'),
+				client_data = common_data.client_id_to_data[client_id];
+
+			$div.attr('class', 'client-' + client_id);
+			$div.attr('title', client_data.username + ' (' + client_data.ip_and_port + ')');
+			$div.text(client_data.username);
+			$div.appendTo('#clients-in-lobby');
 		},
-		clientLeftGame = function(client_id) {
-			$('<div/>').attr('class', 'client-' + client_id).text(common_data.client_id_to_data[client_id].username).appendTo('#clients-in-lobby');
+		removeLobbyClient = function(client_id) {
+			$('#clients-in-lobby .client-' + client_id).remove();
 		},
-		updateGameStateAndLinks = function(game_id) {
+		setGameState = function(game_id) {
 			var $lobby_section = $('#lobby-game-' + game_id),
 				state_id = common_data.game_id_to_game_state[game_id],
 				player_data = null,
@@ -70,44 +72,44 @@ define(function(require) {
 				$lobby_section.find('.link-watch').hide();
 			}
 		},
-		setGamePlayerUsername = function(game_id, player_id, username) {
-			var $player = $('#lobby-game-' + game_id + ' .player:eq(' + player_id + ')');
-			$player.text(username);
-			$player.addClass('missing');
-		},
-		setGamePlayerClientId = function(game_id, player_id, client_id) {
-			var $player = $('#lobby-game-' + game_id + ' .player:eq(' + player_id + ')');
+		setGamePlayerData = function(game_id, player_id, username, client_id) {
+			var $player = $('#lobby-game-' + game_id + ' .player:eq(' + player_id + ')'),
+				ip_and_port = 'missing';
 
 			if (client_id === null) {
 				$player.addClass('missing');
 			} else {
-				$('#clients-in-lobby .client-' + client_id).remove();
-
-				$player.text(common_data.client_id_to_data[client_id].username);
 				$player.removeClass('missing');
+				ip_and_port = common_data.client_id_to_data[client_id].ip_and_port;
 			}
+			$player.attr('title', username + ' (' + ip_and_port + ')');
+			$player.text(username);
+
+			setGameState(game_id);
 		},
-		setGameWatcherClientId = function(game_id, client_id) {
-			$('#clients-in-lobby .client-' + client_id).remove();
-			$('<div/>').attr('class', 'client-' + client_id).text(common_data.client_id_to_data[client_id].username).appendTo('#lobby-game-' + game_id + ' .watchers');
+		addGameWatcher = function(game_id, client_id) {
+			var $div = $('<div/>'),
+				client_data = common_data.client_id_to_data[client_id];
+
+			$div.attr('class', 'client-' + client_id);
+			$div.attr('title', client_data.username + ' (' + client_data.ip_and_port + ')');
+			$div.text(client_data.username);
+			$div.appendTo('#lobby-game-' + game_id + ' .watchers');
 		},
-		returnWatcherToLobby = function(game_id, client_id) {
+		removeGameWatcher = function(game_id, client_id) {
 			$('#lobby-game-' + game_id + ' .watchers .client-' + client_id).remove();
-			clientLeftGame(client_id);
 		},
 		resetHtml = function() {
 			$('#clients-in-lobby').empty();
 			$('#lobby-games').empty();
 		};
 
-	pubsub.subscribe('server-SetClientIdToData', setClientIdToData);
-	pubsub.subscribe('client-ClientLeftGame', clientLeftGame);
-	pubsub.subscribe('client-UpdateGameState', updateGameStateAndLinks);
-	pubsub.subscribe('client-UpdateGamePlayer', updateGameStateAndLinks);
-	pubsub.subscribe('server-SetGamePlayerUsername', setGamePlayerUsername);
-	pubsub.subscribe('server-SetGamePlayerClientId', setGamePlayerClientId);
-	pubsub.subscribe('server-SetGameWatcherClientId', setGameWatcherClientId);
-	pubsub.subscribe('server-ReturnWatcherToLobby', returnWatcherToLobby);
+	pubsub.subscribe('client-AddLobbyClient', addLobbyClient);
+	pubsub.subscribe('client-RemoveLobbyClient', removeLobbyClient);
+	pubsub.subscribe('client-SetGameState', setGameState);
+	pubsub.subscribe('client-SetGamePlayerData', setGamePlayerData);
+	pubsub.subscribe('client-AddGameWatcher', addGameWatcher);
+	pubsub.subscribe('client-RemoveGameWatcher', removeGameWatcher);
 	pubsub.subscribe('network-close', resetHtml);
 
 	$('#link-create-game').click(function() {

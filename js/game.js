@@ -55,47 +55,10 @@ define(function(require) {
 				y -= value[1];
 			});
 		},
-		joinGame = function() {
-			var player_data, player_id, player_datum, $score_player, $score_player_name;
-
-			player_data = common_data.game_id_to_player_data[common_data.game_id];
-			for (player_id in player_data) {
-				if (player_data.hasOwnProperty(player_id)) {
-					player_datum = player_data[player_id];
-
-					$score_player = $('#score-sheet .score-sheet-player:eq(' + player_id + ')');
-					$score_player_name = $score_player.children('.name');
-
-					$score_player_name.text(player_datum.username);
-					if (player_datum.client_id === null) {
-						$score_player_name.addClass('missing');
-					}
-
-					if ($score_player.css('display') === 'none') {
-						$score_player.show();
-						resize();
-					}
-				}
-			}
-		},
-		setGamePlayerUsername = function(game_id, player_id, username) {
-			var $score_player, $score_player_name;
-
-			if (game_id === common_data.game_id) {
-				$score_player = $('#score-sheet .score-sheet-player:eq(' + player_id + ')');
-				$score_player_name = $score_player.children('.name');
-
-				$score_player_name.text(username);
-				$score_player_name.addClass('missing');
-
-				if ($score_player.css('display') === 'none') {
-					$score_player.show();
-					resize();
-				}
-			}
-		},
-		setGamePlayerClientId = function(game_id, player_id, client_id) {
-			var $score_player, $score_player_name;
+		setGamePlayerData = function(game_id, player_id, username, client_id) {
+			var $score_player = null,
+				$score_player_name = null,
+				ip_and_port = 'missing';
 
 			if (game_id === common_data.game_id) {
 				$score_player = $('#score-sheet .score-sheet-player:eq(' + player_id + ')');
@@ -104,13 +67,27 @@ define(function(require) {
 				if (client_id === null) {
 					$score_player_name.addClass('missing');
 				} else {
-					$score_player_name.text(common_data.client_id_to_data[client_id].username);
 					$score_player_name.removeClass('missing');
+					ip_and_port = common_data.client_id_to_data[client_id].ip_and_port;
 				}
+				$score_player_name.attr('title', username + ' (' + ip_and_port + ')');
+				$score_player_name.text(username);
 
 				if ($score_player.css('display') === 'none') {
 					$score_player.show();
 					resize();
+				}
+			}
+		},
+		joinGame = function() {
+			var player_id = 0,
+				player_data = common_data.game_id_to_player_data[common_data.game_id],
+				player_datum = null;
+
+			for (player_id in player_data) {
+				if (player_data.hasOwnProperty(player_id) && player_id !== common_data.player_id) {
+					player_datum = player_data[player_id];
+					setGamePlayerData(common_data.game_id, player_id, player_datum.username, player_datum.client_id);
 				}
 			}
 		},
@@ -256,9 +233,8 @@ define(function(require) {
 	resize();
 	$(window).resize(resize);
 
+	pubsub.subscribe('client-SetGamePlayerData', setGamePlayerData);
 	pubsub.subscribe('client-JoinGame', joinGame);
-	pubsub.subscribe('server-SetGamePlayerUsername', setGamePlayerUsername);
-	pubsub.subscribe('server-SetGamePlayerClientId', setGamePlayerClientId);
 	pubsub.subscribe('server-SetGameBoardCell', setGameBoardCell);
 	pubsub.subscribe('server-SetGameBoard', setGameBoard);
 	pubsub.subscribe('server-SetScoreSheet', setScoreSheet);

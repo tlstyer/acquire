@@ -8,11 +8,15 @@ define(function(require) {
 		setClientIdToData = function(client_id, username, ip_and_port) {
 			if (username === null) {
 				delete data.client_id_to_data[client_id];
+
+				pubsub.publish('client-RemoveLobbyClient', client_id);
 			} else {
 				data.client_id_to_data[client_id] = {
 					username: username,
 					ip_and_port: ip_and_port
 				};
+
+				pubsub.publish('client-AddLobbyClient', client_id);
 			}
 		},
 		setGameState = function(game_id, state_id) {
@@ -21,7 +25,7 @@ define(function(require) {
 				data.game_id_to_player_data[game_id] = {};
 			}
 
-			pubsub.publish('client-UpdateGameState', game_id);
+			pubsub.publish('client-SetGameState', game_id);
 		},
 		setGamePlayerUsername = function(game_id, player_id, username) {
 			data.game_id_to_player_data[game_id][player_id] = {
@@ -29,36 +33,47 @@ define(function(require) {
 				client_id: null
 			};
 
-			pubsub.publish('client-UpdateGamePlayer', game_id);
+			pubsub.publish('client-SetGamePlayerData', game_id, player_id, username, null);
 		},
 		setGamePlayerClientId = function(game_id, player_id, client_id) {
-			var client_id_left_game;
+			var player_data, old_client_id, client_data, old_game_id;
 
 			if (client_id === null) {
-				client_id_left_game = data.game_id_to_player_data[game_id][player_id].client_id;
-				if (client_id_left_game === data.client_id) {
+				player_data = data.game_id_to_player_data[game_id][player_id];
+				old_client_id = player_data.client_id;
+
+				if (old_client_id === data.client_id) {
 					data.game_id = null;
 					data.player_id = null;
+				}
+
+				player_data.client_id = null;
+
+				pubsub.publish('client-SetGamePlayerData', game_id, player_id, player_data.username, null);
+				pubsub.publish('client-AddLobbyClient', old_client_id);
+				if (old_client_id === data.client_id) {
 					pubsub.publish('client-LeaveGame');
 				}
-				data.game_id_to_player_data[game_id][player_id].client_id = null;
-				pubsub.publish('client-ClientLeftGame', client_id_left_game);
 			} else {
+				client_data = data.client_id_to_data[client_id];
+				old_game_id = data.game_id;
+
+				if (client_id === data.client_id) {
+					data.game_id = game_id;
+					data.player_id = player_id;
+				}
+
 				data.game_id_to_player_data[game_id][player_id] = {
-					username: data.client_id_to_data[client_id].username,
+					username: client_data.username,
 					client_id: client_id
 				};
-			}
 
-			if (client_id === data.client_id) {
-				data.player_id = player_id;
-				if (game_id !== data.game_id) {
-					data.game_id = game_id;
+				pubsub.publish('client-RemoveLobbyClient', client_id);
+				pubsub.publish('client-SetGamePlayerData', game_id, player_id, client_data.username, client_id);
+				if (game_id !== old_game_id && client_id === data.client_id) {
 					pubsub.publish('client-JoinGame');
 				}
 			}
-
-			pubsub.publish('client-UpdateGamePlayer', game_id);
 		},
 		setGameWatcherClientId = function(game_id, client_id) {
 			if (!data.game_id_to_watcher_client_ids.hasOwnProperty(game_id)) {
@@ -68,6 +83,11 @@ define(function(require) {
 
 			if (client_id === data.client_id) {
 				data.game_id = game_id;
+			}
+
+			pubsub.publish('client-RemoveLobbyClient', client_id);
+			pubsub.publish('client-AddGameWatcher', game_id, client_id);
+			if (client_id === data.client_id) {
 				pubsub.publish('client-JoinGame');
 			}
 		},
@@ -77,6 +97,11 @@ define(function(require) {
 
 			if (client_id === data.client_id) {
 				data.game_id = null;
+			}
+
+			pubsub.publish('client-RemoveGameWatcher', game_id, client_id);
+			pubsub.publish('client-AddLobbyClient', client_id);
+			if (client_id === data.client_id) {
 				pubsub.publish('client-LeaveGame');
 			}
 		},
