@@ -3,9 +3,14 @@ define(function(require) {
 		enums = require('enums'),
 		network = require('network'),
 		pubsub = require('pubsub'),
+		current_page = null,
 		show_page = function(page) {
-			$('.page').hide();
-			$('#page-' + page).show();
+			if (page !== current_page) {
+				$('.page').hide();
+				$('#page-' + page).show();
+
+				current_page = page;
+			}
 		};
 
 	require('lobby');
