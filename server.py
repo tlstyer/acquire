@@ -84,8 +84,7 @@ class AcquireServerProtocol(autobahn.asyncio.websocket.WebSocketServerProtocol):
         print(self.client_id, 'close')
 
         if self.game_id is not None:
-            game = AcquireServerProtocol.game_id_to_game[self.game_id]
-            game.remove_client(self)
+            AcquireServerProtocol.game_id_to_game[self.game_id].remove_client(self)
 
         AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, [[enums.CommandsToClient.SetClientIdToData.value, self.client_id, None, None]])
         self.flush_pending_messages()
@@ -118,36 +117,28 @@ class AcquireServerProtocol(autobahn.asyncio.websocket.WebSocketServerProtocol):
 
     def onMessageCreateGame(self):
         if self.game_id is None:
-            game_id = AcquireServerProtocol.next_game_id
+            AcquireServerProtocol.game_id_to_game[AcquireServerProtocol.next_game_id] = Game(AcquireServerProtocol.next_game_id, self)
             AcquireServerProtocol.next_game_id += 1
-
-            game = Game(game_id, self)
-            AcquireServerProtocol.game_id_to_game[game_id] = game
 
     def onMessageJoinGame(self, game_id):
         if self.game_id is None and game_id in AcquireServerProtocol.game_id_to_game:
-            game = AcquireServerProtocol.game_id_to_game[game_id]
-            game.join_game(self)
+            AcquireServerProtocol.game_id_to_game[game_id].join_game(self)
 
     def onMessageRejoinGame(self, game_id):
         if self.game_id is None and game_id in AcquireServerProtocol.game_id_to_game:
-            game = AcquireServerProtocol.game_id_to_game[game_id]
-            game.rejoin_game(self)
+            AcquireServerProtocol.game_id_to_game[game_id].rejoin_game(self)
 
     def onMessageWatchGame(self, game_id):
         if self.game_id is None and game_id in AcquireServerProtocol.game_id_to_game:
-            game = AcquireServerProtocol.game_id_to_game[game_id]
-            game.watch_game(self)
+            AcquireServerProtocol.game_id_to_game[game_id].watch_game(self)
 
     def onMessageLeaveGame(self):
         if self.game_id is not None:
-            game = AcquireServerProtocol.game_id_to_game[self.game_id]
-            game.remove_client(self)
+            AcquireServerProtocol.game_id_to_game[self.game_id].remove_client(self)
 
     def onMessageStartGame(self):
         if self.game_id is not None:
-            game = AcquireServerProtocol.game_id_to_game[self.game_id]
-            game.start_game(self)
+            AcquireServerProtocol.game_id_to_game[self.game_id].start_game(self)
 
     @staticmethod
     def add_pending_messages(client_ids, messages):
@@ -223,19 +214,23 @@ class ScoreSheet:
         set_game_player_client_id = enums.CommandsToClient.SetGamePlayerClientId.value
         set_game_board_cell = enums.CommandsToClient.SetGameBoardCell.value
 
-        correct_player_id = 0
-        for player_id, player_datum in enumerate(self.player_data):
+        # update player_ids for all clients in game
+        player_id = 0
+        for player_datum in self.player_data:
             if player_datum[client_index] is not None:
-                player_datum[client_index].player_id = correct_player_id
-            correct_player_id += 1
+                player_datum[client_index].player_id = player_id
+            player_id += 1
 
         for player_id, player_datum in enumerate(self.player_data):
+            # tell everybody about player changes
             player_datum = self.player_data[player_id]
             if player_id >= client.player_id:
                 if player_datum[client_index] is None:
                     messages_all.append([set_game_player_username, self.game_id, player_id, player_datum[username_index]])
                 else:
                     messages_all.append([set_game_player_client_id, self.game_id, player_id, player_datum[client_index].client_id])
+
+            # tell client about other starting tiles
             if player_id != client.player_id:
                 starting_tile = player_datum[starting_tile_index]
                 messages_client.append([set_game_board_cell, starting_tile[0], starting_tile[1], nothing_yet])
@@ -332,13 +327,13 @@ class Game:
 
     def join_game(self, client):
         if self.state == enums.GameStates.Starting.value and not self.score_sheet.is_username_in_game(client.username):
+            self.player_tiles.append(set())
             self.client_ids.add(client.client_id)
             client.game_id = self.game_id
             starting_tile = self.tile_bag.get_tile()
             self.game_board.set_cell(starting_tile, enums.GameBoardTypes.NothingYet.value)
             previous_creator_player_id = self.score_sheet.get_creator_player_id()
             self.score_sheet.add_player(client, starting_tile)
-            self.player_tiles.append(set())
             message = [enums.CommandsToClient.AddGameHistoryMessage.value, enums.GameHistoryMessages.DrewStartingTile.value, client.player_id, starting_tile[0], starting_tile[1]]
             AcquireServerProtocol.add_pending_messages(self.client_ids, [message])
             creator_player_id = self.score_sheet.get_creator_player_id()
@@ -381,6 +376,7 @@ class Game:
             self.state = enums.GameStates.InProgress.value
             AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, [[enums.CommandsToClient.SetGameState.value, self.game_id, self.state]])
 
+            # draw initial tiles
             add_game_history_message = enums.CommandsToClient.AddGameHistoryMessage.value
             set_game_board_cell = enums.CommandsToClient.SetGameBoardCell.value
             client_index = enums.ScoreSheetIndexes.Client.value
@@ -397,14 +393,17 @@ class Game:
                 if client2 is not None:
                     AcquireServerProtocol.add_pending_messages({client2.client_id}, messages)
 
+            # prepare actions for next turn
             self.actions.popleft()
             self.actions.append([enums.GameActions.PlayTile, 0])
             self.actions.append([enums.GameActions.PurchaseStock, 0])
             self.send_action_message(self.client_ids)
 
     def send_initialization_messages(self, client):
+        # game board
         messages = [[enums.CommandsToClient.SetGameBoard.value, self.game_board.x_to_y_to_board_type]]
 
+        # score sheet
         net_index = enums.ScoreSheetIndexes.Net.value
         score_sheet_data = [
             [x[:net_index + 1] for x in self.score_sheet.player_data],
@@ -414,6 +413,7 @@ class Game:
         ]
         messages.append([enums.CommandsToClient.SetScoreSheet.value, score_sheet_data])
 
+        # player's tiles
         if client.player_id is not None:
             set_game_board_cell = enums.CommandsToClient.SetGameBoardCell.value
             i_have_this = enums.GameBoardTypes.IHaveThis.value
