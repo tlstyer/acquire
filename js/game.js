@@ -4,9 +4,10 @@ define(function(require) {
 		common_functions = require('common_functions'),
 		enums = require('enums'),
 		network = require('network'),
-		pubsub = require('pubsub');
-
-	var resize = function() {
+		pubsub = require('pubsub'),
+		periodic_resize_check_width = null,
+		periodic_resize_check_height = null,
+		resize = function() {
 			var half_window_width = Math.floor($(window).width() / 2),
 				half_window_width_ceil = Math.ceil($(window).width() / 2),
 				$game_board = $('#game-board'),
@@ -54,6 +55,18 @@ define(function(require) {
 				$div.css('font-size', Math.floor(cell_width / 2) + 'px');
 				y -= value[1];
 			});
+		},
+		periodicResizeCheck = function() {
+			var width = $(window).width(),
+				height = $(window).height();
+
+			if (width !== periodic_resize_check_width || height !== periodic_resize_check_height) {
+				periodic_resize_check_width = width;
+				periodic_resize_check_height = height;
+				resize();
+			}
+
+			setTimeout(periodicResizeCheck, 500);
 		},
 		setGamePlayerData = function(game_id, player_id, username, client_id) {
 			var $score_player = null,
@@ -230,8 +243,7 @@ define(function(require) {
 			$('#game-action > div').hide();
 		};
 
-	resize();
-	$(window).resize(resize);
+	periodicResizeCheck();
 
 	pubsub.subscribe('client-SetGamePlayerData', setGamePlayerData);
 	pubsub.subscribe('client-JoinGame', joinGame);
