@@ -202,15 +202,16 @@ define(function(require) {
 		},
 		setGameAction = function(game_action_id, player_id) {
 			var hyphenated_enum_name = common_functions.getHyphenatedStringFromEnumName(enums.GameActions[game_action_id]),
-				$action = $('#game-status-' + hyphenated_enum_name).clone().removeAttr('id');
+				$action = $('#game-status-' + hyphenated_enum_name).clone().removeAttr('id'),
+				$game_action = $('#game-action');
 
 			$action.find('.username').text(common_data.game_id_to_player_data[common_data.game_id][player_id].username);
 			$('#game-status').empty().append($action);
 
-			$('#game-action > div').hide();
+			$game_action.empty();
 			if (player_id === common_data.player_id) {
-				$action = $('#game-action-' + hyphenated_enum_name);
-				$action.show();
+				$action = $('#game-action-' + hyphenated_enum_name).clone().removeAttr('id');
+				$game_action.append($action);
 			}
 		},
 		resetHtml = function() {
@@ -240,7 +241,7 @@ define(function(require) {
 
 			$('#game-history').empty();
 			$('#game-status').empty();
-			$('#game-action > div').hide();
+			$('#game-action').empty();
 		};
 
 	periodicResizeCheck();
@@ -261,9 +262,14 @@ define(function(require) {
 		return false;
 	});
 
-	$('#link-start-game').click(function() {
-		network.sendMessage(enums.CommandsToServer.DoGameAction, enums.GameActions.StartGame);
-		$('#game-action-start-game').hide();
+	$('#game-action').on('click', 'a', function() {
+		var $this = $(this),
+			$game_action = $('#game-action');
+
+		if ($this.hasClass('link-start-game')) {
+			network.sendMessage(enums.CommandsToServer.DoGameAction, enums.GameActions.StartGame);
+			$game_action.empty();
+		}
 
 		return false;
 	});
