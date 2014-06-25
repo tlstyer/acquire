@@ -63,7 +63,7 @@ define(function(require) {
 
 	$('#login-form').submit(function() {
 		show_page('connecting');
-		$('#login-error-message').text('');
+		$('#login-error-message').empty();
 		network.connect($('#login-form-username').val());
 
 		return false;

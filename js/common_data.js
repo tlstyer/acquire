@@ -1,8 +1,7 @@
 define(function(require) {
 	var pubsub = require('pubsub'),
-		data = {};
-
-	var setClientId = function(client_id) {
+		data = {},
+		setClientId = function(client_id) {
 			data.client_id = client_id;
 		},
 		setClientIdToData = function(client_id, username, ip_and_port) {

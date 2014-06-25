@@ -3,9 +3,8 @@ define(function(require) {
 		common_data = require('common_data'),
 		enums = require('enums'),
 		network = require('network'),
-		pubsub = require('pubsub');
-
-	var addLobbyClient = function(client_id) {
+		pubsub = require('pubsub'),
+		addLobbyClient = function(client_id) {
 			var $div = $('<div/>'),
 				client_data = common_data.client_id_to_data[client_id];
 
