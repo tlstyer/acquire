@@ -69,6 +69,8 @@ define(function(require) {
 			height = top - num_rows * cell_width_ss - 6;
 			top -= height + 2;
 			setCss('#game-history', left, top, width, height, font_size);
+
+			$('.button-hotel').css('width', cell_width_gb).css('height', cell_width_gb).css('font-size', Math.floor(cell_width_gb * 2 / 5) + 'px');
 		},
 		periodic_resize_check_width = null,
 		periodic_resize_check_height = null,
@@ -212,6 +214,7 @@ define(function(require) {
 			switch (game_history_message_id) {
 			case enums.GameHistoryMessages.DrewStartingTile:
 			case enums.GameHistoryMessages.DrewTile:
+			case enums.GameHistoryMessages.PlayedTile:
 				$message.find('.tile').text(common_functions.getTileName(arguments[2], arguments[3]));
 				break;
 			}
@@ -222,10 +225,38 @@ define(function(require) {
 				$game_history.scrollTop($game_history[0].scrollHeight - $game_history.innerHeight());
 			}
 		},
+		gameActionConstructorPlayTile = function($action, tile_data) {
+			var tile_datum;
+
+			$action.find('.button-hotel').each(function(index) {
+				var $this = $(this);
+
+				if (index < tile_data.length) {
+					tile_datum = tile_data[index];
+					$this.addClass(common_functions.getHyphenatedStringFromEnumName(enums.GameBoardTypes[tile_datum[2]]));
+					$this.val(common_functions.getTileName(tile_datum[0], tile_datum[1]));
+				} else {
+					$this.hide();
+				}
+			});
+		},
+		initializeGameActionButtonClickHandlerPlayTile = function($button) {
+			network.sendMessage(enums.CommandsToServer.DoGameAction, enums.GameActions.PlayTile, parseInt($button.attr('data-index'), 10));
+			$('#game-action').empty();
+		},
+		game_action_constructors_lookup = {},
+		initializeGameActionConstructorsLookup = function() {
+			game_action_constructors_lookup[enums.GameActions.PlayTile] = gameActionConstructorPlayTile;
+		},
+		game_action_button_click_handlers_lookup = {},
+		initializeGameActionButtonClickHandlersLookup = function() {
+			game_action_button_click_handlers_lookup[enums.GameActions.PlayTile] = initializeGameActionButtonClickHandlerPlayTile;
+		},
 		setGameAction = function(game_action_id, player_id) {
 			var hyphenated_enum_name = common_functions.getHyphenatedStringFromEnumName(enums.GameActions[game_action_id]),
 				$action = $('#game-status-' + hyphenated_enum_name).clone().removeAttr('id'),
-				$game_action = $('#game-action');
+				$game_action = $('#game-action'),
+				args = [];
 
 			$action.find('.username').text(common_data.game_id_to_player_data[common_data.game_id][player_id].username);
 			$('#game-status').empty().append($action);
@@ -233,6 +264,15 @@ define(function(require) {
 			$game_action.empty();
 			if (player_id === common_data.player_id) {
 				$action = $('#game-action-' + hyphenated_enum_name).clone().removeAttr('id');
+				$action.attr('data-game-action-id', game_action_id);
+				if (game_action_constructors_lookup.hasOwnProperty(game_action_id)) {
+					args.push($action);
+					$.each(Array.prototype.slice.call(arguments, 2), function(index, value) {
+						args.push(value);
+					});
+
+					game_action_constructors_lookup[game_action_id].apply(null, args);
+				}
 				$game_action.append($action);
 			}
 		},
@@ -267,6 +307,8 @@ define(function(require) {
 		};
 
 	periodicResizeCheck();
+	initializeGameActionConstructorsLookup();
+	initializeGameActionButtonClickHandlersLookup();
 
 	pubsub.subscribe('client-SetGamePlayerData', setGamePlayerData);
 	pubsub.subscribe('client-JoinGame', joinGame);
@@ -292,6 +334,15 @@ define(function(require) {
 			network.sendMessage(enums.CommandsToServer.DoGameAction, enums.GameActions.StartGame);
 			$game_action.empty();
 		}
+
+		return false;
+	});
+
+	$('#game-action').on('click', '.button-hotel', function() {
+		var $this = $(this),
+			game_action_id = parseInt($this.closest('form').attr('data-game-action-id'), 10);
+
+		game_action_button_click_handlers_lookup[game_action_id]($this);
 
 		return false;
 	});

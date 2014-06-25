@@ -183,3 +183,43 @@ body {
 #game-history {
 	overflow-y: scroll;
 }
+
+.button-hotel {
+	font-weight: bold;
+	&.luxor {
+		background-color: $color-luxor;
+	}
+	&.tower {
+		background-color: $color-tower;
+	}
+	&.american {
+		background-color: $color-american;
+	}
+	&.festival {
+		background-color: $color-festival;
+	}
+	&.worldwide {
+		background-color: $color-worldwide;
+	}
+	&.continental {
+		background-color: $color-continental;
+	}
+	&.imperial {
+		background-color: $color-imperial;
+	}
+	&.cant-play-ever {
+		background-color: $color-cant-play-ever;
+	}
+	&.will-put-lonely-tile-down {
+		background-color: $color-will-put-lonely-tile-down;
+	}
+	&.have-neighboring-tile-too {
+		background-color: $color-have-neighboring-tile-too;
+	}
+	&.will-form-new-chain {
+		background-color: $color-will-form-new-chain;
+	}
+	&.cant-play-now {
+		background-color: $color-cant-play-now;
+	}
+}

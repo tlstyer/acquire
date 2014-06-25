@@ -367,7 +367,7 @@ class ActionStartGame(Action):
             if client2 is not None:
                 AcquireServerProtocol.add_pending_messages({client2.client_id}, messages)
 
-        return [ActionPlayTile(self.game, 0), ActionPurchaseStock(self.game, 0)]
+        return [ActionPlayTile(self.game, 0)]
 
 
 class ActionPlayTile(Action):
@@ -380,8 +380,26 @@ class ActionPlayTile(Action):
             data.append([tile[0], tile[1], enums.GameBoardTypes.WillPutLonelyTileDown.value])
         self.player_params.append(data)
 
-    def execute(self):
-        pass
+    def execute(self, tile_index):
+        if isinstance(tile_index, int) and 0 <= tile_index < len(self.player_params[0]):
+            tile_data = self.player_params[0][tile_index]
+            tile = (tile_data[0], tile_data[1])
+
+            self.game.player_tiles[self.player_id].remove(tile)
+            self.game.game_board.set_cell(tile, enums.GameBoardTypes.NothingYet.value)
+
+            message = [enums.CommandsToClient.AddGameHistoryMessage.value, enums.GameHistoryMessages.PlayedTile.value, self.player_id, tile[0], tile[1]]
+            AcquireServerProtocol.add_pending_messages(self.game.client_ids, [message])
+
+            tile = self.game.tile_bag.get_tile()
+            if tile is not None:
+                self.game.player_tiles[self.player_id].add(tile)
+
+                messages = [[enums.CommandsToClient.AddGameHistoryMessage.value, enums.GameHistoryMessages.DrewTile.value, self.player_id, tile[0], tile[1]],
+                            [enums.CommandsToClient.SetGameBoardCell.value, tile[0], tile[1], enums.GameBoardTypes.IHaveThis.value]]
+                AcquireServerProtocol.add_pending_messages({self.game.player_id_to_client_id[self.player_id]}, messages)
+
+            return [ActionPlayTile(self.game, (self.player_id + 1) % len(self.game.player_id_to_client_id))]
 
 
 class ActionPurchaseStock(Action):

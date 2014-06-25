@@ -68,6 +68,7 @@ class GameHistoryMessages(AutoNumber):
     DrewStartingTile = ()
     StartedGame = ()
     DrewTile = ()
+    PlayedTile = ()
 
 
 class GameStates(AutoNumber):
