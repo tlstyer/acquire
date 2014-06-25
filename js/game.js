@@ -212,7 +212,7 @@ define(function(require) {
 			switch (game_history_message_id) {
 			case enums.GameHistoryMessages.DrewStartingTile:
 			case enums.GameHistoryMessages.DrewTile:
-				$message.find('.tile').text((arguments[2] + 1) + String.fromCharCode(arguments[3] + 65));
+				$message.find('.tile').text(common_functions.getTileName(arguments[2], arguments[3]));
 				break;
 			}
 
