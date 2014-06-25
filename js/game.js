@@ -5,8 +5,6 @@ define(function(require) {
 		enums = require('enums'),
 		network = require('network'),
 		pubsub = require('pubsub'),
-		periodic_resize_check_width = null,
-		periodic_resize_check_height = null,
 		resize = function() {
 			var half_window_width = Math.floor($(window).width() / 2),
 				half_window_width_ceil = Math.ceil($(window).width() / 2),
@@ -56,6 +54,8 @@ define(function(require) {
 				y -= value[1];
 			});
 		},
+		periodic_resize_check_width = null,
+		periodic_resize_check_height = null,
 		periodicResizeCheck = function() {
 			var width = $(window).width(),
 				height = $(window).height();
