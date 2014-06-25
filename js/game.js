@@ -187,7 +187,9 @@ define(function(require) {
 			}
 		},
 		addGameHistoryMessage = function(game_history_message_id, player_id) {
-			var $message = $('#game-history-' + common_functions.getHyphenatedStringFromEnumName(enums.GameHistoryMessages[game_history_message_id])).clone().removeAttr('id');
+			var $message = $('#game-history-' + common_functions.getHyphenatedStringFromEnumName(enums.GameHistoryMessages[game_history_message_id])).clone().removeAttr('id'),
+				$game_history = $('#game-history'),
+				at_bottom = $game_history.scrollTop() + $game_history.innerHeight() >= $game_history[0].scrollHeight;
 
 			$message.find('.username').text(common_data.game_id_to_player_data[common_data.game_id][player_id].username);
 
@@ -198,7 +200,11 @@ define(function(require) {
 				break;
 			}
 
-			$('#game-history').append($message);
+			$game_history.append($message);
+
+			if (at_bottom) {
+				$game_history.scrollTop($game_history[0].scrollHeight - $game_history.innerHeight());
+			}
 		},
 		setGameAction = function(game_action_id, player_id) {
 			var hyphenated_enum_name = common_functions.getHyphenatedStringFromEnumName(enums.GameActions[game_action_id]),
