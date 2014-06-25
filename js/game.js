@@ -10,26 +10,37 @@ define(function(require) {
 				half_window_width_ceil = Math.ceil($(window).width() / 2),
 				$game_board = $('#game-board'),
 				$score_sheet = $('#score-sheet'),
-				cell_width = 0,
+				cell_width_gb = 0,
+				cell_width_ss = 0,
 				num_rows = 4,
 				row_height = 0,
-				selectors_and_heights = null,
-				$div = null,
-				y = $(window).height();
+				left = null,
+				top = null,
+				width = null,
+				height = null,
+				font_size = null,
+				setCss = function(selector, left, top, width, height, font_size) {
+					var $div = $(selector);
+					$div.css('left', left);
+					$div.css('top', top);
+					$div.css('width', width);
+					$div.css('height', height);
+					$div.css('font-size', font_size);
+				};
 
-			cell_width = Math.floor((half_window_width - 2) / 12);
+			cell_width_gb = Math.floor((half_window_width - 2) / 12);
 			$game_board.css('left', 0);
 			$game_board.css('top', 0);
-			$game_board.css('width', cell_width * 12 + 2);
-			$game_board.css('height', cell_width * 9 + 2);
-			$game_board.css('font-size', Math.floor(cell_width * 2 / 5) + 'px');
+			$game_board.css('width', cell_width_gb * 12 + 2);
+			$game_board.css('height', cell_width_gb * 9 + 2);
+			$game_board.css('font-size', Math.floor(cell_width_gb * 2 / 5) + 'px');
 
-			cell_width = Math.floor((half_window_width - 2) / 18);
+			cell_width_ss = Math.floor((half_window_width - 2) / 18);
 			$score_sheet.css('left', half_window_width);
 			$score_sheet.css('top', 0);
-			$score_sheet.css('width', cell_width * 18 + 2);
-			$score_sheet.find('tr').css('height', cell_width + 'px');
-			$score_sheet.css('font-size', Math.floor(cell_width * 2 / 3) + 'px');
+			$score_sheet.css('width', cell_width_ss * 18 + 2);
+			$score_sheet.find('tr').css('height', cell_width_ss + 'px');
+			$score_sheet.css('font-size', Math.floor(cell_width_ss * 2 / 3) + 'px');
 
 			$score_sheet.find('.score-sheet-player').each(function() {
 				if ($(this).css('display') !== 'none') {
@@ -37,22 +48,27 @@ define(function(require) {
 				}
 			});
 
-			row_height = Math.floor(cell_width * 2 / 3);
-			selectors_and_heights = [
-				['#game-links', row_height],
-				['#game-action', row_height * 3],
-				['#game-status', row_height * 2],
-				['#game-history', $(window).height() - (num_rows * cell_width + 2) - row_height * 6]
-			];
-			$.each(selectors_and_heights, function(index, value) {
-				$div = $(value[0]);
-				$div.css('left', half_window_width);
-				$div.css('top', y - value[1]);
-				$div.css('width', half_window_width_ceil - 6);
-				$div.css('height', value[1]);
-				$div.css('font-size', Math.floor(cell_width / 2) + 'px');
-				y -= value[1];
-			});
+			row_height = Math.floor(cell_width_ss * 2 / 3);
+			left = half_window_width + 2;
+			top = $(window).height() + 2;
+			width = half_window_width_ceil - 2;
+			font_size = Math.floor(cell_width_ss / 2) + 'px';
+
+			height = row_height;
+			top -= height + 2;
+			setCss('#game-links', left, top, width, height, font_size);
+
+			height = cell_width_gb;
+			top -= height + 2;
+			setCss('#game-action', left, top, width, height, font_size);
+
+			height = row_height * 2;
+			top -= height + 2;
+			setCss('#game-status', left, top, width, height, font_size);
+
+			height = top - num_rows * cell_width_ss - 6;
+			top -= height + 2;
+			setCss('#game-history', left, top, width, height, font_size);
 		},
 		periodic_resize_check_width = null,
 		periodic_resize_check_height = null,
