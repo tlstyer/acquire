@@ -22,6 +22,10 @@ class GameBoardTypes(AutoNumber):
     NothingYet = ()
     CantPlayEver = ()
     IHaveThis = ()
+    WillPutLonelyTileDown = ()
+    HaveNeighboringTileToo = ()
+    WillFormNewChain = ()
+    CantPlayNow = ()
 
 
 class CommandsToClient(AutoNumber):
