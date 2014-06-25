@@ -121,11 +121,11 @@ define(function(require) {
 		var $this = $(this),
 			game_id = parseInt($this.closest('.lobby-section').attr('data-game-id'), 10);
 
-		if ($(this).hasClass('link-join')) {
+		if ($this.hasClass('link-join')) {
 			network.sendMessage(enums.CommandsToServer.JoinGame, game_id);
-		} else if ($(this).hasClass('link-rejoin')) {
+		} else if ($this.hasClass('link-rejoin')) {
 			network.sendMessage(enums.CommandsToServer.RejoinGame, game_id);
-		} else if ($(this).hasClass('link-watch')) {
+		} else if ($this.hasClass('link-watch')) {
 			network.sendMessage(enums.CommandsToServer.WatchGame, game_id);
 		}
 

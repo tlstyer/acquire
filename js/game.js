@@ -236,7 +236,7 @@ define(function(require) {
 				[0, 0, 0, 0, 0, 0, 0]
 			]);
 			$('#score-sheet td').removeClass('safe');
-			$('#score-sheet .score-sheet-player .name').text('');
+			$('#score-sheet .score-sheet-player .name').empty();
 			$('#score-sheet .score-sheet-player').hide();
 
 			$('#game-history').empty();
