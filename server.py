@@ -4,6 +4,7 @@ import collections
 import enums
 import random
 import sys
+import traceback
 import ujson
 
 
@@ -102,7 +103,7 @@ class AcquireServerProtocol(autobahn.asyncio.websocket.WebSocketServerProtocol):
                 method = getattr(self, 'onMessage' + enums.CommandsToServer(message[0]).name)
                 arguments = message[1:]
             except Exception as e:
-                print(e)
+                traceback.print_exc()
                 self.sendClose()
                 return
 
@@ -110,7 +111,7 @@ class AcquireServerProtocol(autobahn.asyncio.websocket.WebSocketServerProtocol):
                 method(*arguments)
                 self.flush_pending_messages()
             except TypeError as e:
-                print(e)
+                traceback.print_exc()
                 self.sendClose()
         else:
             self.sendClose()
@@ -520,6 +521,8 @@ if __name__ == '__main__':
         loop.run_forever()
     except KeyboardInterrupt:
         pass
+    except Exception:
+        traceback.print_exc()
     finally:
         server.close()
         loop.close()
