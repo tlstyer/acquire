@@ -123,10 +123,10 @@ define(function(require) {
 			}
 		},
 		setGameBoardCell = function(x, y, game_board_type_id) {
-			var $cell = $('#game-board .y' + y + ' .x' + x),
+			var $cell = $('#gb-' + x + '-' + y),
 				cell_class = common_functions.getHyphenatedStringFromEnumName(enums.GameBoardTypes[game_board_type_id]);
 
-			$cell.attr('class', 'x' + x + ' ' + cell_class);
+			$cell.attr('class', cell_class);
 		},
 		setGameBoard = function(x_to_y_to_board_type) {
 			var num_x, x, y_to_board_type, num_y, y, board_type;
