@@ -8,39 +8,48 @@ define(function(require) {
 		resize = function() {
 			var half_window_width = Math.floor($(window).width() / 2),
 				half_window_width_ceil = Math.ceil($(window).width() / 2),
-				$game_board = $('#game-board'),
 				$score_sheet = $('#score-sheet'),
 				cell_width_gb = 0,
 				cell_width_ss = 0,
 				num_rows = 4,
-				row_height = 0,
 				left = null,
 				top = null,
 				width = null,
 				height = null,
 				font_size = null,
-				setCss = function(selector, left, top, width, height, font_size) {
-					var $div = $(selector);
-					$div.css('left', left);
-					$div.css('top', top);
+				setCss = function($div, left, top, width, height, font_size) {
+					if (left !== null) {
+						$div.css('left', left);
+					}
+					if (top !== null) {
+						$div.css('top', top);
+					}
 					$div.css('width', width);
-					$div.css('height', height);
-					$div.css('font-size', font_size);
+					if (height !== null) {
+						$div.css('height', height);
+					}
+					$div.css('font-size', font_size + 'px');
 				};
 
 			cell_width_gb = Math.floor((half_window_width - 2) / 12);
-			$game_board.css('left', 0);
-			$game_board.css('top', 0);
-			$game_board.css('width', cell_width_gb * 12 + 2);
-			$game_board.css('height', cell_width_gb * 9 + 2);
-			$game_board.css('font-size', Math.floor(cell_width_gb * 2 / 5) + 'px');
+			top = 0;
+			height = cell_width_gb * 9 + 2;
+			font_size = Math.floor(cell_width_gb * 2 / 5);
+			setCss($('#game-board'), 0, top, cell_width_gb * 12 + 2, height, font_size);
+
+			setCss($('.button-hotel'), null, null, cell_width_gb, cell_width_gb, font_size);
+
+			top += height + 2;
+			height = cell_width_gb;
+			setCss($('#game-tile-rack'), 0, top, half_window_width, height, font_size);
+
+			top += height + 2;
+			height = $(window).height() - top;
+			setCss($('#game-action'), 0, top, half_window_width, height, font_size);
 
 			cell_width_ss = Math.floor((half_window_width - 2) / 18);
-			$score_sheet.css('left', half_window_width);
-			$score_sheet.css('top', 0);
-			$score_sheet.css('width', cell_width_ss * 18 + 2);
+			setCss($score_sheet, half_window_width, 0, cell_width_ss * 18 + 2, null, Math.floor(cell_width_ss * 2 / 3));
 			$score_sheet.find('tr').css('height', cell_width_ss + 'px');
-			$score_sheet.css('font-size', Math.floor(cell_width_ss * 2 / 3) + 'px');
 
 			$score_sheet.find('.score-sheet-player').each(function() {
 				if ($(this).css('display') !== 'none') {
@@ -48,29 +57,22 @@ define(function(require) {
 				}
 			});
 
-			row_height = Math.floor(cell_width_ss * 2 / 3);
 			left = half_window_width + 2;
 			top = $(window).height() + 2;
 			width = half_window_width_ceil - 2;
-			font_size = Math.floor(cell_width_ss / 2) + 'px';
+			font_size = Math.floor(cell_width_ss / 2);
 
-			height = row_height;
+			height = 22;
 			top -= height + 2;
-			setCss('#game-links', left, top, width, height, font_size);
+			setCss($('#game-links'), left, top, width, height, 16);
 
-			height = cell_width_gb;
+			height = 22;
 			top -= height + 2;
-			setCss('#game-action', left, top, width, height, font_size);
-
-			height = row_height * 2;
-			top -= height + 2;
-			setCss('#game-status', left, top, width, height, font_size);
+			setCss($('#game-status'), left, top, width, height, 16);
 
 			height = top - num_rows * cell_width_ss - 6;
 			top -= height + 2;
-			setCss('#game-history', left, top, width, height, font_size);
-
-			$('.button-hotel').css('width', cell_width_gb).css('height', cell_width_gb).css('font-size', Math.floor(cell_width_gb * 2 / 5) + 'px');
+			setCss($('#game-history'), left, top, width, height, 16);
 		},
 		periodic_resize_check_width = null,
 		periodic_resize_check_height = null,
@@ -140,6 +142,18 @@ define(function(require) {
 					setGameBoardCell(x, y, board_type);
 				}
 			}
+		},
+		setTile = function(tile_index, x, y, game_board_type_id) {
+			var $button = $('#game-tile-' + tile_index);
+			$button.attr('class', 'button-hotel ' + common_functions.getHyphenatedStringFromEnumName(enums.GameBoardTypes[game_board_type_id]));
+			$button.val(common_functions.getTileName(x, y));
+			$button.css('visibility', 'visible');
+
+			setGameBoardCell(x, y, enums.GameBoardTypes.IHaveThis);
+		},
+		setTileGameBoardType = function(tile_index, game_board_type_id) {
+			var $button = $('#game-tile-' + tile_index);
+			$button.attr('class', 'button-hotel ' + common_functions.getHyphenatedStringFromEnumName(enums.GameBoardTypes[game_board_type_id]));
 		},
 		setScoreSheetCell = function(row, index, data) {
 			var $row, index_class, mark_chain_as_safe = false;
@@ -225,55 +239,41 @@ define(function(require) {
 				$game_history.scrollTop($game_history[0].scrollHeight - $game_history.innerHeight());
 			}
 		},
-		gameActionConstructorPlayTile = function($action, tile_data) {
-			var tile_datum;
-
-			$action.find('.button-hotel').each(function(index) {
-				var $this = $(this);
-
-				if (index < tile_data.length) {
-					tile_datum = tile_data[index];
-					$this.addClass(common_functions.getHyphenatedStringFromEnumName(enums.GameBoardTypes[tile_datum[2]]));
-					$this.val(common_functions.getTileName(tile_datum[0], tile_datum[1]));
-				} else {
-					$this.hide();
-				}
-			});
+		play_tile_action_enabled = false,
+		gameActionConstructorPlayTile = function() {
+			play_tile_action_enabled = true;
 		},
-		initializeGameActionButtonClickHandlerPlayTile = function($button) {
-			network.sendMessage(enums.CommandsToServer.DoGameAction, enums.GameActions.PlayTile, parseInt($button.attr('data-index'), 10));
-			$('#game-action').empty();
+		gameTileRackButtonClicked = function($button) {
+			if (play_tile_action_enabled) {
+				network.sendMessage(enums.CommandsToServer.DoGameAction, enums.GameActions.PlayTile, parseInt($button.attr('data-index'), 10));
+				$button.css('visibility', 'hidden');
+
+				play_tile_action_enabled = false;
+			}
+		},
+		gameActionConstructorStartGame = function() {
+			$('#game-action-start-game').show();
+		},
+		startGameButtonClicked = function() {
+			network.sendMessage(enums.CommandsToServer.DoGameAction, enums.GameActions.StartGame);
+			$('#game-action-start-game').hide();
 		},
 		game_action_constructors_lookup = {},
 		initializeGameActionConstructorsLookup = function() {
+			game_action_constructors_lookup[enums.GameActions.StartGame] = gameActionConstructorStartGame;
 			game_action_constructors_lookup[enums.GameActions.PlayTile] = gameActionConstructorPlayTile;
-		},
-		game_action_button_click_handlers_lookup = {},
-		initializeGameActionButtonClickHandlersLookup = function() {
-			game_action_button_click_handlers_lookup[enums.GameActions.PlayTile] = initializeGameActionButtonClickHandlerPlayTile;
 		},
 		setGameAction = function(game_action_id, player_id) {
 			var hyphenated_enum_name = common_functions.getHyphenatedStringFromEnumName(enums.GameActions[game_action_id]),
-				$action = $('#game-status-' + hyphenated_enum_name).clone().removeAttr('id'),
-				$game_action = $('#game-action'),
-				args = [];
+				$action = $('#game-status-' + hyphenated_enum_name).clone().removeAttr('id');
 
 			$action.find('.username').text(common_data.game_id_to_player_data[common_data.game_id][player_id].username);
 			$('#game-status').empty().append($action);
 
-			$game_action.empty();
 			if (player_id === common_data.player_id) {
-				$action = $('#game-action-' + hyphenated_enum_name).clone().removeAttr('id');
-				$action.attr('data-game-action-id', game_action_id);
 				if (game_action_constructors_lookup.hasOwnProperty(game_action_id)) {
-					args.push($action);
-					$.each(Array.prototype.slice.call(arguments, 2), function(index, value) {
-						args.push(value);
-					});
-
-					game_action_constructors_lookup[game_action_id].apply(null, args);
+					game_action_constructors_lookup[game_action_id].apply(null, Array.prototype.slice.call(arguments, 2));
 				}
-				$game_action.append($action);
 			}
 		},
 		resetHtml = function() {
@@ -283,6 +283,10 @@ define(function(require) {
 					setGameBoardCell(x, y, enums.GameBoardTypes.Nothing);
 				}
 			}
+
+			$('#game-tile-rack .button-hotel').css('visibility', 'hidden');
+
+			$('#game-action > div').hide();
 
 			setScoreSheet([
 				[
@@ -302,18 +306,19 @@ define(function(require) {
 			$('#score-sheet .score-sheet-player').hide();
 
 			$('#game-history').empty();
+
 			$('#game-status').empty();
-			$('#game-action').empty();
 		};
 
 	periodicResizeCheck();
 	initializeGameActionConstructorsLookup();
-	initializeGameActionButtonClickHandlersLookup();
 
 	pubsub.subscribe('client-SetGamePlayerData', setGamePlayerData);
 	pubsub.subscribe('client-JoinGame', joinGame);
 	pubsub.subscribe('server-SetGameBoardCell', setGameBoardCell);
 	pubsub.subscribe('server-SetGameBoard', setGameBoard);
+	pubsub.subscribe('server-SetTile', setTile);
+	pubsub.subscribe('server-SetTileGameBoardType', setTileGameBoardType);
 	pubsub.subscribe('server-SetScoreSheet', setScoreSheet);
 	pubsub.subscribe('server-AddGameHistoryMessage', addGameHistoryMessage);
 	pubsub.subscribe('server-SetGameAction', setGameAction);
@@ -326,23 +331,14 @@ define(function(require) {
 		return false;
 	});
 
-	$('#game-action').on('click', 'a', function() {
-		var $this = $(this),
-			$game_action = $('#game-action');
-
-		if ($this.hasClass('link-start-game')) {
-			network.sendMessage(enums.CommandsToServer.DoGameAction, enums.GameActions.StartGame);
-			$game_action.empty();
-		}
+	$('#start-game').on('click', function() {
+		startGameButtonClicked();
 
 		return false;
 	});
 
-	$('#game-action').on('click', '.button-hotel', function() {
-		var $this = $(this),
-			game_action_id = parseInt($this.closest('form').attr('data-game-action-id'), 10);
-
-		game_action_button_click_handlers_lookup[game_action_id]($this);
+	$('#game-tile-rack').on('click', '.button-hotel', function() {
+		gameTileRackButtonClicked($(this));
 
 		return false;
 	});

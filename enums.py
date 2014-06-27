@@ -42,6 +42,8 @@ class CommandsToClient(AutoNumber):
     ReturnWatcherToLobby = ()
     AddGameHistoryMessage = ()
     SetGameAction = ()
+    SetTile = ()
+    SetTileGameBoardType = ()
 
 
 class CommandsToServer(AutoNumber):

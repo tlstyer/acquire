@@ -177,8 +177,17 @@ body {
 	}
 }
 
-#game-history, #game-status, #game-action, #game-links {
+#game-tile-rack, #game-action, #game-history, #game-status, #game-links {
 	position: absolute;
+}
+#game-tile-rack {
+	text-align: center;
+	.button-hotel {
+		visibility: hidden;
+	}
+}
+#game-action > div {
+	display: none;
 }
 #game-history {
 	overflow-y: scroll;

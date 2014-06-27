@@ -30,7 +30,9 @@ define(function(require) {
 								command[0] = 'server-' + enums.CommandsToClient[command[0]];
 								pubsub.publish.apply(null, command);
 							}
-						} catch (e) {}
+						} catch (e) {
+							console.log(e.stack);
+						}
 					};
 
 					ws.onerror = function(e) {
