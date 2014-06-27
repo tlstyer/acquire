@@ -352,7 +352,7 @@ class ActionStartGame(Action):
 
         self.game.tile_racks.draw_initial_tiles()
 
-        return [ActionPlayTile(self.game, 0)]
+        return [ActionPlayTile(self.game, 0), ActionPurchaseStock(self.game, 0)]
 
 
 class ActionPlayTile(Action):
@@ -377,15 +377,18 @@ class ActionPlayTile(Action):
         message = [enums.CommandsToClient.AddGameHistoryMessage.value, enums.GameHistoryMessages.PlayedTile.value, self.player_id, tile[0], tile[1]]
         AcquireServerProtocol.add_pending_messages(self.game.client_ids, [message])
 
-        self.game.tile_racks.draw_tile(self.player_id)
-
-        next_player_id = (self.player_id + 1) % len(self.game.player_id_to_client_id)
-        return [ActionPlayTile(self.game, next_player_id)]
+        return True
 
 
 class ActionPurchaseStock(Action):
     def __init__(self, game, player_id):
         super().__init__(game, player_id, enums.GameActions.PurchaseStock.value)
+
+    def prepare(self):
+        self.game.tile_racks.draw_tile(self.player_id)
+
+        next_player_id = (self.player_id + 1) % len(self.game.player_id_to_client_id)
+        return [ActionPlayTile(self.game, next_player_id), ActionPurchaseStock(self.game, next_player_id)]
 
     def execute(self):
         pass
@@ -501,12 +504,13 @@ class Game:
         action = self.actions[0]
         if client.player_id is not None and client.player_id == action.player_id and game_action_id == action.game_action_id:
             new_actions = action.execute(*data)
-            if new_actions is not None:
+            while new_actions:
                 self.actions.popleft()
-                new_actions.reverse()
-                self.actions.extendleft(new_actions)
+                if isinstance(new_actions, list):
+                    new_actions.reverse()
+                    self.actions.extendleft(new_actions)
                 action = self.actions[0]
-                action.prepare()
+                new_actions = action.prepare()
             action.send_message()
 
     def send_initialization_messages(self, client):
