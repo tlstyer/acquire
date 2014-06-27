@@ -102,7 +102,7 @@ class AcquireServerProtocol(autobahn.asyncio.websocket.WebSocketServerProtocol):
                 message = ujson.decode(message)
                 method = getattr(self, 'onMessage' + enums.CommandsToServer(message[0]).name)
                 arguments = message[1:]
-            except Exception as e:
+            except:
                 traceback.print_exc()
                 self.sendClose()
                 return
@@ -110,7 +110,7 @@ class AcquireServerProtocol(autobahn.asyncio.websocket.WebSocketServerProtocol):
             try:
                 method(*arguments)
                 self.flush_pending_messages()
-            except TypeError as e:
+            except TypeError:
                 traceback.print_exc()
                 self.sendClose()
         else:
@@ -178,9 +178,9 @@ class GameBoard:
         self.client_ids = client_ids
 
         nothing = enums.GameBoardTypes.Nothing.value
-        self.x_to_y_to_board_type = [[nothing for y in range(0, 9)] for x in range(0, 12)]
+        self.x_to_y_to_board_type = [[nothing for y in range(9)] for x in range(12)]
         self.board_type_to_coordinates = collections.defaultdict(set)
-        self.board_type_to_coordinates[nothing].update((x, y) for x in range(0, 12) for y in range(0, 9))
+        self.board_type_to_coordinates[nothing].update((x, y) for x in range(12) for y in range(9))
 
     def set_cell(self, coordinates, board_type):
         x, y = coordinates
@@ -297,7 +297,7 @@ class ScoreSheet:
 
 class TileBag:
     def __init__(self):
-        tiles = [(x, y) for x in range(0, 12) for y in range(0, 9)]
+        tiles = [(x, y) for x in range(12) for y in range(9)]
         random.shuffle(tiles)
         self.tiles = tiles
 
@@ -558,7 +558,7 @@ if __name__ == '__main__':
         loop.run_forever()
     except KeyboardInterrupt:
         pass
-    except Exception:
+    except:
         traceback.print_exc()
     finally:
         server.close()
