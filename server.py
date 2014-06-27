@@ -350,23 +350,7 @@ class ActionStartGame(Action):
         self.game.state = enums.GameStates.InProgress.value
         AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, [[enums.CommandsToClient.SetGameState.value, self.game.game_id, self.game.state]])
 
-        # draw initial tiles
-        add_game_history_message = enums.CommandsToClient.AddGameHistoryMessage.value
-        set_tile = enums.CommandsToClient.SetTile.value
-        client_index = enums.ScoreSheetIndexes.Client.value
-        drew_tile = enums.GameHistoryMessages.DrewTile.value
-        will_put_lonely_tile_down = enums.GameBoardTypes.WillPutLonelyTileDown.value
-        for player_id, player_datum in enumerate(self.game.score_sheet.player_data):
-            messages = []
-            for tile_index in range(6):
-                tile = self.game.tile_bag.get_tile()
-                game_board_type_id = will_put_lonely_tile_down
-                self.game.player_tile_data[player_id].append([tile, game_board_type_id])
-                messages.append([add_game_history_message, drew_tile, player_id, tile[0], tile[1]])
-                messages.append([set_tile, tile_index, tile[0], tile[1], game_board_type_id])
-            client2 = player_datum[client_index]
-            if client2 is not None:
-                AcquireServerProtocol.add_pending_messages({client2.client_id}, messages)
+        self.game.tile_racks.draw_initial_tiles()
 
         return [ActionPlayTile(self.game, 0)]
 
@@ -376,30 +360,27 @@ class ActionPlayTile(Action):
         super().__init__(game, player_id, enums.GameActions.PlayTile.value)
 
     def execute(self, tile_index):
-        if isinstance(tile_index, int) and 0 <= tile_index < len(self.game.player_tile_data[self.player_id]):
-            tile_datum = self.game.player_tile_data[self.player_id][tile_index]
-            if tile_datum is None:
-                return
+        if not isinstance(tile_index, int):
+            return
+        tile_data = self.game.tile_racks.racks[self.player_id]
+        if tile_index < 0 or tile_index >= len(tile_data):
+            return
+        tile_datum = tile_data[tile_index]
+        if tile_datum is None:
+            return
 
-            tile = tile_datum[0]
-            # game_board_type_id = tile_datum[1]
+        tile = tile_datum[0]
 
-            self.game.player_tile_data[self.player_id][tile_index] = None
-            self.game.game_board.set_cell(tile, enums.GameBoardTypes.NothingYet.value)
+        tile_data[tile_index] = None
+        self.game.game_board.set_cell(tile, enums.GameBoardTypes.NothingYet.value)
 
-            message = [enums.CommandsToClient.AddGameHistoryMessage.value, enums.GameHistoryMessages.PlayedTile.value, self.player_id, tile[0], tile[1]]
-            AcquireServerProtocol.add_pending_messages(self.game.client_ids, [message])
+        message = [enums.CommandsToClient.AddGameHistoryMessage.value, enums.GameHistoryMessages.PlayedTile.value, self.player_id, tile[0], tile[1]]
+        AcquireServerProtocol.add_pending_messages(self.game.client_ids, [message])
 
-            tile = self.game.tile_bag.get_tile()
-            if tile is not None:
-                game_board_type_id = enums.GameBoardTypes.WillPutLonelyTileDown.value
-                self.game.player_tile_data[self.player_id][tile_index] = [tile, game_board_type_id]
+        self.game.tile_racks.draw_tile(self.player_id)
 
-                messages = [[enums.CommandsToClient.AddGameHistoryMessage.value, enums.GameHistoryMessages.DrewTile.value, self.player_id, tile[0], tile[1]],
-                            [enums.CommandsToClient.SetTile.value, tile_index, tile[0], tile[1], game_board_type_id]]
-                AcquireServerProtocol.add_pending_messages({self.game.player_id_to_client_id[self.player_id]}, messages)
-
-            return [ActionPlayTile(self.game, (self.player_id + 1) % len(self.game.player_id_to_client_id))]
+        next_player_id = (self.player_id + 1) % len(self.game.player_id_to_client_id)
+        return [ActionPlayTile(self.game, next_player_id)]
 
 
 class ActionPurchaseStock(Action):
@@ -408,6 +389,40 @@ class ActionPurchaseStock(Action):
 
     def execute(self):
         pass
+
+
+class TileRacks:
+    def __init__(self, game):
+        self.game = game
+        self.racks = []
+        self._e_add_game_history_message = enums.CommandsToClient.AddGameHistoryMessage.value
+        self._e_drew_tile = enums.GameHistoryMessages.DrewTile.value
+        self._e_set_tile = enums.CommandsToClient.SetTile.value
+
+    def draw_initial_tiles(self):
+        for player_id in range(len(self.game.player_id_to_client_id)):
+            self.racks.append([None] * 6)
+            self.draw_tile(player_id)
+
+    def draw_tile(self, player_id):
+        will_put_lonely_tile_down = enums.GameBoardTypes.WillPutLonelyTileDown.value
+
+        tile_data = self.racks[player_id]
+        messages = []
+
+        for tile_index, tile_datum in enumerate(tile_data):
+            if tile_datum is None:
+                tile = self.game.tile_bag.get_tile()
+                if tile is not None:
+                    game_board_type_id = will_put_lonely_tile_down
+                    tile_data[tile_index] = [tile, game_board_type_id]
+
+                    messages.append([self._e_add_game_history_message, self._e_drew_tile, player_id, tile[0], tile[1]])
+                    messages.append([self._e_set_tile, tile_index, tile[0], tile[1], game_board_type_id])
+
+        client_id = self.game.player_id_to_client_id[player_id]
+        if client_id is not None:
+            AcquireServerProtocol.add_pending_messages({client_id}, messages)
 
 
 class Game:
@@ -419,10 +434,10 @@ class Game:
         self.game_board = GameBoard(self.client_ids)
         self.score_sheet = ScoreSheet(game_id)
         self.tile_bag = TileBag()
+        self.tile_racks = TileRacks(self)
 
         self.state = enums.GameStates.Starting.value
         self.actions = collections.deque()
-        self.player_tile_data = [[]]
 
         AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, [[enums.CommandsToClient.SetGameState.value, self.game_id, self.state]])
 
@@ -439,7 +454,6 @@ class Game:
 
     def join_game(self, client):
         if self.state == enums.GameStates.Starting.value and not self.score_sheet.is_username_in_game(client.username):
-            self.player_tile_data.append([])
             self.client_ids.add(client.client_id)
             client.game_id = self.game_id
             starting_tile = self.tile_bag.get_tile()
@@ -512,7 +526,7 @@ class Game:
         # player's tiles
         if client.player_id is not None:
             set_tile = enums.CommandsToClient.SetTile.value
-            for tile_index, tile_datum in enumerate(self.player_tile_data[client.player_id]):
+            for tile_index, tile_datum in enumerate(self.tile_racks.racks[client.player_id]):
                 if tile_datum is not None:
                     tile = tile_datum[0]
                     messages.append([set_tile, tile_index, tile[0], tile[1], tile_datum[1]])
