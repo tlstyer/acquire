@@ -23,6 +23,10 @@ class AcquireServerProtocol(autobahn.asyncio.websocket.WebSocketServerProtocol):
         self.game_id = None
         self.player_id = None
 
+        self.on_message_lookup = []
+        for command_enum in enums.CommandsToServer:
+            self.on_message_lookup.append(getattr(self, 'onMessage' + command_enum.name))
+
     def onConnect(self, request):
         self.username = ' '.join(request.params.get('username', [''])[0].split())
         print('X', 'connect', self.peer, self.username)
@@ -100,7 +104,7 @@ class AcquireServerProtocol(autobahn.asyncio.websocket.WebSocketServerProtocol):
                 message = payload.decode()
                 print(self.client_id, '->', message)
                 message = ujson.decode(message)
-                method = getattr(self, 'onMessage' + enums.CommandsToServer(message[0]).name)
+                method = self.on_message_lookup[message[0]]
                 arguments = message[1:]
             except:
                 traceback.print_exc()
