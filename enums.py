@@ -10,24 +10,6 @@ class AutoNumber(enum.Enum):
         return obj
 
 
-class GameBoardTypes(AutoNumber):
-    Luxor = ()
-    Tower = ()
-    American = ()
-    Festival = ()
-    Worldwide = ()
-    Continental = ()
-    Imperial = ()
-    Nothing = ()
-    NothingYet = ()
-    CantPlayEver = ()
-    IHaveThis = ()
-    WillPutLonelyTileDown = ()
-    HaveNeighboringTileToo = ()
-    WillFormNewChain = ()
-    CantPlayNow = ()
-
-
 class CommandsToClient(AutoNumber):
     FatalError = ()
     SetClientId = ()
@@ -67,6 +49,24 @@ class GameActions(AutoNumber):
     SelectMergerSurvivor = ()
     SelectChainToMerge = ()
     PurchaseStock = ()
+
+
+class GameBoardTypes(AutoNumber):
+    Luxor = ()
+    Tower = ()
+    American = ()
+    Festival = ()
+    Worldwide = ()
+    Continental = ()
+    Imperial = ()
+    Nothing = ()
+    NothingYet = ()
+    CantPlayEver = ()
+    IHaveThis = ()
+    WillPutLonelyTileDown = ()
+    HaveNeighboringTileToo = ()
+    WillFormNewChain = ()
+    CantPlayNow = ()
 
 
 class GameHistoryMessages(AutoNumber):
