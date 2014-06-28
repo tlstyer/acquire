@@ -254,14 +254,50 @@ define(function(require) {
 		gameActionConstructorStartGame = function() {
 			$('#game-action-start-game').show();
 		},
-		startGameButtonClicked = function() {
+		gameActionButtonClickedStartGame = function() {
 			network.sendMessage(enums.CommandsToServer.DoGameAction, enums.GameActions.StartGame);
 			$('#game-action-start-game').hide();
+		},
+		select_chain_game_action_id = null,
+		gameActionConstructorSelectChain = function(game_action_id, hotel_type_ids) {
+			var hotel_type_id = 0,
+				$button = null;
+
+			select_chain_game_action_id = game_action_id;
+
+			for (hotel_type_id = 0; hotel_type_id < 7; hotel_type_id++) {
+				$button = $('#game-select-chain-' + hotel_type_id);
+
+				if ($.inArray(hotel_type_id, hotel_type_ids) !== -1) {
+					$button.css('visibility', 'visible');
+				} else {
+					$button.css('visibility', 'hidden');
+				}
+			}
+
+			$('#game-action-select-chain').show();
+		},
+		gameActionButtonClickedSelectChain = function($button) {
+			network.sendMessage(enums.CommandsToServer.DoGameAction, select_chain_game_action_id, parseInt($button.attr('data-index'), 10));
+			$('#game-action-select-chain').hide();
 		},
 		game_action_constructors_lookup = {},
 		initializeGameActionConstructorsLookup = function() {
 			game_action_constructors_lookup[enums.GameActions.StartGame] = gameActionConstructorStartGame;
 			game_action_constructors_lookup[enums.GameActions.PlayTile] = gameActionConstructorPlayTile;
+			game_action_constructors_lookup[enums.GameActions.SelectNewChain] = function(hotel_type_ids) {
+				gameActionConstructorSelectChain(enums.GameActions.SelectNewChain, hotel_type_ids);
+			};
+			game_action_constructors_lookup[enums.GameActions.SelectMergerSurvivor] = function(hotel_type_ids) {
+				gameActionConstructorSelectChain(enums.GameActions.SelectMergerSurvivor, hotel_type_ids);
+			};
+			game_action_constructors_lookup[enums.GameActions.SelectChainToMerge] = function(hotel_type_ids) {
+				gameActionConstructorSelectChain(enums.GameActions.SelectChainToMerge, hotel_type_ids);
+			};
+		},
+		game_action_button_click_handlers = {
+			'game-action-start-game': gameActionButtonClickedStartGame,
+			'game-action-select-chain': gameActionButtonClickedSelectChain
 		},
 		setGameAction = function(game_action_id, player_id) {
 			var hyphenated_enum_name = common_functions.getHyphenatedStringFromEnumName(enums.GameActions[game_action_id]),
@@ -331,8 +367,10 @@ define(function(require) {
 		return false;
 	});
 
-	$('#start-game').on('click', function() {
-		startGameButtonClicked();
+	$('#game-action').on('click', 'input', function() {
+		var $this = $(this);
+
+		game_action_button_click_handlers[$this.closest('.game-action').attr('id')]($this);
 
 		return false;
 	});

@@ -186,8 +186,11 @@ body {
 		visibility: hidden;
 	}
 }
-#game-action > div {
-	display: none;
+#game-action {
+	text-align: center;
+	> div {
+		display: none;
+	}
 }
 #game-history {
 	overflow-y: scroll;

@@ -186,8 +186,17 @@
 				<input id="game-tile-5" data-index="5" type="button" value="x" class="button-hotel">
 			</div>
 			<div id="game-action">
-				<div id="game-action-start-game">
+				<div id="game-action-start-game" class="game-action">
 					<input id="start-game" type="button" value="Start Game">
+				</div>
+				<div id="game-action-select-chain" class="game-action">
+					<input id="game-select-chain-0" data-index="0" type="button" value="L" class="button-hotel luxor">
+					<input id="game-select-chain-1" data-index="1" type="button" value="T" class="button-hotel tower">
+					<input id="game-select-chain-2" data-index="2" type="button" value="A" class="button-hotel american">
+					<input id="game-select-chain-3" data-index="3" type="button" value="F" class="button-hotel festival">
+					<input id="game-select-chain-4" data-index="4" type="button" value="W" class="button-hotel worldwide">
+					<input id="game-select-chain-5" data-index="5" type="button" value="C" class="button-hotel continental">
+					<input id="game-select-chain-6" data-index="6" type="button" value="I" class="button-hotel imperial">
 				</div>
 			</div>
 			<table id="score-sheet">
@@ -339,6 +348,9 @@
 			<div id="game-history-played-tile"><span class="username"></span> played tile <span class="tile"></span>.</div>
 			<div id="game-status-start-game">Waiting for <span class="username"></span> to start the game.</div>
 			<div id="game-status-play-tile">Waiting for <span class="username"></span> to play a tile.</div>
+			<div id="game-status-select-new-chain">Waiting for <span class="username"></span> to select new chain.</div>
+			<div id="game-status-select-merger-survivor">Waiting for <span class="username"></span> to select merger survivor.</div>
+			<div id="game-status-select-chain-to-merge">Waiting for <span class="username"></span> to select chain to merge.</div>
 		</div>
 	</body>
 </html>

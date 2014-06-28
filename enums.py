@@ -63,6 +63,9 @@ class FatalErrors(AutoNumber):
 class GameActions(AutoNumber):
     StartGame = ()
     PlayTile = ()
+    SelectNewChain = ()
+    SelectMergerSurvivor = ()
+    SelectChainToMerge = ()
     PurchaseStock = ()
 
 

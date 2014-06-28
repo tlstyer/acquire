@@ -381,6 +381,24 @@ class ActionPlayTile(Action):
         message = [enums.CommandsToClient.AddGameHistoryMessage.value, enums.GameHistoryMessages.PlayedTile.value, self.player_id, tile[0], tile[1]]
         AcquireServerProtocol.add_pending_messages(self.game.client_ids, [message])
 
+        import random
+
+        hotel_type_ids = [0, 1, 2, 3, 4, 5, 6]
+        random.shuffle(hotel_type_ids)
+        hotel_type_ids = hotel_type_ids[:random.randrange(2, 7)]
+        return [ActionSelectNewChain(self.game, self.player_id, hotel_type_ids)]
+
+
+class ActionSelectNewChain(Action):
+    def __init__(self, game, player_id, hotel_type_ids):
+        super().__init__(game, player_id, enums.GameActions.SelectNewChain.value)
+        self.hotel_type_ids = hotel_type_ids
+        self.player_params.append(hotel_type_ids)
+
+    def prepare(self):
+        pass
+
+    def execute(self, hotel_type_id):
         return True
 
 
