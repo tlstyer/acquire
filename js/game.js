@@ -259,16 +259,16 @@ define(function(require) {
 			$('#game-action-start-game').hide();
 		},
 		select_chain_game_action_id = null,
-		gameActionConstructorSelectChain = function(game_action_id, hotel_type_ids) {
-			var hotel_type_id = 0,
+		gameActionConstructorSelectChain = function(game_action_id, game_board_type_ids) {
+			var game_board_type_id = 0,
 				$button = null;
 
 			select_chain_game_action_id = game_action_id;
 
-			for (hotel_type_id = 0; hotel_type_id < 7; hotel_type_id++) {
-				$button = $('#game-select-chain-' + hotel_type_id);
+			for (game_board_type_id = 0; game_board_type_id < 7; game_board_type_id++) {
+				$button = $('#game-select-chain-' + game_board_type_id);
 
-				if ($.inArray(hotel_type_id, hotel_type_ids) !== -1) {
+				if ($.inArray(game_board_type_id, game_board_type_ids) !== -1) {
 					$button.css('visibility', 'visible');
 				} else {
 					$button.css('visibility', 'hidden');
@@ -285,14 +285,14 @@ define(function(require) {
 		initializeGameActionConstructorsLookup = function() {
 			game_action_constructors_lookup[enums.GameActions.StartGame] = gameActionConstructorStartGame;
 			game_action_constructors_lookup[enums.GameActions.PlayTile] = gameActionConstructorPlayTile;
-			game_action_constructors_lookup[enums.GameActions.SelectNewChain] = function(hotel_type_ids) {
-				gameActionConstructorSelectChain(enums.GameActions.SelectNewChain, hotel_type_ids);
+			game_action_constructors_lookup[enums.GameActions.SelectNewChain] = function(game_board_type_ids) {
+				gameActionConstructorSelectChain(enums.GameActions.SelectNewChain, game_board_type_ids);
 			};
-			game_action_constructors_lookup[enums.GameActions.SelectMergerSurvivor] = function(hotel_type_ids) {
-				gameActionConstructorSelectChain(enums.GameActions.SelectMergerSurvivor, hotel_type_ids);
+			game_action_constructors_lookup[enums.GameActions.SelectMergerSurvivor] = function(game_board_type_ids) {
+				gameActionConstructorSelectChain(enums.GameActions.SelectMergerSurvivor, game_board_type_ids);
 			};
-			game_action_constructors_lookup[enums.GameActions.SelectChainToMerge] = function(hotel_type_ids) {
-				gameActionConstructorSelectChain(enums.GameActions.SelectChainToMerge, hotel_type_ids);
+			game_action_constructors_lookup[enums.GameActions.SelectChainToMerge] = function(game_board_type_ids) {
+				gameActionConstructorSelectChain(enums.GameActions.SelectChainToMerge, game_board_type_ids);
 			};
 		},
 		game_action_button_click_handlers = {
