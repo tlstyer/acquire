@@ -55,32 +55,25 @@ class AcquireServerProtocol(autobahn.asyncio.websocket.WebSocketServerProtocol):
             AcquireServerProtocol.usernames.add(self.username)
 
             # tell client about other clients' data
-            enum_set_client_id_to_data = enums.CommandsToClient_SetClientIdToData
             for client in AcquireServerProtocol.client_id_to_client.values():
                 if client is not self:
-                    messages_client.append([enum_set_client_id_to_data, client.client_id, client.username, client.peer])
+                    messages_client.append([enums.CommandsToClient_SetClientIdToData, client.client_id, client.username, client.peer])
             AcquireServerProtocol.add_pending_messages({self.client_id}, messages_client)
             messages_client = []
 
             # tell all clients about client's data
-            AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, [[enum_set_client_id_to_data, self.client_id, self.username, self.peer]])
+            AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, [[enums.CommandsToClient_SetClientIdToData, self.client_id, self.username, self.peer]])
 
             # tell client about all games
-            set_game_state = enums.CommandsToClient_SetGameState
-            client_index = enums.ScoreSheetIndexes_Client
-            username_index = enums.ScoreSheetIndexes_Username
-            set_game_player_username = enums.CommandsToClient_SetGamePlayerUsername
-            set_game_player_client_id = enums.CommandsToClient_SetGamePlayerClientId
-            set_game_watcher_client_id = enums.CommandsToClient_SetGameWatcherClientId
             for game_id, game in AcquireServerProtocol.game_id_to_game.items():
-                messages_client.append([set_game_state, game_id, game.state])
+                messages_client.append([enums.CommandsToClient_SetGameState, game_id, game.state])
                 for player_id, player_datum in enumerate(game.score_sheet.player_data):
-                    if player_datum[client_index] is None:
-                        messages_client.append([set_game_player_username, game_id, player_id, player_datum[username_index]])
+                    if player_datum[enums.ScoreSheetIndexes_Client] is None:
+                        messages_client.append([enums.CommandsToClient_SetGamePlayerUsername, game_id, player_id, player_datum[enums.ScoreSheetIndexes_Username]])
                     else:
-                        messages_client.append([set_game_player_client_id, game_id, player_id, player_datum[client_index].client_id])
+                        messages_client.append([enums.CommandsToClient_SetGamePlayerClientId, game_id, player_id, player_datum[enums.ScoreSheetIndexes_Client].client_id])
                 for client_id in game.watcher_client_ids:
-                    messages_client.append([set_game_watcher_client_id, game_id, client_id])
+                    messages_client.append([enums.CommandsToClient_SetGameWatcherClientId, game_id, client_id])
             AcquireServerProtocol.add_pending_messages({self.client_id}, messages_client)
 
             self.flush_pending_messages()
@@ -181,10 +174,9 @@ class GameBoard:
     def __init__(self, client_ids):
         self.client_ids = client_ids
 
-        nothing = enums.GameBoardTypes_Nothing
-        self.x_to_y_to_board_type = [[nothing for y in range(9)] for x in range(12)]
+        self.x_to_y_to_board_type = [[enums.GameBoardTypes_Nothing for y in range(9)] for x in range(12)]
         self.board_type_to_coordinates = collections.defaultdict(set)
-        self.board_type_to_coordinates[nothing].update((x, y) for x in range(12) for y in range(9))
+        self.board_type_to_coordinates[enums.GameBoardTypes_Nothing].update((x, y) for x in range(12) for y in range(9))
 
     def set_cell(self, coordinates, board_type):
         x, y = coordinates
@@ -211,34 +203,26 @@ class ScoreSheet:
         self.player_data.append([0, 0, 0, 0, 0, 0, 0, 60, 60, client.username, starting_tile, client, len(self.player_data) == 0])
         self.player_data.sort(key=lambda x: x[enums.ScoreSheetIndexes_StartingTile])
 
-        username_index = enums.ScoreSheetIndexes_Username
-        starting_tile_index = enums.ScoreSheetIndexes_StartingTile
-        client_index = enums.ScoreSheetIndexes_Client
-        nothing_yet = enums.GameBoardTypes_NothingYet
-        set_game_player_username = enums.CommandsToClient_SetGamePlayerUsername
-        set_game_player_client_id = enums.CommandsToClient_SetGamePlayerClientId
-        set_game_board_cell = enums.CommandsToClient_SetGameBoardCell
-
         # update player_ids for all clients in game
         player_id = 0
         for player_datum in self.player_data:
-            if player_datum[client_index] is not None:
-                player_datum[client_index].player_id = player_id
+            if player_datum[enums.ScoreSheetIndexes_Client] is not None:
+                player_datum[enums.ScoreSheetIndexes_Client].player_id = player_id
             player_id += 1
 
         for player_id, player_datum in enumerate(self.player_data):
             # tell everybody about player changes
             player_datum = self.player_data[player_id]
             if player_id >= client.player_id:
-                if player_datum[client_index] is None:
-                    messages_all.append([set_game_player_username, self.game_id, player_id, player_datum[username_index]])
+                if player_datum[enums.ScoreSheetIndexes_Client] is None:
+                    messages_all.append([enums.CommandsToClient_SetGamePlayerUsername, self.game_id, player_id, player_datum[enums.ScoreSheetIndexes_Username]])
                 else:
-                    messages_all.append([set_game_player_client_id, self.game_id, player_id, player_datum[client_index].client_id])
+                    messages_all.append([enums.CommandsToClient_SetGamePlayerClientId, self.game_id, player_id, player_datum[enums.ScoreSheetIndexes_Client].client_id])
 
             # tell client about other starting tiles
             if player_id != client.player_id:
-                starting_tile = player_datum[starting_tile_index]
-                messages_client.append([set_game_board_cell, starting_tile[0], starting_tile[1], nothing_yet])
+                starting_tile = player_datum[enums.ScoreSheetIndexes_StartingTile]
+                messages_client.append([enums.CommandsToClient_SetGameBoardCell, starting_tile[0], starting_tile[1], enums.GameBoardTypes_NothingYet])
 
         AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, messages_all)
         if len(messages_client) > 0:
@@ -247,53 +231,41 @@ class ScoreSheet:
     def readd_player(self, client):
         messages_all = []
 
-        username_index = enums.ScoreSheetIndexes_Username
-        client_index = enums.ScoreSheetIndexes_Client
-        set_game_player_client_id = enums.CommandsToClient_SetGamePlayerClientId
-
         for player_id, player_datum in enumerate(self.player_data):
-            if client.username == player_datum[username_index]:
+            if client.username == player_datum[enums.ScoreSheetIndexes_Username]:
                 client.player_id = player_id
-                player_datum[client_index] = client
-                messages_all.append([set_game_player_client_id, self.game_id, player_id, client.client_id])
+                player_datum[enums.ScoreSheetIndexes_Client] = client
+                messages_all.append([enums.CommandsToClient_SetGamePlayerClientId, self.game_id, player_id, client.client_id])
 
         AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, messages_all)
 
     def remove_client(self, client):
         messages_all = []
 
-        client_index = enums.ScoreSheetIndexes_Client
-        set_game_player_client_id = enums.CommandsToClient_SetGamePlayerClientId
-
         for player_id, player_datum in enumerate(self.player_data):
-            if client is player_datum[client_index]:
-                player_datum[client_index].player_id = None
-                player_datum[client_index] = None
-                messages_all.append([set_game_player_client_id, self.game_id, player_id, None])
+            if client is player_datum[enums.ScoreSheetIndexes_Client]:
+                player_datum[enums.ScoreSheetIndexes_Client].player_id = None
+                player_datum[enums.ScoreSheetIndexes_Client] = None
+                messages_all.append([enums.CommandsToClient_SetGamePlayerClientId, self.game_id, player_id, None])
 
         AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, messages_all)
 
     def is_username_in_game(self, username):
-        username_index = enums.ScoreSheetIndexes_Username
-
         for player_datum in self.player_data:
-            if username == player_datum[username_index]:
+            if username == player_datum[enums.ScoreSheetIndexes_Username]:
                 return True
         return False
 
     def get_creator_player_id(self):
-        is_creator_index = enums.ScoreSheetIndexes_IsCreator
         for player_id, player_datum in enumerate(self.player_data):
-            if player_datum[is_creator_index]:
+            if player_datum[enums.ScoreSheetIndexes_IsCreator]:
                 return player_id
 
     def get_player_id_to_client_id(self):
         player_id_to_client_id = []
 
-        client_index = enums.ScoreSheetIndexes_Client
-
         for player_datum in self.player_data:
-            client = player_datum[client_index]
+            client = player_datum[enums.ScoreSheetIndexes_Client]
             player_id_to_client_id.append(None if client is None else client.client_id)
 
         return player_id_to_client_id
@@ -316,8 +288,6 @@ class TileBag:
 
 
 class Action:
-    command_id = enums.CommandsToClient_SetGameAction
-
     def __init__(self, game, player_id, game_action_id):
         self.game = game
         self.player_id = player_id
@@ -330,7 +300,7 @@ class Action:
 
     def send_message(self, client=None):
         target_client_ids = self.game.client_ids if client is None else {client.client_id}
-        message = [Action.command_id, self.game_action_id, self.player_id]
+        message = [enums.CommandsToClient_SetGameAction, self.game_action_id, self.player_id]
 
         if len(self.player_params) == 0 and len(self.other_params) == 0:
             AcquireServerProtocol.add_pending_messages(target_client_ids, [message])
@@ -420,9 +390,6 @@ class TileRacks:
     def __init__(self, game):
         self.game = game
         self.racks = []
-        self._e_add_game_history_message = enums.CommandsToClient_AddGameHistoryMessage
-        self._e_drew_tile = enums.GameHistoryMessages_DrewTile
-        self._e_set_tile = enums.CommandsToClient_SetTile
 
     def draw_initial_tiles(self):
         for player_id in range(len(self.game.player_id_to_client_id)):
@@ -430,8 +397,6 @@ class TileRacks:
             self.draw_tile(player_id)
 
     def draw_tile(self, player_id):
-        will_put_lonely_tile_down = enums.GameBoardTypes_WillPutLonelyTileDown
-
         tile_data = self.racks[player_id]
         messages = []
 
@@ -439,11 +404,11 @@ class TileRacks:
             if tile_datum is None:
                 tile = self.game.tile_bag.get_tile()
                 if tile is not None:
-                    game_board_type_id = will_put_lonely_tile_down
+                    game_board_type_id = enums.GameBoardTypes_WillPutLonelyTileDown
                     tile_data[tile_index] = [tile, game_board_type_id]
 
-                    messages.append([self._e_add_game_history_message, self._e_drew_tile, player_id, tile[0], tile[1]])
-                    messages.append([self._e_set_tile, tile_index, tile[0], tile[1], game_board_type_id])
+                    messages.append([enums.CommandsToClient_AddGameHistoryMessage, enums.GameHistoryMessages_DrewTile, player_id, tile[0], tile[1]])
+                    messages.append([enums.CommandsToClient_SetTile, tile_index, tile[0], tile[1], game_board_type_id])
 
         client_id = self.game.player_id_to_client_id[player_id]
         if client_id is not None:
@@ -540,9 +505,8 @@ class Game:
         messages = [[enums.CommandsToClient_SetGameBoard, self.game_board.x_to_y_to_board_type]]
 
         # score sheet
-        net_index = enums.ScoreSheetIndexes_Net
         score_sheet_data = [
-            [x[:net_index + 1] for x in self.score_sheet.player_data],
+            [x[:enums.ScoreSheetIndexes_Net + 1] for x in self.score_sheet.player_data],
             self.score_sheet.available,
             self.score_sheet.chain_size,
             self.score_sheet.price,
@@ -551,11 +515,10 @@ class Game:
 
         # player's tiles
         if client.player_id is not None:
-            set_tile = enums.CommandsToClient_SetTile
             for tile_index, tile_datum in enumerate(self.tile_racks.racks[client.player_id]):
                 if tile_datum is not None:
                     tile = tile_datum[0]
-                    messages.append([set_tile, tile_index, tile[0], tile[1], tile_datum[1]])
+                    messages.append([enums.CommandsToClient_SetTile, tile_index, tile[0], tile[1], tile_datum[1]])
 
         AcquireServerProtocol.add_pending_messages({client.client_id}, messages)
 
