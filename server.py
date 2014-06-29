@@ -524,13 +524,17 @@ class ActionSelectNewChain(Action):
         self.tile = tile
 
     def prepare(self):
-        pass
+        if len(self.game_board_type_ids) == 1:
+            return self._create_new_chain(self.game_board_type_ids[0])
 
     def execute(self, game_board_type_id):
         if game_board_type_id in self.game_board_type_ids:
-            self.game.game_board.fill_cells(self.tile, game_board_type_id)
-            self.game.score_sheet.set_chain_size(game_board_type_id, len(self.game.game_board.board_type_to_coordinates[game_board_type_id]))
-            return True
+            return self._create_new_chain(game_board_type_id)
+
+    def _create_new_chain(self, game_board_type_id):
+        self.game.game_board.fill_cells(self.tile, game_board_type_id)
+        self.game.score_sheet.set_chain_size(game_board_type_id, len(self.game.game_board.board_type_to_coordinates[game_board_type_id]))
+        return True
 
 
 class ActionPurchaseStock(Action):
