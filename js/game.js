@@ -244,7 +244,7 @@ define(function(require) {
 			play_tile_action_enabled = true;
 		},
 		gameTileRackButtonClicked = function($button) {
-			if (play_tile_action_enabled) {
+			if (play_tile_action_enabled && !$button.hasClass('cant-play-ever') && !$button.hasClass('cant-play-now')) {
 				network.sendMessage(enums.CommandsToServer.DoGameAction, enums.GameActions.PlayTile, parseInt($button.attr('data-index'), 10));
 				$button.css('visibility', 'hidden');
 
@@ -344,6 +344,8 @@ define(function(require) {
 			$('#game-history').empty();
 
 			$('#game-status').empty();
+
+			play_tile_action_enabled = false;
 		};
 
 	periodicResizeCheck();

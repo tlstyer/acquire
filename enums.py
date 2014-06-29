@@ -66,6 +66,7 @@ class GameBoardTypes(AutoNumber):
     WillPutLonelyTileDown = ()
     HaveNeighboringTileToo = ()
     WillFormNewChain = ()
+    WillMergeChains = ()
     CantPlayNow = ()
 
 
@@ -154,7 +155,8 @@ GameBoardTypes_IHaveThis = 10
 GameBoardTypes_WillPutLonelyTileDown = 11
 GameBoardTypes_HaveNeighboringTileToo = 12
 GameBoardTypes_WillFormNewChain = 13
-GameBoardTypes_CantPlayNow = 14
+GameBoardTypes_WillMergeChains = 14
+GameBoardTypes_CantPlayNow = 15
 GameHistoryMessages_DrewStartingTile = 0
 GameHistoryMessages_StartedGame = 1
 GameHistoryMessages_DrewTile = 2

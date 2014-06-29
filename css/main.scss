@@ -16,6 +16,7 @@ $color-i-have-this: rgb(255, 224, 160);
 $color-will-put-lonely-tile-down: rgb(192, 192, 192);
 $color-have-neighboring-tile-too: rgb(192, 255, 192);
 $color-will-form-new-chain: rgb(255, 255, 255);
+$color-will-merge-chains: rgb(255, 255, 255);
 $color-cant-play-now: rgb(96, 96, 96);
 
 $color-player: rgb(192, 192, 255);
@@ -230,6 +231,9 @@ body {
 	}
 	&.will-form-new-chain {
 		background-color: $color-will-form-new-chain;
+	}
+	&.will-merge-chains {
+		background-color: $color-will-merge-chains;
 	}
 	&.cant-play-now {
 		background-color: $color-cant-play-now;
