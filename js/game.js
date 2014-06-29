@@ -357,6 +357,7 @@ define(function(require) {
 	pubsub.subscribe('server-SetGameBoard', setGameBoard);
 	pubsub.subscribe('server-SetTile', setTile);
 	pubsub.subscribe('server-SetTileGameBoardType', setTileGameBoardType);
+	pubsub.subscribe('server-SetScoreSheetCell', setScoreSheetCell);
 	pubsub.subscribe('server-SetScoreSheet', setScoreSheet);
 	pubsub.subscribe('server-AddGameHistoryMessage', addGameHistoryMessage);
 	pubsub.subscribe('server-SetGameAction', setGameAction);

@@ -223,8 +223,9 @@ class GameBoard:
 
 
 class ScoreSheet:
-    def __init__(self, game_id):
+    def __init__(self, game_id, client_ids):
         self.game_id = game_id
+        self.client_ids = client_ids
 
         self.player_data = []
         self.available = [25, 25, 25, 25, 25, 25, 25]
@@ -304,6 +305,30 @@ class ScoreSheet:
             player_id_to_client_id.append(None if client is None else client.client_id)
 
         return player_id_to_client_id
+
+    def set_chain_size(self, game_board_type_id, chain_size):
+        messages = []
+
+        self.chain_size[game_board_type_id] = chain_size
+        messages.append([enums.CommandsToClient_SetScoreSheetCell, enums.ScoreSheetRows_ChainSize, game_board_type_id, chain_size])
+
+        old_price = self.price[game_board_type_id]
+        if chain_size > 0:
+            if chain_size < 11:
+                new_price = min(chain_size, 6)
+            else:
+                new_price = min((chain_size - 1) // 10 + 6, 10)
+            if game_board_type_id >= enums.GameBoardTypes_American:
+                new_price += 1
+            if game_board_type_id >= enums.GameBoardTypes_Continental:
+                new_price += 1
+        else:
+            new_price = 0
+        if new_price != old_price:
+            self.price[game_board_type_id] = new_price
+            messages.append([enums.CommandsToClient_SetScoreSheetCell, enums.ScoreSheetRows_Price, game_board_type_id, new_price])
+
+        AcquireServerProtocol.add_pending_messages(self.client_ids, messages)
 
 
 class TileBag:
@@ -474,6 +499,7 @@ class ActionPlayTile(Action):
 
         if game_board_type_id <= enums.GameBoardTypes_Imperial:
             self.game.game_board.fill_cells(tile, game_board_type_id)
+            self.game.score_sheet.set_chain_size(game_board_type_id, len(self.game.game_board.board_type_to_coordinates[game_board_type_id]))
         elif game_board_type_id == enums.GameBoardTypes_WillPutLonelyTileDown:
             self.game.game_board.set_cell(tile, enums.GameBoardTypes_NothingYet)
         elif game_board_type_id == enums.GameBoardTypes_WillFormNewChain:
@@ -503,6 +529,7 @@ class ActionSelectNewChain(Action):
     def execute(self, game_board_type_id):
         if game_board_type_id in self.game_board_type_ids:
             self.game.game_board.fill_cells(self.tile, game_board_type_id)
+            self.game.score_sheet.set_chain_size(game_board_type_id, len(self.game.game_board.board_type_to_coordinates[game_board_type_id]))
             return True
 
 
@@ -528,7 +555,7 @@ class Game:
         self.watcher_client_ids = set()
 
         self.game_board = GameBoard(self.client_ids)
-        self.score_sheet = ScoreSheet(game_id)
+        self.score_sheet = ScoreSheet(game_id, self.client_ids)
         self.tile_bag = TileBag()
         self.tile_racks = TileRacks(self)
 
