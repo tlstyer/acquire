@@ -322,6 +322,95 @@ class TileBag:
         return len(self.tiles)
 
 
+class TileRacks:
+    def __init__(self, game):
+        self.game = game
+        self.racks = []
+
+    def draw_initial_tiles(self):
+        for player_id in range(len(self.game.player_id_to_client_id)):
+            self.racks.append([None, None, None, None, None, None])
+            self.draw_tile(player_id)
+
+    def remove_tile(self, player_id, tile_index):
+        self.racks[player_id][tile_index] = None
+
+    def draw_tile(self, player_id):
+        tile_data = self.racks[player_id]
+
+        for tile_index, tile_datum in enumerate(tile_data):
+            if tile_datum is None:
+                tile = self.game.tile_bag.get_tile()
+                if tile is not None:
+                    tile_data[tile_index] = [tile, None]
+
+    def determine_tile_game_board_types(self):
+        chain_sizes = self.game.score_sheet.chain_size
+        can_start_new_chain = 0 in chain_sizes
+        x_to_y_to_board_type = self.game.game_board.x_to_y_to_board_type
+
+        for player_id, rack in enumerate(self.racks):
+            old_types = [None if t is None else t[1] for t in rack]
+            new_types = []
+            for tile_datum in rack:
+                if tile_datum is None:
+                    new_type = None
+                else:
+                    tile = tile_datum[0]
+                    x = tile[0]
+                    y = tile[1]
+
+                    borders = set()
+                    if x > 0:
+                        borders.add(x_to_y_to_board_type[x - 1][y])
+                    if x < 11:
+                        borders.add(x_to_y_to_board_type[x + 1][y])
+                    if y > 0:
+                        borders.add(x_to_y_to_board_type[x][y - 1])
+                    if y < 8:
+                        borders.add(x_to_y_to_board_type[x][y + 1])
+                    borders.discard(enums.GameBoardTypes_Nothing)
+                    borders.discard(enums.GameBoardTypes_CantPlayEver)
+                    if len(borders) > 1 and enums.GameBoardTypes_NothingYet in borders:
+                        borders.remove(enums.GameBoardTypes_NothingYet)
+
+                    len_borders = len(borders)
+                    new_type = enums.GameBoardTypes_WillPutLonelyTileDown
+                    if len_borders == 1:
+                        if enums.GameBoardTypes_NothingYet in borders:
+                            if can_start_new_chain:
+                                new_type = enums.GameBoardTypes_WillFormNewChain
+                            else:
+                                new_type = enums.GameBoardTypes_CantPlayNow
+                        else:
+                            for t in borders:
+                                new_type = t
+                    elif len_borders > 1:
+                        new_type = enums.GameBoardTypes_CantPlayEver
+
+                new_types.append(new_type)
+
+            for tile_index, tile_datum in enumerate(rack):
+                if tile_datum is not None:
+                    tile_datum[1] = new_types[tile_index]
+
+            messages = []
+            for tile_index, old_type in enumerate(old_types):
+                new_type = new_types[tile_index]
+                if new_type != old_type:
+                    if old_type is None:
+                        tile = rack[tile_index][0]
+                        messages.append([enums.CommandsToClient_AddGameHistoryMessage, enums.GameHistoryMessages_DrewTile, player_id, tile[0], tile[1]])
+                        messages.append([enums.CommandsToClient_SetTile, tile_index, tile[0], tile[1], new_type])
+                    else:
+                        messages.append([enums.CommandsToClient_SetTileGameBoardType, tile_index, new_type])
+
+            if len(messages) > 0:
+                client_id = self.game.player_id_to_client_id[player_id]
+                if client_id is not None:
+                    AcquireServerProtocol.add_pending_messages({client_id}, messages)
+
+
 class Action:
     def __init__(self, game, player_id, game_action_id):
         self.game = game
@@ -430,95 +519,6 @@ class ActionPurchaseStock(Action):
 
     def execute(self):
         pass
-
-
-class TileRacks:
-    def __init__(self, game):
-        self.game = game
-        self.racks = []
-
-    def draw_initial_tiles(self):
-        for player_id in range(len(self.game.player_id_to_client_id)):
-            self.racks.append([None, None, None, None, None, None])
-            self.draw_tile(player_id)
-
-    def remove_tile(self, player_id, tile_index):
-        self.racks[player_id][tile_index] = None
-
-    def draw_tile(self, player_id):
-        tile_data = self.racks[player_id]
-
-        for tile_index, tile_datum in enumerate(tile_data):
-            if tile_datum is None:
-                tile = self.game.tile_bag.get_tile()
-                if tile is not None:
-                    tile_data[tile_index] = [tile, None]
-
-    def determine_tile_game_board_types(self):
-        chain_sizes = self.game.score_sheet.chain_size
-        can_start_new_chain = 0 in chain_sizes
-        x_to_y_to_board_type = self.game.game_board.x_to_y_to_board_type
-
-        for player_id, rack in enumerate(self.racks):
-            old_types = [None if t is None else t[1] for t in rack]
-            new_types = []
-            for tile_datum in rack:
-                if tile_datum is None:
-                    new_type = None
-                else:
-                    tile = tile_datum[0]
-                    x = tile[0]
-                    y = tile[1]
-
-                    borders = set()
-                    if x > 0:
-                        borders.add(x_to_y_to_board_type[x - 1][y])
-                    if x < 11:
-                        borders.add(x_to_y_to_board_type[x + 1][y])
-                    if y > 0:
-                        borders.add(x_to_y_to_board_type[x][y - 1])
-                    if y < 8:
-                        borders.add(x_to_y_to_board_type[x][y + 1])
-                    borders.discard(enums.GameBoardTypes_Nothing)
-                    borders.discard(enums.GameBoardTypes_CantPlayEver)
-                    if len(borders) > 1 and enums.GameBoardTypes_NothingYet in borders:
-                        borders.remove(enums.GameBoardTypes_NothingYet)
-
-                    len_borders = len(borders)
-                    new_type = enums.GameBoardTypes_WillPutLonelyTileDown
-                    if len_borders == 1:
-                        if enums.GameBoardTypes_NothingYet in borders:
-                            if can_start_new_chain:
-                                new_type = enums.GameBoardTypes_WillFormNewChain
-                            else:
-                                new_type = enums.GameBoardTypes_CantPlayNow
-                        else:
-                            for t in borders:
-                                new_type = t
-                    elif len_borders > 1:
-                        new_type = enums.GameBoardTypes_CantPlayEver
-
-                new_types.append(new_type)
-
-            for tile_index, tile_datum in enumerate(rack):
-                if tile_datum is not None:
-                    tile_datum[1] = new_types[tile_index]
-
-            messages = []
-            for tile_index, old_type in enumerate(old_types):
-                new_type = new_types[tile_index]
-                if new_type != old_type:
-                    if old_type is None:
-                        tile = rack[tile_index][0]
-                        messages.append([enums.CommandsToClient_AddGameHistoryMessage, enums.GameHistoryMessages_DrewTile, player_id, tile[0], tile[1]])
-                        messages.append([enums.CommandsToClient_SetTile, tile_index, tile[0], tile[1], new_type])
-                    else:
-                        messages.append([enums.CommandsToClient_SetTileGameBoardType, tile_index, new_type])
-
-            if len(messages) > 0:
-                client_id = self.game.player_id_to_client_id[player_id]
-                if client_id is not None:
-                    AcquireServerProtocol.add_pending_messages({client_id}, messages)
 
 
 class Game:
