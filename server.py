@@ -564,14 +564,30 @@ class ActionPurchaseShares(Action):
         super().__init__(game, player_id, enums.GameActions_PurchaseShares)
 
     def prepare(self):
+        self.game.tile_racks.determine_tile_game_board_types()
+
+        can_purchase_shares = False
+        score_sheet = self.game.score_sheet
+        cash = score_sheet.player_data[self.player_id][enums.ScoreSheetIndexes_Cash]
+        for available, chain_size, price in zip(score_sheet.available, score_sheet.chain_size, score_sheet.price):
+            if chain_size > 0 and available > 0 and price <= cash:
+                can_purchase_shares = True
+                break
+
+        if can_purchase_shares:
+            self.game.tile_racks.determine_tile_game_board_types()
+        else:
+            return self._complete_action()
+
+    def execute(self, game_board_type_ids, end_game):
+        return self._complete_action()
+
+    def _complete_action(self):
         self.game.tile_racks.draw_tile(self.player_id)
         self.game.tile_racks.determine_tile_game_board_types()
 
         next_player_id = (self.player_id + 1) % len(self.game.player_id_to_client_id)
         return [ActionPlayTile(self.game, next_player_id), ActionPurchaseShares(self.game, next_player_id)]
-
-    def execute(self):
-        pass
 
 
 class Game:

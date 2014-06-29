@@ -42,6 +42,7 @@ define(function(require) {
 			setCss($('#game-board'), 0, top, cell_width_gb * 12 + 2, height, font_size);
 
 			setCss($('.button-hotel'), null, null, cell_width_gb, cell_width_gb, font_size);
+			$('#gps-cart .button-hotel').css('width', Math.floor(cell_width_gb * 4 / 3));
 
 			top += height + 2;
 			height = cell_width_gb;
@@ -304,6 +305,113 @@ define(function(require) {
 			network.sendMessage(enums.CommandsToServer.DoGameAction, select_chain_game_action_id, parseInt($button.attr('data-index'), 10));
 			$('#game-action-select-chain').hide();
 		},
+		purchase_shares_available = null,
+		purchase_shares_cart = null,
+		updatePurchaseSharesElements = function() {
+			var score_sheet_price = score_sheet_data[enums.ScoreSheetRows.Price],
+				score_sheet_available = score_sheet_data[enums.ScoreSheetRows.Available],
+				how_much_money = score_sheet_data[common_data.player_id][enums.ScoreSheetIndexes.Cash],
+				money_spent, index, money_left, selected_chain_counts, has_enough_money, still_available, $button, chain_index;
+
+			// money_spent and money_left
+			money_spent = 0;
+			for (index = 0; index < 3; ++index) {
+				if (purchase_shares_cart[index] !== null) {
+					money_spent += score_sheet_price[purchase_shares_cart[index]];
+				}
+			}
+			money_left = how_much_money - money_spent;
+
+			// selected_chain_counts
+			selected_chain_counts = [0, 0, 0, 0, 0, 0, 0];
+			for (index = 0; index < 3; ++index) {
+				if (purchase_shares_cart[index] !== null) {
+					selected_chain_counts[purchase_shares_cart[index]]++;
+				}
+			}
+
+			// enable/disable chains that player can afford and that are still available
+			for (index = 0; index < 7; index++) {
+				if (purchase_shares_available[index]) {
+					has_enough_money = money_left >= score_sheet_price[index];
+					still_available = score_sheet_available[index] > selected_chain_counts[index];
+					$('#gps-available-' + index).prop('disabled', !(has_enough_money && still_available));
+				}
+			}
+
+			// update cart buttons to reflect purchase_shares_cart
+			for (index = 0; index < 3; index++) {
+				$button = $('#gps-cart-' + index);
+				if (purchase_shares_cart[index] !== null) {
+					chain_index = purchase_shares_cart[index];
+					$button.attr('class', 'button-hotel ' + enums.ScoreSheetIndexes[chain_index].toLowerCase());
+					$button.val(score_sheet_price[chain_index] * 100);
+					$button.css('visibility', 'visible');
+				} else {
+					$button.css('visibility', 'hidden');
+				}
+			}
+
+			// update "Cost" fields
+			$('#gps-total').text(money_spent * 100);
+			$('#gps-left').text(money_left * 100);
+		},
+		gameActionConstructorPurchaseShares = function() {
+			var index, $button, available;
+
+			purchase_shares_available = [];
+			purchase_shares_cart = [null, null, null];
+
+			for (index = 0; index < 7; index++) {
+				$button = $('#gps-available-' + index);
+
+				available = score_sheet_data[enums.ScoreSheetRows.Available][index] > 0 && score_sheet_data[enums.ScoreSheetRows.Price][index] > 0;
+				purchase_shares_available.push(available);
+				if (available) {
+					$button.css('visibility', 'visible');
+				} else {
+					$button.css('visibility', 'hidden');
+				}
+			}
+
+			$('#gps-cart .button-hotel').css('visibility', 'hidden');
+
+			$('#gps-end-game').prop('checked', false);
+
+			updatePurchaseSharesElements();
+
+			$('#game-action-purchase-shares').show();
+		},
+		gameActionButtonClickedPurchaseShares = function($button) {
+			var parent_id = $button.parent().attr('id'),
+				button_id = $button.attr('id'),
+				index, cart;
+
+			if (parent_id === 'gps-available') {
+				for (index = 0; index < 3; index++) {
+					if (purchase_shares_cart[index] === null) {
+						purchase_shares_cart[index] = parseInt($button.attr('data-index'), 10);
+						break;
+					}
+				}
+			} else if (parent_id === 'gps-cart') {
+				purchase_shares_cart[parseInt($button.attr('data-index'), 10)] = null;
+			} else if (button_id === 'gps-end-game') {
+				// do nothing for now
+			} else if (button_id === 'gps-purchase') {
+				cart = [];
+				for (index = 0; index < 3; index++) {
+					if (purchase_shares_cart[index] !== null) {
+						cart.push(purchase_shares_cart[index]);
+					}
+				}
+				network.sendMessage(enums.CommandsToServer.DoGameAction, enums.GameActions.PurchaseShares, cart, $('#gps-end-game').prop('checked') ? 1 : 0);
+				$('#game-action-purchase-shares').hide();
+				return;
+			}
+
+			updatePurchaseSharesElements();
+		},
 		game_action_constructors_lookup = {},
 		initializeGameActionConstructorsLookup = function() {
 			game_action_constructors_lookup[enums.GameActions.StartGame] = gameActionConstructorStartGame;
@@ -317,10 +425,12 @@ define(function(require) {
 			game_action_constructors_lookup[enums.GameActions.SelectChainToMerge] = function(game_board_type_ids) {
 				gameActionConstructorSelectChain(enums.GameActions.SelectChainToMerge, game_board_type_ids);
 			};
+			game_action_constructors_lookup[enums.GameActions.PurchaseShares] = gameActionConstructorPurchaseShares;
 		},
 		game_action_button_click_handlers = {
 			'game-action-start-game': gameActionButtonClickedStartGame,
-			'game-action-select-chain': gameActionButtonClickedSelectChain
+			'game-action-select-chain': gameActionButtonClickedSelectChain,
+			'game-action-purchase-shares': gameActionButtonClickedPurchaseShares
 		},
 		setGameAction = function(game_action_id, player_id) {
 			var hyphenated_enum_name = common_functions.getHyphenatedStringFromEnumName(enums.GameActions[game_action_id]),
@@ -397,14 +507,10 @@ define(function(require) {
 		var $this = $(this);
 
 		game_action_button_click_handlers[$this.closest('.game-action').attr('id')]($this);
-
-		return false;
 	});
 
 	$('#game-tile-rack').on('click', '.button-hotel', function() {
 		gameTileRackButtonClicked($(this));
-
-		return false;
 	});
 
 	return null;

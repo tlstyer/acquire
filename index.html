@@ -198,6 +198,46 @@
 					<input id="game-select-chain-5" data-index="5" type="button" value="C" class="button-hotel continental">
 					<input id="game-select-chain-6" data-index="6" type="button" value="I" class="button-hotel imperial">
 				</div>
+				<div id="game-action-purchase-shares" class="game-action">
+					<div id="gps-row1">
+						<fieldset id="gps-available">
+							<legend>Available</legend>
+							<input id="gps-available-0" data-index="0" type="button" value="L" class="button-hotel luxor">
+							<input id="gps-available-1" data-index="1" type="button" value="T" class="button-hotel tower">
+							<input id="gps-available-2" data-index="2" type="button" value="A" class="button-hotel american">
+							<input id="gps-available-3" data-index="3" type="button" value="F" class="button-hotel festival">
+							<input id="gps-available-4" data-index="4" type="button" value="W" class="button-hotel worldwide">
+							<input id="gps-available-5" data-index="5" type="button" value="C" class="button-hotel continental">
+							<input id="gps-available-6" data-index="6" type="button" value="I" class="button-hotel imperial">
+						</fieldset>
+						<fieldset>
+							<legend>Cost</legend>
+							<table id="gps-cost-table">
+								<tbody>
+									<tr>
+										<td>Total</td>
+										<td id="gps-total"></td>
+									</tr>
+									<tr>
+										<td>Left</td>
+										<td id="gps-left"></td>
+									</tr>
+								</tbody>
+							</table>
+						</fieldset>
+					</div>
+					<div id="gps-row2">
+						<fieldset id="gps-cart">
+							<legend>Cart</legend>
+							<input id="gps-cart-0" data-index="0" type="button" value="x" class="button-hotel">
+							<input id="gps-cart-1" data-index="1" type="button" value="x" class="button-hotel">
+							<input id="gps-cart-2" data-index="2" type="button" value="x" class="button-hotel">
+						</fieldset>
+						<input id="gps-end-game" type="checkbox">
+						<label for="gps-end-game">End game</label>
+						<input id="gps-purchase" type="button" value="Purchase">
+					</div>
+				</div>
 			</div>
 			<table id="score-sheet">
 				<tbody>
@@ -357,6 +397,7 @@
 			<div id="game-status-select-new-chain">Waiting for <span class="username"></span> to select new chain.</div>
 			<div id="game-status-select-merger-survivor">Waiting for <span class="username"></span> to select merger survivor.</div>
 			<div id="game-status-select-chain-to-merge">Waiting for <span class="username"></span> to select chain to merge.</div>
+			<div id="game-status-purchase-shares">Waiting for <span class="username"></span> to purchase shares.</div>
 		</div>
 	</body>
 </html>

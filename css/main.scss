@@ -206,6 +206,27 @@ fieldset.game-history-turn-began {
 	}
 }
 
+#game-action-purchase-shares fieldset {
+	display: inline-block;
+	margin: 0;
+	padding: 0 3px 3px;
+	legend {
+		padding: 0 5px;
+	}
+}
+#gps-row1 > * {
+	vertical-align: top;
+}
+#gps-cost-table tr {
+	:nth-child(1) {
+		text-align: left;
+	}
+	:nth-child(2) {
+		text-align: right;
+		width: 4em;
+	}
+}
+
 span {
 	&.username {
 		background-color: $color-table-border;
