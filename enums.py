@@ -72,7 +72,7 @@ class GameBoardTypes(AutoNumber):
 
 
 class GameHistoryMessages(AutoNumber):
-    DrewStartingTile = ()
+    DrewPositionTile = ()
     StartedGame = ()
     DrewTile = ()
     PlayedTile = ()
@@ -95,7 +95,7 @@ class ScoreSheetIndexes(AutoNumber):
     Cash = ()
     Net = ()
     Username = ()
-    StartingTile = ()
+    PositionTile = ()
     Client = ()
     IsCreator = ()
 
@@ -159,7 +159,7 @@ GameBoardTypes_HaveNeighboringTileToo = 12
 GameBoardTypes_WillFormNewChain = 13
 GameBoardTypes_WillMergeChains = 14
 GameBoardTypes_CantPlayNow = 15
-GameHistoryMessages_DrewStartingTile = 0
+GameHistoryMessages_DrewPositionTile = 0
 GameHistoryMessages_StartedGame = 1
 GameHistoryMessages_DrewTile = 2
 GameHistoryMessages_PlayedTile = 3
@@ -176,7 +176,7 @@ ScoreSheetIndexes_Imperial = 6
 ScoreSheetIndexes_Cash = 7
 ScoreSheetIndexes_Net = 8
 ScoreSheetIndexes_Username = 9
-ScoreSheetIndexes_StartingTile = 10
+ScoreSheetIndexes_PositionTile = 10
 ScoreSheetIndexes_Client = 11
 ScoreSheetIndexes_IsCreator = 12
 ScoreSheetRows_Player0 = 0

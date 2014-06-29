@@ -226,7 +226,7 @@ define(function(require) {
 			$message.find('.username').text(common_data.game_id_to_player_data[common_data.game_id][player_id].username);
 
 			switch (game_history_message_id) {
-			case enums.GameHistoryMessages.DrewStartingTile:
+			case enums.GameHistoryMessages.DrewPositionTile:
 			case enums.GameHistoryMessages.DrewTile:
 			case enums.GameHistoryMessages.PlayedTile:
 				$message.find('.tile').text(common_functions.getTileName(arguments[2], arguments[3]));

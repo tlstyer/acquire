@@ -232,12 +232,12 @@ class ScoreSheet:
         self.chain_size = [0, 0, 0, 0, 0, 0, 0]
         self.price = [0, 0, 0, 0, 0, 0, 0]
 
-    def add_player(self, client, starting_tile):
+    def add_player(self, client, position_tile):
         messages_all = []
         messages_client = []
 
-        self.player_data.append([0, 0, 0, 0, 0, 0, 0, 60, 60, client.username, starting_tile, client, len(self.player_data) == 0])
-        self.player_data.sort(key=lambda x: x[enums.ScoreSheetIndexes_StartingTile])
+        self.player_data.append([0, 0, 0, 0, 0, 0, 0, 60, 60, client.username, position_tile, client, len(self.player_data) == 0])
+        self.player_data.sort(key=lambda x: x[enums.ScoreSheetIndexes_PositionTile])
 
         # update player_ids for all clients in game
         player_id = 0
@@ -255,10 +255,10 @@ class ScoreSheet:
                 else:
                     messages_all.append([enums.CommandsToClient_SetGamePlayerClientId, self.game_id, player_id, player_datum[enums.ScoreSheetIndexes_Client].client_id])
 
-            # tell client about other starting tiles
+            # tell client about other position tiles
             if player_id != client.player_id:
-                starting_tile = player_datum[enums.ScoreSheetIndexes_StartingTile]
-                messages_client.append([enums.CommandsToClient_SetGameBoardCell, starting_tile[0], starting_tile[1], enums.GameBoardTypes_NothingYet])
+                position_tile = player_datum[enums.ScoreSheetIndexes_PositionTile]
+                messages_client.append([enums.CommandsToClient_SetGameBoardCell, position_tile[0], position_tile[1], enums.GameBoardTypes_NothingYet])
 
         AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, messages_all)
         if len(messages_client) > 0:
@@ -570,11 +570,11 @@ class Game:
 
         self.client_ids.add(client.client_id)
         client.game_id = self.game_id
-        starting_tile = self.tile_bag.get_tile()
-        self.game_board.set_cell(starting_tile, enums.GameBoardTypes_NothingYet)
-        self.score_sheet.add_player(client, starting_tile)
+        position_tile = self.tile_bag.get_tile()
+        self.game_board.set_cell(position_tile, enums.GameBoardTypes_NothingYet)
+        self.score_sheet.add_player(client, position_tile)
         self.player_id_to_client_id = self.score_sheet.get_player_id_to_client_id()
-        message = [enums.CommandsToClient_AddGameHistoryMessage, enums.GameHistoryMessages_DrewStartingTile, client.player_id, starting_tile[0], starting_tile[1]]
+        message = [enums.CommandsToClient_AddGameHistoryMessage, enums.GameHistoryMessages_DrewPositionTile, client.player_id, position_tile[0], position_tile[1]]
         AcquireServerProtocol.add_pending_messages(self.client_ids, [message])
         self.actions.append(ActionStartGame(self, self.score_sheet.get_creator_player_id()))
         self.actions[0].send_message()
@@ -583,12 +583,12 @@ class Game:
         if self.state == enums.GameStates_Starting and not self.score_sheet.is_username_in_game(client.username):
             self.client_ids.add(client.client_id)
             client.game_id = self.game_id
-            starting_tile = self.tile_bag.get_tile()
-            self.game_board.set_cell(starting_tile, enums.GameBoardTypes_NothingYet)
+            position_tile = self.tile_bag.get_tile()
+            self.game_board.set_cell(position_tile, enums.GameBoardTypes_NothingYet)
             previous_creator_player_id = self.score_sheet.get_creator_player_id()
-            self.score_sheet.add_player(client, starting_tile)
+            self.score_sheet.add_player(client, position_tile)
             self.player_id_to_client_id = self.score_sheet.get_player_id_to_client_id()
-            message = [enums.CommandsToClient_AddGameHistoryMessage, enums.GameHistoryMessages_DrewStartingTile, client.player_id, starting_tile[0], starting_tile[1]]
+            message = [enums.CommandsToClient_AddGameHistoryMessage, enums.GameHistoryMessages_DrewPositionTile, client.player_id, position_tile[0], position_tile[1]]
             AcquireServerProtocol.add_pending_messages(self.client_ids, [message])
             creator_player_id = self.score_sheet.get_creator_player_id()
             if creator_player_id != previous_creator_player_id:
