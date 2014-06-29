@@ -24,11 +24,15 @@ define(function(require) {
 					if (top !== null) {
 						$div.css('top', top);
 					}
-					$div.css('width', width);
+					if (width !== null) {
+						$div.css('width', width);
+					}
 					if (height !== null) {
 						$div.css('height', height);
 					}
-					$div.css('font-size', font_size + 'px');
+					if (font_size !== null) {
+						$div.css('font-size', font_size + 'px');
+					}
 				};
 
 			cell_width_gb = Math.floor((half_window_width - 2) / 12);
@@ -64,15 +68,15 @@ define(function(require) {
 
 			height = 22;
 			top -= height + 2;
-			setCss($('#game-links'), left, top, width, height, 16);
+			setCss($('#game-links'), left, top, width, height, null);
 
 			height = 22;
 			top -= height + 2;
-			setCss($('#game-status'), left, top, width, height, 16);
+			setCss($('#game-status'), left, top, width, height, null);
 
 			height = top - num_rows * cell_width_ss - 6;
 			top -= height + 2;
-			setCss($('#game-history'), left, top, width, height, 16);
+			setCss($('#game-history'), left, top, width, height, null);
 		},
 		periodic_resize_check_width = null,
 		periodic_resize_check_height = null,
