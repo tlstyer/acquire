@@ -488,7 +488,7 @@ class ActionStartGame(Action):
         self.game.tile_racks.draw_initial_tiles()
         self.game.tile_racks.determine_tile_game_board_types()
 
-        return [ActionPlayTile(self.game, 0), ActionPurchaseStock(self.game, 0)]
+        return [ActionPlayTile(self.game, 0), ActionPurchaseShares(self.game, 0)]
 
 
 class ActionPlayTile(Action):
@@ -559,16 +559,16 @@ class ActionSelectNewChain(Action):
         return True
 
 
-class ActionPurchaseStock(Action):
+class ActionPurchaseShares(Action):
     def __init__(self, game, player_id):
-        super().__init__(game, player_id, enums.GameActions_PurchaseStock)
+        super().__init__(game, player_id, enums.GameActions_PurchaseShares)
 
     def prepare(self):
         self.game.tile_racks.draw_tile(self.player_id)
         self.game.tile_racks.determine_tile_game_board_types()
 
         next_player_id = (self.player_id + 1) % len(self.game.player_id_to_client_id)
-        return [ActionPlayTile(self.game, next_player_id), ActionPurchaseStock(self.game, next_player_id)]
+        return [ActionPlayTile(self.game, next_player_id), ActionPurchaseShares(self.game, next_player_id)]
 
     def execute(self):
         pass
