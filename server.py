@@ -306,6 +306,18 @@ class ScoreSheet:
 
         return player_id_to_client_id
 
+    def adjust_player_data(self, player_id, score_sheet_index, adjustment):
+        messages = []
+
+        self.player_data[player_id][score_sheet_index] += adjustment
+        messages.append([enums.CommandsToClient_SetScoreSheetCell, player_id, score_sheet_index, self.player_data[player_id][score_sheet_index]])
+
+        if score_sheet_index <= enums.ScoreSheetIndexes_Imperial:
+            self.available[score_sheet_index] -= adjustment
+            messages.append([enums.CommandsToClient_SetScoreSheetCell, enums.ScoreSheetRows_Available, score_sheet_index, self.available[score_sheet_index]])
+
+        AcquireServerProtocol.add_pending_messages(self.client_ids, messages)
+
     def set_chain_size(self, game_board_type_id, chain_size):
         messages = []
 
@@ -538,6 +550,8 @@ class ActionSelectNewChain(Action):
     def _create_new_chain(self, game_board_type_id):
         self.game.game_board.fill_cells(self.tile, game_board_type_id)
         self.game.score_sheet.set_chain_size(game_board_type_id, len(self.game.game_board.board_type_to_coordinates[game_board_type_id]))
+        if self.game.score_sheet.available[game_board_type_id] > 0:
+            self.game.score_sheet.adjust_player_data(self.player_id, game_board_type_id, 1)
 
         message = [enums.CommandsToClient_AddGameHistoryMessage, enums.GameHistoryMessages_FormedChain, self.player_id, game_board_type_id]
         AcquireServerProtocol.add_pending_messages(self.game.client_ids, [message])
