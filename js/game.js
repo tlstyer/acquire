@@ -155,8 +155,21 @@ define(function(require) {
 			var $button = $('#game-tile-' + tile_index);
 			$button.attr('class', 'button-hotel ' + common_functions.getHyphenatedStringFromEnumName(enums.GameBoardTypes[game_board_type_id]));
 		},
+		score_sheet_data = [
+			[0, 0, 0, 0, 0, 0, 0, 60, 60],
+			[0, 0, 0, 0, 0, 0, 0, 60, 60],
+			[0, 0, 0, 0, 0, 0, 0, 60, 60],
+			[0, 0, 0, 0, 0, 0, 0, 60, 60],
+			[0, 0, 0, 0, 0, 0, 0, 60, 60],
+			[0, 0, 0, 0, 0, 0, 0, 60, 60],
+			[25, 25, 25, 25, 25, 25, 25],
+			[0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0]
+		],
 		setScoreSheetCell = function(row, index, data) {
 			var $row, index_class, mark_chain_as_safe = false;
+
+			score_sheet_data[row][index] = data;
 
 			if (row <= enums.ScoreSheetRows.Player5) {
 				if (index <= enums.ScoreSheetIndexes.Imperial) {
