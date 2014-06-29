@@ -483,6 +483,10 @@ class ActionPlayTile(Action):
     def __init__(self, game, player_id):
         super().__init__(game, player_id, enums.GameActions_PlayTile)
 
+    def prepare(self):
+        message = [enums.CommandsToClient_AddGameHistoryMessage, enums.GameHistoryMessages_TurnBegan, self.player_id]
+        AcquireServerProtocol.add_pending_messages(self.game.client_ids, [message])
+
     def execute(self, tile_index):
         if not isinstance(tile_index, int):
             return

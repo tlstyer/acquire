@@ -196,6 +196,19 @@ body {
 #game-history {
 	overflow-y: scroll;
 }
+fieldset.game-history-turn-began {
+	border-top: 1px solid black;
+	border-bottom: none;
+	border-left: none;
+	border-right: none;
+	display: block;
+	text-align: center;
+	margin: 0;
+	padding: 0;
+	legend {
+		padding: 0 5px;
+	}
+}
 
 .button-hotel {
 	font-weight: bold;

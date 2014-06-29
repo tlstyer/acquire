@@ -72,6 +72,7 @@ class GameBoardTypes(AutoNumber):
 
 
 class GameHistoryMessages(AutoNumber):
+    TurnBegan = ()
     DrewPositionTile = ()
     StartedGame = ()
     DrewTile = ()
@@ -159,10 +160,11 @@ GameBoardTypes_HaveNeighboringTileToo = 12
 GameBoardTypes_WillFormNewChain = 13
 GameBoardTypes_WillMergeChains = 14
 GameBoardTypes_CantPlayNow = 15
-GameHistoryMessages_DrewPositionTile = 0
-GameHistoryMessages_StartedGame = 1
-GameHistoryMessages_DrewTile = 2
-GameHistoryMessages_PlayedTile = 3
+GameHistoryMessages_TurnBegan = 0
+GameHistoryMessages_DrewPositionTile = 1
+GameHistoryMessages_StartedGame = 2
+GameHistoryMessages_DrewTile = 3
+GameHistoryMessages_PlayedTile = 4
 GameStates_Starting = 0
 GameStates_InProgress = 1
 GameStates_Completed = 2
