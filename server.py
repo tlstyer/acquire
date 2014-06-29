@@ -538,6 +538,10 @@ class ActionSelectNewChain(Action):
     def _create_new_chain(self, game_board_type_id):
         self.game.game_board.fill_cells(self.tile, game_board_type_id)
         self.game.score_sheet.set_chain_size(game_board_type_id, len(self.game.game_board.board_type_to_coordinates[game_board_type_id]))
+
+        message = [enums.CommandsToClient_AddGameHistoryMessage, enums.GameHistoryMessages_FormedChain, self.player_id, game_board_type_id]
+        AcquireServerProtocol.add_pending_messages(self.game.client_ids, [message])
+
         return True
 
 

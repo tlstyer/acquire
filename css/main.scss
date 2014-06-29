@@ -41,11 +41,6 @@ body {
 	font-weight: bold;
 }
 
-.username {
-	background-color: $color-table-border;
-	white-space: nowrap;
-}
-
 .lobby-section {
 	margin-bottom: 1em;
 	white-space: nowrap;
@@ -207,6 +202,34 @@ fieldset.game-history-turn-began {
 	padding: 0;
 	legend {
 		padding: 0 5px;
+	}
+}
+
+span {
+	&.username {
+		background-color: $color-table-border;
+		white-space: nowrap;
+	}
+	&.luxor {
+		background-color: $color-luxor;
+	}
+	&.tower {
+		background-color: $color-tower;
+	}
+	&.american {
+		background-color: $color-american;
+	}
+	&.festival {
+		background-color: $color-festival;
+	}
+	&.worldwide {
+		background-color: $color-worldwide;
+	}
+	&.continental {
+		background-color: $color-continental;
+	}
+	&.imperial {
+		background-color: $color-imperial;
 	}
 }
 

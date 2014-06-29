@@ -221,7 +221,8 @@ define(function(require) {
 		addGameHistoryMessage = function(game_history_message_id, player_id) {
 			var $message = $('#game-history-' + common_functions.getHyphenatedStringFromEnumName(enums.GameHistoryMessages[game_history_message_id])).clone().removeAttr('id'),
 				$game_history = $('#game-history'),
-				at_bottom = $game_history.scrollTop() + $game_history.innerHeight() >= $game_history[0].scrollHeight;
+				at_bottom = $game_history.scrollTop() + $game_history.innerHeight() >= $game_history[0].scrollHeight,
+				$element;
 
 			$message.find('.username').text(common_data.game_id_to_player_data[common_data.game_id][player_id].username);
 
@@ -230,6 +231,11 @@ define(function(require) {
 			case enums.GameHistoryMessages.DrewTile:
 			case enums.GameHistoryMessages.PlayedTile:
 				$message.find('.tile').text(common_functions.getTileName(arguments[2], arguments[3]));
+				break;
+			case enums.GameHistoryMessages.FormedChain:
+				$element = $message.find('.chain');
+				$element.addClass(enums.GameBoardTypes[arguments[2]].toLowerCase());
+				$element.text(enums.GameBoardTypes[arguments[2]]);
 				break;
 			}
 

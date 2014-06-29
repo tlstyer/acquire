@@ -77,6 +77,7 @@ class GameHistoryMessages(AutoNumber):
     StartedGame = ()
     DrewTile = ()
     PlayedTile = ()
+    FormedChain = ()
 
 
 class GameStates(AutoNumber):
@@ -165,6 +166,7 @@ GameHistoryMessages_DrewPositionTile = 1
 GameHistoryMessages_StartedGame = 2
 GameHistoryMessages_DrewTile = 3
 GameHistoryMessages_PlayedTile = 4
+GameHistoryMessages_FormedChain = 5
 GameStates_Starting = 0
 GameStates_InProgress = 1
 GameStates_Completed = 2
