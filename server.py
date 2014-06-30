@@ -381,7 +381,7 @@ class TileRacks:
             if tile_datum is None:
                 tile = self.game.tile_bag.get_tile()
                 if tile is not None:
-                    tile_data[tile_index] = [tile, None]
+                    tile_data[tile_index] = [tile, None, None]
 
     def determine_tile_game_board_types(self):
         chain_sizes = self.game.score_sheet.chain_size
@@ -422,10 +422,17 @@ class TileRacks:
                             else:
                                 new_type = enums.GameBoardTypes_CantPlayNow
                         else:
-                            for t in borders:
-                                new_type = t
+                            new_type = borders.pop()
                     elif len_borders > 1:
-                        new_type = enums.GameBoardTypes_CantPlayNow
+                        safe_count = 0
+                        for border in borders:
+                            if chain_sizes[border] >= 11:
+                                safe_count += 1
+                        if safe_count < 2:
+                            new_type = enums.GameBoardTypes_WillMergeChains
+                            tile_datum[2] = borders
+                        else:
+                            new_type = enums.GameBoardTypes_CantPlayEver
 
                 new_types.append(new_type)
 
@@ -512,8 +519,7 @@ class ActionPlayTile(Action):
         if tile_datum is None:
             return
 
-        tile = tile_datum[0]
-        game_board_type_id = tile_datum[1]
+        tile, game_board_type_id, borders = tile_datum
         retval = True
 
         if game_board_type_id <= enums.GameBoardTypes_Imperial:
@@ -522,8 +528,11 @@ class ActionPlayTile(Action):
         elif game_board_type_id == enums.GameBoardTypes_WillPutLonelyTileDown:
             self.game.game_board.set_cell(tile, enums.GameBoardTypes_NothingYet)
         elif game_board_type_id == enums.GameBoardTypes_WillFormNewChain:
+            # todo: move this set_cell call to ActionSelectNewChain::prepare(). do only if necessary.
             self.game.game_board.set_cell(tile, enums.GameBoardTypes_NothingYet)
             retval = [ActionSelectNewChain(self.game, self.player_id, [index for index, size in enumerate(self.game.score_sheet.chain_size) if size == 0], tile)]
+        elif game_board_type_id == enums.GameBoardTypes_WillMergeChains:
+            retval = [ActionSelectMergerSurvivor(self.game, self.player_id, borders, tile)]
         else:
             return
 
@@ -562,11 +571,100 @@ class ActionSelectNewChain(Action):
         return True
 
 
+class ActionSelectMergerSurvivor(Action):
+    def __init__(self, game, player_id, type_ids, tile):
+        super().__init__(game, player_id, enums.GameActions_SelectMergerSurvivor)
+        self.tile = tile
+
+        chain_size_to_type_ids = collections.defaultdict(set)
+        for type_id in type_ids:
+            chain_size_to_type_ids[self.game.score_sheet.chain_size[type_id]].add(type_id)
+        self.type_id_sets = [x[1] for x in sorted(chain_size_to_type_ids.items(), reverse=True)]
+
+    def prepare(self):
+        largest_type_ids = self.type_id_sets[0]
+        if len(largest_type_ids) == 1:
+            return self._prepare_next_actions(largest_type_ids.pop())
+        else:
+            self.game.game_board.set_cell(self.tile, enums.GameBoardTypes_NothingYet)
+            self.additional_params.append(sorted(largest_type_ids))
+
+    def execute(self, type_id):
+        if type_id in self.type_id_sets[0]:
+            return self._prepare_next_actions(type_id)
+
+    def _prepare_next_actions(self, controlling_type_id):
+        self.type_id_sets[0].discard(controlling_type_id)
+
+        self.game.game_board.fill_cells(self.tile, controlling_type_id)
+        self.game.score_sheet.set_chain_size(controlling_type_id, len(self.game.game_board.board_type_to_coordinates[controlling_type_id]))
+
+        # todo: pay bonuses
+
+        actions = []
+        for type_id_set in self.type_id_sets:
+            if len(type_id_set) > 0:
+                actions.append(ActionSelectChainToMerge(self.game, self.player_id, type_id_set, controlling_type_id))
+
+        return actions
+
+
+class ActionSelectChainToMerge(Action):
+    def __init__(self, game, player_id, defunct_type_ids, controlling_type_id):
+        super().__init__(game, player_id, enums.GameActions_SelectChainToMerge)
+        self.defunct_type_ids = defunct_type_ids
+        self.controlling_type_id = controlling_type_id
+
+    def prepare(self):
+        if len(self.defunct_type_ids) == 1:
+            return self._prepare_next_actions(self.defunct_type_ids.pop())
+        else:
+            self.additional_params.append(sorted(self.defunct_type_ids))
+
+    def execute(self, type_id):
+        if type_id in self.defunct_type_ids:
+            return self._prepare_next_actions(type_id)
+
+    def _prepare_next_actions(self, next_type_id):
+        self.defunct_type_ids.discard(next_type_id)
+
+        actions = []
+        player_ids = list(range(self.player_id, len(self.game.player_id_to_client_id))) + list(range(self.player_id))
+        for player_id in player_ids:
+            if self.game.score_sheet.player_data[player_id][next_type_id] > 0:
+                actions.append(ActionDisposeOfShares(self.game, player_id, next_type_id, self.controlling_type_id))
+
+        if len(self.defunct_type_ids) > 0:
+            actions.append(ActionSelectChainToMerge(self.game, self.player_id, self.defunct_type_ids, self.controlling_type_id))
+
+        return actions
+
+
+class ActionDisposeOfShares(Action):
+    def __init__(self, game, player_id, defunct_type_id, controlling_type_id):
+        super().__init__(game, player_id, enums.GameActions_DisposeOfShares)
+        self.defunct_type_id = defunct_type_id
+        self.controlling_type_id = controlling_type_id
+        self.additional_params.append(defunct_type_id)
+        self.additional_params.append(controlling_type_id)
+
+    def prepare(self):
+        print('ActionDisposeOfShares', self.player_id, self.defunct_type_id, self.controlling_type_id)
+        return True
+
+    def execute(self):
+        pass
+
+
 class ActionPurchaseShares(Action):
     def __init__(self, game, player_id):
         super().__init__(game, player_id, enums.GameActions_PurchaseShares)
 
     def prepare(self):
+        for type_id, chain_size in enumerate(self.game.score_sheet.chain_size):
+            if chain_size > 0 and len(self.game.game_board.board_type_to_coordinates[type_id]) == 0:
+                self.game.score_sheet.set_chain_size(type_id, 0)
+
         self.game.tile_racks.determine_tile_game_board_types()
 
         can_purchase_shares = False

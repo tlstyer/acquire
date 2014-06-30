@@ -49,6 +49,7 @@ class GameActions(AutoNumber):
     SelectNewChain = ()
     SelectMergerSurvivor = ()
     SelectChainToMerge = ()
+    DisposeOfShares = ()
     PurchaseShares = ()
 
 
@@ -146,7 +147,8 @@ GameActions_PlayTile = 1
 GameActions_SelectNewChain = 2
 GameActions_SelectMergerSurvivor = 3
 GameActions_SelectChainToMerge = 4
-GameActions_PurchaseShares = 5
+GameActions_DisposeOfShares = 5
+GameActions_PurchaseShares = 6
 GameBoardTypes_Luxor = 0
 GameBoardTypes_Tower = 1
 GameBoardTypes_American = 2
