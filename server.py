@@ -721,7 +721,7 @@ class Game:
         messages.append([enums.CommandsToClient_SetScoreSheet, score_sheet_data])
 
         # player's tiles
-        if client.player_id is not None:
+        if client.player_id is not None and len(self.tile_racks.racks) > 0:
             for tile_index, tile_datum in enumerate(self.tile_racks.racks[client.player_id]):
                 if tile_datum is not None:
                     tile = tile_datum[0]
