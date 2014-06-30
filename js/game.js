@@ -240,7 +240,7 @@ define(function(require) {
 			var $message = $('#game-history-' + common_functions.getHyphenatedStringFromEnumName(enums.GameHistoryMessages[game_history_message_id])).clone().removeAttr('id'),
 				$game_history = $('#game-history'),
 				at_bottom = $game_history.scrollTop() + $game_history.innerHeight() >= $game_history[0].scrollHeight,
-				$element;
+				$element, parts, length, index, entry, name;
 
 			$message.find('.username').text(common_data.game_id_to_player_data[common_data.game_id][player_id].username);
 
@@ -254,6 +254,26 @@ define(function(require) {
 				$element = $message.find('.chain');
 				$element.addClass(enums.GameBoardTypes[arguments[2]].toLowerCase());
 				$element.text(enums.GameBoardTypes[arguments[2]]);
+				break;
+			case enums.GameHistoryMessages.PurchasedShares:
+				$element = $message.find('.chains');
+				parts = [];
+				length = arguments[2].length;
+				for (index = 0; index < length; index++) {
+					entry = arguments[2][index];
+					name = enums.GameBoardTypes[entry[0]];
+					parts.push(entry[1] + ' <span class="' + name.toLowerCase() + '">' + name + '</span>');
+				}
+
+				if (parts.length === 0) {
+					$element.text('nothing');
+				} else if (parts.length === 1) {
+					$element.html(parts[0]);
+				} else if (parts.length === 2) {
+					$element.html(parts[0] + ' and ' + parts[1]);
+				} else if (parts.length === 3) {
+					$element.html(parts[0] + ', ' + parts[1] + ', and ' + parts[2]);
+				}
 				break;
 			}
 

@@ -78,6 +78,7 @@ class GameHistoryMessages(AutoNumber):
     DrewTile = ()
     PlayedTile = ()
     FormedChain = ()
+    PurchasedShares = ()
 
 
 class GameStates(AutoNumber):
@@ -167,6 +168,7 @@ GameHistoryMessages_StartedGame = 2
 GameHistoryMessages_DrewTile = 3
 GameHistoryMessages_PlayedTile = 4
 GameHistoryMessages_FormedChain = 5
+GameHistoryMessages_PurchasedShares = 6
 GameStates_Starting = 0
 GameStates_InProgress = 1
 GameStates_Completed = 2

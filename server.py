@@ -582,6 +582,35 @@ class ActionPurchaseShares(Action):
             return self._complete_action()
 
     def execute(self, game_board_type_ids, end_game):
+        if end_game != 0 and end_game != 1:
+            return
+        if not isinstance(game_board_type_ids, list) or len(game_board_type_ids) > 3:
+            return
+        game_board_type_id_to_count = collections.defaultdict(int)
+        for game_board_type_id in game_board_type_ids:
+            if isinstance(game_board_type_id, int) and 0 <= game_board_type_id < 7:
+                game_board_type_id_to_count[game_board_type_id] += 1
+            else:
+                return
+
+        cost = 0
+        score_sheet = self.game.score_sheet
+        for game_board_type_id, count in game_board_type_id_to_count.items():
+            if score_sheet.chain_size[game_board_type_id] > 0 and count <= score_sheet.available[game_board_type_id]:
+                cost += score_sheet.price[game_board_type_id] * count
+            else:
+                return
+        if cost > score_sheet.player_data[self.player_id][enums.ScoreSheetIndexes_Cash]:
+            return
+
+        if cost > 0:
+            for game_board_type_id, count in game_board_type_id_to_count.items():
+                score_sheet.adjust_player_data(self.player_id, game_board_type_id, count)
+            score_sheet.adjust_player_data(self.player_id, enums.ScoreSheetIndexes_Cash, -cost)
+
+        message = [enums.CommandsToClient_AddGameHistoryMessage, enums.GameHistoryMessages_PurchasedShares, self.player_id, sorted(game_board_type_id_to_count.items())]
+        AcquireServerProtocol.add_pending_messages(self.game.client_ids, [message])
+
         return self._complete_action()
 
     def _complete_action(self):
