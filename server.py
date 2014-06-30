@@ -425,7 +425,7 @@ class TileRacks:
                             for t in borders:
                                 new_type = t
                     elif len_borders > 1:
-                        new_type = enums.GameBoardTypes_CantPlayEver
+                        new_type = enums.GameBoardTypes_CantPlayNow
 
                 new_types.append(new_type)
 
@@ -498,8 +498,20 @@ class ActionPlayTile(Action):
         super().__init__(game, player_id, enums.GameActions_PlayTile)
 
     def prepare(self):
-        message = [enums.CommandsToClient_AddGameHistoryMessage, enums.GameHistoryMessages_TurnBegan, self.player_id]
-        AcquireServerProtocol.add_pending_messages(self.game.client_ids, [message])
+        messages = [[enums.CommandsToClient_AddGameHistoryMessage, enums.GameHistoryMessages_TurnBegan, self.player_id]]
+
+        has_a_playable_tile = False
+        for tile_datum in self.game.tile_racks.racks[self.player_id]:
+            if tile_datum is not None and tile_datum[1] != enums.GameBoardTypes_CantPlayNow and tile_datum[1] != enums.GameBoardTypes_CantPlayEver:
+                has_a_playable_tile = True
+                break
+        if not has_a_playable_tile:
+            messages.append([enums.CommandsToClient_AddGameHistoryMessage, enums.GameHistoryMessages_HasNoPlayableTile, self.player_id])
+
+        AcquireServerProtocol.add_pending_messages(self.game.client_ids, messages)
+
+        if not has_a_playable_tile:
+            return True
 
     def execute(self, tile_index):
         if not isinstance(tile_index, int):
