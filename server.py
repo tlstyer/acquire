@@ -455,26 +455,15 @@ class Action:
         self.game = game
         self.player_id = player_id
         self.game_action_id = game_action_id
-        self.player_params = []
-        self.other_params = []
+        self.additional_params = []
 
     def prepare(self):
         pass
 
     def send_message(self, client=None):
         target_client_ids = self.game.client_ids if client is None else {client.client_id}
-        message = [enums.CommandsToClient_SetGameAction, self.game_action_id, self.player_id]
-
-        if len(self.player_params) == 0 and len(self.other_params) == 0:
-            AcquireServerProtocol.add_pending_messages(target_client_ids, [message])
-        else:
-            player_client_ids = target_client_ids & {self.game.player_id_to_client_id[self.player_id]}
-            other_client_ids = target_client_ids - player_client_ids
-
-            if len(player_client_ids) > 0:
-                AcquireServerProtocol.add_pending_messages(player_client_ids, [message + self.player_params])
-            if len(other_client_ids) > 0:
-                AcquireServerProtocol.add_pending_messages(other_client_ids, [message + self.other_params])
+        messages = [[enums.CommandsToClient_SetGameAction, self.game_action_id, self.player_id] + self.additional_params]
+        AcquireServerProtocol.add_pending_messages(target_client_ids, messages)
 
 
 class ActionStartGame(Action):
@@ -550,7 +539,7 @@ class ActionSelectNewChain(Action):
     def __init__(self, game, player_id, game_board_type_ids, tile):
         super().__init__(game, player_id, enums.GameActions_SelectNewChain)
         self.game_board_type_ids = game_board_type_ids
-        self.player_params.append(game_board_type_ids)
+        self.additional_params.append(game_board_type_ids)
         self.tile = tile
 
     def prepare(self):
