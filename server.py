@@ -528,8 +528,6 @@ class ActionPlayTile(Action):
         elif game_board_type_id == enums.GameBoardTypes_WillPutLonelyTileDown:
             self.game.game_board.set_cell(tile, enums.GameBoardTypes_NothingYet)
         elif game_board_type_id == enums.GameBoardTypes_WillFormNewChain:
-            # todo: move this set_cell call to ActionSelectNewChain::prepare(). do only if necessary.
-            self.game.game_board.set_cell(tile, enums.GameBoardTypes_NothingYet)
             retval = [ActionSelectNewChain(self.game, self.player_id, [index for index, size in enumerate(self.game.score_sheet.chain_size) if size == 0], tile)]
         elif game_board_type_id == enums.GameBoardTypes_WillMergeChains:
             retval = [ActionSelectMergerSurvivor(self.game, self.player_id, borders, tile)]
@@ -554,6 +552,8 @@ class ActionSelectNewChain(Action):
     def prepare(self):
         if len(self.game_board_type_ids) == 1:
             return self._create_new_chain(self.game_board_type_ids[0])
+        else:
+            self.game.game_board.set_cell(self.tile, enums.GameBoardTypes_NothingYet)
 
     def execute(self, game_board_type_id):
         if game_board_type_id in self.game_board_type_ids:
