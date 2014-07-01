@@ -81,6 +81,8 @@ class GameHistoryMessages(AutoNumber):
     PlayedTile = ()
     FormedChain = ()
     MergedChains = ()
+    SelectedMergerSurvivor = ()
+    SelectedChainToMerge = ()
     PurchasedShares = ()
 
 
@@ -174,7 +176,9 @@ GameHistoryMessages_HasNoPlayableTile = 4
 GameHistoryMessages_PlayedTile = 5
 GameHistoryMessages_FormedChain = 6
 GameHistoryMessages_MergedChains = 7
-GameHistoryMessages_PurchasedShares = 8
+GameHistoryMessages_SelectedMergerSurvivor = 8
+GameHistoryMessages_SelectedChainToMerge = 9
+GameHistoryMessages_PurchasedShares = 10
 GameStates_Starting = 0
 GameStates_InProgress = 1
 GameStates_Completed = 2

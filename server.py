@@ -595,6 +595,9 @@ class ActionSelectMergerSurvivor(Action):
 
     def execute(self, type_id):
         if type_id in self.type_id_sets[0]:
+            message = [enums.CommandsToClient_AddGameHistoryMessage, enums.GameHistoryMessages_SelectedMergerSurvivor, self.player_id, type_id]
+            AcquireServerProtocol.add_pending_messages(self.game.client_ids, [message])
+
             return self._prepare_next_actions(type_id)
 
     def _prepare_next_actions(self, controlling_type_id):
@@ -627,6 +630,9 @@ class ActionSelectChainToMerge(Action):
 
     def execute(self, type_id):
         if type_id in self.defunct_type_ids:
+            message = [enums.CommandsToClient_AddGameHistoryMessage, enums.GameHistoryMessages_SelectedChainToMerge, self.player_id, type_id]
+            AcquireServerProtocol.add_pending_messages(self.game.client_ids, [message])
+
             return self._prepare_next_actions(type_id)
 
     def _prepare_next_actions(self, next_type_id):

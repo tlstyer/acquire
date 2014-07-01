@@ -251,6 +251,8 @@ define(function(require) {
 				$message.find('.tile').text(common_functions.getTileName(arguments[2], arguments[3]));
 				break;
 			case enums.GameHistoryMessages.FormedChain:
+			case enums.GameHistoryMessages.SelectedMergerSurvivor:
+			case enums.GameHistoryMessages.SelectedChainToMerge:
 				$element = $message.find('.chain');
 				$element.addClass(enums.GameBoardTypes[arguments[2]].toLowerCase());
 				$element.text(enums.GameBoardTypes[arguments[2]]);
