@@ -1,13 +1,14 @@
 define(function(require) {
 	var $ = require('jquery'),
+		chat = require('chat'),
 		common_data = require('common_data'),
 		common_functions = require('common_functions'),
 		enums = require('enums'),
 		network = require('network'),
 		pubsub = require('pubsub'),
-		resize = function() {
-			var half_window_width = Math.floor($(window).width() / 2),
-				half_window_width_ceil = Math.ceil($(window).width() / 2),
+		resize = function(window_width, window_height) {
+			var half_window_width = Math.floor(window_width / 2),
+				half_window_width_ceil = Math.ceil(window_width / 2),
 				$score_sheet = $('#score-sheet'),
 				cell_width_gb = 0,
 				cell_width_ss = 0,
@@ -16,44 +17,27 @@ define(function(require) {
 				top = null,
 				width = null,
 				height = null,
-				font_size = null,
-				setCss = function($div, left, top, width, height, font_size) {
-					if (left !== null) {
-						$div.css('left', left);
-					}
-					if (top !== null) {
-						$div.css('top', top);
-					}
-					if (width !== null) {
-						$div.css('width', width);
-					}
-					if (height !== null) {
-						$div.css('height', height);
-					}
-					if (font_size !== null) {
-						$div.css('font-size', font_size + 'px');
-					}
-				};
+				font_size = null;
 
 			cell_width_gb = Math.floor((half_window_width - 2) / 12);
 			top = 0;
 			height = cell_width_gb * 9 + 2;
 			font_size = Math.floor(cell_width_gb * 2 / 5);
-			setCss($('#game-board'), 0, top, cell_width_gb * 12 + 2, height, font_size);
+			common_functions.setElementPosition($('#game-board'), 0, top, cell_width_gb * 12 + 2, height, font_size);
 
-			setCss($('.button-hotel'), null, null, cell_width_gb, cell_width_gb, font_size);
+			common_functions.setElementPosition($('.button-hotel'), null, null, cell_width_gb, cell_width_gb, font_size);
 			$('#gps-cart .button-hotel').css('width', Math.floor(cell_width_gb * 4 / 3));
 
 			top += height + 2;
 			height = cell_width_gb;
-			setCss($('#game-tile-rack'), 0, top, half_window_width, height, font_size);
+			common_functions.setElementPosition($('#game-tile-rack'), 0, top, half_window_width, height, font_size);
 
 			top += height + 2;
-			height = $(window).height() - top;
-			setCss($('#game-action'), 0, top, half_window_width, height, font_size);
+			height = window_height - top;
+			common_functions.setElementPosition($('#game-action'), 0, top, half_window_width, height, font_size);
 
 			cell_width_ss = Math.floor((half_window_width - 2) / 18);
-			setCss($score_sheet, half_window_width, 0, cell_width_ss * 18 + 2, null, Math.floor(cell_width_ss * 2 / 3));
+			common_functions.setElementPosition($score_sheet, half_window_width, 0, cell_width_ss * 18 + 2, null, Math.floor(cell_width_ss * 2 / 3));
 			$score_sheet.find('tr').css('height', cell_width_ss + 'px');
 
 			$score_sheet.find('.score-sheet-player').each(function() {
@@ -63,35 +47,24 @@ define(function(require) {
 			});
 
 			left = half_window_width + 2;
-			top = $(window).height() + 2;
+			top = num_rows * cell_width_ss + 4;
 			width = half_window_width_ceil - 2;
 			font_size = Math.floor(cell_width_ss / 2);
 
+			height = Math.floor((window_height - top - 48) / 2) - 2;
+			common_functions.setElementPosition($('#game-history'), left, top, width, height);
+
+			top += height + 2;
 			height = 22;
-			top -= height + 2;
-			setCss($('#game-links'), left, top, width, height, null);
+			common_functions.setElementPosition($('#game-status'), left, top, width, height);
 
+			top += height + 2;
 			height = 22;
-			top -= height + 2;
-			setCss($('#game-status'), left, top, width, height, null);
+			common_functions.setElementPosition($('#game-links'), left, top, width, height);
 
-			height = top - num_rows * cell_width_ss - 6;
-			top -= height + 2;
-			setCss($('#game-history'), left, top, width, height, null);
-		},
-		periodic_resize_check_width = null,
-		periodic_resize_check_height = null,
-		periodicResizeCheck = function() {
-			var width = $(window).width(),
-				height = $(window).height();
-
-			if (width !== periodic_resize_check_width || height !== periodic_resize_check_height) {
-				periodic_resize_check_width = width;
-				periodic_resize_check_height = height;
-				resize();
-			}
-
-			setTimeout(periodicResizeCheck, 500);
+			top += height + 2;
+			height = window_height - top;
+			chat.setPositionForPage('game', left, top, width, height);
 		},
 		setGamePlayerData = function(game_id, player_id, username, client_id) {
 			var $score_player = null,
@@ -113,7 +86,7 @@ define(function(require) {
 
 				if ($score_player.css('display') === 'none') {
 					$score_player.show();
-					resize();
+					resize($(window).width(), $(window).height());
 				}
 			}
 		},
@@ -239,7 +212,7 @@ define(function(require) {
 		addGameHistoryMessage = function(game_history_message_id, player_id) {
 			var $message = $('#game-history-' + common_functions.getHyphenatedStringFromEnumName(enums.GameHistoryMessages[game_history_message_id])).clone().removeAttr('id'),
 				$game_history = $('#game-history'),
-				at_bottom = $game_history.scrollTop() + $game_history.innerHeight() >= $game_history[0].scrollHeight,
+				scroll_is_at_bottom = common_functions.isScrollAtBottom($game_history),
 				$element, parts, length, index, entry, name;
 
 			$message.find('.username').text(common_data.game_id_to_player_data[common_data.game_id][player_id].username);
@@ -310,8 +283,8 @@ define(function(require) {
 
 			$game_history.append($message);
 
-			if (at_bottom) {
-				$game_history.scrollTop($game_history[0].scrollHeight - $game_history.innerHeight());
+			if (scroll_is_at_bottom) {
+				common_functions.scrollToBottom($game_history);
 			}
 		},
 		play_tile_action_enabled = false,
@@ -618,9 +591,9 @@ define(function(require) {
 			play_tile_action_enabled = false;
 		};
 
-	periodicResizeCheck();
 	initializeGameActionConstructorsLookup();
 
+	pubsub.subscribe('client-Resize', resize);
 	pubsub.subscribe('client-SetGamePlayerData', setGamePlayerData);
 	pubsub.subscribe('client-JoinGame', joinGame);
 	pubsub.subscribe('server-SetGameBoardCell', setGameBoardCell);
@@ -649,6 +622,4 @@ define(function(require) {
 	$('#game-tile-rack').on('click', '.button-hotel', function() {
 		gameTileRackButtonClicked($(this));
 	});
-
-	return null;
 });

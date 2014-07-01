@@ -10,7 +10,23 @@ define(function(require) {
 				$('#page-' + page).show();
 
 				current_page = page;
+
+				pubsub.publish('client-SetPage', page);
 			}
+		},
+		periodic_resize_check_width = null,
+		periodic_resize_check_height = null,
+		periodicResizeCheck = function() {
+			var width = $(window).width(),
+				height = $(window).height();
+
+			if (width !== periodic_resize_check_width || height !== periodic_resize_check_height) {
+				periodic_resize_check_width = width;
+				periodic_resize_check_height = height;
+				pubsub.publish('client-Resize', width, height);
+			}
+
+			setTimeout(periodicResizeCheck, 500);
 		};
 
 	require('lobby');
@@ -68,4 +84,6 @@ define(function(require) {
 
 		return false;
 	});
+
+	periodicResizeCheck();
 });

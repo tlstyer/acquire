@@ -7,6 +7,29 @@ define(function(require) {
 		},
 		getTileName: function(x, y) {
 			return (x + 1) + String.fromCharCode(y + 65);
+		},
+		setElementPosition: function($element, left, top, width, height, font_size) {
+			if (left !== null) {
+				$element.css('left', left);
+			}
+			if (top !== null) {
+				$element.css('top', top);
+			}
+			if (width !== null) {
+				$element.css('width', width);
+			}
+			if (height !== null) {
+				$element.css('height', height);
+			}
+			if (typeof font_size !== 'undefined') {
+				$element.css('font-size', font_size + 'px');
+			}
+		},
+		isScrollAtBottom: function($element) {
+			return $element.scrollTop() + $element.innerHeight() >= $element[0].scrollHeight;
+		},
+		scrollToBottom: function($element) {
+			$element.scrollTop($element[0].scrollHeight - $element.innerHeight());
 		}
 	};
 });

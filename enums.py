@@ -27,6 +27,7 @@ class CommandsToClient(AutoNumber):
     SetGameAction = ()
     SetTile = ()
     SetTileGameBoardType = ()
+    AddChatMessage = ()
 
 
 class CommandsToServer(AutoNumber):
@@ -36,6 +37,7 @@ class CommandsToServer(AutoNumber):
     WatchGame = ()
     LeaveGame = ()
     DoGameAction = ()
+    SendChatMessage = ()
 
 
 class FatalErrors(AutoNumber):
@@ -139,12 +141,14 @@ CommandsToClient_AddGameHistoryMessage = 12
 CommandsToClient_SetGameAction = 13
 CommandsToClient_SetTile = 14
 CommandsToClient_SetTileGameBoardType = 15
+CommandsToClient_AddChatMessage = 16
 CommandsToServer_CreateGame = 0
 CommandsToServer_JoinGame = 1
 CommandsToServer_RejoinGame = 2
 CommandsToServer_WatchGame = 3
 CommandsToServer_LeaveGame = 4
 CommandsToServer_DoGameAction = 5
+CommandsToServer_SendChatMessage = 6
 FatalErrors_InvalidUsername = 0
 FatalErrors_UsernameAlreadyInUse = 1
 GameActions_StartGame = 0

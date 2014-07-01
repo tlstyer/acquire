@@ -387,7 +387,14 @@
 				<a href="javascript:" id="link-leave-game">Leave Game</a>
 			</div>
 		</div>
-		<div style="display: none">
+		<div id="chat">
+			<div id="chat-history"></div>
+			<form id="chat-input-form" autocomplete="off">
+				<input id="chat-input" type="text">
+			</form>
+		</div>
+		<div id="templates">
+			<div id="chat-message"><span class="username"></span> <span class="message"></span></div>
 			<div class="lobby-section" id="lobby-game-template">
 				<div>
 					<span class="header"></span>

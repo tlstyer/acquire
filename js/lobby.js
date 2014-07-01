@@ -1,9 +1,18 @@
 define(function(require) {
 	var $ = require('jquery'),
+		chat = require('chat'),
 		common_data = require('common_data'),
+		common_functions = require('common_functions'),
 		enums = require('enums'),
 		network = require('network'),
 		pubsub = require('pubsub'),
+		resize = function(window_width, window_height) {
+			var half_window_width = Math.floor(window_width / 2);
+
+			common_functions.setElementPosition($('#page-lobby'), 0, 0, half_window_width, window_height);
+
+			chat.setPositionForPage('lobby', half_window_width + 2, 0, window_width - half_window_width - 2, window_height);
+		},
 		addLobbyClient = function(client_id) {
 			var $div = $('<div/>'),
 				client_data = common_data.client_id_to_data[client_id];
@@ -103,6 +112,7 @@ define(function(require) {
 			$('#lobby-games').empty();
 		};
 
+	pubsub.subscribe('client-Resize', resize);
 	pubsub.subscribe('client-AddLobbyClient', addLobbyClient);
 	pubsub.subscribe('client-RemoveLobbyClient', removeLobbyClient);
 	pubsub.subscribe('client-SetGameState', setGameState);
@@ -131,6 +141,4 @@ define(function(require) {
 
 		return false;
 	});
-
-	return null;
 });

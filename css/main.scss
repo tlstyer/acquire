@@ -174,8 +174,12 @@ body {
 	}
 }
 
-#game-tile-rack, #game-action, #game-history, #game-status, #game-links {
+#chat, #templates {
+	display: none;
+}
+#game-tile-rack, #game-action, #game-history, #game-status, #game-links, #page-lobby, #chat-history, #chat-input {
 	position: absolute;
+	box-sizing: border-box;
 }
 #game-tile-rack {
 	text-align: center;
@@ -189,7 +193,7 @@ body {
 		display: none;
 	}
 }
-#game-history {
+#game-history, #page-lobby, #chat-history {
 	overflow-y: scroll;
 }
 fieldset.game-history-turn-began {
