@@ -4,6 +4,7 @@ import asyncio
 import autobahn.asyncio.websocket
 import collections
 import enums
+import math
 import random
 import sys
 import traceback
@@ -344,6 +345,39 @@ class ScoreSheet:
 
         AcquireServerProtocol.add_pending_messages(self.client_ids, messages)
 
+    def get_bonuses(self, game_board_type_id):
+        price = self.price[game_board_type_id]
+        bonus_first = price * 10
+        bonus_second = price * 5
+
+        share_count_to_player_ids = collections.defaultdict(set)
+        for player_id, player_datum in enumerate(self.player_data):
+            share_count = player_datum[game_board_type_id]
+            if share_count > 0:
+                share_count_to_player_ids[share_count].add(player_id)
+        player_id_sets = [x[1] for x in sorted(share_count_to_player_ids.items(), reverse=True)]
+
+        bonus_data = []
+
+        if len(player_id_sets) == 1 and len(player_id_sets[0]) == 1:
+            # if only one player holds stock in defunct chain, he receives both bonuses
+            bonus_data.append([player_id_sets[0], bonus_first + bonus_second])
+        elif len(player_id_sets[0]) > 1:
+            # in case of tie for largest shareholder, first and second bonuses are combined and divided equally between tying shareholders
+            bonus_data.append([player_id_sets[0], math.ceil((bonus_first + bonus_second) / len(player_id_sets[0]))])
+        else:
+            # pay largest shareholder
+            bonus_data.append([player_id_sets[0], bonus_first])
+
+            if len(player_id_sets[1]) == 1:
+                # pay second largest shareholder
+                bonus_data.append([player_id_sets[1], bonus_second])
+            else:
+                # in case of tie for second largest shareholder, second bonus is divided equally between tying players
+                bonus_data.append([player_id_sets[1], math.ceil(bonus_second / len(player_id_sets[1]))])
+
+        return bonus_data
+
 
 class TileBag:
     def __init__(self):
@@ -606,7 +640,21 @@ class ActionSelectMergerSurvivor(Action):
         self.game.game_board.fill_cells(self.tile, controlling_type_id)
         self.game.score_sheet.set_chain_size(controlling_type_id, len(self.game.game_board.board_type_to_coordinates[controlling_type_id]))
 
-        # todo: pay bonuses
+        # pay bonuses
+        messages = []
+        type_ids = set()
+        for type_id_set in self.type_id_sets:
+            type_ids |= type_id_set
+        bonuses = [0] * len(self.game.player_id_to_client_id)
+        for type_id in sorted(type_ids):
+            for player_ids, bonus in self.game.score_sheet.get_bonuses(type_id):
+                for player_id in sorted(player_ids):
+                    bonuses[player_id] += bonus
+                    messages.append([enums.CommandsToClient_AddGameHistoryMessage, enums.GameHistoryMessages_ReceivedBonus, player_id, type_id, bonus])
+        for player_id, bonus in enumerate(bonuses):
+            if bonus > 0:
+                self.game.score_sheet.adjust_player_data(player_id, enums.ScoreSheetIndexes_Cash, bonus)
+        AcquireServerProtocol.add_pending_messages(self.game.client_ids, messages)
 
         actions = []
         for type_id_set in self.type_id_sets:
