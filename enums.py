@@ -80,6 +80,7 @@ class GameHistoryMessages(AutoNumber):
     HasNoPlayableTile = ()
     PlayedTile = ()
     FormedChain = ()
+    MergedChains = ()
     PurchasedShares = ()
 
 
@@ -172,7 +173,8 @@ GameHistoryMessages_DrewTile = 3
 GameHistoryMessages_HasNoPlayableTile = 4
 GameHistoryMessages_PlayedTile = 5
 GameHistoryMessages_FormedChain = 6
-GameHistoryMessages_PurchasedShares = 7
+GameHistoryMessages_MergedChains = 7
+GameHistoryMessages_PurchasedShares = 8
 GameStates_Starting = 0
 GameStates_InProgress = 1
 GameStates_Completed = 2

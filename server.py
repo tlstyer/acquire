@@ -574,6 +574,7 @@ class ActionSelectNewChain(Action):
 class ActionSelectMergerSurvivor(Action):
     def __init__(self, game, player_id, type_ids, tile):
         super().__init__(game, player_id, enums.GameActions_SelectMergerSurvivor)
+        self.type_ids = type_ids
         self.tile = tile
 
         chain_size_to_type_ids = collections.defaultdict(set)
@@ -582,6 +583,9 @@ class ActionSelectMergerSurvivor(Action):
         self.type_id_sets = [x[1] for x in sorted(chain_size_to_type_ids.items(), reverse=True)]
 
     def prepare(self):
+        message = [enums.CommandsToClient_AddGameHistoryMessage, enums.GameHistoryMessages_MergedChains, self.player_id, sorted(self.type_ids)]
+        AcquireServerProtocol.add_pending_messages(self.game.client_ids, [message])
+
         largest_type_ids = self.type_id_sets[0]
         if len(largest_type_ids) == 1:
             return self._prepare_next_actions(largest_type_ids.pop())

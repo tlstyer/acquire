@@ -255,6 +255,23 @@ define(function(require) {
 				$element.addClass(enums.GameBoardTypes[arguments[2]].toLowerCase());
 				$element.text(enums.GameBoardTypes[arguments[2]]);
 				break;
+			case enums.GameHistoryMessages.MergedChains:
+				$element = $message.find('.chains');
+				parts = [];
+				length = arguments[2].length;
+				for (index = 0; index < length; index++) {
+					name = enums.GameBoardTypes[arguments[2][index]];
+					parts.push('<span class="' + name.toLowerCase() + '">' + name + '</span>');
+				}
+
+				if (parts.length === 2) {
+					$element.html(parts[0] + ' and ' + parts[1]);
+				} else if (parts.length === 3) {
+					$element.html(parts[0] + ', ' + parts[1] + ', and ' + parts[2]);
+				} else if (parts.length === 4) {
+					$element.html(parts[0] + ', ' + parts[1] + ', ' + parts[2] + ', and ' + parts[3]);
+				}
+				break;
 			case enums.GameHistoryMessages.PurchasedShares:
 				$element = $message.find('.chains');
 				parts = [];
