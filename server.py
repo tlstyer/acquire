@@ -706,12 +706,8 @@ class ActionDisposeOfShares(Action):
         self.additional_params.append(defunct_type_id)
         self.additional_params.append(controlling_type_id)
 
-    def prepare(self):
-        print('ActionDisposeOfShares', self.player_id, self.defunct_type_id, self.controlling_type_id)
+    def execute(self, trade_amount, sell_amount):
         return True
-
-    def execute(self):
-        pass
 
 
 class ActionPurchaseShares(Action):

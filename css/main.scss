@@ -206,12 +206,24 @@ fieldset.game-history-turn-began {
 	}
 }
 
-#game-action-purchase-shares fieldset {
-	display: inline-block;
-	margin: 0;
-	padding: 0 3px 3px;
-	legend {
-		padding: 0 5px;
+#game-action-dispose-of-shares, #game-action-purchase-shares {
+	fieldset {
+		display: inline-block;
+		margin: 0;
+		padding: 0 3px 3px;
+		legend {
+			padding: 0 5px;
+		}
+	}
+}
+#game-action-dispose-of-shares {
+	span {
+		display: inline-block;
+		text-align: right;
+		width: 1.5em;
+	}
+	input:disabled {
+		color: grey;
 	}
 }
 #gps-row1 > * {
@@ -224,6 +236,51 @@ fieldset.game-history-turn-began {
 	:nth-child(2) {
 		text-align: right;
 		width: 4em;
+	}
+}
+
+fieldset {
+	&.luxor {
+		background-color: $color-luxor;
+		legend {
+			background-color: $color-luxor;
+		}
+	}
+	&.tower {
+		background-color: $color-tower;
+		legend {
+			background-color: $color-tower;
+		}
+	}
+	&.american {
+		background-color: $color-american;
+		legend {
+			background-color: $color-american;
+		}
+	}
+	&.festival {
+		background-color: $color-festival;
+		legend {
+			background-color: $color-festival;
+		}
+	}
+	&.worldwide {
+		background-color: $color-worldwide;
+		legend {
+			background-color: $color-worldwide;
+		}
+	}
+	&.continental {
+		background-color: $color-continental;
+		legend {
+			background-color: $color-continental;
+		}
+	}
+	&.imperial {
+		background-color: $color-imperial;
+		legend {
+			background-color: $color-imperial;
+		}
 	}
 }
 

@@ -349,6 +349,80 @@ define(function(require) {
 			network.sendMessage(enums.CommandsToServer.DoGameAction, select_chain_game_action_id, parseInt($button.attr('data-index'), 10));
 			$('#game-action-select-chain').hide();
 		},
+		dispose_of_shares_defunct_type_count = 0,
+		dispose_of_shares_controlling_type_available = 0,
+		dispose_of_shares_keep = 0,
+		dispose_of_shares_trade = 0,
+		dispose_of_shares_trade_max = 0,
+		dispose_of_shares_sell = 0,
+		dispose_of_shares_sell_max = 0,
+		updateDisposeOfSharesElements = function() {
+			dispose_of_shares_keep = dispose_of_shares_defunct_type_count - dispose_of_shares_trade - dispose_of_shares_sell;
+
+			dispose_of_shares_trade_max = dispose_of_shares_trade + Math.floor(dispose_of_shares_keep / 2) * 2;
+			if (dispose_of_shares_trade_max > dispose_of_shares_controlling_type_available * 2) {
+				dispose_of_shares_trade_max = dispose_of_shares_controlling_type_available * 2;
+			}
+
+			dispose_of_shares_sell_max = dispose_of_shares_sell + dispose_of_shares_keep;
+
+			$('#dos-keep').text(dispose_of_shares_keep);
+
+			$('#dos-trade').text(dispose_of_shares_trade);
+			$('#dos-trade-increment').prop('disabled', dispose_of_shares_trade === dispose_of_shares_trade_max);
+			$('#dos-trade-decrement').prop('disabled', dispose_of_shares_trade === 0);
+			$('#dos-trade-maximum');
+
+			$('#dos-sell').text(dispose_of_shares_sell);
+			$('#dos-sell-increment').prop('disabled', dispose_of_shares_sell === dispose_of_shares_sell_max);
+			$('#dos-sell-decrement').prop('disabled', dispose_of_shares_sell === 0);
+			$('#dos-sell-remaining');
+		},
+		gameActionConstructorDisposeOfShares = function(defunct_type_id, controlling_type_id) {
+			dispose_of_shares_defunct_type_count = score_sheet_data[common_data.player_id][defunct_type_id];
+			dispose_of_shares_controlling_type_available = score_sheet_data[enums.ScoreSheetRows.Available][controlling_type_id];
+
+			dispose_of_shares_trade = 0;
+			dispose_of_shares_sell = 0;
+
+			$('#dos-keep-fieldset').attr('class', enums.GameBoardTypes[defunct_type_id].toLowerCase());
+			$('#dos-trade-fieldset').attr('class', enums.GameBoardTypes[controlling_type_id].toLowerCase());
+
+			updateDisposeOfSharesElements();
+
+			$('#game-action-dispose-of-shares').show();
+		},
+		gameActionButtonClickedDisposeOfShares = function($button) {
+			var parent_id = $button.parent().attr('id'),
+				button_id = $button.attr('id');
+
+			if (button_id === 'dos-keep-all') {
+				dispose_of_shares_trade = 0;
+				dispose_of_shares_sell = 0;
+			} else if (parent_id === 'dos-trade-fieldset') {
+				if (button_id === 'dos-trade-increment') {
+					dispose_of_shares_trade += 2;
+				} else if (button_id === 'dos-trade-decrement') {
+					dispose_of_shares_trade -= 2;
+				} else if (button_id === 'dos-trade-maximum') {
+					dispose_of_shares_trade = dispose_of_shares_trade_max;
+				}
+			} else if (parent_id === 'dos-sell-fieldset') {
+				if (button_id === 'dos-sell-increment') {
+					dispose_of_shares_sell += 1;
+				} else if (button_id === 'dos-sell-decrement') {
+					dispose_of_shares_sell -= 1;
+				} else if (button_id === 'dos-sell-remaining') {
+					dispose_of_shares_sell = dispose_of_shares_sell_max;
+				}
+			} else if (button_id === 'dos-ok') {
+				network.sendMessage(enums.CommandsToServer.DoGameAction, enums.GameActions.DisposeOfShares, dispose_of_shares_trade, dispose_of_shares_sell);
+				$('#game-action-dispose-of-shares').hide();
+				return;
+			}
+
+			updateDisposeOfSharesElements();
+		},
 		purchase_shares_available = null,
 		purchase_shares_cart = null,
 		updatePurchaseSharesElements = function() {
@@ -469,18 +543,30 @@ define(function(require) {
 			game_action_constructors_lookup[enums.GameActions.SelectChainToMerge] = function(game_board_type_ids) {
 				gameActionConstructorSelectChain(enums.GameActions.SelectChainToMerge, game_board_type_ids);
 			};
+			game_action_constructors_lookup[enums.GameActions.DisposeOfShares] = gameActionConstructorDisposeOfShares;
 			game_action_constructors_lookup[enums.GameActions.PurchaseShares] = gameActionConstructorPurchaseShares;
 		},
 		game_action_button_click_handlers = {
 			'game-action-start-game': gameActionButtonClickedStartGame,
 			'game-action-select-chain': gameActionButtonClickedSelectChain,
+			'game-action-dispose-of-shares': gameActionButtonClickedDisposeOfShares,
 			'game-action-purchase-shares': gameActionButtonClickedPurchaseShares
 		},
 		setGameAction = function(game_action_id, player_id) {
 			var hyphenated_enum_name = common_functions.getHyphenatedStringFromEnumName(enums.GameActions[game_action_id]),
-				$action = $('#game-status-' + hyphenated_enum_name).clone().removeAttr('id');
+				$action = $('#game-status-' + hyphenated_enum_name).clone().removeAttr('id'),
+				$element;
 
 			$action.find('.username').text(common_data.game_id_to_player_data[common_data.game_id][player_id].username);
+
+			switch (game_action_id) {
+			case enums.GameActions.DisposeOfShares:
+				$element = $action.find('.chain');
+				$element.addClass(enums.GameBoardTypes[arguments[2]].toLowerCase());
+				$element.text(enums.GameBoardTypes[arguments[2]]);
+				break;
+			}
+
 			$('#game-status').empty().append($action);
 
 			if (player_id === common_data.player_id) {

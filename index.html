@@ -198,6 +198,28 @@
 					<input id="game-select-chain-5" data-index="5" type="button" value="C" class="button-hotel continental">
 					<input id="game-select-chain-6" data-index="6" type="button" value="I" class="button-hotel imperial">
 				</div>
+				<div id="game-action-dispose-of-shares" class="game-action">
+					<fieldset id="dos-keep-fieldset">
+						<legend>Keep</legend>
+						<span id="dos-keep"></span>
+						<input id="dos-keep-all" type="button" value="All">
+					</fieldset>
+					<fieldset id="dos-trade-fieldset">
+						<legend>Trade</legend>
+						<span id="dos-trade"></span>
+						<input id="dos-trade-increment" type="button" value="▲">
+						<input id="dos-trade-decrement" type="button" value="▼">
+						<input id="dos-trade-maximum" type="button" value="Max">
+					</fieldset>
+					<fieldset id="dos-sell-fieldset">
+						<legend>Sell</legend>
+						<span id="dos-sell"></span>
+						<input id="dos-sell-increment" type="button" value="▲">
+						<input id="dos-sell-decrement" type="button" value="▼">
+						<input id="dos-sell-remaining" type="button" value="Remaining">
+					</fieldset>
+					<input id="dos-ok" type="button" value="OK">
+				</div>
 				<div id="game-action-purchase-shares" class="game-action">
 					<div id="gps-row1">
 						<fieldset id="gps-available">
@@ -403,6 +425,7 @@
 			<div id="game-status-select-new-chain">Waiting for <span class="username"></span> to select new chain.</div>
 			<div id="game-status-select-merger-survivor">Waiting for <span class="username"></span> to select merger survivor.</div>
 			<div id="game-status-select-chain-to-merge">Waiting for <span class="username"></span> to select chain to merge.</div>
+			<div id="game-status-dispose-of-shares">Waiting for <span class="username"></span> to dispose of <span class="chain"></span> shares.</div>
 			<div id="game-status-purchase-shares">Waiting for <span class="username"></span> to purchase shares.</div>
 		</div>
 	</body>
