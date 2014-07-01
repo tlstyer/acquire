@@ -84,6 +84,7 @@ class GameHistoryMessages(AutoNumber):
     SelectedMergerSurvivor = ()
     SelectedChainToMerge = ()
     ReceivedBonus = ()
+    DisposedOfShares = ()
     PurchasedShares = ()
 
 
@@ -180,7 +181,8 @@ GameHistoryMessages_MergedChains = 7
 GameHistoryMessages_SelectedMergerSurvivor = 8
 GameHistoryMessages_SelectedChainToMerge = 9
 GameHistoryMessages_ReceivedBonus = 10
-GameHistoryMessages_PurchasedShares = 11
+GameHistoryMessages_DisposedOfShares = 11
+GameHistoryMessages_PurchasedShares = 12
 GameStates_Starting = 0
 GameStates_InProgress = 1
 GameStates_Completed = 2

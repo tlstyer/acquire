@@ -703,10 +703,30 @@ class ActionDisposeOfShares(Action):
         super().__init__(game, player_id, enums.GameActions_DisposeOfShares)
         self.defunct_type_id = defunct_type_id
         self.controlling_type_id = controlling_type_id
+        self.defunct_type_count = self.game.score_sheet.player_data[self.player_id][self.defunct_type_id]
+        self.controlling_type_available = self.game.score_sheet.available[self.controlling_type_id]
         self.additional_params.append(defunct_type_id)
         self.additional_params.append(controlling_type_id)
 
     def execute(self, trade_amount, sell_amount):
+        if not isinstance(trade_amount, int) or trade_amount < 0 or trade_amount % 2 != 0 or trade_amount // 2 > self.controlling_type_available:
+            return
+        if not isinstance(sell_amount, int) or sell_amount < 0:
+            return
+        if trade_amount + sell_amount > self.defunct_type_count:
+            return
+
+        if trade_amount + sell_amount > 0:
+            self.game.score_sheet.adjust_player_data(self.player_id, self.defunct_type_id, -trade_amount - sell_amount)
+            if trade_amount > 0:
+                self.game.score_sheet.adjust_player_data(self.player_id, self.controlling_type_id, trade_amount // 2)
+            if sell_amount > 0:
+                sale_price = self.game.score_sheet.price[self.defunct_type_id] * sell_amount
+                self.game.score_sheet.adjust_player_data(self.player_id, enums.ScoreSheetIndexes_Cash, sale_price)
+
+        message = [enums.CommandsToClient_AddGameHistoryMessage, enums.GameHistoryMessages_DisposedOfShares, self.player_id, self.defunct_type_id, trade_amount, sell_amount]
+        AcquireServerProtocol.add_pending_messages(self.game.client_ids, [message])
+
         return True
 
 

@@ -254,12 +254,19 @@ define(function(require) {
 			case enums.GameHistoryMessages.SelectedMergerSurvivor:
 			case enums.GameHistoryMessages.SelectedChainToMerge:
 			case enums.GameHistoryMessages.ReceivedBonus:
+			case enums.GameHistoryMessages.DisposedOfShares:
 				$element = $message.find('.chain');
 				$element.addClass(enums.GameBoardTypes[arguments[2]].toLowerCase());
 				$element.text(enums.GameBoardTypes[arguments[2]]);
 				if (game_history_message_id === enums.GameHistoryMessages.ReceivedBonus) {
 					$element = $message.find('.amount');
 					$element.text(arguments[3] * 100);
+				}
+				if (game_history_message_id === enums.GameHistoryMessages.DisposedOfShares) {
+					$element = $message.find('.trade-amount');
+					$element.text(arguments[3]);
+					$element = $message.find('.sell-amount');
+					$element.text(arguments[4]);
 				}
 				break;
 			case enums.GameHistoryMessages.MergedChains:
