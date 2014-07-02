@@ -33,6 +33,8 @@ define(function(require) {
 						} catch (e) {
 							console.log(e.stack);
 						}
+
+						pubsub.publish('network-MessageProcessingComplete');
 					};
 
 					ws.onerror = function(e) {

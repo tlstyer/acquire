@@ -102,9 +102,40 @@ define(function(require) {
 				}
 			}
 		},
+		game_board_cell_types = null,
+		initializeGameBoardCellTypes = function() {
+			var initial_type, x, y, column;
+
+			initial_type = enums.GameBoardTypes.Nothing;
+
+			game_board_cell_types = [];
+			for (x = 0; x < 12; x++) {
+				column = [];
+				for (y = 0; y < 9; y++) {
+					column.push(initial_type);
+				}
+				game_board_cell_types.push(column);
+			}
+		},
+		game_board_type_counts = null,
+		initializeGameBoardTypeCounts = function() {
+			var type_id, num_types;
+
+			game_board_type_counts = [];
+			num_types = enums.GameBoardTypes.Max;
+			for (type_id = 0; type_id < num_types; type_id++) {
+				game_board_type_counts.push(0);
+			}
+			game_board_type_counts[enums.GameBoardTypes.Nothing] = 12 * 9;
+		},
 		setGameBoardCell = function(x, y, game_board_type_id) {
 			var $cell = $('#gb-' + x + '-' + y),
 				cell_class = common_functions.getHyphenatedStringFromEnumName(enums.GameBoardTypes[game_board_type_id]);
+
+			game_board_type_counts[game_board_cell_types[x][y]]--;
+			game_board_type_counts[game_board_type_id]++;
+
+			game_board_cell_types[x][y] = game_board_type_id;
 
 			$cell.attr('class', cell_class);
 		},
@@ -144,10 +175,16 @@ define(function(require) {
 			[0, 0, 0, 0, 0, 0, 0],
 			[0, 0, 0, 0, 0, 0, 0]
 		],
+		score_sheet_changed = false,
 		setScoreSheetCell = function(row, index, data) {
 			var $row, available, player_id, price, index_class, mark_chain_as_safe = false;
 
+			if (data === score_sheet_data[row][index]) {
+				return;
+			}
+
 			score_sheet_data[row][index] = data;
+			score_sheet_changed = true;
 
 			if (row <= enums.ScoreSheetRows.Player5) {
 				// update this chain's availability
@@ -232,6 +269,161 @@ define(function(require) {
 			for (index = 0; index < num_indexes; index++) {
 				setScoreSheetCell(row, index, row_data[index]);
 			}
+		},
+		unw_getNumberOfPlayers = function() {
+			var player_data = common_data.game_id_to_player_data[common_data.game_id],
+				num_players = 0,
+				player_id;
+
+			for (player_id in common_data.game_id_to_player_data[common_data.game_id]) {
+				if (player_data.hasOwnProperty(player_id)) {
+					num_players++;
+				}
+			}
+
+			return num_players;
+		},
+		unw_getPlayerColumn = function(num_players, index) {
+			var column = [],
+				player_id;
+
+			for (player_id = 0; player_id < num_players; player_id++) {
+				column.push(score_sheet_data[player_id][index]);
+			}
+
+			return column;
+		},
+		unw_getBonuses = function(holdings, price) {
+			var player_id_and_amount_array = [],
+				length, player_id, bonuses = [],
+				bonus_price, num_tying, bonus;
+
+			length = holdings.length;
+			for (player_id = 0; player_id < length; player_id++) {
+				player_id_and_amount_array.push({
+					player_id: player_id,
+					amount: holdings[player_id]
+				});
+			}
+			player_id_and_amount_array.sort(function(a, b) {
+				return b.amount - a.amount;
+			});
+
+			for (player_id = 0; player_id < length; player_id++) {
+				bonuses.push(0);
+			}
+
+			bonus_price = price * 10;
+
+			// if bonuses do not divide equally into even $100 amounts, tying players receive the next greater amount
+			if (player_id_and_amount_array[0].amount === 0) { // if first place player has no stock in this chain
+				// don't pay anybody
+				return bonuses;
+			}
+
+			if (player_id_and_amount_array[1].amount === 0) { // if second place player has no stock in this chain
+				// if only one player holds stock in defunct chain, he receives both bonuses
+				bonuses[player_id_and_amount_array[0].player_id] = bonus_price + bonus_price / 2;
+				return bonuses;
+			}
+
+			if (player_id_and_amount_array[0].amount === player_id_and_amount_array[1].amount) {
+				// in case of tie for largest shareholder, first and second bonuses are combined and divided equally between tying shareholders
+				num_tying = 2;
+				while (num_tying < player_id_and_amount_array.length) {
+					if (player_id_and_amount_array[num_tying].amount === player_id_and_amount_array[0].amount) {
+						num_tying += 1;
+						continue;
+					}
+					break;
+				}
+				bonus = Math.ceil(((bonus_price + bonus_price / 2)) / num_tying);
+				for (player_id = 0; player_id < num_tying; player_id++) {
+					bonuses[player_id_and_amount_array[player_id].player_id] = bonus;
+				}
+				return bonuses;
+			}
+
+			// pay largest shareholder
+			bonuses[player_id_and_amount_array[0].player_id] = bonus_price;
+
+			// see if there's a tie for 2nd place
+			num_tying = 1;
+			while (num_tying < player_id_and_amount_array.length - 1) {
+				if (player_id_and_amount_array[num_tying + 1].amount === player_id_and_amount_array[1].amount) {
+					num_tying += 1;
+					continue;
+				}
+				break;
+			}
+
+			if (num_tying === 1) {
+				// stock market pays compensatory bonuses to two largest shareholders in defunct chain
+				bonuses[player_id_and_amount_array[1].player_id] = bonus_price / 2;
+			} else {
+				// in case of tie for second largest shareholder, second bonus is divided equally between tying players
+				bonus = Math.ceil(((bonus_price / 2)) / num_tying);
+				for (player_id = 1; player_id <= num_tying; player_id++) {
+					bonuses[player_id_and_amount_array[player_id].player_id] = bonus;
+				}
+			}
+
+			return bonuses;
+		},
+		unw_addMoney = function(money1, money2) {
+			var result = [],
+				length, index;
+
+			length = money1.length;
+			for (index = 0; index < length; index++) {
+				result.push(money1[index] + money2[index]);
+			}
+
+			return result;
+		},
+		unw_calculateSellingPrices = function(holdings, price) {
+			var selling_prices = [],
+				length, player_id;
+
+			length = holdings.length;
+			for (player_id = 0; player_id < length; player_id++) {
+				selling_prices[player_id] = holdings[player_id] * price;
+			}
+
+			return selling_prices;
+		},
+		updateNetWorths = function() {
+			var num_players, money, type_id, holdings, price, more_money, player_id;
+
+			if (!score_sheet_changed) {
+				return;
+			}
+
+			num_players = unw_getNumberOfPlayers();
+			if (num_players < 1) {
+				return;
+			}
+
+			money = unw_getPlayerColumn(num_players, enums.ScoreSheetIndexes.Cash);
+
+			for (type_id = 0; type_id < 7; type_id++) {
+				holdings = unw_getPlayerColumn(Math.max(num_players, 2), type_id);
+				price = score_sheet_data[enums.ScoreSheetRows.Price][type_id];
+
+				if (game_board_type_counts[type_id] > 0) {
+					more_money = unw_getBonuses(holdings, price);
+					money = unw_addMoney(money, more_money);
+				}
+
+				more_money = unw_calculateSellingPrices(holdings, price);
+				money = unw_addMoney(money, more_money);
+			}
+
+			for (player_id = 0; player_id < money.length; player_id++) {
+				setScoreSheetCell(player_id, enums.ScoreSheetIndexes.Net, money[player_id]);
+			}
+
+			score_sheet_changed = false;
 		},
 		addGameHistoryMessage = function(game_history_message_id, player_id) {
 			var $message = $('#game-history-' + common_functions.getHyphenatedStringFromEnumName(enums.GameHistoryMessages[game_history_message_id])).clone().removeAttr('id'),
@@ -593,15 +785,16 @@ define(function(require) {
 
 			setScoreSheet([
 				[
-					[0, 0, 0, 0, 0, 0, 0, 60, 60],
-					[0, 0, 0, 0, 0, 0, 0, 60, 60],
-					[0, 0, 0, 0, 0, 0, 0, 60, 60],
-					[0, 0, 0, 0, 0, 0, 0, 60, 60],
-					[0, 0, 0, 0, 0, 0, 0, 60, 60],
-					[0, 0, 0, 0, 0, 0, 0, 60, 60]
+					[0, 0, 0, 0, 0, 0, 0, 60],
+					[0, 0, 0, 0, 0, 0, 0, 60],
+					[0, 0, 0, 0, 0, 0, 0, 60],
+					[0, 0, 0, 0, 0, 0, 0, 60],
+					[0, 0, 0, 0, 0, 0, 0, 60],
+					[0, 0, 0, 0, 0, 0, 0, 60]
 				],
 				[0, 0, 0, 0, 0, 0, 0]
 			]);
+			updateNetWorths();
 			$('#score-sheet td').removeClass('safe');
 			$('#score-sheet .score-sheet-player .name').empty();
 			$('#score-sheet .score-sheet-player').hide();
@@ -613,6 +806,8 @@ define(function(require) {
 			play_tile_action_enabled = false;
 		};
 
+	initializeGameBoardCellTypes();
+	initializeGameBoardTypeCounts();
 	initializeGameActionConstructorsLookup();
 
 	pubsub.subscribe('client-Resize', resize);
@@ -624,6 +819,7 @@ define(function(require) {
 	pubsub.subscribe('server-SetTileGameBoardType', setTileGameBoardType);
 	pubsub.subscribe('server-SetScoreSheetCell', setScoreSheetCell);
 	pubsub.subscribe('server-SetScoreSheet', setScoreSheet);
+	pubsub.subscribe('network-MessageProcessingComplete', updateNetWorths);
 	pubsub.subscribe('server-AddGameHistoryMessage', addGameHistoryMessage);
 	pubsub.subscribe('server-SetGameAction', setGameAction);
 	pubsub.subscribe('client-LeaveGame', resetHtml);

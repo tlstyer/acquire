@@ -886,7 +886,7 @@ class Game:
 
         # score sheet
         score_sheet_data = [
-            [x[:enums.ScoreSheetIndexes_Net + 1] for x in self.score_sheet.player_data],
+            [x[:enums.ScoreSheetIndexes_Cash + 1] for x in self.score_sheet.player_data],
             self.score_sheet.chain_size,
         ]
         messages.append([enums.CommandsToClient_SetScoreSheet, score_sheet_data])

@@ -72,6 +72,7 @@ class GameBoardTypes(AutoNumber):
     WillFormNewChain = ()
     WillMergeChains = ()
     CantPlayNow = ()
+    Max = ()
 
 
 class GameHistoryMessages(AutoNumber):
@@ -174,6 +175,7 @@ GameBoardTypes_HaveNeighboringTileToo = 12
 GameBoardTypes_WillFormNewChain = 13
 GameBoardTypes_WillMergeChains = 14
 GameBoardTypes_CantPlayNow = 15
+GameBoardTypes_Max = 16
 GameHistoryMessages_TurnBegan = 0
 GameHistoryMessages_DrewPositionTile = 1
 GameHistoryMessages_StartedGame = 2
