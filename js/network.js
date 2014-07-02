@@ -11,12 +11,12 @@ define(function(require) {
 
 				if (ws !== null) {
 					ws.onopen = function() {
-						pubsub.publish('network-open');
+						pubsub.publish('network-Open');
 					};
 
 					ws.onclose = function(e) {
 						ws = null;
-						pubsub.publish('network-close');
+						pubsub.publish('network-Close');
 					};
 
 					ws.onmessage = function(e) {
@@ -36,7 +36,7 @@ define(function(require) {
 					};
 
 					ws.onerror = function(e) {
-						pubsub.publish('network-error');
+						pubsub.publish('network-Error');
 					};
 				}
 			}

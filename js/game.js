@@ -605,7 +605,7 @@ define(function(require) {
 	pubsub.subscribe('server-AddGameHistoryMessage', addGameHistoryMessage);
 	pubsub.subscribe('server-SetGameAction', setGameAction);
 	pubsub.subscribe('client-LeaveGame', resetHtml);
-	pubsub.subscribe('network-close', resetHtml);
+	pubsub.subscribe('network-Close', resetHtml);
 
 	$('#link-leave-game').click(function() {
 		network.sendMessage(enums.CommandsToServer.LeaveGame);

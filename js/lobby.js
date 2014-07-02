@@ -119,7 +119,7 @@ define(function(require) {
 	pubsub.subscribe('client-SetGamePlayerData', setGamePlayerData);
 	pubsub.subscribe('client-AddGameWatcher', addGameWatcher);
 	pubsub.subscribe('client-RemoveGameWatcher', removeGameWatcher);
-	pubsub.subscribe('network-close', resetHtml);
+	pubsub.subscribe('network-Close', resetHtml);
 
 	$('#link-create-game').click(function() {
 		network.sendMessage(enums.CommandsToServer.CreateGame);

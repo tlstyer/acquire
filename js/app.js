@@ -38,15 +38,15 @@ define(function(require) {
 		show_page('websocket-not-supported');
 	}
 
-	pubsub.subscribe('network-open', function() {
+	pubsub.subscribe('network-Open', function() {
 		show_page('lobby');
 	});
 
-	pubsub.subscribe('network-close', function() {
+	pubsub.subscribe('network-Close', function() {
 		show_page('login');
 	});
 
-	pubsub.subscribe('network-error', function() {
+	pubsub.subscribe('network-Error', function() {
 		var $message;
 
 		$message = $('<p>').text('Could not connect to the server.');

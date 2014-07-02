@@ -121,7 +121,7 @@ define(function(require) {
 	pubsub.subscribe('server-SetGamePlayerClientId', setGamePlayerClientId);
 	pubsub.subscribe('server-SetGameWatcherClientId', setGameWatcherClientId);
 	pubsub.subscribe('server-ReturnWatcherToLobby', returnWatcherToLobby);
-	pubsub.subscribe('network-close', resetData);
+	pubsub.subscribe('network-Close', resetData);
 
 	resetData();
 
