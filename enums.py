@@ -27,6 +27,7 @@ class CommandsToClient(AutoNumber):
     SetGameAction = ()
     SetTile = ()
     SetTileGameBoardType = ()
+    RemoveTile = ()
     AddChatMessage = ()
 
 
@@ -89,6 +90,7 @@ class GameHistoryMessages(AutoNumber):
     ReceivedBonus = ()
     DisposedOfShares = ()
     PurchasedShares = ()
+    ReplacedDeadTile = ()
 
 
 class GameStates(AutoNumber):
@@ -142,7 +144,8 @@ CommandsToClient_AddGameHistoryMessage = 12
 CommandsToClient_SetGameAction = 13
 CommandsToClient_SetTile = 14
 CommandsToClient_SetTileGameBoardType = 15
-CommandsToClient_AddChatMessage = 16
+CommandsToClient_RemoveTile = 16
+CommandsToClient_AddChatMessage = 17
 CommandsToServer_CreateGame = 0
 CommandsToServer_JoinGame = 1
 CommandsToServer_RejoinGame = 2
@@ -189,6 +192,7 @@ GameHistoryMessages_SelectedChainToMerge = 9
 GameHistoryMessages_ReceivedBonus = 10
 GameHistoryMessages_DisposedOfShares = 11
 GameHistoryMessages_PurchasedShares = 12
+GameHistoryMessages_ReplacedDeadTile = 13
 GameStates_Starting = 0
 GameStates_InProgress = 1
 GameStates_Completed = 2

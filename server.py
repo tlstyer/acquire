@@ -418,12 +418,17 @@ class TileRacks:
                 if tile is not None:
                     tile_data[tile_index] = [tile, None, None]
 
-    def determine_tile_game_board_types(self):
+    def determine_tile_game_board_types(self, player_ids=None):
         chain_sizes = self.game.score_sheet.chain_size
         can_start_new_chain = 0 in chain_sizes
         x_to_y_to_board_type = self.game.game_board.x_to_y_to_board_type
 
-        for player_id, rack in enumerate(self.racks):
+        if player_ids is None:
+            player_ids = range(len(self.racks))
+
+        for player_id in player_ids:
+            rack = self.racks[player_id]
+
             old_types = [None if t is None else t[1] for t in rack]
             new_types = []
             for tile_datum in rack:
@@ -490,6 +495,34 @@ class TileRacks:
                 client_id = self.game.player_id_to_client_id[player_id]
                 if client_id is not None:
                     AcquireServerProtocol.add_pending_messages({client_id}, messages)
+
+    def replace_dead_tiles(self, player_id):
+        tile_data = self.racks[player_id]
+        replaced_a_dead_tile = True
+        while replaced_a_dead_tile:
+            replaced_a_dead_tile = False
+            for tile_index, tile_datum in enumerate(tile_data):
+                if tile_datum is not None and tile_datum[1] == enums.GameBoardTypes_CantPlayEver:
+                    # remove tile from player's tile rack
+                    tile_data[tile_index] = None
+                    AcquireServerProtocol.add_pending_messages({self.game.player_id_to_client_id[player_id]}, [[enums.CommandsToClient_RemoveTile, tile_index]])
+
+                    # mark cell on game board as can't play ever
+                    tile = tile_datum[0]
+                    self.game.game_board.set_cell(tile, enums.GameBoardTypes_CantPlayEver)
+
+                    # tell everybody that a dead tile was replaced
+                    AcquireServerProtocol.add_pending_messages(self.game.client_ids, [[enums.CommandsToClient_AddGameHistoryMessage, enums.GameHistoryMessages_ReplacedDeadTile, player_id, tile[0], tile[1]]])
+
+                    # draw new tile
+                    self.draw_tile(player_id)
+                    self.determine_tile_game_board_types([player_id])
+
+                    # repeat
+                    replaced_a_dead_tile = True
+
+                    # replace one tile at a time
+                    break
 
 
 class Action:
@@ -790,6 +823,7 @@ class ActionPurchaseShares(Action):
     def _complete_action(self):
         self.game.tile_racks.draw_tile(self.player_id)
         self.game.tile_racks.determine_tile_game_board_types()
+        self.game.tile_racks.replace_dead_tiles(self.player_id)
 
         next_player_id = (self.player_id + 1) % len(self.game.player_id_to_client_id)
         return [ActionPlayTile(self.game, next_player_id), ActionPurchaseShares(self.game, next_player_id)]

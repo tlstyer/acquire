@@ -164,6 +164,10 @@ define(function(require) {
 			var $button = $('#game-tile-' + tile_index);
 			$button.attr('class', 'button-hotel ' + common_functions.getHyphenatedStringFromEnumName(enums.GameBoardTypes[game_board_type_id]));
 		},
+		removeTile = function(tile_index) {
+			var $button = $('#game-tile-' + tile_index);
+			$button.css('visibility', 'hidden');
+		},
 		score_sheet_data = [
 			[0, 0, 0, 0, 0, 0, 0, 60, 60],
 			[0, 0, 0, 0, 0, 0, 0, 60, 60],
@@ -437,6 +441,7 @@ define(function(require) {
 			case enums.GameHistoryMessages.DrewPositionTile:
 			case enums.GameHistoryMessages.DrewTile:
 			case enums.GameHistoryMessages.PlayedTile:
+			case enums.GameHistoryMessages.ReplacedDeadTile:
 				$message.find('.tile').text(common_functions.getTileName(arguments[2], arguments[3]));
 				break;
 			case enums.GameHistoryMessages.FormedChain:
@@ -819,6 +824,7 @@ define(function(require) {
 	pubsub.subscribe('server-SetGameBoard', setGameBoard);
 	pubsub.subscribe('server-SetTile', setTile);
 	pubsub.subscribe('server-SetTileGameBoardType', setTileGameBoardType);
+	pubsub.subscribe('server-RemoveTile', removeTile);
 	pubsub.subscribe('server-SetScoreSheetCell', setScoreSheetCell);
 	pubsub.subscribe('server-SetScoreSheet', setScoreSheet);
 	pubsub.subscribe('network-MessageProcessingComplete', updateNetWorths);
