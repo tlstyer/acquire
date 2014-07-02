@@ -625,7 +625,8 @@ define(function(require) {
 			var score_sheet_price = score_sheet_data[enums.ScoreSheetRows.Price],
 				score_sheet_available = score_sheet_data[enums.ScoreSheetRows.Available],
 				how_much_money = score_sheet_data[common_data.player_id][enums.ScoreSheetIndexes.Cash],
-				money_spent, index, money_left, selected_chain_counts, has_enough_money, still_available, $button, chain_index;
+				money_spent, index, money_left, selected_chain_counts, num_selected_chains = 0,
+				has_enough_money, still_available, $button, chain_index;
 
 			// money_spent and money_left
 			money_spent = 0;
@@ -636,11 +637,12 @@ define(function(require) {
 			}
 			money_left = how_much_money - money_spent;
 
-			// selected_chain_counts
+			// selected_chain_counts and num_selected_chains
 			selected_chain_counts = [0, 0, 0, 0, 0, 0, 0];
 			for (index = 0; index < 3; ++index) {
 				if (purchase_shares_cart[index] !== null) {
 					selected_chain_counts[purchase_shares_cart[index]]++;
+					num_selected_chains++;
 				}
 			}
 
@@ -649,7 +651,7 @@ define(function(require) {
 				if (purchase_shares_available[index]) {
 					has_enough_money = money_left >= score_sheet_price[index];
 					still_available = score_sheet_available[index] > selected_chain_counts[index];
-					$('#gps-available-' + index).prop('disabled', !(has_enough_money && still_available));
+					$('#gps-available-' + index).prop('disabled', !(has_enough_money && still_available && num_selected_chains < 3));
 				}
 			}
 
