@@ -320,7 +320,6 @@ class ScoreSheet:
 
         if score_sheet_index <= enums.ScoreSheetIndexes_Imperial:
             self.available[score_sheet_index] -= adjustment
-            messages.append([enums.CommandsToClient_SetScoreSheetCell, enums.ScoreSheetRows_Available, score_sheet_index, self.available[score_sheet_index]])
 
         AcquireServerProtocol.add_pending_messages(self.client_ids, messages)
 
@@ -344,7 +343,6 @@ class ScoreSheet:
             new_price = 0
         if new_price != old_price:
             self.price[game_board_type_id] = new_price
-            messages.append([enums.CommandsToClient_SetScoreSheetCell, enums.ScoreSheetRows_Price, game_board_type_id, new_price])
 
         AcquireServerProtocol.add_pending_messages(self.client_ids, messages)
 
@@ -889,9 +887,7 @@ class Game:
         # score sheet
         score_sheet_data = [
             [x[:enums.ScoreSheetIndexes_Net + 1] for x in self.score_sheet.player_data],
-            self.score_sheet.available,
             self.score_sheet.chain_size,
-            self.score_sheet.price,
         ]
         messages.append([enums.CommandsToClient_SetScoreSheet, score_sheet_data])
 

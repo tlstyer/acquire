@@ -145,11 +145,18 @@ define(function(require) {
 			[0, 0, 0, 0, 0, 0, 0]
 		],
 		setScoreSheetCell = function(row, index, data) {
-			var $row, index_class, mark_chain_as_safe = false;
+			var $row, available, player_id, price, index_class, mark_chain_as_safe = false;
 
 			score_sheet_data[row][index] = data;
 
 			if (row <= enums.ScoreSheetRows.Player5) {
+				// update this chain's availability
+				available = 25;
+				for (player_id = 0; player_id < 6; player_id++) {
+					available -= score_sheet_data[player_id][index];
+				}
+				setScoreSheetCell(enums.ScoreSheetRows.Available, index, available);
+
 				if (index <= enums.ScoreSheetIndexes.Imperial) {
 					if (data === 0) {
 						data = '';
@@ -162,6 +169,24 @@ define(function(require) {
 			} else if (row === enums.ScoreSheetRows.Available) {
 				$row = $('#score-sheet-available');
 			} else if (row === enums.ScoreSheetRows.ChainSize) {
+				// update this chain's price
+				if (data > 0) {
+					if (data < 11) {
+						price = Math.min(data, 6);
+					} else {
+						price = Math.min(Math.floor((data - 1) / 10) + 6, 10);
+					}
+					if (index >= enums.GameBoardTypes.American) {
+						price += 1;
+					}
+					if (index >= enums.GameBoardTypes.Continental) {
+						price += 1;
+					}
+				} else {
+					price = 0;
+				}
+				setScoreSheetCell(enums.ScoreSheetRows.Price, index, price);
+
 				if (data >= 11) {
 					mark_chain_as_safe = true;
 				}
@@ -200,13 +225,12 @@ define(function(require) {
 				}
 			}
 
-			// available, chain size, price
-			for (row = enums.ScoreSheetRows.Available; row <= enums.ScoreSheetRows.Price; row++) {
-				row_data = score_sheet_data[row - enums.ScoreSheetRows.Available + 1];
-				num_indexes = row_data.length;
-				for (index = 0; index < num_indexes; index++) {
-					setScoreSheetCell(row, index, row_data[index]);
-				}
+			// chain size
+			row = enums.ScoreSheetRows.ChainSize;
+			row_data = score_sheet_data[1];
+			num_indexes = row_data.length;
+			for (index = 0; index < num_indexes; index++) {
+				setScoreSheetCell(row, index, row_data[index]);
 			}
 		},
 		addGameHistoryMessage = function(game_history_message_id, player_id) {
@@ -576,8 +600,6 @@ define(function(require) {
 					[0, 0, 0, 0, 0, 0, 0, 60, 60],
 					[0, 0, 0, 0, 0, 0, 0, 60, 60]
 				],
-				[25, 25, 25, 25, 25, 25, 25],
-				[0, 0, 0, 0, 0, 0, 0],
 				[0, 0, 0, 0, 0, 0, 0]
 			]);
 			$('#score-sheet td').removeClass('safe');
