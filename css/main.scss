@@ -219,15 +219,15 @@ fieldset.game-history-turn-began {
 			padding: 0 5px;
 		}
 	}
+	input:disabled {
+		color: grey;
+	}
 }
 #game-action-dispose-of-shares {
 	span {
 		display: inline-block;
 		text-align: right;
 		width: 1.5em;
-	}
-	input:disabled {
-		color: grey;
 	}
 }
 #gps-row1 > * {
