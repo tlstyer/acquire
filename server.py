@@ -69,7 +69,7 @@ class AcquireServerProtocol(autobahn.asyncio.websocket.WebSocketServerProtocol):
 
             # tell client about all games
             for game_id, game in AcquireServerProtocol.game_id_to_game.items():
-                messages_client.append([enums.CommandsToClient_SetGameState, game_id, game.state])
+                messages_client.append([enums.CommandsToClient_SetGameState, game_id, game.state, game.max_players])
                 for player_id, player_datum in enumerate(game.score_sheet.player_data):
                     if player_datum[enums.ScoreSheetIndexes_Client] is None:
                         messages_client.append([enums.CommandsToClient_SetGamePlayerUsername, game_id, player_id, player_datum[enums.ScoreSheetIndexes_Username]])
@@ -116,9 +116,9 @@ class AcquireServerProtocol(autobahn.asyncio.websocket.WebSocketServerProtocol):
         else:
             self.sendClose()
 
-    def onMessageCreateGame(self):
-        if self.game_id is None:
-            AcquireServerProtocol.game_id_to_game[AcquireServerProtocol.next_game_id] = Game(AcquireServerProtocol.next_game_id, self)
+    def onMessageCreateGame(self, max_players):
+        if self.game_id is None and isinstance(max_players, int) and 1 <= max_players <= 6:
+            AcquireServerProtocol.game_id_to_game[AcquireServerProtocol.next_game_id] = Game(AcquireServerProtocol.next_game_id, self, max_players)
             AcquireServerProtocol.next_game_id += 1
 
     def onMessageJoinGame(self, game_id):
@@ -863,8 +863,9 @@ class ActionGameOver(Action):
 
 
 class Game:
-    def __init__(self, game_id, client):
+    def __init__(self, game_id, client, max_players):
         self.game_id = game_id
+        self.max_players = max_players
         self.client_ids = set()
         self.watcher_client_ids = set()
 
@@ -873,10 +874,10 @@ class Game:
         self.tile_bag = TileBag()
         self.tile_racks = TileRacks(self)
 
-        self.state = enums.GameStates_Starting
+        self.state = enums.GameStates_Starting if self.max_players > 1 else enums.GameStates_StartingFull
         self.actions = collections.deque()
 
-        AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, [[enums.CommandsToClient_SetGameState, self.game_id, self.state]])
+        AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, [[enums.CommandsToClient_SetGameState, self.game_id, self.state, self.max_players]])
 
         self.client_ids.add(client.client_id)
         client.game_id = self.game_id
@@ -907,6 +908,9 @@ class Game:
                 self.actions[0].send_message()
             else:
                 self.actions[0].send_message(client)
+            if len(self.player_id_to_client_id) == self.max_players:
+                self.state = enums.GameStates_StartingFull
+                AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, [[enums.CommandsToClient_SetGameState, self.game_id, self.state]])
 
     def rejoin_game(self, client):
         if self.score_sheet.is_username_in_game(client.username):

@@ -97,6 +97,7 @@ class GameHistoryMessages(AutoNumber):
 
 class GameStates(AutoNumber):
     Starting = ()
+    StartingFull = ()
     InProgress = ()
     Completed = ()
 
@@ -198,8 +199,9 @@ GameHistoryMessages_PurchasedShares = 12
 GameHistoryMessages_ReplacedDeadTile = 13
 GameHistoryMessages_EndedGame = 14
 GameStates_Starting = 0
-GameStates_InProgress = 1
-GameStates_Completed = 2
+GameStates_StartingFull = 1
+GameStates_InProgress = 2
+GameStates_Completed = 3
 ScoreSheetIndexes_Luxor = 0
 ScoreSheetIndexes_Tower = 1
 ScoreSheetIndexes_American = 2

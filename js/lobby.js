@@ -28,6 +28,7 @@ define(function(require) {
 		setGameState = function(game_id) {
 			var $lobby_section = $('#lobby-game-' + game_id),
 				state_id = common_data.game_id_to_game_state[game_id],
+				max_players = common_data.game_id_to_max_players[game_id],
 				player_data = null,
 				player_id = null,
 				client_username = common_data.client_id_to_data[common_data.client_id].username,
@@ -44,7 +45,9 @@ define(function(require) {
 
 			// set game state text
 			if (state_id === enums.GameStates.Starting) {
-				$lobby_section.find('.state').text('Starting');
+				$lobby_section.find('.state').text('Starting (Max of ' + max_players + ' Players)');
+			} else if (state_id === enums.GameStates.StartingFull) {
+				$lobby_section.find('.state').text('Starting (Full)');
 			} else if (state_id === enums.GameStates.InProgress) {
 				$lobby_section.find('.state').text('In Progress');
 			} else if (state_id === enums.GameStates.Completed) {
@@ -123,7 +126,7 @@ define(function(require) {
 	pubsub.subscribe('network-Error', resetHtml);
 
 	$('#button-create-game').click(function() {
-		network.sendMessage(enums.CommandsToServer.CreateGame);
+		network.sendMessage(enums.CommandsToServer.CreateGame, parseInt($('#cg-max-players').val(), 10));
 	});
 
 	$('#lobby-games').on('click', 'input', function() {
