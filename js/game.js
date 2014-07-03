@@ -850,6 +850,7 @@ define(function(require) {
 	pubsub.subscribe('server-SetGameAction', setGameAction);
 	pubsub.subscribe('client-LeaveGame', resetHtml);
 	pubsub.subscribe('network-Close', resetHtml);
+	pubsub.subscribe('network-Error', resetHtml);
 
 	$('#link-leave-game').click(function() {
 		network.sendMessage(enums.CommandsToServer.LeaveGame);
