@@ -39,7 +39,7 @@ define(function(require) {
 				$lobby_section.attr('id', 'lobby-game-' + game_id);
 				$lobby_section.attr('data-game-id', game_id);
 				$lobby_section.find('.header').text('Game #' + game_id);
-				$('#lobby-games').append($lobby_section);
+				$('#lobby-games').prepend($lobby_section);
 			}
 
 			// set game state text
