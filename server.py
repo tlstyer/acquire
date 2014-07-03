@@ -431,6 +431,7 @@ class TileRacks:
 
             old_types = [None if t is None else t[1] for t in rack]
             new_types = []
+            lonely_tile_border_tiles = set()
             for tile_datum in rack:
                 if tile_datum is None:
                     new_type = None
@@ -439,42 +440,52 @@ class TileRacks:
                     x = tile[0]
                     y = tile[1]
 
-                    borders = set()
+                    border_tiles = set()
                     if x > 0:
-                        borders.add(x_to_y_to_board_type[x - 1][y])
+                        border_tiles.add((x - 1, y))
                     if x < 11:
-                        borders.add(x_to_y_to_board_type[x + 1][y])
+                        border_tiles.add((x + 1, y))
                     if y > 0:
-                        borders.add(x_to_y_to_board_type[x][y - 1])
+                        border_tiles.add((x, y - 1))
                     if y < 8:
-                        borders.add(x_to_y_to_board_type[x][y + 1])
-                    borders.discard(enums.GameBoardTypes_Nothing)
-                    borders.discard(enums.GameBoardTypes_CantPlayEver)
-                    if len(borders) > 1 and enums.GameBoardTypes_NothingYet in borders:
-                        borders.remove(enums.GameBoardTypes_NothingYet)
+                        border_tiles.add((x, y + 1))
 
-                    len_borders = len(borders)
+                    border_types = {x_to_y_to_board_type[tile[0]][tile[1]] for tile in border_tiles}
+                    border_types.discard(enums.GameBoardTypes_Nothing)
+                    border_types.discard(enums.GameBoardTypes_CantPlayEver)
+                    if len(border_types) > 1 and enums.GameBoardTypes_NothingYet in border_types:
+                        border_types.remove(enums.GameBoardTypes_NothingYet)
+
+                    len_border_types = len(border_types)
                     new_type = enums.GameBoardTypes_WillPutLonelyTileDown
-                    if len_borders == 1:
-                        if enums.GameBoardTypes_NothingYet in borders:
+                    if len_border_types == 0:
+                        lonely_tile_border_tiles |= border_tiles
+                    elif len_border_types == 1:
+                        if enums.GameBoardTypes_NothingYet in border_types:
                             if can_start_new_chain:
                                 new_type = enums.GameBoardTypes_WillFormNewChain
                             else:
                                 new_type = enums.GameBoardTypes_CantPlayNow
                         else:
-                            new_type = borders.pop()
-                    elif len_borders > 1:
+                            new_type = border_types.pop()
+                    elif len_border_types > 1:
                         safe_count = 0
-                        for border in borders:
-                            if chain_sizes[border] >= 11:
+                        for border_type in border_types:
+                            if chain_sizes[border_type] >= 11:
                                 safe_count += 1
                         if safe_count < 2:
                             new_type = enums.GameBoardTypes_WillMergeChains
-                            tile_datum[2] = borders
+                            tile_datum[2] = border_types
                         else:
                             new_type = enums.GameBoardTypes_CantPlayEver
 
                 new_types.append(new_type)
+
+            if can_start_new_chain:
+                for tile_index, new_type in enumerate(new_types):
+                    if new_type == enums.GameBoardTypes_WillPutLonelyTileDown:
+                        if rack[tile_index][0] in lonely_tile_border_tiles:
+                            new_types[tile_index] = enums.GameBoardTypes_HaveNeighboringTileToo
 
             for tile_index, tile_datum in enumerate(rack):
                 if tile_datum is not None:
@@ -593,7 +604,7 @@ class ActionPlayTile(Action):
         if game_board_type_id <= enums.GameBoardTypes_Imperial:
             self.game.game_board.fill_cells(tile, game_board_type_id)
             self.game.score_sheet.set_chain_size(game_board_type_id, len(self.game.game_board.board_type_to_coordinates[game_board_type_id]))
-        elif game_board_type_id == enums.GameBoardTypes_WillPutLonelyTileDown:
+        elif game_board_type_id == enums.GameBoardTypes_WillPutLonelyTileDown or game_board_type_id == enums.GameBoardTypes_HaveNeighboringTileToo:
             self.game.game_board.set_cell(tile, enums.GameBoardTypes_NothingYet)
         elif game_board_type_id == enums.GameBoardTypes_WillFormNewChain:
             retval = [ActionSelectNewChain(self.game, self.player_id, [index for index, size in enumerate(self.game.score_sheet.chain_size) if size == 0], tile)]
