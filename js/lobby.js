@@ -61,23 +61,23 @@ define(function(require) {
 				}
 			}
 
-			// show/hide links as appropriate
+			// show/hide buttons as appropriate
 			if (state_id === enums.GameStates.Starting && !in_this_game) {
-				$lobby_section.find('.link-join').show();
+				$lobby_section.find('.button-join-game').show();
 			} else {
-				$lobby_section.find('.link-join').hide();
+				$lobby_section.find('.button-join-game').hide();
 			}
 
 			if (in_this_game) {
-				$lobby_section.find('.link-rejoin').show();
+				$lobby_section.find('.button-rejoin-game').show();
 			} else {
-				$lobby_section.find('.link-rejoin').hide();
+				$lobby_section.find('.button-rejoin-game').hide();
 			}
 
 			if (!in_this_game) {
-				$lobby_section.find('.link-watch').show();
+				$lobby_section.find('.button-watch-game').show();
 			} else {
-				$lobby_section.find('.link-watch').hide();
+				$lobby_section.find('.button-watch-game').hide();
 			}
 		},
 		setGamePlayerData = function(game_id, player_id, username, client_id) {
@@ -122,24 +122,20 @@ define(function(require) {
 	pubsub.subscribe('network-Close', resetHtml);
 	pubsub.subscribe('network-Error', resetHtml);
 
-	$('#link-create-game').click(function() {
+	$('#button-create-game').click(function() {
 		network.sendMessage(enums.CommandsToServer.CreateGame);
-
-		return false;
 	});
 
-	$('#lobby-games').on('click', 'a', function() {
+	$('#lobby-games').on('click', 'input', function() {
 		var $this = $(this),
 			game_id = parseInt($this.closest('.lobby-section').attr('data-game-id'), 10);
 
-		if ($this.hasClass('link-join')) {
+		if ($this.hasClass('button-join-game')) {
 			network.sendMessage(enums.CommandsToServer.JoinGame, game_id);
-		} else if ($this.hasClass('link-rejoin')) {
+		} else if ($this.hasClass('button-rejoin-game')) {
 			network.sendMessage(enums.CommandsToServer.RejoinGame, game_id);
-		} else if ($this.hasClass('link-watch')) {
+		} else if ($this.hasClass('button-watch-game')) {
 			network.sendMessage(enums.CommandsToServer.WatchGame, game_id);
 		}
-
-		return false;
 	});
 });

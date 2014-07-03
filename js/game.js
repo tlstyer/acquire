@@ -51,7 +51,7 @@ define(function(require) {
 			width = half_window_width_ceil - 2;
 			font_size = Math.floor(cell_width_ss / 2);
 
-			height = Math.floor((window_height - top - 48) / 2) - 2;
+			height = Math.floor((window_height - top - 51) / 2) - 2;
 			common_functions.setElementPosition($('#game-history'), left, top, width, height);
 
 			top += height + 2;
@@ -59,8 +59,8 @@ define(function(require) {
 			common_functions.setElementPosition($('#game-status'), left, top, width, height);
 
 			top += height + 2;
-			height = 22;
-			common_functions.setElementPosition($('#game-links'), left, top, width, height);
+			height = 25;
+			common_functions.setElementPosition($('#game-buttons'), left, top, width, height);
 
 			top += height + 2;
 			height = window_height - top;
@@ -852,10 +852,8 @@ define(function(require) {
 	pubsub.subscribe('network-Close', resetHtml);
 	pubsub.subscribe('network-Error', resetHtml);
 
-	$('#link-leave-game').click(function() {
+	$('#button-leave-game').click(function() {
 		network.sendMessage(enums.CommandsToServer.LeaveGame);
-
-		return false;
 	});
 
 	$('#game-action').on('click', 'input', function() {
