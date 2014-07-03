@@ -783,9 +783,7 @@ class ActionPurchaseShares(Action):
                 can_purchase_shares = True
                 break
 
-        if can_purchase_shares:
-            self.game.tile_racks.determine_tile_game_board_types()
-        else:
+        if not can_purchase_shares:
             return self._complete_action()
 
     def execute(self, game_board_type_ids, end_game):
@@ -822,7 +820,7 @@ class ActionPurchaseShares(Action):
 
     def _complete_action(self):
         self.game.tile_racks.draw_tile(self.player_id)
-        self.game.tile_racks.determine_tile_game_board_types()
+        self.game.tile_racks.determine_tile_game_board_types([self.player_id])
         self.game.tile_racks.replace_dead_tiles(self.player_id)
 
         next_player_id = (self.player_id + 1) % len(self.game.player_id_to_client_id)
