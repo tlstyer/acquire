@@ -767,6 +767,8 @@ class ActionDisposeOfShares(Action):
 class ActionPurchaseShares(Action):
     def __init__(self, game, player_id):
         super().__init__(game, player_id, enums.GameActions_PurchaseShares)
+        self.can_end_game = False
+        self.end_game = False
 
     def prepare(self):
         for type_id, chain_size in enumerate(self.game.score_sheet.chain_size):
@@ -783,7 +785,10 @@ class ActionPurchaseShares(Action):
                 can_purchase_shares = True
                 break
 
-        if not can_purchase_shares:
+        existing_chain_sizes = [x for x in self.game.score_sheet.chain_size if x > 0]
+        self.can_end_game = len(existing_chain_sizes) > 0 and (min(existing_chain_sizes) >= 11 or max(existing_chain_sizes) >= 41)
+
+        if not can_purchase_shares and not self.can_end_game:
             return self._complete_action()
 
     def execute(self, game_board_type_ids, end_game):
@@ -816,15 +821,34 @@ class ActionPurchaseShares(Action):
         message = [enums.CommandsToClient_AddGameHistoryMessage, enums.GameHistoryMessages_PurchasedShares, self.player_id, sorted(game_board_type_id_to_count.items())]
         AcquireServerProtocol.add_pending_messages(self.game.client_ids, [message])
 
+        if end_game and self.can_end_game:
+            self.end_game = True
+
         return self._complete_action()
 
     def _complete_action(self):
-        self.game.tile_racks.draw_tile(self.player_id)
-        self.game.tile_racks.determine_tile_game_board_types([self.player_id])
-        self.game.tile_racks.replace_dead_tiles(self.player_id)
+        if self.end_game:
+            AcquireServerProtocol.add_pending_messages(self.game.client_ids, [[enums.CommandsToClient_AddGameHistoryMessage, enums.GameHistoryMessages_EndedGame, self.player_id]])
 
-        next_player_id = (self.player_id + 1) % len(self.game.player_id_to_client_id)
-        return [ActionPlayTile(self.game, next_player_id), ActionPurchaseShares(self.game, next_player_id)]
+            self.game.state = enums.GameStates_Completed
+            AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, [[enums.CommandsToClient_SetGameState, self.game.game_id, self.game.state]])
+
+            return [ActionGameOver(self.game)]
+        else:
+            self.game.tile_racks.draw_tile(self.player_id)
+            self.game.tile_racks.determine_tile_game_board_types([self.player_id])
+            self.game.tile_racks.replace_dead_tiles(self.player_id)
+
+            next_player_id = (self.player_id + 1) % len(self.game.player_id_to_client_id)
+            return [ActionPlayTile(self.game, next_player_id), ActionPurchaseShares(self.game, next_player_id)]
+
+
+class ActionGameOver(Action):
+    def __init__(self, game):
+        super().__init__(game, None, enums.GameActions_GameOver)
+
+    def execute(self):
+        pass
 
 
 class Game:

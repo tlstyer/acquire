@@ -760,7 +760,9 @@ define(function(require) {
 				$action = $('#game-status-' + hyphenated_enum_name).clone().removeAttr('id'),
 				$element;
 
-			$action.find('.username').text(common_data.game_id_to_player_data[common_data.game_id][player_id].username);
+			if (player_id !== null) {
+				$action.find('.username').text(common_data.game_id_to_player_data[common_data.game_id][player_id].username);
+			}
 
 			switch (game_action_id) {
 			case enums.GameActions.DisposeOfShares:
@@ -772,7 +774,7 @@ define(function(require) {
 
 			$('#game-status').empty().append($action);
 
-			if (player_id === common_data.player_id) {
+			if (player_id !== null && player_id === common_data.player_id) {
 				if (game_action_constructors_lookup.hasOwnProperty(game_action_id)) {
 					game_action_constructors_lookup[game_action_id].apply(null, Array.prototype.slice.call(arguments, 2));
 				}

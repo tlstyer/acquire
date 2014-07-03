@@ -54,6 +54,7 @@ class GameActions(AutoNumber):
     SelectChainToMerge = ()
     DisposeOfShares = ()
     PurchaseShares = ()
+    GameOver = ()
 
 
 class GameBoardTypes(AutoNumber):
@@ -91,6 +92,7 @@ class GameHistoryMessages(AutoNumber):
     DisposedOfShares = ()
     PurchasedShares = ()
     ReplacedDeadTile = ()
+    EndedGame = ()
 
 
 class GameStates(AutoNumber):
@@ -162,6 +164,7 @@ GameActions_SelectMergerSurvivor = 3
 GameActions_SelectChainToMerge = 4
 GameActions_DisposeOfShares = 5
 GameActions_PurchaseShares = 6
+GameActions_GameOver = 7
 GameBoardTypes_Luxor = 0
 GameBoardTypes_Tower = 1
 GameBoardTypes_American = 2
@@ -193,6 +196,7 @@ GameHistoryMessages_ReceivedBonus = 10
 GameHistoryMessages_DisposedOfShares = 11
 GameHistoryMessages_PurchasedShares = 12
 GameHistoryMessages_ReplacedDeadTile = 13
+GameHistoryMessages_EndedGame = 14
 GameStates_Starting = 0
 GameStates_InProgress = 1
 GameStates_Completed = 2
