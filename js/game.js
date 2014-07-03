@@ -758,13 +758,29 @@ define(function(require) {
 		setGameAction = function(game_action_id, player_id) {
 			var hyphenated_enum_name = common_functions.getHyphenatedStringFromEnumName(enums.GameActions[game_action_id]),
 				$action = $('#game-status-' + hyphenated_enum_name).clone().removeAttr('id'),
-				$element;
+				$element, length, index, name, parts = [];
 
 			if (player_id !== null) {
 				$action.find('.username').text(common_data.game_id_to_player_data[common_data.game_id][player_id].username);
 			}
 
 			switch (game_action_id) {
+			case enums.GameActions.SelectNewChain:
+			case enums.GameActions.SelectMergerSurvivor:
+			case enums.GameActions.SelectChainToMerge:
+				$element = $action.find('.chains');
+				length = arguments[2].length;
+				for (index = 0; index < length; index++) {
+					name = enums.GameBoardTypes[arguments[2][index]];
+					parts.push('<span class="' + name.toLowerCase() + '">' + name[0] + '</span>');
+				}
+
+				if (parts.length === 2) {
+					$element.html(parts[0] + ' or ' + parts[1]);
+				} else {
+					$element.html(parts.slice(0, parts.length - 1).join(', ') + ', or ' + parts[parts.length - 1]);
+				}
+				break;
 			case enums.GameActions.DisposeOfShares:
 				$element = $action.find('.chain');
 				$element.addClass(enums.GameBoardTypes[arguments[2]].toLowerCase());
