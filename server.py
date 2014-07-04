@@ -633,6 +633,7 @@ class ActionSelectNewChain(Action):
             return self._create_new_chain(self.game_board_type_ids[0])
         else:
             self.game.game_board.set_cell(self.tile, enums.GameBoardTypes_NothingYet)
+            self.game.tile_racks.determine_tile_game_board_types()
 
     def execute(self, game_board_type_id):
         if game_board_type_id in self.game_board_type_ids:
@@ -670,6 +671,7 @@ class ActionSelectMergerSurvivor(Action):
             return self._prepare_next_actions(largest_type_ids.pop())
         else:
             self.game.game_board.set_cell(self.tile, enums.GameBoardTypes_NothingYet)
+            self.game.tile_racks.determine_tile_game_board_types()
             self.additional_params.append(sorted(largest_type_ids))
 
     def execute(self, type_id):
@@ -684,6 +686,7 @@ class ActionSelectMergerSurvivor(Action):
 
         self.game.game_board.fill_cells(self.tile, controlling_type_id)
         self.game.score_sheet.set_chain_size(controlling_type_id, len(self.game.game_board.board_type_to_coordinates[controlling_type_id]))
+        self.game.tile_racks.determine_tile_game_board_types()
 
         # pay bonuses
         messages = []
