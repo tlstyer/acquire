@@ -91,6 +91,7 @@ class GameHistoryMessages(AutoNumber):
     ReceivedBonus = ()
     DisposedOfShares = ()
     PurchasedShares = ()
+    DrewLastTile = ()
     ReplacedDeadTile = ()
     EndedGame = ()
 
@@ -196,8 +197,9 @@ GameHistoryMessages_SelectedChainToMerge = 9
 GameHistoryMessages_ReceivedBonus = 10
 GameHistoryMessages_DisposedOfShares = 11
 GameHistoryMessages_PurchasedShares = 12
-GameHistoryMessages_ReplacedDeadTile = 13
-GameHistoryMessages_EndedGame = 14
+GameHistoryMessages_DrewLastTile = 13
+GameHistoryMessages_ReplacedDeadTile = 14
+GameHistoryMessages_EndedGame = 15
 GameStates_Starting = 0
 GameStates_StartingFull = 1
 GameStates_InProgress = 2

@@ -384,16 +384,13 @@ class TileBag:
     def __init__(self):
         tiles = [(x, y) for x in range(12) for y in range(9)]
         random.shuffle(tiles)
-        self.tiles = tiles
+        self._tiles = tiles
 
     def get_tile(self):
-        if len(self.tiles) > 0:
-            return self.tiles.pop()
-        else:
-            return None
+        return self._tiles.pop()
 
     def __len__(self):
-        return len(self.tiles)
+        return len(self._tiles)
 
 
 class TileRacks:
@@ -414,9 +411,9 @@ class TileRacks:
 
         for tile_index, tile_datum in enumerate(tile_data):
             if tile_datum is None:
-                tile = self.game.tile_bag.get_tile()
-                if tile is not None:
-                    tile_data[tile_index] = [tile, None, None]
+                len_tile_bag = len(self.game.tile_bag)
+                if len_tile_bag > 0:
+                    tile_data[tile_index] = [self.game.tile_bag.get_tile(), None, len_tile_bag == 1]
 
     def determine_tile_game_board_types(self, player_ids=None):
         chain_sizes = self.game.score_sheet.chain_size
@@ -432,6 +429,7 @@ class TileRacks:
             old_types = [None if t is None else t[1] for t in rack]
             new_types = []
             lonely_tile_border_tiles = set()
+            drew_last_tile = False
             for tile_datum in rack:
                 if tile_datum is None:
                     new_type = None
@@ -439,6 +437,9 @@ class TileRacks:
                     tile = tile_datum[0]
                     x = tile[0]
                     y = tile[1]
+                    if tile_datum[2] is True:
+                        drew_last_tile = True
+                        tile_datum[2] = False
 
                     border_tiles = set()
                     if x > 0:
@@ -506,6 +507,9 @@ class TileRacks:
                 client_id = self.game.player_id_to_client_id[player_id]
                 if client_id is not None:
                     AcquireServerProtocol.add_pending_messages({client_id}, messages)
+
+            if drew_last_tile:
+                AcquireServerProtocol.add_pending_messages(self.game.client_ids, [[enums.CommandsToClient_AddGameHistoryMessage, enums.GameHistoryMessages_DrewLastTile, player_id]])
 
     def replace_dead_tiles(self, player_id):
         tile_data = self.racks[player_id]
