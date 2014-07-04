@@ -5,9 +5,19 @@ define(function(require) {
 		isBrowserSupported = function() {
 			return 'WebSocket' in window;
 		},
+		server_url = null,
+		initializeServerUrl = function() {
+			var result = /^http(s?):\/\/([^\/]+)\//.exec(window.location.href);
+
+			if (result !== null) {
+				server_url = 'ws' + result[1] + '://' + result[2] + '/acquire/server';
+			} else {
+				server_url = 'ws://localhost:9000';
+			}
+		},
 		connect = function(username) {
 			if (ws === null) {
-				ws = new WebSocket('ws://localhost:9000?username=' + encodeURIComponent(username));
+				ws = new WebSocket(server_url + '?username=' + encodeURIComponent(username));
 
 				if (ws !== null) {
 					ws.onopen = function() {
@@ -48,6 +58,8 @@ define(function(require) {
 				ws.send(JSON.stringify(Array.prototype.slice.call(arguments, 0)));
 			}
 		};
+
+	initializeServerUrl();
 
 	return {
 		isBrowserSupported: isBrowserSupported,
