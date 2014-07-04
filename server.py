@@ -584,7 +584,10 @@ class ActionPlayTile(Action):
             if tile_datum is not None and tile_datum[1] != enums.GameBoardTypes_CantPlayNow and tile_datum[1] != enums.GameBoardTypes_CantPlayEver:
                 has_a_playable_tile = True
                 break
-        if not has_a_playable_tile:
+        if has_a_playable_tile:
+            self.game.turns_without_played_tiles_count = 0
+        else:
+            self.game.turns_without_played_tiles_count += 1
             messages.append([enums.CommandsToClient_AddGameHistoryMessage, enums.GameHistoryMessages_HasNoPlayableTile, self.player_id])
 
         AcquireServerProtocol.add_pending_messages(self.game.client_ids, messages)
@@ -845,8 +848,13 @@ class ActionPurchaseShares(Action):
         return self._complete_action()
 
     def _complete_action(self):
-        if self.end_game:
-            AcquireServerProtocol.add_pending_messages(self.game.client_ids, [[enums.CommandsToClient_AddGameHistoryMessage, enums.GameHistoryMessages_EndedGame, self.player_id]])
+        no_tiles_played_for_entire_round = self.game.turns_without_played_tiles_count == len(self.game.player_id_to_client_id)
+
+        if self.end_game or no_tiles_played_for_entire_round:
+            if self.end_game:
+                AcquireServerProtocol.add_pending_messages(self.game.client_ids, [[enums.CommandsToClient_AddGameHistoryMessage, enums.GameHistoryMessages_EndedGame, self.player_id]])
+            elif no_tiles_played_for_entire_round:
+                AcquireServerProtocol.add_pending_messages(self.game.client_ids, [[enums.CommandsToClient_AddGameHistoryMessage, enums.GameHistoryMessages_NoTilesPlayedForEntireRound, None]])
 
             self.game.state = enums.GameStates_Completed
             AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, [[enums.CommandsToClient_SetGameState, self.game.game_id, self.game.state]])
@@ -883,6 +891,7 @@ class Game:
 
         self.state = enums.GameStates_Starting if self.max_players > 1 else enums.GameStates_StartingFull
         self.actions = collections.deque()
+        self.turns_without_played_tiles_count = 0
 
         AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, [[enums.CommandsToClient_SetGameState, self.game_id, self.state, self.max_players]])
 

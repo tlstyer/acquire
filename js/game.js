@@ -435,7 +435,9 @@ define(function(require) {
 				scroll_is_at_bottom = common_functions.isScrollAtBottom($game_history),
 				$element, parts, length, index, entry, name;
 
-			$message.find('.username').text(common_data.game_id_to_player_data[common_data.game_id][player_id].username);
+			if (player_id !== null) {
+				$message.find('.username').text(common_data.game_id_to_player_data[common_data.game_id][player_id].username);
+			}
 
 			switch (game_history_message_id) {
 			case enums.GameHistoryMessages.DrewPositionTile:
