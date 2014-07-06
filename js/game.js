@@ -589,7 +589,7 @@ define(function(require) {
 			$('#dos-sell').text(dispose_of_shares_sell);
 			$('#dos-sell-increment').prop('disabled', dispose_of_shares_sell === dispose_of_shares_sell_max);
 			$('#dos-sell-decrement').prop('disabled', dispose_of_shares_sell === 0);
-			$('#dos-sell-remaining');
+			$('#dos-sell-maximum');
 		},
 		gameActionConstructorDisposeOfShares = function(defunct_type_id, controlling_type_id) {
 			dispose_of_shares_defunct_type_count = score_sheet_data[common_data.player_id][defunct_type_id];
@@ -625,7 +625,7 @@ define(function(require) {
 					dispose_of_shares_sell += 1;
 				} else if (button_id === 'dos-sell-decrement') {
 					dispose_of_shares_sell -= 1;
-				} else if (button_id === 'dos-sell-remaining') {
+				} else if (button_id === 'dos-sell-maximum') {
 					dispose_of_shares_sell = dispose_of_shares_sell_max;
 				}
 			} else if (button_id === 'dos-ok') {
