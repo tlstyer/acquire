@@ -69,7 +69,7 @@ define(function(require) {
 		setGamePlayerData = function(game_id, player_id, username, client_id) {
 			var $score_player = null,
 				$score_player_name = null,
-				ip_and_port = 'missing';
+				ip_address = 'missing';
 
 			if (game_id === common_data.game_id) {
 				$score_player = $('#score-sheet .score-sheet-player:eq(' + player_id + ')');
@@ -79,9 +79,9 @@ define(function(require) {
 					$score_player_name.addClass('missing');
 				} else {
 					$score_player_name.removeClass('missing');
-					ip_and_port = common_data.client_id_to_data[client_id].ip_and_port;
+					ip_address = common_data.client_id_to_data[client_id].ip_address;
 				}
-				$score_player_name.attr('title', username + ' (' + ip_and_port + ')');
+				$score_player_name.attr('title', username + ' (' + ip_address + ')');
 				$score_player_name.text(username);
 
 				if ($score_player.css('display') === 'none') {

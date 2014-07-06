@@ -4,7 +4,7 @@ define(function(require) {
 		setClientId = function(client_id) {
 			data.client_id = client_id;
 		},
-		setClientIdToData = function(client_id, username, ip_and_port) {
+		setClientIdToData = function(client_id, username, ip_address) {
 			if (username === null) {
 				delete data.client_id_to_data[client_id];
 
@@ -12,7 +12,7 @@ define(function(require) {
 			} else {
 				data.client_id_to_data[client_id] = {
 					username: username,
-					ip_and_port: ip_and_port
+					ip_address: ip_address
 				};
 
 				pubsub.publish('client-AddLobbyClient', client_id);

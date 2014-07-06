@@ -22,6 +22,7 @@ class AcquireServerProtocol(autobahn.asyncio.websocket.WebSocketServerProtocol):
 
     def __init__(self):
         self.username = ''
+        self.ip_address = None
         self.client_id = None
         self.game_id = None
         self.player_id = None
@@ -32,7 +33,8 @@ class AcquireServerProtocol(autobahn.asyncio.websocket.WebSocketServerProtocol):
 
     def onConnect(self, request):
         self.username = ' '.join(request.params.get('username', [''])[0].split())
-        print('X', 'connect', self.peer, self.username)
+        self.ip_address = request.headers.get('x-real-ip', self.peer)
+        print('X', 'connect', self.ip_address, self.username)
         print()
 
     def onOpen(self):
@@ -42,7 +44,7 @@ class AcquireServerProtocol(autobahn.asyncio.websocket.WebSocketServerProtocol):
         AcquireServerProtocol.client_ids.add(self.client_id)
         messages_client = [[enums.CommandsToClient_SetClientId, self.client_id]]
 
-        print(self.client_id, 'open', self.peer)
+        print(self.client_id, 'open', self.ip_address)
 
         if len(self.username) == 0 or len(self.username) > 32:
             messages_client.append([enums.CommandsToClient_FatalError, enums.FatalErrors_InvalidUsername])
@@ -60,12 +62,12 @@ class AcquireServerProtocol(autobahn.asyncio.websocket.WebSocketServerProtocol):
             # tell client about other clients' data
             for client in AcquireServerProtocol.client_id_to_client.values():
                 if client is not self:
-                    messages_client.append([enums.CommandsToClient_SetClientIdToData, client.client_id, client.username, client.peer])
+                    messages_client.append([enums.CommandsToClient_SetClientIdToData, client.client_id, client.username, client.ip_address])
             AcquireServerProtocol.add_pending_messages({self.client_id}, messages_client)
             messages_client = []
 
             # tell all clients about client's data
-            AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, [[enums.CommandsToClient_SetClientIdToData, self.client_id, self.username, self.peer]])
+            AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, [[enums.CommandsToClient_SetClientIdToData, self.client_id, self.username, self.ip_address]])
 
             # tell client about all games
             for game_id, game in AcquireServerProtocol.game_id_to_game.items():

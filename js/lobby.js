@@ -18,7 +18,7 @@ define(function(require) {
 				client_data = common_data.client_id_to_data[client_id];
 
 			$div.attr('class', 'client-' + client_id);
-			$div.attr('title', client_data.username + ' (' + client_data.ip_and_port + ')');
+			$div.attr('title', client_data.username + ' (' + client_data.ip_address + ')');
 			$div.text(client_data.username);
 			$div.appendTo('#clients-in-lobby');
 		},
@@ -85,15 +85,15 @@ define(function(require) {
 		},
 		setGamePlayerData = function(game_id, player_id, username, client_id) {
 			var $player = $('#lobby-game-' + game_id + ' .player:eq(' + player_id + ')'),
-				ip_and_port = 'missing';
+				ip_address = 'missing';
 
 			if (client_id === null) {
 				$player.addClass('missing');
 			} else {
 				$player.removeClass('missing');
-				ip_and_port = common_data.client_id_to_data[client_id].ip_and_port;
+				ip_address = common_data.client_id_to_data[client_id].ip_address;
 			}
-			$player.attr('title', username + ' (' + ip_and_port + ')');
+			$player.attr('title', username + ' (' + ip_address + ')');
 			$player.text(username);
 
 			setGameState(game_id);
@@ -103,7 +103,7 @@ define(function(require) {
 				client_data = common_data.client_id_to_data[client_id];
 
 			$div.attr('class', 'client-' + client_id);
-			$div.attr('title', client_data.username + ' (' + client_data.ip_and_port + ')');
+			$div.attr('title', client_data.username + ' (' + client_data.ip_address + ')');
 			$div.text(client_data.username);
 			$div.appendTo('#lobby-game-' + game_id + ' .watchers');
 		},
