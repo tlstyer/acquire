@@ -5,6 +5,7 @@ define(function(require) {
 		common_functions = require('common_functions'),
 		enums = require('enums'),
 		network = require('network'),
+		notification = require('notification'),
 		pubsub = require('pubsub'),
 		resize = function(window_width, window_height) {
 			var half_window_width = Math.floor(window_width / 2),
@@ -777,6 +778,14 @@ define(function(require) {
 				$('#score-sheet .score-sheet-player:eq(' + player_id + ')').addClass('my-sub-turn');
 			}
 
+			if (game_action_id !== enums.GameActions.StartGame) {
+				if (player_id !== null && player_id === common_data.player_id) {
+					notification.turnOn();
+				} else {
+					notification.turnOff();
+				}
+			}
+
 			if (player_id !== null) {
 				$action.find('.username').text(common_data.game_id_to_player_data[common_data.game_id][player_id].username);
 			}
@@ -815,6 +824,9 @@ define(function(require) {
 		},
 		resetHtml = function() {
 			var x, y;
+
+			notification.turnOff();
+
 			for (x = 0; x < 12; x++) {
 				for (y = 0; y < 9; y++) {
 					setGameBoardCell(x, y, enums.GameBoardTypes.Nothing);
