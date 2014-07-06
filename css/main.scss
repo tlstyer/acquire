@@ -26,6 +26,7 @@ $color-cash: rgb(0, 128, 0);
 $color-available-chain-size-price: rgb(192, 255, 255);
 
 $color-my-turn: rgb(255, 192, 192);
+$color-my-sub-turn: rgb(255, 224, 224);
 $color-safe-chain: rgb(255, 192, 128);
 
 body {
@@ -119,6 +120,12 @@ body {
 		&.missing {
 			color: grey;
 		}
+	}
+	tr.my-turn .name {
+		background-color: $color-my-turn;
+	}
+	tr.my-sub-turn .name {
+		background-color: $color-my-sub-turn;
 	}
 	.luxor, .tower, .american, .festival, .worldwide, .continental, .imperial {
 		width: percentage(1 / 18);

@@ -274,6 +274,15 @@ define(function(require) {
 				setScoreSheetCell(row, index, row_data[index]);
 			}
 		},
+		turn_player_id = null,
+		sub_turn_player_id = null,
+		setTurn = function(player_id) {
+			turn_player_id = player_id;
+			$('#score-sheet .score-sheet-player').removeClass('my-turn');
+			if (player_id !== null) {
+				$('#score-sheet .score-sheet-player:eq(' + player_id + ')').addClass('my-turn');
+			}
+		},
 		unw_getNumberOfPlayers = function() {
 			var player_data = common_data.game_id_to_player_data[common_data.game_id],
 				num_players = 0,
@@ -762,6 +771,12 @@ define(function(require) {
 				$action = $('#game-status-' + hyphenated_enum_name).clone().removeAttr('id'),
 				$element, length, index, name, parts = [];
 
+			sub_turn_player_id = player_id;
+			$('#score-sheet .score-sheet-player').removeClass('my-sub-turn');
+			if (player_id !== null && player_id !== turn_player_id && game_action_id !== enums.GameActions.StartGame) {
+				$('#score-sheet .score-sheet-player:eq(' + player_id + ')').addClass('my-sub-turn');
+			}
+
 			if (player_id !== null) {
 				$action.find('.username').text(common_data.game_id_to_player_data[common_data.game_id][player_id].username);
 			}
@@ -824,7 +839,9 @@ define(function(require) {
 			updateNetWorths();
 			$('#score-sheet td').removeClass('safe');
 			$('#score-sheet .score-sheet-player .name').empty();
-			$('#score-sheet .score-sheet-player').hide();
+			$('#score-sheet .score-sheet-player').hide().removeClass('my-turn my-sub-turn');
+			turn_player_id = null;
+			sub_turn_player_id = null;
 
 			$('#game-history').empty();
 
@@ -847,6 +864,7 @@ define(function(require) {
 	pubsub.subscribe('server-RemoveTile', removeTile);
 	pubsub.subscribe('server-SetScoreSheetCell', setScoreSheetCell);
 	pubsub.subscribe('server-SetScoreSheet', setScoreSheet);
+	pubsub.subscribe('server-SetTurn', setTurn);
 	pubsub.subscribe('network-MessageProcessingComplete', updateNetWorths);
 	pubsub.subscribe('server-AddGameHistoryMessage', addGameHistoryMessage);
 	pubsub.subscribe('server-SetGameAction', setGameAction);

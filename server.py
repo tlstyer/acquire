@@ -577,7 +577,10 @@ class ActionPlayTile(Action):
         super().__init__(game, player_id, enums.GameActions_PlayTile)
 
     def prepare(self):
-        messages = [[enums.CommandsToClient_AddGameHistoryMessage, enums.GameHistoryMessages_TurnBegan, self.player_id]]
+        self.game.turn_player_id = self.player_id
+
+        messages = [[enums.CommandsToClient_SetTurn, self.player_id],
+                    [enums.CommandsToClient_AddGameHistoryMessage, enums.GameHistoryMessages_TurnBegan, self.player_id]]
 
         has_a_playable_tile = False
         for tile_datum in self.game.tile_racks.racks[self.player_id]:
@@ -891,6 +894,7 @@ class Game:
 
         self.state = enums.GameStates_Starting if self.max_players > 1 else enums.GameStates_StartingFull
         self.actions = collections.deque()
+        self.turn_player_id = None
         self.turns_without_played_tiles_count = 0
 
         AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, [[enums.CommandsToClient_SetGameState, self.game_id, self.state, self.max_players]])
@@ -984,6 +988,9 @@ class Game:
                 if tile_datum is not None:
                     tile = tile_datum[0]
                     messages.append([enums.CommandsToClient_SetTile, tile_index, tile[0], tile[1], tile_datum[1]])
+
+        # turn
+        messages.append([enums.CommandsToClient_SetTurn, self.turn_player_id])
 
         AcquireServerProtocol.add_pending_messages({client.client_id}, messages)
 
