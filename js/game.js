@@ -827,16 +827,15 @@ define(function(require) {
 
 			setScoreSheet([
 				[
-					[0, 0, 0, 0, 0, 0, 0, 60],
-					[0, 0, 0, 0, 0, 0, 0, 60],
-					[0, 0, 0, 0, 0, 0, 0, 60],
-					[0, 0, 0, 0, 0, 0, 0, 60],
-					[0, 0, 0, 0, 0, 0, 0, 60],
-					[0, 0, 0, 0, 0, 0, 0, 60]
+					[0, 0, 0, 0, 0, 0, 0, 60, 60],
+					[0, 0, 0, 0, 0, 0, 0, 60, 60],
+					[0, 0, 0, 0, 0, 0, 0, 60, 60],
+					[0, 0, 0, 0, 0, 0, 0, 60, 60],
+					[0, 0, 0, 0, 0, 0, 0, 60, 60],
+					[0, 0, 0, 0, 0, 0, 0, 60, 60]
 				],
 				[0, 0, 0, 0, 0, 0, 0]
 			]);
-			updateNetWorths();
 			$('#score-sheet td').removeClass('safe');
 			$('#score-sheet .score-sheet-player .name').empty();
 			$('#score-sheet .score-sheet-player').hide().removeClass('my-turn my-sub-turn');
