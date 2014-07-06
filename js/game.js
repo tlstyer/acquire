@@ -580,16 +580,17 @@ define(function(require) {
 			dispose_of_shares_sell_max = dispose_of_shares_sell + dispose_of_shares_keep;
 
 			$('#dos-keep').text(dispose_of_shares_keep);
+			$('#dos-keep-all').prop('disabled', dispose_of_shares_keep === dispose_of_shares_defunct_type_count);
 
 			$('#dos-trade').text(dispose_of_shares_trade);
 			$('#dos-trade-increment').prop('disabled', dispose_of_shares_trade === dispose_of_shares_trade_max);
 			$('#dos-trade-decrement').prop('disabled', dispose_of_shares_trade === 0);
-			$('#dos-trade-maximum');
+			$('#dos-trade-maximum').prop('disabled', dispose_of_shares_trade === dispose_of_shares_trade_max);
 
 			$('#dos-sell').text(dispose_of_shares_sell);
 			$('#dos-sell-increment').prop('disabled', dispose_of_shares_sell === dispose_of_shares_sell_max);
 			$('#dos-sell-decrement').prop('disabled', dispose_of_shares_sell === 0);
-			$('#dos-sell-maximum');
+			$('#dos-sell-maximum').prop('disabled', dispose_of_shares_sell === dispose_of_shares_sell_max);
 		},
 		gameActionConstructorDisposeOfShares = function(defunct_type_id, controlling_type_id) {
 			dispose_of_shares_defunct_type_count = score_sheet_data[common_data.player_id][defunct_type_id];
