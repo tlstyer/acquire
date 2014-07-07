@@ -23,6 +23,7 @@ class AcquireServerProtocol(autobahn.asyncio.websocket.WebSocketServerProtocol):
     def __init__(self):
         self.username = ''
         self.ip_address = None
+        self.logged_in = False
         self.client_id = None
         self.game_id = None
         self.player_id = None
@@ -57,6 +58,7 @@ class AcquireServerProtocol(autobahn.asyncio.websocket.WebSocketServerProtocol):
             self.flush_pending_messages()
             self.sendClose()
         else:
+            self.logged_in = True
             AcquireServerProtocol.usernames.add(self.username)
 
             # tell client about other clients' data
@@ -89,12 +91,16 @@ class AcquireServerProtocol(autobahn.asyncio.websocket.WebSocketServerProtocol):
         if self.game_id is not None:
             AcquireServerProtocol.game_id_to_game[self.game_id].remove_client(self)
 
-        AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, [[enums.CommandsToClient_SetClientIdToData, self.client_id, None, None]])
-        self.flush_pending_messages()
+        if self.client_id:
+            del AcquireServerProtocol.client_id_to_client[self.client_id]
+            AcquireServerProtocol.client_ids.remove(self.client_id)
 
-        del AcquireServerProtocol.client_id_to_client[self.client_id]
-        AcquireServerProtocol.client_ids.discard(self.client_id)
-        AcquireServerProtocol.usernames.discard(self.username)
+        if self.logged_in:
+            AcquireServerProtocol.usernames.remove(self.username)
+            AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, [[enums.CommandsToClient_SetClientIdToData, self.client_id, None, None]])
+            self.flush_pending_messages()
+        else:
+            print()
 
     def onMessage(self, payload, isBinary):
         if not isBinary:
