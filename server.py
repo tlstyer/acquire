@@ -547,6 +547,13 @@ class TileRacks:
                     # replace one tile at a time
                     break
 
+    def are_all_racks_empty(self):
+        for rack in self.racks:
+            for tile_datum in rack:
+                if tile_datum is not None:
+                    return False
+        return True
+
 
 class Action:
     def __init__(self, game, player_id, game_action_id):
@@ -859,11 +866,14 @@ class ActionPurchaseShares(Action):
         return self._complete_action()
 
     def _complete_action(self):
+        all_tiles_played = self.game.tile_racks.are_all_racks_empty()
         no_tiles_played_for_entire_round = self.game.turns_without_played_tiles_count == len(self.game.player_id_to_client_id)
 
-        if self.end_game or no_tiles_played_for_entire_round:
+        if self.end_game or all_tiles_played or no_tiles_played_for_entire_round:
             if self.end_game:
                 AcquireServerProtocol.add_pending_messages(self.game.client_ids, [[enums.CommandsToClient_AddGameHistoryMessage, enums.GameHistoryMessages_EndedGame, self.player_id]])
+            elif all_tiles_played:
+                AcquireServerProtocol.add_pending_messages(self.game.client_ids, [[enums.CommandsToClient_AddGameHistoryMessage, enums.GameHistoryMessages_AllTilesPlayed, None]])
             elif no_tiles_played_for_entire_round:
                 AcquireServerProtocol.add_pending_messages(self.game.client_ids, [[enums.CommandsToClient_AddGameHistoryMessage, enums.GameHistoryMessages_NoTilesPlayedForEntireRound, None]])
 

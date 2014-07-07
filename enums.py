@@ -96,6 +96,7 @@ class GameHistoryMessages(AutoNumber):
     ReplacedDeadTile = ()
     EndedGame = ()
     NoTilesPlayedForEntireRound = ()
+    AllTilesPlayed = ()
 
 
 class GameStates(AutoNumber):
@@ -204,6 +205,7 @@ GameHistoryMessages_DrewLastTile = 13
 GameHistoryMessages_ReplacedDeadTile = 14
 GameHistoryMessages_EndedGame = 15
 GameHistoryMessages_NoTilesPlayedForEntireRound = 16
+GameHistoryMessages_AllTilesPlayed = 17
 GameStates_Starting = 0
 GameStates_StartingFull = 1
 GameStates_InProgress = 2
