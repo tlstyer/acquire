@@ -62,10 +62,15 @@ define(function(require) {
 			if (scroll_is_at_bottom) {
 				common_functions.scrollToBottom($chat_history);
 			}
+		},
+		resetHtml = function() {
+			$('#chat-history').empty();
 		};
 
 	pubsub.subscribe('client-SetPage', setPage);
 	pubsub.subscribe('server-AddChatMessage', addChatMessage);
+	pubsub.subscribe('network-Close', resetHtml);
+	pubsub.subscribe('network-Error', resetHtml);
 
 	$('#chat-input-form').submit(submitChatInput);
 
