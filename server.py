@@ -88,12 +88,12 @@ class AcquireServerProtocol(autobahn.asyncio.websocket.WebSocketServerProtocol):
     def onClose(self, wasClean, code, reason):
         print(self.client_id, 'close')
 
-        if self.game_id is not None:
-            AcquireServerProtocol.game_id_to_game[self.game_id].remove_client(self)
-
         if self.client_id:
             del AcquireServerProtocol.client_id_to_client[self.client_id]
             AcquireServerProtocol.client_ids.remove(self.client_id)
+
+        if self.game_id is not None:
+            AcquireServerProtocol.game_id_to_game[self.game_id].remove_client(self)
 
         if self.logged_in:
             AcquireServerProtocol.usernames.remove(self.username)
