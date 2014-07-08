@@ -9,6 +9,7 @@ mkdir -p dist/web/static
 # index.html
 sed "s/<link rel=\"stylesheet\" href=\"css\/main.css\">/<link rel=\"stylesheet\" href=\"static\/${TIMESTAMP}.css\">/" index.html | \
 sed "s/<script data-main=\"js\/main\" src=\"node_modules\/requirejs\/require.js\"><\/script>/<script src=\"static\/${TIMESTAMP}.js\"><\/script>/" | \
+sed "s/data-version=\"VERSION\"/data-version=\"${TIMESTAMP}\"/" | \
 ./node_modules/html-minifier/cli.js \
 	--remove-comments --collapse-whitespace --conservative-collapse --collapse-boolean-attributes --remove-attribute-quotes --remove-redundant-attributes --remove-optional-tags \
 	-o dist/web/index.html
@@ -27,4 +28,5 @@ cd ..
 cp enums.py dist
 
 # server.py
-cp server.py dist
+sed "s/version = 'VERSION'/version = '${TIMESTAMP}'/" server.py > dist/server.py
+chmod u+x dist/server.py

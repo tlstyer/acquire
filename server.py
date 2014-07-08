@@ -19,12 +19,14 @@ class AcquireServerProtocol(autobahn.asyncio.websocket.WebSocketServerProtocol):
     next_game_id = 1
     game_id_to_game = {}
     client_ids_and_messages = []
+    version = 'VERSION'
 
     def __init__(self):
+        self.version = None
         self.username = ''
         self.ip_address = None
-        self.logged_in = False
         self.client_id = None
+        self.logged_in = False
         self.game_id = None
         self.player_id = None
 
@@ -33,6 +35,7 @@ class AcquireServerProtocol(autobahn.asyncio.websocket.WebSocketServerProtocol):
             self.on_message_lookup.append(getattr(self, 'onMessage' + command_enum.name))
 
     def onConnect(self, request):
+        self.version = ' '.join(request.params.get('version', [''])[0].split())
         self.username = ' '.join(request.params.get('username', [''])[0].split())
         self.ip_address = request.headers.get('x-real-ip', self.peer)
         print('X', 'connect', self.ip_address, self.username)
@@ -47,7 +50,12 @@ class AcquireServerProtocol(autobahn.asyncio.websocket.WebSocketServerProtocol):
 
         print(self.client_id, 'open', self.ip_address)
 
-        if len(self.username) == 0 or len(self.username) > 32:
+        if self.version != AcquireServerProtocol.version:
+            messages_client.append([enums.CommandsToClient_FatalError, enums.FatalErrors_NotUsingLatestVersion])
+            AcquireServerProtocol.add_pending_messages({self.client_id}, messages_client)
+            self.flush_pending_messages()
+            self.sendClose()
+        elif len(self.username) == 0 or len(self.username) > 32:
             messages_client.append([enums.CommandsToClient_FatalError, enums.FatalErrors_InvalidUsername])
             AcquireServerProtocol.add_pending_messages({self.client_id}, messages_client)
             self.flush_pending_messages()

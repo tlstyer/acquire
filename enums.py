@@ -43,6 +43,7 @@ class CommandsToServer(AutoNumber):
 
 
 class FatalErrors(AutoNumber):
+    NotUsingLatestVersion = ()
     InvalidUsername = ()
     UsernameAlreadyInUse = ()
 
@@ -161,8 +162,9 @@ CommandsToServer_WatchGame = 3
 CommandsToServer_LeaveGame = 4
 CommandsToServer_DoGameAction = 5
 CommandsToServer_SendChatMessage = 6
-FatalErrors_InvalidUsername = 0
-FatalErrors_UsernameAlreadyInUse = 1
+FatalErrors_NotUsingLatestVersion = 0
+FatalErrors_InvalidUsername = 1
+FatalErrors_UsernameAlreadyInUse = 2
 GameActions_StartGame = 0
 GameActions_PlayTile = 1
 GameActions_SelectNewChain = 2

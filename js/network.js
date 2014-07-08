@@ -6,7 +6,8 @@ define(function(require) {
 			return 'WebSocket' in window;
 		},
 		server_url = null,
-		initializeServerUrl = function() {
+		version = null,
+		initializeServerUrlData = function() {
 			var result = /^http(s?):\/\/([^\/]+)\//.exec(window.location.href);
 
 			if (result !== null) {
@@ -14,10 +15,12 @@ define(function(require) {
 			} else {
 				server_url = 'ws://localhost:9000';
 			}
+
+			version = $('#page-login').attr('data-version');
 		},
 		connect = function(username) {
 			if (ws === null) {
-				ws = new WebSocket(server_url + '?username=' + encodeURIComponent(username));
+				ws = new WebSocket(server_url + '?version=' + encodeURIComponent(version) + '&username=' + encodeURIComponent(username));
 
 				if (ws !== null) {
 					ws.onopen = function() {
@@ -59,7 +62,7 @@ define(function(require) {
 			}
 		};
 
-	initializeServerUrl();
+	initializeServerUrlData();
 
 	return {
 		isBrowserSupported: isBrowserSupported,

@@ -57,7 +57,9 @@ define(function(require) {
 	pubsub.subscribe('server-FatalError', function(fatal_error_id) {
 		var message, $message;
 
-		if (fatal_error_id === enums.FatalErrors.InvalidUsername) {
+		if (fatal_error_id === enums.FatalErrors.NotUsingLatestVersion) {
+			message = 'You are not using the latest version. Please reload this page to get it!';
+		} else if (fatal_error_id === enums.FatalErrors.InvalidUsername) {
 			message = 'Invalid username.';
 		} else if (fatal_error_id === enums.FatalErrors.UsernameAlreadyInUse) {
 			message = 'Username already in use.';
