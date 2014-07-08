@@ -2,9 +2,9 @@ TIMESTAMP=$(date +%s)
 
 ./generate_client_files.sh
 
-mkdir -p dist
-rm -rf dist/*
+rm -rf dist
 mkdir -p dist/web/static
+mkdir -p dist/build/js
 
 # index.html
 sed "s/<link rel=\"stylesheet\" href=\"css\/main.css\">/<link rel=\"stylesheet\" href=\"static\/${TIMESTAMP}.css\">/" index.html | \
@@ -14,19 +14,30 @@ sed "s/data-version=\"VERSION\"/data-version=\"${TIMESTAMP}\"/" | \
 	--remove-comments --collapse-whitespace --conservative-collapse --collapse-boolean-attributes --remove-attribute-quotes --remove-redundant-attributes --remove-optional-tags \
 	-o dist/web/index.html
 
-# main.css
-./node_modules/requirejs/bin/r.js -o cssIn=css/main.css out=dist/web/main.css
-./node_modules/clean-css/bin/cleancss -o dist/web/static/${TIMESTAMP}.css dist/web/main.css
-rm dist/web/main.css
+# ${TIMESTAMP}.css
+./node_modules/requirejs/bin/r.js -o cssIn=css/main.css out=dist/build/main.css
+./node_modules/clean-css/bin/cleancss -o dist/web/static/${TIMESTAMP}.css dist/build/main.css
 
-# main.js
-cd js
-../node_modules/requirejs/bin/r.js -o baseUrl=. name=../node_modules/almond/almond.js wrap=true include=main out=../dist/web/static/${TIMESTAMP}.js
-cd ..
+# ${TIMESTAMP}.js
+for f in js/*.js
+do
+	cat $f | ./generate_distribution_files_helper.py enums > dist/build/$f
+done
+
+./generate_enums_js.py dist > dist/build/js/enums.js
+
+pushd . > /dev/null
+cd dist/build/js
+cp ../../../node_modules/almond/almond.js .
+../../../node_modules/requirejs/bin/r.js -o baseUrl=. name=almond.js wrap=true include=main out=../../web/static/${TIMESTAMP}.js
+popd > /dev/null
 
 # enums.py
 cp enums.py dist
 
 # server.py
-sed "s/version = 'VERSION'/version = '${TIMESTAMP}'/" server.py > dist/server.py
+sed "s/version = 'VERSION'/version = '${TIMESTAMP}'/" server.py | ./generate_distribution_files_helper.py enums > dist/server.py
 chmod u+x dist/server.py
+
+# cleanup
+rm -rf dist/build
