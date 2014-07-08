@@ -6,9 +6,10 @@ define(function(require) {
 		},
 		setClientIdToData = function(client_id, username, ip_address) {
 			if (username === null) {
-				delete data.client_id_to_data[client_id];
-
 				pubsub.publish('client-RemoveLobbyClient', client_id);
+				pubsub.publish('client-RemoveClient', client_id);
+
+				delete data.client_id_to_data[client_id];
 			} else {
 				data.client_id_to_data[client_id] = {
 					username: username,
@@ -16,6 +17,7 @@ define(function(require) {
 				};
 
 				pubsub.publish('client-AddLobbyClient', client_id);
+				pubsub.publish('client-AddClient', client_id);
 			}
 		},
 		setGameState = function(game_id, state_id, max_players) {
@@ -52,6 +54,7 @@ define(function(require) {
 				player_data.client_id = null;
 
 				pubsub.publish('client-SetGamePlayerData', game_id, player_id, player_data.username, null);
+				pubsub.publish('client-RemoveGamePlayer', game_id, old_client_id);
 				pubsub.publish('client-AddLobbyClient', old_client_id);
 				if (old_client_id === data.client_id) {
 					pubsub.publish('client-LeaveGame');
@@ -72,6 +75,7 @@ define(function(require) {
 
 				pubsub.publish('client-RemoveLobbyClient', client_id);
 				pubsub.publish('client-SetGamePlayerData', game_id, player_id, client_data.username, client_id);
+				pubsub.publish('client-AddGamePlayer', game_id, client_id);
 				if (game_id !== old_game_id && client_id === data.client_id) {
 					pubsub.publish('client-JoinGame');
 				}
