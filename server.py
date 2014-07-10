@@ -484,7 +484,7 @@ class TileRacks:
                     tile_data[tile_index] = [self.game.tile_bag.get_tile(), None, len_tile_bag == 1]
 
     def determine_tile_game_board_types(self, player_ids=None):
-        chain_sizes = self.game.score_sheet.chain_size
+        chain_sizes = [len(self.game.game_board.board_type_to_coordinates[t]) for t in range(7)]
         can_start_new_chain = 0 in chain_sizes
         x_to_y_to_board_type = self.game.game_board.x_to_y_to_board_type
 
