@@ -169,7 +169,9 @@ class AcquireServerProtocol(autobahn.asyncio.websocket.WebSocketServerProtocol):
             AcquireServerProtocol.game_id_to_game[self.game_id].do_game_action(self, game_action_id, data)
 
     def onMessageSendChatMessage(self, chat_message):
-        AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, [[enums.CommandsToClient_AddChatMessage, self.client_id, chat_message]])
+        chat_message = ' '.join(chat_message.split())
+        if chat_message:
+            AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, [[enums.CommandsToClient_AddChatMessage, self.client_id, chat_message]])
 
     def onMessageHeartbeat(self):
         pass

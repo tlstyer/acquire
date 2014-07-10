@@ -42,9 +42,13 @@ define(function(require) {
 			}
 		},
 		submitChatInput = function() {
-			var $input = $('#chat-input');
+			var $input = $('#chat-input'),
+				input = $input.val().replace(/\s+/g, ' ').trim();
 
-			network.sendMessage(enums.CommandsToServer.SendChatMessage, $input.val());
+			if (input.length > 0) {
+				network.sendMessage(enums.CommandsToServer.SendChatMessage, input);
+			}
+
 			$input.val('');
 
 			return false;
