@@ -732,7 +732,7 @@ define(function(require) {
 				purchase_shares_cart[parseInt($button.attr('data-index'), 10)] = null;
 			} else if (button_id === 'gps-end-game') {
 				// do nothing for now
-			} else if (button_id === 'gps-purchase') {
+			} else if (button_id === 'gps-ok') {
 				cart = [];
 				for (index = 0; index < 3; index++) {
 					if (purchase_shares_cart[index] !== null) {
