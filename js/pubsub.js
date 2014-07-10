@@ -5,7 +5,7 @@ define(function(require) {
 				i, length = subscribers.length,
 				args = Array.prototype.slice.call(arguments, 1);
 
-			for (i = 0; i < length; i += 1) {
+			for (i = 0; i < length; i++) {
 				subscribers[i].apply(null, args);
 			}
 		},

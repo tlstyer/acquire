@@ -4,7 +4,7 @@ define(function(require) {
 		network = require('network'),
 		pubsub = require('pubsub'),
 		current_page = null,
-		show_page = function(page) {
+		showPage = function(page) {
 			if (page !== current_page) {
 				$('.page').hide();
 				$('#page-' + page).show();
@@ -12,6 +12,13 @@ define(function(require) {
 				current_page = page;
 
 				pubsub.publish('client-SetPage', page);
+			}
+		},
+		checkBrowserSupport = function() {
+			if (network.isBrowserSupported()) {
+				showPage('login');
+			} else {
+				showPage('websocket-not-supported');
 			}
 		},
 		periodic_resize_check_width = null,
@@ -28,15 +35,15 @@ define(function(require) {
 
 			setTimeout(periodicResizeCheck, 500);
 		},
-		checkBrowserSupport = function() {
-			if (network.isBrowserSupported()) {
-				show_page('login');
-			} else {
-				show_page('websocket-not-supported');
-			}
+		onSubmitLoginForm = function() {
+			showPage('connecting');
+			$('#login-error-message').empty();
+			network.connect($('#login-form-username').val());
+
+			return false;
 		},
 		onNetworkOpen = function() {
-			show_page('lobby');
+			showPage('lobby');
 		},
 		onServerFatalError = function(fatal_error_id) {
 			var message;
@@ -54,17 +61,17 @@ define(function(require) {
 			$('#login-error-message').html($('<p>').text(message));
 		},
 		onClientJoinGame = function() {
-			show_page('game');
+			showPage('game');
 		},
 		onClientLeaveGame = function() {
-			show_page('lobby');
+			showPage('lobby');
 		},
 		onNetworkClose = function() {
-			show_page('login');
+			showPage('login');
 		},
 		onNetworkError = function() {
 			$('#login-error-message').html($('<p>').text('Could not connect to the server.'));
-			show_page('login');
+			showPage('login');
 		};
 
 	require('heartbeat');
@@ -74,13 +81,7 @@ define(function(require) {
 	checkBrowserSupport();
 	periodicResizeCheck();
 
-	$('#login-form').submit(function() {
-		show_page('connecting');
-		$('#login-error-message').empty();
-		network.connect($('#login-form-username').val());
-
-		return false;
-	});
+	$('#login-form').submit(onSubmitLoginForm);
 
 	pubsub.subscribe('network-Open', onNetworkOpen);
 	pubsub.subscribe('server-FatalError', onServerFatalError);

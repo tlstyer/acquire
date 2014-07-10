@@ -206,10 +206,10 @@ define(function(require) {
 						price = Math.min(Math.floor((data - 1) / 10) + 6, 10);
 					}
 					if (index >= enums.GameBoardTypes.American) {
-						price += 1;
+						price++;
 					}
 					if (index >= enums.GameBoardTypes.Continental) {
-						price += 1;
+						price++;
 					}
 				} else {
 					price = 0;
@@ -331,7 +331,7 @@ define(function(require) {
 				num_tying = 2;
 				while (num_tying < player_id_and_amount_array.length) {
 					if (player_id_and_amount_array[num_tying].amount === player_id_and_amount_array[0].amount) {
-						num_tying += 1;
+						num_tying++;
 						continue;
 					}
 					break;
@@ -350,7 +350,7 @@ define(function(require) {
 			num_tying = 1;
 			while (num_tying < player_id_and_amount_array.length - 1) {
 				if (player_id_and_amount_array[num_tying + 1].amount === player_id_and_amount_array[1].amount) {
-					num_tying += 1;
+					num_tying++;
 					continue;
 				}
 				break;
@@ -605,9 +605,9 @@ define(function(require) {
 				}
 			} else if (parent_id === 'dos-sell-fieldset') {
 				if (button_id === 'dos-sell-increment') {
-					dispose_of_shares_sell += 1;
+					dispose_of_shares_sell++;
 				} else if (button_id === 'dos-sell-decrement') {
-					dispose_of_shares_sell -= 1;
+					dispose_of_shares_sell--;
 				} else if (button_id === 'dos-sell-maximum') {
 					dispose_of_shares_sell = dispose_of_shares_sell_max;
 				}
