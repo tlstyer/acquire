@@ -7,6 +7,7 @@ import enums
 import math
 import random
 import sys
+import time
 import traceback
 import ujson
 
@@ -15,6 +16,8 @@ class AcquireServerProtocol(autobahn.asyncio.websocket.WebSocketServerProtocol):
     next_client_id = 1
     client_id_to_client = {}
     client_ids = set()
+    client_id_to_last_sent = collections.OrderedDict()
+    client_id_to_last_received = collections.OrderedDict()
     usernames = set()
     next_game_id = 1
     game_id_to_game = {}
@@ -46,6 +49,9 @@ class AcquireServerProtocol(autobahn.asyncio.websocket.WebSocketServerProtocol):
         AcquireServerProtocol.next_client_id += 1
         AcquireServerProtocol.client_id_to_client[self.client_id] = self
         AcquireServerProtocol.client_ids.add(self.client_id)
+        current_time = time.time()
+        AcquireServerProtocol.client_id_to_last_sent[self.client_id] = current_time
+        AcquireServerProtocol.client_id_to_last_received[self.client_id] = current_time
         messages_client = [[enums.CommandsToClient_SetClientId, self.client_id]]
 
         print(self.client_id, 'open', self.ip_address)
@@ -99,6 +105,8 @@ class AcquireServerProtocol(autobahn.asyncio.websocket.WebSocketServerProtocol):
         if self.client_id:
             del AcquireServerProtocol.client_id_to_client[self.client_id]
             AcquireServerProtocol.client_ids.remove(self.client_id)
+            del AcquireServerProtocol.client_id_to_last_sent[self.client_id]
+            del AcquireServerProtocol.client_id_to_last_received[self.client_id]
 
         if self.game_id is not None:
             AcquireServerProtocol.game_id_to_game[self.game_id].remove_client(self)
@@ -111,6 +119,9 @@ class AcquireServerProtocol(autobahn.asyncio.websocket.WebSocketServerProtocol):
             print()
 
     def onMessage(self, payload, isBinary):
+        del AcquireServerProtocol.client_id_to_last_received[self.client_id]
+        AcquireServerProtocol.client_id_to_last_received[self.client_id] = time.time()
+
         if not isBinary:
             try:
                 message = payload.decode()
@@ -160,6 +171,9 @@ class AcquireServerProtocol(autobahn.asyncio.websocket.WebSocketServerProtocol):
     def onMessageSendChatMessage(self, chat_message):
         AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, [[enums.CommandsToClient_AddChatMessage, self.client_id, chat_message]])
 
+    def onMessageHeartbeat(self):
+        pass
+
     @staticmethod
     def add_pending_messages(client_ids, messages):
         client_ids = client_ids.copy()
@@ -182,14 +196,50 @@ class AcquireServerProtocol(autobahn.asyncio.websocket.WebSocketServerProtocol):
 
     @staticmethod
     def flush_pending_messages():
+        current_time = time.time()
         for client_ids, messages in AcquireServerProtocol.client_ids_and_messages:
             messages_json = ujson.dumps(messages)
             print(','.join(str(x) for x in sorted(client_ids)), '<-', messages_json)
             messages_json_bytes = messages_json.encode()
             for client_id in client_ids:
                 AcquireServerProtocol.client_id_to_client[client_id].sendMessage(messages_json_bytes)
+                del AcquireServerProtocol.client_id_to_last_sent[client_id]
+                AcquireServerProtocol.client_id_to_last_sent[client_id] = current_time
         del AcquireServerProtocol.client_ids_and_messages[:]
         print()
+
+    @staticmethod
+    def do_heartbeat_management():
+        current_time = time.time()
+        print_blank_line = False
+
+        threshold = current_time - 20
+        client_ids = set()
+        for client_id, last_sent in AcquireServerProtocol.client_id_to_last_sent.items():
+            if last_sent < threshold:
+                print(client_id, 'send timeout')
+                client_ids.add(client_id)
+            else:
+                break
+
+        threshold = current_time - 30
+        for client_id, last_received in AcquireServerProtocol.client_id_to_last_received.items():
+            if last_received < threshold:
+                print(client_id, 'receive timeout')
+                print_blank_line = True
+                AcquireServerProtocol.client_id_to_client[client_id].sendClose()
+            else:
+                break
+
+        if len(client_ids) > 0:
+            AcquireServerProtocol.add_pending_messages(client_ids, [[enums.CommandsToClient_Heartbeat]])
+            AcquireServerProtocol.flush_pending_messages()
+            print_blank_line = False
+
+        if print_blank_line:
+            print()
+
+        asyncio.get_event_loop().call_later(2, AcquireServerProtocol.do_heartbeat_management)
 
 
 class GameBoard:
@@ -1034,6 +1084,7 @@ if __name__ == '__main__':
     factory.protocol = AcquireServerProtocol
 
     loop = asyncio.get_event_loop()
+    loop.call_soon(AcquireServerProtocol.do_heartbeat_management)
     coro = loop.create_server(factory, '127.0.0.1', 9000)
     server = loop.run_until_complete(coro)
 

@@ -56,9 +56,16 @@ define(function(require) {
 				}
 			}
 		},
+		close = function() {
+			if (ws !== null) {
+				ws.close();
+			}
+		},
 		sendMessage = function() {
 			if (ws !== null) {
 				ws.send(JSON.stringify(Array.prototype.slice.call(arguments, 0)));
+
+				pubsub.publish('network-SendMessage');
 			}
 		};
 
@@ -67,6 +74,7 @@ define(function(require) {
 	return {
 		isBrowserSupported: isBrowserSupported,
 		connect: connect,
+		close: close,
 		sendMessage: sendMessage
 	};
 });

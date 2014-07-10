@@ -29,6 +29,7 @@ define(function(require) {
 			setTimeout(periodicResizeCheck, 500);
 		};
 
+	require('heartbeat');
 	require('lobby');
 	require('game');
 

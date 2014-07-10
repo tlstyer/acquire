@@ -30,6 +30,7 @@ class CommandsToClient(AutoNumber):
     SetTileGameBoardType = ()
     RemoveTile = ()
     AddChatMessage = ()
+    Heartbeat = ()
 
 
 class CommandsToServer(AutoNumber):
@@ -40,6 +41,7 @@ class CommandsToServer(AutoNumber):
     LeaveGame = ()
     DoGameAction = ()
     SendChatMessage = ()
+    Heartbeat = ()
 
 
 class FatalErrors(AutoNumber):
@@ -155,6 +157,7 @@ CommandsToClient_SetTile = 15
 CommandsToClient_SetTileGameBoardType = 16
 CommandsToClient_RemoveTile = 17
 CommandsToClient_AddChatMessage = 18
+CommandsToClient_Heartbeat = 19
 CommandsToServer_CreateGame = 0
 CommandsToServer_JoinGame = 1
 CommandsToServer_RejoinGame = 2
@@ -162,6 +165,7 @@ CommandsToServer_WatchGame = 3
 CommandsToServer_LeaveGame = 4
 CommandsToServer_DoGameAction = 5
 CommandsToServer_SendChatMessage = 6
+CommandsToServer_Heartbeat = 7
 FatalErrors_NotUsingLatestVersion = 0
 FatalErrors_InvalidUsername = 1
 FatalErrors_UsernameAlreadyInUse = 2
