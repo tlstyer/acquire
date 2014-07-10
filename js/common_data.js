@@ -99,6 +99,7 @@ define(function(require) {
 		},
 		returnWatcherToLobby = function(game_id, client_id) {
 			var client_ids = data.game_id_to_watcher_client_ids[game_id];
+
 			data.game_id_to_watcher_client_ids[game_id] = client_ids.splice(client_ids.indexOf(client_id), 1);
 
 			if (client_id === data.client_id) {
@@ -111,7 +112,7 @@ define(function(require) {
 				pubsub.publish('client-LeaveGame');
 			}
 		},
-		resetData = function() {
+		reset = function() {
 			data.client_id = null;
 			data.game_id = null;
 			data.player_id = null;
@@ -122,6 +123,8 @@ define(function(require) {
 			data.game_id_to_watcher_client_ids = {};
 		};
 
+	reset();
+
 	pubsub.subscribe('server-SetClientId', setClientId);
 	pubsub.subscribe('server-SetClientIdToData', setClientIdToData);
 	pubsub.subscribe('server-SetGameState', setGameState);
@@ -129,10 +132,8 @@ define(function(require) {
 	pubsub.subscribe('server-SetGamePlayerClientId', setGamePlayerClientId);
 	pubsub.subscribe('server-SetGameWatcherClientId', setGameWatcherClientId);
 	pubsub.subscribe('server-ReturnWatcherToLobby', returnWatcherToLobby);
-	pubsub.subscribe('network-Close', resetData);
-	pubsub.subscribe('network-Error', resetData);
-
-	resetData();
+	pubsub.subscribe('network-Close', reset);
+	pubsub.subscribe('network-Error', reset);
 
 	return data;
 });

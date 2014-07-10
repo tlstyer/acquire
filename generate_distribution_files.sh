@@ -6,6 +6,13 @@ rm -rf dist
 mkdir -p dist/web/static
 mkdir -p dist/build/js
 
+# server.py
+sed "s/version = 'VERSION'/version = '${TIMESTAMP}'/" server.py | ./generate_distribution_files_helper.py enums > dist/server.py
+chmod u+x dist/server.py
+
+# enums.py
+cp enums.py dist
+
 # index.html
 sed "s/<link rel=\"stylesheet\" href=\"css\/main.css\">/<link rel=\"stylesheet\" href=\"static\/${TIMESTAMP}.css\">/" index.html | \
 sed "s/<script data-main=\"js\/main\" src=\"node_modules\/requirejs\/require.js\"><\/script>/<script src=\"static\/${TIMESTAMP}.js\"><\/script>/" | \
@@ -29,15 +36,8 @@ done
 pushd . > /dev/null
 cd dist/build/js
 cp ../../../node_modules/almond/almond.js .
-../../../node_modules/requirejs/bin/r.js -o baseUrl=. name=almond.js wrap=true include=main out=../../web/static/${TIMESTAMP}.js
+../../../node_modules/requirejs/bin/r.js -o baseUrl=. name=almond.js wrap=true preserveLicenseComments=false include=main out=../../web/static/${TIMESTAMP}.js
 popd > /dev/null
-
-# enums.py
-cp enums.py dist
-
-# server.py
-sed "s/version = 'VERSION'/version = '${TIMESTAMP}'/" server.py | ./generate_distribution_files_helper.py enums > dist/server.py
-chmod u+x dist/server.py
 
 # cleanup
 rm -rf dist/build

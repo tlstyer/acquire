@@ -27,58 +27,52 @@ define(function(require) {
 			}
 
 			setTimeout(periodicResizeCheck, 500);
+		},
+		checkBrowserSupport = function() {
+			if (network.isBrowserSupported()) {
+				show_page('login');
+			} else {
+				show_page('websocket-not-supported');
+			}
+		},
+		onNetworkOpen = function() {
+			show_page('lobby');
+		},
+		onServerFatalError = function(fatal_error_id) {
+			var message;
+
+			if (fatal_error_id === enums.FatalErrors.NotUsingLatestVersion) {
+				message = 'You are not using the latest version. Please reload this page to get it!';
+			} else if (fatal_error_id === enums.FatalErrors.InvalidUsername) {
+				message = 'Invalid username.';
+			} else if (fatal_error_id === enums.FatalErrors.UsernameAlreadyInUse) {
+				message = 'Username already in use.';
+			} else {
+				message = 'Unknown error.';
+			}
+
+			$('#login-error-message').html($('<p>').text(message));
+		},
+		onClientJoinGame = function() {
+			show_page('game');
+		},
+		onClientLeaveGame = function() {
+			show_page('lobby');
+		},
+		onNetworkClose = function() {
+			show_page('login');
+		},
+		onNetworkError = function() {
+			$('#login-error-message').html($('<p>').text('Could not connect to the server.'));
+			show_page('login');
 		};
 
 	require('heartbeat');
 	require('lobby');
 	require('game');
 
-	if (network.isBrowserSupported()) {
-		show_page('login');
-	} else {
-		show_page('websocket-not-supported');
-	}
-
-	pubsub.subscribe('network-Open', function() {
-		show_page('lobby');
-	});
-
-	pubsub.subscribe('network-Close', function() {
-		show_page('login');
-	});
-
-	pubsub.subscribe('network-Error', function() {
-		var $message;
-
-		$message = $('<p>').text('Could not connect to the server.');
-		$('#login-error-message').html($message);
-		show_page('login');
-	});
-
-	pubsub.subscribe('server-FatalError', function(fatal_error_id) {
-		var message, $message;
-
-		if (fatal_error_id === enums.FatalErrors.NotUsingLatestVersion) {
-			message = 'You are not using the latest version. Please reload this page to get it!';
-		} else if (fatal_error_id === enums.FatalErrors.InvalidUsername) {
-			message = 'Invalid username.';
-		} else if (fatal_error_id === enums.FatalErrors.UsernameAlreadyInUse) {
-			message = 'Username already in use.';
-		} else {
-			message = 'Unknown error.';
-		}
-
-		$message = $('<p>').text(message);
-		$('#login-error-message').html($message);
-	});
-
-	pubsub.subscribe('client-JoinGame', function() {
-		show_page('game');
-	});
-
-	pubsub.subscribe('client-LeaveGame', function() {
-		show_page('lobby');
-	});
+	checkBrowserSupport();
+	periodicResizeCheck();
 
 	$('#login-form').submit(function() {
 		show_page('connecting');
@@ -88,5 +82,10 @@ define(function(require) {
 		return false;
 	});
 
-	periodicResizeCheck();
+	pubsub.subscribe('network-Open', onNetworkOpen);
+	pubsub.subscribe('server-FatalError', onServerFatalError);
+	pubsub.subscribe('client-JoinGame', onClientJoinGame);
+	pubsub.subscribe('client-LeaveGame', onClientLeaveGame);
+	pubsub.subscribe('network-Close', onNetworkClose);
+	pubsub.subscribe('network-Error', onNetworkError);
 });

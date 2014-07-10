@@ -28,10 +28,8 @@ define(function(require) {
 		setGameState = function(game_id) {
 			var $lobby_section = $('#lobby-game-' + game_id),
 				state_id = common_data.game_id_to_game_state[game_id],
-				max_players = common_data.game_id_to_max_players[game_id],
-				player_data = null,
-				player_id = null,
-				client_username = common_data.client_id_to_data[common_data.client_id].username,
+				player_data = common_data.game_id_to_player_data[game_id],
+				player_id, client_username = common_data.client_id_to_data[common_data.client_id].username,
 				in_this_game = false;
 
 			// create and add lobby section if it doesn't exist
@@ -45,7 +43,7 @@ define(function(require) {
 
 			// set game state text
 			if (state_id === enums.GameStates.Starting) {
-				$lobby_section.find('.state').text('Starting (Max of ' + max_players + ' Players)');
+				$lobby_section.find('.state').text('Starting (Max of ' + common_data.game_id_to_max_players[game_id] + ' Players)');
 			} else if (state_id === enums.GameStates.StartingFull) {
 				$lobby_section.find('.state').text('Starting (Full)');
 			} else if (state_id === enums.GameStates.InProgress) {
@@ -55,7 +53,6 @@ define(function(require) {
 			}
 
 			// is client's username in this game?
-			player_data = common_data.game_id_to_player_data[game_id];
 			for (player_id in player_data) {
 				if (player_data.hasOwnProperty(player_id)) {
 					if (player_data[player_id].username === client_username) {
@@ -110,20 +107,10 @@ define(function(require) {
 		removeGameWatcher = function(game_id, client_id) {
 			$('#lobby-game-' + game_id + ' .watchers .client-' + client_id).remove();
 		},
-		resetHtml = function() {
+		reset = function() {
 			$('#clients-in-lobby').empty();
 			$('#lobby-games').empty();
 		};
-
-	pubsub.subscribe('client-Resize', resize);
-	pubsub.subscribe('client-AddLobbyClient', addLobbyClient);
-	pubsub.subscribe('client-RemoveLobbyClient', removeLobbyClient);
-	pubsub.subscribe('client-SetGameState', setGameState);
-	pubsub.subscribe('client-SetGamePlayerData', setGamePlayerData);
-	pubsub.subscribe('client-AddGameWatcher', addGameWatcher);
-	pubsub.subscribe('client-RemoveGameWatcher', removeGameWatcher);
-	pubsub.subscribe('network-Close', resetHtml);
-	pubsub.subscribe('network-Error', resetHtml);
 
 	$('#button-create-game').click(function() {
 		network.sendMessage(enums.CommandsToServer.CreateGame, parseInt($('#cg-max-players').val(), 10));
@@ -141,4 +128,14 @@ define(function(require) {
 			network.sendMessage(enums.CommandsToServer.WatchGame, game_id);
 		}
 	});
+
+	pubsub.subscribe('client-Resize', resize);
+	pubsub.subscribe('client-AddLobbyClient', addLobbyClient);
+	pubsub.subscribe('client-RemoveLobbyClient', removeLobbyClient);
+	pubsub.subscribe('client-SetGameState', setGameState);
+	pubsub.subscribe('client-SetGamePlayerData', setGamePlayerData);
+	pubsub.subscribe('client-AddGameWatcher', addGameWatcher);
+	pubsub.subscribe('client-RemoveGameWatcher', removeGameWatcher);
+	pubsub.subscribe('network-Close', reset);
+	pubsub.subscribe('network-Error', reset);
 });

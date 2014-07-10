@@ -12,28 +12,28 @@ define(function(require) {
 		onReceiveTimeout = function() {
 			network.close();
 		},
-		onOpen = function() {
+		start = function() {
 			send_timeout_id = setTimeout(onSendTimeout, send_timeout_length);
 			receive_timeout_id = setTimeout(onReceiveTimeout, receive_timeout_length);
 		},
-		onSendMessage = function() {
+		messageSent = function() {
 			clearTimeout(send_timeout_id);
 			send_timeout_id = setTimeout(onSendTimeout, send_timeout_length);
 		},
-		onMessageProcessingComplete = function() {
+		messageReceived = function() {
 			clearTimeout(receive_timeout_id);
 			receive_timeout_id = setTimeout(onReceiveTimeout, receive_timeout_length);
 		},
-		onClose = function() {
+		reset = function() {
 			clearTimeout(send_timeout_id);
 			send_timeout_id = null;
 			clearTimeout(receive_timeout_id);
 			receive_timeout_id = null;
 		};
 
-	pubsub.subscribe('network-Open', onOpen);
-	pubsub.subscribe('network-SendMessage', onSendMessage);
-	pubsub.subscribe('network-MessageProcessingComplete', onMessageProcessingComplete);
-	pubsub.subscribe('network-Close', onClose);
-	pubsub.subscribe('network-Error', onClose);
+	pubsub.subscribe('network-Open', start);
+	pubsub.subscribe('network-SendMessage', messageSent);
+	pubsub.subscribe('network-MessageProcessingComplete', messageReceived);
+	pubsub.subscribe('network-Close', reset);
+	pubsub.subscribe('network-Error', reset);
 });

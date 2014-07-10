@@ -11,16 +11,10 @@ define(function(require) {
 			var half_window_width = Math.floor(window_width / 2),
 				half_window_width_ceil = Math.ceil(window_width / 2),
 				$score_sheet = $('#score-sheet'),
-				cell_width_gb = 0,
-				cell_width_ss = 0,
-				num_rows = 4,
-				left = null,
-				top = null,
-				width = null,
-				height = null,
-				font_size = null;
+				cell_width_gb = Math.floor((half_window_width - 2) / 12),
+				cell_width_ss = Math.floor((half_window_width - 2) / 18),
+				num_rows, left, top, width, height, font_size;
 
-			cell_width_gb = Math.floor((half_window_width - 2) / 12);
 			top = 0;
 			height = cell_width_gb * 9 + 2;
 			font_size = Math.floor(cell_width_gb * 2 / 5);
@@ -37,10 +31,10 @@ define(function(require) {
 			height = window_height - top;
 			common_functions.setElementPosition($('#game-action'), 0, top, half_window_width, height, font_size);
 
-			cell_width_ss = Math.floor((half_window_width - 2) / 18);
 			common_functions.setElementPosition($score_sheet, half_window_width, 0, cell_width_ss * 18 + 2, null, Math.floor(cell_width_ss * 2 / 3));
 			$score_sheet.find('tr').css('height', cell_width_ss + 'px');
 
+			num_rows = 4;
 			$score_sheet.find('.score-sheet-player').each(function() {
 				if ($(this).css('display') !== 'none') {
 					num_rows++;
@@ -68,9 +62,7 @@ define(function(require) {
 			chat.setPositionForPage('game', left, top, width, height);
 		},
 		setGamePlayerData = function(game_id, player_id, username, client_id) {
-			var $score_player = null,
-				$score_player_name = null,
-				ip_address = 'missing';
+			var $score_player, $score_player_name, ip_address = 'missing';
 
 			if (game_id === common_data.game_id) {
 				$score_player = $('#score-sheet .score-sheet-player:eq(' + player_id + ')');
@@ -92,9 +84,8 @@ define(function(require) {
 			}
 		},
 		joinGame = function() {
-			var player_id = 0,
-				player_data = common_data.game_id_to_player_data[common_data.game_id],
-				player_datum = null;
+			var player_id, player_data = common_data.game_id_to_player_data[common_data.game_id],
+				player_datum;
 
 			for (player_id in player_data) {
 				if (player_data.hasOwnProperty(player_id) && player_id !== common_data.player_id) {
@@ -103,13 +94,11 @@ define(function(require) {
 				}
 			}
 		},
-		game_board_cell_types = null,
+		game_board_cell_types = [],
 		initializeGameBoardCellTypes = function() {
-			var initial_type, x, y, column;
+			var initial_type = enums.GameBoardTypes.Nothing,
+				x, y, column;
 
-			initial_type = enums.GameBoardTypes.Nothing;
-
-			game_board_cell_types = [];
 			for (x = 0; x < 12; x++) {
 				column = [];
 				for (y = 0; y < 9; y++) {
@@ -118,27 +107,22 @@ define(function(require) {
 				game_board_cell_types.push(column);
 			}
 		},
-		game_board_type_counts = null,
+		game_board_type_counts = [],
 		initializeGameBoardTypeCounts = function() {
-			var type_id, num_types;
+			var type_id, num_types = enums.GameBoardTypes.Max;
 
-			game_board_type_counts = [];
-			num_types = enums.GameBoardTypes.Max;
 			for (type_id = 0; type_id < num_types; type_id++) {
 				game_board_type_counts.push(0);
 			}
 			game_board_type_counts[enums.GameBoardTypes.Nothing] = 12 * 9;
 		},
 		setGameBoardCell = function(x, y, game_board_type_id) {
-			var $cell = $('#gb-' + x + '-' + y),
-				cell_class = common_functions.getHyphenatedStringFromEnumName(enums.GameBoardTypes[game_board_type_id]);
-
 			game_board_type_counts[game_board_cell_types[x][y]]--;
 			game_board_type_counts[game_board_type_id]++;
 
 			game_board_cell_types[x][y] = game_board_type_id;
 
-			$cell.attr('class', cell_class);
+			$('#gb-' + x + '-' + y).attr('class', common_functions.getHyphenatedStringFromEnumName(enums.GameBoardTypes[game_board_type_id]));
 		},
 		setGameBoard = function(x_to_y_to_board_type) {
 			var num_x, x, y_to_board_type, num_y, y, board_type;
@@ -155,6 +139,7 @@ define(function(require) {
 		},
 		setTile = function(tile_index, x, y, game_board_type_id) {
 			var $button = $('#game-tile-' + tile_index);
+
 			$button.attr('class', 'button-hotel ' + common_functions.getHyphenatedStringFromEnumName(enums.GameBoardTypes[game_board_type_id]));
 			$button.val(common_functions.getTileName(x, y));
 			$button.css('visibility', 'visible');
@@ -163,10 +148,12 @@ define(function(require) {
 		},
 		setTileGameBoardType = function(tile_index, game_board_type_id) {
 			var $button = $('#game-tile-' + tile_index);
+
 			$button.attr('class', 'button-hotel ' + common_functions.getHyphenatedStringFromEnumName(enums.GameBoardTypes[game_board_type_id]));
 		},
 		removeTile = function(tile_index) {
 			var $button = $('#game-tile-' + tile_index);
+
 			$button.css('visibility', 'hidden');
 		},
 		score_sheet_data = [
@@ -286,8 +273,7 @@ define(function(require) {
 		},
 		unw_getNumberOfPlayers = function() {
 			var player_data = common_data.game_id_to_player_data[common_data.game_id],
-				num_players = 0,
-				player_id;
+				player_id, num_players = 0;
 
 			for (player_id in common_data.game_id_to_player_data[common_data.game_id]) {
 				if (player_data.hasOwnProperty(player_id)) {
@@ -309,11 +295,12 @@ define(function(require) {
 		},
 		unw_getBonuses = function(holdings, price) {
 			var player_id_and_amount_array = [],
-				length, player_id, bonuses = [],
-				bonus_price, num_tying, bonus;
+				holdings_length, player_id, bonuses = [],
+				bonus_price = price * 10,
+				num_tying, bonus;
 
-			length = holdings.length;
-			for (player_id = 0; player_id < length; player_id++) {
+			holdings_length = holdings.length;
+			for (player_id = 0; player_id < holdings_length; player_id++) {
 				player_id_and_amount_array.push({
 					player_id: player_id,
 					amount: holdings[player_id]
@@ -323,11 +310,9 @@ define(function(require) {
 				return b.amount - a.amount;
 			});
 
-			for (player_id = 0; player_id < length; player_id++) {
+			for (player_id = 0; player_id < holdings_length; player_id++) {
 				bonuses.push(0);
 			}
-
-			bonus_price = price * 10;
 
 			// if bonuses do not divide equally into even $100 amounts, tying players receive the next greater amount
 			if (player_id_and_amount_array[0].amount === 0) { // if first place player has no stock in this chain
@@ -385,10 +370,9 @@ define(function(require) {
 			return bonuses;
 		},
 		unw_addMoney = function(money1, money2) {
-			var result = [],
-				length, index;
+			var length = money1.length,
+				index, result = [];
 
-			length = money1.length;
 			for (index = 0; index < length; index++) {
 				result.push(money1[index] + money2[index]);
 			}
@@ -396,10 +380,9 @@ define(function(require) {
 			return result;
 		},
 		unw_calculateSellingPrices = function(holdings, price) {
-			var selling_prices = [],
-				length, player_id;
+			var length = holdings.length,
+				player_id, selling_prices = [];
 
-			length = holdings.length;
 			for (player_id = 0; player_id < length; player_id++) {
 				selling_prices[player_id] = holdings[player_id] * price;
 			}
@@ -541,8 +524,7 @@ define(function(require) {
 		},
 		select_chain_game_action_id = null,
 		gameActionConstructorSelectChain = function(game_action_id, game_board_type_ids) {
-			var game_board_type_id = 0,
-				$button = null;
+			var game_board_type_id, $button;
 
 			select_chain_game_action_id = game_action_id;
 
@@ -607,8 +589,8 @@ define(function(require) {
 			$('#game-action-dispose-of-shares').show();
 		},
 		gameActionButtonClickedDisposeOfShares = function($button) {
-			var parent_id = $button.parent().attr('id'),
-				button_id = $button.attr('id');
+			var button_id = $button.attr('id'),
+				parent_id = $button.parent().attr('id');
 
 			if (button_id === 'dos-keep-all') {
 				dispose_of_shares_trade = 0;
@@ -643,12 +625,11 @@ define(function(require) {
 			var score_sheet_price = score_sheet_data[enums.ScoreSheetRows.Price],
 				score_sheet_available = score_sheet_data[enums.ScoreSheetRows.Available],
 				how_much_money = score_sheet_data[common_data.player_id][enums.ScoreSheetIndexes.Cash],
-				money_spent, index, money_left, selected_chain_counts, num_selected_chains = 0,
-				has_enough_money, still_available, $button, chain_index;
+				money_spent, index, money_left, selected_chain_counts, num_selected_chains, has_enough_money, still_available, $button, chain_index;
 
 			// money_spent and money_left
 			money_spent = 0;
-			for (index = 0; index < 3; ++index) {
+			for (index = 0; index < 3; index++) {
 				if (purchase_shares_cart[index] !== null) {
 					money_spent += score_sheet_price[purchase_shares_cart[index]];
 				}
@@ -657,7 +638,8 @@ define(function(require) {
 
 			// selected_chain_counts and num_selected_chains
 			selected_chain_counts = [0, 0, 0, 0, 0, 0, 0];
-			for (index = 0; index < 3; ++index) {
+			num_selected_chains = 0;
+			for (index = 0; index < 3; index++) {
 				if (purchase_shares_cart[index] !== null) {
 					selected_chain_counts[purchase_shares_cart[index]]++;
 					num_selected_chains++;
@@ -823,7 +805,7 @@ define(function(require) {
 				}
 			}
 		},
-		resetHtml = function() {
+		reset = function() {
 			var x, y;
 
 			notification.turnOff();
@@ -866,6 +848,20 @@ define(function(require) {
 	initializeGameBoardTypeCounts();
 	initializeGameActionConstructorsLookup();
 
+	$('#button-leave-game').click(function() {
+		network.sendMessage(enums.CommandsToServer.LeaveGame);
+	});
+
+	$('#game-action').on('click', 'input', function() {
+		var $this = $(this);
+
+		game_action_button_click_handlers[$this.closest('.game-action').attr('id')]($this);
+	});
+
+	$('#game-tile-rack').on('click', '.button-hotel', function() {
+		gameTileRackButtonClicked($(this));
+	});
+
 	pubsub.subscribe('client-Resize', resize);
 	pubsub.subscribe('client-SetGamePlayerData', setGamePlayerData);
 	pubsub.subscribe('client-JoinGame', joinGame);
@@ -880,21 +876,7 @@ define(function(require) {
 	pubsub.subscribe('network-MessageProcessingComplete', updateNetWorths);
 	pubsub.subscribe('server-AddGameHistoryMessage', addGameHistoryMessage);
 	pubsub.subscribe('server-SetGameAction', setGameAction);
-	pubsub.subscribe('client-LeaveGame', resetHtml);
-	pubsub.subscribe('network-Close', resetHtml);
-	pubsub.subscribe('network-Error', resetHtml);
-
-	$('#button-leave-game').click(function() {
-		network.sendMessage(enums.CommandsToServer.LeaveGame);
-	});
-
-	$('#game-action').on('click', 'input', function() {
-		var $this = $(this);
-
-		game_action_button_click_handlers[$this.closest('.game-action').attr('id')]($this);
-	});
-
-	$('#game-tile-rack').on('click', '.button-hotel', function() {
-		gameTileRackButtonClicked($(this));
-	});
+	pubsub.subscribe('client-LeaveGame', reset);
+	pubsub.subscribe('network-Close', reset);
+	pubsub.subscribe('network-Error', reset);
 });

@@ -103,11 +103,13 @@ define(function(require) {
 		removeGameWatcher = function(game_id, client_id) {
 			addClientLocationMessage('#chat-remove-game-watcher', client_id, game_id);
 		},
-		resetHtml = function() {
+		reset = function() {
 			$('#chat-history').empty();
 
 			add_client_location_messages = false;
 		};
+
+	$('#chat-input-form').submit(submitChatInput);
 
 	pubsub.subscribe('client-SetPage', setPage);
 	pubsub.subscribe('server-AddChatMessage', addChatMessage);
@@ -118,10 +120,8 @@ define(function(require) {
 	pubsub.subscribe('client-RemoveGamePlayer', removeGamePlayer);
 	pubsub.subscribe('client-AddGameWatcher', addGameWatcher);
 	pubsub.subscribe('client-RemoveGameWatcher', removeGameWatcher);
-	pubsub.subscribe('network-Close', resetHtml);
-	pubsub.subscribe('network-Error', resetHtml);
-
-	$('#chat-input-form').submit(submitChatInput);
+	pubsub.subscribe('network-Close', reset);
+	pubsub.subscribe('network-Error', reset);
 
 	return {
 		setPositionForPage: setPositionForPage

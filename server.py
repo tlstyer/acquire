@@ -59,17 +59,17 @@ class AcquireServerProtocol(autobahn.asyncio.websocket.WebSocketServerProtocol):
         if self.version != AcquireServerProtocol.version:
             messages_client.append([enums.CommandsToClient_FatalError, enums.FatalErrors_NotUsingLatestVersion])
             AcquireServerProtocol.add_pending_messages({self.client_id}, messages_client)
-            self.flush_pending_messages()
+            AcquireServerProtocol.flush_pending_messages()
             self.sendClose()
         elif len(self.username) == 0 or len(self.username) > 32:
             messages_client.append([enums.CommandsToClient_FatalError, enums.FatalErrors_InvalidUsername])
             AcquireServerProtocol.add_pending_messages({self.client_id}, messages_client)
-            self.flush_pending_messages()
+            AcquireServerProtocol.flush_pending_messages()
             self.sendClose()
         elif self.username in AcquireServerProtocol.usernames:
             messages_client.append([enums.CommandsToClient_FatalError, enums.FatalErrors_UsernameAlreadyInUse])
             AcquireServerProtocol.add_pending_messages({self.client_id}, messages_client)
-            self.flush_pending_messages()
+            AcquireServerProtocol.flush_pending_messages()
             self.sendClose()
         else:
             self.logged_in = True
@@ -97,7 +97,7 @@ class AcquireServerProtocol(autobahn.asyncio.websocket.WebSocketServerProtocol):
                     messages_client.append([enums.CommandsToClient_SetGameWatcherClientId, game_id, client_id])
             AcquireServerProtocol.add_pending_messages({self.client_id}, messages_client)
 
-            self.flush_pending_messages()
+            AcquireServerProtocol.flush_pending_messages()
 
     def onClose(self, wasClean, code, reason):
         print(self.client_id, 'close')
@@ -114,7 +114,7 @@ class AcquireServerProtocol(autobahn.asyncio.websocket.WebSocketServerProtocol):
         if self.logged_in:
             AcquireServerProtocol.usernames.remove(self.username)
             AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, [[enums.CommandsToClient_SetClientIdToData, self.client_id, None, None]])
-            self.flush_pending_messages()
+            AcquireServerProtocol.flush_pending_messages()
         else:
             print()
 
@@ -136,7 +136,7 @@ class AcquireServerProtocol(autobahn.asyncio.websocket.WebSocketServerProtocol):
 
             try:
                 method(*arguments)
-                self.flush_pending_messages()
+                AcquireServerProtocol.flush_pending_messages()
             except TypeError:
                 traceback.print_exc()
                 self.sendClose()
