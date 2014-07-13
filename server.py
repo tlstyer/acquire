@@ -249,7 +249,7 @@ class GameBoard:
         self.client_ids = client_ids
 
         self.x_to_y_to_board_type = [[enums.GameBoardTypes_Nothing for y in range(9)] for x in range(12)]
-        self.board_type_to_coordinates = collections.defaultdict(set)
+        self.board_type_to_coordinates = [set() for t in range(enums.GameBoardTypes_Max)]
         self.board_type_to_coordinates[enums.GameBoardTypes_Nothing].update((x, y) for x in range(12) for y in range(9))
 
     def set_cell(self, coordinates, board_type):
