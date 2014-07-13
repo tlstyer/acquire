@@ -28,6 +28,9 @@ define(function(require) {
 			if (!data.game_id_to_player_data.hasOwnProperty(game_id)) {
 				data.game_id_to_player_data[game_id] = {};
 			}
+			if (!data.game_id_to_watcher_client_ids.hasOwnProperty(game_id)) {
+				data.game_id_to_watcher_client_ids[game_id] = [];
+			}
 
 			pubsub.publish('client-SetGameState', game_id);
 		},
@@ -82,9 +85,6 @@ define(function(require) {
 			}
 		},
 		setGameWatcherClientId = function(game_id, client_id) {
-			if (!data.game_id_to_watcher_client_ids.hasOwnProperty(game_id)) {
-				data.game_id_to_watcher_client_ids[game_id] = [];
-			}
 			data.game_id_to_watcher_client_ids[game_id].push(client_id);
 
 			if (client_id === data.client_id) {

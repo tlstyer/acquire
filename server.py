@@ -836,7 +836,7 @@ class ActionDisposeOfShares(Action):
         if trade_amount + sell_amount > self.defunct_type_count:
             return
 
-        if trade_amount + sell_amount:
+        if trade_amount or sell_amount:
             self.game.score_sheet.adjust_player_data(self.player_id, self.defunct_type_id, -trade_amount - sell_amount)
             if trade_amount:
                 self.game.score_sheet.adjust_player_data(self.player_id, self.controlling_type_id, trade_amount // 2)
@@ -1021,8 +1021,9 @@ class Game:
             if client.client_id in self.watcher_client_ids:
                 self.watcher_client_ids.discard(client.client_id)
                 AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, [[enums.CommandsToClient_ReturnWatcherToLobby, self.game_id, client.client_id]])
-            self.score_sheet.remove_client(client)
-            self.player_id_to_client_id = self.score_sheet.get_player_id_to_client_id()
+            else:
+                self.score_sheet.remove_client(client)
+                self.player_id_to_client_id = self.score_sheet.get_player_id_to_client_id()
             self.client_ids.discard(client.client_id)
 
     def do_game_action(self, client, game_action_id, data):

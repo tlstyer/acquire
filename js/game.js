@@ -62,7 +62,7 @@ define(function(require) {
 			chat.setPositionForPage('game', left, top, width, height);
 		},
 		setGamePlayerData = function(game_id, player_id, username, client_id) {
-			var $score_player, $score_player_name, ip_address = 'missing';
+			var $score_player, $score_player_name, ip_address;
 
 			if (game_id === common_data.game_id) {
 				$score_player = $('#score-sheet .score-sheet-player:eq(' + player_id + ')');
@@ -70,6 +70,7 @@ define(function(require) {
 
 				if (client_id === null) {
 					$score_player_name.addClass('missing');
+					ip_address = 'missing';
 				} else {
 					$score_player_name.removeClass('missing');
 					ip_address = common_data.client_id_to_data[client_id].ip_address;

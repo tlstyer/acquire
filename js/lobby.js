@@ -28,9 +28,8 @@ define(function(require) {
 		setGameState = function(game_id) {
 			var $lobby_section = $('#lobby-game-' + game_id),
 				state_id = common_data.game_id_to_game_state[game_id],
-				player_data = common_data.game_id_to_player_data[game_id],
-				player_id, client_username = common_data.client_id_to_data[common_data.client_id].username,
-				in_this_game = false;
+				in_this_game, player_id, player_data = common_data.game_id_to_player_data[game_id],
+				client_username = common_data.client_id_to_data[common_data.client_id].username;
 
 			// create and add lobby section if it doesn't exist
 			if ($lobby_section.length === 0) {
@@ -53,6 +52,7 @@ define(function(require) {
 			}
 
 			// is client's username in this game?
+			in_this_game = false;
 			for (player_id in player_data) {
 				if (player_data.hasOwnProperty(player_id)) {
 					if (player_data[player_id].username === client_username) {
@@ -70,22 +70,19 @@ define(function(require) {
 
 			if (in_this_game) {
 				$lobby_section.find('.button-rejoin-game').show();
+				$lobby_section.find('.button-watch-game').hide();
 			} else {
 				$lobby_section.find('.button-rejoin-game').hide();
-			}
-
-			if (!in_this_game) {
 				$lobby_section.find('.button-watch-game').show();
-			} else {
-				$lobby_section.find('.button-watch-game').hide();
 			}
 		},
 		setGamePlayerData = function(game_id, player_id, username, client_id) {
 			var $player = $('#lobby-game-' + game_id + ' .player:eq(' + player_id + ')'),
-				ip_address = 'missing';
+				ip_address;
 
 			if (client_id === null) {
 				$player.addClass('missing');
+				ip_address = 'missing';
 			} else {
 				$player.removeClass('missing');
 				ip_address = common_data.client_id_to_data[client_id].ip_address;
