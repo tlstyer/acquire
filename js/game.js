@@ -441,7 +441,7 @@ define(function(require) {
 				break;
 			case enums.GameHistoryMessages.FormedChain:
 			case enums.GameHistoryMessages.SelectedMergerSurvivor:
-			case enums.GameHistoryMessages.SelectedChainToMerge:
+			case enums.GameHistoryMessages.SelectedChainToDisposeOfNext:
 			case enums.GameHistoryMessages.ReceivedBonus:
 			case enums.GameHistoryMessages.DisposedOfShares:
 				$element = $message.find('.chain');
@@ -738,8 +738,8 @@ define(function(require) {
 			game_action_constructors_lookup[enums.GameActions.SelectMergerSurvivor] = function(game_board_type_ids) {
 				gameActionConstructorSelectChain(enums.GameActions.SelectMergerSurvivor, game_board_type_ids);
 			};
-			game_action_constructors_lookup[enums.GameActions.SelectChainToMerge] = function(game_board_type_ids) {
-				gameActionConstructorSelectChain(enums.GameActions.SelectChainToMerge, game_board_type_ids);
+			game_action_constructors_lookup[enums.GameActions.SelectChainToDisposeOfNext] = function(game_board_type_ids) {
+				gameActionConstructorSelectChain(enums.GameActions.SelectChainToDisposeOfNext, game_board_type_ids);
 			};
 			game_action_constructors_lookup[enums.GameActions.DisposeOfShares] = gameActionConstructorDisposeOfShares;
 			game_action_constructors_lookup[enums.GameActions.PurchaseShares] = gameActionConstructorPurchaseShares;
@@ -776,7 +776,7 @@ define(function(require) {
 			switch (game_action_id) {
 			case enums.GameActions.SelectNewChain:
 			case enums.GameActions.SelectMergerSurvivor:
-			case enums.GameActions.SelectChainToMerge:
+			case enums.GameActions.SelectChainToDisposeOfNext:
 				$element = $action.find('.chains');
 				length = arguments[2].length;
 				for (index = 0; index < length; index++) {

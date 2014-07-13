@@ -779,14 +779,14 @@ class ActionSelectMergerSurvivor(Action):
         actions = []
         for type_id_set in self.type_id_sets:
             if type_id_set:
-                actions.append(ActionSelectChainToMerge(self.game, self.player_id, type_id_set, controlling_type_id))
+                actions.append(ActionSelectChainToDisposeOfNext(self.game, self.player_id, type_id_set, controlling_type_id))
 
         return actions
 
 
-class ActionSelectChainToMerge(Action):
+class ActionSelectChainToDisposeOfNext(Action):
     def __init__(self, game, player_id, defunct_type_ids, controlling_type_id):
-        super().__init__(game, player_id, enums.GameActions_SelectChainToMerge)
+        super().__init__(game, player_id, enums.GameActions_SelectChainToDisposeOfNext)
         self.defunct_type_ids = defunct_type_ids
         self.controlling_type_id = controlling_type_id
 
@@ -798,7 +798,7 @@ class ActionSelectChainToMerge(Action):
 
     def execute(self, type_id):
         if type_id in self.defunct_type_ids:
-            message = [enums.CommandsToClient_AddGameHistoryMessage, enums.GameHistoryMessages_SelectedChainToMerge, self.player_id, type_id]
+            message = [enums.CommandsToClient_AddGameHistoryMessage, enums.GameHistoryMessages_SelectedChainToDisposeOfNext, self.player_id, type_id]
             AcquireServerProtocol.add_pending_messages(self.game.client_ids, [message])
 
             return self._prepare_next_actions(type_id)
@@ -813,7 +813,7 @@ class ActionSelectChainToMerge(Action):
                 actions.append(ActionDisposeOfShares(self.game, player_id, next_type_id, self.controlling_type_id))
 
         if self.defunct_type_ids:
-            actions.append(ActionSelectChainToMerge(self.game, self.player_id, self.defunct_type_ids, self.controlling_type_id))
+            actions.append(ActionSelectChainToDisposeOfNext(self.game, self.player_id, self.defunct_type_ids, self.controlling_type_id))
 
         return actions
 
