@@ -523,11 +523,8 @@ define(function(require) {
 			network.sendMessage(enums.CommandsToServer.DoGameAction, enums.GameActions.StartGame);
 			$('#game-action-start-game').hide();
 		},
-		select_chain_game_action_id = null,
-		gameActionConstructorSelectChain = function(game_action_id, game_board_type_ids) {
+		gameActionConstructorSelectChain = function(game_board_type_ids) {
 			var game_board_type_id, $button;
-
-			select_chain_game_action_id = game_action_id;
 
 			for (game_board_type_id = 0; game_board_type_id < 7; game_board_type_id++) {
 				$button = $('#game-select-chain-' + game_board_type_id);
@@ -542,7 +539,7 @@ define(function(require) {
 			$('#game-action-select-chain').show();
 		},
 		gameActionButtonClickedSelectChain = function($button) {
-			network.sendMessage(enums.CommandsToServer.DoGameAction, select_chain_game_action_id, parseInt($button.attr('data-index'), 10));
+			network.sendMessage(enums.CommandsToServer.DoGameAction, current_game_action_id, parseInt($button.attr('data-index'), 10));
 			$('#game-action-select-chain').hide();
 		},
 		dispose_of_shares_defunct_type_count = 0,
@@ -733,15 +730,9 @@ define(function(require) {
 		initializeGameActionConstructorsLookup = function() {
 			game_action_constructors_lookup[enums.GameActions.StartGame] = gameActionConstructorStartGame;
 			game_action_constructors_lookup[enums.GameActions.PlayTile] = gameActionConstructorPlayTile;
-			game_action_constructors_lookup[enums.GameActions.SelectNewChain] = function(game_board_type_ids) {
-				gameActionConstructorSelectChain(enums.GameActions.SelectNewChain, game_board_type_ids);
-			};
-			game_action_constructors_lookup[enums.GameActions.SelectMergerSurvivor] = function(game_board_type_ids) {
-				gameActionConstructorSelectChain(enums.GameActions.SelectMergerSurvivor, game_board_type_ids);
-			};
-			game_action_constructors_lookup[enums.GameActions.SelectChainToDisposeOfNext] = function(game_board_type_ids) {
-				gameActionConstructorSelectChain(enums.GameActions.SelectChainToDisposeOfNext, game_board_type_ids);
-			};
+			game_action_constructors_lookup[enums.GameActions.SelectNewChain] = gameActionConstructorSelectChain;
+			game_action_constructors_lookup[enums.GameActions.SelectMergerSurvivor] = gameActionConstructorSelectChain;
+			game_action_constructors_lookup[enums.GameActions.SelectChainToDisposeOfNext] = gameActionConstructorSelectChain;
 			game_action_constructors_lookup[enums.GameActions.DisposeOfShares] = gameActionConstructorDisposeOfShares;
 			game_action_constructors_lookup[enums.GameActions.PurchaseShares] = gameActionConstructorPurchaseShares;
 		},
