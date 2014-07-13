@@ -320,7 +320,7 @@ class ScoreSheet:
                 player_datum[enums.ScoreSheetIndexes_Client].player_id = player_id
             player_id += 1
 
-        for player_id, player_datum in enumerate(self.player_data):
+        for player_id in range(len(self.player_data) - 1, -1, -1):
             # tell everybody about player changes
             player_datum = self.player_data[player_id]
             if player_id >= client.player_id:

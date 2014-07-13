@@ -43,7 +43,7 @@ define(function(require) {
 			pubsub.publish('client-SetGamePlayerData', game_id, player_id, username, null);
 		},
 		setGamePlayerClientId = function(game_id, player_id, client_id) {
-			var player_data, old_client_id, client_data, old_game_id;
+			var player_data, old_client_id, client_data, old_game_id, client_already_in_game, player_id2;
 
 			if (client_id === null) {
 				player_data = data.game_id_to_player_data[game_id][player_id];
@@ -78,7 +78,18 @@ define(function(require) {
 
 				pubsub.publish('client-RemoveLobbyClient', client_id);
 				pubsub.publish('client-SetGamePlayerData', game_id, player_id, client_data.username, client_id);
-				pubsub.publish('client-AddGamePlayer', game_id, client_id);
+
+				client_already_in_game = false;
+				player_data = data.game_id_to_player_data[game_id];
+				for (player_id2 in player_data) {
+					if (player_data.hasOwnProperty(player_id2) && parseInt(player_id2, 10) !== player_id && client_id === player_data[player_id2].client_id) {
+						client_already_in_game = true;
+					}
+				}
+				if (!client_already_in_game) {
+					pubsub.publish('client-AddGamePlayer', game_id, client_id);
+				}
+
 				if (game_id !== old_game_id && client_id === data.client_id) {
 					pubsub.publish('client-JoinGame');
 				}
