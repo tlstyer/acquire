@@ -751,10 +751,15 @@ define(function(require) {
 			'game-action-dispose-of-shares': gameActionButtonClickedDisposeOfShares,
 			'game-action-purchase-shares': gameActionButtonClickedPurchaseShares
 		},
+		current_game_action_id = null,
+		current_player_id = null,
 		setGameAction = function(game_action_id, player_id) {
 			var hyphenated_enum_name = common_functions.getHyphenatedStringFromEnumName(enums.GameActions[game_action_id]),
 				$action = $('#game-status-' + hyphenated_enum_name).clone().removeAttr('id'),
 				$element, length, index, name, parts = [];
+
+			current_game_action_id = game_action_id;
+			current_player_id = player_id;
 
 			sub_turn_player_id = player_id;
 			$('#score-sheet .score-sheet-player').removeClass('my-sub-turn');
@@ -769,6 +774,8 @@ define(function(require) {
 					notification.turnOff();
 				}
 			}
+
+			maybeNotifyStartingPlayerBecauseGameIsFull();
 
 			if (player_id !== null) {
 				$action.find('.username').text(common_data.game_id_to_player_data[common_data.game_id][player_id].username);
@@ -804,6 +811,16 @@ define(function(require) {
 				if (game_action_constructors_lookup.hasOwnProperty(game_action_id)) {
 					game_action_constructors_lookup[game_action_id].apply(null, Array.prototype.slice.call(arguments, 2));
 				}
+			}
+		},
+		setGameState = function(game_id) {
+			if (game_id === common_data.game_id) {
+				maybeNotifyStartingPlayerBecauseGameIsFull();
+			}
+		},
+		maybeNotifyStartingPlayerBecauseGameIsFull = function() {
+			if (common_data.game_id_to_game_state[common_data.game_id] === enums.GameStates.StartingFull && current_player_id === common_data.player_id) {
+				notification.turnOn();
 			}
 		},
 		reset = function() {
@@ -877,6 +894,7 @@ define(function(require) {
 	pubsub.subscribe('network-MessageProcessingComplete', updateNetWorths);
 	pubsub.subscribe('server-AddGameHistoryMessage', addGameHistoryMessage);
 	pubsub.subscribe('server-SetGameAction', setGameAction);
+	pubsub.subscribe('client-SetGameState', setGameState);
 	pubsub.subscribe('client-LeaveGame', reset);
 	pubsub.subscribe('network-Close', reset);
 	pubsub.subscribe('network-Error', reset);
