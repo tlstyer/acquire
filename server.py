@@ -448,19 +448,6 @@ class ScoreSheet:
         return bonus_data
 
 
-class TileBag:
-    def __init__(self):
-        tiles = [(x, y) for x in range(12) for y in range(9)]
-        random.shuffle(tiles)
-        self._tiles = tiles
-
-    def get_tile(self):
-        return self._tiles.pop()
-
-    def __len__(self):
-        return len(self._tiles)
-
-
 class TileRacks:
     def __init__(self, game):
         self.game = game
@@ -481,7 +468,7 @@ class TileRacks:
             if not tile_datum:
                 len_tile_bag = len(self.game.tile_bag)
                 if len_tile_bag:
-                    tile_data[tile_index] = [self.game.tile_bag.get_tile(), None, len_tile_bag == 1]
+                    tile_data[tile_index] = [self.game.tile_bag.pop(), None, len_tile_bag == 1]
 
     def determine_tile_game_board_types(self, player_ids=None):
         chain_sizes = [len(self.game.game_board.board_type_to_coordinates[t]) for t in range(7)]
@@ -967,7 +954,9 @@ class Game:
 
         self.game_board = GameBoard(self.client_ids)
         self.score_sheet = ScoreSheet(game_id, self.client_ids)
-        self.tile_bag = TileBag()
+        tiles = [(x, y) for x in range(12) for y in range(9)]
+        random.shuffle(tiles)
+        self.tile_bag = tiles
         self.tile_racks = TileRacks(self)
 
         self.state = enums.GameStates_Starting if self.max_players > 1 else enums.GameStates_StartingFull
@@ -979,7 +968,7 @@ class Game:
 
         self.client_ids.add(client.client_id)
         client.game_id = self.game_id
-        position_tile = self.tile_bag.get_tile()
+        position_tile = self.tile_bag.pop()
         self.game_board.set_cell(position_tile, enums.GameBoardTypes_NothingYet)
         self.score_sheet.add_player(client, position_tile)
         self.player_id_to_client_id = self.score_sheet.get_player_id_to_client_id()
@@ -992,7 +981,7 @@ class Game:
         if self.state == enums.GameStates_Starting and not self.score_sheet.is_username_in_game(client.username):
             self.client_ids.add(client.client_id)
             client.game_id = self.game_id
-            position_tile = self.tile_bag.get_tile()
+            position_tile = self.tile_bag.pop()
             self.game_board.set_cell(position_tile, enums.GameBoardTypes_NothingYet)
             previous_creator_player_id = self.score_sheet.get_creator_player_id()
             self.score_sheet.add_player(client, position_tile)
