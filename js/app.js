@@ -42,7 +42,7 @@ define(function(require) {
 
 			return false;
 		},
-		onNetworkOpen = function() {
+		onClientSetClientData = function() {
 			showPage('lobby');
 		},
 		onServerFatalError = function(fatal_error_id) {
@@ -83,7 +83,7 @@ define(function(require) {
 
 	$('#login-form').submit(onSubmitLoginForm);
 
-	pubsub.subscribe('network-Open', onNetworkOpen);
+	pubsub.subscribe('client-SetClientData', onClientSetClientData);
 	pubsub.subscribe('server-FatalError', onServerFatalError);
 	pubsub.subscribe('client-JoinGame', onClientJoinGame);
 	pubsub.subscribe('client-LeaveGame', onClientLeaveGame);

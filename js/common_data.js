@@ -18,6 +18,9 @@ define(function(require) {
 
 				pubsub.publish('client-AddLobbyClient', client_id);
 				pubsub.publish('client-AddClient', client_id);
+				if (client_id === data.client_id) {
+					pubsub.publish('client-SetClientData');
+				}
 			}
 		},
 		setGameState = function(game_id, state_id, max_players) {
