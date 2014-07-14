@@ -36,9 +36,15 @@ define(function(require) {
 			setTimeout(periodicResizeCheck, 500);
 		},
 		onSubmitLoginForm = function() {
-			showPage('connecting');
-			$('#login-error-message').empty();
-			network.connect($('#login-form-username').val());
+			var username = $('#login-form-username').val().replace(/\s+/g, ' ').trim();
+
+			if (username.length === 0 || username.length > 32) {
+				onServerFatalError(enums.FatalErrors.InvalidUsername);
+			} else {
+				showPage('connecting');
+				$('#login-error-message').empty();
+				network.connect(username);
+			}
 
 			return false;
 		},
@@ -51,7 +57,7 @@ define(function(require) {
 			if (fatal_error_id === enums.FatalErrors.NotUsingLatestVersion) {
 				message = 'You are not using the latest version. Please reload this page to get it!';
 			} else if (fatal_error_id === enums.FatalErrors.InvalidUsername) {
-				message = 'Invalid username.';
+				message = 'Invalid username. Username must have between 1 and 32 characters.';
 			} else if (fatal_error_id === enums.FatalErrors.UsernameAlreadyInUse) {
 				message = 'Username already in use.';
 			} else {
