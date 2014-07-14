@@ -230,7 +230,7 @@ class AcquireServerProtocol(autobahn.asyncio.websocket.WebSocketServerProtocol):
             else:
                 break
 
-        threshold = current_time - 30
+        threshold = current_time - 35
         for client_id, last_received in AcquireServerProtocol.client_id_to_last_received.items():
             if last_received < threshold:
                 print(client_id, 'receive timeout')

@@ -3,7 +3,7 @@ define(function(require) {
 		network = require('network'),
 		pubsub = require('pubsub'),
 		send_timeout_length = 20000,
-		receive_timeout_length = 30000,
+		receive_timeout_length = 35000,
 		send_timeout_id = null,
 		receive_timeout_id = null,
 		onSendTimeout = function() {
