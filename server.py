@@ -52,22 +52,22 @@ class AcquireServerProtocol(autobahn.asyncio.websocket.WebSocketServerProtocol):
         current_time = time.time()
         AcquireServerProtocol.client_id_to_last_sent[self.client_id] = current_time
         AcquireServerProtocol.client_id_to_last_received[self.client_id] = current_time
-        messages_client = [[enums.CommandsToClient_SetClientId, self.client_id]]
+        messages_client = [[enums.CommandsToClient.SetClientId.value, self.client_id]]
 
         print(self.client_id, 'open', self.ip_address)
 
         if self.version != AcquireServerProtocol.version:
-            messages_client.append([enums.CommandsToClient_FatalError, enums.FatalErrors_NotUsingLatestVersion])
+            messages_client.append([enums.CommandsToClient.FatalError.value, enums.FatalErrors.NotUsingLatestVersion.value])
             AcquireServerProtocol.add_pending_messages({self.client_id}, messages_client)
             AcquireServerProtocol.flush_pending_messages()
             self.sendClose()
         elif not self.username or len(self.username) > 32:
-            messages_client.append([enums.CommandsToClient_FatalError, enums.FatalErrors_InvalidUsername])
+            messages_client.append([enums.CommandsToClient.FatalError.value, enums.FatalErrors.InvalidUsername.value])
             AcquireServerProtocol.add_pending_messages({self.client_id}, messages_client)
             AcquireServerProtocol.flush_pending_messages()
             self.sendClose()
         elif self.username in AcquireServerProtocol.usernames:
-            messages_client.append([enums.CommandsToClient_FatalError, enums.FatalErrors_UsernameAlreadyInUse])
+            messages_client.append([enums.CommandsToClient.FatalError.value, enums.FatalErrors.UsernameAlreadyInUse.value])
             AcquireServerProtocol.add_pending_messages({self.client_id}, messages_client)
             AcquireServerProtocol.flush_pending_messages()
             self.sendClose()
@@ -78,23 +78,23 @@ class AcquireServerProtocol(autobahn.asyncio.websocket.WebSocketServerProtocol):
             # tell client about other clients' data
             for client in AcquireServerProtocol.client_id_to_client.values():
                 if client is not self:
-                    messages_client.append([enums.CommandsToClient_SetClientIdToData, client.client_id, client.username, client.ip_address])
+                    messages_client.append([enums.CommandsToClient.SetClientIdToData.value, client.client_id, client.username, client.ip_address])
             AcquireServerProtocol.add_pending_messages({self.client_id}, messages_client)
             messages_client = []
 
             # tell all clients about client's data
-            AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, [[enums.CommandsToClient_SetClientIdToData, self.client_id, self.username, self.ip_address]])
+            AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, [[enums.CommandsToClient.SetClientIdToData.value, self.client_id, self.username, self.ip_address]])
 
             # tell client about all games
             for game_id, game in AcquireServerProtocol.game_id_to_game.items():
-                messages_client.append([enums.CommandsToClient_SetGameState, game_id, game.state, game.max_players])
+                messages_client.append([enums.CommandsToClient.SetGameState.value, game_id, game.state, game.max_players])
                 for player_id, player_datum in enumerate(game.score_sheet.player_data):
-                    if player_datum[enums.ScoreSheetIndexes_Client]:
-                        messages_client.append([enums.CommandsToClient_SetGamePlayerClientId, game_id, player_id, player_datum[enums.ScoreSheetIndexes_Client].client_id])
+                    if player_datum[enums.ScoreSheetIndexes.Client.value]:
+                        messages_client.append([enums.CommandsToClient.SetGamePlayerClientId.value, game_id, player_id, player_datum[enums.ScoreSheetIndexes.Client.value].client_id])
                     else:
-                        messages_client.append([enums.CommandsToClient_SetGamePlayerUsername, game_id, player_id, player_datum[enums.ScoreSheetIndexes_Username]])
+                        messages_client.append([enums.CommandsToClient.SetGamePlayerUsername.value, game_id, player_id, player_datum[enums.ScoreSheetIndexes.Username.value]])
                 for client_id in game.watcher_client_ids:
-                    messages_client.append([enums.CommandsToClient_SetGameWatcherClientId, game_id, client_id])
+                    messages_client.append([enums.CommandsToClient.SetGameWatcherClientId.value, game_id, client_id])
             AcquireServerProtocol.add_pending_messages({self.client_id}, messages_client)
 
             AcquireServerProtocol.flush_pending_messages()
@@ -113,7 +113,7 @@ class AcquireServerProtocol(autobahn.asyncio.websocket.WebSocketServerProtocol):
 
         if self.logged_in:
             AcquireServerProtocol.usernames.remove(self.username)
-            AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, [[enums.CommandsToClient_SetClientIdToData, self.client_id, None, None]])
+            AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, [[enums.CommandsToClient.SetClientIdToData.value, self.client_id, None, None]])
             AcquireServerProtocol.flush_pending_messages()
         else:
             print()
@@ -171,7 +171,7 @@ class AcquireServerProtocol(autobahn.asyncio.websocket.WebSocketServerProtocol):
     def onMessageSendChatMessage(self, chat_message):
         chat_message = ' '.join(chat_message.split())
         if chat_message:
-            AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, [[enums.CommandsToClient_AddChatMessage, self.client_id, chat_message]])
+            AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, [[enums.CommandsToClient.AddChatMessage.value, self.client_id, chat_message]])
 
     def onMessageHeartbeat(self):
         pass
@@ -234,7 +234,7 @@ class AcquireServerProtocol(autobahn.asyncio.websocket.WebSocketServerProtocol):
                 break
 
         if client_ids:
-            AcquireServerProtocol.add_pending_messages(client_ids, [[enums.CommandsToClient_Heartbeat]])
+            AcquireServerProtocol.add_pending_messages(client_ids, [[enums.CommandsToClient.Heartbeat.value]])
             AcquireServerProtocol.flush_pending_messages()
             print_blank_line = False
 
@@ -257,7 +257,7 @@ class AcquireServerProtocol(autobahn.asyncio.websocket.WebSocketServerProtocol):
             for game_id in expired_game_ids:
                 print('game #%d expired' % game_id)
                 del AcquireServerProtocol.game_id_to_game[game_id]
-                messages.append([enums.CommandsToClient_DestroyGame, game_id])
+                messages.append([enums.CommandsToClient.DestroyGame.value, game_id])
             AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, messages)
             AcquireServerProtocol.flush_pending_messages()
 
@@ -268,9 +268,9 @@ class GameBoard:
     def __init__(self, client_ids):
         self.client_ids = client_ids
 
-        self.x_to_y_to_board_type = [[enums.GameBoardTypes_Nothing for y in range(9)] for x in range(12)]
-        self.board_type_to_coordinates = [set() for t in range(enums.GameBoardTypes_Max)]
-        self.board_type_to_coordinates[enums.GameBoardTypes_Nothing].update((x, y) for x in range(12) for y in range(9))
+        self.x_to_y_to_board_type = [[enums.GameBoardTypes.Nothing.value for y in range(9)] for x in range(12)]
+        self.board_type_to_coordinates = [set() for t in range(enums.GameBoardTypes.Max.value)]
+        self.board_type_to_coordinates[enums.GameBoardTypes.Nothing.value].update((x, y) for x in range(12) for y in range(9))
 
     def set_cell(self, coordinates, board_type):
         x, y = coordinates
@@ -278,13 +278,13 @@ class GameBoard:
         self.board_type_to_coordinates[old_board_type].remove(coordinates)
         self.x_to_y_to_board_type[x][y] = board_type
         self.board_type_to_coordinates[board_type].add(coordinates)
-        AcquireServerProtocol.add_pending_messages(self.client_ids, [[enums.CommandsToClient_SetGameBoardCell, x, y, board_type]])
+        AcquireServerProtocol.add_pending_messages(self.client_ids, [[enums.CommandsToClient.SetGameBoardCell.value, x, y, board_type]])
 
     def fill_cells(self, coordinates, board_type):
         pending = [coordinates]
         found = {coordinates}
         messages = []
-        excluded_board_types = {enums.GameBoardTypes_Nothing, enums.GameBoardTypes_CantPlayEver, board_type}
+        excluded_board_types = {enums.GameBoardTypes.Nothing.value, enums.GameBoardTypes.CantPlayEver.value, board_type}
 
         while pending:
             new_pending = []
@@ -294,7 +294,7 @@ class GameBoard:
                 self.board_type_to_coordinates[old_board_type].remove(coords)
                 self.x_to_y_to_board_type[x][y] = board_type
                 self.board_type_to_coordinates[board_type].add(coords)
-                messages.append([enums.CommandsToClient_SetGameBoardCell, x, y, board_type])
+                messages.append([enums.CommandsToClient.SetGameBoardCell.value, x, y, board_type])
 
                 possibilities = []
                 if x:
@@ -331,28 +331,28 @@ class ScoreSheet:
         messages_client = []
 
         self.player_data.append([0, 0, 0, 0, 0, 0, 0, 60, 60, client.username, position_tile, client, len(self.player_data) == 0])
-        self.player_data.sort(key=lambda x: x[enums.ScoreSheetIndexes_PositionTile])
+        self.player_data.sort(key=lambda x: x[enums.ScoreSheetIndexes.PositionTile.value])
 
         # update player_ids for all clients in game
         player_id = 0
         for player_datum in self.player_data:
-            if player_datum[enums.ScoreSheetIndexes_Client]:
-                player_datum[enums.ScoreSheetIndexes_Client].player_id = player_id
+            if player_datum[enums.ScoreSheetIndexes.Client.value]:
+                player_datum[enums.ScoreSheetIndexes.Client.value].player_id = player_id
             player_id += 1
 
         for player_id in range(len(self.player_data) - 1, -1, -1):
             # tell everybody about player changes
             player_datum = self.player_data[player_id]
             if player_id >= client.player_id:
-                if player_datum[enums.ScoreSheetIndexes_Client]:
-                    messages_all.append([enums.CommandsToClient_SetGamePlayerClientId, self.game_id, player_id, player_datum[enums.ScoreSheetIndexes_Client].client_id])
+                if player_datum[enums.ScoreSheetIndexes.Client.value]:
+                    messages_all.append([enums.CommandsToClient.SetGamePlayerClientId.value, self.game_id, player_id, player_datum[enums.ScoreSheetIndexes.Client.value].client_id])
                 else:
-                    messages_all.append([enums.CommandsToClient_SetGamePlayerUsername, self.game_id, player_id, player_datum[enums.ScoreSheetIndexes_Username]])
+                    messages_all.append([enums.CommandsToClient.SetGamePlayerUsername.value, self.game_id, player_id, player_datum[enums.ScoreSheetIndexes.Username.value]])
 
             # tell client about other position tiles
             if player_id != client.player_id:
-                position_tile = player_datum[enums.ScoreSheetIndexes_PositionTile]
-                messages_client.append([enums.CommandsToClient_SetGameBoardCell, position_tile[0], position_tile[1], enums.GameBoardTypes_NothingYet])
+                position_tile = player_datum[enums.ScoreSheetIndexes.PositionTile.value]
+                messages_client.append([enums.CommandsToClient.SetGameBoardCell.value, position_tile[0], position_tile[1], enums.GameBoardTypes.NothingYet.value])
 
         AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, messages_all)
         if messages_client:
@@ -362,10 +362,10 @@ class ScoreSheet:
         messages_all = []
 
         for player_id, player_datum in enumerate(self.player_data):
-            if client.username == player_datum[enums.ScoreSheetIndexes_Username]:
+            if client.username == player_datum[enums.ScoreSheetIndexes.Username.value]:
                 client.player_id = player_id
-                player_datum[enums.ScoreSheetIndexes_Client] = client
-                messages_all.append([enums.CommandsToClient_SetGamePlayerClientId, self.game_id, player_id, client.client_id])
+                player_datum[enums.ScoreSheetIndexes.Client.value] = client
+                messages_all.append([enums.CommandsToClient.SetGamePlayerClientId.value, self.game_id, player_id, client.client_id])
 
         AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, messages_all)
 
@@ -373,29 +373,29 @@ class ScoreSheet:
         messages_all = []
 
         for player_id, player_datum in enumerate(self.player_data):
-            if client is player_datum[enums.ScoreSheetIndexes_Client]:
-                player_datum[enums.ScoreSheetIndexes_Client].player_id = None
-                player_datum[enums.ScoreSheetIndexes_Client] = None
-                messages_all.append([enums.CommandsToClient_SetGamePlayerClientId, self.game_id, player_id, None])
+            if client is player_datum[enums.ScoreSheetIndexes.Client.value]:
+                player_datum[enums.ScoreSheetIndexes.Client.value].player_id = None
+                player_datum[enums.ScoreSheetIndexes.Client.value] = None
+                messages_all.append([enums.CommandsToClient.SetGamePlayerClientId.value, self.game_id, player_id, None])
 
         AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, messages_all)
 
     def is_username_in_game(self, username):
         for player_datum in self.player_data:
-            if username == player_datum[enums.ScoreSheetIndexes_Username]:
+            if username == player_datum[enums.ScoreSheetIndexes.Username.value]:
                 return True
         return False
 
     def get_creator_player_id(self):
         for player_id, player_datum in enumerate(self.player_data):
-            if player_datum[enums.ScoreSheetIndexes_IsCreator]:
+            if player_datum[enums.ScoreSheetIndexes.IsCreator.value]:
                 return player_id
 
     def get_player_id_to_client_id(self):
         player_id_to_client_id = []
 
         for player_datum in self.player_data:
-            client = player_datum[enums.ScoreSheetIndexes_Client]
+            client = player_datum[enums.ScoreSheetIndexes.Client.value]
             player_id_to_client_id.append(client.client_id if client else None)
 
         return player_id_to_client_id
@@ -404,9 +404,9 @@ class ScoreSheet:
         messages = []
 
         self.player_data[player_id][score_sheet_index] += adjustment
-        messages.append([enums.CommandsToClient_SetScoreSheetCell, player_id, score_sheet_index, self.player_data[player_id][score_sheet_index]])
+        messages.append([enums.CommandsToClient.SetScoreSheetCell.value, player_id, score_sheet_index, self.player_data[player_id][score_sheet_index]])
 
-        if score_sheet_index <= enums.ScoreSheetIndexes_Imperial:
+        if score_sheet_index <= enums.ScoreSheetIndexes.Imperial.value:
             self.available[score_sheet_index] -= adjustment
 
         AcquireServerProtocol.add_pending_messages(self.client_ids, messages)
@@ -415,7 +415,7 @@ class ScoreSheet:
         messages = []
 
         self.chain_size[game_board_type_id] = chain_size
-        messages.append([enums.CommandsToClient_SetScoreSheetCell, enums.ScoreSheetRows_ChainSize, game_board_type_id, chain_size])
+        messages.append([enums.CommandsToClient.SetScoreSheetCell.value, enums.ScoreSheetRows.ChainSize.value, game_board_type_id, chain_size])
 
         old_price = self.price[game_board_type_id]
         if chain_size:
@@ -423,9 +423,9 @@ class ScoreSheet:
                 new_price = min(chain_size, 6)
             else:
                 new_price = min((chain_size - 1) // 10 + 6, 10)
-            if game_board_type_id >= enums.GameBoardTypes_American:
+            if game_board_type_id >= enums.GameBoardTypes.American.value:
                 new_price += 1
-            if game_board_type_id >= enums.GameBoardTypes_Continental:
+            if game_board_type_id >= enums.GameBoardTypes.Continental.value:
                 new_price += 1
         else:
             new_price = 0
@@ -525,21 +525,21 @@ class TileRacks:
                         border_tiles.add((x, y + 1))
 
                     border_types = {x_to_y_to_board_type[tile[0]][tile[1]] for tile in border_tiles}
-                    border_types.discard(enums.GameBoardTypes_Nothing)
-                    border_types.discard(enums.GameBoardTypes_CantPlayEver)
-                    if len(border_types) > 1 and enums.GameBoardTypes_NothingYet in border_types:
-                        border_types.remove(enums.GameBoardTypes_NothingYet)
+                    border_types.discard(enums.GameBoardTypes.Nothing.value)
+                    border_types.discard(enums.GameBoardTypes.CantPlayEver.value)
+                    if len(border_types) > 1 and enums.GameBoardTypes.NothingYet.value in border_types:
+                        border_types.remove(enums.GameBoardTypes.NothingYet.value)
 
                     len_border_types = len(border_types)
-                    new_type = enums.GameBoardTypes_WillPutLonelyTileDown
+                    new_type = enums.GameBoardTypes.WillPutLonelyTileDown.value
                     if len_border_types == 0:
                         lonely_tile_border_tiles |= border_tiles
                     elif len_border_types == 1:
-                        if enums.GameBoardTypes_NothingYet in border_types:
+                        if enums.GameBoardTypes.NothingYet.value in border_types:
                             if can_start_new_chain:
-                                new_type = enums.GameBoardTypes_WillFormNewChain
+                                new_type = enums.GameBoardTypes.WillFormNewChain.value
                             else:
-                                new_type = enums.GameBoardTypes_CantPlayNow
+                                new_type = enums.GameBoardTypes.CantPlayNow.value
                         else:
                             new_type = border_types.pop()
                     elif len_border_types > 1:
@@ -548,10 +548,10 @@ class TileRacks:
                             if chain_sizes[border_type] >= 11:
                                 safe_count += 1
                         if safe_count < 2:
-                            new_type = enums.GameBoardTypes_WillMergeChains
+                            new_type = enums.GameBoardTypes.WillMergeChains.value
                             tile_datum[2] = border_types
                         else:
-                            new_type = enums.GameBoardTypes_CantPlayEver
+                            new_type = enums.GameBoardTypes.CantPlayEver.value
                 else:
                     new_type = None
 
@@ -559,9 +559,9 @@ class TileRacks:
 
             if can_start_new_chain:
                 for tile_index, new_type in enumerate(new_types):
-                    if new_type == enums.GameBoardTypes_WillPutLonelyTileDown:
+                    if new_type == enums.GameBoardTypes.WillPutLonelyTileDown.value:
                         if rack[tile_index][0] in lonely_tile_border_tiles:
-                            new_types[tile_index] = enums.GameBoardTypes_HaveNeighboringTileToo
+                            new_types[tile_index] = enums.GameBoardTypes.HaveNeighboringTileToo.value
 
             for tile_index, tile_datum in enumerate(rack):
                 if tile_datum:
@@ -573,10 +573,10 @@ class TileRacks:
                 if new_type != old_type:
                     if old_type is None:
                         tile = rack[tile_index][0]
-                        messages.append([enums.CommandsToClient_AddGameHistoryMessage, enums.GameHistoryMessages_DrewTile, player_id, tile[0], tile[1]])
-                        messages.append([enums.CommandsToClient_SetTile, tile_index, tile[0], tile[1], new_type])
+                        messages.append([enums.CommandsToClient.AddGameHistoryMessage.value, enums.GameHistoryMessages.DrewTile.value, player_id, tile[0], tile[1]])
+                        messages.append([enums.CommandsToClient.SetTile.value, tile_index, tile[0], tile[1], new_type])
                     else:
-                        messages.append([enums.CommandsToClient_SetTileGameBoardType, tile_index, new_type])
+                        messages.append([enums.CommandsToClient.SetTileGameBoardType.value, tile_index, new_type])
 
             if messages:
                 client_id = self.game.player_id_to_client_id[player_id]
@@ -584,7 +584,7 @@ class TileRacks:
                     AcquireServerProtocol.add_pending_messages({client_id}, messages)
 
             if drew_last_tile:
-                AcquireServerProtocol.add_pending_messages(self.game.client_ids, [[enums.CommandsToClient_AddGameHistoryMessage, enums.GameHistoryMessages_DrewLastTile, player_id]])
+                AcquireServerProtocol.add_pending_messages(self.game.client_ids, [[enums.CommandsToClient.AddGameHistoryMessage.value, enums.GameHistoryMessages.DrewLastTile.value, player_id]])
 
     def replace_dead_tiles(self, player_id):
         tile_data = self.racks[player_id]
@@ -592,17 +592,17 @@ class TileRacks:
         while replaced_a_dead_tile:
             replaced_a_dead_tile = False
             for tile_index, tile_datum in enumerate(tile_data):
-                if tile_datum and tile_datum[1] == enums.GameBoardTypes_CantPlayEver:
+                if tile_datum and tile_datum[1] == enums.GameBoardTypes.CantPlayEver.value:
                     # remove tile from player's tile rack
                     tile_data[tile_index] = None
-                    AcquireServerProtocol.add_pending_messages({self.game.player_id_to_client_id[player_id]}, [[enums.CommandsToClient_RemoveTile, tile_index]])
+                    AcquireServerProtocol.add_pending_messages({self.game.player_id_to_client_id[player_id]}, [[enums.CommandsToClient.RemoveTile.value, tile_index]])
 
                     # mark cell on game board as can't play ever
                     tile = tile_datum[0]
-                    self.game.game_board.set_cell(tile, enums.GameBoardTypes_CantPlayEver)
+                    self.game.game_board.set_cell(tile, enums.GameBoardTypes.CantPlayEver.value)
 
                     # tell everybody that a dead tile was replaced
-                    AcquireServerProtocol.add_pending_messages(self.game.client_ids, [[enums.CommandsToClient_AddGameHistoryMessage, enums.GameHistoryMessages_ReplacedDeadTile, player_id, tile[0], tile[1]]])
+                    AcquireServerProtocol.add_pending_messages(self.game.client_ids, [[enums.CommandsToClient.AddGameHistoryMessage.value, enums.GameHistoryMessages.ReplacedDeadTile.value, player_id, tile[0], tile[1]]])
 
                     # draw new tile
                     self.draw_tile(player_id)
@@ -634,19 +634,19 @@ class Action:
 
     def send_message(self, client=None):
         target_client_ids = {client.client_id} if client else self.game.client_ids
-        messages = [[enums.CommandsToClient_SetGameAction, self.game_action_id, self.player_id] + self.additional_params]
+        messages = [[enums.CommandsToClient.SetGameAction.value, self.game_action_id, self.player_id] + self.additional_params]
         AcquireServerProtocol.add_pending_messages(target_client_ids, messages)
 
 
 class ActionStartGame(Action):
     def __init__(self, game, player_id):
-        super().__init__(game, player_id, enums.GameActions_StartGame)
+        super().__init__(game, player_id, enums.GameActions.StartGame.value)
 
     def execute(self):
-        AcquireServerProtocol.add_pending_messages(self.game.client_ids, [[enums.CommandsToClient_AddGameHistoryMessage, enums.GameHistoryMessages_StartedGame, self.player_id]])
+        AcquireServerProtocol.add_pending_messages(self.game.client_ids, [[enums.CommandsToClient.AddGameHistoryMessage.value, enums.GameHistoryMessages.StartedGame.value, self.player_id]])
 
-        self.game.state = enums.GameStates_InProgress
-        AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, [[enums.CommandsToClient_SetGameState, self.game.game_id, self.game.state]])
+        self.game.state = enums.GameStates.InProgress.value
+        AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, [[enums.CommandsToClient.SetGameState.value, self.game.game_id, self.game.state]])
 
         self.game.tile_racks.draw_initial_tiles()
         self.game.tile_racks.determine_tile_game_board_types()
@@ -656,24 +656,24 @@ class ActionStartGame(Action):
 
 class ActionPlayTile(Action):
     def __init__(self, game, player_id):
-        super().__init__(game, player_id, enums.GameActions_PlayTile)
+        super().__init__(game, player_id, enums.GameActions.PlayTile.value)
 
     def prepare(self):
         self.game.turn_player_id = self.player_id
 
-        messages = [[enums.CommandsToClient_SetTurn, self.player_id],
-                    [enums.CommandsToClient_AddGameHistoryMessage, enums.GameHistoryMessages_TurnBegan, self.player_id]]
+        messages = [[enums.CommandsToClient.SetTurn.value, self.player_id],
+                    [enums.CommandsToClient.AddGameHistoryMessage.value, enums.GameHistoryMessages.TurnBegan.value, self.player_id]]
 
         has_a_playable_tile = False
         for tile_datum in self.game.tile_racks.racks[self.player_id]:
-            if tile_datum and tile_datum[1] != enums.GameBoardTypes_CantPlayNow and tile_datum[1] != enums.GameBoardTypes_CantPlayEver:
+            if tile_datum and tile_datum[1] != enums.GameBoardTypes.CantPlayNow.value and tile_datum[1] != enums.GameBoardTypes.CantPlayEver.value:
                 has_a_playable_tile = True
                 break
         if has_a_playable_tile:
             self.game.turns_without_played_tiles_count = 0
         else:
             self.game.turns_without_played_tiles_count += 1
-            messages.append([enums.CommandsToClient_AddGameHistoryMessage, enums.GameHistoryMessages_HasNoPlayableTile, self.player_id])
+            messages.append([enums.CommandsToClient.AddGameHistoryMessage.value, enums.GameHistoryMessages.HasNoPlayableTile.value, self.player_id])
 
         AcquireServerProtocol.add_pending_messages(self.game.client_ids, messages)
 
@@ -693,21 +693,21 @@ class ActionPlayTile(Action):
         tile, game_board_type_id, borders = tile_datum
         retval = True
 
-        if game_board_type_id <= enums.GameBoardTypes_Imperial:
+        if game_board_type_id <= enums.GameBoardTypes.Imperial.value:
             self.game.game_board.fill_cells(tile, game_board_type_id)
             self.game.score_sheet.set_chain_size(game_board_type_id, len(self.game.game_board.board_type_to_coordinates[game_board_type_id]))
-        elif game_board_type_id == enums.GameBoardTypes_WillPutLonelyTileDown or game_board_type_id == enums.GameBoardTypes_HaveNeighboringTileToo:
-            self.game.game_board.set_cell(tile, enums.GameBoardTypes_NothingYet)
-        elif game_board_type_id == enums.GameBoardTypes_WillFormNewChain:
+        elif game_board_type_id == enums.GameBoardTypes.WillPutLonelyTileDown.value or game_board_type_id == enums.GameBoardTypes.HaveNeighboringTileToo.value:
+            self.game.game_board.set_cell(tile, enums.GameBoardTypes.NothingYet.value)
+        elif game_board_type_id == enums.GameBoardTypes.WillFormNewChain.value:
             retval = [ActionSelectNewChain(self.game, self.player_id, [index for index, size in enumerate(self.game.score_sheet.chain_size) if size == 0], tile)]
-        elif game_board_type_id == enums.GameBoardTypes_WillMergeChains:
+        elif game_board_type_id == enums.GameBoardTypes.WillMergeChains.value:
             retval = [ActionSelectMergerSurvivor(self.game, self.player_id, borders, tile)]
         else:
             return
 
         self.game.tile_racks.remove_tile(self.player_id, tile_index)
 
-        message = [enums.CommandsToClient_AddGameHistoryMessage, enums.GameHistoryMessages_PlayedTile, self.player_id, tile[0], tile[1]]
+        message = [enums.CommandsToClient.AddGameHistoryMessage.value, enums.GameHistoryMessages.PlayedTile.value, self.player_id, tile[0], tile[1]]
         AcquireServerProtocol.add_pending_messages(self.game.client_ids, [message])
 
         return retval
@@ -715,7 +715,7 @@ class ActionPlayTile(Action):
 
 class ActionSelectNewChain(Action):
     def __init__(self, game, player_id, game_board_type_ids, tile):
-        super().__init__(game, player_id, enums.GameActions_SelectNewChain)
+        super().__init__(game, player_id, enums.GameActions.SelectNewChain.value)
         self.game_board_type_ids = game_board_type_ids
         self.additional_params.append(game_board_type_ids)
         self.tile = tile
@@ -724,7 +724,7 @@ class ActionSelectNewChain(Action):
         if len(self.game_board_type_ids) == 1:
             return self._create_new_chain(self.game_board_type_ids[0])
         else:
-            self.game.game_board.set_cell(self.tile, enums.GameBoardTypes_NothingYet)
+            self.game.game_board.set_cell(self.tile, enums.GameBoardTypes.NothingYet.value)
             self.game.tile_racks.determine_tile_game_board_types()
 
     def execute(self, game_board_type_id):
@@ -737,7 +737,7 @@ class ActionSelectNewChain(Action):
         if self.game.score_sheet.available[game_board_type_id]:
             self.game.score_sheet.adjust_player_data(self.player_id, game_board_type_id, 1)
 
-        message = [enums.CommandsToClient_AddGameHistoryMessage, enums.GameHistoryMessages_FormedChain, self.player_id, game_board_type_id]
+        message = [enums.CommandsToClient.AddGameHistoryMessage.value, enums.GameHistoryMessages.FormedChain.value, self.player_id, game_board_type_id]
         AcquireServerProtocol.add_pending_messages(self.game.client_ids, [message])
 
         return True
@@ -745,7 +745,7 @@ class ActionSelectNewChain(Action):
 
 class ActionSelectMergerSurvivor(Action):
     def __init__(self, game, player_id, type_ids, tile):
-        super().__init__(game, player_id, enums.GameActions_SelectMergerSurvivor)
+        super().__init__(game, player_id, enums.GameActions.SelectMergerSurvivor.value)
         self.type_ids = type_ids
         self.tile = tile
 
@@ -755,20 +755,20 @@ class ActionSelectMergerSurvivor(Action):
         self.type_id_sets = [x[1] for x in sorted(chain_size_to_type_ids.items(), reverse=True)]
 
     def prepare(self):
-        message = [enums.CommandsToClient_AddGameHistoryMessage, enums.GameHistoryMessages_MergedChains, self.player_id, sorted(self.type_ids)]
+        message = [enums.CommandsToClient.AddGameHistoryMessage.value, enums.GameHistoryMessages.MergedChains.value, self.player_id, sorted(self.type_ids)]
         AcquireServerProtocol.add_pending_messages(self.game.client_ids, [message])
 
         largest_type_ids = self.type_id_sets[0]
         if len(largest_type_ids) == 1:
             return self._prepare_next_actions(largest_type_ids.pop())
         else:
-            self.game.game_board.set_cell(self.tile, enums.GameBoardTypes_NothingYet)
+            self.game.game_board.set_cell(self.tile, enums.GameBoardTypes.NothingYet.value)
             self.game.tile_racks.determine_tile_game_board_types()
             self.additional_params.append(sorted(largest_type_ids))
 
     def execute(self, type_id):
         if type_id in self.type_id_sets[0]:
-            message = [enums.CommandsToClient_AddGameHistoryMessage, enums.GameHistoryMessages_SelectedMergerSurvivor, self.player_id, type_id]
+            message = [enums.CommandsToClient.AddGameHistoryMessage.value, enums.GameHistoryMessages.SelectedMergerSurvivor.value, self.player_id, type_id]
             AcquireServerProtocol.add_pending_messages(self.game.client_ids, [message])
 
             return self._prepare_next_actions(type_id)
@@ -790,10 +790,10 @@ class ActionSelectMergerSurvivor(Action):
             for player_ids, bonus in self.game.score_sheet.get_bonuses(type_id):
                 for player_id in sorted(player_ids):
                     bonuses[player_id] += bonus
-                    messages.append([enums.CommandsToClient_AddGameHistoryMessage, enums.GameHistoryMessages_ReceivedBonus, player_id, type_id, bonus])
+                    messages.append([enums.CommandsToClient.AddGameHistoryMessage.value, enums.GameHistoryMessages.ReceivedBonus.value, player_id, type_id, bonus])
         for player_id, bonus in enumerate(bonuses):
             if bonus:
-                self.game.score_sheet.adjust_player_data(player_id, enums.ScoreSheetIndexes_Cash, bonus)
+                self.game.score_sheet.adjust_player_data(player_id, enums.ScoreSheetIndexes.Cash.value, bonus)
         AcquireServerProtocol.add_pending_messages(self.game.client_ids, messages)
 
         actions = []
@@ -806,7 +806,7 @@ class ActionSelectMergerSurvivor(Action):
 
 class ActionSelectChainToDisposeOfNext(Action):
     def __init__(self, game, player_id, defunct_type_ids, controlling_type_id):
-        super().__init__(game, player_id, enums.GameActions_SelectChainToDisposeOfNext)
+        super().__init__(game, player_id, enums.GameActions.SelectChainToDisposeOfNext.value)
         self.defunct_type_ids = defunct_type_ids
         self.controlling_type_id = controlling_type_id
 
@@ -818,7 +818,7 @@ class ActionSelectChainToDisposeOfNext(Action):
 
     def execute(self, type_id):
         if type_id in self.defunct_type_ids:
-            message = [enums.CommandsToClient_AddGameHistoryMessage, enums.GameHistoryMessages_SelectedChainToDisposeOfNext, self.player_id, type_id]
+            message = [enums.CommandsToClient.AddGameHistoryMessage.value, enums.GameHistoryMessages.SelectedChainToDisposeOfNext.value, self.player_id, type_id]
             AcquireServerProtocol.add_pending_messages(self.game.client_ids, [message])
 
             return self._prepare_next_actions(type_id)
@@ -840,7 +840,7 @@ class ActionSelectChainToDisposeOfNext(Action):
 
 class ActionDisposeOfShares(Action):
     def __init__(self, game, player_id, defunct_type_id, controlling_type_id):
-        super().__init__(game, player_id, enums.GameActions_DisposeOfShares)
+        super().__init__(game, player_id, enums.GameActions.DisposeOfShares.value)
         self.defunct_type_id = defunct_type_id
         self.controlling_type_id = controlling_type_id
         self.defunct_type_count = self.game.score_sheet.player_data[self.player_id][self.defunct_type_id]
@@ -862,9 +862,9 @@ class ActionDisposeOfShares(Action):
                 self.game.score_sheet.adjust_player_data(self.player_id, self.controlling_type_id, trade_amount // 2)
             if sell_amount:
                 sale_price = self.game.score_sheet.price[self.defunct_type_id] * sell_amount
-                self.game.score_sheet.adjust_player_data(self.player_id, enums.ScoreSheetIndexes_Cash, sale_price)
+                self.game.score_sheet.adjust_player_data(self.player_id, enums.ScoreSheetIndexes.Cash.value, sale_price)
 
-        message = [enums.CommandsToClient_AddGameHistoryMessage, enums.GameHistoryMessages_DisposedOfShares, self.player_id, self.defunct_type_id, trade_amount, sell_amount]
+        message = [enums.CommandsToClient.AddGameHistoryMessage.value, enums.GameHistoryMessages.DisposedOfShares.value, self.player_id, self.defunct_type_id, trade_amount, sell_amount]
         AcquireServerProtocol.add_pending_messages(self.game.client_ids, [message])
 
         return True
@@ -872,7 +872,7 @@ class ActionDisposeOfShares(Action):
 
 class ActionPurchaseShares(Action):
     def __init__(self, game, player_id):
-        super().__init__(game, player_id, enums.GameActions_PurchaseShares)
+        super().__init__(game, player_id, enums.GameActions.PurchaseShares.value)
         self.can_end_game = False
         self.end_game = False
 
@@ -885,7 +885,7 @@ class ActionPurchaseShares(Action):
 
         can_purchase_shares = False
         score_sheet = self.game.score_sheet
-        cash = score_sheet.player_data[self.player_id][enums.ScoreSheetIndexes_Cash]
+        cash = score_sheet.player_data[self.player_id][enums.ScoreSheetIndexes.Cash.value]
         for available, chain_size, price in zip(score_sheet.available, score_sheet.chain_size, score_sheet.price):
             if chain_size and available and price <= cash:
                 can_purchase_shares = True
@@ -916,15 +916,15 @@ class ActionPurchaseShares(Action):
                 cost += score_sheet.price[game_board_type_id] * count
             else:
                 return
-        if cost > score_sheet.player_data[self.player_id][enums.ScoreSheetIndexes_Cash]:
+        if cost > score_sheet.player_data[self.player_id][enums.ScoreSheetIndexes.Cash.value]:
             return
 
         if cost:
             for game_board_type_id, count in game_board_type_id_to_count.items():
                 score_sheet.adjust_player_data(self.player_id, game_board_type_id, count)
-            score_sheet.adjust_player_data(self.player_id, enums.ScoreSheetIndexes_Cash, -cost)
+            score_sheet.adjust_player_data(self.player_id, enums.ScoreSheetIndexes.Cash.value, -cost)
 
-        message = [enums.CommandsToClient_AddGameHistoryMessage, enums.GameHistoryMessages_PurchasedShares, self.player_id, sorted(game_board_type_id_to_count.items())]
+        message = [enums.CommandsToClient.AddGameHistoryMessage.value, enums.GameHistoryMessages.PurchasedShares.value, self.player_id, sorted(game_board_type_id_to_count.items())]
         AcquireServerProtocol.add_pending_messages(self.game.client_ids, [message])
 
         if end_game and self.can_end_game:
@@ -938,14 +938,14 @@ class ActionPurchaseShares(Action):
 
         if self.end_game or all_tiles_played or no_tiles_played_for_entire_round:
             if self.end_game:
-                AcquireServerProtocol.add_pending_messages(self.game.client_ids, [[enums.CommandsToClient_AddGameHistoryMessage, enums.GameHistoryMessages_EndedGame, self.player_id]])
+                AcquireServerProtocol.add_pending_messages(self.game.client_ids, [[enums.CommandsToClient.AddGameHistoryMessage.value, enums.GameHistoryMessages.EndedGame.value, self.player_id]])
             elif all_tiles_played:
-                AcquireServerProtocol.add_pending_messages(self.game.client_ids, [[enums.CommandsToClient_AddGameHistoryMessage, enums.GameHistoryMessages_AllTilesPlayed, None]])
+                AcquireServerProtocol.add_pending_messages(self.game.client_ids, [[enums.CommandsToClient.AddGameHistoryMessage.value, enums.GameHistoryMessages.AllTilesPlayed.value, None]])
             elif no_tiles_played_for_entire_round:
-                AcquireServerProtocol.add_pending_messages(self.game.client_ids, [[enums.CommandsToClient_AddGameHistoryMessage, enums.GameHistoryMessages_NoTilesPlayedForEntireRound, None]])
+                AcquireServerProtocol.add_pending_messages(self.game.client_ids, [[enums.CommandsToClient.AddGameHistoryMessage.value, enums.GameHistoryMessages.NoTilesPlayedForEntireRound.value, None]])
 
-            self.game.state = enums.GameStates_Completed
-            AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, [[enums.CommandsToClient_SetGameState, self.game.game_id, self.game.state]])
+            self.game.state = enums.GameStates.Completed.value
+            AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, [[enums.CommandsToClient.SetGameState.value, self.game.game_id, self.game.state]])
 
             return [ActionGameOver(self.game)]
         else:
@@ -959,7 +959,7 @@ class ActionPurchaseShares(Action):
 
 class ActionGameOver(Action):
     def __init__(self, game):
-        super().__init__(game, None, enums.GameActions_GameOver)
+        super().__init__(game, None, enums.GameActions.GameOver.value)
 
     def execute(self):
         pass
@@ -979,35 +979,35 @@ class Game:
         self.tile_bag = tiles
         self.tile_racks = TileRacks(self)
 
-        self.state = enums.GameStates_Starting if self.max_players > 1 else enums.GameStates_StartingFull
+        self.state = enums.GameStates.Starting.value if self.max_players > 1 else enums.GameStates.StartingFull.value
         self.actions = collections.deque()
         self.turn_player_id = None
         self.turns_without_played_tiles_count = 0
 
-        AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, [[enums.CommandsToClient_SetGameState, self.game_id, self.state, self.max_players]])
+        AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, [[enums.CommandsToClient.SetGameState.value, self.game_id, self.state, self.max_players]])
 
         self.client_ids.add(client.client_id)
         client.game_id = self.game_id
         position_tile = self.tile_bag.pop()
-        self.game_board.set_cell(position_tile, enums.GameBoardTypes_NothingYet)
+        self.game_board.set_cell(position_tile, enums.GameBoardTypes.NothingYet.value)
         self.score_sheet.add_player(client, position_tile)
         self.player_id_to_client_id = self.score_sheet.get_player_id_to_client_id()
-        message = [enums.CommandsToClient_AddGameHistoryMessage, enums.GameHistoryMessages_DrewPositionTile, client.player_id, position_tile[0], position_tile[1]]
+        message = [enums.CommandsToClient.AddGameHistoryMessage.value, enums.GameHistoryMessages.DrewPositionTile.value, client.player_id, position_tile[0], position_tile[1]]
         AcquireServerProtocol.add_pending_messages(self.client_ids, [message])
         self.actions.append(ActionStartGame(self, self.score_sheet.get_creator_player_id()))
         self.actions[0].send_message()
         self.expiration_time = None
 
     def join_game(self, client):
-        if self.state == enums.GameStates_Starting and not self.score_sheet.is_username_in_game(client.username):
+        if self.state == enums.GameStates.Starting.value and not self.score_sheet.is_username_in_game(client.username):
             self.client_ids.add(client.client_id)
             client.game_id = self.game_id
             position_tile = self.tile_bag.pop()
-            self.game_board.set_cell(position_tile, enums.GameBoardTypes_NothingYet)
+            self.game_board.set_cell(position_tile, enums.GameBoardTypes.NothingYet.value)
             previous_creator_player_id = self.score_sheet.get_creator_player_id()
             self.score_sheet.add_player(client, position_tile)
             self.player_id_to_client_id = self.score_sheet.get_player_id_to_client_id()
-            message = [enums.CommandsToClient_AddGameHistoryMessage, enums.GameHistoryMessages_DrewPositionTile, client.player_id, position_tile[0], position_tile[1]]
+            message = [enums.CommandsToClient.AddGameHistoryMessage.value, enums.GameHistoryMessages.DrewPositionTile.value, client.player_id, position_tile[0], position_tile[1]]
             AcquireServerProtocol.add_pending_messages(self.client_ids, [message])
             creator_player_id = self.score_sheet.get_creator_player_id()
             if creator_player_id != previous_creator_player_id:
@@ -1017,8 +1017,8 @@ class Game:
             else:
                 self.actions[0].send_message(client)
             if len(self.player_id_to_client_id) == self.max_players:
-                self.state = enums.GameStates_StartingFull
-                AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, [[enums.CommandsToClient_SetGameState, self.game_id, self.state]])
+                self.state = enums.GameStates.StartingFull.value
+                AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, [[enums.CommandsToClient.SetGameState.value, self.game_id, self.state]])
             self.expiration_time = None
 
     def rejoin_game(self, client):
@@ -1035,7 +1035,7 @@ class Game:
             self.client_ids.add(client.client_id)
             self.watcher_client_ids.add(client.client_id)
             client.game_id = self.game_id
-            AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, [[enums.CommandsToClient_SetGameWatcherClientId, self.game_id, client.client_id]])
+            AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, [[enums.CommandsToClient.SetGameWatcherClientId.value, self.game_id, client.client_id]])
             self.send_initialization_messages(client)
             self.expiration_time = None
 
@@ -1044,7 +1044,7 @@ class Game:
             client.game_id = None
             if client.client_id in self.watcher_client_ids:
                 self.watcher_client_ids.discard(client.client_id)
-                AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, [[enums.CommandsToClient_ReturnWatcherToLobby, self.game_id, client.client_id]])
+                AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, [[enums.CommandsToClient.ReturnWatcherToLobby.value, self.game_id, client.client_id]])
             else:
                 self.score_sheet.remove_client(client)
                 self.player_id_to_client_id = self.score_sheet.get_player_id_to_client_id()
@@ -1067,24 +1067,24 @@ class Game:
 
     def send_initialization_messages(self, client):
         # game board
-        messages = [[enums.CommandsToClient_SetGameBoard, self.game_board.x_to_y_to_board_type]]
+        messages = [[enums.CommandsToClient.SetGameBoard.value, self.game_board.x_to_y_to_board_type]]
 
         # score sheet
         score_sheet_data = [
-            [x[:enums.ScoreSheetIndexes_Cash + 1] for x in self.score_sheet.player_data],
+            [x[:enums.ScoreSheetIndexes.Cash.value + 1] for x in self.score_sheet.player_data],
             self.score_sheet.chain_size,
         ]
-        messages.append([enums.CommandsToClient_SetScoreSheet, score_sheet_data])
+        messages.append([enums.CommandsToClient.SetScoreSheet.value, score_sheet_data])
 
         # player's tiles
         if client.player_id is not None and self.tile_racks.racks:
             for tile_index, tile_datum in enumerate(self.tile_racks.racks[client.player_id]):
                 if tile_datum:
                     tile = tile_datum[0]
-                    messages.append([enums.CommandsToClient_SetTile, tile_index, tile[0], tile[1], tile_datum[1]])
+                    messages.append([enums.CommandsToClient.SetTile.value, tile_index, tile[0], tile[1], tile_datum[1]])
 
         # turn
-        messages.append([enums.CommandsToClient_SetTurn, self.turn_player_id])
+        messages.append([enums.CommandsToClient.SetTurn.value, self.turn_player_id])
 
         AcquireServerProtocol.add_pending_messages({client.client_id}, messages)
 
