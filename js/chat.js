@@ -9,15 +9,29 @@ define(function(require) {
 		page_to_position = {},
 		setPosition = function() {
 			var position = page_to_position[current_page],
-				top, height;
+				left, top, width, height;
 
+			left = position.left;
 			top = position.top;
+			width = position.width;
 			height = position.height - 25;
-			common_functions.setElementPosition($('#chat-history'), position.left, top, position.width, height);
+			common_functions.setElementPosition($('#chat-history'), left, top, width, height);
 
 			top += height;
+			if (current_page === 'game') {
+				width = position.width - 80;
+			}
 			height = 25;
-			common_functions.setElementPosition($('#chat-input'), position.left, top, position.width, height);
+			common_functions.setElementPosition($('#chat-input'), left, top, width, height);
+
+			if (current_page === 'game') {
+				left += width + 2;
+				width = position.width - width - 2;
+				common_functions.setElementPosition($('#chat-game-checkbox-div'), left, top, width, height);
+				$('#chat-game-checkbox-div').show();
+			} else {
+				$('#chat-game-checkbox-div').hide();
+			}
 		},
 		setPage = function(page) {
 			current_page = page;
@@ -43,10 +57,17 @@ define(function(require) {
 		},
 		submitChatInput = function() {
 			var $input = $('#chat-input'),
-				input = $input.val().replace(/\s+/g, ' ').trim();
+				input = $input.val().replace(/\s+/g, ' ').trim(),
+				command;
 
 			if (input.length > 0) {
-				network.sendMessage(enums.CommandsToServer.SendChatMessage, input);
+				if (current_page === 'game' && $('#chat-game-checkbox').prop('checked')) {
+					command = enums.CommandsToServer.SendGameChatMessage;
+				} else {
+					command = enums.CommandsToServer.SendGlobalChatMessage;
+				}
+
+				network.sendMessage(command, input);
 			}
 
 			$input.val('');
@@ -63,11 +84,19 @@ define(function(require) {
 				common_functions.scrollToBottom($chat_history);
 			}
 		},
-		addChatMessage = function(client_id, chat_message) {
-			var $message = $('#chat-message').clone().removeAttr('id');
+		addGlobalChatMessage = function(client_id, chat_message) {
+			var $message = $('#chat-message-global').clone().removeAttr('id');
 
 			$message.find('.username').text(common_data.client_id_to_data[client_id].username);
-			$message.find('.chat-message-contents').text(chat_message);
+			$message.find('.chat-message-global-contents').text(chat_message);
+
+			appendElement($message);
+		},
+		addGameChatMessage = function(client_id, chat_message) {
+			var $message = $('#chat-message-game').clone().removeAttr('id');
+
+			$message.find('.username').text(common_data.client_id_to_data[client_id].username);
+			$message.find('.chat-message-game-contents').text(chat_message);
 
 			appendElement($message);
 		},
@@ -116,7 +145,8 @@ define(function(require) {
 	$('#chat-input-form').submit(submitChatInput);
 
 	pubsub.subscribe('client-SetPage', setPage);
-	pubsub.subscribe('server-AddChatMessage', addChatMessage);
+	pubsub.subscribe('server-AddGlobalChatMessage', addGlobalChatMessage);
+	pubsub.subscribe('server-AddGameChatMessage', addGameChatMessage);
 	pubsub.subscribe('network-MessageProcessingComplete', messageProcessingComplete);
 	pubsub.subscribe('client-AddClient', addClient);
 	pubsub.subscribe('client-RemoveClient', removeClient);

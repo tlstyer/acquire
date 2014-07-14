@@ -29,7 +29,8 @@ class CommandsToClient(AutoNumber):
     SetTile = ()
     SetTileGameBoardType = ()
     RemoveTile = ()
-    AddChatMessage = ()
+    AddGlobalChatMessage = ()
+    AddGameChatMessage = ()
     DestroyGame = ()
     Heartbeat = ()
 
@@ -41,7 +42,8 @@ class CommandsToServer(AutoNumber):
     WatchGame = ()
     LeaveGame = ()
     DoGameAction = ()
-    SendChatMessage = ()
+    SendGlobalChatMessage = ()
+    SendGameChatMessage = ()
     Heartbeat = ()
 
 

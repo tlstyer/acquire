@@ -168,10 +168,16 @@ class AcquireServerProtocol(autobahn.asyncio.websocket.WebSocketServerProtocol):
         if self.game_id:
             AcquireServerProtocol.game_id_to_game[self.game_id].do_game_action(self, game_action_id, data)
 
-    def onMessageSendChatMessage(self, chat_message):
+    def onMessageSendGlobalChatMessage(self, chat_message):
         chat_message = ' '.join(chat_message.split())
         if chat_message:
-            AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, [[enums.CommandsToClient.AddChatMessage.value, self.client_id, chat_message]])
+            AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, [[enums.CommandsToClient.AddGlobalChatMessage.value, self.client_id, chat_message]])
+
+    def onMessageSendGameChatMessage(self, chat_message):
+        if self.game_id:
+            chat_message = ' '.join(chat_message.split())
+            if chat_message:
+                AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.game_id_to_game[self.game_id].client_ids, [[enums.CommandsToClient.AddGameChatMessage.value, self.client_id, chat_message]])
 
     def onMessageHeartbeat(self):
         pass

@@ -186,7 +186,7 @@ body {
 #options, #chat, #templates {
 	display: none;
 }
-#game-tile-rack, #game-action, #game-history, #game-status, #game-buttons, #page-lobby, #options, #chat-history, #chat-input {
+#game-tile-rack, #game-action, #game-history, #game-status, #game-buttons, #page-lobby, #options, #chat-history, #chat-input, #chat-game-checkbox-div {
 	position: absolute;
 	box-sizing: border-box;
 }
@@ -224,8 +224,14 @@ fieldset.game-history-turn-began {
 #options .header {
 	font-weight: bold;
 }
-.chat-message-contents {
+.chat-message-global-contents {
 	color: blue;
+}
+.chat-message-game-contents {
+	color: green;
+}
+#chat-game-checkbox-div {
+	line-height: 25px;
 }
 
 #game-action-dispose-of-shares, #game-action-purchase-shares {
