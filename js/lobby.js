@@ -104,6 +104,9 @@ define(function(require) {
 		removeGameWatcher = function(game_id, client_id) {
 			$('#lobby-game-' + game_id + ' .watchers .client-' + client_id).remove();
 		},
+		destroyGame = function(game_id) {
+			$('#lobby-game-' + game_id).remove();
+		},
 		reset = function() {
 			$('#clients-in-lobby').empty();
 			$('#lobby-games').empty();
@@ -133,6 +136,7 @@ define(function(require) {
 	pubsub.subscribe('client-SetGamePlayerData', setGamePlayerData);
 	pubsub.subscribe('client-AddGameWatcher', addGameWatcher);
 	pubsub.subscribe('client-RemoveGameWatcher', removeGameWatcher);
+	pubsub.subscribe('server-DestroyGame', destroyGame);
 	pubsub.subscribe('network-Close', reset);
 	pubsub.subscribe('network-Error', reset);
 });

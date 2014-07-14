@@ -126,6 +126,12 @@ define(function(require) {
 				pubsub.publish('client-LeaveGame');
 			}
 		},
+		destroyGame = function(game_id) {
+			delete data.game_id_to_game_state[game_id];
+			delete data.game_id_to_max_players[game_id];
+			delete data.game_id_to_player_data[game_id];
+			delete data.game_id_to_watcher_client_ids[game_id];
+		},
 		reset = function() {
 			data.client_id = null;
 			data.game_id = null;
@@ -146,6 +152,7 @@ define(function(require) {
 	pubsub.subscribe('server-SetGamePlayerClientId', setGamePlayerClientId);
 	pubsub.subscribe('server-SetGameWatcherClientId', setGameWatcherClientId);
 	pubsub.subscribe('server-ReturnWatcherToLobby', returnWatcherToLobby);
+	pubsub.subscribe('server-DestroyGame', destroyGame);
 	pubsub.subscribe('network-Close', reset);
 	pubsub.subscribe('network-Error', reset);
 

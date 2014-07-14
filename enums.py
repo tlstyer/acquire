@@ -30,6 +30,7 @@ class CommandsToClient(AutoNumber):
     SetTileGameBoardType = ()
     RemoveTile = ()
     AddChatMessage = ()
+    DestroyGame = ()
     Heartbeat = ()
 
 
@@ -157,7 +158,8 @@ CommandsToClient_SetTile = 15
 CommandsToClient_SetTileGameBoardType = 16
 CommandsToClient_RemoveTile = 17
 CommandsToClient_AddChatMessage = 18
-CommandsToClient_Heartbeat = 19
+CommandsToClient_DestroyGame = 19
+CommandsToClient_Heartbeat = 20
 CommandsToServer_CreateGame = 0
 CommandsToServer_JoinGame = 1
 CommandsToServer_RejoinGame = 2

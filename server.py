@@ -243,6 +243,26 @@ class AcquireServerProtocol(autobahn.asyncio.websocket.WebSocketServerProtocol):
 
         asyncio.get_event_loop().call_later(2, AcquireServerProtocol.do_heartbeat_management)
 
+    @staticmethod
+    def destroy_expired_games():
+        current_time = time.time()
+        expired_game_ids = []
+
+        for game_id, game in AcquireServerProtocol.game_id_to_game.items():
+            if game.expiration_time and game.expiration_time <= current_time:
+                expired_game_ids.append(game_id)
+
+        if expired_game_ids:
+            messages = []
+            for game_id in expired_game_ids:
+                print('game #%d expired' % game_id)
+                del AcquireServerProtocol.game_id_to_game[game_id]
+                messages.append([enums.CommandsToClient_DestroyGame, game_id])
+            AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, messages)
+            AcquireServerProtocol.flush_pending_messages()
+
+        asyncio.get_event_loop().call_later(15, AcquireServerProtocol.destroy_expired_games)
+
 
 class GameBoard:
     def __init__(self, client_ids):
@@ -976,6 +996,7 @@ class Game:
         AcquireServerProtocol.add_pending_messages(self.client_ids, [message])
         self.actions.append(ActionStartGame(self, self.score_sheet.get_creator_player_id()))
         self.actions[0].send_message()
+        self.expiration_time = None
 
     def join_game(self, client):
         if self.state == enums.GameStates_Starting and not self.score_sheet.is_username_in_game(client.username):
@@ -998,6 +1019,7 @@ class Game:
             if len(self.player_id_to_client_id) == self.max_players:
                 self.state = enums.GameStates_StartingFull
                 AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, [[enums.CommandsToClient_SetGameState, self.game_id, self.state]])
+            self.expiration_time = None
 
     def rejoin_game(self, client):
         if self.score_sheet.is_username_in_game(client.username):
@@ -1006,6 +1028,7 @@ class Game:
             self.score_sheet.readd_player(client)
             self.player_id_to_client_id = self.score_sheet.get_player_id_to_client_id()
             self.send_initialization_messages(client)
+            self.expiration_time = None
 
     def watch_game(self, client):
         if not self.score_sheet.is_username_in_game(client.username):
@@ -1014,6 +1037,7 @@ class Game:
             client.game_id = self.game_id
             AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, [[enums.CommandsToClient_SetGameWatcherClientId, self.game_id, client.client_id]])
             self.send_initialization_messages(client)
+            self.expiration_time = None
 
     def remove_client(self, client):
         if client.client_id in self.client_ids:
@@ -1025,6 +1049,8 @@ class Game:
                 self.score_sheet.remove_client(client)
                 self.player_id_to_client_id = self.score_sheet.get_player_id_to_client_id()
             self.client_ids.discard(client.client_id)
+            if not self.client_ids:
+                self.expiration_time = time.time() + 300
 
     def do_game_action(self, client, game_action_id, data):
         action = self.actions[0]
@@ -1077,6 +1103,7 @@ if __name__ == '__main__':
 
     loop = asyncio.get_event_loop()
     loop.call_soon(AcquireServerProtocol.do_heartbeat_management)
+    loop.call_soon(AcquireServerProtocol.destroy_expired_games)
     coro = loop.create_server(factory, '127.0.0.1', 9000)
     server = loop.run_until_complete(coro)
 
