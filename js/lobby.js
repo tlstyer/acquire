@@ -5,13 +5,23 @@ define(function(require) {
 		common_functions = require('common_functions'),
 		enums = require('enums'),
 		network = require('network'),
+		options = require('options'),
 		pubsub = require('pubsub'),
 		resize = function(window_width, window_height) {
-			var half_window_width = Math.floor(window_width / 2);
+			var half_window_width = Math.floor(window_width / 2),
+				left, top, width, height;
 
 			common_functions.setElementPosition($('#page-lobby'), 0, 0, half_window_width, window_height);
 
-			chat.setPositionForPage('lobby', half_window_width + 2, 0, window_width - half_window_width - 2, window_height);
+			left = half_window_width + 2;
+			top = 0;
+			width = window_width - half_window_width - 2;
+			height = 100;
+			options.setPositionForPage('lobby', left, top, width, height);
+
+			top += height;
+			height = window_height - top;
+			chat.setPositionForPage('lobby', left, top, width, height);
 		},
 		addLobbyClient = function(client_id) {
 			var $div = $('<div/>'),

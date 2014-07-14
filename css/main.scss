@@ -183,10 +183,10 @@ body {
 	}
 }
 
-#chat, #templates {
+#options, #chat, #templates {
 	display: none;
 }
-#game-tile-rack, #game-action, #game-history, #game-status, #game-buttons, #page-lobby, #chat-history, #chat-input {
+#game-tile-rack, #game-action, #game-history, #game-status, #game-buttons, #page-lobby, #options, #chat-history, #chat-input {
 	position: absolute;
 	box-sizing: border-box;
 }
@@ -219,6 +219,9 @@ fieldset.game-history-turn-began {
 	}
 }
 #game-status {
+	font-weight: bold;
+}
+#options .header {
 	font-weight: bold;
 }
 .chat-message-contents {
