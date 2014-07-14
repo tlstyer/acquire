@@ -9,6 +9,12 @@ define(function(require) {
 			document.title = (showing_title_prefix ? '!!! YOUR TURN !!! ' : '') + title;
 		},
 		turnOn = function() {
+			var beep = document.getElementById('beep');
+
+			beep.pause();
+			beep.currentTime = 0;
+			beep.play();
+
 			if (interval === null) {
 				interval = setInterval(intervalCallback, 500);
 				intervalCallback();

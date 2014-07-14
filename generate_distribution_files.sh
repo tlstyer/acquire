@@ -6,6 +6,9 @@ rm -rf dist
 mkdir -p dist/web/static
 mkdir -p dist/build/js
 
+# pre-existing static files
+cp -a static/* dist/web/static
+
 # server.py
 sed "s/version = 'VERSION'/version = '${TIMESTAMP}'/" server.py | ./generate_distribution_files_helper.py enums > dist/server.py
 chmod u+x dist/server.py
