@@ -42,7 +42,7 @@ define(function(require) {
 				onServerFatalError(enums.FatalErrors.InvalidUsername);
 			} else {
 				showPage('connecting');
-				$('#login-error-message').empty();
+				$('#login-error-message').html($('<p>').text('Lost connection to the server.'));
 				network.connect(username);
 			}
 
