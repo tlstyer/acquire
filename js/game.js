@@ -6,6 +6,7 @@ define(function(require) {
 		enums = require('enums'),
 		network = require('network'),
 		notification = require('notification'),
+		options = require('options'),
 		pubsub = require('pubsub'),
 		resize = function(window_width, window_height) {
 			var half_window_width = Math.floor(window_width / 2),
@@ -118,12 +119,40 @@ define(function(require) {
 			game_board_type_counts[enums.GameBoardTypes.Nothing] = 12 * 9;
 		},
 		setGameBoardCell = function(x, y, game_board_type_id) {
+			var $cell = $('#gb-' + x + '-' + y),
+				game_board_label_mode = options['game-board-label-mode'],
+				text;
+
 			game_board_type_counts[game_board_cell_types[x][y]]--;
 			game_board_type_counts[game_board_type_id]++;
 
 			game_board_cell_types[x][y] = game_board_type_id;
 
-			$('#gb-' + x + '-' + y).attr('class', common_functions.getHyphenatedStringFromEnumName(enums.GameBoardTypes[game_board_type_id]));
+			$cell.attr('class', common_functions.getHyphenatedStringFromEnumName(enums.GameBoardTypes[game_board_type_id]));
+
+			switch (game_board_label_mode) {
+			case 'coordinates':
+				text = common_functions.getTileName(x, y);
+				break;
+			case 'hotel initials':
+				if (game_board_type_id === enums.GameBoardTypes.Nothing || game_board_type_id === enums.GameBoardTypes.IHaveThis) {
+					text = common_functions.getTileName(x, y);
+				} else if (game_board_type_id <= enums.GameBoardTypes.Imperial) {
+					text = enums.GameBoardTypes[game_board_type_id][0];
+				} else {
+					text = '';
+				}
+				break;
+			case 'nothing':
+				if (game_board_type_id === enums.GameBoardTypes.Nothing || game_board_type_id === enums.GameBoardTypes.IHaveThis) {
+					text = common_functions.getTileName(x, y);
+				} else {
+					text = '';
+				}
+				break;
+			}
+
+			$cell.text(text);
 		},
 		setGameBoard = function(x_to_y_to_board_type) {
 			var num_x, x, y_to_board_type, num_y, y, board_type;

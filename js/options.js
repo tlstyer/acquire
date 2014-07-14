@@ -35,11 +35,18 @@ define(function(require) {
 		details = {
 			'enable-page-title-notifications': {
 				'type': 'checkbox',
-				'default': true
+				'default': true,
+				'valid': [true, false]
 			},
 			'enable-sound-notifications': {
 				'type': 'checkbox',
-				'default': true
+				'default': true,
+				'valid': [true, false]
+			},
+			'game-board-label-mode': {
+				'type': 'select',
+				'default': 'coordinates',
+				'valid': ['coordinates', 'hotel initials', 'nothing']
 			}
 		},
 		got_local_storage = 'localStorage' in window,
@@ -73,14 +80,10 @@ define(function(require) {
 			for (key in details) {
 				if (details.hasOwnProperty(key)) {
 					detail = details[key];
-					value = getStoredOptionValue(key);
 
-					switch (detail.type) {
-					case 'checkbox':
-						if (value !== true && value !== false) {
-							value = detail['default'];
-						}
-						break;
+					value = getStoredOptionValue(key);
+					if ($.inArray(value, detail.valid) === -1) {
+						value = detail['default'];
 					}
 
 					setStoredOptionValue(key, value);
@@ -91,13 +94,16 @@ define(function(require) {
 					case 'checkbox':
 						$input.prop('checked', value);
 						break;
+					case 'select':
+						$input.val(value);
+						break;
 					}
 				}
 			}
 
 			data.setPositionForPage = setPositionForPage;
 		},
-		processClick = function() {
+		processChange = function() {
 			var $input = $(this),
 				key = $input.attr('id').substr(7),
 				detail = details[key],
@@ -107,6 +113,9 @@ define(function(require) {
 			case 'checkbox':
 				value = $input.prop('checked');
 				break;
+			case 'select':
+				value = $input.val();
+				break;
 			}
 
 			setStoredOptionValue(key, value);
@@ -115,7 +124,7 @@ define(function(require) {
 
 	initialize();
 
-	$('#options').on('click', 'input', processClick);
+	$('#options').on('change', 'input, select', processChange);
 
 	pubsub.subscribe('client-SetPage', setPage);
 
