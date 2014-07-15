@@ -31,6 +31,9 @@ define(function(require) {
 			if (typeof max_players !== 'undefined') {
 				data.game_id_to_max_players[game_id] = max_players;
 			}
+			if (!data.game_id_to_number_of_players.hasOwnProperty(game_id)) {
+				data.game_id_to_number_of_players[game_id] = 0;
+			}
 			if (!data.game_id_to_player_data.hasOwnProperty(game_id)) {
 				data.game_id_to_player_data[game_id] = {};
 			}
@@ -41,6 +44,8 @@ define(function(require) {
 			pubsub.publish('client-SetGameState', game_id);
 		},
 		setGamePlayerUsername = function(game_id, player_id, username) {
+			data.game_id_to_number_of_players[game_id] = Math.max(data.game_id_to_number_of_players[game_id], player_id + 1);
+
 			data.game_id_to_player_data[game_id][player_id] = {
 				username: username,
 				client_id: null
@@ -50,6 +55,8 @@ define(function(require) {
 		},
 		setGamePlayerClientId = function(game_id, player_id, client_id) {
 			var player_data, old_client_id, client_data, old_game_id, client_already_in_game, player_id2;
+
+			data.game_id_to_number_of_players[game_id] = Math.max(data.game_id_to_number_of_players[game_id], player_id + 1);
 
 			if (client_id === null) {
 				player_data = data.game_id_to_player_data[game_id][player_id];
@@ -133,6 +140,7 @@ define(function(require) {
 			delete data.game_id_to_game_state[game_id];
 			delete data.game_id_to_mode[game_id];
 			delete data.game_id_to_max_players[game_id];
+			delete data.game_id_to_number_of_players[game_id];
 			delete data.game_id_to_player_data[game_id];
 			delete data.game_id_to_watcher_client_ids[game_id];
 		},
@@ -144,6 +152,7 @@ define(function(require) {
 			data.game_id_to_game_state = {};
 			data.game_id_to_mode = {};
 			data.game_id_to_max_players = {};
+			data.game_id_to_number_of_players = {};
 			data.game_id_to_player_data = {};
 			data.game_id_to_watcher_client_ids = {};
 		};

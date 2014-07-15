@@ -301,18 +301,6 @@ define(function(require) {
 				$('#score-sheet .score-sheet-player:eq(' + player_id + ')').addClass('my-turn');
 			}
 		},
-		unw_getNumberOfPlayers = function() {
-			var player_data = common_data.game_id_to_player_data[common_data.game_id],
-				player_id, num_players = 0;
-
-			for (player_id in common_data.game_id_to_player_data[common_data.game_id]) {
-				if (player_data.hasOwnProperty(player_id)) {
-					num_players++;
-				}
-			}
-
-			return num_players;
-		},
 		unw_getPlayerColumn = function(num_players, index) {
 			var column = [],
 				player_id;
@@ -426,7 +414,7 @@ define(function(require) {
 				return;
 			}
 
-			num_players = unw_getNumberOfPlayers();
+			num_players = common_data.game_id_to_number_of_players[common_data.game_id];
 			if (num_players < 1) {
 				return;
 			}
@@ -858,7 +846,7 @@ define(function(require) {
 			}
 		},
 		maybeShowTeamNetWorths = function() {
-			if (common_data.game_id_to_mode[common_data.game_id] === enums.GameModes.Teams && unw_getNumberOfPlayers() === 4) {
+			if (common_data.game_id_to_mode[common_data.game_id] === enums.GameModes.Teams && common_data.game_id_to_number_of_players[common_data.game_id] === 4) {
 				$('#score-sheet .teams').show();
 			}
 		},
