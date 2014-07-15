@@ -117,27 +117,28 @@ define(function(require) {
 		destroyGame = function(game_id) {
 			$('#lobby-game-' + game_id).remove();
 		},
+		createGameButtonClicked = function() {
+			network.sendMessage(enums.CommandsToServer.CreateGame, parseInt($('#cg-max-players').val(), 10));
+		},
+		gameButtonClicked = function() {
+			var $this = $(this),
+				game_id = parseInt($this.closest('.lobby-section').attr('data-game-id'), 10);
+
+			if ($this.hasClass('button-join-game')) {
+				network.sendMessage(enums.CommandsToServer.JoinGame, game_id);
+			} else if ($this.hasClass('button-rejoin-game')) {
+				network.sendMessage(enums.CommandsToServer.RejoinGame, game_id);
+			} else if ($this.hasClass('button-watch-game')) {
+				network.sendMessage(enums.CommandsToServer.WatchGame, game_id);
+			}
+		},
 		reset = function() {
 			$('#clients-in-lobby').empty();
 			$('#lobby-games').empty();
 		};
 
-	$('#button-create-game').click(function() {
-		network.sendMessage(enums.CommandsToServer.CreateGame, parseInt($('#cg-max-players').val(), 10));
-	});
-
-	$('#lobby-games').on('click', 'input', function() {
-		var $this = $(this),
-			game_id = parseInt($this.closest('.lobby-section').attr('data-game-id'), 10);
-
-		if ($this.hasClass('button-join-game')) {
-			network.sendMessage(enums.CommandsToServer.JoinGame, game_id);
-		} else if ($this.hasClass('button-rejoin-game')) {
-			network.sendMessage(enums.CommandsToServer.RejoinGame, game_id);
-		} else if ($this.hasClass('button-watch-game')) {
-			network.sendMessage(enums.CommandsToServer.WatchGame, game_id);
-		}
-	});
+	$('#button-create-game').click(createGameButtonClicked);
+	$('#lobby-games').on('click', 'input', gameButtonClicked);
 
 	pubsub.subscribe('client-Resize', resize);
 	pubsub.subscribe('client-AddLobbyClient', addLobbyClient);

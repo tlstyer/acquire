@@ -537,7 +537,9 @@ define(function(require) {
 		gameActionConstructorPlayTile = function() {
 			play_tile_action_enabled = true;
 		},
-		gameTileRackButtonClicked = function($button) {
+		gameTileRackButtonClicked = function() {
+			var $button = $(this);
+
 			if (play_tile_action_enabled && !$button.hasClass('cant-play-ever') && !$button.hasClass('cant-play-now')) {
 				network.sendMessage(enums.CommandsToServer.DoGameAction, enums.GameActions.PlayTile, parseInt($button.attr('data-index'), 10));
 				$button.css('visibility', 'hidden');
@@ -771,6 +773,11 @@ define(function(require) {
 			'game-action-dispose-of-shares': gameActionButtonClickedDisposeOfShares,
 			'game-action-purchase-shares': gameActionButtonClickedPurchaseShares
 		},
+		gameActionButtonClicked = function() {
+			var $this = $(this);
+
+			game_action_button_click_handlers[$this.closest('.game-action').attr('id')]($this);
+		},
 		current_game_action_id = null,
 		current_player_id = null,
 		setGameAction = function(game_action_id, player_id) {
@@ -843,6 +850,9 @@ define(function(require) {
 				notification.turnOn();
 			}
 		},
+		leaveGameButtonClicked = function() {
+			network.sendMessage(enums.CommandsToServer.LeaveGame);
+		},
 		reset = function() {
 			var x, y;
 
@@ -886,19 +896,9 @@ define(function(require) {
 	initializeGameBoardTypeCounts();
 	initializeGameActionConstructorsLookup();
 
-	$('#button-leave-game').click(function() {
-		network.sendMessage(enums.CommandsToServer.LeaveGame);
-	});
-
-	$('#game-action').on('click', 'input', function() {
-		var $this = $(this);
-
-		game_action_button_click_handlers[$this.closest('.game-action').attr('id')]($this);
-	});
-
-	$('#game-tile-rack').on('click', '.button-hotel', function() {
-		gameTileRackButtonClicked($(this));
-	});
+	$('#game-tile-rack .button-hotel').click(gameTileRackButtonClicked);
+	$('#game-action input').click(gameActionButtonClicked);
+	$('#button-leave-game').click(leaveGameButtonClicked);
 
 	pubsub.subscribe('client-Resize', resize);
 	pubsub.subscribe('client-SetGamePlayerData', setGamePlayerData);

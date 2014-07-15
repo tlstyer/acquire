@@ -124,7 +124,7 @@ define(function(require) {
 
 	initialize();
 
-	$('#options').on('change', 'input, select', processChange);
+	$('#options input, #options select').change(processChange);
 
 	pubsub.subscribe('client-SetPage', setPage);
 
