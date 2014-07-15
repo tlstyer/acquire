@@ -11,7 +11,7 @@ define(function(require) {
 			var result = /^http(s?):\/\/([^\/]+)\//.exec(window.location.href);
 
 			if (result !== null) {
-				server_url = 'ws' + result[1] + '://' + result[2] + '/acquire/server';
+				server_url = 'ws' + result[1] + '://' + result[2] + '/server';
 			} else {
 				server_url = 'ws://localhost:9000';
 			}

@@ -6,6 +6,9 @@ rm -rf dist
 mkdir -p dist/web/static
 mkdir -p dist/build/js
 
+# favicon.ico
+cp -a ../tlstyer.com/favicon.ico dist/web
+
 # pre-existing static files
 cp -a static/* dist/web/static
 
