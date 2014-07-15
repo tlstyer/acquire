@@ -450,6 +450,11 @@ define(function(require) {
 				setScoreSheetCell(player_id, enums.ScoreSheetIndexes.Net, money[player_id]);
 			}
 
+			if (common_data.game_id_to_mode[common_data.game_id] === enums.GameModes.Teams && num_players === 4) {
+				$('#team1-net').text((money[0] + money[2]) * 100);
+				$('#team2-net').text((money[1] + money[3]) * 100);
+			}
+
 			score_sheet_changed = false;
 		},
 		addGameHistoryMessage = function(game_history_message_id, player_id) {
@@ -803,6 +808,7 @@ define(function(require) {
 			}
 
 			maybeNotifyStartingPlayerBecauseGameIsFull();
+			maybeShowTeamNetWorths();
 
 			if (player_id !== null) {
 				$action.find('.username').text(common_data.game_id_to_player_data[common_data.game_id][player_id].username);
@@ -843,11 +849,17 @@ define(function(require) {
 		setGameState = function(game_id) {
 			if (game_id === common_data.game_id) {
 				maybeNotifyStartingPlayerBecauseGameIsFull();
+				maybeShowTeamNetWorths();
 			}
 		},
 		maybeNotifyStartingPlayerBecauseGameIsFull = function() {
 			if (common_data.game_id_to_game_state[common_data.game_id] === enums.GameStates.StartingFull && current_player_id === common_data.player_id) {
 				notification.turnOn();
+			}
+		},
+		maybeShowTeamNetWorths = function() {
+			if (common_data.game_id_to_mode[common_data.game_id] === enums.GameModes.Teams && unw_getNumberOfPlayers() === 4) {
+				$('#score-sheet .teams').show();
 			}
 		},
 		leaveGameButtonClicked = function() {
@@ -884,6 +896,9 @@ define(function(require) {
 			$('#score-sheet .score-sheet-player').hide().removeClass('my-turn my-sub-turn');
 			turn_player_id = null;
 			sub_turn_player_id = null;
+			$('#score-sheet .teams').hide();
+			$('#team1-net').text(12000);
+			$('#team2-net').text(12000);
 
 			$('#game-history').empty();
 

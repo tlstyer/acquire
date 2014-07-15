@@ -49,19 +49,28 @@
 				<div id="clients-in-lobby">
 				</div>
 			</div>
-			<div class="lobby-section">
+			<div id="create-game-section" class="lobby-section">
 				<div class="header">
 					Create Game
 				</div>
-				Max. Players:
-				<select id=cg-max-players>
-					<option value="1">1</option>
-					<option value="2">2</option>
-					<option value="3">3</option>
-					<option value="4" selected>4</option>
-					<option value="5">5</option>
-					<option value="6">6</option>
-				</select>
+				<span id="cg-span-mode">
+					Mode:
+					<select id="cg-mode">
+						<option value="Singles" selected>Singles</option>
+						<option value="Teams">Teams</option>
+					</select>
+				</span>
+				<span id="cg-span-max-players">
+					Max. Players:
+					<select id="cg-max-players">
+						<option value="1">1</option>
+						<option value="2">2</option>
+						<option value="3">3</option>
+						<option value="4" selected>4</option>
+						<option value="5">5</option>
+						<option value="6">6</option>
+					</select>
+				</span>
 				<input id="button-create-game" type="button" value="Create Game">
 			</div>
 			<div id="lobby-games">
@@ -377,6 +386,8 @@
 						<td class="worldwide">25</td>
 						<td class="continental">25</td>
 						<td class="imperial">25</td>
+						<td class="teams"></td>
+						<td class="teams border-bottom"></td>
 					</tr>
 					<tr id="score-sheet-chain-size">
 						<td class="name">Chain Size</td>
@@ -387,6 +398,8 @@
 						<td class="worldwide">-</td>
 						<td class="continental">-</td>
 						<td class="imperial">-</td>
+						<td class="teams border-right">Team 1</td>
+						<td class="teams team-net" id="team1-net">12000</td>
 					</tr>
 					<tr id="score-sheet-price">
 						<td class="name">Price ($00)</td>
@@ -397,6 +410,8 @@
 						<td class="worldwide">-</td>
 						<td class="continental">-</td>
 						<td class="imperial">-</td>
+						<td class="teams border-right">Team 2</td>
+						<td class="teams team-net" id="team2-net">12000</td>
 					</tr>
 				</tbody>
 			</table>

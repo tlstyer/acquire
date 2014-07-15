@@ -131,10 +131,24 @@ body {
 		width: percentage(1 / 18);
 		text-align: center;
 	}
-	.cash, .net {
+	.cash, .net, .teams {
 		width: percentage(3 / 18);
 		text-align: right;
 		padding-right: 3px;
+	}
+	.teams {
+		border: 2px solid transparent;
+		background-color: transparent;
+		display: none;
+		&.border-bottom {
+			border-bottom: 2px solid $color-table-border;
+		}
+		&.border-right {
+			border-right: 2px solid $color-table-border;
+		}
+		&.team-net {
+			border: 2px solid $color-table-border;
+		}
 	}
 }
 
@@ -177,9 +191,11 @@ body {
 }
 
 #score-sheet-available, #score-sheet-chain-size, #score-sheet-price {
-	background-color: $color-available-chain-size-price;
-	.safe {
-		background-color: $color-safe-chain;
+	td {
+		background-color: $color-available-chain-size-price;
+		&.safe {
+			background-color: $color-safe-chain;
+		}
 	}
 }
 

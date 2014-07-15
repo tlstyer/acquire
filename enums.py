@@ -105,6 +105,12 @@ class GameHistoryMessages(AutoNumber):
     AllTilesPlayed = ()
 
 
+class GameModes(AutoNumber):
+    Singles = ()
+    Teams = ()
+    Max = ()
+
+
 class GameStates(AutoNumber):
     Starting = ()
     StartingFull = ()

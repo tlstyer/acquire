@@ -87,7 +87,7 @@ class AcquireServerProtocol(autobahn.asyncio.websocket.WebSocketServerProtocol):
 
             # tell client about all games
             for game_id, game in AcquireServerProtocol.game_id_to_game.items():
-                messages_client.append([enums.CommandsToClient.SetGameState.value, game_id, game.state, game.max_players])
+                messages_client.append([enums.CommandsToClient.SetGameState.value, game_id, game.state, game.mode, game.max_players])
                 for player_id, player_datum in enumerate(game.score_sheet.player_data):
                     if player_datum[enums.ScoreSheetIndexes.Client.value]:
                         messages_client.append([enums.CommandsToClient.SetGamePlayerClientId.value, game_id, player_id, player_datum[enums.ScoreSheetIndexes.Client.value].client_id])
@@ -143,9 +143,9 @@ class AcquireServerProtocol(autobahn.asyncio.websocket.WebSocketServerProtocol):
         else:
             self.sendClose()
 
-    def onMessageCreateGame(self, max_players):
-        if not self.game_id and isinstance(max_players, int) and 1 <= max_players <= 6:
-            AcquireServerProtocol.game_id_to_game[AcquireServerProtocol.next_game_id] = Game(AcquireServerProtocol.next_game_id, self, max_players)
+    def onMessageCreateGame(self, mode, max_players):
+        if not self.game_id and isinstance(mode, int) and 0 <= mode < enums.GameModes.Max.value and isinstance(max_players, int) and 1 <= max_players <= 6:
+            AcquireServerProtocol.game_id_to_game[AcquireServerProtocol.next_game_id] = Game(AcquireServerProtocol.next_game_id, self, mode, max_players)
             AcquireServerProtocol.next_game_id += 1
 
     def onMessageJoinGame(self, game_id):
@@ -652,7 +652,11 @@ class ActionStartGame(Action):
         AcquireServerProtocol.add_pending_messages(self.game.client_ids, [[enums.CommandsToClient.AddGameHistoryMessage.value, enums.GameHistoryMessages.StartedGame.value, self.player_id]])
 
         self.game.state = enums.GameStates.InProgress.value
-        AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, [[enums.CommandsToClient.SetGameState.value, self.game.game_id, self.game.state]])
+        message = [enums.CommandsToClient.SetGameState.value, self.game.game_id, self.game.state]
+        if self.game.mode == enums.GameModes.Teams.value and len(self.game.player_id_to_client_id) < 4:
+            self.game.mode = enums.GameModes.Singles.value
+            message.append(self.game.mode)
+        AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, [message])
 
         self.game.tile_racks.draw_initial_tiles()
         self.game.tile_racks.determine_tile_game_board_types()
@@ -972,9 +976,10 @@ class ActionGameOver(Action):
 
 
 class Game:
-    def __init__(self, game_id, client, max_players):
+    def __init__(self, game_id, client, mode, max_players):
         self.game_id = game_id
-        self.max_players = max_players
+        self.mode = mode
+        self.max_players = max_players if mode == enums.GameModes.Singles.value else 4
         self.client_ids = set()
         self.watcher_client_ids = set()
 
@@ -990,7 +995,7 @@ class Game:
         self.turn_player_id = None
         self.turns_without_played_tiles_count = 0
 
-        AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, [[enums.CommandsToClient.SetGameState.value, self.game_id, self.state, self.max_players]])
+        AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, [[enums.CommandsToClient.SetGameState.value, self.game_id, self.state, self.mode, self.max_players]])
 
         self.client_ids.add(client.client_id)
         client.game_id = self.game_id

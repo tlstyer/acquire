@@ -23,8 +23,11 @@ define(function(require) {
 				}
 			}
 		},
-		setGameState = function(game_id, state_id, max_players) {
+		setGameState = function(game_id, state_id, mode, max_players) {
 			data.game_id_to_game_state[game_id] = state_id;
+			if (typeof mode !== 'undefined') {
+				data.game_id_to_mode[game_id] = mode;
+			}
 			if (typeof max_players !== 'undefined') {
 				data.game_id_to_max_players[game_id] = max_players;
 			}
@@ -128,6 +131,7 @@ define(function(require) {
 		},
 		destroyGame = function(game_id) {
 			delete data.game_id_to_game_state[game_id];
+			delete data.game_id_to_mode[game_id];
 			delete data.game_id_to_max_players[game_id];
 			delete data.game_id_to_player_data[game_id];
 			delete data.game_id_to_watcher_client_ids[game_id];
@@ -138,6 +142,7 @@ define(function(require) {
 			data.player_id = null;
 			data.client_id_to_data = {};
 			data.game_id_to_game_state = {};
+			data.game_id_to_mode = {};
 			data.game_id_to_max_players = {};
 			data.game_id_to_player_data = {};
 			data.game_id_to_watcher_client_ids = {};

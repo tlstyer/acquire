@@ -37,7 +37,7 @@ define(function(require) {
 		},
 		setGameState = function(game_id) {
 			var $lobby_section = $('#lobby-game-' + game_id),
-				state_id = common_data.game_id_to_game_state[game_id],
+				state_text, state_id = common_data.game_id_to_game_state[game_id],
 				in_this_game, player_id, player_data = common_data.game_id_to_player_data[game_id],
 				client_username = common_data.client_id_to_data[common_data.client_id].username;
 
@@ -51,15 +51,17 @@ define(function(require) {
 			}
 
 			// set game state text
+			state_text = enums.GameModes[common_data.game_id_to_mode[game_id]] + ', ';
 			if (state_id === enums.GameStates.Starting) {
-				$lobby_section.find('.state').text('Starting (Max of ' + common_data.game_id_to_max_players[game_id] + ' Players)');
+				state_text += 'Starting (Max of ' + common_data.game_id_to_max_players[game_id] + ' Players)';
 			} else if (state_id === enums.GameStates.StartingFull) {
-				$lobby_section.find('.state').text('Starting (Full)');
+				state_text += 'Starting (Full)';
 			} else if (state_id === enums.GameStates.InProgress) {
-				$lobby_section.find('.state').text('In Progress');
+				state_text += 'In Progress';
 			} else if (state_id === enums.GameStates.Completed) {
-				$lobby_section.find('.state').text('Completed');
+				state_text += 'Completed';
 			}
+			$lobby_section.find('.state').text(state_text);
 
 			// is client's username in this game?
 			in_this_game = false;
@@ -117,8 +119,23 @@ define(function(require) {
 		destroyGame = function(game_id) {
 			$('#lobby-game-' + game_id).remove();
 		},
+		createGameSelectChanged = function() {
+			var $this = $(this),
+				id = $this.attr('id'),
+				value = $this.val();
+
+			switch (id) {
+			case 'cg-mode':
+				if (value === 'Singles') {
+					$('#cg-span-max-players').show();
+				} else if (value === 'Teams') {
+					$('#cg-span-max-players').hide();
+				}
+				break;
+			}
+		},
 		createGameButtonClicked = function() {
-			network.sendMessage(enums.CommandsToServer.CreateGame, parseInt($('#cg-max-players').val(), 10));
+			network.sendMessage(enums.CommandsToServer.CreateGame, enums.GameModes[$('#cg-mode').val()], parseInt($('#cg-max-players').val(), 10));
 		},
 		gameButtonClicked = function() {
 			var $this = $(this),
@@ -137,6 +154,7 @@ define(function(require) {
 			$('#lobby-games').empty();
 		};
 
+	$('#create-game-section select').change(createGameSelectChanged);
 	$('#button-create-game').click(createGameButtonClicked);
 	$('#lobby-games').on('click', 'input', gameButtonClicked);
 
