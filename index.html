@@ -10,20 +10,20 @@
 		<script data-main="js/main" src="node_modules/requirejs/require.js"></script>
 	</head>
 	<body>
-		<div class="page" id="page-websocket-not-supported">
-			<h1>Acquire</h1>
-			<p>
-				Sorry, your browser does not support WebSockets. Please use a browser with that functionality.
-			</p>
-		</div>
 		<div class="page" id="page-login" data-version="VERSION">
 			<h1>Acquire</h1>
-			<div id="login-error-message"></div>
-			<form id="login-form">
-				Please enter your username.<br>
-				<input type="text" id="login-form-username">
-				<input type="submit" value="Login">
-			</form>
+			<p id="section-websockets-not-supported">
+				<span id="websockets-not-supported-message">Sorry, WebSockets support is required in order to play here.</span>
+				<a href="http://caniuse.com/websockets">See browsers with WebSockets support</a>.
+			</p>
+			<div id="section-login-form">
+				<div id="login-error-message"></div>
+				<form id="login-form">
+					Please enter your username.<br>
+					<input type="text" id="login-form-username">
+					<input type="submit" value="Login">
+				</form>
+			</div>
 			<p>
 				Here, you can play the Acquire board game. It's still in beta, and I haven't yet added all the features I want.
 			</p>

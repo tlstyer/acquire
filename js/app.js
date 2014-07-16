@@ -16,9 +16,9 @@ define(function(require) {
 		},
 		checkBrowserSupport = function() {
 			if (network.isBrowserSupported()) {
-				showPage('login');
+				$('#section-login-form').show();
 			} else {
-				showPage('websocket-not-supported');
+				$('#section-websockets-not-supported').show();
 			}
 		},
 		periodic_resize_check_width = null,
@@ -95,6 +95,7 @@ define(function(require) {
 
 	checkBrowserSupport();
 	periodicResizeCheck();
+	showPage('login');
 
 	$('#login-form').submit(onSubmitLoginForm);
 
