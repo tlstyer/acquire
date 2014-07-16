@@ -8,6 +8,25 @@ define(function(require) {
 		notification = require('notification'),
 		options = require('options'),
 		pubsub = require('pubsub'),
+		initializeHtml = function() {
+			var $body = $('#game-board tbody'),
+				y, $tr, x, $td, $score_sheet_player = $('.score-sheet-player');
+
+			for (y = 0; y < 9; y++) {
+				$tr = $('<tr>');
+				for (x = 0; x < 12; x++) {
+					$td = $('<td>');
+					$td.attr('id', 'gb-' + x + '-' + y);
+					$td.text(common_functions.getTileName(x, y));
+					$tr.append($td);
+				}
+				$body.append($tr);
+			}
+
+			for (y = 0; y < 5; y++) {
+				$score_sheet_player.after($score_sheet_player.clone());
+			}
+		},
 		resize = function(window_width, window_height) {
 			var half_window_width = Math.floor(window_width / 2),
 				half_window_width_ceil = Math.ceil(window_width / 2),
@@ -895,6 +914,7 @@ define(function(require) {
 			play_tile_action_enabled = false;
 		};
 
+	initializeHtml();
 	initializeGameBoardCellTypes();
 	initializeGameBoardTypeCounts();
 	initializeGameActionConstructorsLookup();
