@@ -95,13 +95,13 @@
 					<input id="start-game" type="button" value="Start Game">
 				</div>
 				<div id="game-action-select-chain" class="game-action">
-					<input id="game-select-chain-0" data-index="0" type="button" value="L" class="button-hotel luxor">
-					<input id="game-select-chain-1" data-index="1" type="button" value="T" class="button-hotel tower">
-					<input id="game-select-chain-2" data-index="2" type="button" value="A" class="button-hotel american">
-					<input id="game-select-chain-3" data-index="3" type="button" value="F" class="button-hotel festival">
-					<input id="game-select-chain-4" data-index="4" type="button" value="W" class="button-hotel worldwide">
-					<input id="game-select-chain-5" data-index="5" type="button" value="C" class="button-hotel continental">
-					<input id="game-select-chain-6" data-index="6" type="button" value="I" class="button-hotel imperial">
+					<input id="game-select-chain-0" data-index="0" type="button" value="L" class="button-hotel color-luxor">
+					<input id="game-select-chain-1" data-index="1" type="button" value="T" class="button-hotel color-tower">
+					<input id="game-select-chain-2" data-index="2" type="button" value="A" class="button-hotel color-american">
+					<input id="game-select-chain-3" data-index="3" type="button" value="F" class="button-hotel color-festival">
+					<input id="game-select-chain-4" data-index="4" type="button" value="W" class="button-hotel color-worldwide">
+					<input id="game-select-chain-5" data-index="5" type="button" value="C" class="button-hotel color-continental">
+					<input id="game-select-chain-6" data-index="6" type="button" value="I" class="button-hotel color-imperial">
 				</div>
 				<div id="game-action-dispose-of-shares" class="game-action">
 					<fieldset id="dos-keep-fieldset">
@@ -129,13 +129,13 @@
 					<div id="gps-row1">
 						<fieldset id="gps-available">
 							<legend>Available</legend>
-							<input id="gps-available-0" data-index="0" type="button" value="L" class="button-hotel luxor">
-							<input id="gps-available-1" data-index="1" type="button" value="T" class="button-hotel tower">
-							<input id="gps-available-2" data-index="2" type="button" value="A" class="button-hotel american">
-							<input id="gps-available-3" data-index="3" type="button" value="F" class="button-hotel festival">
-							<input id="gps-available-4" data-index="4" type="button" value="W" class="button-hotel worldwide">
-							<input id="gps-available-5" data-index="5" type="button" value="C" class="button-hotel continental">
-							<input id="gps-available-6" data-index="6" type="button" value="I" class="button-hotel imperial">
+							<input id="gps-available-0" data-index="0" type="button" value="L" class="button-hotel color-luxor">
+							<input id="gps-available-1" data-index="1" type="button" value="T" class="button-hotel color-tower">
+							<input id="gps-available-2" data-index="2" type="button" value="A" class="button-hotel color-american">
+							<input id="gps-available-3" data-index="3" type="button" value="F" class="button-hotel color-festival">
+							<input id="gps-available-4" data-index="4" type="button" value="W" class="button-hotel color-worldwide">
+							<input id="gps-available-5" data-index="5" type="button" value="C" class="button-hotel color-continental">
+							<input id="gps-available-6" data-index="6" type="button" value="I" class="button-hotel color-imperial">
 						</fieldset>
 						<fieldset>
 							<legend>Cost</legend>
@@ -169,16 +169,16 @@
 			<table id="score-sheet">
 				<tbody>
 					<tr id="score-sheet-header">
-						<td class="name">Player</td>
-						<td class="luxor">L</td>
-						<td class="tower">T</td>
-						<td class="american">A</td>
-						<td class="festival">F</td>
-						<td class="worldwide">W</td>
-						<td class="continental">C</td>
-						<td class="imperial">I</td>
-						<td class="cash">Cash</td>
-						<td class="net">Net</td>
+						<td class="name color-player">Player</td>
+						<td class="luxor color-luxor">L</td>
+						<td class="tower color-tower">T</td>
+						<td class="american color-american">A</td>
+						<td class="festival color-festival">F</td>
+						<td class="worldwide color-worldwide">W</td>
+						<td class="continental color-continental">C</td>
+						<td class="imperial color-imperial">I</td>
+						<td class="cash color-cash-net">Cash</td>
+						<td class="net color-cash-net">Net</td>
 					</tr>
 					<tr class="score-sheet-player">
 						<td class="name"></td>
@@ -193,7 +193,7 @@
 						<td class="net">6000</td>
 					</tr>
 					<!-- generated in game.js::initializeHtml() -->
-					<tr id="score-sheet-available">
+					<tr id="score-sheet-available" class="color-available-chain-size-price">
 						<td class="name">Available</td>
 						<td class="luxor">25</td>
 						<td class="tower">25</td>
@@ -205,7 +205,7 @@
 						<td class="teams"></td>
 						<td class="teams border-bottom"></td>
 					</tr>
-					<tr id="score-sheet-chain-size">
+					<tr id="score-sheet-chain-size" class="color-available-chain-size-price">
 						<td class="name">Chain Size</td>
 						<td class="luxor">-</td>
 						<td class="tower">-</td>
@@ -217,7 +217,7 @@
 						<td class="teams border-right">Team 1</td>
 						<td class="teams team-net" id="team1-net">12000</td>
 					</tr>
-					<tr id="score-sheet-price">
+					<tr id="score-sheet-price" class="color-available-chain-size-price">
 						<td class="name">Price ($00)</td>
 						<td class="luxor">-</td>
 						<td class="tower">-</td>

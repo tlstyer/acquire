@@ -14,7 +14,6 @@ $color-nothing: rgb(255, 255, 192);
 $color-nothing-yet: rgb(0, 0, 0);
 $color-cant-play-ever: rgb(128, 128, 128);
 $color-i-have-this: rgb(255, 224, 160);
-
 $color-will-put-lonely-tile-down: rgb(192, 192, 192);
 $color-have-neighboring-tile-too: rgb(192, 255, 192);
 $color-will-form-new-chain: rgb(255, 255, 255);
@@ -22,12 +21,71 @@ $color-will-merge-chains: rgb(255, 255, 255);
 $color-cant-play-now: rgb(96, 96, 96);
 
 $color-player: rgb(192, 192, 255);
-$color-cash: rgb(0, 128, 0);
+$color-cash-net: rgb(0, 128, 0);
 $color-available-chain-size-price: rgb(192, 255, 255);
 
 $color-my-turn: rgb(255, 192, 192);
 $color-my-sub-turn: rgb(255, 224, 224);
 $color-safe-chain: rgb(255, 192, 128);
+
+.color-luxor {
+	background-color: $color-luxor;
+}
+.color-tower {
+	background-color: $color-tower;
+}
+.color-american {
+	background-color: $color-american;
+}
+.color-festival {
+	background-color: $color-festival;
+}
+.color-worldwide {
+	background-color: $color-worldwide;
+}
+.color-continental {
+	background-color: $color-continental;
+}
+.color-imperial {
+	background-color: $color-imperial;
+}
+.color-nothing {
+	background-color: $color-nothing;
+}
+.color-nothing-yet {
+	background-color: $color-nothing-yet;
+	color: white;
+}
+.color-cant-play-ever {
+	background-color: $color-cant-play-ever;
+}
+.color-i-have-this {
+	background-color: $color-i-have-this;
+}
+.color-will-put-lonely-tile-down {
+	background-color: $color-will-put-lonely-tile-down;
+}
+.color-have-neighboring-tile-too {
+	background-color: $color-have-neighboring-tile-too;
+}
+.color-will-form-new-chain {
+	background-color: $color-will-form-new-chain;
+}
+.color-will-merge-chains {
+	background-color: $color-will-merge-chains;
+}
+.color-cant-play-now {
+	background-color: $color-cant-play-now;
+}
+.color-player {
+	background-color: $color-player;
+}
+.color-cash-net {
+	background-color: $color-cash-net;
+}
+.color-available-chain-size-price {
+	background-color: $color-available-chain-size-price;
+}
 
 body {
 	background-color: $color-background;
@@ -68,39 +126,7 @@ body {
 		border: 2px solid $color-table-border;
 		width: percentage(1 / 12);
 		height: percentage(1 / 9);
-		background-color: $color-nothing;
 		overflow: hidden;
-	}
-	.luxor {
-		background-color: $color-luxor;
-	}
-	.tower {
-		background-color: $color-tower;
-	}
-	.american {
-		background-color: $color-american;
-	}
-	.festival {
-		background-color: $color-festival;
-	}
-	.worldwide {
-		background-color: $color-worldwide;
-	}
-	.continental {
-		background-color: $color-continental;
-	}
-	.imperial {
-		background-color: $color-imperial;
-	}
-	.nothing-yet {
-		background-color: $color-nothing-yet;
-		color: white;
-	}
-	.cant-play-ever {
-		background-color: $color-cant-play-ever;
-	}
-	.i-have-this {
-		background-color: $color-i-have-this;
 	}
 }
 
@@ -152,36 +178,6 @@ body {
 	}
 }
 
-#score-sheet-header {
-	.name {
-		background-color: $color-player;
-	}
-	.luxor {
-		background-color: $color-luxor;
-	}
-	.tower {
-		background-color: $color-tower;
-	}
-	.american {
-		background-color: $color-american;
-	}
-	.festival {
-		background-color: $color-festival;
-	}
-	.worldwide {
-		background-color: $color-worldwide;
-	}
-	.continental {
-		background-color: $color-continental;
-	}
-	.imperial {
-		background-color: $color-imperial;
-	}
-	.cash, .net {
-		background-color: $color-cash;
-	}
-}
-
 .score-sheet-player {
 	background-color: white;
 	display: none;
@@ -191,11 +187,8 @@ body {
 }
 
 #score-sheet-available, #score-sheet-chain-size, #score-sheet-price {
-	td {
-		background-color: $color-available-chain-size-price;
-		&.safe {
-			background-color: $color-safe-chain;
-		}
+	.safe {
+		background-color: $color-safe-chain;
 	}
 }
 
@@ -283,118 +276,11 @@ fieldset.game-history-turn-began {
 	}
 }
 
-fieldset {
-	&.luxor {
-		background-color: $color-luxor;
-		legend {
-			background-color: $color-luxor;
-		}
-	}
-	&.tower {
-		background-color: $color-tower;
-		legend {
-			background-color: $color-tower;
-		}
-	}
-	&.american {
-		background-color: $color-american;
-		legend {
-			background-color: $color-american;
-		}
-	}
-	&.festival {
-		background-color: $color-festival;
-		legend {
-			background-color: $color-festival;
-		}
-	}
-	&.worldwide {
-		background-color: $color-worldwide;
-		legend {
-			background-color: $color-worldwide;
-		}
-	}
-	&.continental {
-		background-color: $color-continental;
-		legend {
-			background-color: $color-continental;
-		}
-	}
-	&.imperial {
-		background-color: $color-imperial;
-		legend {
-			background-color: $color-imperial;
-		}
-	}
-}
-
-span {
-	&.username {
-		background-color: $color-table-border;
-		white-space: nowrap;
-	}
-	&.luxor {
-		background-color: $color-luxor;
-	}
-	&.tower {
-		background-color: $color-tower;
-	}
-	&.american {
-		background-color: $color-american;
-	}
-	&.festival {
-		background-color: $color-festival;
-	}
-	&.worldwide {
-		background-color: $color-worldwide;
-	}
-	&.continental {
-		background-color: $color-continental;
-	}
-	&.imperial {
-		background-color: $color-imperial;
-	}
+span.username {
+	background-color: $color-table-border;
+	white-space: nowrap;
 }
 
 .button-hotel {
 	font-weight: bold;
-	&.luxor {
-		background-color: $color-luxor;
-	}
-	&.tower {
-		background-color: $color-tower;
-	}
-	&.american {
-		background-color: $color-american;
-	}
-	&.festival {
-		background-color: $color-festival;
-	}
-	&.worldwide {
-		background-color: $color-worldwide;
-	}
-	&.continental {
-		background-color: $color-continental;
-	}
-	&.imperial {
-		background-color: $color-imperial;
-	}
-	&.cant-play-ever {
-		background-color: $color-cant-play-ever;
-	}
-	&.will-put-lonely-tile-down {
-		background-color: $color-will-put-lonely-tile-down;
-	}
-	&.have-neighboring-tile-too {
-		background-color: $color-have-neighboring-tile-too;
-	}
-	&.will-form-new-chain {
-		background-color: $color-will-form-new-chain;
-	}
-	&.will-merge-chains {
-		background-color: $color-will-merge-chains;
-	}
-	&.cant-play-now {
-		background-color: $color-cant-play-now;
-	}
 }

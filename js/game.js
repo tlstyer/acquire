@@ -16,6 +16,7 @@ define(function(require) {
 				$tr = $('<tr>');
 				for (x = 0; x < 12; x++) {
 					$td = $('<td>');
+					$td.attr('class', 'color-nothing');
 					$td.attr('id', 'gb-' + x + '-' + y);
 					$td.text(common_functions.getTileName(x, y));
 					$tr.append($td);
@@ -147,7 +148,7 @@ define(function(require) {
 
 			game_board_cell_types[x][y] = game_board_type_id;
 
-			$cell.attr('class', common_functions.getHyphenatedStringFromEnumName(enums.GameBoardTypes[game_board_type_id]));
+			$cell.attr('class', 'color-' + common_functions.getHyphenatedStringFromEnumName(enums.GameBoardTypes[game_board_type_id]));
 
 			switch (game_board_label_mode) {
 			case 'coordinates':
@@ -189,7 +190,7 @@ define(function(require) {
 		setTile = function(tile_index, x, y, game_board_type_id) {
 			var $button = $('#game-tile-' + tile_index);
 
-			$button.attr('class', 'button-hotel ' + common_functions.getHyphenatedStringFromEnumName(enums.GameBoardTypes[game_board_type_id]));
+			$button.attr('class', 'button-hotel color-' + common_functions.getHyphenatedStringFromEnumName(enums.GameBoardTypes[game_board_type_id]));
 			$button.val(common_functions.getTileName(x, y));
 			$button.css('visibility', 'visible');
 
@@ -198,7 +199,7 @@ define(function(require) {
 		setTileGameBoardType = function(tile_index, game_board_type_id) {
 			var $button = $('#game-tile-' + tile_index);
 
-			$button.attr('class', 'button-hotel ' + common_functions.getHyphenatedStringFromEnumName(enums.GameBoardTypes[game_board_type_id]));
+			$button.attr('class', 'button-hotel color-' + common_functions.getHyphenatedStringFromEnumName(enums.GameBoardTypes[game_board_type_id]));
 		},
 		removeTile = function(tile_index) {
 			var $button = $('#game-tile-' + tile_index);
@@ -487,7 +488,7 @@ define(function(require) {
 			case enums.GameHistoryMessages.ReceivedBonus:
 			case enums.GameHistoryMessages.DisposedOfShares:
 				$element = $message.find('.chain');
-				$element.addClass(enums.GameBoardTypes[arguments[2]].toLowerCase());
+				$element.addClass('color-' + enums.GameBoardTypes[arguments[2]].toLowerCase());
 				$element.text(enums.GameBoardTypes[arguments[2]]);
 				if (game_history_message_id === enums.GameHistoryMessages.ReceivedBonus) {
 					$element = $message.find('.amount');
@@ -506,7 +507,7 @@ define(function(require) {
 				length = arguments[2].length;
 				for (index = 0; index < length; index++) {
 					name = enums.GameBoardTypes[arguments[2][index]];
-					parts.push('<span class="' + name.toLowerCase() + '">' + name + '</span>');
+					parts.push('<span class="color-' + name.toLowerCase() + '">' + name + '</span>');
 				}
 
 				if (parts.length === 2) {
@@ -524,7 +525,7 @@ define(function(require) {
 				for (index = 0; index < length; index++) {
 					entry = arguments[2][index];
 					name = enums.GameBoardTypes[entry[0]];
-					parts.push(entry[1] + ' <span class="' + name.toLowerCase() + '">' + name + '</span>');
+					parts.push(entry[1] + ' <span class="color-' + name.toLowerCase() + '">' + name + '</span>');
 				}
 
 				if (parts.length === 0) {
@@ -552,7 +553,7 @@ define(function(require) {
 		gameTileRackButtonClicked = function() {
 			var $button = $(this);
 
-			if (play_tile_action_enabled && !$button.hasClass('cant-play-ever') && !$button.hasClass('cant-play-now')) {
+			if (play_tile_action_enabled && !$button.hasClass('color-cant-play-ever') && !$button.hasClass('color-cant-play-now')) {
 				network.sendMessage(enums.CommandsToServer.DoGameAction, enums.GameActions.PlayTile, parseInt($button.attr('data-index'), 10));
 				$button.css('visibility', 'hidden');
 
@@ -622,8 +623,8 @@ define(function(require) {
 			dispose_of_shares_trade = 0;
 			dispose_of_shares_sell = 0;
 
-			$('#dos-keep-fieldset').attr('class', enums.GameBoardTypes[defunct_type_id].toLowerCase());
-			$('#dos-trade-fieldset').attr('class', enums.GameBoardTypes[controlling_type_id].toLowerCase());
+			$('#dos-keep-fieldset, #dos-keep-fieldset legend').attr('class', 'color-' + enums.GameBoardTypes[defunct_type_id].toLowerCase());
+			$('#dos-trade-fieldset, #dos-trade-fieldset legend').attr('class', 'color-' + enums.GameBoardTypes[controlling_type_id].toLowerCase());
 
 			updateDisposeOfSharesElements();
 
@@ -701,7 +702,7 @@ define(function(require) {
 				$button = $('#gps-cart-' + index);
 				if (purchase_shares_cart[index] !== null) {
 					chain_index = purchase_shares_cart[index];
-					$button.attr('class', 'button-hotel ' + enums.ScoreSheetIndexes[chain_index].toLowerCase());
+					$button.attr('class', 'button-hotel color-' + enums.ScoreSheetIndexes[chain_index].toLowerCase());
 					$button.val(score_sheet_price[chain_index] * 100);
 					$button.css('visibility', 'visible');
 				} else {
@@ -829,7 +830,7 @@ define(function(require) {
 				length = arguments[2].length;
 				for (index = 0; index < length; index++) {
 					name = enums.GameBoardTypes[arguments[2][index]];
-					parts.push('<span class="' + name.toLowerCase() + '">' + name[0] + '</span>');
+					parts.push('<span class="color-' + name.toLowerCase() + '">' + name[0] + '</span>');
 				}
 
 				if (parts.length === 2) {
@@ -840,7 +841,7 @@ define(function(require) {
 				break;
 			case enums.GameActions.DisposeOfShares:
 				$element = $action.find('.chain');
-				$element.addClass(enums.GameBoardTypes[arguments[2]].toLowerCase());
+				$element.addClass('color-' + enums.GameBoardTypes[arguments[2]].toLowerCase());
 				$element.text(enums.GameBoardTypes[arguments[2]]);
 				break;
 			}
