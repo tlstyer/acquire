@@ -29,12 +29,21 @@ define(function(require) {
 			}
 		},
 		resize = function(window_width, window_height) {
-			var half_window_width = Math.floor(window_width / 2),
-				half_window_width_ceil = Math.ceil(window_width / 2),
-				$score_sheet = $('#score-sheet'),
-				cell_width_gb = Math.floor((half_window_width - 2) / 12),
-				cell_width_ss = Math.floor((half_window_width - 2) / 18),
-				num_rows, left, top, width, height, font_size;
+			var $score_sheet = $('#score-sheet'),
+				cell_width_gb_based_on_width, cell_width_gb_based_on_height, cell_width_gb, left_side_width, cell_width_ss, score_sheet_width, num_rows, left, top, width, height, font_size;
+
+			// algebra and estimation were used in the determination of these 2 formulas
+			cell_width_gb_based_on_width = (window_width - 6) / 24;
+			cell_width_gb_based_on_height = (window_height - 30) / 13;
+			cell_width_gb = Math.floor(Math.min(cell_width_gb_based_on_width, cell_width_gb_based_on_height));
+			// due to rounding, see if cell_width_gb + 1 is good, else use cell_width_gb
+			cell_width_gb += 2;
+			do {
+				cell_width_gb--;
+				left_side_width = cell_width_gb * 12 + 2;
+				cell_width_ss = Math.floor((left_side_width - 2) / 18);
+				score_sheet_width = cell_width_ss * 18 + 2;
+			} while (left_side_width + 2 + score_sheet_width > window_width);
 
 			top = 0;
 			height = cell_width_gb * 9 + 2;
@@ -46,13 +55,14 @@ define(function(require) {
 
 			top += height + 2;
 			height = cell_width_gb;
-			common_functions.setElementPosition($('#game-tile-rack'), 0, top, half_window_width, height, font_size);
+			common_functions.setElementPosition($('#game-tile-rack'), 0, top, left_side_width, height, font_size);
 
 			top += height + 2;
 			height = window_height - top;
-			common_functions.setElementPosition($('#game-action'), 0, top, half_window_width, height, font_size);
+			common_functions.setElementPosition($('#game-action'), 0, top, left_side_width, height, font_size);
 
-			common_functions.setElementPosition($score_sheet, half_window_width, 0, cell_width_ss * 18 + 2, null, Math.floor(cell_width_ss * 2 / 3));
+			left = left_side_width + 2;
+			common_functions.setElementPosition($score_sheet, left, 0, score_sheet_width, null, Math.floor(cell_width_ss * 2 / 3));
 			$score_sheet.find('tr').css('height', cell_width_ss + 'px');
 
 			num_rows = 4;
@@ -62,9 +72,8 @@ define(function(require) {
 				}
 			});
 
-			left = half_window_width + 2;
 			top = num_rows * cell_width_ss + 4;
-			width = half_window_width_ceil - 2;
+			width = window_width - left;
 			font_size = Math.floor(cell_width_ss / 2);
 
 			height = Math.floor((window_height - top - 51) / 2) - 2;
