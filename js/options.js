@@ -43,6 +43,11 @@ define(function(require) {
 				'default': true,
 				'valid': [true, false]
 			},
+			'enable-high-contrast-colors': {
+				'type': 'checkbox',
+				'default': false,
+				'valid': [true, false]
+			},
 			'game-board-label-mode': {
 				'type': 'select',
 				'default': 'coordinates',
@@ -88,6 +93,7 @@ define(function(require) {
 
 					setStoredOptionValue(key, value);
 					data[key] = value;
+					pubsub.publish('client-SetOption', key, value);
 
 					$input = $('#option-' + key);
 					switch (detail.type) {
@@ -120,6 +126,7 @@ define(function(require) {
 
 			setStoredOptionValue(key, value);
 			data[key] = value;
+			pubsub.publish('client-SetOption', key, value);
 		};
 
 	initialize();

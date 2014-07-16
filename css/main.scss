@@ -87,6 +87,12 @@ $color-safe-chain: rgb(255, 192, 128);
 	background-color: $color-available-chain-size-price;
 }
 
+body.high-contrast {
+	.color-luxor, .color-american, .color-worldwide, .color-imperial, .color-cant-play-now, .color-cash-net {
+		color: white;
+	}
+}
+
 body {
 	background-color: $color-background;
 	color: black;

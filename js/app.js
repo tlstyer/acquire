@@ -66,6 +66,15 @@ define(function(require) {
 
 			$('#login-error-message').html($('<p>').text(message));
 		},
+		onClientSetOption = function(key, value) {
+			if (key === 'enable-high-contrast-colors') {
+				if (value) {
+					$('body').addClass('high-contrast');
+				} else {
+					$('body').removeClass('high-contrast');
+				}
+			}
+		},
 		onClientJoinGame = function() {
 			showPage('game');
 		},
@@ -91,6 +100,7 @@ define(function(require) {
 
 	pubsub.subscribe('client-SetClientData', onClientSetClientData);
 	pubsub.subscribe('server-FatalError', onServerFatalError);
+	pubsub.subscribe('client-SetOption', onClientSetOption);
 	pubsub.subscribe('client-JoinGame', onClientJoinGame);
 	pubsub.subscribe('client-LeaveGame', onClientLeaveGame);
 	pubsub.subscribe('network-Close', onNetworkClose);
