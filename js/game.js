@@ -18,6 +18,8 @@ define(function(require) {
 					$td = $('<td>');
 					$td.attr('class', 'color-nothing');
 					$td.attr('id', 'gb-' + x + '-' + y);
+					$td.attr('data-x', x);
+					$td.attr('data-y', y);
 					$td.text(common_functions.getTileName(x, y));
 					$tr.append($td);
 				}
@@ -196,8 +198,11 @@ define(function(require) {
 				}
 			}
 		},
+		tile_rack = [null, null, null, null, null, null],
 		setTile = function(tile_index, x, y, game_board_type_id) {
 			var $button = $('#game-tile-' + tile_index);
+
+			tile_rack[tile_index] = [x, y, game_board_type_id];
 
 			$button.attr('class', 'button-hotel color-' + common_functions.getHyphenatedStringFromEnumName(enums.GameBoardTypes[game_board_type_id]));
 			$button.val(common_functions.getTileName(x, y));
@@ -208,10 +213,14 @@ define(function(require) {
 		setTileGameBoardType = function(tile_index, game_board_type_id) {
 			var $button = $('#game-tile-' + tile_index);
 
+			tile_rack[tile_index][2] = game_board_type_id;
+
 			$button.attr('class', 'button-hotel color-' + common_functions.getHyphenatedStringFromEnumName(enums.GameBoardTypes[game_board_type_id]));
 		},
 		removeTile = function(tile_index) {
 			var $button = $('#game-tile-' + tile_index);
+
+			tile_rack[tile_index] = null;
 
 			$button.css('visibility', 'hidden');
 		},
@@ -559,12 +568,31 @@ define(function(require) {
 		gameActionConstructorPlayTile = function() {
 			play_tile_action_enabled = true;
 		},
-		gameTileRackButtonClicked = function() {
-			var $button = $(this);
+		gameBoardCellClicked = function() {
+			var $cell = $(this),
+				x = parseInt($cell.attr('data-x'), 10),
+				y = parseInt($cell.attr('data-y'), 10),
+				tile_index, tile_datum;
 
-			if (play_tile_action_enabled && !$button.hasClass('color-cant-play-ever') && !$button.hasClass('color-cant-play-now')) {
-				network.sendMessage(enums.CommandsToServer.DoGameAction, enums.GameActions.PlayTile, parseInt($button.attr('data-index'), 10));
-				$button.css('visibility', 'hidden');
+			for (tile_index = 0; tile_index < 6; tile_index++) {
+				tile_datum = tile_rack[tile_index];
+				if (tile_datum !== null && tile_datum[0] === x && tile_datum[1] === y) {
+					processTileRackButtonClick(tile_index);
+					break;
+				}
+			}
+		},
+		gameTileRackButtonClicked = function() {
+			var tile_index = parseInt($(this).attr('data-index'), 10);
+
+			processTileRackButtonClick(tile_index);
+		},
+		processTileRackButtonClick = function(tile_index) {
+			var tile_datum = tile_rack[tile_index];
+
+			if (play_tile_action_enabled && tile_datum !== null && tile_datum[2] !== enums.GameBoardTypes.CantPlayEver && tile_datum[2] !== enums.GameBoardTypes.CantPlayNow) {
+				network.sendMessage(enums.CommandsToServer.DoGameAction, enums.GameActions.PlayTile, tile_index);
+				removeTile(tile_index);
 
 				play_tile_action_enabled = false;
 			}
@@ -893,6 +921,9 @@ define(function(require) {
 				}
 			}
 
+			for (x = 0; x < 6; x++) {
+				tile_rack[x] = null;
+			}
 			$('#game-tile-rack .button-hotel').css('visibility', 'hidden');
 
 			$('#game-action > div').hide();
@@ -929,6 +960,7 @@ define(function(require) {
 	initializeGameBoardTypeCounts();
 	initializeGameActionConstructorsLookup();
 
+	$('#game-board td').click(gameBoardCellClicked);
 	$('#game-tile-rack .button-hotel').click(gameTileRackButtonClicked);
 	$('#game-action input').click(gameActionButtonClicked);
 	$('#button-leave-game').click(leaveGameButtonClicked);
