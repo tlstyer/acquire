@@ -9,6 +9,10 @@ define(function(require) {
 				$('.page').hide();
 				$('#page-' + page).show();
 
+				if (page === 'login') {
+					$('#login-form-username').focus();
+				}
+
 				current_page = page;
 
 				pubsub.publish('client-SetPage', page);
