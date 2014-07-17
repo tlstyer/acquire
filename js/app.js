@@ -126,4 +126,6 @@ define(function(require) {
 	pubsub.subscribe('client-LeaveGame', onClientLeaveGame);
 	pubsub.subscribe('network-Close', onNetworkClose);
 	pubsub.subscribe('network-Error', onNetworkError);
+
+	pubsub.publish('client-InitializationComplete');
 });

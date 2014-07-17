@@ -106,8 +106,6 @@ define(function(require) {
 					}
 				}
 			}
-
-			data.setPositionForPage = setPositionForPage;
 		},
 		processChange = function() {
 			var $input = $(this),
@@ -129,7 +127,11 @@ define(function(require) {
 			pubsub.publish('client-SetOption', key, value);
 		};
 
-	initialize();
+	data.setPositionForPage = setPositionForPage;
+
+	pubsub.subscribe('client-InitializationComplete', function() {
+		initialize();
+	});
 
 	$('#options input, #options select').change(processChange);
 
