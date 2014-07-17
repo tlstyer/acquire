@@ -39,12 +39,27 @@ define(function(require) {
 
 			setTimeout(periodicResizeCheck, 500);
 		},
+		got_local_storage = 'localStorage' in window,
+		initializeUsername = function() {
+			var username;
+
+			if (got_local_storage) {
+				username = localStorage['username'];
+				if (typeof username !== 'undefined') {
+					$('#login-form-username').val(username);
+				}
+			}
+		},
 		onSubmitLoginForm = function() {
 			var username = $('#login-form-username').val().replace(/\s+/g, ' ').trim();
 
 			if (username.length === 0 || username.length > 32) {
 				onServerFatalError(enums.FatalErrors.InvalidUsername);
 			} else {
+				if (got_local_storage) {
+					localStorage['username'] = username;
+				}
+
 				showPage('connecting');
 				$('#login-error-message').html($('<p>').text('Lost connection to the server.'));
 				network.connect(username);
@@ -99,6 +114,7 @@ define(function(require) {
 
 	checkBrowserSupport();
 	periodicResizeCheck();
+	initializeUsername();
 	showPage('login');
 
 	$('#login-form').submit(onSubmitLoginForm);
