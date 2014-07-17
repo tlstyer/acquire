@@ -217,6 +217,7 @@ body {
 }
 #game-action {
 	text-align: center;
+	overflow: hidden;
 	> div {
 		display: none;
 	}
