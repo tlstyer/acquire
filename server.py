@@ -621,8 +621,12 @@ class TileRacks:
                     # replace one tile at a time
                     break
 
-    def are_all_racks_empty(self):
-        for rack in self.racks:
+    def are_racks_empty(self, player_ids=None):
+        if player_ids is None:
+            player_ids = range(len(self.racks))
+
+        for player_id in player_ids:
+            rack = self.racks[player_id]
             for tile_datum in rack:
                 if tile_datum:
                     return False
@@ -944,7 +948,7 @@ class ActionPurchaseShares(Action):
         return self._complete_action()
 
     def _complete_action(self):
-        all_tiles_played = self.game.tile_racks.are_all_racks_empty()
+        all_tiles_played = self.game.tile_racks.are_racks_empty()
         no_tiles_played_for_entire_round = self.game.turns_without_played_tiles_count == len(self.game.player_id_to_client_id)
 
         if self.end_game or all_tiles_played or no_tiles_played_for_entire_round:
@@ -963,6 +967,13 @@ class ActionPurchaseShares(Action):
             self.game.tile_racks.draw_tile(self.player_id)
             self.game.tile_racks.determine_tile_game_board_types([self.player_id])
             self.game.tile_racks.replace_dead_tiles(self.player_id)
+
+            all_tiles_played = self.game.tile_racks.are_racks_empty([self.player_id])
+            if all_tiles_played:
+                AcquireServerProtocol.add_pending_messages(self.game.client_ids, [[enums.CommandsToClient.AddGameHistoryMessage.value, enums.GameHistoryMessages.AllTilesPlayed.value, None]])
+                self.game.state = enums.GameStates.Completed.value
+                AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, [[enums.CommandsToClient.SetGameState.value, self.game.game_id, self.game.state]])
+                return [ActionGameOver(self.game)]
 
             next_player_id = (self.player_id + 1) % len(self.game.player_id_to_client_id)
             return [ActionPlayTile(self.game, next_player_id), ActionPurchaseShares(self.game, next_player_id)]
