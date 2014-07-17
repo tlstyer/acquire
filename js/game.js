@@ -490,7 +490,13 @@ define(function(require) {
 				$element, parts, length, index, entry, name;
 
 			if (player_id !== null) {
-				$message.find('.username').text(common_data.game_id_to_player_data[common_data.game_id][player_id].username);
+				$element = $message.find('.username');
+				if (player_id === common_data.player_id) {
+					$element.removeClass('username');
+					$element.text('You');
+				} else {
+					$element.text(common_data.game_id_to_player_data[common_data.game_id][player_id].username);
+				}
 			}
 
 			switch (game_history_message_id) {
@@ -856,7 +862,13 @@ define(function(require) {
 			maybeShowTeamNetWorths();
 
 			if (player_id !== null) {
-				$action.find('.username').text(common_data.game_id_to_player_data[common_data.game_id][player_id].username);
+				$element = $action.find('.username');
+				if (player_id === common_data.player_id) {
+					$element.removeClass('username');
+					$element.text('you');
+				} else {
+					$element.text(common_data.game_id_to_player_data[common_data.game_id][player_id].username);
+				}
 			}
 
 			switch (game_action_id) {
