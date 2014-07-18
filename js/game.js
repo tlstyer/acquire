@@ -82,6 +82,8 @@ define(function(require) {
 			common_functions.setElementPosition($('#game-history'), left, top, width, height);
 			common_functions.scrollToBottom($('#game-history'));
 
+			common_functions.setElementPosition($('#game-history-new-messages'), left, top + height - 25, width - common_functions.getScrollbarWidth(), 25);
+
 			top += height + 2;
 			height = 22;
 			common_functions.setElementPosition($('#game-status'), left, top, width, height);
@@ -484,6 +486,7 @@ define(function(require) {
 
 			score_sheet_changed = false;
 		},
+		game_history_new_messages_count = 0,
 		addGameHistoryMessage = function(game_history_message_id, player_id) {
 			var $message = $('#game-history-' + common_functions.getHyphenatedStringFromEnumName(enums.GameHistoryMessages[game_history_message_id])).clone().removeAttr('id'),
 				$game_history = $('#game-history'),
@@ -569,6 +572,26 @@ define(function(require) {
 
 			if (scroll_is_at_bottom) {
 				common_functions.scrollToBottom($game_history);
+			} else {
+				game_history_new_messages_count++;
+				$element = $('#game-history-new-messages');
+				if (game_history_new_messages_count === 1) {
+					$element.find('.singular').show();
+					$element.find('.plural').hide();
+				} else {
+					$element.find('.message-count').text(game_history_new_messages_count);
+					$element.find('.singular').hide();
+					$element.find('.plural').show();
+				}
+				$element.show();
+			}
+		},
+		gameHistoryScrolled = function() {
+			var $game_history = $('#game-history');
+
+			if (common_functions.isScrollAtBottom($game_history)) {
+				game_history_new_messages_count = 0;
+				$('#game-history-new-messages').hide();
 			}
 		},
 		play_tile_action_enabled = false,
@@ -976,6 +999,7 @@ define(function(require) {
 	$('#game-board td').click(gameBoardCellClicked);
 	$('#game-tile-rack .button-hotel').click(gameTileRackButtonClicked);
 	$('#game-action input').click(gameActionButtonClicked);
+	$('#game-history').scroll(gameHistoryScrolled);
 	$('#button-leave-game').click(leaveGameButtonClicked);
 
 	pubsub.subscribe('client-Resize', resize);

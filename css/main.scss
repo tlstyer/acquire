@@ -206,7 +206,7 @@ body {
 #options, #chat, #templates {
 	display: none;
 }
-#game-tile-rack, #game-action, #game-history, #game-status, #game-buttons, #page-lobby, #options, #chat-history, #chat-input, #chat-game-checkbox-div {
+#game-tile-rack, #game-action, #game-history, #game-history-new-messages, #game-status, #game-buttons, #page-lobby, #options, #chat-history, #chat-history-new-messages, #chat-input, #chat-game-checkbox-div {
 	position: absolute;
 	box-sizing: border-box;
 }
@@ -225,6 +225,12 @@ body {
 }
 #game-history, #page-lobby, #chat-history {
 	overflow-y: scroll;
+}
+#game-history-new-messages, #chat-history-new-messages {
+	display: none;
+	background-color: lightgreen;
+	overflow: hidden;
+	line-height: 25px;
 }
 fieldset.game-history-turn-began {
 	border-top: 1px solid black;

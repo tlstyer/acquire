@@ -18,6 +18,8 @@ define(function(require) {
 			common_functions.setElementPosition($('#chat-history'), left, top, width, height);
 			common_functions.scrollToBottom($('#chat-history'));
 
+			common_functions.setElementPosition($('#chat-history-new-messages'), left, top + height - 25, width - common_functions.getScrollbarWidth(), 25);
+
 			top += height;
 			if (current_page === 'game') {
 				width = position.width - 80;
@@ -75,6 +77,7 @@ define(function(require) {
 
 			return false;
 		},
+		new_messages_count = 0,
 		appendElement = function($element, client_id) {
 			var $chat_history = $('#chat-history'),
 				scroll_is_at_bottom = common_functions.isScrollAtBottom($chat_history),
@@ -91,6 +94,26 @@ define(function(require) {
 
 			if (scroll_is_at_bottom) {
 				common_functions.scrollToBottom($chat_history);
+			} else {
+				new_messages_count++;
+				$element = $('#chat-history-new-messages');
+				if (new_messages_count === 1) {
+					$element.find('.singular').show();
+					$element.find('.plural').hide();
+				} else {
+					$element.find('.message-count').text(new_messages_count);
+					$element.find('.singular').hide();
+					$element.find('.plural').show();
+				}
+				$element.show();
+			}
+		},
+		chatHistoryScrolled = function() {
+			var $chat_history = $('#chat-history');
+
+			if (common_functions.isScrollAtBottom($chat_history)) {
+				new_messages_count = 0;
+				$('#chat-history-new-messages').hide();
 			}
 		},
 		addGlobalChatMessage = function(client_id, chat_message) {
@@ -148,6 +171,7 @@ define(function(require) {
 			add_client_location_messages = false;
 		};
 
+	$('#chat-history').scroll(chatHistoryScrolled);
 	$('#chat-input-form').submit(submitChatInput);
 
 	pubsub.subscribe('client-SetPage', setPage);

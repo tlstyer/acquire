@@ -1,4 +1,17 @@
 define(function(require) {
+	var scrollbar_width = 0,
+		initializeScrollbarWidth = function() {
+			// from http://benalman.com/projects/jquery-misc-plugins/#scrollbarwidth
+			var parent, child;
+
+			parent = $('<div style="width:50px;height:50px;overflow:auto"><div/></div>').appendTo('body');
+			child = parent.children();
+			scrollbar_width = child.innerWidth() - child.height(99).innerWidth();
+			parent.remove();
+		};
+
+	initializeScrollbarWidth();
+
 	return {
 		getHyphenatedStringFromEnumName: function(enum_name) {
 			return enum_name.replace(/([A-Z])/g, function($1) {
@@ -30,6 +43,9 @@ define(function(require) {
 		},
 		scrollToBottom: function($element) {
 			$element.scrollTop($element[0].scrollHeight - $element.innerHeight());
+		},
+		getScrollbarWidth: function() {
+			return scrollbar_width;
 		}
 	};
 });
