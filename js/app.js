@@ -15,7 +15,7 @@ define(function(require) {
 
 				current_page = page;
 
-				pubsub.publish('client-SetPage', page);
+				pubsub.publish(enums.PubSub.Client_SetPage, page);
 			}
 		},
 		checkBrowserSupport = function() {
@@ -34,7 +34,7 @@ define(function(require) {
 			if (width !== periodic_resize_check_width || height !== periodic_resize_check_height) {
 				periodic_resize_check_width = width;
 				periodic_resize_check_height = height;
-				pubsub.publish('client-Resize', width, height);
+				pubsub.publish(enums.PubSub.Client_Resize, width, height);
 			}
 
 			setTimeout(periodicResizeCheck, 500);
@@ -119,13 +119,13 @@ define(function(require) {
 
 	$('#login-form').submit(onSubmitLoginForm);
 
-	pubsub.subscribe('client-SetClientData', onClientSetClientData);
-	pubsub.subscribe('server-FatalError', onServerFatalError);
-	pubsub.subscribe('client-SetOption', onClientSetOption);
-	pubsub.subscribe('client-JoinGame', onClientJoinGame);
-	pubsub.subscribe('client-LeaveGame', onClientLeaveGame);
-	pubsub.subscribe('network-Close', onNetworkClose);
-	pubsub.subscribe('network-Error', onNetworkError);
+	pubsub.subscribe(enums.PubSub.Client_SetClientData, onClientSetClientData);
+	pubsub.subscribe(enums.PubSub.Server_FatalError, onServerFatalError);
+	pubsub.subscribe(enums.PubSub.Client_SetOption, onClientSetOption);
+	pubsub.subscribe(enums.PubSub.Client_JoinGame, onClientJoinGame);
+	pubsub.subscribe(enums.PubSub.Client_LeaveGame, onClientLeaveGame);
+	pubsub.subscribe(enums.PubSub.Network_Close, onNetworkClose);
+	pubsub.subscribe(enums.PubSub.Network_Error, onNetworkError);
 
-	pubsub.publish('client-InitializationComplete');
+	pubsub.publish(enums.PubSub.Client_InitializationComplete);
 });

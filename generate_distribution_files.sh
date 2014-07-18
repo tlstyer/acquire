@@ -13,7 +13,7 @@ cp -a ../tlstyer.com/favicon.ico dist/web
 cp -a static/* dist/web/static
 
 # server.py
-sed "s/version = 'VERSION'/version = '${TIMESTAMP}'/" server.py | ./generate_distribution_files_helper.py enums > dist/server.py
+sed "s/version = 'VERSION'/version = '${TIMESTAMP}'/" server.py > dist/server.py
 chmod u+x dist/server.py
 
 # enums.py
@@ -31,13 +31,14 @@ sed "s/data-version=\"VERSION\"/data-version=\"${TIMESTAMP}\"/" | \
 ./node_modules/requirejs/bin/r.js -o cssIn=css/main.css out=dist/build/main.css
 ./node_modules/clean-css/bin/cleancss -o dist/web/static/${TIMESTAMP}.css dist/build/main.css
 
-# ${TIMESTAMP}.js
-for f in js/*.js
-do
-	cat $f | ./generate_distribution_files_helper.py enums > dist/build/$f
-done
+# start ${TIMESTAMP}.js
+cp js/* dist/build/js
 
-./generate_enums_js.py dist > dist/build/js/enums.js
+# enums replacements in server.py and .js files
+./enumsgen.py replace dist/server.py dist/build/js/*.js
+
+# finish # ${TIMESTAMP}.js
+./enumsgen.py js release > dist/build/js/enums.js
 
 pushd . > /dev/null
 cd dist/build/js

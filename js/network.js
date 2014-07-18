@@ -24,12 +24,12 @@ define(function(require) {
 
 				if (ws !== null) {
 					ws.onopen = function() {
-						pubsub.publish('network-Open');
+						pubsub.publish(enums.PubSub.Network_Open);
 					};
 
 					ws.onclose = function(e) {
 						ws = null;
-						pubsub.publish('network-Close');
+						pubsub.publish(enums.PubSub.Network_Close);
 					};
 
 					ws.onmessage = function(e) {
@@ -39,19 +39,17 @@ define(function(require) {
 							data = JSON.parse(e.data);
 							data_length = data.length;
 							for (i = 0; i < data_length; i++) {
-								command = data[i];
-								command[0] = 'server-' + enums.CommandsToClient[command[0]];
-								pubsub.publish.apply(null, command);
+								pubsub.publish.apply(null, data[i]);
 							}
 						} catch (e) {
 							console.log(e.stack);
 						}
 
-						pubsub.publish('network-MessageProcessingComplete');
+						pubsub.publish(enums.PubSub.Network_MessageProcessingComplete);
 					};
 
 					ws.onerror = function(e) {
-						pubsub.publish('network-Error');
+						pubsub.publish(enums.PubSub.Network_Error);
 					};
 				}
 			}
@@ -65,7 +63,7 @@ define(function(require) {
 			if (ws !== null) {
 				ws.send(JSON.stringify(Array.prototype.slice.call(arguments, 0)));
 
-				pubsub.publish('network-SendMessage');
+				pubsub.publish(enums.PubSub.Network_SendMessage);
 			}
 		};
 

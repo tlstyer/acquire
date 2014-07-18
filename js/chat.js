@@ -174,18 +174,18 @@ define(function(require) {
 	$('#chat-history').scroll(chatHistoryScrolled);
 	$('#chat-input-form').submit(submitChatInput);
 
-	pubsub.subscribe('client-SetPage', setPage);
-	pubsub.subscribe('server-AddGlobalChatMessage', addGlobalChatMessage);
-	pubsub.subscribe('server-AddGameChatMessage', addGameChatMessage);
-	pubsub.subscribe('network-MessageProcessingComplete', messageProcessingComplete);
-	pubsub.subscribe('client-AddClient', addClient);
-	pubsub.subscribe('client-RemoveClient', removeClient);
-	pubsub.subscribe('client-AddGamePlayer', addGamePlayer);
-	pubsub.subscribe('client-RemoveGamePlayer', removeGamePlayer);
-	pubsub.subscribe('client-AddGameWatcher', addGameWatcher);
-	pubsub.subscribe('client-RemoveGameWatcher', removeGameWatcher);
-	pubsub.subscribe('network-Close', reset);
-	pubsub.subscribe('network-Error', reset);
+	pubsub.subscribe(enums.PubSub.Client_SetPage, setPage);
+	pubsub.subscribe(enums.PubSub.Server_AddGlobalChatMessage, addGlobalChatMessage);
+	pubsub.subscribe(enums.PubSub.Server_AddGameChatMessage, addGameChatMessage);
+	pubsub.subscribe(enums.PubSub.Network_MessageProcessingComplete, messageProcessingComplete);
+	pubsub.subscribe(enums.PubSub.Client_AddClient, addClient);
+	pubsub.subscribe(enums.PubSub.Client_RemoveClient, removeClient);
+	pubsub.subscribe(enums.PubSub.Client_AddGamePlayer, addGamePlayer);
+	pubsub.subscribe(enums.PubSub.Client_RemoveGamePlayer, removeGamePlayer);
+	pubsub.subscribe(enums.PubSub.Client_AddGameWatcher, addGameWatcher);
+	pubsub.subscribe(enums.PubSub.Client_RemoveGameWatcher, removeGameWatcher);
+	pubsub.subscribe(enums.PubSub.Network_Close, reset);
+	pubsub.subscribe(enums.PubSub.Network_Error, reset);
 
 	return {
 		setPositionForPage: setPositionForPage

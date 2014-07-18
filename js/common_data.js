@@ -1,13 +1,14 @@
 define(function(require) {
-	var pubsub = require('pubsub'),
+	var enums = require('enums'),
+		pubsub = require('pubsub'),
 		data = {},
 		setClientId = function(client_id) {
 			data.client_id = client_id;
 		},
 		setClientIdToData = function(client_id, username, ip_address) {
 			if (username === null) {
-				pubsub.publish('client-RemoveLobbyClient', client_id);
-				pubsub.publish('client-RemoveClient', client_id);
+				pubsub.publish(enums.PubSub.Client_RemoveLobbyClient, client_id);
+				pubsub.publish(enums.PubSub.Client_RemoveClient, client_id);
 
 				delete data.client_id_to_data[client_id];
 			} else {
@@ -16,10 +17,10 @@ define(function(require) {
 					ip_address: ip_address
 				};
 
-				pubsub.publish('client-AddLobbyClient', client_id);
-				pubsub.publish('client-AddClient', client_id);
+				pubsub.publish(enums.PubSub.Client_AddLobbyClient, client_id);
+				pubsub.publish(enums.PubSub.Client_AddClient, client_id);
 				if (client_id === data.client_id) {
-					pubsub.publish('client-SetClientData');
+					pubsub.publish(enums.PubSub.Client_SetClientData);
 				}
 			}
 		},
@@ -41,7 +42,7 @@ define(function(require) {
 				data.game_id_to_watcher_client_ids[game_id] = [];
 			}
 
-			pubsub.publish('client-SetGameState', game_id);
+			pubsub.publish(enums.PubSub.Client_SetGameState, game_id);
 		},
 		setGamePlayerUsername = function(game_id, player_id, username) {
 			data.game_id_to_number_of_players[game_id] = Math.max(data.game_id_to_number_of_players[game_id], player_id + 1);
@@ -51,7 +52,7 @@ define(function(require) {
 				client_id: null
 			};
 
-			pubsub.publish('client-SetGamePlayerData', game_id, player_id, username, null);
+			pubsub.publish(enums.PubSub.Client_SetGamePlayerData, game_id, player_id, username, null);
 		},
 		setGamePlayerClientId = function(game_id, player_id, client_id) {
 			var player_data, old_client_id, client_data, old_game_id, client_already_in_game, player_id2;
@@ -69,11 +70,11 @@ define(function(require) {
 
 				player_data.client_id = null;
 
-				pubsub.publish('client-SetGamePlayerData', game_id, player_id, player_data.username, null);
-				pubsub.publish('client-RemoveGamePlayer', game_id, old_client_id);
-				pubsub.publish('client-AddLobbyClient', old_client_id);
+				pubsub.publish(enums.PubSub.Client_SetGamePlayerData, game_id, player_id, player_data.username, null);
+				pubsub.publish(enums.PubSub.Client_RemoveGamePlayer, game_id, old_client_id);
+				pubsub.publish(enums.PubSub.Client_AddLobbyClient, old_client_id);
 				if (old_client_id === data.client_id) {
-					pubsub.publish('client-LeaveGame');
+					pubsub.publish(enums.PubSub.Client_LeaveGame);
 				}
 			} else {
 				client_data = data.client_id_to_data[client_id];
@@ -89,8 +90,8 @@ define(function(require) {
 					client_id: client_id
 				};
 
-				pubsub.publish('client-RemoveLobbyClient', client_id);
-				pubsub.publish('client-SetGamePlayerData', game_id, player_id, client_data.username, client_id);
+				pubsub.publish(enums.PubSub.Client_RemoveLobbyClient, client_id);
+				pubsub.publish(enums.PubSub.Client_SetGamePlayerData, game_id, player_id, client_data.username, client_id);
 
 				client_already_in_game = false;
 				player_data = data.game_id_to_player_data[game_id];
@@ -100,11 +101,11 @@ define(function(require) {
 					}
 				}
 				if (!client_already_in_game) {
-					pubsub.publish('client-AddGamePlayer', game_id, client_id);
+					pubsub.publish(enums.PubSub.Client_AddGamePlayer, game_id, client_id);
 				}
 
 				if (game_id !== old_game_id && client_id === data.client_id) {
-					pubsub.publish('client-JoinGame');
+					pubsub.publish(enums.PubSub.Client_JoinGame);
 				}
 			}
 		},
@@ -115,10 +116,10 @@ define(function(require) {
 				data.game_id = game_id;
 			}
 
-			pubsub.publish('client-RemoveLobbyClient', client_id);
-			pubsub.publish('client-AddGameWatcher', game_id, client_id);
+			pubsub.publish(enums.PubSub.Client_RemoveLobbyClient, client_id);
+			pubsub.publish(enums.PubSub.Client_AddGameWatcher, game_id, client_id);
 			if (client_id === data.client_id) {
-				pubsub.publish('client-JoinGame');
+				pubsub.publish(enums.PubSub.Client_JoinGame);
 			}
 		},
 		returnWatcherToLobby = function(game_id, client_id) {
@@ -130,10 +131,10 @@ define(function(require) {
 				data.game_id = null;
 			}
 
-			pubsub.publish('client-RemoveGameWatcher', game_id, client_id);
-			pubsub.publish('client-AddLobbyClient', client_id);
+			pubsub.publish(enums.PubSub.Client_RemoveGameWatcher, game_id, client_id);
+			pubsub.publish(enums.PubSub.Client_AddLobbyClient, client_id);
 			if (client_id === data.client_id) {
-				pubsub.publish('client-LeaveGame');
+				pubsub.publish(enums.PubSub.Client_LeaveGame);
 			}
 		},
 		destroyGame = function(game_id) {
@@ -159,16 +160,16 @@ define(function(require) {
 
 	reset();
 
-	pubsub.subscribe('server-SetClientId', setClientId);
-	pubsub.subscribe('server-SetClientIdToData', setClientIdToData);
-	pubsub.subscribe('server-SetGameState', setGameState);
-	pubsub.subscribe('server-SetGamePlayerUsername', setGamePlayerUsername);
-	pubsub.subscribe('server-SetGamePlayerClientId', setGamePlayerClientId);
-	pubsub.subscribe('server-SetGameWatcherClientId', setGameWatcherClientId);
-	pubsub.subscribe('server-ReturnWatcherToLobby', returnWatcherToLobby);
-	pubsub.subscribe('server-DestroyGame', destroyGame);
-	pubsub.subscribe('network-Close', reset);
-	pubsub.subscribe('network-Error', reset);
+	pubsub.subscribe(enums.PubSub.Server_SetClientId, setClientId);
+	pubsub.subscribe(enums.PubSub.Server_SetClientIdToData, setClientIdToData);
+	pubsub.subscribe(enums.PubSub.Server_SetGameState, setGameState);
+	pubsub.subscribe(enums.PubSub.Server_SetGamePlayerUsername, setGamePlayerUsername);
+	pubsub.subscribe(enums.PubSub.Server_SetGamePlayerClientId, setGamePlayerClientId);
+	pubsub.subscribe(enums.PubSub.Server_SetGameWatcherClientId, setGameWatcherClientId);
+	pubsub.subscribe(enums.PubSub.Server_ReturnWatcherToLobby, returnWatcherToLobby);
+	pubsub.subscribe(enums.PubSub.Server_DestroyGame, destroyGame);
+	pubsub.subscribe(enums.PubSub.Network_Close, reset);
+	pubsub.subscribe(enums.PubSub.Network_Error, reset);
 
 	return data;
 });

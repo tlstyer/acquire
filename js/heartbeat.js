@@ -31,9 +31,9 @@ define(function(require) {
 			receive_timeout_id = null;
 		};
 
-	pubsub.subscribe('network-Open', start);
-	pubsub.subscribe('network-SendMessage', messageSent);
-	pubsub.subscribe('network-MessageProcessingComplete', messageReceived);
-	pubsub.subscribe('network-Close', reset);
-	pubsub.subscribe('network-Error', reset);
+	pubsub.subscribe(enums.PubSub.Network_Open, start);
+	pubsub.subscribe(enums.PubSub.Network_SendMessage, messageSent);
+	pubsub.subscribe(enums.PubSub.Network_MessageProcessingComplete, messageReceived);
+	pubsub.subscribe(enums.PubSub.Network_Close, reset);
+	pubsub.subscribe(enums.PubSub.Network_Error, reset);
 });

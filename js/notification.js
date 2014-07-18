@@ -1,5 +1,6 @@
 define(function(require) {
 	var common_data = require('common_data'),
+		enums = require('enums'),
 		options = require('options'),
 		pubsub = require('pubsub'),
 		title = '',
@@ -45,9 +46,9 @@ define(function(require) {
 			intervalCallback();
 		};
 
-	pubsub.subscribe('client-SetClientData', onClientSetClientData);
-	pubsub.subscribe('network-Close', resetTitle);
-	pubsub.subscribe('network-Error', resetTitle);
+	pubsub.subscribe(enums.PubSub.Client_SetClientData, onClientSetClientData);
+	pubsub.subscribe(enums.PubSub.Network_Close, resetTitle);
+	pubsub.subscribe(enums.PubSub.Network_Error, resetTitle);
 
 	return {
 		turnOn: turnOn,

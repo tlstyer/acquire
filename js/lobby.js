@@ -158,14 +158,14 @@ define(function(require) {
 	$('#button-create-game').click(createGameButtonClicked);
 	$('#lobby-games').on('click', 'input', gameButtonClicked);
 
-	pubsub.subscribe('client-Resize', resize);
-	pubsub.subscribe('client-AddLobbyClient', addLobbyClient);
-	pubsub.subscribe('client-RemoveLobbyClient', removeLobbyClient);
-	pubsub.subscribe('client-SetGameState', setGameState);
-	pubsub.subscribe('client-SetGamePlayerData', setGamePlayerData);
-	pubsub.subscribe('client-AddGameWatcher', addGameWatcher);
-	pubsub.subscribe('client-RemoveGameWatcher', removeGameWatcher);
-	pubsub.subscribe('server-DestroyGame', destroyGame);
-	pubsub.subscribe('network-Close', reset);
-	pubsub.subscribe('network-Error', reset);
+	pubsub.subscribe(enums.PubSub.Client_Resize, resize);
+	pubsub.subscribe(enums.PubSub.Client_AddLobbyClient, addLobbyClient);
+	pubsub.subscribe(enums.PubSub.Client_RemoveLobbyClient, removeLobbyClient);
+	pubsub.subscribe(enums.PubSub.Client_SetGameState, setGameState);
+	pubsub.subscribe(enums.PubSub.Client_SetGamePlayerData, setGamePlayerData);
+	pubsub.subscribe(enums.PubSub.Client_AddGameWatcher, addGameWatcher);
+	pubsub.subscribe(enums.PubSub.Client_RemoveGameWatcher, removeGameWatcher);
+	pubsub.subscribe(enums.PubSub.Server_DestroyGame, destroyGame);
+	pubsub.subscribe(enums.PubSub.Network_Close, reset);
+	pubsub.subscribe(enums.PubSub.Network_Error, reset);
 });

@@ -1,6 +1,7 @@
 define(function(require) {
 	var $ = require('jquery'),
 		common_functions = require('common_functions'),
+		enums = require('enums'),
 		pubsub = require('pubsub'),
 		data = {},
 		current_page = null,
@@ -93,7 +94,7 @@ define(function(require) {
 
 					setStoredOptionValue(key, value);
 					data[key] = value;
-					pubsub.publish('client-SetOption', key, value);
+					pubsub.publish(enums.PubSub.Client_SetOption, key, value);
 
 					$input = $('#option-' + key);
 					switch (detail.type) {
@@ -124,18 +125,18 @@ define(function(require) {
 
 			setStoredOptionValue(key, value);
 			data[key] = value;
-			pubsub.publish('client-SetOption', key, value);
+			pubsub.publish(enums.PubSub.Client_SetOption, key, value);
 		};
 
 	data.setPositionForPage = setPositionForPage;
 
-	pubsub.subscribe('client-InitializationComplete', function() {
+	pubsub.subscribe(enums.PubSub.Client_InitializationComplete, function() {
 		initialize();
 	});
 
 	$('#options input, #options select').change(processChange);
 
-	pubsub.subscribe('client-SetPage', setPage);
+	pubsub.subscribe(enums.PubSub.Client_SetPage, setPage);
 
 	return data;
 });
