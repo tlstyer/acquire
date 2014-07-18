@@ -16,6 +16,7 @@ define(function(require) {
 			width = position.width;
 			height = position.height - 25;
 			common_functions.setElementPosition($('#chat-history'), left, top, width, height);
+			common_functions.scrollToBottom($('#chat-history'));
 
 			top += height;
 			if (current_page === 'game') {

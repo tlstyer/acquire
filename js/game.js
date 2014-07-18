@@ -80,6 +80,7 @@ define(function(require) {
 
 			height = Math.floor((window_height - top - 51) / 2) - 2;
 			common_functions.setElementPosition($('#game-history'), left, top, width, height);
+			common_functions.scrollToBottom($('#game-history'));
 
 			top += height + 2;
 			height = 22;
