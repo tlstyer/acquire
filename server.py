@@ -52,7 +52,7 @@ class AcquireServerProtocol(autobahn.asyncio.websocket.WebSocketServerProtocol):
         current_time = time.time()
         AcquireServerProtocol.client_id_to_last_sent[self.client_id] = current_time
         AcquireServerProtocol.client_id_to_last_received[self.client_id] = current_time
-        messages_client = [[enums.CommandsToClient.SetClientId.value, self.client_id]]
+        messages_client = []
 
         print(self.client_id, 'open', self.ip_address)
 
@@ -74,6 +74,8 @@ class AcquireServerProtocol(autobahn.asyncio.websocket.WebSocketServerProtocol):
         else:
             self.logged_in = True
             AcquireServerProtocol.usernames.add(self.username)
+
+            messages_client.append([enums.CommandsToClient.SetClientId.value, self.client_id])
 
             # tell client about other clients' data
             for client in AcquireServerProtocol.client_id_to_client.values():
