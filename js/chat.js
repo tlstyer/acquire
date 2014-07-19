@@ -80,15 +80,9 @@ define(function(require) {
 		new_messages_count = 0,
 		appendElement = function($element, client_id) {
 			var $chat_history = $('#chat-history'),
-				scroll_is_at_bottom = common_functions.isScrollAtBottom($chat_history),
-				$username = $element.find('.username');
+				scroll_is_at_bottom = common_functions.isScrollAtBottom($chat_history);
 
-			if (client_id === common_data.client_id) {
-				$username.removeClass('username');
-				$username.text('You');
-			} else {
-				$username.text(common_data.client_id_to_data[client_id].username);
-			}
+			$element.find('.username').text(common_data.client_id_to_data[client_id].username);
 
 			$chat_history.append($element);
 
