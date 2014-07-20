@@ -966,6 +966,7 @@ define(function(require) {
 			$('#team2-net').text(12000);
 
 			$('#game-history').empty();
+			$('#game-history-new-messages').hide();
 
 			$('#game-status').empty();
 

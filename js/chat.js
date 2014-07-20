@@ -161,6 +161,7 @@ define(function(require) {
 		},
 		reset = function() {
 			$('#chat-history').empty();
+			$('#chat-history-new-messages').hide();
 
 			add_client_location_messages = false;
 		};
