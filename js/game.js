@@ -32,7 +32,7 @@ define(function(require) {
 		},
 		resize = function(window_width, window_height) {
 			var $score_sheet = $('#score-sheet'),
-				cell_width_gb_based_on_width, cell_width_gb_based_on_height, cell_width_gb, left_side_width, cell_width_ss, score_sheet_width, num_rows, left, top, width, height, font_size;
+				cell_width_gb_based_on_width, cell_width_gb_based_on_height, cell_width_gb, left_side_width, cell_width_ss, score_sheet_width, left, top, width, height, font_size;
 
 			// algebra and estimation were used in the determination of these 2 formulas
 			cell_width_gb_based_on_width = (window_width - 6) / 24;
@@ -67,14 +67,7 @@ define(function(require) {
 			common_functions.setElementPosition($score_sheet, left, 0, score_sheet_width, null, Math.floor(cell_width_ss * 2 / 3));
 			$score_sheet.find('tr').css('height', cell_width_ss + 'px');
 
-			num_rows = 4;
-			$score_sheet.find('.score-sheet-player').each(function() {
-				if ($(this).css('display') !== 'none') {
-					num_rows++;
-				}
-			});
-
-			top = num_rows * cell_width_ss + 4;
+			top = (common_data.game_id_to_number_of_players[common_data.game_id] + 4) * cell_width_ss + 4;
 			width = window_width - left;
 			font_size = Math.floor(cell_width_ss / 2);
 
