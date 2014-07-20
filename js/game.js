@@ -319,11 +319,10 @@ define(function(require) {
 			}
 
 			// chain size
-			row = enums.ScoreSheetRows.ChainSize;
 			row_data = score_sheet_data[1];
 			num_indexes = row_data.length;
 			for (index = 0; index < num_indexes; index++) {
-				setScoreSheetCell(row, index, row_data[index]);
+				setScoreSheetCell(enums.ScoreSheetRows.ChainSize, index, row_data[index]);
 			}
 		},
 		turn_player_id = null,

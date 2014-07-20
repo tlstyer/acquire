@@ -17,7 +17,7 @@ sed "s/version = 'VERSION'/version = '${TIMESTAMP}'/" server.py > dist/server.py
 chmod u+x dist/server.py
 
 # enums.py
-cp enums.py dist
+cp -a enums.py dist
 
 # index.html
 sed "s/<link rel=\"stylesheet\" href=\"css\/main.css\">/<link rel=\"stylesheet\" href=\"static\/${TIMESTAMP}.css\">/" index.html | \
