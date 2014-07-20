@@ -71,7 +71,7 @@ define(function(require) {
 			width = window_width - left;
 			font_size = Math.floor(cell_width_ss / 2);
 
-			height = Math.floor((window_height - top - 51) / 2) - 2;
+			height = Math.floor((window_height - top - 78) / 2);
 			common_functions.setElementPosition($('#game-history'), left, top, width, height);
 			common_functions.scrollToBottom($('#game-history'));
 
