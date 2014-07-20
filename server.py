@@ -2,6 +2,7 @@
 
 import asyncio
 import autobahn.asyncio.websocket
+import autobahn.websocket.protocol
 import collections
 import enums
 import math
@@ -10,6 +11,12 @@ import sys
 import time
 import traceback
 import ujson
+
+
+# override broken autobahn.websocket.protocol.PreparedMessage::_initHixie() as it tries to concatenate strings and bytes
+class PreparedMessage(autobahn.websocket.protocol.PreparedMessage):
+    def _initHixie(self, payload, binary):
+        pass
 
 
 class AcquireServerProtocol(autobahn.asyncio.websocket.WebSocketServerProtocol):
@@ -212,8 +219,9 @@ class AcquireServerProtocol(autobahn.asyncio.websocket.WebSocketServerProtocol):
             messages_json = ujson.dumps(messages)
             print(','.join(str(x) for x in sorted(client_ids)), '<-', messages_json)
             messages_json_bytes = messages_json.encode()
+            prepared_message = PreparedMessage(messages_json_bytes, False, False, False)
             for client_id in client_ids:
-                AcquireServerProtocol.client_id_to_client[client_id].sendMessage(messages_json_bytes)
+                AcquireServerProtocol.client_id_to_client[client_id].sendPreparedMessage(prepared_message)
                 del AcquireServerProtocol.client_id_to_last_sent[client_id]
                 AcquireServerProtocol.client_id_to_last_sent[client_id] = current_time
         del AcquireServerProtocol.client_ids_and_messages[:]
