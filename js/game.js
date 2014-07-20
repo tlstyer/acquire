@@ -75,7 +75,7 @@ define(function(require) {
 			common_functions.setElementPosition($('#game-history'), left, top, width, height);
 			common_functions.scrollToBottom($('#game-history'));
 
-			common_functions.setElementPosition($('#game-history-new-messages'), left, top + height - 25, width - common_functions.getScrollbarWidth(), 25);
+			common_functions.setElementPosition($('#game-history-new-messages'), left, top + height - 22, width - common_functions.getScrollbarWidth(), 22);
 
 			top += height + 2;
 			height = 22;

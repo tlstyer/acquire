@@ -18,7 +18,7 @@ define(function(require) {
 			common_functions.setElementPosition($('#chat-history'), left, top, width, height);
 			common_functions.scrollToBottom($('#chat-history'));
 
-			common_functions.setElementPosition($('#chat-history-new-messages'), left, top + height - 25, width - common_functions.getScrollbarWidth(), 25);
+			common_functions.setElementPosition($('#chat-history-new-messages'), left, top + height - 22, width - common_functions.getScrollbarWidth(), 22);
 
 			top += height;
 			if (current_page === 'game') {
