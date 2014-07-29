@@ -28,105 +28,112 @@ define(function(require) {
 				'valid': ['coordinates', 'hotel initials', 'nothing']
 			}
 		},
-		got_local_storage = 'localStorage' in window,
-		setPosition = function() {
-			var position = page_to_position[current_page];
+		got_local_storage = 'localStorage' in window;
 
-			common_functions.setElementPosition($('#options'), position.left, position.top, position.width, position.height);
-		},
-		setPage = function(page) {
-			current_page = page;
+	function setPosition() {
+		var position = page_to_position[current_page];
 
-			if (page === 'lobby') {
-				setPosition();
-				$('#options').show();
-			} else {
-				$('#options').hide();
-			}
-		},
-		setPositionForPage = function(page, left, top, width, height) {
-			page_to_position[page] = {
-				left: left,
-				top: top,
-				width: width,
-				height: height
-			};
+		common_functions.setElementPosition($('#options'), position.left, position.top, position.width, position.height);
+	}
 
-			if (page === current_page) {
-				setPosition();
-			}
-		},
-		getStoredOptionValue = function(key) {
-			var value = null;
+	function setPage(page) {
+		current_page = page;
 
-			if (got_local_storage) {
-				value = localStorage[key];
+		if (page === 'lobby') {
+			setPosition();
+			$('#options').show();
+		} else {
+			$('#options').hide();
+		}
+	}
 
-				if (typeof value === 'undefined') {
-					value = null;
-				} else {
-					try {
-						value = JSON.parse(value);
-					} catch (e) {
-						value = null;
-					}
-				}
-			}
-
-			return value;
-		},
-		setStoredOptionValue = function(key, value) {
-			if (got_local_storage) {
-				localStorage[key] = JSON.stringify(value);
-			}
-		},
-		initialize = function() {
-			var key, detail, value, $input;
-
-			for (key in details) {
-				if (details.hasOwnProperty(key)) {
-					detail = details[key];
-
-					value = getStoredOptionValue(key);
-					if ($.inArray(value, detail.valid) === -1) {
-						value = detail['default'];
-					}
-
-					setStoredOptionValue(key, value);
-					data[key] = value;
-					pubsub.publish(enums.PubSub.Client_SetOption, key, value);
-
-					$input = $('#option-' + key);
-					switch (detail.type) {
-					case 'checkbox':
-						$input.prop('checked', value);
-						break;
-					case 'select':
-						$input.val(value);
-						break;
-					}
-				}
-			}
-		},
-		processChange = function() {
-			var $input = $(this),
-				key = $input.attr('id').substr(7),
-				detail = details[key],
-				value;
-
-			switch (detail.type) {
-			case 'checkbox':
-				value = $input.prop('checked');
-				break;
-			case 'select':
-				value = $input.val();
-				break;
-			}
-
-			setStoredOptionValue(key, value);
-			data[key] = value;
-			pubsub.publish(enums.PubSub.Client_SetOption, key, value);
+	function setPositionForPage(page, left, top, width, height) {
+		page_to_position[page] = {
+			left: left,
+			top: top,
+			width: width,
+			height: height
 		};
+
+		if (page === current_page) {
+			setPosition();
+		}
+	}
+
+	function getStoredOptionValue(key) {
+		var value = null;
+
+		if (got_local_storage) {
+			value = localStorage[key];
+
+			if (typeof value === 'undefined') {
+				value = null;
+			} else {
+				try {
+					value = JSON.parse(value);
+				} catch (e) {
+					value = null;
+				}
+			}
+		}
+
+		return value;
+	}
+
+	function setStoredOptionValue(key, value) {
+		if (got_local_storage) {
+			localStorage[key] = JSON.stringify(value);
+		}
+	}
+
+	function initialize() {
+		var key, detail, value, $input;
+
+		for (key in details) {
+			if (details.hasOwnProperty(key)) {
+				detail = details[key];
+
+				value = getStoredOptionValue(key);
+				if ($.inArray(value, detail.valid) === -1) {
+					value = detail['default'];
+				}
+
+				setStoredOptionValue(key, value);
+				data[key] = value;
+				pubsub.publish(enums.PubSub.Client_SetOption, key, value);
+
+				$input = $('#option-' + key);
+				switch (detail.type) {
+				case 'checkbox':
+					$input.prop('checked', value);
+					break;
+				case 'select':
+					$input.val(value);
+					break;
+				}
+			}
+		}
+	}
+
+	function processChange() {
+		var $input = $(this),
+			key = $input.attr('id').substr(7),
+			detail = details[key],
+			value;
+
+		switch (detail.type) {
+		case 'checkbox':
+			value = $input.prop('checked');
+			break;
+		case 'select':
+			value = $input.val();
+			break;
+		}
+
+		setStoredOptionValue(key, value);
+		data[key] = value;
+		pubsub.publish(enums.PubSub.Client_SetOption, key, value);
+	}
 
 	data.setPositionForPage = setPositionForPage;
 
