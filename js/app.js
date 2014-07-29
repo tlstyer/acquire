@@ -4,6 +4,9 @@ define(function(require) {
 		network = require('network'),
 		pubsub = require('pubsub'),
 		current_page = null,
+		periodic_resize_check_width = null,
+		periodic_resize_check_height = null,
+		got_local_storage = 'localStorage' in window,
 		showPage = function(page) {
 			if (page !== current_page) {
 				$('.page').hide();
@@ -25,8 +28,6 @@ define(function(require) {
 				$('#section-websockets-not-supported').show();
 			}
 		},
-		periodic_resize_check_width = null,
-		periodic_resize_check_height = null,
 		periodicResizeCheck = function() {
 			var width = $(window).width(),
 				height = $(window).height();
@@ -39,7 +40,6 @@ define(function(require) {
 
 			setTimeout(periodicResizeCheck, 500);
 		},
-		got_local_storage = 'localStorage' in window,
 		initializeUsername = function() {
 			var username;
 

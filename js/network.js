@@ -2,11 +2,11 @@ define(function(require) {
 	var ws = null,
 		enums = require('enums'),
 		pubsub = require('pubsub'),
+		server_url = null,
+		version = null,
 		isBrowserSupported = function() {
 			return 'WebSocket' in window;
 		},
-		server_url = null,
-		version = null,
 		initializeServerUrlData = function() {
 			var result = /^http(s?):\/\/([^\/]+)\//.exec(window.location.href);
 

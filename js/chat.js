@@ -7,6 +7,8 @@ define(function(require) {
 		pubsub = require('pubsub'),
 		current_page = null,
 		page_to_position = {},
+		new_messages_count = 0,
+		add_client_location_messages = false,
 		setPosition = function() {
 			var position = page_to_position[current_page],
 				left, top, width, height;
@@ -77,7 +79,6 @@ define(function(require) {
 
 			return false;
 		},
-		new_messages_count = 0,
 		appendElement = function($element, client_id) {
 			var $chat_history = $('#chat-history'),
 				scroll_is_at_bottom = common_functions.isScrollAtBottom($chat_history);
@@ -124,7 +125,6 @@ define(function(require) {
 
 			appendElement($message, client_id);
 		},
-		add_client_location_messages = false,
 		messageProcessingComplete = function() {
 			add_client_location_messages = true;
 		},

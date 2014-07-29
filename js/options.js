@@ -6,6 +6,29 @@ define(function(require) {
 		data = {},
 		current_page = null,
 		page_to_position = {},
+		details = {
+			'enable-page-title-notifications': {
+				'type': 'checkbox',
+				'default': true,
+				'valid': [true, false]
+			},
+			'enable-sound-notifications': {
+				'type': 'checkbox',
+				'default': true,
+				'valid': [true, false]
+			},
+			'enable-high-contrast-colors': {
+				'type': 'checkbox',
+				'default': false,
+				'valid': [true, false]
+			},
+			'game-board-label-mode': {
+				'type': 'select',
+				'default': 'coordinates',
+				'valid': ['coordinates', 'hotel initials', 'nothing']
+			}
+		},
+		got_local_storage = 'localStorage' in window,
 		setPosition = function() {
 			var position = page_to_position[current_page];
 
@@ -33,29 +56,6 @@ define(function(require) {
 				setPosition();
 			}
 		},
-		details = {
-			'enable-page-title-notifications': {
-				'type': 'checkbox',
-				'default': true,
-				'valid': [true, false]
-			},
-			'enable-sound-notifications': {
-				'type': 'checkbox',
-				'default': true,
-				'valid': [true, false]
-			},
-			'enable-high-contrast-colors': {
-				'type': 'checkbox',
-				'default': false,
-				'valid': [true, false]
-			},
-			'game-board-label-mode': {
-				'type': 'select',
-				'default': 'coordinates',
-				'valid': ['coordinates', 'hotel initials', 'nothing']
-			}
-		},
-		got_local_storage = 'localStorage' in window,
 		getStoredOptionValue = function(key) {
 			var value = null;
 

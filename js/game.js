@@ -8,6 +8,43 @@ define(function(require) {
 		notification = require('notification'),
 		options = require('options'),
 		pubsub = require('pubsub'),
+		game_board_cell_types = [],
+		game_board_type_counts = [],
+		tile_rack = [null, null, null, null, null, null],
+		score_sheet_data = [
+			[0, 0, 0, 0, 0, 0, 0, 60, 60],
+			[0, 0, 0, 0, 0, 0, 0, 60, 60],
+			[0, 0, 0, 0, 0, 0, 0, 60, 60],
+			[0, 0, 0, 0, 0, 0, 0, 60, 60],
+			[0, 0, 0, 0, 0, 0, 0, 60, 60],
+			[0, 0, 0, 0, 0, 0, 0, 60, 60],
+			[25, 25, 25, 25, 25, 25, 25],
+			[0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0]
+		],
+		score_sheet_changed = false,
+		turn_player_id = null,
+		sub_turn_player_id = null,
+		game_history_new_messages_count = 0,
+		play_tile_action_enabled = false,
+		dispose_of_shares_defunct_type_count = 0,
+		dispose_of_shares_controlling_type_available = 0,
+		dispose_of_shares_keep = 0,
+		dispose_of_shares_trade = 0,
+		dispose_of_shares_trade_max = 0,
+		dispose_of_shares_sell = 0,
+		dispose_of_shares_sell_max = 0,
+		purchase_shares_available = null,
+		purchase_shares_cart = null,
+		game_action_constructors_lookup = {},
+		game_action_button_click_handlers = {
+			'game-action-start-game': gameActionButtonClickedStartGame,
+			'game-action-select-chain': gameActionButtonClickedSelectChain,
+			'game-action-dispose-of-shares': gameActionButtonClickedDisposeOfShares,
+			'game-action-purchase-shares': gameActionButtonClickedPurchaseShares
+		},
+		current_game_action_id = null,
+		current_player_id = null,
 		initializeHtml = function() {
 			var $body = $('#game-board tbody'),
 				y, $tr, x, $td, $score_sheet_player = $('.score-sheet-player');
@@ -123,7 +160,6 @@ define(function(require) {
 				}
 			}
 		},
-		game_board_cell_types = [],
 		initializeGameBoardCellTypes = function() {
 			var initial_type = enums.GameBoardTypes.Nothing,
 				x, y, column;
@@ -136,7 +172,6 @@ define(function(require) {
 				game_board_cell_types.push(column);
 			}
 		},
-		game_board_type_counts = [],
 		initializeGameBoardTypeCounts = function() {
 			var type_id, num_types = enums.GameBoardTypes.Max;
 
@@ -194,7 +229,6 @@ define(function(require) {
 				}
 			}
 		},
-		tile_rack = [null, null, null, null, null, null],
 		setTile = function(tile_index, x, y, game_board_type_id) {
 			var $button = $('#game-tile-' + tile_index);
 
@@ -220,18 +254,6 @@ define(function(require) {
 
 			$button.css('visibility', 'hidden');
 		},
-		score_sheet_data = [
-			[0, 0, 0, 0, 0, 0, 0, 60, 60],
-			[0, 0, 0, 0, 0, 0, 0, 60, 60],
-			[0, 0, 0, 0, 0, 0, 0, 60, 60],
-			[0, 0, 0, 0, 0, 0, 0, 60, 60],
-			[0, 0, 0, 0, 0, 0, 0, 60, 60],
-			[0, 0, 0, 0, 0, 0, 0, 60, 60],
-			[25, 25, 25, 25, 25, 25, 25],
-			[0, 0, 0, 0, 0, 0, 0],
-			[0, 0, 0, 0, 0, 0, 0]
-		],
-		score_sheet_changed = false,
 		setScoreSheetCell = function(row, index, data) {
 			var $row, available, player_id, price, index_class, mark_chain_as_safe = false;
 
@@ -325,8 +347,6 @@ define(function(require) {
 				setScoreSheetCell(enums.ScoreSheetRows.ChainSize, index, row_data[index]);
 			}
 		},
-		turn_player_id = null,
-		sub_turn_player_id = null,
 		setTurn = function(player_id) {
 			turn_player_id = player_id;
 			$('#score-sheet .score-sheet-player').removeClass('my-turn');
@@ -478,7 +498,6 @@ define(function(require) {
 
 			score_sheet_changed = false;
 		},
-		game_history_new_messages_count = 0,
 		addGameHistoryMessage = function(game_history_message_id, player_id) {
 			var $message = $('#game-history-' + common_functions.getHyphenatedStringFromEnumName(enums.GameHistoryMessages[game_history_message_id])).clone().removeAttr('id'),
 				$game_history = $('#game-history'),
@@ -580,7 +599,6 @@ define(function(require) {
 				$('#game-history-new-messages').hide();
 			}
 		},
-		play_tile_action_enabled = false,
 		gameActionConstructorPlayTile = function() {
 			play_tile_action_enabled = true;
 		},
@@ -639,13 +657,6 @@ define(function(require) {
 			network.sendMessage(enums.CommandsToServer.DoGameAction, current_game_action_id, parseInt($button.attr('data-index'), 10));
 			$('#game-action-select-chain').hide();
 		},
-		dispose_of_shares_defunct_type_count = 0,
-		dispose_of_shares_controlling_type_available = 0,
-		dispose_of_shares_keep = 0,
-		dispose_of_shares_trade = 0,
-		dispose_of_shares_trade_max = 0,
-		dispose_of_shares_sell = 0,
-		dispose_of_shares_sell_max = 0,
 		updateDisposeOfSharesElements = function() {
 			dispose_of_shares_keep = dispose_of_shares_defunct_type_count - dispose_of_shares_trade - dispose_of_shares_sell;
 
@@ -714,8 +725,6 @@ define(function(require) {
 
 			updateDisposeOfSharesElements();
 		},
-		purchase_shares_available = null,
-		purchase_shares_cart = null,
 		updatePurchaseSharesElements = function() {
 			var score_sheet_price = score_sheet_data[enums.ScoreSheetRows.Price],
 				score_sheet_available = score_sheet_data[enums.ScoreSheetRows.Available],
@@ -823,7 +832,6 @@ define(function(require) {
 
 			updatePurchaseSharesElements();
 		},
-		game_action_constructors_lookup = {},
 		initializeGameActionConstructorsLookup = function() {
 			game_action_constructors_lookup[enums.GameActions.StartGame] = gameActionConstructorStartGame;
 			game_action_constructors_lookup[enums.GameActions.PlayTile] = gameActionConstructorPlayTile;
@@ -833,19 +841,11 @@ define(function(require) {
 			game_action_constructors_lookup[enums.GameActions.DisposeOfShares] = gameActionConstructorDisposeOfShares;
 			game_action_constructors_lookup[enums.GameActions.PurchaseShares] = gameActionConstructorPurchaseShares;
 		},
-		game_action_button_click_handlers = {
-			'game-action-start-game': gameActionButtonClickedStartGame,
-			'game-action-select-chain': gameActionButtonClickedSelectChain,
-			'game-action-dispose-of-shares': gameActionButtonClickedDisposeOfShares,
-			'game-action-purchase-shares': gameActionButtonClickedPurchaseShares
-		},
 		gameActionButtonClicked = function() {
 			var $this = $(this);
 
 			game_action_button_click_handlers[$this.closest('.game-action').attr('id')]($this);
 		},
-		current_game_action_id = null,
-		current_player_id = null,
 		setGameAction = function(game_action_id, player_id) {
 			var hyphenated_enum_name = common_functions.getHyphenatedStringFromEnumName(enums.GameActions[game_action_id]),
 				$action = $('#game-status-' + hyphenated_enum_name).clone().removeAttr('id'),
