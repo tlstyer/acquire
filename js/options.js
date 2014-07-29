@@ -130,12 +130,9 @@ define(function(require) {
 
 	data.setPositionForPage = setPositionForPage;
 
-	pubsub.subscribe(enums.PubSub.Client_InitializationComplete, function() {
-		initialize();
-	});
-
 	$('#options input, #options select').change(processChange);
 
+	pubsub.subscribe(enums.PubSub.Client_InitializationComplete, initialize);
 	pubsub.subscribe(enums.PubSub.Client_SetPage, setPage);
 
 	return data;

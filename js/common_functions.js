@@ -8,20 +8,16 @@ define(function(require) {
 			child = parent.children();
 			scrollbar_width = child.innerWidth() - child.height(99).innerWidth();
 			parent.remove();
-		};
-
-	initializeScrollbarWidth();
-
-	return {
-		getHyphenatedStringFromEnumName: function(enum_name) {
+		},
+		getHyphenatedStringFromEnumName = function(enum_name) {
 			return enum_name.replace(/([A-Z])/g, function($1) {
 				return '-' + $1.toLowerCase();
 			}).substring(1);
 		},
-		getTileName: function(x, y) {
+		getTileName = function(x, y) {
 			return (x + 1) + String.fromCharCode(y + 65);
 		},
-		setElementPosition: function($element, left, top, width, height, font_size) {
+		setElementPosition = function($element, left, top, width, height, font_size) {
 			if (left !== null) {
 				$element.css('left', left);
 			}
@@ -38,14 +34,24 @@ define(function(require) {
 				$element.css('font-size', font_size + 'px');
 			}
 		},
-		isScrollAtBottom: function($element) {
+		isScrollAtBottom = function($element) {
 			return $element.scrollTop() + $element.innerHeight() >= $element[0].scrollHeight;
 		},
-		scrollToBottom: function($element) {
+		scrollToBottom = function($element) {
 			$element.scrollTop($element[0].scrollHeight - $element.innerHeight());
 		},
-		getScrollbarWidth: function() {
+		getScrollbarWidth = function() {
 			return scrollbar_width;
-		}
+		};
+
+	initializeScrollbarWidth();
+
+	return {
+		getHyphenatedStringFromEnumName: getHyphenatedStringFromEnumName,
+		getTileName: getTileName,
+		setElementPosition: setElementPosition,
+		isScrollAtBottom: isScrollAtBottom,
+		scrollToBottom: scrollToBottom,
+		getScrollbarWidth: getScrollbarWidth
 	};
 });
