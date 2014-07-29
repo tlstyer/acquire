@@ -6,7 +6,7 @@ define(function(require) {
 		current_page = null,
 		periodic_resize_check_width = null,
 		periodic_resize_check_height = null,
-		got_local_storage = 'localStorage' in window;
+		got_local_storage = window.hasOwnProperty('localStorage');
 
 	function showPage(page) {
 		if (page !== current_page) {
@@ -48,8 +48,8 @@ define(function(require) {
 		var username;
 
 		if (got_local_storage) {
-			username = localStorage['username'];
-			if (typeof username !== 'undefined') {
+			username = localStorage.username;
+			if (username !== undefined) {
 				$('#login-form-username').val(username);
 			}
 		}
@@ -62,7 +62,7 @@ define(function(require) {
 			onServerFatalError(enums.FatalErrors.InvalidUsername);
 		} else {
 			if (got_local_storage) {
-				localStorage['username'] = username;
+				localStorage.username = username;
 			}
 
 			showPage('connecting');

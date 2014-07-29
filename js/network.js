@@ -6,7 +6,7 @@ define(function(require) {
 		version = null;
 
 	function isBrowserSupported() {
-		return 'WebSocket' in window;
+		return window.hasOwnProperty('WebSocket');
 	}
 
 	function initializeServerUrlData() {
@@ -30,13 +30,13 @@ define(function(require) {
 					pubsub.publish(enums.PubSub.Network_Open);
 				};
 
-				ws.onclose = function(e) {
+				ws.onclose = function() {
 					ws = null;
 					pubsub.publish(enums.PubSub.Network_Close);
 				};
 
 				ws.onmessage = function(e) {
-					var data, data_length, i, command;
+					var data, data_length, i;
 
 					try {
 						data = JSON.parse(e.data);
@@ -44,14 +44,14 @@ define(function(require) {
 						for (i = 0; i < data_length; i++) {
 							pubsub.publish.apply(null, data[i]);
 						}
-					} catch (e) {
-						console.log(e.stack);
+					} catch (e2) {
+						console.log(e2.stack);
 					}
 
 					pubsub.publish(enums.PubSub.Network_MessageProcessingComplete);
 				};
 
-				ws.onerror = function(e) {
+				ws.onerror = function() {
 					pubsub.publish(enums.PubSub.Network_Error);
 				};
 			}

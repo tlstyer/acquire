@@ -28,7 +28,7 @@ define(function(require) {
 				'valid': ['coordinates', 'hotel initials', 'nothing']
 			}
 		},
-		got_local_storage = 'localStorage' in window;
+		got_local_storage = window.hasOwnProperty('localStorage');
 
 	function setPosition() {
 		var position = page_to_position[current_page];
@@ -66,7 +66,7 @@ define(function(require) {
 		if (got_local_storage) {
 			value = localStorage[key];
 
-			if (typeof value === 'undefined') {
+			if (value === undefined) {
 				value = null;
 			} else {
 				try {

@@ -29,10 +29,10 @@ define(function(require) {
 
 	function setGameState(game_id, state_id, mode, max_players) {
 		data.game_id_to_game_state[game_id] = state_id;
-		if (typeof mode !== 'undefined') {
+		if (mode !== undefined) {
 			data.game_id_to_mode[game_id] = mode;
 		}
-		if (typeof max_players !== 'undefined') {
+		if (max_players !== undefined) {
 			data.game_id_to_max_players[game_id] = max_players;
 		}
 		if (!data.game_id_to_number_of_players.hasOwnProperty(game_id)) {

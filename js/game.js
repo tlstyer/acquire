@@ -416,12 +416,8 @@ define(function(require) {
 		if (player_id_and_amount_array[0].amount === player_id_and_amount_array[1].amount) {
 			// in case of tie for largest shareholder, first and second bonuses are combined and divided equally between tying shareholders
 			num_tying = 2;
-			while (num_tying < player_id_and_amount_array.length) {
-				if (player_id_and_amount_array[num_tying].amount === player_id_and_amount_array[0].amount) {
-					num_tying++;
-					continue;
-				}
-				break;
+			while (num_tying < player_id_and_amount_array.length && player_id_and_amount_array[num_tying].amount === player_id_and_amount_array[0].amount) {
+				num_tying++;
 			}
 			bonus = Math.ceil(((bonus_price + bonus_price / 2)) / num_tying);
 			for (player_id = 0; player_id < num_tying; player_id++) {
@@ -435,12 +431,8 @@ define(function(require) {
 
 		// see if there's a tie for 2nd place
 		num_tying = 1;
-		while (num_tying < player_id_and_amount_array.length - 1) {
-			if (player_id_and_amount_array[num_tying + 1].amount === player_id_and_amount_array[1].amount) {
-				num_tying++;
-				continue;
-			}
-			break;
+		while (num_tying < player_id_and_amount_array.length - 1 && player_id_and_amount_array[num_tying + 1].amount === player_id_and_amount_array[1].amount) {
+			num_tying++;
 		}
 
 		if (num_tying === 1) {
@@ -518,7 +510,7 @@ define(function(require) {
 		score_sheet_changed = false;
 	}
 
-	function addGameHistoryMessage(game_history_message_id, player_id) {
+	function addGameHistoryMessage(game_history_message_id, player_id, argument2, argument3, argument4) {
 		var $message = $('#game-history-' + common_functions.getHyphenatedStringFromEnumName(enums.GameHistoryMessages[game_history_message_id])).clone().removeAttr('id'),
 			$game_history = $('#game-history'),
 			scroll_is_at_bottom = common_functions.isScrollAtBottom($game_history),
@@ -533,7 +525,7 @@ define(function(require) {
 		case enums.GameHistoryMessages.DrewTile:
 		case enums.GameHistoryMessages.PlayedTile:
 		case enums.GameHistoryMessages.ReplacedDeadTile:
-			$message.find('.tile').text(common_functions.getTileName(arguments[2], arguments[3]));
+			$message.find('.tile').text(common_functions.getTileName(argument2, argument3));
 			break;
 		case enums.GameHistoryMessages.FormedChain:
 		case enums.GameHistoryMessages.SelectedMergerSurvivor:
@@ -541,25 +533,25 @@ define(function(require) {
 		case enums.GameHistoryMessages.ReceivedBonus:
 		case enums.GameHistoryMessages.DisposedOfShares:
 			$element = $message.find('.chain');
-			$element.addClass('color-' + enums.GameBoardTypes[arguments[2]].toLowerCase());
-			$element.text(enums.GameBoardTypes[arguments[2]]);
+			$element.addClass('color-' + enums.GameBoardTypes[argument2].toLowerCase());
+			$element.text(enums.GameBoardTypes[argument2]);
 			if (game_history_message_id === enums.GameHistoryMessages.ReceivedBonus) {
 				$element = $message.find('.amount');
-				$element.text(arguments[3] * 100);
+				$element.text(argument3 * 100);
 			}
 			if (game_history_message_id === enums.GameHistoryMessages.DisposedOfShares) {
 				$element = $message.find('.trade-amount');
-				$element.text(arguments[3]);
+				$element.text(argument3);
 				$element = $message.find('.sell-amount');
-				$element.text(arguments[4]);
+				$element.text(argument4);
 			}
 			break;
 		case enums.GameHistoryMessages.MergedChains:
 			$element = $message.find('.chains');
 			parts = [];
-			length = arguments[2].length;
+			length = argument2.length;
 			for (index = 0; index < length; index++) {
-				name = enums.GameBoardTypes[arguments[2][index]];
+				name = enums.GameBoardTypes[argument2[index]];
 				parts.push('<span class="color-' + name.toLowerCase() + '">' + name + '</span>');
 			}
 
@@ -574,9 +566,9 @@ define(function(require) {
 		case enums.GameHistoryMessages.PurchasedShares:
 			$element = $message.find('.chains');
 			parts = [];
-			length = arguments[2].length;
+			length = argument2.length;
 			for (index = 0; index < length; index++) {
-				entry = arguments[2][index];
+				entry = argument2[index];
 				name = enums.GameBoardTypes[entry[0]];
 				parts.push(entry[1] + ' <span class="color-' + name.toLowerCase() + '">' + name + '</span>');
 			}
@@ -884,7 +876,7 @@ define(function(require) {
 		game_action_button_click_handlers[$this.closest('.game-action').attr('id')]($this);
 	}
 
-	function setGameAction(game_action_id, player_id) {
+	function setGameAction(game_action_id, player_id, argument2) {
 		var hyphenated_enum_name = common_functions.getHyphenatedStringFromEnumName(enums.GameActions[game_action_id]),
 			$action = $('#game-status-' + hyphenated_enum_name).clone().removeAttr('id'),
 			$element, length, index, name, parts = [];
@@ -918,9 +910,9 @@ define(function(require) {
 		case enums.GameActions.SelectMergerSurvivor:
 		case enums.GameActions.SelectChainToDisposeOfNext:
 			$element = $action.find('.chains');
-			length = arguments[2].length;
+			length = argument2.length;
 			for (index = 0; index < length; index++) {
-				name = enums.GameBoardTypes[arguments[2][index]];
+				name = enums.GameBoardTypes[argument2[index]];
 				parts.push('<span class="color-' + name.toLowerCase() + '">' + name[0] + '</span>');
 			}
 
@@ -932,8 +924,8 @@ define(function(require) {
 			break;
 		case enums.GameActions.DisposeOfShares:
 			$element = $action.find('.chain');
-			$element.addClass('color-' + enums.GameBoardTypes[arguments[2]].toLowerCase());
-			$element.text(enums.GameBoardTypes[arguments[2]]);
+			$element.addClass('color-' + enums.GameBoardTypes[argument2].toLowerCase());
+			$element.text(enums.GameBoardTypes[argument2]);
 			break;
 		}
 

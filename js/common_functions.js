@@ -34,7 +34,7 @@ define(function(require) {
 		if (height !== null) {
 			$element.css('height', height);
 		}
-		if (typeof font_size !== 'undefined') {
+		if (font_size !== undefined) {
 			$element.css('font-size', font_size + 'px');
 		}
 	}
