@@ -38,14 +38,10 @@ define(function(require) {
 				ws.onmessage = function(e) {
 					var data, data_length, i;
 
-					try {
-						data = JSON.parse(e.data);
-						data_length = data.length;
-						for (i = 0; i < data_length; i++) {
-							pubsub.publish.apply(null, data[i]);
-						}
-					} catch (e2) {
-						console.log(e2.stack);
+					data = JSON.parse(e.data);
+					data_length = data.length;
+					for (i = 0; i < data_length; i++) {
+						pubsub.publish.apply(null, data[i]);
 					}
 
 					pubsub.publish(enums.PubSub.Network_MessageProcessingComplete);
