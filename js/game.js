@@ -1,6 +1,5 @@
 define(function(require) {
-	var $ = require('jquery'),
-		chat = require('chat'),
+	var chat = require('chat'),
 		common_data = require('common_data'),
 		common_functions = require('common_functions'),
 		enums = require('enums'),

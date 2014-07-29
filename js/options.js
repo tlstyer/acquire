@@ -1,6 +1,5 @@
 define(function(require) {
-	var $ = require('jquery'),
-		common_functions = require('common_functions'),
+	var common_functions = require('common_functions'),
 		enums = require('enums'),
 		pubsub = require('pubsub'),
 		data = {},
