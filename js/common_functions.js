@@ -1,4 +1,4 @@
-define(function(require) {
+define(function() {
 	var scrollbar_width = 0;
 
 	function initializeScrollbarWidth() {

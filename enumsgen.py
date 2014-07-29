@@ -78,7 +78,7 @@ def generate_enums_js(mode):
             lookups.append("\t\t\t{}: '{}'".format(value, name))
         parts.append('\t\t' + class_name + ': {\n' + ',\n'.join(lookups) + '\n\t\t}')
 
-    print('define(function(require) {')
+    print('define(function() {')
     print('\treturn {')
 
     print(',\n'.join(parts))

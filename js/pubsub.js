@@ -1,4 +1,4 @@
-define(function(require) {
+define(function() {
 	var type_to_subscribers = {};
 
 	function publish(type) {
