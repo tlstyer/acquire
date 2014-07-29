@@ -48,3 +48,6 @@ popd > /dev/null
 
 # cleanup
 rm -rf dist/build
+
+# gzip
+gzip -kn9 `find dist/web -type f`
