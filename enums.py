@@ -131,7 +131,6 @@ class ScoreSheetIndexes(AutoNumber):
     Username = ()
     PositionTile = ()
     Client = ()
-    IsCreator = ()
 
 
 class ScoreSheetRows(AutoNumber):

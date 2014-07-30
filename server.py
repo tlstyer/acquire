@@ -341,11 +341,16 @@ class ScoreSheet:
         self.chain_size = [0, 0, 0, 0, 0, 0, 0]
         self.price = [0, 0, 0, 0, 0, 0, 0]
 
+        self.creator_username = None
+        self.username_to_player_id = {}
+
     def add_player(self, client, position_tile):
         messages_all = []
         messages_client = []
 
-        self.player_data.append([0, 0, 0, 0, 0, 0, 0, 60, 60, client.username, position_tile, client, len(self.player_data) == 0])
+        if not self.player_data:
+            self.creator_username = client.username
+        self.player_data.append([0, 0, 0, 0, 0, 0, 0, 60, 60, client.username, position_tile, client])
         self.player_data.sort(key=lambda t: t[enums.ScoreSheetIndexes.PositionTile.value])
 
         # update player_ids for all clients in game
@@ -356,13 +361,15 @@ class ScoreSheet:
             player_id += 1
 
         for player_id in range(len(self.player_data) - 1, -1, -1):
-            # tell everybody about player changes
             player_datum = self.player_data[player_id]
+
+            # tell everybody about player changes
             if player_id >= client.player_id:
                 if player_datum[enums.ScoreSheetIndexes.Client.value]:
                     messages_all.append([enums.CommandsToClient.SetGamePlayerClientId.value, self.game_id, player_id, player_datum[enums.ScoreSheetIndexes.Client.value].client_id])
                 else:
                     messages_all.append([enums.CommandsToClient.SetGamePlayerUsername.value, self.game_id, player_id, player_datum[enums.ScoreSheetIndexes.Username.value]])
+                self.username_to_player_id[player_datum[enums.ScoreSheetIndexes.Username.value]] = player_id
 
             # tell client about other position tiles
             if player_id != client.player_id:
@@ -374,37 +381,22 @@ class ScoreSheet:
             AcquireServerProtocol.add_pending_messages({client.client_id}, messages_client)
 
     def readd_player(self, client):
-        messages_all = []
-
-        for player_id, player_datum in enumerate(self.player_data):
-            if client.username == player_datum[enums.ScoreSheetIndexes.Username.value]:
-                client.player_id = player_id
-                player_datum[enums.ScoreSheetIndexes.Client.value] = client
-                messages_all.append([enums.CommandsToClient.SetGamePlayerClientId.value, self.game_id, player_id, client.client_id])
-
-        AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, messages_all)
+        player_id = self.username_to_player_id[client.username]
+        client.player_id = player_id
+        self.player_data[player_id][enums.ScoreSheetIndexes.Client.value] = client
+        AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, [[enums.CommandsToClient.SetGamePlayerClientId.value, self.game_id, player_id, client.client_id]])
 
     def remove_client(self, client):
-        messages_all = []
-
-        for player_id, player_datum in enumerate(self.player_data):
-            if client is player_datum[enums.ScoreSheetIndexes.Client.value]:
-                player_datum[enums.ScoreSheetIndexes.Client.value].player_id = None
-                player_datum[enums.ScoreSheetIndexes.Client.value] = None
-                messages_all.append([enums.CommandsToClient.SetGamePlayerClientId.value, self.game_id, player_id, None])
-
-        AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, messages_all)
+        player_id = client.player_id
+        client.player_id = None
+        self.player_data[player_id][enums.ScoreSheetIndexes.Client.value] = None
+        AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, [[enums.CommandsToClient.SetGamePlayerClientId.value, self.game_id, player_id, None]])
 
     def is_username_in_game(self, username):
-        for player_datum in self.player_data:
-            if username == player_datum[enums.ScoreSheetIndexes.Username.value]:
-                return True
-        return False
+        return username in self.username_to_player_id
 
     def get_creator_player_id(self):
-        for player_id, player_datum in enumerate(self.player_data):
-            if player_datum[enums.ScoreSheetIndexes.IsCreator.value]:
-                return player_id
+        return self.username_to_player_id[self.creator_username]
 
     def get_player_id_to_client_id(self):
         player_id_to_client_id = []
