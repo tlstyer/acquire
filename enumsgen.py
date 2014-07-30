@@ -38,6 +38,8 @@ def get_pubsub_enums():
     for name in sorted(names):
         lookup[name] = len(lookup)
 
+    lookup['Max'] = len(lookup)
+
     return lookup
 
 

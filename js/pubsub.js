@@ -1,8 +1,17 @@
 define(function() {
-	var type_to_subscribers = {};
+	var enums = require('enums'),
+		id_to_subscribers = [];
 
-	function publish(type) {
-		var subscribers = type_to_subscribers.hasOwnProperty(type) ? type_to_subscribers[type] : [],
+	function initialize() {
+		var id;
+
+		for (id = 0; id < enums.PubSub.Max; id++) {
+			id_to_subscribers.push([]);
+		}
+	}
+
+	function publish(id) {
+		var subscribers = id_to_subscribers[id],
 			i, length = subscribers.length,
 			args = Array.prototype.slice.call(arguments, 1);
 
@@ -11,12 +20,11 @@ define(function() {
 		}
 	}
 
-	function subscribe(type, fn) {
-		if (!type_to_subscribers.hasOwnProperty(type)) {
-			type_to_subscribers[type] = [];
-		}
-		type_to_subscribers[type].push(fn);
+	function subscribe(id, fn) {
+		id_to_subscribers[id].push(fn);
 	}
+
+	initialize();
 
 	return {
 		publish: publish,
