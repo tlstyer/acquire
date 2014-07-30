@@ -862,9 +862,12 @@ class ActionDisposeOfShares(Action):
         self.defunct_type_id = defunct_type_id
         self.controlling_type_id = controlling_type_id
         self.defunct_type_count = self.game.score_sheet.player_data[self.player_id][self.defunct_type_id]
-        self.controlling_type_available = self.game.score_sheet.available[self.controlling_type_id]
+        self.controlling_type_available = 0
         self.additional_params.append(defunct_type_id)
         self.additional_params.append(controlling_type_id)
+
+    def prepare(self):
+        self.controlling_type_available = self.game.score_sheet.available[self.controlling_type_id]
 
     def execute(self, trade_amount, sell_amount):
         if not isinstance(trade_amount, int) or trade_amount < 0 or trade_amount % 2 != 0 or trade_amount // 2 > self.controlling_type_available:
