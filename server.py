@@ -523,8 +523,8 @@ class TileRacks:
                     border_types = {x_to_y_to_board_type[x][y] for x, y in border_tiles}
                     border_types.discard(enums.GameBoardTypes.Nothing.value)
                     border_types.discard(enums.GameBoardTypes.CantPlayEver.value)
-                    if len(border_types) > 1 and enums.GameBoardTypes.NothingYet.value in border_types:
-                        border_types.remove(enums.GameBoardTypes.NothingYet.value)
+                    if len(border_types) > 1:
+                        border_types.discard(enums.GameBoardTypes.NothingYet.value)
 
                     len_border_types = len(border_types)
                     new_type = enums.GameBoardTypes.WillPutLonelyTileDown.value
