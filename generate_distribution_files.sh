@@ -50,4 +50,4 @@ popd > /dev/null
 rm -rf dist/build
 
 # gzip
-gzip -kn9 `find dist/web -type f`
+gzip -kn9 $(find dist/web -type f)

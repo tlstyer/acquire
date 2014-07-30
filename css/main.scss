@@ -232,7 +232,7 @@ body {
 	overflow: hidden;
 	line-height: 22px;
 }
-fieldset.game-history-turn-began {
+.game-history-turn-began {
 	border-top: 1px solid black;
 	border-bottom: none;
 	border-left: none;
@@ -284,10 +284,10 @@ fieldset.game-history-turn-began {
 		color: black;
 	}
 }
-#gps-row1 > * {
+#ps-row1 > * {
 	vertical-align: top;
 }
-#gps-cost-table tr {
+#ps-cost-table tr {
 	:nth-child(1) {
 		text-align: left;
 	}

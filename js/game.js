@@ -46,7 +46,7 @@ define(function(require) {
 		current_player_id = null;
 
 	function initializeHtml() {
-		var $body = $('#game-board tbody'),
+		var $game_board_tbody = $('#game-board tbody'),
 			y, $tr, x, $td, $score_sheet_player = $('.score-sheet-player');
 
 		for (y = 0; y < 9; y++) {
@@ -60,7 +60,7 @@ define(function(require) {
 				$td.text(common_functions.getTileName(x, y));
 				$tr.append($td);
 			}
-			$body.append($tr);
+			$game_board_tbody.append($tr);
 		}
 
 		for (y = 0; y < 5; y++) {
@@ -91,7 +91,7 @@ define(function(require) {
 		common_functions.setElementPosition($('#game-board'), 0, top, cell_width_gb * 12 + 2, height, font_size);
 
 		common_functions.setElementPosition($('.button-hotel'), null, null, cell_width_gb, cell_width_gb, font_size);
-		$('#gps-cart .button-hotel').css('width', Math.floor(cell_width_gb * 4 / 3));
+		$('#ps-cart .button-hotel').css('width', Math.floor(cell_width_gb * 4 / 3));
 
 		top += height + 2;
 		height = cell_width_gb;
@@ -266,7 +266,7 @@ define(function(require) {
 	}
 
 	function setScoreSheetCell(row, index, data) {
-		var $row, available, player_id, price, index_class, mark_chain_as_safe = false;
+		var $row, available, player_id, price, index_class = enums.ScoreSheetIndexes[index].toLowerCase();
 
 		if (data === score_sheet_data[row][index]) {
 			return;
@@ -314,7 +314,7 @@ define(function(require) {
 			setScoreSheetCell(enums.ScoreSheetRows.Price, index, price);
 
 			if (data >= 11) {
-				mark_chain_as_safe = true;
+				$('#score-sheet .' + index_class).addClass('safe');
 			}
 
 			if (data === 0) {
@@ -330,13 +330,7 @@ define(function(require) {
 			$row = $('#score-sheet-price');
 		}
 
-		index_class = enums.ScoreSheetIndexes[index].toLowerCase();
-
 		$row.children('.' + index_class).text(data);
-
-		if (mark_chain_as_safe) {
-			$('#score-sheet .' + index_class).addClass('safe');
-		}
 	}
 
 	function setScoreSheet(score_sheet_data) {
@@ -779,13 +773,13 @@ define(function(require) {
 			if (purchase_shares_available[index]) {
 				has_enough_money = money_left >= score_sheet_price[index];
 				still_available = score_sheet_available[index] > selected_chain_counts[index];
-				$('#gps-available-' + index).prop('disabled', !(has_enough_money && still_available && num_selected_chains < 3));
+				$('#ps-available-' + index).prop('disabled', !(has_enough_money && still_available && num_selected_chains < 3));
 			}
 		}
 
 		// update cart buttons to reflect purchase_shares_cart
 		for (index = 0; index < 3; index++) {
-			$button = $('#gps-cart-' + index);
+			$button = $('#ps-cart-' + index);
 			if (purchase_shares_cart[index] !== null) {
 				chain_index = purchase_shares_cart[index];
 				$button.attr('class', 'button-hotel color-' + enums.ScoreSheetIndexes[chain_index].toLowerCase());
@@ -797,8 +791,8 @@ define(function(require) {
 		}
 
 		// update "Cost" fields
-		$('#gps-total').text(money_spent * 100);
-		$('#gps-left').text(money_left * 100);
+		$('#ps-total').text(money_spent * 100);
+		$('#ps-left').text(money_left * 100);
 	}
 
 	function gameActionConstructorPurchaseShares() {
@@ -808,7 +802,7 @@ define(function(require) {
 		purchase_shares_cart = [null, null, null];
 
 		for (index = 0; index < 7; index++) {
-			$button = $('#gps-available-' + index);
+			$button = $('#ps-available-' + index);
 
 			available = score_sheet_data[enums.ScoreSheetRows.Available][index] > 0 && score_sheet_data[enums.ScoreSheetRows.Price][index] > 0;
 			purchase_shares_available.push(available);
@@ -819,9 +813,9 @@ define(function(require) {
 			}
 		}
 
-		$('#gps-cart .button-hotel').css('visibility', 'hidden');
+		$('#ps-cart .button-hotel').css('visibility', 'hidden');
 
-		$('#gps-end-game').prop('checked', false);
+		$('#ps-end-game').prop('checked', false);
 
 		updatePurchaseSharesElements();
 
@@ -833,25 +827,25 @@ define(function(require) {
 			button_id = $button.attr('id'),
 			index, cart;
 
-		if (parent_id === 'gps-available') {
+		if (parent_id === 'ps-available') {
 			for (index = 0; index < 3; index++) {
 				if (purchase_shares_cart[index] === null) {
 					purchase_shares_cart[index] = parseInt($button.attr('data-index'), 10);
 					break;
 				}
 			}
-		} else if (parent_id === 'gps-cart') {
+		} else if (parent_id === 'ps-cart') {
 			purchase_shares_cart[parseInt($button.attr('data-index'), 10)] = null;
-		} else if (button_id === 'gps-end-game') {
+		} else if (button_id === 'ps-end-game') {
 			// do nothing for now
-		} else if (button_id === 'gps-ok') {
+		} else if (button_id === 'ps-ok') {
 			cart = [];
 			for (index = 0; index < 3; index++) {
 				if (purchase_shares_cart[index] !== null) {
 					cart.push(purchase_shares_cart[index]);
 				}
 			}
-			network.sendMessage(enums.CommandsToServer.DoGameAction, enums.GameActions.PurchaseShares, cart, $('#gps-end-game').prop('checked') ? 1 : 0);
+			network.sendMessage(enums.CommandsToServer.DoGameAction, enums.GameActions.PurchaseShares, cart, $('#ps-end-game').prop('checked') ? 1 : 0);
 			$('#game-action-purchase-shares').hide();
 			return;
 		}
@@ -916,7 +910,7 @@ define(function(require) {
 			}
 
 			if (parts.length === 2) {
-				$element.html(parts[0] + ' or ' + parts[1]);
+				$element.html(parts.join(' or '));
 			} else {
 				$element.html(parts.slice(0, parts.length - 1).join(', ') + ', or ' + parts[parts.length - 1]);
 			}

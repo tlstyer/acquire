@@ -324,8 +324,8 @@ class GameBoard:
 
                 for coords2 in possibilities:
                     if coords2 not in found and self.x_to_y_to_board_type[coords2[0]][coords2[1]] not in excluded_board_types:
-                        found.add(coords2)
                         new_pending.append(coords2)
+                        found.add(coords2)
 
             pending = new_pending
 
@@ -347,7 +347,7 @@ class ScoreSheet:
         messages_client = []
 
         self.player_data.append([0, 0, 0, 0, 0, 0, 0, 60, 60, client.username, position_tile, client, len(self.player_data) == 0])
-        self.player_data.sort(key=lambda x: x[enums.ScoreSheetIndexes.PositionTile.value])
+        self.player_data.sort(key=lambda t: t[enums.ScoreSheetIndexes.PositionTile.value])
 
         # update player_ids for all clients in game
         player_id = 0
@@ -367,8 +367,8 @@ class ScoreSheet:
 
             # tell client about other position tiles
             if player_id != client.player_id:
-                position_tile = player_datum[enums.ScoreSheetIndexes.PositionTile.value]
-                messages_client.append([enums.CommandsToClient.SetGameBoardCell.value, position_tile[0], position_tile[1], enums.GameBoardTypes.NothingYet.value])
+                x, y = player_datum[enums.ScoreSheetIndexes.PositionTile.value]
+                messages_client.append([enums.CommandsToClient.SetGameBoardCell.value, x, y, enums.GameBoardTypes.NothingYet.value])
 
         AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, messages_all)
         if messages_client:
@@ -523,9 +523,7 @@ class TileRacks:
             drew_last_tile = False
             for tile_datum in rack:
                 if tile_datum:
-                    tile = tile_datum[0]
-                    x = tile[0]
-                    y = tile[1]
+                    x, y = tile_datum[0]
                     if tile_datum[2] is True:
                         drew_last_tile = True
                         tile_datum[2] = False
@@ -540,7 +538,7 @@ class TileRacks:
                     if y < 8:
                         border_tiles.add((x, y + 1))
 
-                    border_types = {x_to_y_to_board_type[tile[0]][tile[1]] for tile in border_tiles}
+                    border_types = {x_to_y_to_board_type[x][y] for x, y in border_tiles}
                     border_types.discard(enums.GameBoardTypes.Nothing.value)
                     border_types.discard(enums.GameBoardTypes.CantPlayEver.value)
                     if len(border_types) > 1 and enums.GameBoardTypes.NothingYet.value in border_types:
@@ -588,9 +586,9 @@ class TileRacks:
                 new_type = new_types[tile_index]
                 if new_type != old_type:
                     if old_type is None:
-                        tile = rack[tile_index][0]
-                        messages.append([enums.CommandsToClient.AddGameHistoryMessage.value, enums.GameHistoryMessages.DrewTile.value, player_id, tile[0], tile[1]])
-                        messages.append([enums.CommandsToClient.SetTile.value, tile_index, tile[0], tile[1], new_type])
+                        x, y = rack[tile_index][0]
+                        messages.append([enums.CommandsToClient.AddGameHistoryMessage.value, enums.GameHistoryMessages.DrewTile.value, player_id, x, y])
+                        messages.append([enums.CommandsToClient.SetTile.value, tile_index, x, y, new_type])
                     else:
                         messages.append([enums.CommandsToClient.SetTileGameBoardType.value, tile_index, new_type])
 
@@ -1112,8 +1110,8 @@ class Game:
         if client.player_id is not None and self.tile_racks.racks:
             for tile_index, tile_datum in enumerate(self.tile_racks.racks[client.player_id]):
                 if tile_datum:
-                    tile = tile_datum[0]
-                    messages.append([enums.CommandsToClient.SetTile.value, tile_index, tile[0], tile[1], tile_datum[1]])
+                    x, y = tile_datum[0]
+                    messages.append([enums.CommandsToClient.SetTile.value, tile_index, x, y, tile_datum[1]])
 
         # turn
         messages.append([enums.CommandsToClient.SetTurn.value, self.turn_player_id])

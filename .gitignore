@@ -3,5 +3,5 @@
 /nbproject
 /node_modules
 /__pycache__
-/css/*.css
+/css/main.css
 /js/enums.js
