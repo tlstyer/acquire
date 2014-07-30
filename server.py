@@ -628,12 +628,8 @@ class TileRacks:
                     # replace one tile at a time
                     break
 
-    def are_racks_empty(self, player_ids=None):
-        if player_ids is None:
-            player_ids = range(len(self.racks))
-
-        for player_id in player_ids:
-            rack = self.racks[player_id]
+    def are_racks_empty(self):
+        for rack in self.racks:
             for tile_datum in rack:
                 if tile_datum:
                     return False
@@ -975,7 +971,7 @@ class ActionPurchaseShares(Action):
             self.game.tile_racks.determine_tile_game_board_types([self.player_id])
             self.game.tile_racks.replace_dead_tiles(self.player_id)
 
-            all_tiles_played = self.game.tile_racks.are_racks_empty([self.player_id])
+            all_tiles_played = self.game.tile_racks.are_racks_empty()
             if all_tiles_played:
                 AcquireServerProtocol.add_pending_messages(self.game.client_ids, [[enums.CommandsToClient.AddGameHistoryMessage.value, enums.GameHistoryMessages.AllTilesPlayed.value, None]])
                 self.game.state = enums.GameStates.Completed.value
