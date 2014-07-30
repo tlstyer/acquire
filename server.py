@@ -480,13 +480,13 @@ class TileRacks:
         self.racks[player_id][tile_index] = None
 
     def draw_tile(self, player_id):
-        tile_data = self.racks[player_id]
+        rack = self.racks[player_id]
 
-        for tile_index, tile_datum in enumerate(tile_data):
-            if not tile_datum:
+        for tile_index, tile_data in enumerate(rack):
+            if not tile_data:
                 len_tile_bag = len(self.game.tile_bag)
                 if len_tile_bag:
-                    tile_data[tile_index] = [self.game.tile_bag.pop(), None, len_tile_bag == 1]
+                    rack[tile_index] = [self.game.tile_bag.pop(), None, len_tile_bag == 1]
 
     def determine_tile_game_board_types(self, player_ids=None):
         chain_sizes = [len(self.game.game_board.board_type_to_coordinates[t]) for t in range(7)]
@@ -503,12 +503,12 @@ class TileRacks:
             new_types = []
             lonely_tile_border_tiles = set()
             drew_last_tile = False
-            for tile_datum in rack:
-                if tile_datum:
-                    x, y = tile_datum[0]
-                    if tile_datum[2] is True:
+            for tile_data in rack:
+                if tile_data:
+                    x, y = tile_data[0]
+                    if tile_data[2] is True:
                         drew_last_tile = True
-                        tile_datum[2] = False
+                        tile_data[2] = False
 
                     border_tiles = set()
                     if x:
@@ -545,7 +545,7 @@ class TileRacks:
                                 safe_count += 1
                         if safe_count < 2:
                             new_type = enums.GameBoardTypes.WillMergeChains.value
-                            tile_datum[2] = border_types
+                            tile_data[2] = border_types
                         else:
                             new_type = enums.GameBoardTypes.CantPlayEver.value
                 else:
@@ -559,9 +559,9 @@ class TileRacks:
                         if rack[tile_index][0] in lonely_tile_border_tiles:
                             new_types[tile_index] = enums.GameBoardTypes.HaveNeighboringTileToo.value
 
-            for tile_index, tile_datum in enumerate(rack):
-                if tile_datum:
-                    tile_datum[1] = new_types[tile_index]
+            for tile_index, tile_data in enumerate(rack):
+                if tile_data:
+                    tile_data[1] = new_types[tile_index]
 
             messages = []
             for tile_index, old_type in enumerate(old_types):
@@ -583,18 +583,18 @@ class TileRacks:
                 AcquireServerProtocol.add_pending_messages(self.game.client_ids, [[enums.CommandsToClient.AddGameHistoryMessage.value, enums.GameHistoryMessages.DrewLastTile.value, player_id]])
 
     def replace_dead_tiles(self, player_id):
-        tile_data = self.racks[player_id]
+        rack = self.racks[player_id]
         replaced_a_dead_tile = True
         while replaced_a_dead_tile:
             replaced_a_dead_tile = False
-            for tile_index, tile_datum in enumerate(tile_data):
-                if tile_datum and tile_datum[1] == enums.GameBoardTypes.CantPlayEver.value:
+            for tile_index, tile_data in enumerate(rack):
+                if tile_data and tile_data[1] == enums.GameBoardTypes.CantPlayEver.value:
                     # remove tile from player's tile rack
-                    tile_data[tile_index] = None
+                    rack[tile_index] = None
                     AcquireServerProtocol.add_pending_messages({self.game.score_sheet.player_data[player_id][enums.ScoreSheetIndexes.Client.value].client_id}, [[enums.CommandsToClient.RemoveTile.value, tile_index]])
 
                     # mark cell on game board as can't play ever
-                    tile = tile_datum[0]
+                    tile = tile_data[0]
                     self.game.game_board.set_cell(tile, enums.GameBoardTypes.CantPlayEver.value)
 
                     # tell everybody that a dead tile was replaced
@@ -612,8 +612,8 @@ class TileRacks:
 
     def are_racks_empty(self):
         for rack in self.racks:
-            for tile_datum in rack:
-                if tile_datum:
+            for tile_data in rack:
+                if tile_data:
                     return False
         return True
 
@@ -663,8 +663,8 @@ class ActionPlayTile(Action):
                     [enums.CommandsToClient.AddGameHistoryMessage.value, enums.GameHistoryMessages.TurnBegan.value, self.player_id]]
 
         has_a_playable_tile = False
-        for tile_datum in self.game.tile_racks.racks[self.player_id]:
-            if tile_datum and tile_datum[1] != enums.GameBoardTypes.CantPlayNow.value and tile_datum[1] != enums.GameBoardTypes.CantPlayEver.value:
+        for tile_data in self.game.tile_racks.racks[self.player_id]:
+            if tile_data and tile_data[1] != enums.GameBoardTypes.CantPlayNow.value and tile_data[1] != enums.GameBoardTypes.CantPlayEver.value:
                 has_a_playable_tile = True
                 break
         if has_a_playable_tile:
@@ -681,14 +681,14 @@ class ActionPlayTile(Action):
     def execute(self, tile_index):
         if not isinstance(tile_index, int):
             return
-        tile_data = self.game.tile_racks.racks[self.player_id]
-        if tile_index < 0 or tile_index >= len(tile_data):
+        rack = self.game.tile_racks.racks[self.player_id]
+        if tile_index < 0 or tile_index >= len(rack):
             return
-        tile_datum = tile_data[tile_index]
-        if not tile_datum:
+        tile_data = rack[tile_index]
+        if not tile_data:
             return
 
-        tile, game_board_type_id, borders = tile_datum
+        tile, game_board_type_id, borders = tile_data
         retval = True
 
         if game_board_type_id <= enums.GameBoardTypes.Imperial.value:
@@ -1085,10 +1085,10 @@ class Game:
 
         # player's tiles
         if client.player_id is not None and self.tile_racks.racks:
-            for tile_index, tile_datum in enumerate(self.tile_racks.racks[client.player_id]):
-                if tile_datum:
-                    x, y = tile_datum[0]
-                    messages.append([enums.CommandsToClient.SetTile.value, tile_index, x, y, tile_datum[1]])
+            for tile_index, tile_data in enumerate(self.tile_racks.racks[client.player_id]):
+                if tile_data:
+                    x, y = tile_data[0]
+                    messages.append([enums.CommandsToClient.SetTile.value, tile_index, x, y, tile_data[1]])
 
         # turn
         messages.append([enums.CommandsToClient.SetTurn.value, self.turn_player_id])
