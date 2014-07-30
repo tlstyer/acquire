@@ -288,13 +288,16 @@ class GameBoard:
         self.board_type_to_coordinates = [set() for t in range(enums.GameBoardTypes.Max.value)]
         self.board_type_to_coordinates[enums.GameBoardTypes.Nothing.value].update((x, y) for x in range(12) for y in range(9))
 
-    def set_cell(self, coordinates, board_type):
+    def _set_cell(self, coordinates, board_type):
         x, y = coordinates
         old_board_type = self.x_to_y_to_board_type[x][y]
         self.board_type_to_coordinates[old_board_type].remove(coordinates)
         self.x_to_y_to_board_type[x][y] = board_type
         self.board_type_to_coordinates[board_type].add(coordinates)
-        AcquireServerProtocol.add_pending_messages(self.client_ids, [[enums.CommandsToClient.SetGameBoardCell.value, x, y, board_type]])
+        return [enums.CommandsToClient.SetGameBoardCell.value, x, y, board_type]
+
+    def set_cell(self, coordinates, board_type):
+        AcquireServerProtocol.add_pending_messages(self.client_ids, [self._set_cell(coordinates, board_type)])
 
     def fill_cells(self, coordinates, board_type):
         pending = [coordinates]
@@ -305,13 +308,9 @@ class GameBoard:
         while pending:
             new_pending = []
             for coords in pending:
-                x, y = coords
-                old_board_type = self.x_to_y_to_board_type[x][y]
-                self.board_type_to_coordinates[old_board_type].remove(coords)
-                self.x_to_y_to_board_type[x][y] = board_type
-                self.board_type_to_coordinates[board_type].add(coords)
-                messages.append([enums.CommandsToClient.SetGameBoardCell.value, x, y, board_type])
+                messages.append(self._set_cell(coords, board_type))
 
+                x, y = coords
                 possibilities = []
                 if x:
                     possibilities.append((x - 1, y))
