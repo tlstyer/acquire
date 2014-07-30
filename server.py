@@ -888,7 +888,7 @@ class ActionPurchaseShares(Action):
         can_purchase_shares = False
         score_sheet = self.game.score_sheet
         cash = score_sheet.player_data[self.player_id][enums.ScoreSheetIndexes.Cash.value]
-        for available, chain_size, price in zip(score_sheet.available, score_sheet.chain_size, score_sheet.price):
+        for chain_size, available, price in zip(score_sheet.chain_size, score_sheet.available, score_sheet.price):
             if chain_size and available and price <= cash:
                 can_purchase_shares = True
                 break
