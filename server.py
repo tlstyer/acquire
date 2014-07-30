@@ -628,10 +628,8 @@ class Action:
     def prepare(self):
         pass
 
-    def send_message(self, client=None):
-        target_client_ids = {client.client_id} if client else self.game.client_ids
-        messages = [[enums.CommandsToClient.SetGameAction.value, self.game_action_id, self.player_id] + self.additional_params]
-        AcquireServerProtocol.add_pending_messages(target_client_ids, messages)
+    def send_message(self, client_ids):
+        AcquireServerProtocol.add_pending_messages(client_ids, [[enums.CommandsToClient.SetGameAction.value, self.game_action_id, self.player_id] + self.additional_params])
 
 
 class ActionStartGame(Action):
@@ -1006,7 +1004,7 @@ class Game:
         message = [enums.CommandsToClient.AddGameHistoryMessage.value, enums.GameHistoryMessages.DrewPositionTile.value, client.player_id, position_tile[0], position_tile[1]]
         AcquireServerProtocol.add_pending_messages(self.client_ids, [message])
         self.actions.append(ActionStartGame(self, self.score_sheet.get_creator_player_id()))
-        self.actions[0].send_message()
+        self.actions[0].send_message(self.client_ids)
         self.expiration_time = None
 
     def join_game(self, client):
@@ -1024,9 +1022,9 @@ class Game:
             if creator_player_id != previous_creator_player_id:
                 self.actions.clear()
                 self.actions.append(ActionStartGame(self, creator_player_id))
-                self.actions[0].send_message()
+                self.actions[0].send_message(self.client_ids)
             else:
-                self.actions[0].send_message(client)
+                self.actions[0].send_message({client.client_id})
             if self.num_players == self.max_players:
                 self.state = enums.GameStates.StartingFull.value
                 AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, [[enums.CommandsToClient.SetGameState.value, self.game_id, self.state]])
@@ -1072,7 +1070,7 @@ class Game:
                     self.actions.extendleft(new_actions)
                 action = self.actions[0]
                 new_actions = action.prepare()
-            action.send_message()
+            action.send_message(self.client_ids)
 
     def send_initialization_messages(self, client):
         # game board
@@ -1098,7 +1096,7 @@ class Game:
         AcquireServerProtocol.add_pending_messages({client.client_id}, messages)
 
         # action
-        self.actions[0].send_message(client)
+        self.actions[0].send_message({client.client_id})
 
 
 if __name__ == '__main__':
