@@ -501,9 +501,10 @@ class TileRacks:
 
             old_types = [t[1] if t else None for t in rack]
             new_types = []
+            lonely_tile_indexes = set()
             lonely_tile_border_tiles = set()
             drew_last_tile = False
-            for tile_data in rack:
+            for tile_index, tile_data in enumerate(rack):
                 if tile_data:
                     x, y = tile_data[0]
                     if tile_data[2] is True:
@@ -529,6 +530,7 @@ class TileRacks:
                     len_border_types = len(border_types)
                     new_type = enums.GameBoardTypes.WillPutLonelyTileDown.value
                     if len_border_types == 0:
+                        lonely_tile_indexes.add(tile_index)
                         lonely_tile_border_tiles |= border_tiles
                     elif len_border_types == 1:
                         if enums.GameBoardTypes.NothingYet.value in border_types:
@@ -554,10 +556,9 @@ class TileRacks:
                 new_types.append(new_type)
 
             if can_start_new_chain:
-                for tile_index, new_type in enumerate(new_types):
-                    if new_type == enums.GameBoardTypes.WillPutLonelyTileDown.value:
-                        if rack[tile_index][0] in lonely_tile_border_tiles:
-                            new_types[tile_index] = enums.GameBoardTypes.HaveNeighboringTileToo.value
+                for tile_index in lonely_tile_indexes:
+                    if new_types[tile_index] == enums.GameBoardTypes.WillPutLonelyTileDown.value and rack[tile_index][0] in lonely_tile_border_tiles:
+                        new_types[tile_index] = enums.GameBoardTypes.HaveNeighboringTileToo.value
 
             for tile_index, tile_data in enumerate(rack):
                 if tile_data:
