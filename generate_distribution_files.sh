@@ -28,8 +28,7 @@ sed "s/data-version=\"VERSION\"/data-version=\"${TIMESTAMP}\"/" | \
 	-o dist/web/index.html
 
 # ${TIMESTAMP}.css
-./node_modules/requirejs/bin/r.js -o cssIn=css/main.css out=dist/build/main.css
-./node_modules/clean-css/bin/cleancss -o dist/web/static/${TIMESTAMP}.css dist/build/main.css
+./node_modules/clean-css/bin/cleancss --s0 -o dist/web/static/${TIMESTAMP}.css css/main.css
 
 # start ${TIMESTAMP}.js
 cp js/* dist/build/js
