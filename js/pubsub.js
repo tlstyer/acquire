@@ -1,4 +1,4 @@
-define(function() {
+define(function(require) {
 	var enums = require('enums'),
 		id_to_subscribers = [];
 
