@@ -503,14 +503,12 @@ define(function(require) {
 		score_sheet_changed = false;
 	}
 
-	function addGameHistoryMessage(game_history_message_id, player_id, argument2, argument3, argument4) {
+	function getGameHistoryMessageElement(game_history_message_id, player_id, argument2, argument3, argument4) {
 		var $message = $('#game-history-' + common_functions.getHyphenatedStringFromEnumName(enums.GameHistoryMessages[game_history_message_id])).clone().removeAttr('id'),
-			$game_history = $('#game-history'),
-			scroll_is_at_bottom = common_functions.isScrollAtBottom($game_history),
 			$element, parts, length, index, entry, name;
 
 		if (player_id !== null) {
-			$message.find('.username').text(common_data.game_id_to_player_data[common_data.game_id][player_id].username);
+			$message.find('.username').text((typeof player_id === 'number') ? common_data.game_id_to_player_data[common_data.game_id][player_id].username : player_id);
 		}
 
 		switch (game_history_message_id) {
@@ -578,12 +576,23 @@ define(function(require) {
 			break;
 		}
 
-		$game_history.append($message);
+		return $message;
+	}
+
+	function appendGameHistoryMessageElements(elements) {
+		var i, length = elements.length,
+			$game_history = $('#game-history'),
+			scroll_is_at_bottom = common_functions.isScrollAtBottom($game_history),
+			$element;
+
+		for (i = 0; i < length; i++) {
+			$game_history.append(elements[i]);
+		}
 
 		if (scroll_is_at_bottom) {
 			common_functions.scrollToBottom($game_history);
 		} else {
-			game_history_new_messages_count++;
+			game_history_new_messages_count += length;
 			$element = $('#game-history-new-messages');
 			if (game_history_new_messages_count === 1) {
 				$element.find('.singular').show();
@@ -595,6 +604,21 @@ define(function(require) {
 			}
 			$element.show();
 		}
+	}
+
+	function addGameHistoryMessage() {
+		appendGameHistoryMessageElements([getGameHistoryMessageElement.apply(null, arguments)]);
+	}
+
+	function addGameHistoryMessages(messages) {
+		var i, length = messages.length,
+			elements = [];
+
+		for (i = 0; i < length; i++) {
+			elements.push(getGameHistoryMessageElement.apply(null, messages[i]));
+		}
+
+		appendGameHistoryMessageElements(elements);
 	}
 
 	function gameHistoryScrolled() {
@@ -1024,6 +1048,7 @@ define(function(require) {
 	pubsub.subscribe(enums.PubSub.Server_SetTurn, setTurn);
 	pubsub.subscribe(enums.PubSub.Network_MessageProcessingComplete, updateNetWorths);
 	pubsub.subscribe(enums.PubSub.Server_AddGameHistoryMessage, addGameHistoryMessage);
+	pubsub.subscribe(enums.PubSub.Server_AddGameHistoryMessages, addGameHistoryMessages);
 	pubsub.subscribe(enums.PubSub.Server_SetGameAction, setGameAction);
 	pubsub.subscribe(enums.PubSub.Client_SetGameState, setGameState);
 	pubsub.subscribe(enums.PubSub.Client_LeaveGame, reset);

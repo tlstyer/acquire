@@ -24,6 +24,7 @@ class CommandsToClient(AutoNumber):
     SetGameWatcherClientId = ()
     ReturnWatcherToLobby = ()
     AddGameHistoryMessage = ()
+    AddGameHistoryMessages = ()
     SetTurn = ()
     SetGameAction = ()
     SetTile = ()
