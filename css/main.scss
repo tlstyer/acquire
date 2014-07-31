@@ -270,9 +270,6 @@ body {
 			padding: 0 5px;
 		}
 	}
-	input:disabled {
-		color: grey;
-	}
 }
 #game-action-dispose-of-shares {
 	span {
@@ -282,6 +279,15 @@ body {
 	}
 	input {
 		color: black;
+		&:disabled {
+			color: grey;
+		}
+	}
+}
+#game-action-purchase-shares {
+	input:disabled {
+		background-color: lightgrey;
+		color: #555;
 	}
 }
 #ps-row1 > * {
