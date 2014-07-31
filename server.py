@@ -396,7 +396,7 @@ class ScoreSheet:
         return username in self.username_to_player_id
 
     def get_creator_player_id(self):
-        return self.username_to_player_id[self.creator_username]
+        return self.username_to_player_id[self.creator_username] if self.creator_username else None
 
     def adjust_player_data(self, player_id, score_sheet_index, adjustment):
         messages = []
@@ -966,7 +966,7 @@ class Game:
     def __init__(self, game_id, client, mode, max_players):
         self.game_id = game_id
         self.mode = mode
-        self.num_players = 1
+        self.num_players = 0
         self.max_players = max_players if mode == enums.GameModes.Singles.value else 4
         self.client_ids = set()
         self.watcher_client_ids = set()
@@ -978,23 +978,16 @@ class Game:
         self.tile_bag = tiles
         self.tile_racks = TileRacks(self)
 
-        self.state = enums.GameStates.Starting.value if self.max_players > 1 else enums.GameStates.StartingFull.value
+        self.state = enums.GameStates.Starting.value
         self.actions = collections.deque()
         self.turn_player_id = None
         self.turns_without_played_tiles_count = 0
         self.history_messages = []
+        self.expiration_time = None
 
         AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, [[enums.CommandsToClient.SetGameState.value, self.game_id, self.state, self.mode, self.max_players]])
 
-        self.client_ids.add(client.client_id)
-        client.game_id = self.game_id
-        position_tile = self.tile_bag.pop()
-        self.game_board.set_cell(position_tile, enums.GameBoardTypes.NothingYet.value)
-        self.score_sheet.add_player(client, position_tile)
-        self.add_history_message(enums.GameHistoryMessages.DrewPositionTile.value, client.username, position_tile[0], position_tile[1])
-        self.actions.append(ActionStartGame(self, self.score_sheet.get_creator_player_id()))
-        self.actions[0].send_message(self.client_ids)
-        self.expiration_time = None
+        self.join_game(client)
 
     def join_game(self, client):
         if self.state == enums.GameStates.Starting.value and not self.score_sheet.is_username_in_game(client.username):
