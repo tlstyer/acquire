@@ -7,6 +7,7 @@ import collections
 import enums
 import math
 import random
+import re
 import sys
 import time
 import traceback
@@ -30,6 +31,8 @@ class AcquireServerProtocol(autobahn.asyncio.websocket.WebSocketServerProtocol):
     game_id_to_game = {}
     client_ids_and_messages = []
     version = 'VERSION'
+
+    _re_whitespace = re.compile(r'\s')
 
     def __init__(self):
         self.version = None
@@ -134,7 +137,7 @@ class AcquireServerProtocol(autobahn.asyncio.websocket.WebSocketServerProtocol):
         if not isBinary:
             try:
                 message = payload.decode()
-                print(self.client_id, '->', message)
+                print(self.client_id, '->', AcquireServerProtocol._re_whitespace.sub(' ', message))
                 message = ujson.decode(message)
                 method = self.on_message_lookup[message[0]]
                 arguments = message[1:]
