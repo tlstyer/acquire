@@ -979,7 +979,7 @@ class Game:
         self.tile_racks = TileRacks(self)
 
         self.state = enums.GameStates.Starting.value
-        self.actions = collections.deque()
+        self.actions = []
         self.turn_player_id = None
         self.turns_without_played_tiles_count = 0
         self.history_messages = []
@@ -1002,11 +1002,11 @@ class Game:
             self.add_history_message(enums.GameHistoryMessages.DrewPositionTile.value, client.username, position_tile[0], position_tile[1])
             creator_player_id = self.score_sheet.get_creator_player_id()
             if creator_player_id != previous_creator_player_id:
-                self.actions.clear()
+                del self.actions[:]
                 self.actions.append(ActionStartGame(self, creator_player_id))
-                self.actions[0].send_message(self.client_ids)
+                self.actions[-1].send_message(self.client_ids)
             else:
-                self.actions[0].send_message({client.client_id})
+                self.actions[-1].send_message({client.client_id})
             if self.num_players == self.max_players:
                 self.state = enums.GameStates.StartingFull.value
                 AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, [[enums.CommandsToClient.SetGameState.value, self.game_id, self.state]])
@@ -1044,15 +1044,15 @@ class Game:
                 self.expiration_time = time.time() + 300
 
     def do_game_action(self, client, game_action_id, data):
-        action = self.actions[0]
+        action = self.actions[-1]
         if client.player_id is not None and client.player_id == action.player_id and game_action_id == action.game_action_id:
             new_actions = action.execute(*data)
             while new_actions:
-                self.actions.popleft()
+                self.actions.pop()
                 if isinstance(new_actions, list):
                     new_actions.reverse()
-                    self.actions.extendleft(new_actions)
-                action = self.actions[0]
+                    self.actions.extend(new_actions)
+                action = self.actions[-1]
                 new_actions = action.prepare()
             action.send_message(self.client_ids)
 
@@ -1112,7 +1112,7 @@ class Game:
         AcquireServerProtocol.add_pending_messages({client.client_id}, messages)
 
         # action
-        self.actions[0].send_message({client.client_id})
+        self.actions[-1].send_message({client.client_id})
 
 
 if __name__ == '__main__':
