@@ -465,6 +465,21 @@ class ScoreSheet:
 
         return bonus_data
 
+    def update_net_worths(self):
+        net_worths = []
+        for player_datum in self.player_data:
+            net_worths.append(player_datum[enums.ScoreSheetIndexes.Cash.value])
+        for game_board_type_id, price in enumerate(self.price):
+            if price:
+                for player_id, player_datum in enumerate(self.player_data):
+                    net_worths[player_id] += player_datum[game_board_type_id] * price
+                for player_ids, bonus in self.get_bonuses(game_board_type_id):
+                    for player_id in player_ids:
+                        net_worths[player_id] += bonus
+
+        for player_id, net_worth in enumerate(net_worths):
+            self.player_data[player_id][enums.ScoreSheetIndexes.Net.value] = net_worth
+
 
 class TileRacks:
     def __init__(self, game):
@@ -957,6 +972,12 @@ class ActionPurchaseShares(Action):
 class ActionGameOver(Action):
     def __init__(self, game):
         super().__init__(game, None, enums.GameActions.GameOver.value)
+
+    def prepare(self):
+        self.game.score_sheet.update_net_worths()
+        scores = [[player_datum[enums.ScoreSheetIndexes.Username.value], player_datum[enums.ScoreSheetIndexes.Net.value]] for player_datum in self.game.score_sheet.player_data]
+        result = ujson.dumps([time.time(), self.game.mode, scores])
+        print('result', result)
 
     def execute(self):
         pass
