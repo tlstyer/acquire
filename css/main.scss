@@ -84,9 +84,6 @@ $color-safe-chain: rgb(255, 192, 128);
 .color-cash-net {
 	background-color: $color-cash-net;
 }
-.color-available-chain-size-price {
-	background-color: $color-available-chain-size-price;
-}
 
 body.high-contrast {
 	.color-luxor, .color-american, .color-worldwide, .color-imperial, .color-cant-play-now, .color-cash-net {
@@ -175,7 +172,7 @@ body {
 	}
 	.teams {
 		border: 2px solid transparent;
-		background-color: transparent;
+		background-color: $color-background;
 		display: none;
 		&.border-bottom {
 			border-bottom: 2px solid $color-table-border;
@@ -198,6 +195,9 @@ body {
 }
 
 #score-sheet-available, #score-sheet-chain-size, #score-sheet-price {
+	td {
+		background-color: $color-available-chain-size-price;
+	}
 	.safe {
 		background-color: $color-safe-chain;
 	}
