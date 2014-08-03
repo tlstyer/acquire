@@ -488,8 +488,6 @@ class TileRacks:
     def __init__(self, game):
         self.game = game
         self.racks = []
-
-    def draw_initial_tiles(self):
         for player_id in range(self.game.num_players):
             self.racks.append([None, None, None, None, None, None])
             self.draw_tile(player_id)
@@ -664,7 +662,7 @@ class ActionStartGame(Action):
             message.append(self.game.mode)
         AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, [message])
 
-        self.game.tile_racks.draw_initial_tiles()
+        self.game.tile_racks = TileRacks(self.game)
         self.game.tile_racks.determine_tile_game_board_types()
 
         return [ActionPlayTile(self.game, 0), ActionPurchaseShares(self.game, 0)]
@@ -1000,7 +998,7 @@ class Game:
         tiles = [(x, y) for x in range(12) for y in range(9)]
         random.shuffle(tiles)
         self.tile_bag = tiles
-        self.tile_racks = TileRacks(self)
+        self.tile_racks = None
 
         self.state = enums.GameStates.Starting.value
         self.actions = []
@@ -1124,7 +1122,7 @@ class Game:
         messages.append([enums.CommandsToClient.SetScoreSheet.value, score_sheet_data])
 
         # player's tiles
-        if client.player_id is not None and self.tile_racks.racks:
+        if client.player_id is not None and self.tile_racks:
             for tile_index, tile_data in enumerate(self.tile_racks.racks[client.player_id]):
                 if tile_data:
                     x, y = tile_data[0]
