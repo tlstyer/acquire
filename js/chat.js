@@ -24,14 +24,14 @@ define(function(require) {
 
 		top += height;
 		if (current_page === 'game') {
-			width = position.width - 80;
+			width = position.width - 120;
 		}
 		height = 25;
 		common_functions.setElementPosition($('#chat-message'), left, top, width, height);
 
 		if (current_page === 'game') {
-			left += width + 2;
-			width = position.width - width - 2;
+			left += width + 5;
+			width = position.width - width - 5;
 			common_functions.setElementPosition($('#chat-target-div'), left, top, width, height);
 			$('#chat-target-div').show();
 		} else {
@@ -48,6 +48,8 @@ define(function(require) {
 		} else {
 			$('#chat').hide();
 		}
+
+		chatTargetChanged();
 	}
 
 	function setPositionForPage(page, left, top, width, height) {
@@ -63,16 +65,36 @@ define(function(require) {
 		}
 	}
 
+	function getChatTarget() {
+		if (current_page === 'game' && $('#chat-target-game').prop('checked')) {
+			return 'game';
+		} else {
+			return 'all';
+		}
+	}
+
+	function chatTargetChanged() {
+		var $message = $('#chat-message');
+
+		if (getChatTarget() === 'all') {
+			$message.removeClass('chat-message-game-contents');
+			$message.addClass('chat-message-global-contents');
+		} else {
+			$message.removeClass('chat-message-global-contents');
+			$message.addClass('chat-message-game-contents');
+		}
+	}
+
 	function chatFormSubmitted() {
 		var $message = $('#chat-message'),
 			message = $message.val().replace(/\s+/g, ' ').trim(),
 			command;
 
 		if (message.length > 0) {
-			if (current_page === 'game' && $('#chat-target-game').prop('checked')) {
-				command = enums.CommandsToServer.SendGameChatMessage;
-			} else {
+			if (getChatTarget() === 'all') {
 				command = enums.CommandsToServer.SendGlobalChatMessage;
+			} else {
+				command = enums.CommandsToServer.SendGameChatMessage;
 			}
 
 			network.sendMessage(command, message);
@@ -183,6 +205,7 @@ define(function(require) {
 	}
 
 	$('#chat-history').scroll(chatHistoryScrolled);
+	$('#chat-form input[name="chat-target"]').change(chatTargetChanged);
 	$('#chat-form').submit(chatFormSubmitted);
 
 	pubsub.subscribe(enums.PubSub.Client_SetPage, setPage);

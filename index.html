@@ -275,8 +275,10 @@
 			<form id="chat-form" autocomplete="off">
 				<input id="chat-message" type="text">
 				<div id="chat-target-div">
-					<input id="chat-target-game" type="checkbox" checked="checked">
-					<label for="chat-target-game">Game</label>
+					<input name="chat-target" id="chat-target-all" value="all" type="radio">
+					<label for="chat-target-all" class="chat-message-global-contents">All</label>
+					<input name="chat-target" id="chat-target-game" value="game" type="radio" checked="checked">
+					<label for="chat-target-game" class="chat-message-game-contents">Game</label>
 				</div>
 			</form>
 		</div>

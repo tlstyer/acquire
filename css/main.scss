@@ -259,6 +259,8 @@ body {
 }
 #chat-target-div {
 	line-height: 25px;
+	white-space: nowrap;
+	overflow: hidden;
 }
 
 #game-action-dispose-of-shares, #game-action-purchase-shares {
