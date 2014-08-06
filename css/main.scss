@@ -206,7 +206,7 @@ body {
 #options, #chat, #templates {
 	display: none;
 }
-#game-tile-rack, #game-action, #game-history, #game-history-new-messages, #game-status, #game-buttons, #page-lobby, #options, #chat-history, #chat-history-new-messages, #chat-input, #chat-game-checkbox-div {
+#game-tile-rack, #game-action, #game-history, #game-history-new-messages, #game-status, #game-buttons, #page-lobby, #options, #chat-history, #chat-history-new-messages, #chat-message, #chat-target-div {
 	position: absolute;
 	box-sizing: border-box;
 }
@@ -257,7 +257,7 @@ body {
 .chat-message-game-contents {
 	color: green;
 }
-#chat-game-checkbox-div {
+#chat-target-div {
 	line-height: 25px;
 }
 

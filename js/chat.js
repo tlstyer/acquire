@@ -27,15 +27,15 @@ define(function(require) {
 			width = position.width - 80;
 		}
 		height = 25;
-		common_functions.setElementPosition($('#chat-input'), left, top, width, height);
+		common_functions.setElementPosition($('#chat-message'), left, top, width, height);
 
 		if (current_page === 'game') {
 			left += width + 2;
 			width = position.width - width - 2;
-			common_functions.setElementPosition($('#chat-game-checkbox-div'), left, top, width, height);
-			$('#chat-game-checkbox-div').show();
+			common_functions.setElementPosition($('#chat-target-div'), left, top, width, height);
+			$('#chat-target-div').show();
 		} else {
-			$('#chat-game-checkbox-div').hide();
+			$('#chat-target-div').hide();
 		}
 	}
 
@@ -63,22 +63,22 @@ define(function(require) {
 		}
 	}
 
-	function submitChatInput() {
-		var $input = $('#chat-input'),
-			input = $input.val().replace(/\s+/g, ' ').trim(),
+	function chatFormSubmitted() {
+		var $message = $('#chat-message'),
+			message = $message.val().replace(/\s+/g, ' ').trim(),
 			command;
 
-		if (input.length > 0) {
-			if (current_page === 'game' && $('#chat-game-checkbox').prop('checked')) {
+		if (message.length > 0) {
+			if (current_page === 'game' && $('#chat-target-game').prop('checked')) {
 				command = enums.CommandsToServer.SendGameChatMessage;
 			} else {
 				command = enums.CommandsToServer.SendGlobalChatMessage;
 			}
 
-			network.sendMessage(command, input);
+			network.sendMessage(command, message);
 		}
 
-		$input.val('');
+		$message.val('');
 
 		return false;
 	}
@@ -183,7 +183,7 @@ define(function(require) {
 	}
 
 	$('#chat-history').scroll(chatHistoryScrolled);
-	$('#chat-input-form').submit(submitChatInput);
+	$('#chat-form').submit(chatFormSubmitted);
 
 	pubsub.subscribe(enums.PubSub.Client_SetPage, setPage);
 	pubsub.subscribe(enums.PubSub.Server_AddGlobalChatMessage, addGlobalChatMessage);
