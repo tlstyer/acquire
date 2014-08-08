@@ -1137,7 +1137,7 @@ class Game:
         self.actions[-1].send_message({client.client_id})
 
 
-if __name__ == '__main__':
+def main():
     if len(sys.argv) > 1 and sys.argv[1] == 'debug':
         debug = True
     else:
@@ -1161,3 +1161,7 @@ if __name__ == '__main__':
     finally:
         server.close()
         loop.close()
+
+
+if __name__ == '__main__':
+    main()
