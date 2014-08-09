@@ -1,9 +1,9 @@
 define(function(require) {
-	var ws = null,
-		enums = require('enums'),
+	var enums = require('enums'),
 		pubsub = require('pubsub'),
 		server_url = null,
-		version = null;
+		version = null,
+		ws = null;
 
 	function isBrowserSupported() {
 		return window.hasOwnProperty('WebSocket');

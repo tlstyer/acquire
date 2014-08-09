@@ -43,13 +43,12 @@ define(function(require) {
 		current_page = page;
 
 		if (page === 'lobby' || page === 'game') {
+			chatTargetChanged();
 			setPosition();
 			$('#chat').show();
 		} else {
 			$('#chat').hide();
 		}
-
-		chatTargetChanged();
 	}
 
 	function setPositionForPage(page, left, top, width, height) {
