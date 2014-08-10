@@ -98,6 +98,7 @@ class GameHistoryMessages(AutoNumber):
     SelectedChainToDisposeOfNext = ()
     ReceivedBonus = ()
     DisposedOfShares = ()
+    CouldNotAffordAnyShares = ()
     PurchasedShares = ()
     DrewLastTile = ()
     ReplacedDeadTile = ()

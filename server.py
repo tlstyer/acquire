@@ -880,6 +880,7 @@ class ActionDisposeOfShares(Action):
 class ActionPurchaseShares(Action):
     def __init__(self, game, player_id):
         super().__init__(game, player_id, enums.GameActions.PurchaseShares.value)
+        self.can_not_afford_any_shares = False
         self.can_end_game = False
         self.end_game = False
 
@@ -890,18 +891,24 @@ class ActionPurchaseShares(Action):
 
         self.game.tile_racks.determine_tile_game_board_types()
 
+        existing_chain_sizes = []
+        shares_available = False
         can_purchase_shares = False
         score_sheet = self.game.score_sheet
         cash = score_sheet.player_data[self.player_id][enums.ScoreSheetIndexes.Cash.value]
         for chain_size, available, price in zip(score_sheet.chain_size, score_sheet.available, score_sheet.price):
-            if chain_size and available and price <= cash:
-                can_purchase_shares = True
-                break
-
-        existing_chain_sizes = [x for x in self.game.score_sheet.chain_size if x]
+            if chain_size:
+                existing_chain_sizes.append(chain_size)
+                if available:
+                    shares_available = True
+                    if price <= cash:
+                        can_purchase_shares = True
+        self.can_not_afford_any_shares = shares_available and not can_purchase_shares
         self.can_end_game = existing_chain_sizes and (min(existing_chain_sizes) >= 11 or max(existing_chain_sizes) >= 41)
 
         if not can_purchase_shares and not self.can_end_game:
+            if self.can_not_afford_any_shares:
+                self.game.add_history_message(enums.GameHistoryMessages.CouldNotAffordAnyShares.value, self.player_id)
             return self._complete_action()
 
     def execute(self, game_board_type_ids, end_game):
@@ -931,7 +938,10 @@ class ActionPurchaseShares(Action):
                 score_sheet.adjust_player_data(self.player_id, game_board_type_id, count)
             score_sheet.adjust_player_data(self.player_id, enums.ScoreSheetIndexes.Cash.value, -cost)
 
-        self.game.add_history_message(enums.GameHistoryMessages.PurchasedShares.value, self.player_id, sorted(game_board_type_id_to_count.items()))
+        if self.can_not_afford_any_shares:
+            self.game.add_history_message(enums.GameHistoryMessages.CouldNotAffordAnyShares.value, self.player_id)
+        else:
+            self.game.add_history_message(enums.GameHistoryMessages.PurchasedShares.value, self.player_id, sorted(game_board_type_id_to_count.items()))
 
         if end_game and self.can_end_game:
             self.end_game = True
