@@ -17,7 +17,6 @@ $color-i-have-this: rgb(255, 224, 160);
 $color-will-put-lonely-tile-down: rgb(192, 192, 192);
 $color-have-neighboring-tile-too: rgb(192, 255, 192);
 $color-will-form-new-chain: rgb(255, 255, 255);
-$color-will-merge-chains: rgb(255, 255, 255);
 $color-cant-play-now: rgb(96, 96, 96);
 
 $color-player: rgb(192, 192, 255);
@@ -73,7 +72,7 @@ $color-safe-chain: rgb(255, 192, 128);
 	background-color: $color-will-form-new-chain;
 }
 .color-will-merge-chains {
-	background-color: $color-will-merge-chains;
+	background: url(../static/merge1.png);
 }
 .color-cant-play-now {
 	background-color: $color-cant-play-now;
