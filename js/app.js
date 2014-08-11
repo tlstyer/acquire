@@ -57,7 +57,7 @@ define(function(require) {
 			}
 
 			showPage('connecting');
-			$('#login-error-message').html($('<p>').text('Lost connection to the server.'));
+			$('#login-error-message').html($('<p/>').text('Lost connection to the server.'));
 			network.connect(username);
 		}
 
@@ -81,7 +81,7 @@ define(function(require) {
 			message = 'Unknown error.';
 		}
 
-		$('#login-error-message').html($('<p>').text(message));
+		$('#login-error-message').html($('<p/>').text(message));
 	}
 
 	function onClientSetOption(key, value) {

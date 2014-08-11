@@ -50,9 +50,9 @@ define(function(require) {
 			y, $tr, x, $td, $score_sheet_player = $('.score-sheet-player');
 
 		for (y = 0; y < 9; y++) {
-			$tr = $('<tr>');
+			$tr = $('<tr/>');
 			for (x = 0; x < 12; x++) {
-				$td = $('<td>');
+				$td = $('<td/>');
 				$td.attr('class', 'color-nothing');
 				$td.attr('id', 'gb-' + x + '-' + y);
 				$td.attr('data-x', x);
