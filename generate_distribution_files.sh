@@ -52,4 +52,8 @@ popd > /dev/null
 rm -rf dist/build
 
 # gzip
-gzip -kn9 $(find dist/web -type f)
+zopfli $(find dist/web -type f)
+for f in $(find dist/web -type f | grep -v '\.gz$')
+do
+	touch -r $f $f.gz
+done
