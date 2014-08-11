@@ -14,7 +14,10 @@ define(function(require) {
 			'enable-sound-notifications': {
 				'type': 'checkbox',
 				'default': true,
-				'valid': [true, false]
+				'valid': [true, false],
+				'disable': function() {
+					return document.getElementById('beep').pause === undefined;
+				}
 			},
 			'enable-high-contrast-colors': {
 				'type': 'checkbox',
@@ -86,7 +89,7 @@ define(function(require) {
 	}
 
 	function initialize() {
-		var key, detail, value, $input;
+		var key, detail, value, disable, $input;
 
 		for (key in details) {
 			if (details.hasOwnProperty(key)) {
@@ -97,19 +100,26 @@ define(function(require) {
 					value = detail['default'];
 				}
 
-				setStoredOptionValue(key, value);
-				data[key] = value;
-				pubsub.publish(enums.PubSub.Client_SetOption, key, value);
+				disable = detail.hasOwnProperty('disable') && detail.disable();
 
 				$input = $('#option-' + key);
 				switch (detail.type) {
 				case 'checkbox':
+					if (disable) {
+						value = false;
+						$input.prop('disabled', true);
+						$input.next().addClass('disabled');
+					}
 					$input.prop('checked', value);
 					break;
 				case 'select':
 					$input.val(value);
 					break;
 				}
+
+				setStoredOptionValue(key, value);
+				data[key] = value;
+				pubsub.publish(enums.PubSub.Client_SetOption, key, value);
 			}
 		}
 	}
