@@ -4,7 +4,8 @@
     sudo apt-get install npm
     sudo apt-get install ruby
 ## Install dependencies
-    sudo pip3 install autobahn[asyncio,accelerate]
+    npm install socket.io
+    sudo pip3 install ujson
     npm install requirejs
     npm install normalize.css
     sudo gem install sass
@@ -13,4 +14,4 @@
     npm install almond
 ## Update dependencies
 same as in Install dependencies, except:
-    sudo pip3 install --upgrade autobahn[asyncio,accelerate]
+    sudo pip3 install --upgrade ujson

@@ -177,8 +177,7 @@ define(function(require) {
 	pubsub.subscribe(enums.PubSub.Server_SetGameWatcherClientId, setGameWatcherClientId);
 	pubsub.subscribe(enums.PubSub.Server_ReturnWatcherToLobby, returnWatcherToLobby);
 	pubsub.subscribe(enums.PubSub.Server_DestroyGame, destroyGame);
-	pubsub.subscribe(enums.PubSub.Network_Close, reset);
-	pubsub.subscribe(enums.PubSub.Network_Error, reset);
+	pubsub.subscribe(enums.PubSub.Network_Disconnect, reset);
 
 	return data;
 });

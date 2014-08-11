@@ -1052,6 +1052,5 @@ define(function(require) {
 	pubsub.subscribe(enums.PubSub.Server_SetGameAction, setGameAction);
 	pubsub.subscribe(enums.PubSub.Client_SetGameState, setGameState);
 	pubsub.subscribe(enums.PubSub.Client_LeaveGame, reset);
-	pubsub.subscribe(enums.PubSub.Network_Close, reset);
-	pubsub.subscribe(enums.PubSub.Network_Error, reset);
+	pubsub.subscribe(enums.PubSub.Network_Disconnect, reset);
 });

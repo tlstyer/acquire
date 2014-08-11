@@ -33,7 +33,6 @@ class CommandsToClient(AutoNumber):
     AddGlobalChatMessage = ()
     AddGameChatMessage = ()
     DestroyGame = ()
-    Heartbeat = ()
 
 
 class CommandsToServer(AutoNumber):
@@ -45,7 +44,6 @@ class CommandsToServer(AutoNumber):
     DoGameAction = ()
     SendGlobalChatMessage = ()
     SendGameChatMessage = ()
-    Heartbeat = ()
 
 
 class FatalErrors(AutoNumber):

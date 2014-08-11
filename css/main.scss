@@ -101,11 +101,7 @@ body {
 	padding-left: .5em;
 }
 
-#section-websockets-not-supported, #section-login-form {
-	display: none;
-}
-
-#websockets-not-supported-message, #login-error-message {
+#login-error-message {
 	color: red;
 	font-weight: bold;
 }

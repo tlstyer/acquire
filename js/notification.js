@@ -52,8 +52,7 @@ define(function(require) {
 	}
 
 	pubsub.subscribe(enums.PubSub.Client_SetClientData, onClientSetClientData);
-	pubsub.subscribe(enums.PubSub.Network_Close, resetTitle);
-	pubsub.subscribe(enums.PubSub.Network_Error, resetTitle);
+	pubsub.subscribe(enums.PubSub.Network_Disconnect, resetTitle);
 
 	return {
 		turnOn: turnOn,

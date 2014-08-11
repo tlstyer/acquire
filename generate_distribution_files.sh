@@ -12,6 +12,9 @@ cp -a ../tlstyer.com/favicon.ico dist/web
 # pre-existing static files
 cp -a static/* dist/web/static
 
+# server.js
+cp -a server.js dist/server.js
+
 # server.py
 sed "s/version = 'VERSION'/version = '${TIMESTAMP}'/" server.py > dist/server.py
 chmod u+x dist/server.py

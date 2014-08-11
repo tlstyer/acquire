@@ -7,23 +7,20 @@
 
 		<link rel="stylesheet" href="css/main.css">
 		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+		<!--<script src="../jquery-1.11.1.js"></script>-->
+		<script src="http://cdn.socket.io/socket.io-1.0.6.js"></script>
+		<!--<script src="http://127.0.0.1:9000/socket.io/socket.io.js"></script>-->
 		<script data-main="js/main" src="node_modules/requirejs/require.js"></script>
 	</head>
 	<body>
 		<div class="page" id="page-login" data-version="VERSION">
 			<h1>Acquire</h1>
-			<p id="section-websockets-not-supported">
-				<span id="websockets-not-supported-message">Sorry, WebSockets support is required in order to play here.</span>
-				<a href="http://caniuse.com/websockets">See browsers with WebSockets support</a>.
-			</p>
-			<div id="section-login-form">
-				<div id="login-error-message"></div>
-				<form id="login-form">
-					Please enter your username.<br>
-					<input type="text" id="login-form-username">
-					<input type="submit" value="Login">
-				</form>
-			</div>
+			<div id="login-error-message"></div>
+			<form id="login-form">
+				Please enter your username.<br>
+				<input type="text" id="login-form-username">
+				<input type="submit" value="Login">
+			</form>
 			<p>
 				Here, you can play the Acquire board game.
 			</p>

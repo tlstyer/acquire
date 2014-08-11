@@ -22,14 +22,6 @@ define(function(require) {
 		}
 	}
 
-	function checkBrowserSupport() {
-		if (network.isBrowserSupported()) {
-			$('#section-login-form').show();
-		} else {
-			$('#section-websockets-not-supported').show();
-		}
-	}
-
 	function periodicResizeCheck() {
 		var width = $(window).width(),
 			height = $(window).height();
@@ -110,20 +102,13 @@ define(function(require) {
 		showPage('lobby');
 	}
 
-	function onNetworkClose() {
+	function onNetworkDisconnect() {
 		showPage('login');
 	}
 
-	function onNetworkError() {
-		$('#login-error-message').html($('<p>').text('Could not connect to the server.'));
-		showPage('login');
-	}
-
-	require('heartbeat');
 	require('lobby');
 	require('game');
 
-	checkBrowserSupport();
 	periodicResizeCheck();
 	initializeUsername();
 	showPage('login');
@@ -135,8 +120,7 @@ define(function(require) {
 	pubsub.subscribe(enums.PubSub.Client_SetOption, onClientSetOption);
 	pubsub.subscribe(enums.PubSub.Client_JoinGame, onClientJoinGame);
 	pubsub.subscribe(enums.PubSub.Client_LeaveGame, onClientLeaveGame);
-	pubsub.subscribe(enums.PubSub.Network_Close, onNetworkClose);
-	pubsub.subscribe(enums.PubSub.Network_Error, onNetworkError);
+	pubsub.subscribe(enums.PubSub.Network_Disconnect, onNetworkDisconnect);
 
 	pubsub.publish(enums.PubSub.Client_InitializationComplete);
 });

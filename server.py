@@ -1,88 +1,114 @@
 #!/usr/bin/env python3.4m
 
 import asyncio
-import autobahn.asyncio.websocket
-import autobahn.websocket.protocol
 import collections
 import enums
 import math
 import random
 import re
-import sys
 import time
 import traceback
 import ujson
 
 
-# override broken autobahn.websocket.protocol.PreparedMessage::_initHixie() as it tries to concatenate strings and bytes
-class PreparedMessage(autobahn.websocket.protocol.PreparedMessage):
-    def _initHixie(self, payload, binary):
-        pass
+class Server(asyncio.Protocol):
+    def __init__(self):
+        self.transport = None
+        self.unprocessed_data = []
+
+    def connection_made(self, transport):
+        self.transport = transport
+        AcquireServerProtocol.server_transport = transport
+        print('connection_made')
+        print()
+
+    def connection_lost(self, exc):
+        print('connection_lost')
+        print()
+
+    def data_received(self, data):
+        start_index = 0
+        len_data = len(data)
+        while start_index < len_data:
+            index = data.find(b'\n', start_index)
+            if index >= 0:
+                key_and_value = data[start_index:index]
+                start_index = index + 1
+
+                if self.unprocessed_data:
+                    key_and_value = b''.join(self.unprocessed_data) + key_and_value
+                    del self.unprocessed_data[:]
+
+                key, value = key_and_value.split(b' ', 1)
+                if key == b'connect':
+                    value = ujson.decode(value.decode())
+                    AcquireServerProtocol(*value)
+                elif key == b'disconnect':
+                    client = AcquireServerProtocol.client_id_to_client.get(int(value.decode()), None)
+                    if client:
+                        client.disconnect()
+                else:
+                    client = AcquireServerProtocol.client_id_to_client.get(int(key.decode()), None)
+                    if client:
+                        client.on_message(value)
+            else:
+                self.unprocessed_data.append(data[start_index:])
+                break
 
 
-class AcquireServerProtocol(autobahn.asyncio.websocket.WebSocketServerProtocol):
+class AcquireServerProtocol():
     next_client_id = 1
     client_id_to_client = {}
     client_ids = set()
-    client_id_to_last_sent = collections.OrderedDict()
-    client_id_to_last_received = collections.OrderedDict()
     usernames = set()
     next_game_id = 1
     game_id_to_game = {}
     client_ids_and_messages = []
     version = 'VERSION'
 
-    _re_whitespace = re.compile(r'\s')
+    server_transport = None
 
-    def __init__(self):
-        self.version = None
-        self.username = ''
-        self.ip_address = None
-        self.client_id = None
+    re_camelcase = re.compile(r'(.)([A-Z])')
+
+    def __init__(self, version, username, ip_address, socket_id):
+        self.username = username
+        self.ip_address = ip_address
+        self.client_id = AcquireServerProtocol.next_client_id
         self.logged_in = False
+        self.allow_messages = False
         self.game_id = None
         self.player_id = None
 
         self.on_message_lookup = []
         for command_enum in enums.CommandsToServer:
-            self.on_message_lookup.append(getattr(self, 'onMessage' + command_enum.name))
+            self.on_message_lookup.append(getattr(self, 'on_message_' + AcquireServerProtocol.re_camelcase.sub(r'\1_\2', command_enum.name).lower()))
 
-    def onConnect(self, request):
-        self.version = ' '.join(request.params.get('version', [''])[0].split())
-        self.username = ' '.join(request.params.get('username', [''])[0].split())
-        self.ip_address = request.headers.get('x-real-ip', self.peer)
-        print('X', 'connect', self.ip_address, self.username)
-        print()
-
-    def onOpen(self):
-        self.client_id = AcquireServerProtocol.next_client_id
         AcquireServerProtocol.next_client_id += 1
         AcquireServerProtocol.client_id_to_client[self.client_id] = self
         AcquireServerProtocol.client_ids.add(self.client_id)
-        current_time = time.time()
-        AcquireServerProtocol.client_id_to_last_sent[self.client_id] = current_time
-        AcquireServerProtocol.client_id_to_last_received[self.client_id] = current_time
         messages_client = []
 
-        print(self.client_id, 'open', self.ip_address)
+        print(self.client_id, 'connect', self.ip_address, self.username)
+        AcquireServerProtocol.server_transport.write(b'connect ' + ujson.dumps([socket_id, self.client_id]).encode() + b'\n')
 
-        if self.version != AcquireServerProtocol.version:
+        if version != AcquireServerProtocol.version:
             messages_client.append([enums.CommandsToClient.FatalError.value, enums.FatalErrors.NotUsingLatestVersion.value])
             AcquireServerProtocol.add_pending_messages({self.client_id}, messages_client)
             AcquireServerProtocol.flush_pending_messages()
-            self.sendClose()
+            self.send_disconnect()
         elif not self.username or len(self.username) > 32:
             messages_client.append([enums.CommandsToClient.FatalError.value, enums.FatalErrors.InvalidUsername.value])
             AcquireServerProtocol.add_pending_messages({self.client_id}, messages_client)
             AcquireServerProtocol.flush_pending_messages()
-            self.sendClose()
+            self.send_disconnect()
         elif self.username in AcquireServerProtocol.usernames:
             messages_client.append([enums.CommandsToClient.FatalError.value, enums.FatalErrors.UsernameAlreadyInUse.value])
             AcquireServerProtocol.add_pending_messages({self.client_id}, messages_client)
             AcquireServerProtocol.flush_pending_messages()
-            self.sendClose()
+            self.send_disconnect()
         else:
             self.logged_in = True
+            self.allow_messages = True
             AcquireServerProtocol.usernames.add(self.username)
 
             messages_client.append([enums.CommandsToClient.SetClientId.value, self.client_id])
@@ -111,14 +137,16 @@ class AcquireServerProtocol(autobahn.asyncio.websocket.WebSocketServerProtocol):
 
             AcquireServerProtocol.flush_pending_messages()
 
-    def onClose(self, wasClean, code, reason):
-        print(self.client_id, 'close')
+    def send_disconnect(self):
+        self.allow_messages = False
+        AcquireServerProtocol.client_ids.discard(self.client_id)
+        AcquireServerProtocol.server_transport.write(b'disconnect ' + str(self.client_id).encode() + b'\n')
 
-        if self.client_id:
-            del AcquireServerProtocol.client_id_to_client[self.client_id]
-            AcquireServerProtocol.client_ids.remove(self.client_id)
-            del AcquireServerProtocol.client_id_to_last_sent[self.client_id]
-            del AcquireServerProtocol.client_id_to_last_received[self.client_id]
+    def disconnect(self):
+        print(self.client_id, 'disconnect')
+
+        del AcquireServerProtocol.client_id_to_client[self.client_id]
+        AcquireServerProtocol.client_ids.discard(self.client_id)
 
         if self.game_id:
             AcquireServerProtocol.game_id_to_game[self.game_id].remove_client(self)
@@ -130,20 +158,17 @@ class AcquireServerProtocol(autobahn.asyncio.websocket.WebSocketServerProtocol):
         else:
             print()
 
-    def onMessage(self, payload, isBinary):
-        del AcquireServerProtocol.client_id_to_last_received[self.client_id]
-        AcquireServerProtocol.client_id_to_last_received[self.client_id] = time.time()
-
-        if not isBinary:
+    def on_message(self, payload):
+        if self.allow_messages:
             try:
                 message = payload.decode()
-                print(self.client_id, '->', AcquireServerProtocol._re_whitespace.sub(' ', message))
+                print(self.client_id, '->', message)
                 message = ujson.decode(message)
                 method = self.on_message_lookup[message[0]]
                 arguments = message[1:]
             except:
                 traceback.print_exc()
-                self.sendClose()
+                self.send_disconnect()
                 return
 
             try:
@@ -151,48 +176,43 @@ class AcquireServerProtocol(autobahn.asyncio.websocket.WebSocketServerProtocol):
                 AcquireServerProtocol.flush_pending_messages()
             except TypeError:
                 traceback.print_exc()
-                self.sendClose()
-        else:
-            self.sendClose()
+                self.send_disconnect()
 
-    def onMessageCreateGame(self, mode, max_players):
+    def on_message_create_game(self, mode, max_players):
         if not self.game_id and isinstance(mode, int) and 0 <= mode < enums.GameModes.Max.value and isinstance(max_players, int) and 1 <= max_players <= 6:
             AcquireServerProtocol.game_id_to_game[AcquireServerProtocol.next_game_id] = Game(AcquireServerProtocol.next_game_id, self, mode, max_players)
             AcquireServerProtocol.next_game_id += 1
 
-    def onMessageJoinGame(self, game_id):
+    def on_message_join_game(self, game_id):
         if not self.game_id and game_id in AcquireServerProtocol.game_id_to_game:
             AcquireServerProtocol.game_id_to_game[game_id].join_game(self)
 
-    def onMessageRejoinGame(self, game_id):
+    def on_message_rejoin_game(self, game_id):
         if not self.game_id and game_id in AcquireServerProtocol.game_id_to_game:
             AcquireServerProtocol.game_id_to_game[game_id].rejoin_game(self)
 
-    def onMessageWatchGame(self, game_id):
+    def on_message_watch_game(self, game_id):
         if not self.game_id and game_id in AcquireServerProtocol.game_id_to_game:
             AcquireServerProtocol.game_id_to_game[game_id].watch_game(self)
 
-    def onMessageLeaveGame(self):
+    def on_message_leave_game(self):
         if self.game_id:
             AcquireServerProtocol.game_id_to_game[self.game_id].remove_client(self)
 
-    def onMessageDoGameAction(self, game_action_id, *data):
+    def on_message_do_game_action(self, game_action_id, *data):
         if self.game_id:
             AcquireServerProtocol.game_id_to_game[self.game_id].do_game_action(self, game_action_id, data)
 
-    def onMessageSendGlobalChatMessage(self, chat_message):
+    def on_message_send_global_chat_message(self, chat_message):
         chat_message = ' '.join(chat_message.split())
         if chat_message:
             AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, [[enums.CommandsToClient.AddGlobalChatMessage.value, self.client_id, chat_message]])
 
-    def onMessageSendGameChatMessage(self, chat_message):
+    def on_message_send_game_chat_message(self, chat_message):
         if self.game_id:
             chat_message = ' '.join(chat_message.split())
             if chat_message:
                 AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.game_id_to_game[self.game_id].client_ids, [[enums.CommandsToClient.AddGameChatMessage.value, self.client_id, chat_message]])
-
-    def onMessageHeartbeat(self):
-        pass
 
     @staticmethod
     def add_pending_messages(client_ids, messages):
@@ -216,51 +236,21 @@ class AcquireServerProtocol(autobahn.asyncio.websocket.WebSocketServerProtocol):
 
     @staticmethod
     def flush_pending_messages():
-        current_time = time.time()
+        outgoing = []
         for client_ids, messages in AcquireServerProtocol.client_ids_and_messages:
+            client_ids_string = ','.join(str(x) for x in sorted(client_ids))
             messages_json = ujson.dumps(messages)
-            print(','.join(str(x) for x in sorted(client_ids)), '<-', messages_json)
-            messages_json_bytes = messages_json.encode()
-            prepared_message = PreparedMessage(messages_json_bytes, False, False, False)
-            for client_id in client_ids:
-                AcquireServerProtocol.client_id_to_client[client_id].sendPreparedMessage(prepared_message)
-                del AcquireServerProtocol.client_id_to_last_sent[client_id]
-                AcquireServerProtocol.client_id_to_last_sent[client_id] = current_time
+            print(client_ids_string, '<-', messages_json)
+
+            outgoing.append(client_ids_string.encode())
+            outgoing.append(b' ')
+            outgoing.append(messages_json.encode())
+            outgoing.append(b'\n')
+
         del AcquireServerProtocol.client_ids_and_messages[:]
         print()
 
-    @staticmethod
-    def do_heartbeat_management():
-        current_time = time.time()
-        print_blank_line = False
-
-        threshold = current_time - 20
-        client_ids = set()
-        for client_id, last_sent in AcquireServerProtocol.client_id_to_last_sent.items():
-            if last_sent < threshold:
-                print(client_id, 'send timeout')
-                client_ids.add(client_id)
-            else:
-                break
-
-        threshold = current_time - 35
-        for client_id, last_received in AcquireServerProtocol.client_id_to_last_received.items():
-            if last_received < threshold:
-                print(client_id, 'receive timeout')
-                print_blank_line = True
-                AcquireServerProtocol.client_id_to_client[client_id].sendClose()
-            else:
-                break
-
-        if client_ids:
-            AcquireServerProtocol.add_pending_messages(client_ids, [[enums.CommandsToClient.Heartbeat.value]])
-            AcquireServerProtocol.flush_pending_messages()
-            print_blank_line = False
-
-        if print_blank_line:
-            print()
-
-        asyncio.get_event_loop().call_later(2, AcquireServerProtocol.do_heartbeat_management)
+        AcquireServerProtocol.server_transport.write(b''.join(outgoing))
 
     @staticmethod
     def destroy_expired_games():
@@ -1148,18 +1138,9 @@ class Game:
 
 
 def main():
-    if len(sys.argv) > 1 and sys.argv[1] == 'debug':
-        debug = True
-    else:
-        debug = False
-
-    factory = autobahn.asyncio.websocket.WebSocketServerFactory('ws://127.0.0.1:9000', debug=debug)
-    factory.protocol = AcquireServerProtocol
-
     loop = asyncio.get_event_loop()
-    loop.call_soon(AcquireServerProtocol.do_heartbeat_management)
     loop.call_soon(AcquireServerProtocol.destroy_expired_games)
-    coro = loop.create_server(factory, '127.0.0.1', 9000)
+    coro = loop.create_server(Server, '127.0.0.1', 9001)
     server = loop.run_until_complete(coro)
 
     try:
