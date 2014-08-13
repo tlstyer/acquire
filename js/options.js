@@ -1,4 +1,6 @@
 define(function(require) {
+	'use strict';
+
 	var common_functions = require('common_functions'),
 		enums = require('enums'),
 		pubsub = require('pubsub'),
@@ -125,6 +127,7 @@ define(function(require) {
 	}
 
 	function processChange() {
+		/* jshint validthis:true */
 		var $input = $(this),
 			key = $input.attr('id').substr(7),
 			detail = details[key],

@@ -1,4 +1,6 @@
 define(function(require) {
+	'use strict';
+
 	var common_data = require('common_data'),
 		enums = require('enums'),
 		options = require('options'),

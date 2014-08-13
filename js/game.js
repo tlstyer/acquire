@@ -1,4 +1,6 @@
 define(function(require) {
+	'use strict';
+
 	var chat = require('chat'),
 		common_data = require('common_data'),
 		common_functions = require('common_functions'),
@@ -635,6 +637,7 @@ define(function(require) {
 	}
 
 	function gameBoardCellClicked() {
+		/* jshint validthis:true */
 		var $cell = $(this),
 			x = parseInt($cell.attr('data-x'), 10),
 			y = parseInt($cell.attr('data-y'), 10),
@@ -650,6 +653,7 @@ define(function(require) {
 	}
 
 	function gameTileRackButtonClicked() {
+		/* jshint validthis:true */
 		var tile_index = parseInt($(this).attr('data-index'), 10);
 
 		processTileRackButtonClick(tile_index);
@@ -888,6 +892,7 @@ define(function(require) {
 	}
 
 	function gameActionButtonClicked() {
+		/* jshint validthis:true */
 		var $this = $(this);
 
 		game_action_button_click_handlers[$this.closest('.game-action').attr('id')]($this);

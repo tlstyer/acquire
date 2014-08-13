@@ -1,4 +1,6 @@
 define(function(require) {
+	'use strict';
+
 	var chat = require('chat'),
 		common_data = require('common_data'),
 		common_functions = require('common_functions'),
@@ -128,6 +130,7 @@ define(function(require) {
 	}
 
 	function createGameSelectChanged() {
+		/* jshint validthis:true */
 		var $this = $(this),
 			id = $this.attr('id'),
 			value = $this.val();
@@ -148,6 +151,7 @@ define(function(require) {
 	}
 
 	function gameButtonClicked() {
+		/* jshint validthis:true */
 		var $this = $(this),
 			game_id = parseInt($this.closest('.lobby-section').attr('data-game-id'), 10);
 

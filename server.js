@@ -1,6 +1,8 @@
 #!/usr/bin/env nodejs
 
 (function() {
+	'use strict';
+
 	var app = require('http').createServer();
 	var io = require('socket.io')(app, {
 		pingInterval: 20000,

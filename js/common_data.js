@@ -1,4 +1,6 @@
 define(function(require) {
+	'use strict';
+
 	var enums = require('enums'),
 		pubsub = require('pubsub'),
 		data = {};

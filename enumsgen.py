@@ -81,6 +81,8 @@ def generate_enums_js(mode):
         parts.append('\t\t' + class_name + ': {\n' + ',\n'.join(lookups) + '\n\t\t}')
 
     print('define(function() {')
+    print('\t\'use strict\';')
+    print()
     print('\treturn {')
 
     print(',\n'.join(parts))

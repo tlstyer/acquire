@@ -1,5 +1,9 @@
-requirejs.config({
-	baseUrl: 'js'
-});
+(function() {
+	'use strict';
 
-requirejs(['app']);
+	requirejs.config({
+		baseUrl: 'js'
+	});
+
+	requirejs(['app']);
+})();

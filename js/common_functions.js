@@ -1,4 +1,6 @@
 define(function() {
+	'use strict';
+
 	var scrollbar_width = 0;
 
 	function initializeScrollbarWidth() {
