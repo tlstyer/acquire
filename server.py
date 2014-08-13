@@ -79,10 +79,6 @@ class AcquireServerProtocol():
         self.game_id = None
         self.player_id = None
 
-        self.on_message_lookup = []
-        for command_enum in enums.CommandsToServer:
-            self.on_message_lookup.append(getattr(self, 'on_message_' + AcquireServerProtocol.re_camelcase.sub(r'\1_\2', command_enum.name).lower()))
-
         AcquireServerProtocol.next_client_id += 1
         AcquireServerProtocol.client_id_to_client[self.client_id] = self
         AcquireServerProtocol.client_ids.add(self.client_id)
@@ -109,6 +105,9 @@ class AcquireServerProtocol():
         else:
             self.logged_in = True
             self.allow_messages = True
+            self.on_message_lookup = []
+            for command_enum in enums.CommandsToServer:
+                self.on_message_lookup.append(getattr(self, 'on_message_' + AcquireServerProtocol.re_camelcase.sub(r'\1_\2', command_enum.name).lower()))
             AcquireServerProtocol.usernames.add(self.username)
 
             messages_client.append([enums.CommandsToClient.SetClientId.value, self.client_id])
