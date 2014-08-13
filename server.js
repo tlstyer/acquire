@@ -2,7 +2,10 @@
 
 (function() {
 	var app = require('http').createServer();
-	var io = require('socket.io')(app);
+	var io = require('socket.io')(app, {
+		pingInterval: 20000,
+		pingTimeout: 35000
+	});
 	app.listen(9000);
 
 
