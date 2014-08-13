@@ -28,7 +28,8 @@ sed "s/<script data-main=\"js\/main\" src=\"node_modules\/requirejs\/require.js\
 sed "s/data-version=\"VERSION\"/data-version=\"${TIMESTAMP}\"/" | \
 ./node_modules/html-minifier/cli.js \
 	--remove-comments --collapse-whitespace --conservative-collapse --collapse-boolean-attributes --remove-attribute-quotes --remove-redundant-attributes --remove-optional-tags \
-	-o dist/web/index.html
+	-o dist/build/index.html
+sed 's/\s\s*/ /g' dist/build/index.html | sed 's/ $//' > dist/web/index.html
 
 # ${TIMESTAMP}.css
 ./node_modules/clean-css/bin/cleancss --s0 css/main.css | sed "s/\.\.\/static\///" > dist/web/static/${TIMESTAMP}.css
