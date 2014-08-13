@@ -31,7 +31,7 @@
 					unprocessed_data = [];
 				}
 
-				var space_index = key_and_value.indexOf(' ');
+				space_index = key_and_value.indexOf(' ');
 				key = key_and_value.substr(0, space_index);
 				value = key_and_value.substr(space_index + 1);
 
