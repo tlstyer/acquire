@@ -357,11 +357,13 @@ class ScoreSheet:
 
             # tell everybody about player changes
             if player_id >= client.player_id:
+                username = player_datum[enums.ScoreSheetIndexes.Username.value]
                 if player_datum[enums.ScoreSheetIndexes.Client.value]:
                     messages_all.append([enums.CommandsToClient.SetGamePlayerClientId.value, self.game_id, player_id, player_datum[enums.ScoreSheetIndexes.Client.value].client_id])
                 else:
-                    messages_all.append([enums.CommandsToClient.SetGamePlayerUsername.value, self.game_id, player_id, player_datum[enums.ScoreSheetIndexes.Username.value]])
-                self.username_to_player_id[player_datum[enums.ScoreSheetIndexes.Username.value]] = player_id
+                    messages_all.append([enums.CommandsToClient.SetGamePlayerUsername.value, self.game_id, player_id, username])
+                self.username_to_player_id[username] = player_id
+                print(ujson.dumps({'_': 'game-player', 'game-id': self.game_id, 'player-id': player_id, 'username': username}))
 
             # tell client about other position tiles
             if player_id != client.player_id:
@@ -644,12 +646,10 @@ class ActionStartGame(Action):
     def execute(self):
         self.game.add_history_message(enums.GameHistoryMessages.StartedGame.value, self.player_id)
 
-        self.game.state = enums.GameStates.InProgress.value
-        message = [enums.CommandsToClient.SetGameState.value, self.game.game_id, self.game.state]
         if self.game.mode == enums.GameModes.Teams.value and self.game.num_players < 4:
-            self.game.mode = enums.GameModes.Singles.value
-            message.append(self.game.mode)
-        AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, [message])
+            self.game.set_state(enums.GameStates.InProgress.value, enums.GameModes.Singles.value)
+        else:
+            self.game.set_state(enums.GameStates.InProgress.value)
 
         self.game.tile_racks = TileRacks(self.game)
         self.game.tile_racks.determine_tile_game_board_types()
@@ -949,8 +949,7 @@ class ActionPurchaseShares(Action):
             elif no_tiles_played_for_entire_round:
                 self.game.add_history_message(enums.GameHistoryMessages.NoTilesPlayedForEntireRound.value, None)
 
-            self.game.state = enums.GameStates.Completed.value
-            AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, [[enums.CommandsToClient.SetGameState.value, self.game.game_id, self.game.state]])
+            self.game.set_state(enums.GameStates.Completed.value)
 
             return [ActionGameOver(self.game)]
         else:
@@ -961,8 +960,7 @@ class ActionPurchaseShares(Action):
             all_tiles_played = self.game.tile_racks.are_racks_empty()
             if all_tiles_played:
                 self.game.add_history_message(enums.GameHistoryMessages.AllTilesPlayed.value, None)
-                self.game.state = enums.GameStates.Completed.value
-                AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, [[enums.CommandsToClient.SetGameState.value, self.game.game_id, self.game.state]])
+                self.game.set_state(enums.GameStates.Completed.value)
                 return [ActionGameOver(self.game)]
 
             next_player_id = (self.player_id + 1) % self.game.num_players
@@ -975,9 +973,7 @@ class ActionGameOver(Action):
 
     def prepare(self):
         self.game.score_sheet.update_net_worths()
-        scores = [[player_datum[enums.ScoreSheetIndexes.Username.value], player_datum[enums.ScoreSheetIndexes.Net.value]] for player_datum in self.game.score_sheet.player_data]
-        result = ujson.dumps([time.time(), self.game.mode, scores])
-        print('result', result)
+        print(ujson.dumps({'_': 'game-result', 'game-id': self.game.game_id, 'scores': [player_datum[enums.ScoreSheetIndexes.Net.value] for player_datum in self.game.score_sheet.player_data]}))
 
     def execute(self):
         pass
@@ -1006,7 +1002,7 @@ class Game:
         self.history_messages = []
         self.expiration_time = None
 
-        AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, [[enums.CommandsToClient.SetGameState.value, self.game_id, self.state, self.mode, self.max_players]])
+        self.set_state(self.state, self.mode, self.max_players)
 
         self.join_game(client)
 
@@ -1029,8 +1025,7 @@ class Game:
             else:
                 self.actions[-1].send_message({client.client_id})
             if self.num_players == self.max_players:
-                self.state = enums.GameStates.StartingFull.value
-                AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, [[enums.CommandsToClient.SetGameState.value, self.game_id, self.state]])
+                self.set_state(enums.GameStates.StartingFull.value)
             self.expiration_time = None
 
     def rejoin_game(self, client):
@@ -1076,6 +1071,28 @@ class Game:
                 action = self.actions[-1]
                 new_actions = action.prepare()
             action.send_message(self.client_ids)
+
+    def set_state(self, state, mode=None, max_players=None):
+        self.state = state
+        message = [enums.CommandsToClient.SetGameState.value, self.game_id, state]
+        log = {'_': 'game', 'game-id': self.game_id, 'state': enums.GameStates(state).name}
+        if state == enums.GameStates.InProgress.value:
+            log['begin'] = int(time.time())
+        if state == enums.GameStates.Completed.value:
+            log['end'] = int(time.time())
+
+        if mode is not None:
+            self.mode = mode
+            message.append(mode)
+            log['mode'] = enums.GameModes(mode).name
+
+            if max_players is not None:
+                self.max_players = max_players
+                message.append(max_players)
+                log['max-players'] = max_players
+
+        AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, [message])
+        print(ujson.dumps(log))
 
     def add_history_message(self, *data, player_id=None):
         self.history_messages.append([player_id, data])
