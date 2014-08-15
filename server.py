@@ -672,13 +672,12 @@ class ActionPlayTile(Action):
             if tile_data and tile_data[1] != enums.GameBoardTypes.CantPlayNow.value and tile_data[1] != enums.GameBoardTypes.CantPlayEver.value:
                 has_a_playable_tile = True
                 break
+
         if has_a_playable_tile:
             self.game.turns_without_played_tiles_count = 0
         else:
             self.game.turns_without_played_tiles_count += 1
             self.game.add_history_message(enums.GameHistoryMessages.HasNoPlayableTile.value, self.player_id)
-
-        if not has_a_playable_tile:
             return True
 
     def execute(self, tile_index):
@@ -883,9 +882,8 @@ class ActionPurchaseShares(Action):
         existing_chain_sizes = []
         shares_available = False
         can_purchase_shares = False
-        score_sheet = self.game.score_sheet
-        cash = score_sheet.player_data[self.player_id][enums.ScoreSheetIndexes.Cash.value]
-        for chain_size, available, price in zip(score_sheet.chain_size, score_sheet.available, score_sheet.price):
+        cash = self.game.score_sheet.player_data[self.player_id][enums.ScoreSheetIndexes.Cash.value]
+        for chain_size, available, price in zip(self.game.score_sheet.chain_size, self.game.score_sheet.available, self.game.score_sheet.price):
             if chain_size:
                 existing_chain_sizes.append(chain_size)
                 if available:
@@ -913,19 +911,18 @@ class ActionPurchaseShares(Action):
                 return
 
         cost = 0
-        score_sheet = self.game.score_sheet
         for game_board_type_id, count in game_board_type_id_to_count.items():
-            if score_sheet.chain_size[game_board_type_id] and count <= score_sheet.available[game_board_type_id]:
-                cost += score_sheet.price[game_board_type_id] * count
+            if self.game.score_sheet.chain_size[game_board_type_id] and count <= self.game.score_sheet.available[game_board_type_id]:
+                cost += self.game.score_sheet.price[game_board_type_id] * count
             else:
                 return
-        if cost > score_sheet.player_data[self.player_id][enums.ScoreSheetIndexes.Cash.value]:
+        if cost > self.game.score_sheet.player_data[self.player_id][enums.ScoreSheetIndexes.Cash.value]:
             return
 
         if cost:
             for game_board_type_id, count in game_board_type_id_to_count.items():
-                score_sheet.adjust_player_data(self.player_id, game_board_type_id, count)
-            score_sheet.adjust_player_data(self.player_id, enums.ScoreSheetIndexes.Cash.value, -cost)
+                self.game.score_sheet.adjust_player_data(self.player_id, game_board_type_id, count)
+            self.game.score_sheet.adjust_player_data(self.player_id, enums.ScoreSheetIndexes.Cash.value, -cost)
 
         if self.can_not_afford_any_shares:
             self.game.add_history_message(enums.GameHistoryMessages.CouldNotAffordAnyShares.value, self.player_id)
@@ -982,9 +979,10 @@ class ActionGameOver(Action):
 class Game:
     def __init__(self, game_id, client, mode, max_players):
         self.game_id = game_id
+        self.state = enums.GameStates.Starting.value
         self.mode = mode
-        self.num_players = 0
         self.max_players = max_players if mode == enums.GameModes.Singles.value else 4
+        self.num_players = 0
         self.client_ids = set()
         self.watcher_client_ids = set()
 
@@ -995,7 +993,6 @@ class Game:
         self.tile_bag = tiles
         self.tile_racks = None
 
-        self.state = enums.GameStates.Starting.value
         self.actions = []
         self.turn_player_id = None
         self.turns_without_played_tiles_count = 0
@@ -1009,8 +1006,8 @@ class Game:
     def join_game(self, client):
         if self.state == enums.GameStates.Starting.value and not self.score_sheet.is_username_in_game(client.username):
             self.num_players += 1
-            self.client_ids.add(client.client_id)
             client.game_id = self.game_id
+            self.client_ids.add(client.client_id)
             position_tile = self.tile_bag.pop()
             self.game_board.set_cell(position_tile, enums.GameBoardTypes.NothingYet.value)
             previous_creator_player_id = self.score_sheet.get_creator_player_id()
@@ -1030,8 +1027,8 @@ class Game:
 
     def rejoin_game(self, client):
         if self.score_sheet.is_username_in_game(client.username):
-            self.client_ids.add(client.client_id)
             client.game_id = self.game_id
+            self.client_ids.add(client.client_id)
             self.score_sheet.readd_player(client)
             self.send_initialization_messages(client)
             self.send_past_history_messages(client)
@@ -1039,9 +1036,9 @@ class Game:
 
     def watch_game(self, client):
         if not self.score_sheet.is_username_in_game(client.username):
+            client.game_id = self.game_id
             self.client_ids.add(client.client_id)
             self.watcher_client_ids.add(client.client_id)
-            client.game_id = self.game_id
             AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, [[enums.CommandsToClient.SetGameWatcherClientId.value, self.game_id, client.client_id]])
             self.send_initialization_messages(client)
             self.send_past_history_messages(client)
@@ -1050,12 +1047,12 @@ class Game:
     def remove_client(self, client):
         if client.client_id in self.client_ids:
             client.game_id = None
+            self.client_ids.discard(client.client_id)
             if client.client_id in self.watcher_client_ids:
                 self.watcher_client_ids.discard(client.client_id)
                 AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, [[enums.CommandsToClient.ReturnWatcherToLobby.value, self.game_id, client.client_id]])
             else:
                 self.score_sheet.remove_client(client)
-            self.client_ids.discard(client.client_id)
             if not self.client_ids:
                 self.expiration_time = time.time() + 300
 
@@ -1115,12 +1112,7 @@ class Game:
         player_id = client.player_id
         messages = []
         for target_player_id, message in self.history_messages:
-            if target_player_id is None:
-                include_message = True
-            else:
-                include_message = player_id is not None and target_player_id == player_id
-
-            if include_message:
+            if target_player_id is None or target_player_id == player_id:
                 messages.append(message)
 
         if messages:
