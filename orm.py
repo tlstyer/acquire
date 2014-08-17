@@ -1,6 +1,7 @@
 from sqlalchemy import create_engine, Column, ForeignKey, UniqueConstraint
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.dialects.mysql import FLOAT, INTEGER, SMALLINT, TINYINT, VARCHAR
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import relationship
 
 Base = declarative_base()
 engine = create_engine('mysql+mysqlconnector://root:root@localhost:3306/acquire')
@@ -16,6 +17,9 @@ class Game(Base):
     game_state_id = Column(TINYINT(unsigned=True), ForeignKey('game_state.game_state_id'), nullable=False)
     game_mode_id = Column(TINYINT(unsigned=True), ForeignKey('game_mode.game_mode_id'), nullable=False)
     imported = Column(TINYINT(unsigned=True), nullable=False)
+
+    game_state = relationship('GameState')
+    game_mode = relationship('GameMode')
 
     def __repr__(self):
         params = (repr(self.game_id), repr(self.log_time), repr(self.number), repr(self.begin_time), repr(self.end_time), repr(self.game_state_id), repr(self.game_mode_id), repr(self.imported))
@@ -40,6 +44,9 @@ class GamePlayer(Base):
     player_index = Column(TINYINT(unsigned=True), nullable=False)
     user_id = Column(INTEGER(unsigned=True), ForeignKey('user.user_id'), nullable=False)
     score = Column(SMALLINT(unsigned=True))
+
+    game = relationship('Game')
+    user = relationship('User')
 
     def __repr__(self):
         params = (repr(self.game_player_id), repr(self.game_id), repr(self.player_index), repr(self.user_id), repr(self.score))
