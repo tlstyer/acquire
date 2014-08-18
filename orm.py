@@ -17,6 +17,7 @@ class Game(Base):
     game_state_id = Column(TINYINT(unsigned=True), ForeignKey('game_state.game_state_id'), nullable=False)
     game_mode_id = Column(TINYINT(unsigned=True), ForeignKey('game_mode.game_mode_id'), nullable=False)
     imported = Column(TINYINT(unsigned=True), nullable=False)
+    __table_args__ = (UniqueConstraint('log_time', 'number'),)
 
     game_state = relationship('GameState')
     game_mode = relationship('GameMode')
@@ -44,6 +45,7 @@ class GamePlayer(Base):
     player_index = Column(TINYINT(unsigned=True), nullable=False)
     user_id = Column(INTEGER(unsigned=True), ForeignKey('user.user_id'), nullable=False)
     score = Column(SMALLINT(unsigned=True))
+    __table_args__ = (UniqueConstraint('game_id', 'player_index'),)
 
     game = relationship('Game')
     user = relationship('User')
