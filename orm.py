@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, Column, ForeignKey, UniqueConstraint
+from sqlalchemy import create_engine, Column, Index, ForeignKey, UniqueConstraint
 from sqlalchemy.dialects.mysql import FLOAT, INTEGER, SMALLINT, TINYINT, VARCHAR
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
@@ -74,6 +74,10 @@ class Rating(Base):
     time = Column(INTEGER(unsigned=True), nullable=False)
     mu = Column(FLOAT(), nullable=False)
     sigma = Column(FLOAT(), nullable=False)
+    __table_args__ = (Index('user_id_rating_type_id', 'user_id', 'rating_type_id'),)
+
+    user = relationship('User')
+    rating_type = relationship('RatingType')
 
     def __repr__(self):
         params = (repr(self.rating_id), repr(self.user_id), repr(self.rating_type_id), repr(self.time), repr(self.mu), repr(self.sigma))

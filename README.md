@@ -7,7 +7,7 @@ This is the code for my Acquire board game program which can be played at [http:
     sudo apt-get install nodejs npm python3-pip ruby zopfli
     npm install almond clean-css html-minifier normalize.css requirejs socket.io
     sudo gem install sass
-    sudo pip3 install --allow-external mysql-connector-python mysql-connector-python sqlalchemy ujson
+    sudo pip3 install --allow-external mysql-connector-python mysql-connector-python sqlalchemy trueskill ujson
 
 ## Upgrade Dependencies
 
