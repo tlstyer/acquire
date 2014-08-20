@@ -1,9 +1,8 @@
 #!/usr/bin/env python3.4m
 
-import collections
 import orm
+import ormlookup
 import sqlalchemy.orm
-import sys
 import trueskill
 import ujson
 
@@ -18,13 +17,7 @@ class Logs2DB:
 
     def __init__(self, session):
         self.session = session
-        self.game_lookup = collections.defaultdict(dict)
-        self.game_mode_lookup = {}
-        self.game_player_lookup = collections.defaultdict(lambda: collections.defaultdict(dict))
-        self.game_state_lookup = {}
-        self.rating_lookup = collections.defaultdict(dict)
-        self.rating_type_lookup = {}
-        self.user_lookup = {}
+        self.lookup = ormlookup.Lookup(session)
         self.trueskill_environment_lookup = {}
 
         self.method_lookup = {
@@ -42,7 +35,7 @@ class Logs2DB:
                 self.method_lookup[params['_']](params)
 
     def process_game(self, params):
-        game = self.get_game(params['_log-time'], params['game-id'])
+        game = self.lookup.get_game(params['_log-time'], params['game-id'])
 
         begin_time = params.get('begin', None)
         if begin_time:
@@ -52,11 +45,11 @@ class Logs2DB:
         if end_time:
             game.end_time = end_time
 
-        game.game_state = self.get_game_state(params['state'])
+        game.game_state = self.lookup.get_game_state(params['state'])
 
         game_mode = params.get('mode', None)
         if game_mode:
-            game.game_mode = self.get_game_mode(game_mode)
+            game.game_mode = self.lookup.get_game_mode(game_mode)
 
         game.imported = 0
 
@@ -67,8 +60,8 @@ class Logs2DB:
         game.number = len(params['scores']) - 1 if params['mode'] == 'Singles' else 4
         game.begin_time = params['end'] - 300
         game.end_time = params['end']
-        game.game_state = self.get_game_state('Completed')
-        game.game_mode = self.get_game_mode(params['mode'])
+        game.game_state = self.lookup.get_game_state('Completed')
+        game.game_mode = self.lookup.get_game_mode(params['mode'])
         game.imported = 1
 
         game_players = []
@@ -78,130 +71,43 @@ class Logs2DB:
             self.session.add(game_player)
             game_player.game = game
             game_player.player_index = player_index
-            game_player.user = self.get_user(name)
+            game_player.user = self.lookup.get_user(name)
             game_player.score = score
             game_players.append(game_player)
 
         self.calculate_new_ratings(game, game_players)
 
     def process_game_player(self, params):
-        game_player = self.get_game_player(params['_log-time'], params['game-id'], params['player-id'])
-        game_player.user = self.get_user(params['username'])
+        game_player = self.lookup.get_game_player(params['_log-time'], params['game-id'], params['player-id'])
+        game_player.user = self.lookup.get_user(params['username'])
 
     def process_game_result(self, params):
-        game = self.get_game(params['_log-time'], params['game-id'])
+        game = self.lookup.get_game(params['_log-time'], params['game-id'])
 
         game_players = []
         for player_index, score in enumerate(params['scores']):
-            game_player = self.get_game_player(params['_log-time'], params['game-id'], player_index)
+            game_player = self.lookup.get_game_player(params['_log-time'], params['game-id'], player_index)
             game_player.score = score
             game_players.append(game_player)
 
         self.calculate_new_ratings(game, game_players)
 
-    def get_game(self, log_time, number):
-        game = self.game_lookup[log_time].get(number, None)
-        if game:
-            return game
-
-        game = self.session.query(orm.Game).filter_by(log_time=log_time, number=number).scalar()
-        if not game:
-            game = orm.Game(log_time=log_time, number=number)
-            self.session.add(game)
-
-        self.game_lookup[log_time][number] = game
-        return game
-
-    def get_game_mode(self, name):
-        game_mode = self.game_mode_lookup.get(name, None)
-        if game_mode:
-            return game_mode
-
-        game_mode = self.session.query(orm.GameMode).filter_by(name=name).scalar()
-
-        self.game_mode_lookup[name] = game_mode
-        return game_mode
-
-    def get_game_player(self, log_time, number, player_index):
-        game_player = self.game_player_lookup[log_time][number].get(player_index, None)
-        if game_player:
-            return game_player
-
-        game = self.get_game(log_time, number)
-        if game.game_id:
-            game_player = self.session.query(orm.GamePlayer).filter_by(game_id=game.game_id, player_index=player_index).scalar()
-
-        if not game_player:
-            game_player = orm.GamePlayer(game=game, player_index=player_index)
-            self.session.add(game_player)
-
-        self.game_player_lookup[log_time][number][player_index] = game_player
-        return game_player
-
-    def get_game_state(self, name):
-        game_state = self.game_state_lookup.get(name, None)
-        if game_state:
-            return game_state
-
-        game_state = self.session.query(orm.GameState).filter_by(name=name).scalar()
-
-        self.game_state_lookup[name] = game_state
-        return game_state
-
-    def get_rating(self, user, rating_type):
-        rating = self.rating_lookup[user.name].get(rating_type.name, None)
-        if rating:
-            return rating
-
-        if user.user_id:
-            rating = self.session.query(orm.Rating).filter_by(user=user, rating_type=rating_type).order_by(orm.Rating.rating_id.desc()).limit(1).scalar()
-
-        if not rating:
-            rating = orm.Rating(user=user, rating_type=rating_type, mu=trueskill.MU, sigma=trueskill.SIGMA)
-            self.session.add(rating)
-
-        self.rating_lookup[user.name][rating_type.name] = rating
-        return rating
-
-    def get_rating_type(self, name):
-        rating_type = self.rating_type_lookup.get(name, None)
-        if rating_type:
-            return rating_type
-
-        rating_type = self.session.query(orm.RatingType).filter_by(name=name).scalar()
-
-        self.rating_type_lookup[name] = rating_type
-        return rating_type
-
-    def get_user(self, name):
-        user = self.user_lookup.get(name, None)
-        if user:
-            return user
-
-        user = self.session.query(orm.User).filter_by(name=name).scalar()
-        if not user:
-            user = orm.User(name=name)
-            self.session.add(user)
-
-        self.user_lookup[name] = user
-        return user
-
     def calculate_new_ratings(self, game, game_players):
         game_mode_name = game.game_mode.name.decode()
         num_players = len(game_players)
         if game_mode_name == 'Teams':
-            rating_type = self.get_rating_type('Teams')
+            rating_type = self.lookup.get_rating_type('Teams')
         elif game_mode_name == 'Singles' and 2 <= num_players <= 4:
-            rating_type = self.get_rating_type('Singles' + str(num_players))
+            rating_type = self.lookup.get_rating_type('Singles' + str(num_players))
         else:
             return
 
         trueskill_ratings = []
         for game_player in game_players:
-            rating = self.get_rating(game_player.user, rating_type)
-            if rating.time is None:
-                # update initial rating
-                rating.time = game.begin_time
+            rating = self.lookup.get_rating(game_player.user, rating_type)
+            if not rating:
+                rating = orm.Rating(user=game_player.user, rating_type=rating_type, time=game.begin_time, mu=trueskill.MU, sigma=trueskill.SIGMA)
+                self.session.add(rating)
             trueskill_rating = trueskill.Rating(rating.mu, rating.sigma)
             trueskill_ratings.append(trueskill_rating)
 
@@ -231,7 +137,7 @@ class Logs2DB:
                 new_ratings[player_index].mu = rating_group_result[0].mu
 
         for rating in new_ratings:
-            self.rating_lookup[rating.user.name][rating_type.name] = rating
+            self.lookup.add_rating(rating)
 
     def get_trueskill_environment(self, rating_type):
         trueskill_environment = self.trueskill_environment_lookup.get(rating_type.name)
