@@ -36,12 +36,11 @@ class Lookup:
         self.game_mode_lookup[name] = game_mode
         return game_mode
 
-    def get_game_player(self, log_time, number, player_index):
-        game_player = self.game_player_lookup[log_time][number].get(player_index, None)
+    def get_game_player(self, game, player_index):
+        game_player = self.game_player_lookup[game.log_time][game.number].get(player_index, None)
         if game_player:
             return game_player
 
-        game = self.get_game(log_time, number)
         if game.game_id:
             game_player = self.session.query(orm.GamePlayer).filter_by(game_id=game.game_id, player_index=player_index).scalar()
 
@@ -49,7 +48,7 @@ class Lookup:
             game_player = orm.GamePlayer(game=game, player_index=player_index)
             self.session.add(game_player)
 
-        self.game_player_lookup[log_time][number][player_index] = game_player
+        self.game_player_lookup[game.log_time][game.number][player_index] = game_player
         return game_player
 
     def get_game_state(self, name):

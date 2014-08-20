@@ -78,7 +78,8 @@ class Logs2DB:
         self.calculate_new_ratings(game, game_players)
 
     def process_game_player(self, params):
-        game_player = self.lookup.get_game_player(params['_log-time'], params['game-id'], params['player-id'])
+        game = self.lookup.get_game(params['_log-time'], params['game-id'])
+        game_player = self.lookup.get_game_player(game, params['player-id'])
         game_player.user = self.lookup.get_user(params['username'])
 
     def process_game_result(self, params):
@@ -86,7 +87,7 @@ class Logs2DB:
 
         game_players = []
         for player_index, score in enumerate(params['scores']):
-            game_player = self.lookup.get_game_player(params['_log-time'], params['game-id'], player_index)
+            game_player = self.lookup.get_game_player(game, player_index)
             game_player.score = score
             game_players.append(game_player)
 
