@@ -94,7 +94,7 @@ class Logs2DB:
         self.calculate_new_ratings(game, game_players)
 
     def calculate_new_ratings(self, game, game_players):
-        game_mode_name = game.game_mode.name.decode()
+        game_mode_name = game.game_mode.name
         num_players = len(game_players)
         if game_mode_name == 'Teams':
             rating_type = self.lookup.get_rating_type('Teams')
@@ -145,7 +145,7 @@ class Logs2DB:
         if trueskill_environment:
             return trueskill_environment
 
-        trueskill_environment = trueskill.TrueSkill(beta=trueskill.SIGMA, draw_probability=Logs2DB.rating_type_to_draw_probability[rating_type.name.decode()])
+        trueskill_environment = trueskill.TrueSkill(beta=trueskill.SIGMA, draw_probability=Logs2DB.rating_type_to_draw_probability[rating_type.name])
 
         self.trueskill_environment_lookup[rating_type.name] = trueskill_environment
         return trueskill_environment

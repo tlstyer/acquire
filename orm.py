@@ -1,5 +1,5 @@
-from sqlalchemy import create_engine, Column, Index, ForeignKey, UniqueConstraint
-from sqlalchemy.dialects.mysql import FLOAT, INTEGER, SMALLINT, TINYINT, VARCHAR
+from sqlalchemy import create_engine, Column, Index, ForeignKey, String, UniqueConstraint
+from sqlalchemy.dialects.mysql import FLOAT, INTEGER, SMALLINT, TINYINT
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 
@@ -30,7 +30,7 @@ class Game(Base):
 class GameMode(Base):
     __tablename__ = 'game_mode'
     game_mode_id = Column(TINYINT(unsigned=True), primary_key=True, nullable=False)
-    name = Column(VARCHAR(length=255), nullable=False)
+    name = Column(String(255, convert_unicode='force'), nullable=False)
     __table_args__ = (UniqueConstraint('name'),)
 
     def __repr__(self):
@@ -58,7 +58,7 @@ class GamePlayer(Base):
 class GameState(Base):
     __tablename__ = 'game_state'
     game_state_id = Column(TINYINT(unsigned=True), primary_key=True, nullable=False)
-    name = Column(VARCHAR(length=255), nullable=False)
+    name = Column(String(255, convert_unicode='force'), nullable=False)
     __table_args__ = (UniqueConstraint('name'),)
 
     def __repr__(self):
@@ -87,7 +87,7 @@ class Rating(Base):
 class RatingType(Base):
     __tablename__ = 'rating_type'
     rating_type_id = Column(TINYINT(unsigned=True), primary_key=True, nullable=False)
-    name = Column(VARCHAR(length=255), nullable=False)
+    name = Column(String(255, convert_unicode='force'), nullable=False)
     __table_args__ = (UniqueConstraint('name'),)
 
     def __repr__(self):
@@ -98,7 +98,7 @@ class RatingType(Base):
 class User(Base):
     __tablename__ = 'user'
     user_id = Column(INTEGER(unsigned=True), primary_key=True, nullable=False)
-    name = Column(VARCHAR(length=255), nullable=False)
+    name = Column(String(255, convert_unicode='force'), nullable=False)
     __table_args__ = (UniqueConstraint('name'),)
 
     def __repr__(self):
