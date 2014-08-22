@@ -317,8 +317,22 @@ span.username {
 	padding-left: .5em;
 	padding-right: .5em;
 }
-#stats-user {
+#stats-users, #stats-user {
 	display: none;
+}
+#stats-users {
+	tr {
+		:nth-child(1), :nth-child(3), :nth-child(5) {
+			text-align: right;
+		}
+		:nth-child(2) {
+			cursor: pointer;
+		}
+	}
+	th, td {
+		border: 2px solid $color-table-border;
+		padding: 3px;
+	}
 }
 .stats-rating {
 	display: inline-block;
@@ -336,7 +350,6 @@ span.username {
 	}
 	tr {
 		:nth-child(1) {
-			text-align: left;
 			cursor: pointer;
 		}
 		:nth-child(2), :nth-child(3)  {

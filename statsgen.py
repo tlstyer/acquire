@@ -28,6 +28,23 @@ class StatsGen:
             user.name
         from user
     ''')
+    ratings_sql = sqlalchemy.sql.text('''
+        select rating.user_id,
+            rating_type.name as rating_type,
+            rating.time,
+            rating.mu,
+            rating.sigma,
+            rating_summary.num_games
+        from rating
+        join (
+            select max(rating_id) as rating_id,
+                count(rating_id) - 1 as num_games
+            from rating
+            group by user_id, rating_type_id
+        ) rating_summary on rating.rating_id = rating_summary.rating_id
+        join rating_type on rating.rating_type_id = rating_type.rating_type_id
+        order by rating.mu - rating.sigma * 3 desc
+    ''')
     user_ratings_sql = sqlalchemy.sql.text('''
         select rating_type.name,
             rating.time,
@@ -65,10 +82,7 @@ class StatsGen:
         last_end_time = 0 if kv_last_end_time.value is None else int(kv_last_end_time.value)
         kv_last_game_ids = self.lookup.get_key_value('statsgen last game_ids')
         last_game_ids = set() if kv_last_game_ids.value is None else {int(x) for x in kv_last_game_ids.value.split(',')}
-        kv_last_user_id = self.lookup.get_key_value('statsgen last user_id')
-        last_user_id = 0 if kv_last_user_id.value is None else int(kv_last_user_id.value)
 
-        update_users = False
         update_user_ids = set()
         next_last_game_ids = last_game_ids.copy()
         for row in self.session.execute(StatsGen.users_to_update_sql, {'end_time': last_end_time}):
@@ -77,26 +91,26 @@ class StatsGen:
                     last_end_time = row.end_time
                     next_last_game_ids = set()
                 next_last_game_ids.add(row.game_id)
-                if row.user_id > last_user_id:
-                    last_user_id = row.user_id
-                    update_users = True
                 update_user_ids.add(row.user_id)
 
-        if update_users:
+        if update_user_ids:
             self.output_users()
-        for user_id in sorted(update_user_ids):
+        for user_id in update_user_ids:
             self.output_user(user_id)
 
         kv_last_end_time.value = str(last_end_time)
         kv_last_game_ids.value = ','.join(str(x) for x in next_last_game_ids)
-        kv_last_user_id.value = str(last_user_id)
 
     def output_users(self):
         user_id_to_name = {}
         for row in self.session.execute(StatsGen.users_sql):
             user_id_to_name[row.user_id] = row.name.decode()
 
-        StatsGen.write_file('users', user_id_to_name)
+        rating_type_to_ratings = collections.defaultdict(list)
+        for row in self.session.execute(StatsGen.ratings_sql):
+            rating_type_to_ratings[row.rating_type.decode()].append([row.user_id, row.time, row.mu, row.sigma, row.num_games])
+
+        StatsGen.write_file('users', {'users': user_id_to_name, 'ratings': rating_type_to_ratings})
 
     def output_user(self, user_id):
         ratings = collections.defaultdict(list)

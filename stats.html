@@ -14,12 +14,34 @@
 	<body id="stats-body">
 		<h1>Acquire Stats</h1>
 		<form id="stats-form">
+			Ratings:
+			<input type="button" value="Singles2" disabled="disabled">
+			<input type="button" value="Singles3" disabled="disabled">
+			<input type="button" value="Singles4" disabled="disabled">
+			<input type="button" value="Teams" disabled="disabled">
+			<br>
 			Lookup Username:
 			<input type="text" id="stats-form-username" disabled="disabled">
-			<input type="submit" value="Lookup" id="stats-form-submit" disabled="disabled">
+			<input type="submit" value="Lookup" disabled="disabled">
 			<span id="stats-form-error-message"></span>
-			<span id="stats-form-loading-message">Loading usernames...</span>
+			<span id="stats-form-loading-message">Loading users and ratings...</span>
 		</form>
+		<div id="stats-users">
+			<h2>Acquire ratings for <span id="stats-ratings-type"></span></h2>
+			<table>
+				<thead>
+					<tr>
+						<th>Rank</th>
+						<th>Username</th>
+						<th>Rating</th>
+						<th>Rating Range</th>
+						<th># Games</th>
+						<th>Last Game Date</th>
+					</tr>
+				</thead>
+				<tbody></tbody>
+			</table>
+		</div>
 		<div id="stats-user">
 			<h2>Acquire stats for <span id="stats-user-name"></span></h2>
 			<h3>Ratings</h3>
