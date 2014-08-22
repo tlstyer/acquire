@@ -9,6 +9,7 @@ class Lookup:
         self.game_mode_lookup = {}
         self.game_player_lookup = collections.defaultdict(lambda: collections.defaultdict(dict))
         self.game_state_lookup = {}
+        self.key_value_lookup = {}
         self.rating_lookup = collections.defaultdict(dict)
         self.rating_type_lookup = {}
         self.user_lookup = {}
@@ -60,6 +61,19 @@ class Lookup:
 
         self.game_state_lookup[name] = game_state
         return game_state
+
+    def get_key_value(self, key):
+        key_value = self.key_value_lookup.get(key, None)
+        if key_value:
+            return key_value
+
+        key_value = self.session.query(orm.KeyValue).filter_by(key=key).scalar()
+        if not key_value:
+            key_value = orm.KeyValue(key=key)
+            self.session.add(key_value)
+
+        self.key_value_lookup[key] = key_value
+        return key_value
 
     def get_rating(self, user, rating_type):
         rating = self.rating_lookup[user.name].get(rating_type.name, None)

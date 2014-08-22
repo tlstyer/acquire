@@ -101,7 +101,7 @@ body {
 	padding-left: .5em;
 }
 
-#login-error-message {
+#login-error-message, #stats-form-error-message {
 	color: red;
 	font-weight: bold;
 }
@@ -311,4 +311,40 @@ span.username {
 .button-hotel {
 	font-weight: bold;
 	padding: 1px;
+}
+
+#stats-body {
+	padding-left: .5em;
+	padding-right: .5em;
+}
+#stats-user {
+	display: none;
+}
+.stats-rating {
+	display: inline-block;
+	margin: .5em;
+}
+.dygraph-legend {
+	left: 60px !important;
+	top: 25px !important;
+	width: 300px !important;
+}
+#stats-games {
+	div {
+		display: inline-block;
+		margin: .5em;
+	}
+	tr {
+		:nth-child(1) {
+			text-align: left;
+			cursor: pointer;
+		}
+		:nth-child(2), :nth-child(3)  {
+			text-align: right;
+		}
+	}
+	td {
+		border: 2px solid $color-table-border;
+		padding: 3px;
+	}
 }

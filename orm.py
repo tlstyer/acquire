@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, Column, Index, ForeignKey, String, UniqueConstraint
+from sqlalchemy import create_engine, Column, Index, ForeignKey, String, Text, UniqueConstraint
 from sqlalchemy.dialects.mysql import FLOAT, INTEGER, SMALLINT, TINYINT
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
@@ -17,7 +17,7 @@ class Game(Base):
     game_state_id = Column(TINYINT(unsigned=True), ForeignKey('game_state.game_state_id'), nullable=False)
     game_mode_id = Column(TINYINT(unsigned=True), ForeignKey('game_mode.game_mode_id'), nullable=False)
     imported = Column(TINYINT(unsigned=True), nullable=False)
-    __table_args__ = (UniqueConstraint('log_time', 'number'),)
+    __table_args__ = (UniqueConstraint('log_time', 'number'), Index('end_time', 'end_time'))
 
     game_state = relationship('GameState')
     game_mode = relationship('GameMode')
@@ -64,6 +64,18 @@ class GameState(Base):
     def __repr__(self):
         params = (repr(self.game_state_id), repr(self.name))
         return '<GameState(game_state_id=%s, name=%s)>' % params
+
+
+class KeyValue(Base):
+    __tablename__ = 'key_value'
+    key_value_id = Column(TINYINT(unsigned=True), primary_key=True, nullable=False)
+    key = Column(String(255, convert_unicode='force'), nullable=False)
+    value = Column(Text(convert_unicode='force'), nullable=False)
+    __table_args__ = (UniqueConstraint('key'),)
+
+    def __repr__(self):
+        params = (repr(self.key_value_id), repr(self.key), repr(self.value))
+        return '<KeyValue(key_value_id=%s, key=%s, value=%s)>' % params
 
 
 class Rating(Base):
