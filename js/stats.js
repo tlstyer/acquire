@@ -1,4 +1,6 @@
 $(function() {
+	'use strict';
+
 	var user_id_to_username = null,
 		username_to_user_id = null,
 		rating_type_to_ratings = null,
@@ -150,6 +152,7 @@ $(function() {
 	}
 
 	function formButtonClicked() {
+		/* jshint validthis:true */
 		var rating_type = $(this).val();
 
 		$('#stats-user').hide();
@@ -190,6 +193,7 @@ $(function() {
 	}
 
 	function nameCellClicked() {
+		/* jshint validthis:true */
 		window.scrollTo(0, 0);
 		$('#stats-form-username').val($(this).text());
 		formSubmitted();
