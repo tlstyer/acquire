@@ -121,21 +121,21 @@ class Logs2DB:
             rating_groups = [[trueskill_ratings[0], trueskill_ratings[2]], [trueskill_ratings[1], trueskill_ratings[3]]]
             ranks = [-(game_players[0].score + game_players[2].score), -(game_players[1].score + game_players[3].score)]
             rating_groups_result = trueskill_environment.rate(rating_groups, ranks)
-            new_ratings[0].sigma = rating_groups_result[0][0].sigma
             new_ratings[0].mu = rating_groups_result[0][0].mu
-            new_ratings[1].sigma = rating_groups_result[1][0].sigma
+            new_ratings[0].sigma = rating_groups_result[0][0].sigma
             new_ratings[1].mu = rating_groups_result[1][0].mu
-            new_ratings[2].sigma = rating_groups_result[0][1].sigma
+            new_ratings[1].sigma = rating_groups_result[1][0].sigma
             new_ratings[2].mu = rating_groups_result[0][1].mu
-            new_ratings[3].sigma = rating_groups_result[1][1].sigma
+            new_ratings[2].sigma = rating_groups_result[0][1].sigma
             new_ratings[3].mu = rating_groups_result[1][1].mu
+            new_ratings[3].sigma = rating_groups_result[1][1].sigma
         else:
             rating_groups = [[trueskill_rating] for trueskill_rating in trueskill_ratings]
             ranks = [[-game_player.score] for game_player in game_players]
             rating_groups_result = trueskill_environment.rate(rating_groups, ranks)
             for player_index, rating_group_result in enumerate(rating_groups_result):
-                new_ratings[player_index].sigma = rating_group_result[0].sigma
                 new_ratings[player_index].mu = rating_group_result[0].mu
+                new_ratings[player_index].sigma = rating_group_result[0].sigma
 
         for rating in new_ratings:
             self.lookup.add_rating(rating)
