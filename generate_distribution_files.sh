@@ -4,6 +4,7 @@ TIMESTAMP=$(date +%s)
 
 rm -rf dist
 mkdir -p dist/web/static
+mkdir -p dist/web/stats
 mkdir -p dist/build/js
 
 # favicon.ico
@@ -43,11 +44,21 @@ cp js/* dist/build/js
 # finish # ${TIMESTAMP}.js
 ./enumsgen.py js release > dist/build/js/enums.js
 
-pushd . > /dev/null
 cd dist/build/js
 cp ../../../node_modules/almond/almond.js .
 ../../../node_modules/requirejs/bin/r.js -o baseUrl=. name=almond.js wrap=true preserveLicenseComments=false include=main out=../../web/static/${TIMESTAMP}.js
-popd > /dev/null
+cd ../../..
+
+# stats/index.html
+sed "s/<link rel=\"stylesheet\" href=\"css\/main.css\">/<link rel=\"stylesheet\" href=\"\/static\/${TIMESTAMP}.css\">/" stats.html | \
+sed "s/<script src=\"js\/stats.js\"><\/script>/<script src=\"\/static\/${TIMESTAMP}-stats.js\"><\/script>/" | \
+./node_modules/html-minifier/cli.js \
+	--remove-comments --collapse-whitespace --conservative-collapse --collapse-boolean-attributes --remove-attribute-quotes --remove-redundant-attributes --remove-optional-tags \
+	-o dist/build/stats.html
+sed 's/\s\s*/ /g' dist/build/stats.html | sed 's/ $//' > dist/web/stats/index.html
+
+# ${TIMESTAMP}-stats.js
+sed "s/url: 'stats\//url: '/" js/stats.js | ./node_modules/uglify-js/bin/uglifyjs -o dist/web/static/${TIMESTAMP}-stats.js -m -c
 
 # cleanup
 rm -rf dist/build
