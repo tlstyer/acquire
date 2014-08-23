@@ -13,7 +13,8 @@ $(function() {
 		game_mode_id_to_name = {
 			1: 'Singles',
 			2: 'Teams'
-		};
+		},
+		games, games_length, games_num_shown;
 
 	function initializeUsers() {
 		$.ajax({
@@ -115,14 +116,13 @@ $(function() {
 		}
 	}
 
-	function populateGames(games) {
+	function showMoreGames(num_games_to_add) {
 		var $games = $('#stats-games'),
-			game_index, num_games = games.length,
-			game, $div, game_mode_name, $table, $tbody, scores, num_scores, score_index, score, $tr;
+			game_index, game_index_cutoff = Math.min(games_num_shown + num_games_to_add, games_length),
+			game, $div, game_mode_name, $table, $tbody, scores, num_scores, score_index, score, $tr, games_num_remaining, $stats_games_show_next_100 = $('#stats-games-show-next-100'),
+			$stats_games_show_remaining = $('#stats-games-show-remaining');
 
-		$games.empty();
-
-		for (game_index = 0; game_index < num_games; game_index++) {
+		for (game_index = games_num_shown; game_index < game_index_cutoff; game_index++) {
 			game = games[game_index];
 
 			$div = $('<div/>');
@@ -149,6 +149,29 @@ $(function() {
 				$tbody.append($tr);
 			}
 		}
+
+		games_num_shown = game_index_cutoff;
+
+		games_num_remaining = games_length - games_num_shown;
+		if (games_num_remaining > 100) {
+			$stats_games_show_next_100.show();
+		} else {
+			$stats_games_show_next_100.hide();
+		}
+		if (games_num_remaining > 0) {
+			$stats_games_show_remaining.show();
+		} else {
+			$stats_games_show_remaining.hide();
+		}
+	}
+
+	function populateGames(games_data) {
+		games = games_data;
+		games_length = games_data.length;
+		games_num_shown = 0;
+
+		$('#stats-games').empty();
+		showMoreGames(100);
 	}
 
 	function formButtonClicked() {
@@ -199,10 +222,22 @@ $(function() {
 		formSubmitted();
 	}
 
+	function showNext100Clicked() {
+		showMoreGames(100);
+		return false;
+	}
+
+	function showRemainingClicked() {
+		showMoreGames(games_length - games_num_shown);
+		return false;
+	}
+
 	initializeUsers();
 
 	$('#stats-form input[type=button]').click(formButtonClicked);
 	$('#stats-form').submit(formSubmitted);
 	$('#stats-users').on('click', 'tr td:nth-child(2)', nameCellClicked);
 	$('#stats-games').on('click', 'tr td:nth-child(1)', nameCellClicked);
+	$('#stats-games-show-next-100').click(showNext100Clicked);
+	$('#stats-games-show-remaining').click(showRemainingClicked);
 });
