@@ -325,7 +325,10 @@ span.username {
 		:nth-child(1), :nth-child(3), :nth-child(5) {
 			text-align: right;
 		}
-		:nth-child(2) {
+		:nth-child(2), :nth-child(4), :nth-child(6) {
+			text-align: left;
+		}
+		td:nth-child(2) {
 			cursor: pointer;
 		}
 	}
@@ -349,7 +352,7 @@ span.username {
 		margin: .5em;
 	}
 	tr {
-		:nth-child(1) {
+		td:nth-child(1) {
 			cursor: pointer;
 		}
 		:nth-child(2), :nth-child(3)  {
