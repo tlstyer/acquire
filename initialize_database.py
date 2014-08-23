@@ -6,7 +6,7 @@ import subprocess
 
 
 def main():
-    subprocess.call(['mysql', '-u', 'root', '-proot', '-e', 'drop schema if exists `acquire`; create schema `acquire` default character set utf8 collate utf8_bin;'])
+    subprocess.call(['mysql', '-u', 'root', '-proot', '-e', 'drop schema if exists `acquire`; create schema `acquire` default character set utf8mb4 collate utf8mb4_bin;'])
 
     orm.Base.metadata.create_all(orm.engine)
 
