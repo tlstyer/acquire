@@ -20,8 +20,8 @@ cp -a server.js dist/server.js
 sed "s/version = 'VERSION'/version = '${TIMESTAMP}'/" server.py > dist/server.py
 chmod u+x dist/server.py
 
-# enums.py
-cp -a enums.py dist
+# other .py files
+cp -a cron.py enums.py logs2db.py orm.py ormlookup.py statsgen.py dist
 
 # index.html
 sed "s/<link rel=\"stylesheet\" href=\"css\/main.css\">/<link rel=\"stylesheet\" href=\"static\/${TIMESTAMP}.css\">/" index.html | \
