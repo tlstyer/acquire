@@ -1,8 +1,10 @@
 /dist
 /.idea
+/logs_py
 /nbproject
 /node_modules
 /__pycache__
 /stats
+/stats_temp
 /css/main.css
 /js/enums.js

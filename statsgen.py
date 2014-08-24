@@ -3,6 +3,7 @@
 import collections
 import orm
 import ormlookup
+import os.path
 import sqlalchemy.orm
 import sqlalchemy.sql
 import sqlalchemy.types
@@ -10,8 +11,6 @@ import ujson
 
 
 class StatsGen:
-    output_dir = 'stats/'
-
     users_to_update_sql = sqlalchemy.sql.text('''
         select game.game_id,
             game.end_time,
@@ -73,9 +72,10 @@ class StatsGen:
         order by game.end_time desc, game.game_id desc, game_player.player_index asc
     ''')
 
-    def __init__(self, session):
+    def __init__(self, session, lookup, output_dir):
         self.session = session
-        self.lookup = ormlookup.Lookup(session)
+        self.lookup = lookup
+        self.output_dir = output_dir
 
     def do_work(self):
         kv_last_end_time = self.lookup.get_key_value('statsgen last end_time')
@@ -110,7 +110,7 @@ class StatsGen:
         for row in self.session.execute(StatsGen.ratings_sql):
             rating_type_to_ratings[row.rating_type.decode()].append([row.user_id, row.time, row.mu, row.sigma, row.num_games])
 
-        StatsGen.write_file('users', {'users': user_id_to_name, 'ratings': rating_type_to_ratings})
+        self.write_file('users', {'users': user_id_to_name, 'ratings': rating_type_to_ratings})
 
     def output_user(self, user_id):
         ratings = collections.defaultdict(list)
@@ -126,18 +126,18 @@ class StatsGen:
             last_game_id = row.game_id
         games = [game for game in games if len(game[2]) > 1]
 
-        StatsGen.write_file('user' + str(user_id), {'ratings': ratings, 'games': games})
+        self.write_file('user' + str(user_id), {'ratings': ratings, 'games': games})
 
-    @staticmethod
-    def write_file(filename_prefix, contents):
-        with open(StatsGen.output_dir + filename_prefix + '.json', 'w') as f:
+    def write_file(self, filename_prefix, contents):
+        with open(os.path.join(self.output_dir, filename_prefix + '.json'), 'w') as f:
             f.write(ujson.dumps(contents))
 
 
 def main():
-    session = sqlalchemy.orm.sessionmaker(bind=orm.engine)(autoflush=False, expire_on_commit=False)
+    session = sqlalchemy.orm.sessionmaker(bind=orm.engine)(autoflush=False)
     try:
-        statsgen = StatsGen(session)
+        lookup = ormlookup.Lookup(session)
+        statsgen = StatsGen(session, lookup, 'stats')
         statsgen.do_work()
         session.commit()
     except:

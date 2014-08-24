@@ -15,9 +15,9 @@ class Logs2DB:
         'Teams': .0023,
     }
 
-    def __init__(self, session):
+    def __init__(self, session, lookup):
         self.session = session
-        self.lookup = ormlookup.Lookup(session)
+        self.lookup = lookup
         self.trueskill_environment_lookup = {}
 
         self.method_lookup = {
@@ -28,11 +28,16 @@ class Logs2DB:
         }
 
     def process_logs(self, file, log_time=None):
+        len_last_line = 0
         for line in file:
-            if line and line[0] == '{' and line[-1] == '\n':
-                params = ujson.decode(line)
-                params['_log-time'] = log_time
-                self.method_lookup[params['_']](params)
+            if line and line[-1] == '\n':
+                if line[0] == '{':
+                    params = ujson.decode(line)
+                    params['_log-time'] = log_time
+                    self.method_lookup[params['_']](params)
+            else:
+                len_last_line = len(line.encode())
+        return file.tell() - len_last_line
 
     def process_game(self, params):
         game = self.lookup.get_game(params['_log-time'], params['game-id'])
@@ -153,12 +158,17 @@ class Logs2DB:
 
 def main():
     session = sqlalchemy.orm.sessionmaker(bind=orm.engine)(autoflush=False)
-    logs2db = Logs2DB(session)
-    with open('game_import_data.txt', 'r') as f:
-        logs2db.process_logs(f)
-    with open('/home/tim/server_mirror/home-tim-acquire/logs_py/1407991178', 'r') as f:
-        logs2db.process_logs(f, 1407991178)
-    session.commit()
+    try:
+        lookup = ormlookup.Lookup(session)
+        logs2db = Logs2DB(session, lookup)
+        with open('game_import_data.txt', 'r') as f:
+            logs2db.process_logs(f)
+        session.commit()
+    except:
+        session.rollback()
+        raise
+    finally:
+        session.close()
 
 
 if __name__ == '__main__':
