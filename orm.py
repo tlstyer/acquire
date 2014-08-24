@@ -24,7 +24,7 @@ class Game(Base):
 
     def __repr__(self):
         params = (repr(self.game_id), repr(self.log_time), repr(self.number), repr(self.begin_time), repr(self.end_time), repr(self.game_state_id), repr(self.game_mode_id), repr(self.imported))
-        return '<Game(game_id=%s, log_time=%s, number=%s, begin_time=%s, end_time=%s, game_state_id=%s, game_mode_id=%s, imported=%s)>' % params
+        return 'Game(game_id=%s, log_time=%s, number=%s, begin_time=%s, end_time=%s, game_state_id=%s, game_mode_id=%s, imported=%s)' % params
 
 
 class GameMode(Base):
@@ -35,7 +35,7 @@ class GameMode(Base):
 
     def __repr__(self):
         params = (repr(self.game_mode_id), repr(self.name))
-        return '<GameMode(game_mode_id=%s, name=%s)>' % params
+        return 'GameMode(game_mode_id=%s, name=%s)' % params
 
 
 class GamePlayer(Base):
@@ -52,7 +52,7 @@ class GamePlayer(Base):
 
     def __repr__(self):
         params = (repr(self.game_player_id), repr(self.game_id), repr(self.player_index), repr(self.user_id), repr(self.score))
-        return '<GamePlayer(game_player_id=%s, game_id=%s, player_index=%s, user_id=%s, score=%s)>' % params
+        return 'GamePlayer(game_player_id=%s, game_id=%s, player_index=%s, user_id=%s, score=%s)' % params
 
 
 class GameState(Base):
@@ -63,7 +63,7 @@ class GameState(Base):
 
     def __repr__(self):
         params = (repr(self.game_state_id), repr(self.name))
-        return '<GameState(game_state_id=%s, name=%s)>' % params
+        return 'GameState(game_state_id=%s, name=%s)' % params
 
 
 class KeyValue(Base):
@@ -75,7 +75,7 @@ class KeyValue(Base):
 
     def __repr__(self):
         params = (repr(self.key_value_id), repr(self.key), repr(self.value))
-        return '<KeyValue(key_value_id=%s, key=%s, value=%s)>' % params
+        return 'KeyValue(key_value_id=%s, key=%s, value=%s)' % params
 
 
 class Rating(Base):
@@ -93,7 +93,7 @@ class Rating(Base):
 
     def __repr__(self):
         params = (repr(self.rating_id), repr(self.user_id), repr(self.rating_type_id), repr(self.time), repr(self.mu), repr(self.sigma))
-        return '<Rating(rating_id=%s, user_id=%s, rating_type_id=%s, time=%s, mu=%s, sigma=%s)>' % params
+        return 'Rating(rating_id=%s, user_id=%s, rating_type_id=%s, time=%s, mu=%s, sigma=%s)' % params
 
 
 class RatingType(Base):
@@ -104,7 +104,7 @@ class RatingType(Base):
 
     def __repr__(self):
         params = (repr(self.rating_type_id), repr(self.name))
-        return '<RatingType(rating_type_id=%s, name=%s)>' % params
+        return 'RatingType(rating_type_id=%s, name=%s)' % params
 
 
 class User(Base):
@@ -115,4 +115,4 @@ class User(Base):
 
     def __repr__(self):
         params = (repr(self.user_id), repr(self.name))
-        return '<User(user_id=%s, name=%s)>' % params
+        return 'User(user_id=%s, name=%s)' % params
