@@ -205,9 +205,11 @@ define(function(require) {
 		add_client_location_messages = false;
 	}
 
-	$('#chat-history').scroll(chatHistoryScrolled);
-	$('#chat-form input[name="chat-target"]').change(chatTargetChanged);
-	$('#chat-form').submit(chatFormSubmitted);
+	function onInitializationComplete() {
+		$('#chat-history').scroll(chatHistoryScrolled);
+		$('#chat-form input[name="chat-target"]').change(chatTargetChanged);
+		$('#chat-form').submit(chatFormSubmitted);
+	}
 
 	pubsub.subscribe(enums.PubSub.Client_SetPage, setPage);
 	pubsub.subscribe(enums.PubSub.Server_AddGlobalChatMessage, addGlobalChatMessage);
@@ -220,6 +222,7 @@ define(function(require) {
 	pubsub.subscribe(enums.PubSub.Client_AddGameWatcher, addGameWatcher);
 	pubsub.subscribe(enums.PubSub.Client_RemoveGameWatcher, removeGameWatcher);
 	pubsub.subscribe(enums.PubSub.Network_Disconnect, reset);
+	pubsub.subscribe(enums.PubSub.Client_InitializationComplete, onInitializationComplete);
 
 	return {
 		setPositionForPage: setPositionForPage

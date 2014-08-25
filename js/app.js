@@ -108,14 +108,16 @@ define(function(require) {
 		showPage('login');
 	}
 
+	function onInitializationComplete() {
+		periodicResizeCheck();
+		initializeUsername();
+		showPage('login');
+
+		$('#login-form').submit(onSubmitLoginForm);
+	}
+
 	require('lobby');
 	require('game');
-
-	periodicResizeCheck();
-	initializeUsername();
-	showPage('login');
-
-	$('#login-form').submit(onSubmitLoginForm);
 
 	pubsub.subscribe(enums.PubSub.Client_SetClientData, onClientSetClientData);
 	pubsub.subscribe(enums.PubSub.Server_FatalError, onServerFatalError);
@@ -123,6 +125,9 @@ define(function(require) {
 	pubsub.subscribe(enums.PubSub.Client_JoinGame, onClientJoinGame);
 	pubsub.subscribe(enums.PubSub.Client_LeaveGame, onClientLeaveGame);
 	pubsub.subscribe(enums.PubSub.Network_Disconnect, onNetworkDisconnect);
+	pubsub.subscribe(enums.PubSub.Client_InitializationComplete, onInitializationComplete);
 
-	pubsub.publish(enums.PubSub.Client_InitializationComplete);
+	$(function() {
+		pubsub.publish(enums.PubSub.Client_InitializationComplete);
+	});
 });

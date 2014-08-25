@@ -147,12 +147,16 @@ define(function(require) {
 		pubsub.publish(enums.PubSub.Client_SetOption, key, value);
 	}
 
+	function onInitializationComplete() {
+		initialize();
+
+		$('#options input, #options select').change(processChange);
+	}
+
 	data.setPositionForPage = setPositionForPage;
 
-	$('#options input, #options select').change(processChange);
-
-	pubsub.subscribe(enums.PubSub.Client_InitializationComplete, initialize);
 	pubsub.subscribe(enums.PubSub.Client_SetPage, setPage);
+	pubsub.subscribe(enums.PubSub.Client_InitializationComplete, onInitializationComplete);
 
 	return data;
 });

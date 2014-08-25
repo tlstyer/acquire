@@ -1,7 +1,9 @@
-define(function() {
+define(function(require) {
 	'use strict';
 
-	var scrollbar_width = 0;
+	var enums = require('enums'),
+		pubsub = require('pubsub'),
+		scrollbar_width = 0;
 
 	function initializeScrollbarWidth() {
 		// from http://benalman.com/projects/jquery-misc-plugins/#scrollbarwidth
@@ -53,7 +55,11 @@ define(function() {
 		return scrollbar_width;
 	}
 
-	initializeScrollbarWidth();
+	function onInitializationComplete() {
+		initializeScrollbarWidth();
+	}
+
+	pubsub.subscribe(enums.PubSub.Client_InitializationComplete, onInitializationComplete);
 
 	return {
 		getHyphenatedStringFromEnumName: getHyphenatedStringFromEnumName,

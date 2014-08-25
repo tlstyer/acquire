@@ -1029,16 +1029,18 @@ define(function(require) {
 		play_tile_action_enabled = false;
 	}
 
-	initializeHtml();
-	initializeGameBoardCellTypes();
-	initializeGameBoardTypeCounts();
-	initializeGameActionConstructorsLookup();
+	function onInitializationComplete() {
+		initializeHtml();
+		initializeGameBoardCellTypes();
+		initializeGameBoardTypeCounts();
+		initializeGameActionConstructorsLookup();
 
-	$('#game-board td').click(gameBoardCellClicked);
-	$('#game-tile-rack .button-hotel').click(gameTileRackButtonClicked);
-	$('#game-action input').click(gameActionButtonClicked);
-	$('#game-history').scroll(gameHistoryScrolled);
-	$('#button-leave-game').click(leaveGameButtonClicked);
+		$('#game-board td').click(gameBoardCellClicked);
+		$('#game-tile-rack .button-hotel').click(gameTileRackButtonClicked);
+		$('#game-action input').click(gameActionButtonClicked);
+		$('#game-history').scroll(gameHistoryScrolled);
+		$('#button-leave-game').click(leaveGameButtonClicked);
+	}
 
 	pubsub.subscribe(enums.PubSub.Client_Resize, resize);
 	pubsub.subscribe(enums.PubSub.Client_SetGamePlayerData, setGamePlayerData);
@@ -1058,4 +1060,5 @@ define(function(require) {
 	pubsub.subscribe(enums.PubSub.Client_SetGameState, setGameState);
 	pubsub.subscribe(enums.PubSub.Client_LeaveGame, reset);
 	pubsub.subscribe(enums.PubSub.Network_Disconnect, reset);
+	pubsub.subscribe(enums.PubSub.Client_InitializationComplete, onInitializationComplete);
 });

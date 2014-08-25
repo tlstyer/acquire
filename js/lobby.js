@@ -169,9 +169,11 @@ define(function(require) {
 		$('#lobby-games').empty();
 	}
 
-	$('#create-game-section select').change(createGameSelectChanged);
-	$('#button-create-game').click(createGameButtonClicked);
-	$('#lobby-games').on('click', 'input', gameButtonClicked);
+	function onInitializationComplete() {
+		$('#create-game-section select').change(createGameSelectChanged);
+		$('#button-create-game').click(createGameButtonClicked);
+		$('#lobby-games').on('click', 'input', gameButtonClicked);
+	}
 
 	pubsub.subscribe(enums.PubSub.Client_Resize, resize);
 	pubsub.subscribe(enums.PubSub.Client_AddLobbyClient, addLobbyClient);
@@ -182,4 +184,5 @@ define(function(require) {
 	pubsub.subscribe(enums.PubSub.Client_RemoveGameWatcher, removeGameWatcher);
 	pubsub.subscribe(enums.PubSub.Server_DestroyGame, destroyGame);
 	pubsub.subscribe(enums.PubSub.Network_Disconnect, reset);
+	pubsub.subscribe(enums.PubSub.Client_InitializationComplete, onInitializationComplete);
 });

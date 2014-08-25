@@ -53,7 +53,11 @@ define(function(require) {
 		}
 	}
 
-	initializeServerUrlData();
+	function onInitializationComplete() {
+		initializeServerUrlData();
+	}
+
+	pubsub.subscribe(enums.PubSub.Client_InitializationComplete, onInitializationComplete);
 
 	return {
 		connect: connect,
