@@ -48,8 +48,6 @@ define(function(require) {
 	function sendMessage() {
 		if (socket !== null) {
 			socket.emit('x', JSON.stringify(Array.prototype.slice.call(arguments, 0)));
-
-			pubsub.publish(enums.PubSub.Network_SendMessage);
 		}
 	}
 
