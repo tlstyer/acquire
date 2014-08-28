@@ -26,6 +26,7 @@ class Logs2DB:
         self.session = session
         self.lookup = lookup
         self.trueskill_environment_lookup = {}
+        self.completed_game_users = None
 
         self.method_lookup = {
             'game': self.process_game,
@@ -36,6 +37,7 @@ class Logs2DB:
 
     def process_logs(self, file, log_time=None):
         len_last_line = 0
+        self.completed_game_users = set()
         for line in file:
             if line and line[-1] == '\n':
                 if line[0] == '{':
@@ -44,7 +46,7 @@ class Logs2DB:
                     self.method_lookup[params['_']](params)
             else:
                 len_last_line = len(line.encode())
-        return file.tell() - len_last_line
+        return file.tell() - len_last_line, self.completed_game_users
 
     def process_game(self, params):
         game = self.lookup.get_game(params['_log-time'], params['game-id'])
@@ -86,6 +88,7 @@ class Logs2DB:
             game_player.user = self.lookup.get_user(name)
             game_player.score = score
             game_players.append(game_player)
+            self.completed_game_users.add(game_player.user)
 
         self.calculate_new_ratings(game, game_players)
 
@@ -102,6 +105,7 @@ class Logs2DB:
             game_player = self.lookup.get_game_player(game, player_index)
             game_player.score = score
             game_players.append(game_player)
+            self.completed_game_users.add(game_player.user)
 
         self.calculate_new_ratings(game, game_players)
 
@@ -164,17 +168,6 @@ class Logs2DB:
 
 
 class StatsGen:
-    users_to_update_sql = sqlalchemy.sql.text('''
-        select game.game_id,
-            game.end_time,
-            user.user_id
-        from game
-        join game_player on game.game_id = game_player.game_id
-        join user on game_player.user_id = user.user_id
-        where game.end_time >= :end_time
-            and game_player.score is not null
-        order by game.end_time asc
-    ''')
     users_sql = sqlalchemy.sql.text('''
         select user.user_id,
             user.name
@@ -225,34 +218,9 @@ class StatsGen:
         order by game.end_time desc, game.game_id desc, game_player.player_index asc
     ''')
 
-    def __init__(self, session, lookup, output_dir):
+    def __init__(self, session, output_dir):
         self.session = session
-        self.lookup = lookup
         self.output_dir = output_dir
-
-    def do_work(self):
-        kv_last_end_time = self.lookup.get_key_value('statsgen last end_time')
-        last_end_time = 0 if kv_last_end_time.value is None else int(kv_last_end_time.value)
-        kv_last_game_ids = self.lookup.get_key_value('statsgen last game_ids')
-        last_game_ids = set() if kv_last_game_ids.value is None else {int(x) for x in kv_last_game_ids.value.split(',')}
-
-        update_user_ids = set()
-        next_last_game_ids = last_game_ids.copy()
-        for row in self.session.execute(StatsGen.users_to_update_sql, {'end_time': last_end_time}):
-            if row.game_id not in last_game_ids:
-                if row.end_time > last_end_time:
-                    last_end_time = row.end_time
-                    next_last_game_ids = set()
-                next_last_game_ids.add(row.game_id)
-                update_user_ids.add(row.user_id)
-
-        if update_user_ids:
-            self.output_users()
-        for user_id in update_user_ids:
-            self.output_user(user_id)
-
-        kv_last_end_time.value = str(last_end_time)
-        kv_last_game_ids.value = ','.join(str(x) for x in next_last_game_ids)
 
     def output_users(self):
         user_id_to_name = {}
@@ -286,62 +254,57 @@ class StatsGen:
             f.write(ujson.dumps(contents))
 
 
-def run_logs2db():
-    with orm.session_scope() as session:
-        lookup = orm.Lookup(session)
-        logs2db_obj = Logs2DB(session, lookup)
-
-        kv_last_filename = lookup.get_key_value('cron last filename')
-        last_filename = 0 if kv_last_filename.value is None else int(kv_last_filename.value)
-        kv_last_offset = lookup.get_key_value('cron last offset')
-        last_offset = 0 if kv_last_offset.value is None else int(kv_last_offset.value)
-
-        filenames = []
-        for filename in os.listdir('logs_py'):
-            filename = int(filename)
-            if filename >= last_filename:
-                filenames.append(filename)
-        filenames.sort()
-
-        filename = 0
-        offset = 0
-        for filename in filenames:
-            offset = last_offset if filename == last_filename else 0
-            with open('logs_py/' + str(filename), 'r') as f:
-                if offset:
-                    f.seek(offset)
-                offset = logs2db_obj.process_logs(f, filename)
-
-        kv_last_filename.value = filename
-        kv_last_offset.value = offset
-
-
-def run_statsgen():
-    with orm.session_scope() as session:
-        lookup = orm.Lookup(session)
-        statsgen_obj = StatsGen(session, lookup, 'stats_temp')
-        statsgen_obj.do_work()
-
-
-def gzip_and_release_stats_files():
-    filenames = glob.glob('stats_temp/*.json')
-    if filenames:
-        command = ['gzip', '-knf9']
-        command.extend(filenames)
-        subprocess.call(command)
-
-        command = ['mv']
-        command.extend(filenames)
-        command.extend(x + '.gz' for x in filenames)
-        command.append('web/stats')
-        subprocess.call(command)
-
-
 def main():
     while True:
-        run_logs2db()
-        run_statsgen()
-        gzip_and_release_stats_files()
+        with orm.session_scope() as session:
+            lookup = orm.Lookup(session)
+            logs2db = Logs2DB(session, lookup)
+
+            kv_last_filename = lookup.get_key_value('cron last filename')
+            last_filename = 0 if kv_last_filename.value is None else int(kv_last_filename.value)
+            kv_last_offset = lookup.get_key_value('cron last offset')
+            last_offset = 0 if kv_last_offset.value is None else int(kv_last_offset.value)
+
+            filenames = []
+            for filename in os.listdir('logs_py'):
+                filename = int(filename)
+                if filename >= last_filename:
+                    filenames.append(filename)
+            filenames.sort()
+
+            filename = 0
+            offset = 0
+            completed_game_users = set()
+            for filename in filenames:
+                offset = last_offset if filename == last_filename else 0
+                with open('logs_py/' + str(filename), 'r') as f:
+                    if offset:
+                        f.seek(offset)
+                    offset, new_completed_game_users = logs2db.process_logs(f, filename)
+                    completed_game_users.update(new_completed_game_users)
+
+            kv_last_filename.value = filename
+            kv_last_offset.value = offset
+
+            session.flush()
+
+            if completed_game_users:
+                statsgen = StatsGen(session, 'stats_temp')
+                statsgen.output_users()
+                for user in completed_game_users:
+                    statsgen.output_user(user.user_id)
+
+                filenames = glob.glob('stats_temp/*.json')
+                if filenames:
+                    command = ['gzip', '-knf9']
+                    command.extend(filenames)
+                    subprocess.call(command)
+
+                    command = ['mv']
+                    command.extend(filenames)
+                    command.extend(x + '.gz' for x in filenames)
+                    command.append('web/stats')
+                    subprocess.call(command)
 
         time.sleep(60)
 
