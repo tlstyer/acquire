@@ -5,15 +5,13 @@ import logs2db
 import orm
 import ormlookup
 import os
-import sqlalchemy.orm
 import statsgen
 import subprocess
 import time
 
 
 def run_logs2db():
-    session = sqlalchemy.orm.sessionmaker(bind=orm.engine)(autoflush=False)
-    try:
+    with orm.session_scope() as session:
         lookup = ormlookup.Lookup(session)
         logs2db_obj = logs2db.Logs2DB(session, lookup)
 
@@ -41,26 +39,12 @@ def run_logs2db():
         kv_last_filename.value = filename
         kv_last_offset.value = offset
 
-        session.commit()
-    except:
-        session.rollback()
-        raise
-    finally:
-        session.close()
-
 
 def run_statsgen():
-    session = sqlalchemy.orm.sessionmaker(bind=orm.engine)(autoflush=False)
-    try:
+    with orm.session_scope() as session:
         lookup = ormlookup.Lookup(session)
         statsgen_obj = statsgen.StatsGen(session, lookup, 'stats_temp')
         statsgen_obj.do_work()
-        session.commit()
-    except:
-        session.rollback()
-        raise
-    finally:
-        session.close()
 
 
 def gzip_and_release_stats_files():

@@ -134,17 +134,10 @@ class StatsGen:
 
 
 def main():
-    session = sqlalchemy.orm.sessionmaker(bind=orm.engine)(autoflush=False)
-    try:
+    with orm.session_scope() as session:
         lookup = ormlookup.Lookup(session)
         statsgen = StatsGen(session, lookup, 'stats')
         statsgen.do_work()
-        session.commit()
-    except:
-        session.rollback()
-        raise
-    finally:
-        session.close()
 
 
 if __name__ == '__main__':

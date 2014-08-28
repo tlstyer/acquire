@@ -2,7 +2,6 @@
 
 import orm
 import ormlookup
-import sqlalchemy.orm
 import trueskill
 import ujson
 
@@ -157,18 +156,11 @@ class Logs2DB:
 
 
 def main():
-    session = sqlalchemy.orm.sessionmaker(bind=orm.engine)(autoflush=False)
-    try:
+    with orm.session_scope() as session:
         lookup = ormlookup.Lookup(session)
         logs2db = Logs2DB(session, lookup)
         with open('game_import_data.txt', 'r') as f:
             logs2db.process_logs(f)
-        session.commit()
-    except:
-        session.rollback()
-        raise
-    finally:
-        session.close()
 
 
 if __name__ == '__main__':

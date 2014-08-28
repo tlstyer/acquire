@@ -1,10 +1,25 @@
+from contextlib import contextmanager
 from sqlalchemy import create_engine, Column, Index, ForeignKey, String, Text, UniqueConstraint
 from sqlalchemy.dialects.mysql import FLOAT, INTEGER, SMALLINT, TINYINT
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, sessionmaker
 
 Base = declarative_base()
 engine = create_engine('mysql+mysqlconnector://root:root@localhost:3306/acquire')
+Session = sessionmaker(bind=engine)
+
+
+@contextmanager
+def session_scope():
+    session = Session(autoflush=False)
+    try:
+        yield session
+        session.commit()
+    except:
+        session.rollback()
+        raise
+    finally:
+        session.close()
 
 
 class Game(Base):
