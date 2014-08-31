@@ -13,12 +13,8 @@ cp -a ../tlstyer.com/favicon.ico dist/web
 # pre-existing static files
 cp -a static/* dist/web/static
 
-# server.js
-cp -a server.js dist/server.js
-
 # server.py
-sed "s/version = 'VERSION'/version = '${TIMESTAMP}'/" server.py > dist/server.py
-chmod u+x dist/server.py
+cp server.py dist/server.py
 
 # other .py files
 cp -a cron.py enums.py orm.py dist
@@ -35,8 +31,8 @@ sed 's/\s\s*/ /g' dist/build/index.html | sed 's/ $//' > dist/web/index.html
 # ${TIMESTAMP}.css
 ./node_modules/clean-css/bin/cleancss --s0 css/main.css | sed "s/\.\.\/static\///" > dist/web/static/${TIMESTAMP}.css
 
-# start ${TIMESTAMP}.js
-cp js/* dist/build/js
+# start ${TIMESTAMP}.js and server.js
+cp js/* server.js dist/build/js
 
 # enums replacements in server.py and .js files
 ./enumsgen.py replace dist/server.py dist/build/js/*.js
@@ -48,6 +44,11 @@ cd dist/build/js
 cp ../../../node_modules/almond/almond.js .
 ../../../node_modules/requirejs/bin/r.js -o baseUrl=. name=almond.js wrap=true preserveLicenseComments=false include=main out=../../web/static/${TIMESTAMP}.js
 cd ../../..
+
+# finish server.js
+sed "s/var server_version = 'VERSION';/var server_version = '${TIMESTAMP}';/" dist/build/js/server.js | \
+sed "s/var enums = require('\.\/js\/enums');/\/\/ var enums = require('\.\/js\/enums');/" > dist/server.js
+chmod u+x dist/server.js
 
 # stats/index.html
 sed "s/<link rel=\"stylesheet\" href=\"css\/main.css\">/<link rel=\"stylesheet\" href=\"\/static\/${TIMESTAMP}.css\">/" stats.html | \

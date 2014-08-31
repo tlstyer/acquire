@@ -99,10 +99,16 @@ body {
 .page {
 	display: none;
 	padding-left: .5em;
+	padding-right: .5em;
 }
 
-#login-error-message, #stats-form-error-message {
+#login-error-message, #set-password-error-message, #stats-form-error-message {
 	color: red;
+	font-weight: bold;
+}
+
+#set-password-success-message {
+	color: green;
 	font-weight: bold;
 }
 

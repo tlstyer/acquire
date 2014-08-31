@@ -61,7 +61,7 @@ def generate_enums_js(mode):
         class_names_include_str_to_int = {'GameModes'}
     elif mode == 'development':
         class_names_set = {obj[0] for obj in inspect.getmembers(enums) if inspect.isclass(obj[1])}
-        class_names_set -= {'AutoNumber', 'CommandsToClient'}
+        class_names_set -= {'AutoNumber'}
         class_names_set |= {'PubSub'}
         class_names = sorted(class_names_set)
         class_names_include_str_to_int = class_names_set
@@ -80,6 +80,11 @@ def generate_enums_js(mode):
             lookups.append("\t\t\t{}: '{}'".format(value, name))
         parts.append('\t\t' + class_name + ': {\n' + ',\n'.join(lookups) + '\n\t\t}')
 
+    print('if (typeof define !== \'function\') {')
+    print('\t/* global require, module */')
+    print('\tvar define = require(\'amdefine\')(module);')
+    print('}')
+    print()
     print('define(function() {')
     print('\t\'use strict\';')
     print()

@@ -64,13 +64,12 @@ class AcquireServerProtocol():
     next_game_id = 1
     game_id_to_game = {}
     client_ids_and_messages = []
-    version = 'VERSION'
 
     server_transport = None
 
     re_camelcase = re.compile(r'(.)([A-Z])')
 
-    def __init__(self, version, username, ip_address, socket_id):
+    def __init__(self, username, ip_address, socket_id):
         self.username = username
         self.ip_address = ip_address
         self.client_id = AcquireServerProtocol.next_client_id
@@ -84,21 +83,11 @@ class AcquireServerProtocol():
         AcquireServerProtocol.client_ids.add(self.client_id)
         messages_client = []
 
-        print(self.client_id, 'connect', self.ip_address, self.username)
+        print(self.client_id, 'connect', self.username, self.ip_address, socket_id)
         AcquireServerProtocol.server_transport.write(b'connect ' + ujson.dumps([socket_id, self.client_id]).encode() + b'\n')
 
-        if version != AcquireServerProtocol.version:
-            messages_client.append([enums.CommandsToClient.FatalError.value, enums.FatalErrors.NotUsingLatestVersion.value])
-            AcquireServerProtocol.add_pending_messages({self.client_id}, messages_client)
-            AcquireServerProtocol.flush_pending_messages()
-            self.send_disconnect()
-        elif not self.username or len(self.username) > 32:
-            messages_client.append([enums.CommandsToClient.FatalError.value, enums.FatalErrors.InvalidUsername.value])
-            AcquireServerProtocol.add_pending_messages({self.client_id}, messages_client)
-            AcquireServerProtocol.flush_pending_messages()
-            self.send_disconnect()
-        elif self.username in AcquireServerProtocol.usernames:
-            messages_client.append([enums.CommandsToClient.FatalError.value, enums.FatalErrors.UsernameAlreadyInUse.value])
+        if self.username in AcquireServerProtocol.usernames:
+            messages_client.append([enums.CommandsToClient.FatalError.value, enums.Errors.UsernameAlreadyInUse.value])
             AcquireServerProtocol.add_pending_messages({self.client_id}, messages_client)
             AcquireServerProtocol.flush_pending_messages()
             self.send_disconnect()

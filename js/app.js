@@ -7,7 +7,8 @@ define(function(require) {
 		current_page = null,
 		periodic_resize_check_width = null,
 		periodic_resize_check_height = null,
-		got_local_storage = window.hasOwnProperty('localStorage');
+		got_local_storage = window.hasOwnProperty('localStorage'),
+		error_message_lookup = {};
 
 	function showPage(page) {
 		if (page !== current_page) {
@@ -49,41 +50,115 @@ define(function(require) {
 	}
 
 	function onSubmitLoginForm() {
-		var username = $('#login-form-username').val().replace(/\s+/g, ' ').trim();
+		var username = $('#login-form-username').val().replace(/\s+/g, ' ').trim(),
+			password = $('#login-form-password').val();
 
 		if (username.length === 0 || username.length > 32) {
-			onServerFatalError(enums.FatalErrors.InvalidUsername);
+			setLoginErrorMessage(enums.Errors.InvalidUsername);
 		} else {
 			if (got_local_storage) {
 				localStorage.username = username;
 			}
 
 			showPage('connecting');
-			$('#login-error-message').html($('<p/>').text('Lost connection to the server.'));
-			network.connect(username);
+			setLoginErrorMessage(enums.Errors.LostConnection);
+			network.connect(username, password.length > 0 ? getPasswordHash(username, password) : '');
 		}
 
 		return false;
+	}
+
+	function onSubmitSetPasswordForm() {
+		var username = $('#set-password-form-username').val().replace(/\s+/g, ' ').trim(),
+			password = $('#set-password-form-password').val(),
+			password_repeat = $('#set-password-form-password-repeat').val(),
+			$inputs;
+
+		if (username.length < 1 || username.length > 32) {
+			setSetPasswordErrorMessage(enums.Errors.InvalidUsername);
+		} else if (password.length < 8) {
+			setSetPasswordErrorMessage(enums.Errors.InvalidPassword);
+		} else if (password !== password_repeat) {
+			setSetPasswordErrorMessage(enums.Errors.NonMatchingPasswords);
+		} else {
+			$inputs = $('#set-password-form input');
+			$inputs.prop('disabled', true);
+
+			$.ajax({
+				type: 'POST',
+				url: network.getServerUrl() + '/server/set-password',
+				data: {
+					version: $('#page-login').attr('data-version'),
+					username: username,
+					password: getPasswordHash(username, password)
+				},
+				success: function(data) {
+					setSetPasswordErrorMessage(data);
+				},
+				error: function() {
+					setSetPasswordErrorMessage(enums.Errors.GenericError);
+				},
+				complete: function() {
+					$inputs.prop('disabled', false);
+				},
+				dataType: 'json'
+			});
+		}
+
+		return false;
+	}
+
+	function getPasswordHash(username, password) {
+		return CryptoJS.SHA256('acquire ' + username + ' ' + password).toString();
 	}
 
 	function onClientSetClientData() {
 		showPage('lobby');
 	}
 
-	function onServerFatalError(fatal_error_id) {
+	function initializeErrorMessageLookup() {
+		error_message_lookup[enums.Errors.NotUsingLatestVersion] = 'You are not using the latest version. Please reload this page to get it!';
+		error_message_lookup[enums.Errors.GenericError] = 'An error occurred during the processing of your request.';
+		error_message_lookup[enums.Errors.InvalidUsername] = 'Invalid username. Username must have between 1 and 32 characters.';
+		error_message_lookup[enums.Errors.InvalidPassword] = 'Invalid password. Password must have at least 8 characters.';
+		error_message_lookup[enums.Errors.MissingPassword] = 'Password is required.';
+		error_message_lookup[enums.Errors.ProvidedPassword] = 'Password is not set for this user.';
+		error_message_lookup[enums.Errors.IncorrectPassword] = 'Password is incorrect.';
+		error_message_lookup[enums.Errors.NonMatchingPasswords] = 'Password and Repeat Password must match.';
+		error_message_lookup[enums.Errors.ExistingPassword] = 'Password already exists for this username.';
+		error_message_lookup[enums.Errors.UsernameAlreadyInUse] = 'Username already in use.';
+		error_message_lookup[enums.Errors.LostConnection] = 'Lost connection to the server.';
+	}
+
+	function setLoginErrorMessage(error_id) {
 		var message;
 
-		if (fatal_error_id === enums.FatalErrors.NotUsingLatestVersion) {
-			message = 'You are not using the latest version. Please reload this page to get it!';
-		} else if (fatal_error_id === enums.FatalErrors.InvalidUsername) {
-			message = 'Invalid username. Username must have between 1 and 32 characters.';
-		} else if (fatal_error_id === enums.FatalErrors.UsernameAlreadyInUse) {
-			message = 'Username already in use.';
+		if (error_message_lookup.hasOwnProperty(error_id)) {
+			message = error_message_lookup[error_id];
 		} else {
 			message = 'Unknown error.';
 		}
 
 		$('#login-error-message').html($('<p/>').text(message));
+	}
+
+	function setSetPasswordErrorMessage(error_id) {
+		var message, $set_password_success_message = $('#set-password-success-message'),
+			$set_password_error_message = $('#set-password-error-message');
+
+		if (error_id === null) {
+			$set_password_success_message.html($('<p/>').text('Success!'));
+			$set_password_error_message.empty();
+		} else {
+			if (error_message_lookup.hasOwnProperty(error_id)) {
+				message = error_message_lookup[error_id];
+			} else {
+				message = 'Unknown error.';
+			}
+
+			$set_password_success_message.empty();
+			$set_password_error_message.html($('<p/>').text(message));
+		}
 	}
 
 	function onClientSetOption(key, value) {
@@ -111,16 +186,18 @@ define(function(require) {
 	function onInitializationComplete() {
 		periodicResizeCheck();
 		initializeUsername();
+		initializeErrorMessageLookup();
 		showPage('login');
 
 		$('#login-form').submit(onSubmitLoginForm);
+		$('#set-password-form').submit(onSubmitSetPasswordForm);
 	}
 
 	require('lobby');
 	require('game');
 
 	pubsub.subscribe(enums.PubSub.Client_SetClientData, onClientSetClientData);
-	pubsub.subscribe(enums.PubSub.Server_FatalError, onServerFatalError);
+	pubsub.subscribe(enums.PubSub.Server_FatalError, setLoginErrorMessage);
 	pubsub.subscribe(enums.PubSub.Client_SetOption, onClientSetOption);
 	pubsub.subscribe(enums.PubSub.Client_JoinGame, onClientJoinGame);
 	pubsub.subscribe(enums.PubSub.Client_LeaveGame, onClientLeaveGame);

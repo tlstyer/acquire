@@ -3,12 +3,91 @@
 (function() {
 	'use strict';
 
-	var app = require('http').createServer();
-	var io = require('socket.io')(app, {
+	var app = require('express')();
+	var body_parser = require('body-parser');
+	var http = require('http').Server(app);
+	var io = require('socket.io')(http, {
 		pingInterval: 20000,
 		pingTimeout: 35000
 	});
-	app.listen(9000);
+	http.listen(9000);
+
+	var mysql = require('mysql');
+	var pool = mysql.createPool({
+		socketPath: '/var/run/mysqld/mysqld.sock',
+		user: 'root',
+		password: 'root',
+		database: 'acquire',
+		charset: 'utf8mb4'
+	});
+
+	var server_version = 'VERSION';
+	var enums = require('./js/enums');
+
+
+	app.use(body_parser.urlencoded({
+		extended: false
+	}));
+	app.post('/server/set-password', function(req, res) {
+		var version = req.body.hasOwnProperty('version') ? req.body.version.replace(/\s+/g, ' ').trim() : '',
+			username = req.body.hasOwnProperty('username') ? req.body.username.replace(/\s+/g, ' ').trim() : '',
+			password = req.body.hasOwnProperty('password') ? req.body.password.replace(/\s+/g, ' ').trim() : '',
+			ip_address = req.headers.hasOwnProperty('x-real-ip') ? req.headers['x-real-ip'] : req.address.address,
+			fields;
+
+		res.setHeader('Content-Type', 'application/json');
+
+		var return_result = function(error_id) {
+				console.log('/server/set-password', version, username, password, ip_address, error_id);
+				res.end(String(error_id));
+			};
+
+		if (version !== server_version) {
+			return_result(enums.Errors.NotUsingLatestVersion);
+		} else if (username.length < 1 || username.length > 32) {
+			return_result(enums.Errors.InvalidUsername);
+		} else if (!/^[0-9a-f]{64}$/.test(password)) {
+			return_result(enums.Errors.GenericError);
+		} else {
+			pool.query('select * from user where name = ?', [username], function(err, results) {
+				if (err === null) {
+					if (results.length === 1) {
+						if (results[0].password === null) {
+							// set user's password
+							fields = {
+								password: password
+							};
+							pool.query('update user set ? where user_id = ?', [fields, results[0].user_id], function(err) {
+								if (err === null) {
+									return_result(null);
+								} else {
+									return_result(enums.Errors.GenericError);
+								}
+							});
+						} else {
+							// password already set
+							return_result(enums.Errors.ExistingPassword);
+						}
+					} else {
+						// insert user
+						fields = {
+							name: username,
+							password: password
+						};
+						pool.query('insert into user set ?', [fields], function(err) {
+							if (err === null) {
+								return_result(null);
+							} else {
+								return_result(enums.Errors.GenericError);
+							}
+						});
+					}
+				} else {
+					return_result(enums.Errors.GenericError);
+				}
+			});
+		}
+	});
 
 
 	var python_server = require('net').Socket();
@@ -67,12 +146,61 @@
 	io.on('connect', function(socket) {
 		var version = socket.handshake.query.hasOwnProperty('version') ? socket.handshake.query.version.replace(/\s+/g, ' ').trim() : '',
 			username = socket.handshake.query.hasOwnProperty('username') ? socket.handshake.query.username.replace(/\s+/g, ' ').trim() : '',
+			password = socket.handshake.query.hasOwnProperty('password') ? socket.handshake.query.password.replace(/\s+/g, ' ').trim() : '',
 			ip_address = socket.handshake.headers.hasOwnProperty('x-real-ip') ? socket.handshake.headers['x-real-ip'] : socket.handshake.address.address;
+
+		console.log(socket.id, 'connect', version, username, password, ip_address);
 
 		socket_id_to_socket[socket.id] = socket;
 		socket_id_to_client_id[socket.id] = null;
 
-		python_server.write('connect ' + JSON.stringify([version, username, ip_address, socket.id]) + '\n');
+		var return_fatal_error = function(error_id) {
+				console.log(socket.id, 'return_fatal_error', error_id);
+				socket.emit('x', JSON.stringify([
+					[enums.CommandsToClient.FatalError, error_id]
+				]));
+				socket.disconnect();
+			};
+		var pass_to_python = function() {
+				console.log(socket.id, 'pass_to_python');
+				python_server.write('connect ' + JSON.stringify([username, ip_address, socket.id]) + '\n');
+			};
+		if (version !== server_version) {
+			return_fatal_error(enums.Errors.NotUsingLatestVersion);
+		} else if (username.length < 1 || username.length > 32) {
+			return_fatal_error(enums.Errors.InvalidUsername);
+		} else {
+			pool.query('select * from user where name = ?', [username], function(err, results) {
+				console.log(socket.id, 'query_result', err, results);
+				if (err === null) {
+					if (results.length === 1) {
+						if (results[0].password === null) {
+							if (password.length > 0) {
+								return_fatal_error(enums.Errors.ProvidedPassword);
+							} else {
+								pass_to_python();
+							}
+						} else {
+							if (password.length === 0) {
+								return_fatal_error(enums.Errors.MissingPassword);
+							} else if (password !== results[0].password) {
+								return_fatal_error(enums.Errors.IncorrectPassword);
+							} else {
+								pass_to_python();
+							}
+						}
+					} else {
+						if (password.length > 0) {
+							return_fatal_error(enums.Errors.ProvidedPassword);
+						} else {
+							pass_to_python();
+						}
+					}
+				} else {
+					return_fatal_error(enums.Errors.GenericError);
+				}
+			});
+		}
 
 		socket.on('disconnect', function() {
 			var client_id = socket_id_to_client_id[socket.id];

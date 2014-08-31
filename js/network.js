@@ -19,9 +19,13 @@ define(function(require) {
 		version = $('#page-login').attr('data-version');
 	}
 
-	function connect(username) {
+	function getServerUrl() {
+		return server_url;
+	}
+
+	function connect(username, password) {
 		if (socket === null) {
-			socket = io(server_url + '?version=' + encodeURIComponent(version) + '&username=' + encodeURIComponent(username), {
+			socket = io(server_url + '?version=' + encodeURIComponent(version) + '&username=' + encodeURIComponent(username) + '&password=' + encodeURIComponent(password), {
 				forceNew: true,
 				reconnection: false
 			});
@@ -58,6 +62,7 @@ define(function(require) {
 	pubsub.subscribe(enums.PubSub.Client_InitializationComplete, onInitializationComplete);
 
 	return {
+		getServerUrl: getServerUrl,
 		connect: connect,
 		sendMessage: sendMessage
 	};

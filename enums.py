@@ -46,10 +46,18 @@ class CommandsToServer(AutoNumber):
     SendGameChatMessage = ()
 
 
-class FatalErrors(AutoNumber):
+class Errors(AutoNumber):
     NotUsingLatestVersion = ()
+    GenericError = ()
     InvalidUsername = ()
+    InvalidPassword = ()
+    MissingPassword = ()
+    ProvidedPassword = ()
+    IncorrectPassword = ()
+    NonMatchingPasswords = ()
+    ExistingPassword = ()
     UsernameAlreadyInUse = ()
+    LostConnection = ()
 
 
 class GameActions(AutoNumber):

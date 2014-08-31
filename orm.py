@@ -127,11 +127,12 @@ class User(Base):
     __tablename__ = 'user'
     user_id = Column(INTEGER(unsigned=True), primary_key=True, nullable=False)
     name = Column(String(32, convert_unicode='force'), nullable=False)
+    password = Column(String(64, convert_unicode='force'))
     __table_args__ = (UniqueConstraint('name'),)
 
     def __repr__(self):
-        params = (repr(self.user_id), repr(self.name))
-        return 'User(user_id=%s, name=%s)' % params
+        params = (repr(self.user_id), repr(self.name), repr(self.password))
+        return 'User(user_id=%s, name=%s, password=%s)' % params
 
 
 class Lookup:
