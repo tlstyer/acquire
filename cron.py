@@ -223,11 +223,13 @@ class StatsGen:
         self.session = session
         self.output_dir = output_dir
 
-    def output_users(self):
+    def get_user_id_to_name(self):
         user_id_to_name = {}
         for row in self.session.execute(StatsGen.users_sql):
             user_id_to_name[row.user_id] = row.name.decode()
+        return user_id_to_name
 
+    def output_users(self, user_id_to_name):
         rating_type_to_ratings = collections.defaultdict(list)
         for row in self.session.execute(StatsGen.ratings_sql):
             rating_type_to_ratings[row.rating_type.decode()].append([row.user_id, row.time, row.mu, row.sigma, row.num_games])
@@ -256,6 +258,8 @@ class StatsGen:
 
 
 def main():
+    user_id_to_name = None
+
     while True:
         with orm.session_scope() as session:
             lookup = orm.Lookup(session)
@@ -291,7 +295,11 @@ def main():
 
             if completed_game_users:
                 statsgen = StatsGen(session, 'stats_temp')
-                statsgen.output_users()
+                if not user_id_to_name:
+                    user_id_to_name = statsgen.get_user_id_to_name()
+                for user in completed_game_users:
+                    user_id_to_name[user.user_id] = user.name
+                statsgen.output_users(user_id_to_name)
                 for user in completed_game_users:
                     statsgen.output_user(user.user_id)
 
