@@ -59,7 +59,7 @@ sed "s/<script src=\"js\/stats.js\"><\/script>/<script src=\"\/static\/${TIMESTA
 sed 's/\s\s*/ /g' dist/build/stats.html | sed 's/ $//' > dist/web/stats/index.html
 
 # ${TIMESTAMP}-stats.js
-sed "s/url: 'stats\//url: '/" js/stats.js | ./node_modules/uglify-js/bin/uglifyjs -o dist/web/static/${TIMESTAMP}-stats.js -m -c
+sed "s/url: 'web\/stats\//url: '/" js/stats.js | ./node_modules/uglify-js/bin/uglifyjs -o dist/web/static/${TIMESTAMP}-stats.js -m -c
 
 # cleanup
 rm -rf dist/build
