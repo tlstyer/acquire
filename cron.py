@@ -169,9 +169,10 @@ class Logs2DB:
 
 class StatsGen:
     users_sql = sqlalchemy.sql.text('''
-        select user.user_id,
+        select distinct user.user_id,
             user.name
         from user
+        join rating on user.user_id = rating.user_id
     ''')
     ratings_sql = sqlalchemy.sql.text('''
         select rating.user_id,
