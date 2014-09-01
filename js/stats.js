@@ -4,6 +4,7 @@ $(function() {
 	var user_id_to_username = null,
 		username_to_user_id = null,
 		rating_type_to_ratings = null,
+		rating_types = ['Singles2', 'Singles3', 'Singles4', 'Teams'],
 		rating_type_to_dygraph = {
 			Singles2: null,
 			Singles3: null,
@@ -82,10 +83,38 @@ $(function() {
 		}
 	}
 
-	function populateRatings(ratings) {
-		var rating_type, $rating, data, data_length, data_index, datum, dygraph_data;
+	function populateSummary(ratings) {
+		var $tbody = $('#stats-user-summary tbody'),
+			rating_type_index, rating_types_length = rating_types.length,
+			rating_type, num_ratings, rating, $tr;
 
-		for (rating_type in rating_type_to_dygraph) {
+		$tbody.empty();
+
+		for (rating_type_index = 0; rating_type_index < rating_types_length; rating_type_index++) {
+			rating_type = rating_types[rating_type_index];
+
+			if (ratings.hasOwnProperty(rating_type)) {
+				num_ratings = ratings[rating_type].length;
+				rating = ratings[rating_type][num_ratings - 1];
+
+				$tr = $('<tr/>');
+				$tr.append($('<td/>').text(rating_type));
+				$tr.append($('<td/>').text((rating[1] - rating[2] * 3).toFixed(2)));
+				$tr.append($('<td/>').text(rating[1].toFixed(2) + ' ± ' + (rating[2] * 3).toFixed(2)));
+				$tr.append($('<td/>').text(num_ratings - 1));
+				$tr.append($('<td/>').text(formatDate(rating[0])));
+				$tbody.append($tr);
+			}
+		}
+	}
+
+	function populateRatings(ratings) {
+		var rating_type_index, rating_types_length = rating_types.length,
+			rating_type, $rating, data, data_length, data_index, datum, dygraph_data;
+
+		for (rating_type_index = 0; rating_type_index < rating_types_length; rating_type_index++) {
+			rating_type = rating_types[rating_type_index];
+
 			if (rating_type_to_dygraph.hasOwnProperty(rating_type)) {
 				$rating = $('#stats-rating-' + rating_type);
 
@@ -197,6 +226,7 @@ $(function() {
 					$('#stats-users').hide();
 					$('#stats-user').show();
 					$('#stats-user-name').text(username);
+					populateSummary(data.ratings);
 					populateRatings(data.ratings);
 					populateGames(data.games);
 				},

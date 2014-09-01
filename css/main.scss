@@ -343,6 +343,20 @@ span.username {
 		padding: 3px;
 	}
 }
+#stats-user-summary {
+	tr {
+		:nth-child(1), :nth-child(3), :nth-child(5) {
+			text-align: left;
+		}
+		:nth-child(2), :nth-child(4) {
+			text-align: right;
+		}
+	}
+	th, td {
+		border: 2px solid $color-table-border;
+		padding: 3px;
+	}
+}
 .stats-rating {
 	display: inline-block;
 	margin: .5em;
