@@ -92,40 +92,6 @@
 			</p>
 		</div>
 		<div class="page" id="page-lobby">
-			<h1>Acquire</h1>
-			<div class="lobby-section">
-				<div class="header">
-					In Lobby
-				</div>
-				<div id="clients-in-lobby">
-				</div>
-			</div>
-			<div id="create-game-section" class="lobby-section">
-				<div class="header">
-					Create Game
-				</div>
-				<span id="cg-span-mode">
-					Mode:
-					<select id="cg-mode">
-						<option value="Singles" selected>Singles</option>
-						<option value="Teams">Teams</option>
-					</select>
-				</span>
-				<span id="cg-span-max-players">
-					Max. Players:
-					<select id="cg-max-players">
-						<option value="1">1</option>
-						<option value="2">2</option>
-						<option value="3">3</option>
-						<option value="4" selected>4</option>
-						<option value="5">5</option>
-						<option value="6">6</option>
-					</select>
-				</span>
-				<input id="button-create-game" type="button" value="Create Game">
-			</div>
-			<div id="lobby-games">
-			</div>
 		</div>
 		<div class="page" id="page-game">
 			<table id="game-board">
@@ -292,6 +258,44 @@
 			</div>
 			<div id="game-buttons">
 				<input id="button-leave-game" type="button" value="Leave Game">
+				<input id="button-show-lobby" type="button" value="Show Lobby">
+				<input id="button-show-chat" type="button" value="Show Chat">
+			</div>
+		</div>
+		<div id="lobby">
+			<h1 id="lobby-header">Acquire</h1>
+			<div class="lobby-section">
+				<div class="header">
+					In Lobby
+				</div>
+				<div id="clients-in-lobby">
+				</div>
+			</div>
+			<div id="create-game-section" class="lobby-section">
+				<div class="header">
+					Create Game
+				</div>
+				<span id="cg-span-mode">
+					Mode:
+					<select id="cg-mode">
+						<option value="Singles" selected>Singles</option>
+						<option value="Teams">Teams</option>
+					</select>
+				</span>
+				<span id="cg-span-max-players">
+					Max. Players:
+					<select id="cg-max-players">
+						<option value="1">1</option>
+						<option value="2">2</option>
+						<option value="3">3</option>
+						<option value="4" selected>4</option>
+						<option value="5">5</option>
+						<option value="6">6</option>
+					</select>
+				</span>
+				<input id="button-create-game" type="button" value="Create Game">
+			</div>
+			<div id="lobby-games">
 			</div>
 		</div>
 		<div id="options">
@@ -346,9 +350,11 @@
 				<div>
 					<span class="header"></span>
 					<span class="state"></span>
-					<input class="button-join-game" type="button" value="Join">
-					<input class="button-rejoin-game" type="button" value="Rejoin">
-					<input class="button-watch-game" type="button" value="Watch">
+					<span class="game-buttons">
+						<input class="button-join-game" type="button" value="Join">
+						<input class="button-rejoin-game" type="button" value="Rejoin">
+						<input class="button-watch-game" type="button" value="Watch">
+					</span>
 				</div>
 				<div class="player"></div>
 				<div class="player"></div>

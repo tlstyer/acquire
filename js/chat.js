@@ -7,6 +7,7 @@ define(function(require) {
 		network = require('network'),
 		pubsub = require('pubsub'),
 		current_page = null,
+		show_on_game_page = false,
 		page_to_position = {},
 		new_messages_count = 0,
 		add_client_location_messages = false;
@@ -44,12 +45,20 @@ define(function(require) {
 	function setPage(page) {
 		current_page = page;
 
-		if (page === 'lobby' || page === 'game') {
+		if (page === 'lobby' || (page === 'game' && show_on_game_page)) {
 			chatTargetChanged();
 			setPosition();
 			$('#chat').show();
 		} else {
 			$('#chat').hide();
+		}
+	}
+
+	function setShowOnGamePage(show) {
+		show_on_game_page = show;
+
+		if (current_page === 'game') {
+			setPage(current_page);
 		}
 	}
 
@@ -225,6 +234,7 @@ define(function(require) {
 	pubsub.subscribe(enums.PubSub.Client_InitializationComplete, onInitializationComplete);
 
 	return {
+		setShowOnGamePage: setShowOnGamePage,
 		setPositionForPage: setPositionForPage
 	};
 });

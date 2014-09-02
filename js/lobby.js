@@ -1,29 +1,57 @@
 define(function(require) {
 	'use strict';
 
-	var chat = require('chat'),
-		common_data = require('common_data'),
+	var common_data = require('common_data'),
 		common_functions = require('common_functions'),
 		enums = require('enums'),
 		network = require('network'),
-		options = require('options'),
-		pubsub = require('pubsub');
+		pubsub = require('pubsub'),
+		current_page = null,
+		show_on_game_page = false,
+		page_to_position = {};
 
-	function resize(window_width, window_height) {
-		var half_window_width = Math.floor(window_width / 2),
-			left, top, width, height;
+	function setPosition() {
+		var position = page_to_position[current_page];
 
-		common_functions.setElementPosition($('#page-lobby'), 0, 0, half_window_width, window_height);
+		common_functions.setElementPosition($('#lobby'), position.left, position.top, position.width, position.height);
+	}
 
-		left = half_window_width + 2;
-		top = 0;
-		width = window_width - half_window_width - 2;
-		height = 100;
-		options.setPositionForPage('lobby', left, top, width, height);
+	function setPage(page) {
+		current_page = page;
 
-		top += height;
-		height = window_height - top;
-		chat.setPositionForPage('lobby', left, top, width, height);
+		if (page === 'game') {
+			$('#lobby-header, #create-game-section, #lobby-games .game-buttons').hide();
+		} else {
+			$('#lobby-header, #create-game-section, #lobby-games .game-buttons').show();
+		}
+
+		if (page === 'lobby' || (page === 'game' && show_on_game_page)) {
+			setPosition();
+			$('#lobby').show();
+		} else {
+			$('#lobby').hide();
+		}
+	}
+
+	function setShowOnGamePage(show) {
+		show_on_game_page = show;
+
+		if (current_page === 'game') {
+			setPage(current_page);
+		}
+	}
+
+	function setPositionForPage(page, left, top, width, height) {
+		page_to_position[page] = {
+			left: left,
+			top: top,
+			width: width,
+			height: height
+		};
+
+		if (page === current_page) {
+			setPosition();
+		}
 	}
 
 	function addLobbyClient(client_id) {
@@ -175,7 +203,7 @@ define(function(require) {
 		$('#lobby-games').on('click', 'input', gameButtonClicked);
 	}
 
-	pubsub.subscribe(enums.PubSub.Client_Resize, resize);
+	pubsub.subscribe(enums.PubSub.Client_SetPage, setPage);
 	pubsub.subscribe(enums.PubSub.Client_AddLobbyClient, addLobbyClient);
 	pubsub.subscribe(enums.PubSub.Client_RemoveLobbyClient, removeLobbyClient);
 	pubsub.subscribe(enums.PubSub.Client_SetGameState, setGameState);
@@ -185,4 +213,9 @@ define(function(require) {
 	pubsub.subscribe(enums.PubSub.Server_DestroyGame, destroyGame);
 	pubsub.subscribe(enums.PubSub.Network_Disconnect, reset);
 	pubsub.subscribe(enums.PubSub.Client_InitializationComplete, onInitializationComplete);
+
+	return {
+		setShowOnGamePage: setShowOnGamePage,
+		setPositionForPage: setPositionForPage
+	};
 });

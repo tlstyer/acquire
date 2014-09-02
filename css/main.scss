@@ -204,10 +204,10 @@ body {
 	}
 }
 
-#options, #chat, #templates {
+#lobby, #options, #chat, #templates {
 	display: none;
 }
-#game-tile-rack, #game-action, #game-history, #game-history-new-messages, #game-status, #game-buttons, #page-lobby, #options, #chat-history, #chat-history-new-messages, #chat-message, #chat-target-div {
+#game-tile-rack, #game-action, #game-history, #game-history-new-messages, #game-status, #game-buttons, #lobby, #options, #chat-history, #chat-history-new-messages, #chat-message, #chat-target-div {
 	position: absolute;
 	box-sizing: border-box;
 }
@@ -224,7 +224,7 @@ body {
 		display: none;
 	}
 }
-#game-history, #page-lobby, #chat-history {
+#game-history, #lobby, #chat-history {
 	overflow-y: scroll;
 }
 #game-history-new-messages, #chat-history-new-messages {

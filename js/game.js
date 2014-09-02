@@ -5,6 +5,7 @@ define(function(require) {
 		common_data = require('common_data'),
 		common_functions = require('common_functions'),
 		enums = require('enums'),
+		lobby = require('lobby'),
 		network = require('network'),
 		notification = require('notification'),
 		options = require('options'),
@@ -127,6 +128,7 @@ define(function(require) {
 
 		top += height + 2;
 		height = window_height - top;
+		lobby.setPositionForPage('game', left, top, width, height);
 		chat.setPositionForPage('game', left, top, width, height);
 	}
 
@@ -983,6 +985,27 @@ define(function(require) {
 		network.sendMessage(enums.CommandsToServer.LeaveGame);
 	}
 
+	function showLobbyOrChat(which_one) {
+		lobby.setShowOnGamePage(which_one === 'lobby');
+		chat.setShowOnGamePage(which_one === 'chat');
+
+		if (which_one === 'lobby') {
+			$('#button-show-lobby').hide();
+			$('#button-show-chat').show();
+		} else {
+			$('#button-show-chat').hide();
+			$('#button-show-lobby').show();
+		}
+	}
+
+	function showLobbyButtonClicked() {
+		showLobbyOrChat('lobby');
+	}
+
+	function showChatButtonClicked() {
+		showLobbyOrChat('chat');
+	}
+
 	function reset() {
 		var x, y;
 
@@ -1034,12 +1057,15 @@ define(function(require) {
 		initializeGameBoardCellTypes();
 		initializeGameBoardTypeCounts();
 		initializeGameActionConstructorsLookup();
+		showLobbyOrChat('chat');
 
 		$('#game-board td').click(gameBoardCellClicked);
 		$('#game-tile-rack .button-hotel').click(gameTileRackButtonClicked);
 		$('#game-action input').click(gameActionButtonClicked);
 		$('#game-history').scroll(gameHistoryScrolled);
 		$('#button-leave-game').click(leaveGameButtonClicked);
+		$('#button-show-lobby').click(showLobbyButtonClicked);
+		$('#button-show-chat').click(showChatButtonClicked);
 	}
 
 	pubsub.subscribe(enums.PubSub.Client_Resize, resize);

@@ -193,7 +193,7 @@ define(function(require) {
 		$('#set-password-form').submit(onSubmitSetPasswordForm);
 	}
 
-	require('lobby');
+	require('lobby_page');
 	require('game');
 
 	pubsub.subscribe(enums.PubSub.Client_SetClientData, onClientSetClientData);
