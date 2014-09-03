@@ -269,6 +269,7 @@ define(function(require) {
 		tile_rack[tile_index] = null;
 
 		$button.css('visibility', 'hidden');
+		$button.prop('disabled', true);
 	}
 
 	function setScoreSheetCell(row, index, data) {
@@ -691,8 +692,10 @@ define(function(require) {
 
 			if ($.inArray(game_board_type_id, game_board_type_ids) !== -1) {
 				$button.css('visibility', 'visible');
+				$button.prop('disabled', false);
 			} else {
 				$button.css('visibility', 'hidden');
+				$button.prop('disabled', true);
 			}
 		}
 
@@ -817,14 +820,18 @@ define(function(require) {
 				$button.attr('class', 'button-hotel color-' + enums.ScoreSheetIndexes[chain_index].toLowerCase());
 				$button.val(score_sheet_price[chain_index] * 100);
 				$button.css('visibility', 'visible');
+				$button.prop('disabled', false);
 			} else {
 				$button.css('visibility', 'hidden');
+				$button.prop('disabled', true);
 			}
 		}
 
 		// update "Cost" fields
 		$('#ps-total').text(money_spent * 100);
 		$('#ps-left').text(money_left * 100);
+
+		focusOnSensibleButton();
 	}
 
 	function gameActionConstructorPurchaseShares() {
@@ -842,6 +849,7 @@ define(function(require) {
 				$button.css('visibility', 'visible');
 			} else {
 				$button.css('visibility', 'hidden');
+				$button.prop('disabled', true);
 			}
 		}
 
@@ -962,6 +970,10 @@ define(function(require) {
 				game_action_constructors_lookup[game_action_id].apply(null, Array.prototype.slice.call(arguments, 2));
 			}
 		}
+
+		if (sub_turn_player_id === common_data.player_id) {
+			focusOnSensibleButton();
+		}
 	}
 
 	function setGameState(game_id) {
@@ -980,6 +992,49 @@ define(function(require) {
 	function maybeShowTeamNetWorths() {
 		if (common_data.game_id_to_mode[common_data.game_id] === enums.GameModes.Teams && common_data.game_id_to_number_of_players[common_data.game_id] === 4) {
 			$('#score-sheet .teams').show();
+		}
+	}
+
+	function focusOnSensibleButton() {
+		var active_element = document.activeElement,
+			active_element_id = active_element.id,
+			$element;
+
+		if (active_element_id === 'chat-message') {
+			return;
+		}
+
+		switch (current_game_action_id) {
+		case enums.GameActions.StartGame:
+			$('#start-game').focus();
+			break;
+
+		case enums.GameActions.PlayTile:
+			if (!/^game-tile-\d$/.test(active_element_id) || $(active_element).prop('disabled')) {
+				$('#game-tile-rack input:enabled').first().focus();
+			}
+			break;
+
+		case enums.GameActions.SelectNewChain:
+		case enums.GameActions.SelectMergerSurvivor:
+		case enums.GameActions.SelectChainToDisposeOfNext:
+			$('#game-action-select-chain input:enabled').first().focus();
+			break;
+
+		case enums.GameActions.DisposeOfShares:
+			$('#game-action-dispose-of-shares input:enabled').first().focus();
+			break;
+
+		case enums.GameActions.PurchaseShares:
+			$element = $('#ps-available input:enabled').first();
+			if ($element.length === 1) {
+				if (!/^ps-available-\d$/.test(active_element_id) || $(active_element).prop('disabled')) {
+					$element.focus();
+				}
+			} else {
+				$('#ps-ok').focus();
+			}
+			break;
 		}
 	}
 
@@ -1025,6 +1080,8 @@ define(function(require) {
 		$('#game-tile-rack .button-hotel').css('visibility', 'hidden');
 
 		$('#game-action > div').hide();
+
+		$('.button-hotel').prop('disabled', true);
 
 		setScoreSheet([
 			[
