@@ -101,11 +101,13 @@ class Logs2DB:
         game = self.lookup.get_game(params['_log-time'], params['game-id'])
 
         game_players = []
+        num_players = len(params['scores'])
         for player_index, score in enumerate(params['scores']):
             game_player = self.lookup.get_game_player(game, player_index)
             game_player.score = score
             game_players.append(game_player)
-            self.completed_game_users.add(game_player.user)
+            if num_players >= 2:
+                self.completed_game_users.add(game_player.user)
 
         self.calculate_new_ratings(game, game_players)
 
