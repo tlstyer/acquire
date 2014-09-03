@@ -249,6 +249,7 @@ define(function(require) {
 		$button.attr('class', 'button-hotel color-' + common_functions.getHyphenatedStringFromEnumName(enums.GameBoardTypes[game_board_type_id]));
 		$button.val(common_functions.getTileName(x, y));
 		$button.css('visibility', 'visible');
+		$button.prop('disabled', game_board_type_id === enums.GameBoardTypes.CantPlayEver || game_board_type_id === enums.GameBoardTypes.CantPlayNow);
 
 		setGameBoardCell(x, y, enums.GameBoardTypes.IHaveThis);
 	}
@@ -259,6 +260,7 @@ define(function(require) {
 		tile_rack[tile_index][2] = game_board_type_id;
 
 		$button.attr('class', 'button-hotel color-' + common_functions.getHyphenatedStringFromEnumName(enums.GameBoardTypes[game_board_type_id]));
+		$button.prop('disabled', game_board_type_id === enums.GameBoardTypes.CantPlayEver || game_board_type_id === enums.GameBoardTypes.CantPlayNow);
 	}
 
 	function removeTile(tile_index) {
