@@ -83,12 +83,81 @@ $(function() {
 		}
 	}
 
-	function populateSummary(ratings) {
+	function compareFuncResults(a, b) {
+		return b[1] - a[1];
+	}
+
+	function getRecords(user_id, games) {
+		var records, game_index, games_length = games.length,
+			game, game_mode_name, player_data, player_data_length, rating_type, results, player_index, player_datum, team_index, results_length, last_score, score, rank;
+
+		records = {
+			Singles2: [0, 0],
+			Singles3: [0, 0, 0],
+			Singles4: [0, 0, 0, 0],
+			Teams: [0, 0]
+		};
+
+		for (game_index = 0; game_index < games_length; game_index++) {
+			game = games[game_index];
+			game_mode_name = game_mode_id_to_name[game[0]];
+			player_data = game[2];
+			player_data_length = player_data.length;
+			rating_type = game_mode_name === 'Singles' ? game_mode_name + player_data_length : game_mode_name;
+
+			if (player_data_length > 4) {
+				continue;
+			}
+
+			if (rating_type === 'Teams') {
+				results = [
+					[0, 0],
+					[0, 0]
+				];
+				for (player_index = 0; player_index < player_data_length; player_index++) {
+					player_datum = player_data[player_index];
+					team_index = player_index % 2;
+
+					if (player_datum[0] === user_id) {
+						results[team_index][0] = user_id;
+					}
+					results[team_index][1] += player_datum[1];
+				}
+			} else {
+				results = player_data.slice(0);
+			}
+
+			results.sort(compareFuncResults);
+			results_length = results.length;
+
+			last_score = -1;
+			for (player_index = 0; player_index < results_length; player_index++) {
+				player_datum = results[player_index];
+				score = player_datum[1];
+
+				if (score !== last_score) {
+					rank = player_index;
+					last_score = score;
+				}
+
+				if (player_datum[0] === user_id) {
+					records[rating_type][rank]++;
+					break;
+				}
+			}
+		}
+
+		return records;
+	}
+
+	function populateSummary(user_id, ratings, games) {
 		var $tbody = $('#stats-user-summary tbody'),
-			rating_type_index, rating_types_length = rating_types.length,
+			records, rating_type_index, rating_types_length = rating_types.length,
 			rating_type, num_ratings, rating, $tr;
 
 		$tbody.empty();
+
+		records = getRecords(user_id, games);
 
 		for (rating_type_index = 0; rating_type_index < rating_types_length; rating_type_index++) {
 			rating_type = rating_types[rating_type_index];
@@ -102,6 +171,7 @@ $(function() {
 				$tr.append($('<td/>').text((rating[1] - rating[2] * 3).toFixed(2)));
 				$tr.append($('<td/>').text(rating[1].toFixed(2) + ' ± ' + (rating[2] * 3).toFixed(2)));
 				$tr.append($('<td/>').text(num_ratings - 1));
+				$tr.append($('<td/>').text(records[rating_type].join(' - ')));
 				$tr.append($('<td/>').text(formatDate(rating[0])));
 				$tbody.append($tr);
 			}
@@ -214,19 +284,21 @@ $(function() {
 	}
 
 	function formSubmitted() {
-		var username = $('#stats-form-username').val().replace(/\s+/g, ' ').trim();
+		var username = $('#stats-form-username').val().replace(/\s+/g, ' ').trim(),
+			user_id;
 
 		if (username_to_user_id.hasOwnProperty(username)) {
+			user_id = username_to_user_id[username];
 			setFormLoadingMessage('Loading stats for ' + username + '...');
 			setFormErrorMessage(null);
 
 			$.ajax({
-				url: 'web/stats/user' + username_to_user_id[username] + '.json',
+				url: 'web/stats/user' + user_id + '.json',
 				success: function(data) {
 					$('#stats-users').hide();
 					$('#stats-user').show();
 					$('#stats-user-name').text(username);
-					populateSummary(data.ratings);
+					populateSummary(user_id, data.ratings, data.games);
 					populateRatings(data.ratings);
 					populateGames(data.games);
 				},
