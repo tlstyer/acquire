@@ -307,13 +307,18 @@ def main():
 
                 filenames = glob.glob('stats_temp/*.json')
                 if filenames:
-                    command = ['gzip', '-knf9']
+                    all_filenames = filenames + [x + '.gz' for x in filenames]
+
+                    command = ['zopfli']
                     command.extend(filenames)
                     subprocess.call(command)
 
+                    command = ['touch', '-r', 'stats_temp/users.json']
+                    command.extend(all_filenames)
+                    subprocess.call(command)
+
                     command = ['mv']
-                    command.extend(filenames)
-                    command.extend(x + '.gz' for x in filenames)
+                    command.extend(all_filenames)
                     command.append('web/stats')
                     subprocess.call(command)
 

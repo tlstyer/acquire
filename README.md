@@ -11,7 +11,7 @@ This is the code for my Acquire board game program which can be played at [http:
 
 ## Install Server Dependencies
 
-    sudo apt-get install nodejs npm python3-pip
+    sudo apt-get install nodejs npm python3-pip zopfli
     npm install amdefine body-parser express mysql socket.io
     sudo pip3 install --upgrade --allow-external mysql-connector-python mysql-connector-python sqlalchemy trueskill ujson
 
