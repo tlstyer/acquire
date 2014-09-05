@@ -191,7 +191,7 @@ class StatsGen:
             group by user_id, rating_type_id
         ) rating_summary on rating.rating_id = rating_summary.rating_id
         join rating_type on rating.rating_type_id = rating_type.rating_type_id
-        order by rating.mu - rating.sigma * 3 desc
+        order by rating.mu - rating.sigma * 3 desc, rating.mu desc, rating.time asc, rating.user_id asc
     ''')
     user_ratings_sql = sqlalchemy.sql.text('''
         select rating_type.name,
