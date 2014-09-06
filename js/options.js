@@ -4,7 +4,6 @@ define(function(require) {
 	var common_functions = require('common_functions'),
 		enums = require('enums'),
 		pubsub = require('pubsub'),
-		data = {},
 		current_page = null,
 		page_to_position = {},
 		details = {
@@ -120,7 +119,6 @@ define(function(require) {
 				}
 
 				setStoredOptionValue(key, value);
-				data[key] = value;
 				pubsub.publish(enums.PubSub.Client_SetOption, key, value);
 			}
 		}
@@ -143,7 +141,6 @@ define(function(require) {
 		}
 
 		setStoredOptionValue(key, value);
-		data[key] = value;
 		pubsub.publish(enums.PubSub.Client_SetOption, key, value);
 	}
 
@@ -153,10 +150,10 @@ define(function(require) {
 		$('#options input, #options select').change(processChange);
 	}
 
-	data.setPositionForPage = setPositionForPage;
-
 	pubsub.subscribe(enums.PubSub.Client_SetPage, setPage);
 	pubsub.subscribe(enums.PubSub.Client_InitializationComplete, onInitializationComplete);
 
-	return data;
+	return {
+		setPositionForPage: setPositionForPage
+	};
 });

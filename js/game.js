@@ -8,8 +8,8 @@ define(function(require) {
 		lobby = require('lobby'),
 		network = require('network'),
 		notification = require('notification'),
-		options = require('options'),
 		pubsub = require('pubsub'),
+		game_board_label_mode = null,
 		game_board_cell_types = [],
 		game_board_type_counts = [],
 		tile_rack = [null, null, null, null, null, null],
@@ -47,6 +47,12 @@ define(function(require) {
 		},
 		current_game_action_id = null,
 		current_player_id = null;
+
+	function setOption(key, value) {
+		if (key === 'game-board-label-mode') {
+			game_board_label_mode = value;
+		}
+	}
 
 	function initializeHtml() {
 		var $game_board_tbody = $('#game-board tbody'),
@@ -192,7 +198,6 @@ define(function(require) {
 
 	function setGameBoardCell(x, y, game_board_type_id) {
 		var $cell = $('#gb-' + x + '-' + y),
-			game_board_label_mode = options['game-board-label-mode'],
 			text;
 
 		game_board_type_counts[game_board_cell_types[x][y]]--;
@@ -1127,6 +1132,7 @@ define(function(require) {
 		$('#button-show-chat').click(showChatButtonClicked);
 	}
 
+	pubsub.subscribe(enums.PubSub.Client_SetOption, setOption);
 	pubsub.subscribe(enums.PubSub.Client_Resize, resize);
 	pubsub.subscribe(enums.PubSub.Client_SetGamePlayerData, setGamePlayerData);
 	pubsub.subscribe(enums.PubSub.Client_JoinGame, joinGame);

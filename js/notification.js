@@ -3,11 +3,20 @@ define(function(require) {
 
 	var common_data = require('common_data'),
 		enums = require('enums'),
-		options = require('options'),
 		pubsub = require('pubsub'),
+		enable_sound_notifications = null,
+		enable_page_title_notifications = null,
 		title = '',
 		interval = null,
 		showing_title_prefix = false;
+
+	function setOption(key, value) {
+		if (key === 'enable-sound-notifications') {
+			enable_sound_notifications = value;
+		} else if (key === 'enable-page-title-notifications') {
+			enable_page_title_notifications = value;
+		}
+	}
 
 	function intervalCallback() {
 		showing_title_prefix = !showing_title_prefix;
@@ -17,14 +26,14 @@ define(function(require) {
 	function turnOn() {
 		var beep;
 
-		if (options['enable-sound-notifications']) {
+		if (enable_sound_notifications) {
 			beep = document.getElementById('beep');
 			beep.pause();
 			beep.currentTime = 0;
 			beep.play();
 		}
 
-		if (options['enable-page-title-notifications']) {
+		if (enable_page_title_notifications) {
 			if (interval === null) {
 				interval = setInterval(intervalCallback, 500);
 				intervalCallback();
@@ -53,6 +62,7 @@ define(function(require) {
 		intervalCallback();
 	}
 
+	pubsub.subscribe(enums.PubSub.Client_SetOption, setOption);
 	pubsub.subscribe(enums.PubSub.Client_SetClientData, onClientSetClientData);
 	pubsub.subscribe(enums.PubSub.Network_Disconnect, resetTitle);
 
