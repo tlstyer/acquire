@@ -46,7 +46,61 @@ define(function(require) {
 			'game-action-purchase-shares': gameActionButtonClickedPurchaseShares
 		},
 		current_game_action_id = null,
-		current_player_id = null;
+		current_player_id = null,
+		key_pressed_PlayTile = {
+			1: 0,
+			2: 1,
+			3: 2,
+			4: 3,
+			5: 4,
+			6: 5
+		},
+		key_pressed_SelectChain = {
+			1: 0,
+			l: 0,
+			2: 1,
+			t: 1,
+			3: 2,
+			a: 2,
+			4: 3,
+			f: 3,
+			5: 4,
+			w: 4,
+			6: 5,
+			c: 5,
+			7: 6,
+			i: 6
+		},
+		key_pressed_DisposeOfShares = {
+			1: 'dos-keep-all',
+			k: 'dos-keep-all',
+			2: 'dos-trade-increment',
+			t: 'dos-trade-increment',
+			3: 'dos-trade-decrement',
+			T: 'dos-trade-decrement',
+			4: 'dos-trade-maximum',
+			5: 'dos-sell-increment',
+			s: 'dos-sell-increment',
+			6: 'dos-sell-decrement',
+			S: 'dos-sell-decrement',
+			7: 'dos-sell-maximum'
+		},
+		key_pressed_PurchaseShares_cart = {
+			'!': 0,
+			L: 0,
+			'@': 1,
+			T: 1,
+			'#': 2,
+			A: 2,
+			'$': 3,
+			F: 3,
+			'%': 4,
+			W: 4,
+			'^': 5,
+			C: 5,
+			'&': 6,
+			I: 6
+		};
 
 	function setOption(key, value) {
 		if (key === 'game-board-label-mode') {
@@ -172,6 +226,8 @@ define(function(require) {
 				setGamePlayerData(common_data.game_id, player_id, player_datum.username, player_datum.client_id);
 			}
 		}
+
+		$('body').on('keypress', keyPressed);
 	}
 
 	function initializeGameBoardCellTypes() {
@@ -734,6 +790,8 @@ define(function(require) {
 		$('#dos-sell-increment').prop('disabled', dispose_of_shares_sell === dispose_of_shares_sell_max);
 		$('#dos-sell-decrement').prop('disabled', dispose_of_shares_sell === 0);
 		$('#dos-sell-maximum').prop('disabled', dispose_of_shares_sell === dispose_of_shares_sell_max);
+
+		focusOnSensibleButton();
 	}
 
 	function gameActionConstructorDisposeOfShares(defunct_type_id, controlling_type_id) {
@@ -857,8 +915,6 @@ define(function(require) {
 				$button.prop('disabled', true);
 			}
 		}
-
-		$('#ps-cart .button-hotel').css('visibility', 'hidden');
 
 		$('#ps-end-game').prop('checked', false);
 
@@ -1027,7 +1083,12 @@ define(function(require) {
 			break;
 
 		case enums.GameActions.DisposeOfShares:
-			$('#game-action-dispose-of-shares input:enabled').first().focus();
+			$element = $('#game-action-dispose-of-shares input:focus');
+			if ($element.length === 0) {
+				$('#game-action-dispose-of-shares input:enabled').first().focus();
+			} else if ($element.prop('disabled')) {
+				$('#dos-ok').focus();
+			}
 			break;
 
 		case enums.GameActions.PurchaseShares:
@@ -1037,6 +1098,70 @@ define(function(require) {
 					$element.focus();
 				}
 			} else {
+				$('#ps-ok').focus();
+			}
+			break;
+		}
+	}
+
+	function keyPressed(event) {
+		var key_code, key_char, game_action_id, $element, i;
+
+		if (document.activeElement.id === 'chat-message') {
+			return;
+		}
+
+		key_code = event.which;
+		key_char = String.fromCharCode(key_code);
+		game_action_id = current_game_action_id;
+		if (current_player_id !== common_data.player_id) {
+			game_action_id = enums.GameActions.PlayTile;
+		}
+
+		switch (game_action_id) {
+		case enums.GameActions.PlayTile:
+			if (key_pressed_PlayTile.hasOwnProperty(key_char)) {
+				$('#game-tile-' + key_pressed_PlayTile[key_char]).focus();
+			}
+			break;
+
+		case enums.GameActions.SelectNewChain:
+		case enums.GameActions.SelectMergerSurvivor:
+		case enums.GameActions.SelectChainToDisposeOfNext:
+			if (key_pressed_SelectChain.hasOwnProperty(key_char)) {
+				$('#game-select-chain-' + key_pressed_SelectChain[key_char]).focus();
+			}
+			break;
+
+		case enums.GameActions.DisposeOfShares:
+			if (key_pressed_DisposeOfShares.hasOwnProperty(key_char)) {
+				$element = $('#' + key_pressed_DisposeOfShares[key_char]);
+				if (!$element.prop('disabled')) {
+					$element.focus().click();
+				}
+			} else if (key_char === '8' || key_char === 'o') {
+				$('#dos-ok').focus();
+			}
+			break;
+
+		case enums.GameActions.PurchaseShares:
+			if (key_pressed_SelectChain.hasOwnProperty(key_char)) {
+				$element = $('#ps-available-' + key_pressed_SelectChain[key_char]);
+				if (!$element.prop('disabled')) {
+					$element.focus().click();
+				}
+			} else if (key_pressed_PurchaseShares_cart.hasOwnProperty(key_char)) {
+				for (i = 2; i >= 0; i--) {
+					if (purchase_shares_cart[i] === key_pressed_PurchaseShares_cart[key_char]) {
+						$('#ps-cart-' + i).focus().click();
+						break;
+					}
+				}
+			} else if (key_code === 8 || key_char === '-') {
+				$('#ps-cart input:enabled').last().focus().click();
+			} else if (key_char === 'e') {
+				$('#ps-end-game').focus().click();
+			} else if (key_char === 'o') {
 				$('#ps-ok').focus();
 			}
 			break;
@@ -1114,6 +1239,8 @@ define(function(require) {
 		$('#game-status').empty();
 
 		play_tile_action_enabled = false;
+
+		$('body').off('keypress', keyPressed);
 	}
 
 	function onInitializationComplete() {
