@@ -115,11 +115,9 @@ define(function(require) {
 		return false;
 	}
 
-	function appendElement($element, client_id) {
+	function appendElement($element) {
 		var $chat_history = $('#chat-history'),
 			scroll_is_at_bottom = common_functions.isScrollAtBottom($chat_history);
-
-		$element.find('.username').text(common_data.client_id_to_data[client_id].username);
 
 		$chat_history.append($element);
 
@@ -152,17 +150,19 @@ define(function(require) {
 	function addGlobalChatMessage(client_id, chat_message) {
 		var $message = $('#chat-message-global').clone().removeAttr('id');
 
+		$message.find('.username').text(common_data.client_id_to_data[client_id].username);
 		$message.find('.chat-message-global-contents').text(chat_message);
 
-		appendElement($message, client_id);
+		appendElement($message);
 	}
 
 	function addGameChatMessage(client_id, chat_message) {
 		var $message = $('#chat-message-game').clone().removeAttr('id');
 
+		$message.find('.username').text(common_data.client_id_to_data[client_id].username);
 		$message.find('.chat-message-game-contents').text(chat_message);
 
-		appendElement($message, client_id);
+		appendElement($message);
 	}
 
 	function messageProcessingComplete() {
@@ -175,11 +175,13 @@ define(function(require) {
 		if (add_client_location_messages) {
 			$message = $(template_selector).clone().removeAttr('id');
 
+			$message.find('.username').text(common_data.client_id_to_data[client_id].username);
+
 			if (game_id !== null) {
 				$message.find('.game-id').text(game_id);
 			}
 
-			appendElement($message, client_id);
+			appendElement($message);
 		}
 	}
 
