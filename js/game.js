@@ -267,6 +267,7 @@ define(function(require) {
 		case 'coordinates':
 			text = common_functions.getTileName(x, y);
 			break;
+
 		case 'hotel initials':
 			if (game_board_type_id === enums.GameBoardTypes.Nothing || game_board_type_id === enums.GameBoardTypes.IHaveThis) {
 				text = common_functions.getTileName(x, y);
@@ -276,6 +277,7 @@ define(function(require) {
 				text = '';
 			}
 			break;
+
 		case 'nothing':
 			if (game_board_type_id === enums.GameBoardTypes.Nothing || game_board_type_id === enums.GameBoardTypes.IHaveThis) {
 				text = common_functions.getTileName(x, y);
@@ -441,6 +443,10 @@ define(function(require) {
 		return column;
 	}
 
+	function unw_compareFuncPlayerIdAndAmount(a, b) {
+		return b.amount - a.amount;
+	}
+
 	function unw_getBonuses(holdings, price) {
 		var player_id_and_amount_array = [],
 			holdings_length, player_id, bonuses = [],
@@ -454,9 +460,7 @@ define(function(require) {
 				amount: holdings[player_id]
 			});
 		}
-		player_id_and_amount_array.sort(function(a, b) {
-			return b.amount - a.amount;
-		});
+		player_id_and_amount_array.sort(unw_compareFuncPlayerIdAndAmount);
 
 		for (player_id = 0; player_id < holdings_length; player_id++) {
 			bonuses.push(0);
@@ -563,7 +567,7 @@ define(function(require) {
 			setScoreSheetCell(player_id, enums.ScoreSheetIndexes.Net, money[player_id]);
 		}
 
-		if (common_data.game_id_to_mode[common_data.game_id] === enums.GameModes.Teams && num_players === 4) {
+		if (common_data.game_id_to_mode_id[common_data.game_id] === enums.GameModes.Teams && num_players === 4) {
 			$('#team1-net').text((money[0] + money[2]) * 100);
 			$('#team2-net').text((money[1] + money[3]) * 100);
 		}
@@ -586,6 +590,7 @@ define(function(require) {
 		case enums.GameHistoryMessages.ReplacedDeadTile:
 			$message.find('.tile').text(common_functions.getTileName(argument2, argument3));
 			break;
+
 		case enums.GameHistoryMessages.FormedChain:
 		case enums.GameHistoryMessages.SelectedMergerSurvivor:
 		case enums.GameHistoryMessages.SelectedChainToDisposeOfNext:
@@ -605,6 +610,7 @@ define(function(require) {
 				$element.text(argument4);
 			}
 			break;
+
 		case enums.GameHistoryMessages.MergedChains:
 			$element = $message.find('.chains');
 			parts = [];
@@ -622,6 +628,7 @@ define(function(require) {
 				$element.html(parts[0] + ', ' + parts[1] + ', ' + parts[2] + ', and ' + parts[3]);
 			}
 			break;
+
 		case enums.GameHistoryMessages.PurchasedShares:
 			$element = $message.find('.chains');
 			parts = [];
@@ -1017,6 +1024,7 @@ define(function(require) {
 				$element.html(parts.slice(0, parts.length - 1).join(', ') + ', or ' + parts[parts.length - 1]);
 			}
 			break;
+
 		case enums.GameActions.DisposeOfShares:
 			$element = $action.find('.chain');
 			$element.addClass('color-' + enums.GameBoardTypes[argument2].toLowerCase());
@@ -1045,13 +1053,13 @@ define(function(require) {
 	}
 
 	function maybeNotifyStartingPlayerBecauseGameIsFull() {
-		if (common_data.game_id_to_game_state[common_data.game_id] === enums.GameStates.StartingFull && current_player_id === common_data.player_id) {
+		if (common_data.game_id_to_state_id[common_data.game_id] === enums.GameStates.StartingFull && current_player_id === common_data.player_id) {
 			notification.turnOn();
 		}
 	}
 
 	function maybeShowTeamNetWorths() {
-		if (common_data.game_id_to_mode[common_data.game_id] === enums.GameModes.Teams && common_data.game_id_to_number_of_players[common_data.game_id] === 4) {
+		if (common_data.game_id_to_mode_id[common_data.game_id] === enums.GameModes.Teams && common_data.game_id_to_number_of_players[common_data.game_id] === 4) {
 			$('#score-sheet .teams').show();
 		}
 	}

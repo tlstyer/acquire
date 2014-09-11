@@ -29,10 +29,10 @@ define(function(require) {
 		}
 	}
 
-	function setGameState(game_id, state_id, mode, max_players) {
-		data.game_id_to_game_state[game_id] = state_id;
-		if (mode !== undefined) {
-			data.game_id_to_mode[game_id] = mode;
+	function setGameState(game_id, state_id, mode_id, max_players) {
+		data.game_id_to_state_id[game_id] = state_id;
+		if (mode_id !== undefined) {
+			data.game_id_to_mode_id[game_id] = mode_id;
 		}
 		if (max_players !== undefined) {
 			data.game_id_to_max_players[game_id] = max_players;
@@ -148,8 +148,8 @@ define(function(require) {
 	}
 
 	function destroyGame(game_id) {
-		delete data.game_id_to_game_state[game_id];
-		delete data.game_id_to_mode[game_id];
+		delete data.game_id_to_state_id[game_id];
+		delete data.game_id_to_mode_id[game_id];
 		delete data.game_id_to_max_players[game_id];
 		delete data.game_id_to_number_of_players[game_id];
 		delete data.game_id_to_player_data[game_id];
@@ -161,8 +161,8 @@ define(function(require) {
 		data.game_id = null;
 		data.player_id = null;
 		data.client_id_to_data = {};
-		data.game_id_to_game_state = {};
-		data.game_id_to_mode = {};
+		data.game_id_to_state_id = {};
+		data.game_id_to_mode_id = {};
 		data.game_id_to_max_players = {};
 		data.game_id_to_number_of_players = {};
 		data.game_id_to_player_data = {};

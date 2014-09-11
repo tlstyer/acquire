@@ -70,7 +70,7 @@ define(function(require) {
 
 	function setGameState(game_id) {
 		var $lobby_section = $('#lobby-game-' + game_id),
-			state_text, state_id = common_data.game_id_to_game_state[game_id],
+			state_text, state_id = common_data.game_id_to_state_id[game_id],
 			in_this_game, player_id, player_data = common_data.game_id_to_player_data[game_id],
 			client_username = common_data.client_id_to_data[common_data.client_id].username;
 
@@ -84,7 +84,7 @@ define(function(require) {
 		}
 
 		// set game state text
-		state_text = enums.GameModes[common_data.game_id_to_mode[game_id]] + ', ';
+		state_text = enums.GameModes[common_data.game_id_to_mode_id[game_id]] + ', ';
 		if (state_id === enums.GameStates.Starting) {
 			state_text += 'Starting (Max of ' + common_data.game_id_to_max_players[game_id] + ' Players)';
 		} else if (state_id === enums.GameStates.StartingFull) {
