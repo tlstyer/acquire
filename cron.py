@@ -65,6 +65,11 @@ class Logs2DB:
         if game_mode:
             game.game_mode = self.lookup.get_game_mode(game_mode)
 
+        score = params.get('score', None)
+        if score:
+            params['scores'] = score
+            self.process_game_result(params)
+
         game.imported = 0
 
     def process_game_import(self, params):

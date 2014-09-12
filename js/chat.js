@@ -10,7 +10,8 @@ define(function(require) {
 		show_on_game_page = false,
 		page_to_position = {},
 		new_messages_count = 0,
-		add_client_location_messages = false;
+		add_client_location_messages = false,
+		game_ids_with_changed_state = [];
 
 	function setPosition() {
 		var position = page_to_position[current_page],
@@ -165,8 +166,94 @@ define(function(require) {
 		appendElement($message);
 	}
 
+	function compareFuncScoreboard(a, b) {
+		var result = b[1] - a[1];
+
+		if (result === 0) {
+			result = a[0][0] - b[0][0];
+		}
+
+		return result;
+	}
+
+	function getUsernameSpanHtml(username) {
+		return $('<span class="username"/>').text(username)[0].outerHTML;
+	}
+
 	function messageProcessingComplete() {
-		add_client_location_messages = true;
+		var length, index, game_id, state_id, mode_id, number_of_players, score, player_data, message, scoreboard, i, parts, scoreboard_length, scoreboard_row, player_ids, subparts, num_player_ids, j;
+
+		if (add_client_location_messages) {
+			if (game_ids_with_changed_state.length > 0) {
+				game_ids_with_changed_state = common_functions.arrayUnique(game_ids_with_changed_state);
+
+				length = game_ids_with_changed_state.length;
+				for (index = 0; index < length; index++) {
+					game_id = game_ids_with_changed_state[index];
+					state_id = common_data.game_id_to_state_id[game_id];
+					mode_id = common_data.game_id_to_mode_id[game_id];
+					number_of_players = common_data.game_id_to_number_of_players[game_id];
+					score = common_data.game_id_to_score[game_id];
+					player_data = common_data.game_id_to_player_data[game_id];
+
+					message = 'Game #' + game_id + ': ' + common_functions.getGameStateText(game_id) + ', ';
+
+					if (state_id === enums.GameStates.Completed) {
+						scoreboard = [];
+						if (mode_id === enums.GameModes.Singles) {
+							for (i = 0; i < number_of_players; i++) {
+								scoreboard.push([
+									[i], score[i]
+								]);
+							}
+						} else {
+							scoreboard.push([
+								[0, 2], score[0] + score[2]
+							]);
+							scoreboard.push([
+								[1, 3], score[1] + score[3]
+							]);
+						}
+						scoreboard.sort(compareFuncScoreboard);
+
+						parts = [];
+						scoreboard_length = scoreboard.length;
+						for (i = 0; i < scoreboard_length; i++) {
+							scoreboard_row = scoreboard[i];
+							player_ids = scoreboard_row[0];
+
+							subparts = [];
+							num_player_ids = player_ids.length;
+							for (j = 0; j < num_player_ids; j++) {
+								subparts.push(getUsernameSpanHtml(player_data[player_ids[j]].username));
+							}
+
+							parts.push(subparts.join(' + ') + ': ' + scoreboard_row[1] * 100);
+						}
+
+						message += 'Score: ' + parts.join(', ');
+					} else {
+						parts = [];
+						for (i = 0; i < number_of_players; i++) {
+							parts.push(getUsernameSpanHtml(player_data[i].username));
+						}
+						message += 'Players: ' + parts.join(', ');
+					}
+
+					appendElement($('<div/>').html(message));
+				}
+
+				game_ids_with_changed_state = [];
+			}
+		} else {
+			add_client_location_messages = true;
+
+			game_ids_with_changed_state = [];
+		}
+	}
+
+	function gameStateChanged(game_id) {
+		game_ids_with_changed_state.push(game_id);
 	}
 
 	function addClientLocationMessage(template_selector, client_id, game_id) {
@@ -226,6 +313,8 @@ define(function(require) {
 	pubsub.subscribe(enums.PubSub.Server_AddGlobalChatMessage, addGlobalChatMessage);
 	pubsub.subscribe(enums.PubSub.Server_AddGameChatMessage, addGameChatMessage);
 	pubsub.subscribe(enums.PubSub.Network_MessageProcessingComplete, messageProcessingComplete);
+	pubsub.subscribe(enums.PubSub.Client_SetGameState, gameStateChanged);
+	pubsub.subscribe(enums.PubSub.Client_AddNewGamePlayer, gameStateChanged);
 	pubsub.subscribe(enums.PubSub.Client_AddClient, addClient);
 	pubsub.subscribe(enums.PubSub.Client_RemoveClient, removeClient);
 	pubsub.subscribe(enums.PubSub.Client_AddGamePlayer, addGamePlayer);

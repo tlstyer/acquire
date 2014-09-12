@@ -935,8 +935,6 @@ class ActionPurchaseShares(Action):
             elif no_tiles_played_for_entire_round:
                 self.game.add_history_message(enums.GameHistoryMessages.NoTilesPlayedForEntireRound.value, None)
 
-            self.game.set_state(enums.GameStates.Completed.value)
-
             return [ActionGameOver(self.game)]
         else:
             self.game.tile_racks.draw_tile(self.player_id)
@@ -946,7 +944,6 @@ class ActionPurchaseShares(Action):
             all_tiles_played = self.game.tile_racks.are_racks_empty()
             if all_tiles_played:
                 self.game.add_history_message(enums.GameHistoryMessages.AllTilesPlayed.value, None)
-                self.game.set_state(enums.GameStates.Completed.value)
                 return [ActionGameOver(self.game)]
 
             next_player_id = (self.player_id + 1) % self.game.num_players
@@ -956,10 +953,7 @@ class ActionPurchaseShares(Action):
 class ActionGameOver(Action):
     def __init__(self, game):
         super().__init__(game, None, enums.GameActions.GameOver.value)
-
-    def prepare(self):
-        self.game.score_sheet.update_net_worths()
-        print(ujson.dumps({'_': 'game-result', 'game-id': self.game.game_id, 'scores': [player_datum[enums.ScoreSheetIndexes.Net.value] for player_datum in self.game.score_sheet.player_data]}))
+        game.set_state(enums.GameStates.Completed.value)
 
     def execute(self):
         pass
@@ -1060,24 +1054,23 @@ class Game:
 
     def set_state(self, state, mode=None, max_players=None):
         self.state = state
-        message = [enums.CommandsToClient.SetGameState.value, self.game_id, state]
         log = {'_': 'game', 'game-id': self.game_id, 'state': enums.GameStates(state).name}
+        score = None
         if state == enums.GameStates.InProgress.value:
             log['begin'] = int(time.time())
         if state == enums.GameStates.Completed.value:
             log['end'] = int(time.time())
-
+            self.score_sheet.update_net_worths()
+            score = [player_datum[enums.ScoreSheetIndexes.Net.value] for player_datum in self.score_sheet.player_data]
+            log['score'] = score
         if mode is not None:
             self.mode = mode
-            message.append(mode)
             log['mode'] = enums.GameModes(mode).name
+        if max_players is not None:
+            self.max_players = max_players
+            log['max-players'] = max_players
 
-            if max_players is not None:
-                self.max_players = max_players
-                message.append(max_players)
-                log['max-players'] = max_players
-
-        AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, [message])
+        AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, [[enums.CommandsToClient.SetGameState.value, self.game_id, state, mode, max_players, score]])
         print(ujson.dumps(log))
 
     def add_history_message(self, *data, player_id=None):

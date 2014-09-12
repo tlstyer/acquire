@@ -29,13 +29,18 @@ define(function(require) {
 		}
 	}
 
-	function setGameState(game_id, state_id, mode_id, max_players) {
+	function setGameState(game_id, state_id, mode_id, max_players, score) {
 		data.game_id_to_state_id[game_id] = state_id;
-		if (mode_id !== undefined) {
+		if (mode_id !== null) {
 			data.game_id_to_mode_id[game_id] = mode_id;
 		}
-		if (max_players !== undefined) {
+		if (max_players !== null) {
 			data.game_id_to_max_players[game_id] = max_players;
+		}
+		if (score !== null) {
+			data.game_id_to_score[game_id] = score;
+		} else if (!data.game_id_to_score.hasOwnProperty(game_id)) {
+			data.game_id_to_score[game_id] = null;
 		}
 		if (!data.game_id_to_number_of_players.hasOwnProperty(game_id)) {
 			data.game_id_to_number_of_players[game_id] = 0;
@@ -62,9 +67,13 @@ define(function(require) {
 	}
 
 	function setGamePlayerClientId(game_id, player_id, client_id) {
-		var player_data, old_client_id, client_data, old_game_id, client_already_in_game, player_id2;
+		var add_new_game_player = false,
+			player_data, old_client_id, client_data, old_game_id, client_already_in_game, player_id2;
 
-		data.game_id_to_number_of_players[game_id] = Math.max(data.game_id_to_number_of_players[game_id], player_id + 1);
+		if (player_id + 1 > data.game_id_to_number_of_players[game_id]) {
+			data.game_id_to_number_of_players[game_id] = player_id + 1;
+			add_new_game_player = true;
+		}
 
 		if (client_id === null) {
 			player_data = data.game_id_to_player_data[game_id][player_id];
@@ -115,6 +124,10 @@ define(function(require) {
 				pubsub.publish(enums.PubSub.Client_JoinGame);
 			}
 		}
+
+		if (add_new_game_player) {
+			pubsub.publish(enums.PubSub.Client_AddNewGamePlayer, game_id);
+		}
 	}
 
 	function setGameWatcherClientId(game_id, client_id) {
@@ -151,6 +164,7 @@ define(function(require) {
 		delete data.game_id_to_state_id[game_id];
 		delete data.game_id_to_mode_id[game_id];
 		delete data.game_id_to_max_players[game_id];
+		delete data.game_id_to_score[game_id];
 		delete data.game_id_to_number_of_players[game_id];
 		delete data.game_id_to_player_data[game_id];
 		delete data.game_id_to_watcher_client_ids[game_id];
@@ -164,6 +178,7 @@ define(function(require) {
 		data.game_id_to_state_id = {};
 		data.game_id_to_mode_id = {};
 		data.game_id_to_max_players = {};
+		data.game_id_to_score = {};
 		data.game_id_to_number_of_players = {};
 		data.game_id_to_player_data = {};
 		data.game_id_to_watcher_client_ids = {};

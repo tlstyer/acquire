@@ -1,7 +1,8 @@
 define(function(require) {
 	'use strict';
 
-	var enums = require('enums'),
+	var common_data = require('common_data'),
+		enums = require('enums'),
 		pubsub = require('pubsub'),
 		scrollbar_width = 0;
 
@@ -55,6 +56,30 @@ define(function(require) {
 		return scrollbar_width;
 	}
 
+	function getGameStateText(game_id) {
+		var state_text, state_id = common_data.game_id_to_state_id[game_id];
+
+		state_text = enums.GameModes[common_data.game_id_to_mode_id[game_id]] + ', ';
+		if (state_id === enums.GameStates.Starting) {
+			state_text += 'Starting (Max of ' + common_data.game_id_to_max_players[game_id] + ' Players)';
+		} else if (state_id === enums.GameStates.StartingFull) {
+			state_text += 'Starting (Full)';
+		} else if (state_id === enums.GameStates.InProgress) {
+			state_text += 'In Progress';
+		} else if (state_id === enums.GameStates.Completed) {
+			state_text += 'Completed';
+		}
+
+		return state_text;
+	}
+
+	function arrayUnique(array) {
+		// from http://stackoverflow.com/questions/10191941/jquery-unique-on-an-array-of-strings
+		return $.grep(array, function(el, index) {
+			return index === $.inArray(el, array);
+		});
+	}
+
 	function onInitializationComplete() {
 		initializeScrollbarWidth();
 	}
@@ -67,6 +92,8 @@ define(function(require) {
 		setElementPosition: setElementPosition,
 		isScrollAtBottom: isScrollAtBottom,
 		scrollToBottom: scrollToBottom,
-		getScrollbarWidth: getScrollbarWidth
+		getScrollbarWidth: getScrollbarWidth,
+		getGameStateText: getGameStateText,
+		arrayUnique: arrayUnique
 	};
 });

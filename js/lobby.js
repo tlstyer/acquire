@@ -70,7 +70,7 @@ define(function(require) {
 
 	function setGameState(game_id) {
 		var $lobby_section = $('#lobby-game-' + game_id),
-			state_text, state_id = common_data.game_id_to_state_id[game_id],
+			state_id = common_data.game_id_to_state_id[game_id],
 			in_this_game, player_id, player_data = common_data.game_id_to_player_data[game_id],
 			client_username = common_data.client_id_to_data[common_data.client_id].username;
 
@@ -84,17 +84,7 @@ define(function(require) {
 		}
 
 		// set game state text
-		state_text = enums.GameModes[common_data.game_id_to_mode_id[game_id]] + ', ';
-		if (state_id === enums.GameStates.Starting) {
-			state_text += 'Starting (Max of ' + common_data.game_id_to_max_players[game_id] + ' Players)';
-		} else if (state_id === enums.GameStates.StartingFull) {
-			state_text += 'Starting (Full)';
-		} else if (state_id === enums.GameStates.InProgress) {
-			state_text += 'In Progress';
-		} else if (state_id === enums.GameStates.Completed) {
-			state_text += 'Completed';
-		}
-		$lobby_section.find('.state').text(state_text);
+		$lobby_section.find('.state').text(common_functions.getGameStateText(game_id));
 
 		// is client's username in this game?
 		in_this_game = false;
