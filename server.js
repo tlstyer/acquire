@@ -3,6 +3,9 @@
 (function() {
 	'use strict';
 
+	var port_web = parseInt(process.argv[2], 10);
+	var port_python = parseInt(process.argv[3], 10);
+
 	var app = require('express')();
 	var body_parser = require('body-parser');
 	var http = require('http').Server(app);
@@ -10,7 +13,7 @@
 		pingInterval: 20000,
 		pingTimeout: 35000
 	});
-	http.listen(9000);
+	http.listen(port_web);
 
 	var mysql = require('mysql');
 	var pool = mysql.createPool({
@@ -101,7 +104,7 @@
 
 
 	var python_server = require('net').Socket();
-	python_server.connect(9001, '127.0.0.1');
+	python_server.connect(port_python, '127.0.0.1');
 
 	var unprocessed_data = [];
 	python_server.on('data', function(data) {
