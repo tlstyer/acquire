@@ -28,6 +28,16 @@
 	app.use(body_parser.urlencoded({
 		extended: false
 	}));
+	app.post('/server/report-error', function(req, res) {
+		var message = req.body.hasOwnProperty('message') ? req.body.message.replace(/\n/g, '\n\t') : '<null>',
+			trace = req.body.hasOwnProperty('trace') ? req.body.trace.replace(/\n/g, '\n\t') : '<null>';
+
+		console.log('/server/report-error:', message);
+		console.log('\t' + trace);
+		console.log(' ', req.headers);
+
+		res.end();
+	});
 	app.post('/server/set-password', function(req, res) {
 		var version = req.body.hasOwnProperty('version') ? req.body.version.replace(/\s+/g, ' ').trim() : '',
 			username = req.body.hasOwnProperty('username') ? req.body.username.replace(/\s+/g, ' ').trim() : '',

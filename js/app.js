@@ -196,6 +196,13 @@ define(function(require) {
 	require('lobby_page');
 	require('game');
 
+	window.onerror = function(message, file, line_number) {
+		$.post('/server/report-error', {
+			message: message,
+			trace: file + ':' + line_number
+		});
+	};
+
 	pubsub.subscribe(enums.PubSub.Client_SetClientData, onClientSetClientData);
 	pubsub.subscribe(enums.PubSub.Server_FatalError, setLoginErrorMessage);
 	pubsub.subscribe(enums.PubSub.Client_SetOption, onClientSetOption);

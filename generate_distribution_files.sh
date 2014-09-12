@@ -42,7 +42,7 @@ cp js/* server.js dist/build/js
 
 cd dist/build/js
 cp ../../../node_modules/almond/almond.js .
-../../../node_modules/requirejs/bin/r.js -o baseUrl=. name=almond.js wrap=true preserveLicenseComments=false include=main out=../../web/static/${TIMESTAMP}.js
+../../../node_modules/requirejs/bin/r.js -o optimize=none baseUrl=. name=almond.js wrap=true preserveLicenseComments=false include=main out=../../web/static/${TIMESTAMP}.js
 cd ../../..
 
 # finish server.js

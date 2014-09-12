@@ -38,13 +38,25 @@ define(function(require) {
 			socket.on('x', function(data) {
 				var data_length, i;
 
-				data = JSON.parse(data);
-				data_length = data.length;
-				for (i = 0; i < data_length; i++) {
-					pubsub.publish.apply(null, data[i]);
-				}
+				try {
+					data = JSON.parse(data);
+					data_length = data.length;
+					for (i = 0; i < data_length; i++) {
+						pubsub.publish.apply(null, data[i]);
+					}
 
-				pubsub.publish(enums.PubSub.Network_MessageProcessingComplete);
+					pubsub.publish(enums.PubSub.Network_MessageProcessingComplete);
+				} catch (e) {
+					$.post('/server/report-error', {
+						message: e.message,
+						trace: printStackTrace({
+							e: e,
+							guess: false
+						}).join('\n')
+					});
+
+					socket.disconnect();
+				}
 			});
 		}
 	}
