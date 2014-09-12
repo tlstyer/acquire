@@ -215,6 +215,8 @@
 		socket.on('disconnect', function() {
 			var client_id = socket_id_to_client_id[socket.id];
 
+			console.log(socket.id, 'disconnect');
+
 			delete socket_id_to_socket[socket.id];
 			delete socket_id_to_client_id[socket.id];
 			if (client_id) {
