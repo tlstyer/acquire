@@ -28,9 +28,11 @@ define(function(require) {
 
 		if (enable_sound_notifications) {
 			beep = document.getElementById('beep');
-			beep.pause();
-			beep.currentTime = 0;
-			beep.play();
+			if (typeof beep.readyState === 'number' && beep.readyState > 0) {
+				beep.pause();
+				beep.currentTime = 0;
+				beep.play();
+			}
 		}
 
 		if (enable_page_title_notifications) {
