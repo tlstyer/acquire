@@ -1067,7 +1067,7 @@ define(function(require) {
 	function focusOnSensibleButton() {
 		var active_element = document.activeElement,
 			active_element_id = active_element.id,
-			$element;
+			$element, $elements, elements_length, i, $element2, found_element = false;
 
 		if (active_element_id === 'chat-message') {
 			return;
@@ -1095,7 +1095,22 @@ define(function(require) {
 			if ($element.length === 0) {
 				$('#game-action-dispose-of-shares input:enabled').first().focus();
 			} else if ($element.prop('disabled')) {
-				$('#dos-ok').focus();
+				// focus on next enabled input
+				$elements = $('#game-action-dispose-of-shares input');
+				elements_length = $elements.length;
+
+				for (i = 0; i < elements_length; i++) {
+					$element2 = $($elements[i]);
+
+					if (found_element) {
+						if (!$element2.prop('disabled')) {
+							$element2.focus();
+							break;
+						}
+					} else if ($element2.is($element)) {
+						found_element = true;
+					}
+				}
 			}
 			break;
 
