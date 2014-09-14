@@ -1,10 +1,13 @@
 #!/usr/bin/env python3.4m
 
+import collections
 import datetime
 import glob
 import html.parser
+import orm
 import pickle
 import re
+import sqlalchemy.sql
 import sys
 import ujson
 
@@ -83,7 +86,7 @@ def part1():
         pickle.dump(game_type_to_date_to_result, f)
 
 
-def part2():
+def part2(compare_mode=False):
     with open('game_import_data.bin', 'rb') as f:
         game_type_to_date_to_result = pickle.load(f)
 
@@ -160,15 +163,47 @@ def part2():
             comp = 'lt'
         else:
             comp = 'gt'
-        print(comp, date, datetime.datetime.fromtimestamp(date), game_type, scores)
+        if not compare_mode:
+            print(comp, date, datetime.datetime.fromtimestamp(date), game_type, scores)
 
         if num_players == num_players_needed:
-            print(ujson.dumps({'_': 'game-import', 'end': date, 'mode': game_type_to_mode[game_type], 'scores': scores}))
+            if compare_mode:
+                print([date, game_type_to_mode[game_type], scores])
+            else:
+                print(ujson.dumps({'_': 'game-import', 'end': date, 'mode': game_type_to_mode[game_type], 'scores': scores}))
 
     for game_type in sorted(game_type_to_mode.keys()):
         draw_count = game_type_to_draw_count[game_type]
         total_count = game_type_to_total_count[game_type]
-        print(game_type, draw_count, total_count, 100 * draw_count / total_count)
+        if not compare_mode:
+            print(game_type, draw_count, total_count, 100 * draw_count / total_count)
+
+
+def compare1():
+    with orm.session_scope() as session:
+        query = sqlalchemy.sql.text('''
+            select game.game_id,
+                game.end_time,
+                game_mode.name as game_mode,
+                user.name as username,
+                game_player.score
+            from game
+            join game_mode on game.game_mode_id = game_mode.game_mode_id
+            join game_player on game.game_id = game_player.game_id
+            join user on game_player.user_id = user.user_id
+            where game.imported = 1
+            order by game.game_id, game_player.player_index
+        ''')
+        game_id_to_data = collections.defaultdict(lambda: {'scores': []})
+        for row in session.execute(query):
+            data = game_id_to_data[row.game_id]
+            data['end_time'] = row.end_time
+            data['game_mode'] = row.game_mode.decode()
+            data['scores'].append((row.username.decode(), row.score))
+
+        for game_id in sorted(game_id_to_data.keys()):
+            data = game_id_to_data[game_id]
+            print([data['end_time'], data['game_mode'], data['scores']])
 
 
 if __name__ == '__main__':
@@ -176,5 +211,9 @@ if __name__ == '__main__':
         part1()
     elif sys.argv[1] == 'part2':
         part2()
+    elif sys.argv[1] == 'compare1':
+        compare1()
+    elif sys.argv[1] == 'compare2':
+        part2(compare_mode=True)
     else:
         print('bad mode')
