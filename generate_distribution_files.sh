@@ -42,8 +42,10 @@ cp js/* server.js dist/build/js
 
 cd dist/build/js
 cp ../../../node_modules/almond/almond.js .
-../../../node_modules/requirejs/bin/r.js -o optimize=none baseUrl=. name=almond.js wrap=true preserveLicenseComments=false include=main out=../../web/static/${TIMESTAMP}.js
+../../../node_modules/requirejs/bin/r.js -o optimize=none baseUrl=. name=almond.js wrap=true preserveLicenseComments=false include=main out=../main.js
 cd ../../..
+
+./node_modules/uglify-js/bin/uglifyjs dist/build/main.js -m -b indent-level=0 -o dist/web/static/${TIMESTAMP}.js
 
 # finish server.js
 sed "s/var server_version = 'VERSION';/var server_version = '${TIMESTAMP}';/" dist/build/js/server.js | \
