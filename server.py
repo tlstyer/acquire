@@ -554,7 +554,7 @@ class TileRacks:
 
             if can_start_new_chain:
                 for tile_index in lonely_tile_indexes:
-                    if new_types[tile_index] == enums.GameBoardTypes.WillPutLonelyTileDown.value and rack[tile_index][0] in lonely_tile_border_tiles:
+                    if rack[tile_index][0] in lonely_tile_border_tiles:
                         new_types[tile_index] = enums.GameBoardTypes.HaveNeighboringTileToo.value
 
             for tile_index, tile_data in enumerate(rack):
