@@ -498,7 +498,7 @@ class TileRacks:
 
             old_types = [t[1] if t else None for t in rack]
             new_types = []
-            lonely_tile_indexes = set()
+            lonely_tile_indexes = []
             lonely_tile_border_tiles = set()
             drew_last_tile = False
             for tile_index, tile_data in enumerate(rack):
@@ -527,7 +527,7 @@ class TileRacks:
                     len_border_types = len(border_types)
                     new_type = enums.GameBoardTypes.WillPutLonelyTileDown.value
                     if len_border_types == 0:
-                        lonely_tile_indexes.add(tile_index)
+                        lonely_tile_indexes.append(tile_index)
                         lonely_tile_border_tiles |= border_tiles
                     elif len_border_types == 1:
                         if enums.GameBoardTypes.NothingYet.value in border_types:
@@ -955,9 +955,6 @@ class ActionGameOver(Action):
     def __init__(self, game):
         super().__init__(game, None, enums.GameActions.GameOver.value)
         game.set_state(enums.GameStates.Completed.value)
-
-    def execute(self):
-        pass
 
 
 class Game:
