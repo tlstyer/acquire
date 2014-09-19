@@ -109,7 +109,7 @@
 	var unprocessed_data = [];
 	python_server.on('data', function(data) {
 		var start_index = 0,
-			data_length, index, key_and_value, space_index, key, value, parts, socket_id, client_id, client_ids, length, i;
+			data_length, index, key_and_value, space_index, key, value, parts, socket_id, client_id, socket, client_ids, length, i;
 
 		data = data.toString();
 		data_length = data.length;
@@ -136,12 +136,22 @@
 					socket_id_to_client_id[socket_id] = client_id;
 					client_id_to_socket[client_id] = socket_id_to_socket[socket_id];
 				} else if (key === 'disconnect') {
-					client_id_to_socket[value].disconnect();
+					socket = client_id_to_socket[value];
+					if (socket) {
+						socket.disconnect();
+					} else {
+						console.log('ERROR! 1. client_id ===', value);
+					}
 				} else {
 					client_ids = key.split(',');
 					length = client_ids.length;
 					for (i = 0; i < length; i++) {
-						client_id_to_socket[client_ids[i]].emit('x', value);
+						socket = client_id_to_socket[client_ids[i]];
+						if (socket) {
+							socket.emit('x', value);
+						} else {
+							console.log('ERROR! 2. client_id ===', client_ids[i], value);
+						}
 					}
 				}
 			} else {
