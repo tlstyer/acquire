@@ -1,11 +1,7 @@
-TIMESTAMP=$(date +%s)
-
 ./generate_client_files.sh
 
 rm -rf dist
-mkdir -p dist/web/static
-mkdir -p dist/web/stats
-mkdir -p dist/build/js
+mkdir -p dist/build/js dist/web/static dist/web/stats
 
 # favicon.ico
 cp -a ../tlstyer.com/favicon.ico dist/web
@@ -19,49 +15,56 @@ cp server.py dist/server.py
 # other .py files
 cp -a cron.py enums.py orm.py dist
 
-# index.html
-sed "s/<link rel=\"stylesheet\" href=\"css\/main.css\">/<link rel=\"stylesheet\" href=\"static\/${TIMESTAMP}.css\">/" index.html | \
-sed "s/<script data-main=\"js\/main\" src=\"node_modules\/requirejs\/require.js\"><\/script>/<script src=\"static\/${TIMESTAMP}.js\"><\/script>/" | \
-sed "s/data-version=\"VERSION\"/data-version=\"${TIMESTAMP}\"/" | \
-./node_modules/html-minifier/cli.js \
-	--remove-comments --collapse-whitespace --conservative-collapse --collapse-boolean-attributes --remove-attribute-quotes --remove-redundant-attributes --remove-optional-tags \
-	-o dist/build/index.html
-sed 's/\s\s*/ /g' dist/build/index.html | sed 's/ $//' > dist/web/index.html
+# main.css
+./node_modules/clean-css/bin/cleancss --s0 css/main.css | sed "s/\.\.\/static\///" > dist/build/main.css
+MAIN_CSS=$(sha1sum dist/build/main.css | awk '{ print $1 }').css
+cp dist/build/main.css dist/web/static/${MAIN_CSS}
 
-# ${TIMESTAMP}.css
-./node_modules/clean-css/bin/cleancss --s0 css/main.css | sed "s/\.\.\/static\///" > dist/web/static/${TIMESTAMP}.css
-
-# start ${TIMESTAMP}.js and server.js
+# start main.js and server.js
 cp js/* server.js dist/build/js
 
 # enums replacements in server.py and .js files
 ./enumsgen.py replace dist/server.py dist/build/js/*.js
 
-# finish # ${TIMESTAMP}.js
+# finish main.js
 ./enumsgen.py js release > dist/build/js/enums.js
 
 cd dist/build/js
 cp ../../../node_modules/almond/almond.js .
-../../../node_modules/requirejs/bin/r.js -o optimize=none baseUrl=. name=almond.js wrap=true preserveLicenseComments=false include=main out=../main.js
+../../../node_modules/requirejs/bin/r.js -o optimize=none baseUrl=. name=almond.js wrap=true preserveLicenseComments=false include=main out=../main1.js
 cd ../../..
 
-./node_modules/uglify-js/bin/uglifyjs dist/build/main.js -m -b indent-level=0 -o dist/web/static/${TIMESTAMP}.js
+./node_modules/uglify-js/bin/uglifyjs dist/build/main1.js -m -b indent-level=0 -o dist/build/main2.js
+MAIN_JS=$(sha1sum dist/build/main2.js | awk '{ print $1 }').js
+cp dist/build/main2.js dist/web/static/${MAIN_JS}
 
-# finish server.js
-sed "s/var server_version = 'VERSION';/var server_version = '${TIMESTAMP}';/" dist/build/js/server.js | \
-sed "s/var enums = require('\.\/js\/enums');/\/\/ var enums = require('\.\/js\/enums');/" > dist/server.js
-chmod u+x dist/server.js
+# stats.js
+sed "s/url: 'web\/stats\//url: '/" js/stats.js | ./node_modules/uglify-js/bin/uglifyjs -o dist/build/stats.js -m -c
+STATS_JS=$(sha1sum dist/build/stats.js | awk '{ print $1 }').js
+cp dist/build/stats.js dist/web/static/${STATS_JS}
+
+# index.html
+sed "s/<link rel=\"stylesheet\" href=\"css\/main.css\">/<link rel=\"stylesheet\" href=\"static\/${MAIN_CSS}\">/" index.html | \
+sed "s/<script data-main=\"js\/main\" src=\"node_modules\/requirejs\/require.js\"><\/script>/<script src=\"static\/${MAIN_JS}\"><\/script>/" | \
+./node_modules/html-minifier/cli.js \
+	--remove-comments --collapse-whitespace --conservative-collapse --collapse-boolean-attributes --remove-attribute-quotes --remove-redundant-attributes --remove-optional-tags | \
+sed 's/\s\s*/ /g' | sed 's/ $//' > dist/build/index.html
+
+VERSION=$(sha1sum dist/build/index.html | awk '{ print $1 }')
+
+sed "s/data-version=VERSION/data-version=${VERSION}/" dist/build/index.html > dist/web/index.html
 
 # stats/index.html
-sed "s/<link rel=\"stylesheet\" href=\"css\/main.css\">/<link rel=\"stylesheet\" href=\"\/static\/${TIMESTAMP}.css\">/" stats.html | \
-sed "s/<script src=\"js\/stats.js\"><\/script>/<script src=\"\/static\/${TIMESTAMP}-stats.js\"><\/script>/" | \
+sed "s/<link rel=\"stylesheet\" href=\"css\/main.css\">/<link rel=\"stylesheet\" href=\"\/static\/${MAIN_CSS}\">/" stats.html | \
+sed "s/<script src=\"js\/stats.js\"><\/script>/<script src=\"\/static\/${STATS_JS}\"><\/script>/" | \
 ./node_modules/html-minifier/cli.js \
-	--remove-comments --collapse-whitespace --conservative-collapse --collapse-boolean-attributes --remove-attribute-quotes --remove-redundant-attributes --remove-optional-tags \
-	-o dist/build/stats.html
-sed 's/\s\s*/ /g' dist/build/stats.html | sed 's/ $//' > dist/web/stats/index.html
+	--remove-comments --collapse-whitespace --conservative-collapse --collapse-boolean-attributes --remove-attribute-quotes --remove-redundant-attributes --remove-optional-tags | \
+sed 's/\s\s*/ /g' | sed 's/ $//' > dist/web/stats/index.html
 
-# ${TIMESTAMP}-stats.js
-sed "s/url: 'web\/stats\//url: '/" js/stats.js | ./node_modules/uglify-js/bin/uglifyjs -o dist/web/static/${TIMESTAMP}-stats.js -m -c
+# finish server.js
+sed "s/var server_version = 'VERSION';/var server_version = '${VERSION}';/" dist/build/js/server.js | \
+sed "s/var enums = require('\.\/js\/enums');/\/\/ var enums = require('\.\/js\/enums');/" > dist/server.js
+chmod u+x dist/server.js
 
 # cleanup
 rm -rf dist/build
