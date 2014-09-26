@@ -7,7 +7,6 @@ define(function(require) {
 		current_page = null,
 		periodic_resize_check_width = null,
 		periodic_resize_check_height = null,
-		got_local_storage = window.hasOwnProperty('localStorage'),
 		error_message_lookup = {};
 
 	function showPage(page) {
@@ -41,7 +40,7 @@ define(function(require) {
 	function initializeUsername() {
 		var username;
 
-		if (got_local_storage) {
+		if (localStorage) {
 			username = localStorage.username;
 			if (username !== undefined) {
 				$('#login-form-username').val(username);
@@ -56,7 +55,7 @@ define(function(require) {
 		if (username.length === 0 || username.length > 32) {
 			setLoginErrorMessage(enums.Errors.InvalidUsername);
 		} else {
-			if (got_local_storage) {
+			if (localStorage) {
 				localStorage.username = username;
 			}
 

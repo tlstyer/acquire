@@ -30,8 +30,7 @@ define(function(require) {
 				'default': 'coordinates',
 				'valid': ['coordinates', 'hotel initials', 'nothing']
 			}
-		},
-		got_local_storage = window.hasOwnProperty('localStorage');
+		};
 
 	function setPosition() {
 		var position = page_to_position[current_page];
@@ -66,7 +65,7 @@ define(function(require) {
 	function getStoredOptionValue(key) {
 		var value = null;
 
-		if (got_local_storage) {
+		if (localStorage) {
 			value = localStorage[key];
 
 			if (value === undefined) {
@@ -84,7 +83,7 @@ define(function(require) {
 	}
 
 	function setStoredOptionValue(key, value) {
-		if (got_local_storage) {
+		if (localStorage) {
 			localStorage[key] = JSON.stringify(value);
 		}
 	}
