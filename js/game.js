@@ -1065,7 +1065,7 @@ define(function(require) {
 	}
 
 	function focusOnSensibleButton() {
-		var active_element = document.activeElement,
+		var active_element = document.activeElement ? document.activeElement : document.getElementById('templates'),
 			active_element_id = active_element.id,
 			$element, $elements, elements_length, i, $element2, found_element = false;
 
