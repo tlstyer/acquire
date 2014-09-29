@@ -1125,10 +1125,10 @@ class Game:
         self.actions[-1].send_message({client.client_id})
 
 
-def main(port):
+def main():
     loop = asyncio.get_event_loop()
     loop.call_soon(AcquireServerProtocol.destroy_expired_games)
-    coro = loop.create_server(Server, '127.0.0.1', port)
+    coro = loop.create_unix_server(Server, 'python.sock')
     server = loop.run_until_complete(coro)
 
     try:
@@ -1143,4 +1143,4 @@ def main(port):
 
 
 if __name__ == '__main__':
-    main(int(sys.argv[1]))
+    main()
