@@ -1,5 +1,6 @@
 /dist
 /.idea
+/lib
 /logs_py
 /nbproject
 /node_modules
