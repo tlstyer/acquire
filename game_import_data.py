@@ -73,14 +73,12 @@ class MyHTMLParser(html.parser.HTMLParser):
 
 
 def part1():
-    re_gamebot = re.compile(r'.*/GAMEBOT-\d+\.html$')
     game_type_to_date_to_result = {game_type: {} for game_type in game_type_to_mode.keys()}
     for filename in glob.iglob('../../netacquire.ca/players/*.html'):
-        if not re_gamebot.match(filename):
-            with open(filename, 'r', encoding='latin_1') as f:
-                contents = f.read()
-            parser = MyHTMLParser(game_type_to_date_to_result)
-            parser.feed(contents)
+        with open(filename, 'r', encoding='latin_1') as f:
+            contents = f.read()
+        parser = MyHTMLParser(game_type_to_date_to_result)
+        parser.feed(contents)
 
     with open('game_import_data.bin', 'wb') as f:
         pickle.dump(game_type_to_date_to_result, f)
