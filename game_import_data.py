@@ -6,7 +6,6 @@ import glob
 import html.parser
 import orm
 import pickle
-import re
 import sqlalchemy.sql
 import sys
 import ujson
