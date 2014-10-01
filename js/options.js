@@ -84,7 +84,11 @@ define(function(require) {
 
 	function setStoredOptionValue(key, value) {
 		if (localStorage) {
-			localStorage[key] = JSON.stringify(value);
+			try {
+				localStorage[key] = JSON.stringify(value);
+			} catch (e) {
+				common_functions.reportError(e);
+			}
 		}
 	}
 

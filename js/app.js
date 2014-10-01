@@ -1,7 +1,8 @@
 define(function(require) {
 	'use strict';
 
-	var enums = require('enums'),
+	var common_functions = require('common_functions'),
+		enums = require('enums'),
 		network = require('network'),
 		pubsub = require('pubsub'),
 		current_page = null,
@@ -56,7 +57,11 @@ define(function(require) {
 			setLoginErrorMessage(enums.Errors.InvalidUsername);
 		} else {
 			if (localStorage) {
-				localStorage.username = username;
+				try {
+					localStorage.username = username;
+				} catch (e) {
+					common_functions.reportError(e);
+				}
 			}
 
 			showPage('connecting');

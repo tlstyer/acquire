@@ -1,7 +1,8 @@
 define(function(require) {
 	'use strict';
 
-	var enums = require('enums'),
+	var common_functions = require('common_functions'),
+		enums = require('enums'),
 		pubsub = require('pubsub'),
 		server_url = null,
 		version = null,
@@ -47,13 +48,7 @@ define(function(require) {
 
 					pubsub.publish(enums.PubSub.Network_MessageProcessingComplete);
 				} catch (e) {
-					$.post('/server/report-error', {
-						message: e.message,
-						trace: printStackTrace({
-							e: e,
-							guess: false
-						}).join('\n')
-					});
+					common_functions.reportError(e);
 
 					socket.disconnect();
 				}

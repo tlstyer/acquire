@@ -80,6 +80,16 @@ define(function(require) {
 		});
 	}
 
+	function reportError(e) {
+		$.post('/server/report-error', {
+			message: e.message,
+			trace: printStackTrace({
+				e: e,
+				guess: false
+			}).join('\n')
+		});
+	}
+
 	function onInitializationComplete() {
 		initializeScrollbarWidth();
 	}
@@ -94,6 +104,7 @@ define(function(require) {
 		scrollToBottom: scrollToBottom,
 		getScrollbarWidth: getScrollbarWidth,
 		getGameStateText: getGameStateText,
-		arrayUnique: arrayUnique
+		arrayUnique: arrayUnique,
+		reportError: reportError
 	};
 });
