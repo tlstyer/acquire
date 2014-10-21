@@ -1,6 +1,8 @@
 /dist
 /.idea
 /lib
+/logs_cron
+/logs_js
 /logs_py
 /nbproject
 /node_modules
