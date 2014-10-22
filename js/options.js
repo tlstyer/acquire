@@ -6,31 +6,7 @@ define(function(require) {
 		pubsub = require('pubsub'),
 		current_page = null,
 		page_to_position = {},
-		details = {
-			'enable-page-title-notifications': {
-				'type': 'checkbox',
-				'default': true,
-				'valid': [true, false]
-			},
-			'enable-sound-notifications': {
-				'type': 'checkbox',
-				'default': true,
-				'valid': [true, false],
-				'disable': function() {
-					return document.getElementById('beep').pause === undefined;
-				}
-			},
-			'enable-high-contrast-colors': {
-				'type': 'checkbox',
-				'default': false,
-				'valid': [true, false]
-			},
-			'game-board-label-mode': {
-				'type': 'select',
-				'default': 'coordinates',
-				'valid': ['coordinates', 'hotel initials', 'nothing']
-			}
-		};
+		details = null;
 
 	function setPosition() {
 		var position = page_to_position[current_page];
@@ -94,6 +70,32 @@ define(function(require) {
 
 	function initialize() {
 		var key, detail, value, disable, $input;
+
+		details = {
+			'enable-page-title-notifications': {
+				'type': 'checkbox',
+				'default': true,
+				'valid': [true, false]
+			},
+			'enable-sound-notifications': {
+				'type': 'checkbox',
+				'default': true,
+				'valid': [true, false],
+				'disable': function() {
+					return document.getElementById('beep').pause === undefined;
+				}
+			},
+			'enable-high-contrast-colors': {
+				'type': 'checkbox',
+				'default': false,
+				'valid': [true, false]
+			},
+			'game-board-label-mode': {
+				'type': 'select',
+				'default': 'coordinates',
+				'valid': ['coordinates', 'hotel initials', 'nothing']
+			}
+		};
 
 		for (key in details) {
 			if (details.hasOwnProperty(key)) {
