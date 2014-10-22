@@ -34,9 +34,42 @@ $(function() {
 				rating_type_to_ratings = data.ratings;
 
 				setFormLoadingMessage(null);
+
+				initializeHistory();
 			},
 			dataType: 'json'
 		});
+	}
+
+	function getQueryStringParams() {
+		var qs_parts = window.location.search.substring(1).replace('+', ' ').split('&'),
+			qs_parts_length = qs_parts.length,
+			parts, i, key, value, params = {};
+
+		for (i = 0; i < qs_parts_length; i++) {
+			parts = qs_parts[i].split('=');
+			key = decodeURIComponent(parts[0]);
+			value = decodeURIComponent(parts.slice(1).join('='));
+			params[key] = value;
+		}
+
+		return params;
+	}
+
+	function initializeHistory() {
+		var params = getQueryStringParams(),
+			state = null;
+
+		if (params.hasOwnProperty('ratings')) {
+			state = getRatingsHistoryParams(params.ratings);
+		} else if (params.hasOwnProperty('username')) {
+			state = getUsernameHistoryParams(params.username);
+		}
+
+		if (state !== null) {
+			History.replaceState.apply(History, state);
+			onStateChange();
+		}
 	}
 
 	function setFormErrorMessage(message) {
@@ -277,15 +310,42 @@ $(function() {
 		/* jshint validthis:true */
 		var rating_type = $(this).val();
 
-		$('#stats-user').hide();
-		$('#stats-users').show();
-		$('#stats-ratings-type').text(rating_type);
-		populateRatingsTable(rating_type_to_ratings[rating_type]);
+		History.pushState.apply(History, getRatingsHistoryParams(rating_type));
+	}
+
+	function getRatingsHistoryParams(rating_type) {
+		return [{
+			ratings: rating_type
+		}, document.title, '?ratings=' + rating_type];
+	}
+
+	function showRatings(rating_type) {
+		if (rating_type_to_ratings.hasOwnProperty(rating_type)) {
+			$('#stats-user').hide();
+			$('#stats-users').show();
+			$('#stats-ratings-type').text(rating_type);
+			populateRatingsTable(rating_type_to_ratings[rating_type]);
+		} else {
+			setFormErrorMessage('Invalid ratings type.');
+		}
 	}
 
 	function formSubmitted() {
-		var username = $('#stats-form-username').val().replace(/\s+/g, ' ').trim(),
-			user_id;
+		var username = $('#stats-form-username').val().replace(/\s+/g, ' ').trim();
+
+		History.pushState.apply(History, getUsernameHistoryParams(username));
+
+		return false;
+	}
+
+	function getUsernameHistoryParams(username) {
+		return [{
+			username: username
+		}, document.title, '?username=' + encodeURIComponent(username)];
+	}
+
+	function showUsername(username) {
+		var user_id;
 
 		if (username_to_user_id.hasOwnProperty(username)) {
 			user_id = username_to_user_id[username];
@@ -313,8 +373,24 @@ $(function() {
 		} else {
 			setFormErrorMessage('Cannot find ' + username + '.');
 		}
+	}
 
-		return false;
+	function showNothing() {
+		$('#stats-user').hide();
+		$('#stats-users').hide();
+	}
+
+	function onStateChange() {
+		var state = History.getState(),
+			data = state.data;
+
+		if (data.hasOwnProperty('ratings')) {
+			showRatings(data.ratings);
+		} else if (data.hasOwnProperty('username')) {
+			showUsername(data.username);
+		} else {
+			showNothing();
+		}
 	}
 
 	function nameCellClicked() {
@@ -334,12 +410,13 @@ $(function() {
 		return false;
 	}
 
-	initializeUsers();
-
 	$('#stats-form input[type=button]').click(formButtonClicked);
 	$('#stats-form').submit(formSubmitted);
 	$('#stats-users').on('click', 'tr td:nth-child(2)', nameCellClicked);
 	$('#stats-games').on('click', 'tr td:nth-child(1)', nameCellClicked);
 	$('#stats-games-show-next-100').click(showNext100Clicked);
 	$('#stats-games-show-remaining').click(showRemainingClicked);
+	History.Adapter.bind(window, 'statechange', onStateChange);
+
+	initializeUsers();
 });
