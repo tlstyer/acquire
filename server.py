@@ -137,7 +137,7 @@ class AcquireServerProtocol():
         AcquireServerProtocol.client_ids.discard(self.client_id)
 
         if self.game_id:
-            AcquireServerProtocol.game_id_to_game[self.game_id].remove_client(self)
+            AcquireServerProtocol.game_id_to_game[self.game_id].leave_game(self)
 
         if self.logged_in:
             AcquireServerProtocol.usernames.remove(self.username)
@@ -185,7 +185,7 @@ class AcquireServerProtocol():
 
     def on_message_leave_game(self):
         if self.game_id:
-            AcquireServerProtocol.game_id_to_game[self.game_id].remove_client(self)
+            AcquireServerProtocol.game_id_to_game[self.game_id].leave_game(self)
 
     def on_message_do_game_action(self, game_action_id, *data):
         if self.game_id:
@@ -325,7 +325,7 @@ class ScoreSheet:
         self.creator_username = None
         self.username_to_player_id = {}
 
-    def add_player(self, client, position_tile):
+    def join_game(self, client, position_tile):
         messages_all = []
         messages_client = []
 
@@ -363,13 +363,13 @@ class ScoreSheet:
         if messages_client:
             AcquireServerProtocol.add_pending_messages({client.client_id}, messages_client)
 
-    def readd_player(self, client):
+    def rejoin_game(self, client):
         player_id = self.username_to_player_id[client.username]
         client.player_id = player_id
         self.player_data[player_id][enums.ScoreSheetIndexes.Client.value] = client
         AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, [[enums.CommandsToClient.SetGamePlayerClientId.value, self.game_id, player_id, client.client_id]])
 
-    def remove_client(self, client):
+    def leave_game(self, client):
         player_id = client.player_id
         client.player_id = None
         self.player_data[player_id][enums.ScoreSheetIndexes.Client.value] = None
@@ -382,21 +382,15 @@ class ScoreSheet:
         return self.username_to_player_id[self.creator_username] if self.creator_username else None
 
     def adjust_player_data(self, player_id, score_sheet_index, adjustment):
-        messages = []
-
         self.player_data[player_id][score_sheet_index] += adjustment
-        messages.append([enums.CommandsToClient.SetScoreSheetCell.value, player_id, score_sheet_index, self.player_data[player_id][score_sheet_index]])
 
         if score_sheet_index <= enums.ScoreSheetIndexes.Imperial.value:
             self.available[score_sheet_index] -= adjustment
 
-        AcquireServerProtocol.add_pending_messages(self.client_ids, messages)
+        AcquireServerProtocol.add_pending_messages(self.client_ids, [[enums.CommandsToClient.SetScoreSheetCell.value, player_id, score_sheet_index, self.player_data[player_id][score_sheet_index]]])
 
     def set_chain_size(self, game_board_type_id, chain_size):
-        messages = []
-
         self.chain_size[game_board_type_id] = chain_size
-        messages.append([enums.CommandsToClient.SetScoreSheetCell.value, enums.ScoreSheetRows.ChainSize.value, game_board_type_id, chain_size])
 
         old_price = self.price[game_board_type_id]
         if chain_size:
@@ -413,7 +407,7 @@ class ScoreSheet:
         if new_price != old_price:
             self.price[game_board_type_id] = new_price
 
-        AcquireServerProtocol.add_pending_messages(self.client_ids, messages)
+        AcquireServerProtocol.add_pending_messages(self.client_ids, [[enums.CommandsToClient.SetScoreSheetCell.value, enums.ScoreSheetRows.ChainSize.value, game_board_type_id, chain_size]])
 
     def get_bonuses(self, game_board_type_id):
         price = self.price[game_board_type_id]
@@ -991,7 +985,7 @@ class Game:
             position_tile = self.tile_bag.pop()
             self.game_board.set_cell(position_tile, enums.GameBoardTypes.NothingYet.value)
             previous_creator_player_id = self.score_sheet.get_creator_player_id()
-            self.score_sheet.add_player(client, position_tile)
+            self.score_sheet.join_game(client, position_tile)
             self.send_past_history_messages(client)
             self.add_history_message(enums.GameHistoryMessages.DrewPositionTile.value, client.username, position_tile[0], position_tile[1])
             creator_player_id = self.score_sheet.get_creator_player_id()
@@ -1009,7 +1003,7 @@ class Game:
         if self.score_sheet.is_username_in_game(client.username):
             client.game_id = self.game_id
             self.client_ids.add(client.client_id)
-            self.score_sheet.readd_player(client)
+            self.score_sheet.rejoin_game(client)
             self.send_initialization_messages(client)
             self.send_past_history_messages(client)
             self.expiration_time = None
@@ -1024,7 +1018,7 @@ class Game:
             self.send_past_history_messages(client)
             self.expiration_time = None
 
-    def remove_client(self, client):
+    def leave_game(self, client):
         if client.client_id in self.client_ids:
             client.game_id = None
             self.client_ids.discard(client.client_id)
@@ -1032,7 +1026,7 @@ class Game:
                 self.watcher_client_ids.discard(client.client_id)
                 AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, [[enums.CommandsToClient.ReturnWatcherToLobby.value, self.game_id, client.client_id]])
             else:
-                self.score_sheet.remove_client(client)
+                self.score_sheet.leave_game(client)
             if not self.client_ids:
                 self.expiration_time = time.time() + 300
 
