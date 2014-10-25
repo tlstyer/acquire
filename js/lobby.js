@@ -80,6 +80,9 @@ define(function(require) {
 			$lobby_section.attr('id', 'lobby-game-' + game_id);
 			$lobby_section.attr('data-game-id', game_id);
 			$lobby_section.find('.header').text('Game #' + game_id);
+			if (current_page === 'game') {
+				$lobby_section.find('.game-buttons').hide();
+			}
 			$('#lobby-games').prepend($lobby_section);
 		}
 
