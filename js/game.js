@@ -4,8 +4,8 @@ define(function(require) {
 	var common_data = require('common_data'),
 		common_functions = require('common_functions'),
 		enums = require('enums'),
-		global_chat = require('global_chat'),
 		game_chat = require('game_chat'),
+		global_chat = require('global_chat'),
 		lobby = require('lobby'),
 		network = require('network'),
 		notification = require('notification'),
@@ -102,9 +102,9 @@ define(function(require) {
 			'&': 6,
 			I: 6
 		},
+		show_lobby = false,
 		show_global_chat = false,
 		show_game_chat = true,
-		show_lobby = false,
 		message_windows_left = 0,
 		message_windows_top = 0,
 		message_windows_width = 0,
@@ -204,7 +204,7 @@ define(function(require) {
 	}
 
 	function setMessageWindowPositions() {
-		var number_of_message_windows = (show_global_chat ? 1 : 0) + (show_game_chat ? 1 : 0) + (show_lobby ? 1 : 0),
+		var number_of_message_windows = (show_lobby ? 1 : 0) + (show_global_chat ? 1 : 0) + (show_game_chat ? 1 : 0),
 			width, left;
 
 		if (number_of_message_windows === 0) {
@@ -214,6 +214,11 @@ define(function(require) {
 		width = Math.floor(message_windows_width / number_of_message_windows) - 2;
 		left = message_windows_left + message_windows_width - number_of_message_windows * width - (number_of_message_windows - 1) * 2;
 
+		if (show_lobby) {
+			lobby.setPositionForPage('game', left, message_windows_top, width, message_windows_height);
+			left += width + 2;
+		}
+
 		if (show_global_chat) {
 			global_chat.setPositionForPage('game', left, message_windows_top, width, message_windows_height);
 			left += width + 2;
@@ -221,11 +226,6 @@ define(function(require) {
 
 		if (show_game_chat) {
 			game_chat.setPositionForPage('game', left, message_windows_top, width, message_windows_height);
-			left += width + 2;
-		}
-
-		if (show_lobby) {
-			lobby.setPositionForPage('game', left, message_windows_top, width, message_windows_height);
 			left += width + 2;
 		}
 	}
@@ -1234,6 +1234,10 @@ define(function(require) {
 	}
 
 	function initializeMessageWindows() {
+		lobby.setShowOnGamePage(show_lobby);
+		$('#show-lobby').prop('checked', show_lobby);
+		lobby.setPositionForPage('game', 0, 0, 100, 100);
+
 		global_chat.setShowOnGamePage(show_global_chat);
 		$('#show-global-chat').prop('checked', show_global_chat);
 		global_chat.setPositionForPage('game', 0, 0, 100, 100);
@@ -1241,10 +1245,6 @@ define(function(require) {
 		game_chat.setShowOnGamePage(show_game_chat);
 		$('#show-game-chat').prop('checked', show_game_chat);
 		game_chat.setPositionForPage('game', 0, 0, 100, 100);
-
-		lobby.setShowOnGamePage(show_lobby);
-		$('#show-lobby').prop('checked', show_lobby);
-		lobby.setPositionForPage('game', 0, 0, 100, 100);
 	}
 
 	function messageWindowCheckboxClicked() {
@@ -1254,6 +1254,10 @@ define(function(require) {
 			value = $input.prop('checked');
 
 		switch (key) {
+		case 'lobby':
+			show_lobby = value;
+			lobby.setShowOnGamePage(value);
+			break;
 		case 'global-chat':
 			show_global_chat = value;
 			global_chat.setShowOnGamePage(value);
@@ -1261,10 +1265,6 @@ define(function(require) {
 		case 'game-chat':
 			show_game_chat = value;
 			game_chat.setShowOnGamePage(value);
-			break;
-		case 'lobby':
-			show_lobby = value;
-			lobby.setShowOnGamePage(value);
 			break;
 		}
 
