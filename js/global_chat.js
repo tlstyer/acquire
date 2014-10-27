@@ -224,27 +224,27 @@ define(function(require) {
 	}
 
 	function addClient(client_id) {
-		addClientLocationMessage('#chat-add-client', client_id, null);
+		addClientLocationMessage('#global-chat-add-client', client_id, null);
 	}
 
 	function removeClient(client_id) {
-		addClientLocationMessage('#chat-remove-client', client_id, null);
+		addClientLocationMessage('#global-chat-remove-client', client_id, null);
 	}
 
 	function addGamePlayer(game_id, client_id) {
-		addClientLocationMessage('#chat-add-game-player', client_id, game_id);
+		addClientLocationMessage('#global-chat-add-game-player', client_id, game_id);
 	}
 
 	function removeGamePlayer(game_id, client_id) {
-		addClientLocationMessage('#chat-remove-game-player', client_id, game_id);
+		addClientLocationMessage('#global-chat-remove-game-player', client_id, game_id);
 	}
 
 	function addGameWatcher(game_id, client_id) {
-		addClientLocationMessage('#chat-add-game-watcher', client_id, game_id);
+		addClientLocationMessage('#global-chat-add-game-watcher', client_id, game_id);
 	}
 
 	function removeGameWatcher(game_id, client_id) {
-		addClientLocationMessage('#chat-remove-game-watcher', client_id, game_id);
+		addClientLocationMessage('#global-chat-remove-game-watcher', client_id, game_id);
 	}
 
 	function reset() {

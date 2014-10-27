@@ -115,6 +115,34 @@ define(function(require) {
 		appendElement($message);
 	}
 
+	function addClientLocationMessage(template_selector, client_id, game_id) {
+		var $message;
+
+		if (game_id === common_data.game_id) {
+			$message = $(template_selector).clone().removeAttr('id');
+
+			$message.find('.username').text(common_data.client_id_to_data[client_id].username);
+
+			appendElement($message);
+		}
+	}
+
+	function addGamePlayer(game_id, client_id) {
+		addClientLocationMessage('#game-chat-add-game-player', client_id, game_id);
+	}
+
+	function removeGamePlayer(game_id, client_id) {
+		addClientLocationMessage('#game-chat-remove-game-player', client_id, game_id);
+	}
+
+	function addGameWatcher(game_id, client_id) {
+		addClientLocationMessage('#game-chat-add-game-watcher', client_id, game_id);
+	}
+
+	function removeGameWatcher(game_id, client_id) {
+		addClientLocationMessage('#game-chat-remove-game-watcher', client_id, game_id);
+	}
+
 	function reset() {
 		$('#game-chat .chat-history').empty();
 		$('#game-chat .chat-history-new-messages').hide();
@@ -128,6 +156,10 @@ define(function(require) {
 	pubsub.subscribe(enums.PubSub.Client_SetPage, setPage);
 	pubsub.subscribe(enums.PubSub.Server_AddGameChatMessage, addGameChatMessage);
 	pubsub.subscribe(enums.PubSub.Client_LeaveGame, reset);
+	pubsub.subscribe(enums.PubSub.Client_AddGamePlayer, addGamePlayer);
+	pubsub.subscribe(enums.PubSub.Client_RemoveGamePlayer, removeGamePlayer);
+	pubsub.subscribe(enums.PubSub.Client_AddGameWatcher, addGameWatcher);
+	pubsub.subscribe(enums.PubSub.Client_RemoveGameWatcher, removeGameWatcher);
 	pubsub.subscribe(enums.PubSub.Network_Disconnect, reset);
 	pubsub.subscribe(enums.PubSub.Client_InitializationComplete, onInitializationComplete);
 
