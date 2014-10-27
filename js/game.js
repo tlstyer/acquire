@@ -145,7 +145,7 @@ define(function(require) {
 
 		// algebra and estimation were used in the determination of these 2 formulas
 		cell_width_gb_based_on_width = (window_width - 6) / 24;
-		cell_width_gb_based_on_height = (window_height - 30) / 13;
+		cell_width_gb_based_on_height = (window_height - 50) / 13;
 		cell_width_gb = Math.floor(Math.min(cell_width_gb_based_on_width, cell_width_gb_based_on_height));
 		// due to rounding, see if cell_width_gb + 1 is good, else use cell_width_gb
 		cell_width_gb += 2;
@@ -164,11 +164,11 @@ define(function(require) {
 		common_functions.setElementPosition($('.button-hotel'), null, null, cell_width_gb, cell_width_gb, font_size);
 		$('#ps-cart .button-hotel').css('width', Math.floor(cell_width_gb * 4 / 3));
 
-		top += height + 2;
+		top += height + 12;
 		height = cell_width_gb;
 		common_functions.setElementPosition($('#game-tile-rack'), 0, top, left_side_width, height, font_size);
 
-		top += height + 2;
+		top += height + 12;
 		height = window_height - top;
 		common_functions.setElementPosition($('#game-action'), 0, top, left_side_width, height, font_size);
 
