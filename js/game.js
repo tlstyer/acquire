@@ -1102,12 +1102,15 @@ define(function(require) {
 		}
 	}
 
+	function getActiveElement() {
+		return $(document.activeElement ? document.activeElement : document.getElementById('templates'));
+	}
+
 	function focusOnSensibleButton() {
-		var active_element = document.activeElement ? document.activeElement : document.getElementById('templates'),
-			active_element_id = active_element.id,
+		var $active_element = getActiveElement(),
 			$element, $elements, elements_length, i, $element2, found_element = false;
 
-		if (active_element_id === 'chat-message') {
+		if ($active_element.hasClass('chat-message')) {
 			return;
 		}
 
@@ -1117,7 +1120,7 @@ define(function(require) {
 			break;
 
 		case enums.GameActions.PlayTile:
-			if (!/^game-tile-\d$/.test(active_element_id) || $(active_element).prop('disabled')) {
+			if (!/^game-tile-\d$/.test($active_element.attr('id')) || $active_element.prop('disabled')) {
 				$('#game-tile-rack input:enabled').first().focus();
 			}
 			break;
@@ -1155,7 +1158,7 @@ define(function(require) {
 		case enums.GameActions.PurchaseShares:
 			$element = $('#ps-available input:enabled').first();
 			if ($element.length === 1) {
-				if (!/^ps-available-\d$/.test(active_element_id) || $(active_element).prop('disabled')) {
+				if (!/^ps-available-\d$/.test($active_element.attr('id')) || $active_element.prop('disabled')) {
 					$element.focus();
 				}
 			} else {
@@ -1166,9 +1169,10 @@ define(function(require) {
 	}
 
 	function keyPressed(event) {
-		var key_code, key_char, game_action_id, $element, i;
+		var $active_element = getActiveElement(),
+			key_code, key_char, game_action_id, $element, i;
 
-		if (document.activeElement.id === 'chat-message') {
+		if ($active_element.hasClass('chat-message')) {
 			return;
 		}
 
