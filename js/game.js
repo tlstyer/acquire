@@ -103,7 +103,7 @@ define(function(require) {
 			I: 6
 		},
 		show_lobby = false,
-		show_global_chat = false,
+		show_global_chat = true,
 		show_game_chat = true,
 		message_windows_left = 0,
 		message_windows_top = 0,
