@@ -1,7 +1,7 @@
 define(function(require) {
 	'use strict';
 
-	var chat = require('chat'),
+	var global_chat = require('global_chat'),
 		enums = require('enums'),
 		lobby = require('lobby'),
 		options = require('options'),
@@ -21,7 +21,7 @@ define(function(require) {
 
 		top += height;
 		height = window_height - top;
-		chat.setPositionForPage('lobby', left, top, width, height);
+		global_chat.setPositionForPage('lobby', left, top, width, height);
 	}
 
 	pubsub.subscribe(enums.PubSub.Client_Resize, resize);

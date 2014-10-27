@@ -204,10 +204,10 @@ body {
 	}
 }
 
-#lobby, #options, #chat, #templates {
+#lobby, #options, #global-chat, #game-chat, #templates {
 	display: none;
 }
-#game-tile-rack, #game-action, #game-history, #game-history-new-messages, #game-status, #game-buttons, #lobby, #options, #chat-history, #chat-history-new-messages, #chat-message, #chat-target-div {
+#game-tile-rack, #game-action, #game-history, #game-history-new-messages, #game-status, #game-buttons, #lobby, #options, .chat-history, .chat-history-new-messages, .chat-message {
 	position: absolute;
 	box-sizing: border-box;
 }
@@ -224,10 +224,10 @@ body {
 		display: none;
 	}
 }
-#game-history, #lobby, #chat-history {
+#game-history, #lobby, .chat-history {
 	overflow-y: scroll;
 }
-#game-history-new-messages, #chat-history-new-messages {
+#game-history-new-messages, .chat-history-new-messages {
 	display: none;
 	background-color: lightgreen;
 	overflow: hidden;
@@ -258,16 +258,11 @@ body {
 .disabled {
 	color: grey;
 }
-.chat-message-global-contents {
+#global-chat .chat-message, #global-chat .chat-message-contents {
 	color: blue;
 }
-.chat-message-game-contents {
+#game-chat .chat-message, #game-chat .chat-message-contents {
 	color: green;
-}
-#chat-target-div {
-	line-height: 25px;
-	white-space: nowrap;
-	overflow: hidden;
 }
 
 #game-action-dispose-of-shares, #game-action-purchase-shares {

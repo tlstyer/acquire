@@ -268,8 +268,14 @@
 			</div>
 			<div id="game-buttons">
 				<input id="button-leave-game" type="button" value="Leave Game">
-				<input id="button-show-lobby" type="button" value="Show Lobby">
-				<input id="button-show-chat" type="button" value="Show Chat">
+				<span id="message-window-checkboxes">
+					<input id="show-global-chat" type="checkbox">
+					<label for="show-global-chat">Global Chat</label>
+					<input id="show-game-chat" type="checkbox">
+					<label for="show-game-chat">Game Chat</label>
+					<input id="show-lobby" type="checkbox">
+					<label for="show-lobby">Lobby</label>
+				</span>
 			</div>
 		</div>
 		<div id="lobby">
@@ -331,25 +337,28 @@
 				</select>
 			</div>
 		</div>
-		<div id="chat">
-			<div id="chat-history"></div>
-			<div id="chat-history-new-messages">
+		<div id="global-chat">
+			<div class="chat-history"></div>
+			<div class="chat-history-new-messages">
 				<span class="singular">There is 1 new message.</span>
 				<span class="plural">There are <span class="message-count"></span> new messages.</span>
 			</div>
-			<form id="chat-form" autocomplete="off">
-				<input id="chat-message" type="text">
-				<div id="chat-target-div">
-					<input name="chat-target" id="chat-target-all" value="all" type="radio" checked="checked">
-					<label for="chat-target-all" class="chat-message-global-contents">All</label>
-					<input name="chat-target" id="chat-target-game" value="game" type="radio">
-					<label for="chat-target-game" class="chat-message-game-contents">Game</label>
-				</div>
+			<form class="chat-form" autocomplete="off">
+				<input class="chat-message" type="text">
+			</form>
+		</div>
+		<div id="game-chat">
+			<div class="chat-history"></div>
+			<div class="chat-history-new-messages">
+				<span class="singular">There is 1 new message.</span>
+				<span class="plural">There are <span class="message-count"></span> new messages.</span>
+			</div>
+			<form class="chat-form" autocomplete="off">
+				<input class="chat-message" type="text">
 			</form>
 		</div>
 		<div id="templates">
-			<div id="chat-message-global"><span class="username"></span> <b>&gt;</b> <span class="chat-message-global-contents"></span></div>
-			<div id="chat-message-game"><span class="username"></span> <b>&gt;</b> <span class="chat-message-game-contents"></span></div>
+			<div id="chat-message"><span class="username"></span> <b>&gt;</b> <span class="chat-message-contents"></span></div>
 			<div id="chat-add-client"><span class="username"></span> connected to the server.</div>
 			<div id="chat-remove-client"><span class="username"></span> disconnected from the server.</div>
 			<div id="chat-add-game-player"><span class="username"></span> entered game #<span class="game-id"></span>.</div>
