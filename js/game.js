@@ -141,54 +141,21 @@ define(function(require) {
 
 	function resize(window_width, window_height) {
 		var $score_sheet = $('#score-sheet'),
-			cell_width_gb_based_on_width, cell_width_gb_based_on_height, cell_width_gb, left_side_width, cell_width_ss, score_sheet_width, left, top, width, height, font_size;
+			cell_width_gb_based_on_width, cell_width_gb_based_on_height, cell_width_gb, left, top, width, height, font_size, cell_width_ss, score_sheet_width, score_sheet_height;
 
-		// algebra and estimation were used in the determination of these 2 formulas
-		cell_width_gb_based_on_width = (window_width - 6) / 24;
-		cell_width_gb_based_on_height = (window_height - 50) / 13;
+		cell_width_gb_based_on_width = (window_width / 2) / 12;
+		cell_width_gb_based_on_height = (window_height - 129) / 9;
 		cell_width_gb = Math.floor(Math.min(cell_width_gb_based_on_width, cell_width_gb_based_on_height));
-		// due to rounding, see if cell_width_gb + 1 is good, else use cell_width_gb
-		cell_width_gb += 2;
-		do {
-			cell_width_gb--;
-			left_side_width = cell_width_gb * 12 + 2;
-			cell_width_ss = Math.floor((left_side_width - 2) / 18);
-			score_sheet_width = cell_width_ss * 18 + 2;
-		} while (left_side_width + 2 + score_sheet_width > window_width);
 
+		left = 0;
 		top = 0;
+		width = cell_width_gb * 12 + 2;
 		height = cell_width_gb * 9 + 2;
 		font_size = Math.floor(cell_width_gb * 2 / 5);
-		common_functions.setElementPosition($('#game-board'), 0, top, cell_width_gb * 12 + 2, height, font_size);
+		common_functions.setElementPosition($('#game-board'), left, top, cell_width_gb * 12 + 2, height, font_size);
 
 		common_functions.setElementPosition($('.button-hotel'), null, null, cell_width_gb, cell_width_gb, font_size);
 		$('#ps-cart .button-hotel').css('width', Math.floor(cell_width_gb * 4 / 3));
-
-		top += height + 12;
-		height = cell_width_gb;
-		common_functions.setElementPosition($('#game-tile-rack'), 0, top, left_side_width, height, font_size);
-
-		top += height + 12;
-		height = window_height - top;
-		common_functions.setElementPosition($('#game-action'), 0, top, left_side_width, height, font_size);
-
-		left = left_side_width + 2;
-		common_functions.setElementPosition($score_sheet, left, 0, score_sheet_width, null, Math.floor(cell_width_ss * 2 / 3));
-		$score_sheet.find('tr').css('height', cell_width_ss + 'px');
-
-		top = (common_data.game_id_to_number_of_players[common_data.game_id] + 4) * cell_width_ss + 4;
-		width = window_width - left;
-		font_size = Math.floor(cell_width_ss / 2);
-
-		height = Math.floor((window_height - top - 78) / 2);
-		common_functions.setElementPosition($('#game-history'), left, top, width, height);
-		common_functions.scrollToBottom($('#game-history'));
-
-		common_functions.setElementPosition($('#game-history-new-messages'), left, top + height - 22, width - common_functions.getScrollbarWidth(), 22);
-
-		top += height + 2;
-		height = 22;
-		common_functions.setElementPosition($('#game-status'), left, top, width, height);
 
 		top += height + 2;
 		height = 25;
@@ -201,6 +168,38 @@ define(function(require) {
 		message_windows_width = width;
 		message_windows_height = height;
 		setMessageWindowPositions();
+
+		left = width + 2;
+		top = 0;
+		cell_width_ss = Math.floor((Math.min(width, window_width - left) - 2) / 18);
+		score_sheet_width = cell_width_ss * 18 + 2;
+		score_sheet_height = (common_data.game_id_to_number_of_players[common_data.game_id] + 4) * cell_width_ss + 2;
+		common_functions.setElementPosition($score_sheet, left, top, score_sheet_width, null, Math.floor(cell_width_ss * 2 / 3));
+		$score_sheet.find('tr').css('height', cell_width_ss + 'px');
+
+		top = score_sheet_height + 12;
+		width = window_width - left;
+		height = cell_width_gb;
+		common_functions.setElementPosition($('#game-tile-rack'), left + 10, top, width - 10, height, font_size);
+
+		top += height + 12;
+		height = cell_width_gb * 3 + 25;
+		common_functions.setElementPosition($('#game-action'), left + 10, top, width - 10, height, font_size);
+
+		if (common_data.player_id === null) {
+			top = score_sheet_height + 2;
+		} else {
+			top += height + 2;
+		}
+		height = window_height - top - 24;
+		common_functions.setElementPosition($('#game-history'), left, top, width, height);
+		common_functions.scrollToBottom($('#game-history'));
+
+		common_functions.setElementPosition($('#game-history-new-messages'), left, top + height - 22, width - common_functions.getScrollbarWidth(), 22);
+
+		top += height + 2;
+		height = 22;
+		common_functions.setElementPosition($('#game-status'), left, top, width, height);
 	}
 
 	function setMessageWindowPositions() {
