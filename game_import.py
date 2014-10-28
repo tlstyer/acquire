@@ -1,12 +1,14 @@
 #!/usr/bin/env python3.4m
 
 import collections
+import cron
 import datetime
 import glob
 import html.parser
 import orm
 import pickle
 import sqlalchemy.sql
+import subprocess
 import sys
 import ujson
 
@@ -83,7 +85,7 @@ def part1():
         pickle.dump(game_type_to_date_to_result, f)
 
 
-def part2(compare_mode=False):
+def part2(compare_mode=False, games_to_include=None):
     with open('game_import_data.bin', 'rb') as f:
         game_type_to_date_to_result = pickle.load(f)
 
@@ -160,14 +162,15 @@ def part2(compare_mode=False):
             comp = 'lt'
         else:
             comp = 'gt'
-        if not compare_mode:
+        if not compare_mode and not games_to_include:
             print(comp, date, datetime.datetime.fromtimestamp(date), game_type, scores)
 
         if num_players == num_players_needed:
             if compare_mode:
                 print([date, game_type_to_mode[game_type], scores])
             else:
-                print(ujson.dumps({'_': 'game-import', 'end': date, 'mode': game_type_to_mode[game_type], 'scores': scores}))
+                if not games_to_include or (date, game_type_to_mode[game_type]) in games_to_include:
+                    print(ujson.dumps({'_': 'game-import', 'end': date, 'mode': game_type_to_mode[game_type], 'scores': scores}))
 
     for game_type in sorted(game_type_to_mode.keys()):
         draw_count = game_type_to_draw_count[game_type]
@@ -203,6 +206,70 @@ def compare1():
             print([data['end_time'], data['game_mode'], data['scores']])
 
 
+def cron1():
+    class cron1Logs2DB(cron.Logs2DB):
+        def calculate_new_ratings(self, game, game_players):
+            return
+
+    with orm.session_scope() as session:
+        lookup = orm.Lookup(session)
+        logs2db = cron1Logs2DB(session, lookup)
+
+        with open('game_import_data.txt', 'r') as f:
+            logs2db.process_logs(f, 'x')
+
+
+def cron2():
+    with orm.session_scope() as session:
+        lookup = orm.Lookup(session)
+        logs2db = cron.Logs2DB(session, lookup)
+
+        query = sqlalchemy.sql.text('''
+            select game.log_time,
+                game.number,
+                count(distinct game_player.game_player_id) as num_players
+            from game
+            join game_state on game.game_state_id = game_state.game_state_id
+            join game_player on game.game_id = game_player.game_id
+            where game_state.name = 'Completed'
+            group by game.game_id
+            having num_players > 1
+            order by game.end_time asc
+        ''')
+        for row in session.execute(query):
+            game = lookup.get_game(row.log_time, row.number)
+            game_players = []
+            for player_index in range(row.num_players):
+                game_players.append(lookup.get_game_player(game, player_index))
+            logs2db.calculate_new_ratings(game, game_players)
+
+
+def cron3():
+    with orm.session_scope() as session:
+        statsgen = cron.StatsGen(session, 'stats_temp')
+        user_id_to_name = statsgen.get_user_id_to_name()
+        statsgen.output_users(user_id_to_name)
+        for user_id in user_id_to_name.keys():
+            statsgen.output_user(user_id)
+
+        filenames = glob.glob('stats_temp/*.json')
+        if filenames:
+            all_filenames = filenames + [x + '.gz' for x in filenames]
+
+            command = ['zopfli']
+            command.extend(filenames)
+            subprocess.call(command)
+
+            command = ['touch', '-r', 'stats_temp/users.json']
+            command.extend(all_filenames)
+            subprocess.call(command)
+
+            command = ['mv']
+            command.extend(all_filenames)
+            command.append('web/stats')
+            subprocess.call(command)
+
+
 if __name__ == '__main__':
     if sys.argv[1] == 'part1':
         part1()
@@ -212,5 +279,15 @@ if __name__ == '__main__':
         compare1()
     elif sys.argv[1] == 'compare2':
         part2(compare_mode=True)
+    elif sys.argv[1] == 'final-game-list':
+        import compare12
+
+        part2(False, compare12.games)
+    elif sys.argv[1] == 'cron1':
+        cron1()
+    elif sys.argv[1] == 'cron2':
+        cron2()
+    elif sys.argv[1] == 'cron3':
+        cron3()
     else:
         print('bad mode')
