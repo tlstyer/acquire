@@ -18,3 +18,12 @@ This is the code for my Acquire board game program which can be played at [http:
 ## Upgrade Dependencies
 
 The apt-get packages are upgraded by your system. To upgrade the other dependencies, rerun the relevant commands.
+
+## Download Libraries
+
+    cd lib
+    curl http://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/sha256.js > crypto-js.rollups.sha256-3.1.2.min.js
+    curl http://cdnjs.cloudflare.com/ajax/libs/dygraph/1.0.1/dygraph-combined.min.js > dygraph-combined-1.0.1.min.js
+    curl http://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js > jquery-1.11.1.min.js
+    curl http://cdnjs.cloudflare.com/ajax/libs/history.js/1.8/native.history.min.js > native.history-1.8.min.js
+    curl http://cdnjs.cloudflare.com/ajax/libs/stacktrace.js/0.6.2/stacktrace.min.js > stacktrace-0.6.2.min.js
