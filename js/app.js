@@ -8,7 +8,8 @@ define(function(require) {
 		current_page = null,
 		periodic_resize_check_width = null,
 		periodic_resize_check_height = null,
-		error_message_lookup = {};
+		error_message_lookup = {},
+		option_color_scheme = null;
 
 	function showPage(page) {
 		if (page !== current_page) {
@@ -20,6 +21,8 @@ define(function(require) {
 			}
 
 			current_page = page;
+
+			updateColorScheme();
 
 			pubsub.publish(enums.PubSub.Client_SetPage, page);
 		}
@@ -172,6 +175,23 @@ define(function(require) {
 			} else {
 				$('body').removeClass('high-contrast');
 			}
+		} else if (key === 'color-scheme') {
+			option_color_scheme = value;
+			updateColorScheme();
+		}
+	}
+
+	function updateColorScheme() {
+		var color_scheme = 'default';
+
+		if (current_page !== 'login' && current_page !== 'connecting') {
+			color_scheme = option_color_scheme;
+		}
+
+		if (color_scheme === 'netacquire') {
+			$('body').addClass('color-scheme-netacquire');
+		} else {
+			$('body').removeClass('color-scheme-netacquire');
 		}
 	}
 

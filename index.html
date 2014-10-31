@@ -231,8 +231,8 @@
 						<td class="worldwide">25</td>
 						<td class="continental">25</td>
 						<td class="imperial">25</td>
-						<td class="teams"></td>
-						<td class="teams border-bottom"></td>
+						<td class="teams team-empty"></td>
+						<td class="teams team-border-bottom"></td>
 					</tr>
 					<tr id="score-sheet-chain-size">
 						<td class="name">Chain Size</td>
@@ -243,7 +243,7 @@
 						<td class="worldwide">-</td>
 						<td class="continental">-</td>
 						<td class="imperial">-</td>
-						<td class="teams border-right">Team 1</td>
+						<td class="teams team-border-right">Team 1</td>
 						<td class="teams team-net" id="team1-net">12000</td>
 					</tr>
 					<tr id="score-sheet-price">
@@ -255,7 +255,7 @@
 						<td class="worldwide">-</td>
 						<td class="continental">-</td>
 						<td class="imperial">-</td>
-						<td class="teams border-right">Team 2</td>
+						<td class="teams team-border-right">Team 2</td>
 						<td class="teams team-net" id="team2-net">12000</td>
 					</tr>
 				</tbody>
@@ -329,6 +329,13 @@
 			<div>
 				<input id="option-enable-high-contrast-colors" type="checkbox">
 				<label for="option-enable-high-contrast-colors">Enable high contrast colors</label>
+			</div>
+			<div>
+				Color scheme:
+				<select id="option-color-scheme">
+					<option value="default">Default</option>
+					<option value="netacquire">NetAcquire</option>
+				</select>
 			</div>
 			<div>
 				Game board label mode:

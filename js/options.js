@@ -90,6 +90,11 @@ define(function(require) {
 				'default': false,
 				'valid': [true, false]
 			},
+			'color-scheme': {
+				'type': 'select',
+				'default': 'default',
+				'valid': ['default', 'netacquire']
+			},
 			'game-board-label-mode': {
 				'type': 'select',
 				'default': 'coordinates',

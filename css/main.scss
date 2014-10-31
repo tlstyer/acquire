@@ -1,6 +1,7 @@
 @import '../node_modules/normalize.css/normalize.css';
 
-$color-background: rgb(246, 244, 242);
+$color-background-default: rgb(255, 255, 255);
+$color-background-netacquire: rgb(246, 244, 242);
 $color-table-border: rgb(246, 244, 242);
 $color-scroll-div-background: rgb(192, 192, 255);
 
@@ -91,8 +92,21 @@ body.high-contrast {
 	}
 }
 
+body.color-scheme-netacquire {
+	background-color: $color-background-netacquire;
+	#game-history, #lobby, .chat-history {
+		background-color: $color-scroll-div-background;
+	}
+	.team-empty, .team-border-bottom, .team-border-right {
+		background-color: $color-background-netacquire;
+	}
+	span.username {
+		background-color: lightgrey;
+	}
+}
+
 body {
-	background-color: $color-background;
+	background-color: $color-background-default;
 	color: black;
 	font-size: 16px;
 }
@@ -176,18 +190,18 @@ body {
 	}
 	.teams {
 		border: 2px solid transparent;
-		background-color: $color-background;
+		background-color: $color-background-default;
 		display: none;
-		&.border-bottom {
-			border-bottom: 2px solid $color-table-border;
-		}
-		&.border-right {
-			border-right: 2px solid $color-table-border;
-		}
-		&.team-net {
-			background-color: white;
-			border: 2px solid $color-table-border;
-		}
+	}
+	.team-border-bottom {
+		border-bottom: 2px solid $color-table-border;
+	}
+	.team-border-right {
+		border-right: 2px solid $color-table-border;
+	}
+	.team-net {
+		background-color: white;
+		border: 2px solid $color-table-border;
 	}
 }
 
@@ -228,7 +242,6 @@ body {
 }
 #game-history, #lobby, .chat-history {
 	padding: 0 2px;
-	background-color: $color-scroll-div-background;
 	overflow-y: scroll;
 }
 #game-history-new-messages, .chat-history-new-messages {
@@ -313,7 +326,7 @@ body {
 }
 
 span.username {
-	background-color: lightgrey;
+	background-color: $color-table-border;
 	white-space: nowrap;
 }
 
@@ -326,7 +339,6 @@ span.username {
 }
 
 #stats-body {
-	background-color: white;
 	padding-left: .5em;
 	padding-right: .5em;
 }
