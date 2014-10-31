@@ -86,7 +86,7 @@ $color-safe-chain: rgb(255, 192, 128);
 	background-color: $color-cash-net;
 }
 
-body.high-contrast {
+body.enable-high-contrast-colors {
 	.color-luxor, .color-american, .color-worldwide, .color-imperial, .color-cant-play-now, .color-cash-net {
 		color: white;
 	}

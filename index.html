@@ -111,6 +111,82 @@
 					<!-- generated in game.js::initializeHtml() -->
 				</tbody>
 			</table>
+			<div id="game-buttons">
+				<input id="button-leave-game" type="button" value="Leave Game">
+				<span id="message-window-checkboxes">
+					<input id="show-lobby" type="checkbox">
+					<label for="show-lobby">Lobby</label>
+					<input id="show-global-chat" type="checkbox">
+					<label for="show-global-chat">Global Chat</label>
+					<input id="show-game-chat" type="checkbox">
+					<label for="show-game-chat">Game Chat</label>
+				</span>
+			</div>
+			<table id="score-sheet">
+				<tbody>
+					<tr id="score-sheet-header">
+						<td class="name color-player">Player</td>
+						<td class="luxor color-luxor">L</td>
+						<td class="tower color-tower">T</td>
+						<td class="american color-american">A</td>
+						<td class="festival color-festival">F</td>
+						<td class="worldwide color-worldwide">W</td>
+						<td class="continental color-continental">C</td>
+						<td class="imperial color-imperial">I</td>
+						<td class="cash color-cash-net">Cash</td>
+						<td class="net color-cash-net">Net</td>
+					</tr>
+					<tr class="score-sheet-player">
+						<td class="name"></td>
+						<td class="luxor"></td>
+						<td class="tower"></td>
+						<td class="american"></td>
+						<td class="festival"></td>
+						<td class="worldwide"></td>
+						<td class="continental"></td>
+						<td class="imperial"></td>
+						<td class="cash">6000</td>
+						<td class="net">6000</td>
+					</tr>
+					<!-- generated in game.js::initializeHtml() -->
+					<tr id="score-sheet-available">
+						<td class="name">Available</td>
+						<td class="luxor">25</td>
+						<td class="tower">25</td>
+						<td class="american">25</td>
+						<td class="festival">25</td>
+						<td class="worldwide">25</td>
+						<td class="continental">25</td>
+						<td class="imperial">25</td>
+						<td class="teams team-empty"></td>
+						<td class="teams team-border-bottom"></td>
+					</tr>
+					<tr id="score-sheet-chain-size">
+						<td class="name">Chain Size</td>
+						<td class="luxor">-</td>
+						<td class="tower">-</td>
+						<td class="american">-</td>
+						<td class="festival">-</td>
+						<td class="worldwide">-</td>
+						<td class="continental">-</td>
+						<td class="imperial">-</td>
+						<td class="teams team-border-right">Team 1</td>
+						<td class="teams team-net" id="team1-net">12000</td>
+					</tr>
+					<tr id="score-sheet-price">
+						<td class="name">Price ($00)</td>
+						<td class="luxor">-</td>
+						<td class="tower">-</td>
+						<td class="american">-</td>
+						<td class="festival">-</td>
+						<td class="worldwide">-</td>
+						<td class="continental">-</td>
+						<td class="imperial">-</td>
+						<td class="teams team-border-right">Team 2</td>
+						<td class="teams team-net" id="team2-net">12000</td>
+					</tr>
+				</tbody>
+			</table>
 			<div id="game-tile-rack">
 				<input id="game-tile-0" data-index="0" type="button" value="x" class="button-hotel">
 				<input id="game-tile-1" data-index="1" type="button" value="x" class="button-hotel">
@@ -195,71 +271,6 @@
 					</div>
 				</div>
 			</div>
-			<table id="score-sheet">
-				<tbody>
-					<tr id="score-sheet-header">
-						<td class="name color-player">Player</td>
-						<td class="luxor color-luxor">L</td>
-						<td class="tower color-tower">T</td>
-						<td class="american color-american">A</td>
-						<td class="festival color-festival">F</td>
-						<td class="worldwide color-worldwide">W</td>
-						<td class="continental color-continental">C</td>
-						<td class="imperial color-imperial">I</td>
-						<td class="cash color-cash-net">Cash</td>
-						<td class="net color-cash-net">Net</td>
-					</tr>
-					<tr class="score-sheet-player">
-						<td class="name"></td>
-						<td class="luxor"></td>
-						<td class="tower"></td>
-						<td class="american"></td>
-						<td class="festival"></td>
-						<td class="worldwide"></td>
-						<td class="continental"></td>
-						<td class="imperial"></td>
-						<td class="cash">6000</td>
-						<td class="net">6000</td>
-					</tr>
-					<!-- generated in game.js::initializeHtml() -->
-					<tr id="score-sheet-available">
-						<td class="name">Available</td>
-						<td class="luxor">25</td>
-						<td class="tower">25</td>
-						<td class="american">25</td>
-						<td class="festival">25</td>
-						<td class="worldwide">25</td>
-						<td class="continental">25</td>
-						<td class="imperial">25</td>
-						<td class="teams team-empty"></td>
-						<td class="teams team-border-bottom"></td>
-					</tr>
-					<tr id="score-sheet-chain-size">
-						<td class="name">Chain Size</td>
-						<td class="luxor">-</td>
-						<td class="tower">-</td>
-						<td class="american">-</td>
-						<td class="festival">-</td>
-						<td class="worldwide">-</td>
-						<td class="continental">-</td>
-						<td class="imperial">-</td>
-						<td class="teams team-border-right">Team 1</td>
-						<td class="teams team-net" id="team1-net">12000</td>
-					</tr>
-					<tr id="score-sheet-price">
-						<td class="name">Price ($00)</td>
-						<td class="luxor">-</td>
-						<td class="tower">-</td>
-						<td class="american">-</td>
-						<td class="festival">-</td>
-						<td class="worldwide">-</td>
-						<td class="continental">-</td>
-						<td class="imperial">-</td>
-						<td class="teams team-border-right">Team 2</td>
-						<td class="teams team-net" id="team2-net">12000</td>
-					</tr>
-				</tbody>
-			</table>
 			<div id="game-history">
 			</div>
 			<div id="game-history-new-messages">
@@ -267,17 +278,6 @@
 				<span class="plural">There are <span class="message-count"></span> new messages.</span>
 			</div>
 			<div id="game-status">
-			</div>
-			<div id="game-buttons">
-				<input id="button-leave-game" type="button" value="Leave Game">
-				<span id="message-window-checkboxes">
-					<input id="show-lobby" type="checkbox">
-					<label for="show-lobby">Lobby</label>
-					<input id="show-global-chat" type="checkbox">
-					<label for="show-global-chat">Global Chat</label>
-					<input id="show-game-chat" type="checkbox">
-					<label for="show-game-chat">Game Chat</label>
-				</span>
 			</div>
 		</div>
 		<div id="lobby">

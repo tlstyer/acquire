@@ -171,9 +171,9 @@ define(function(require) {
 	function onClientSetOption(key, value) {
 		if (key === 'enable-high-contrast-colors') {
 			if (value) {
-				$('body').addClass('high-contrast');
+				$('body').addClass('enable-high-contrast-colors');
 			} else {
-				$('body').removeClass('high-contrast');
+				$('body').removeClass('enable-high-contrast-colors');
 			}
 		} else if (key === 'color-scheme') {
 			option_color_scheme = value;
