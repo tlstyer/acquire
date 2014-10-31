@@ -90,6 +90,11 @@ define(function(require) {
 				'default': false,
 				'valid': [true, false]
 			},
+			'enable-text-background-colors': {
+				'type': 'checkbox',
+				'default': true,
+				'valid': [true, false]
+			},
 			'color-scheme': {
 				'type': 'select',
 				'default': 'default',

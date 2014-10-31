@@ -175,6 +175,14 @@ define(function(require) {
 			} else {
 				$('body').removeClass('enable-high-contrast-colors');
 			}
+		} else if (key === 'enable-text-background-colors') {
+			if (value) {
+				$('body').addClass('enable-text-background-colors');
+				$('body').removeClass('disable-text-background-colors');
+			} else {
+				$('body').addClass('disable-text-background-colors');
+				$('body').removeClass('enable-text-background-colors');
+			}
 		} else if (key === 'color-scheme') {
 			option_color_scheme = value;
 			updateColorScheme();

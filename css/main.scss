@@ -92,6 +92,20 @@ body.enable-high-contrast-colors {
 	}
 }
 
+body.enable-text-background-colors {
+	span.username {
+		background-color: $color-table-border;
+	}
+}
+body.disable-text-background-colors {
+	span.chain {
+		&.color-luxor, &.color-tower, &.color-american, &.color-festival, &.color-worldwide, &.color-continental, &.color-imperial {
+			background-color: transparent;
+			color: black;
+		}
+	}
+}
+
 body.color-scheme-netacquire {
 	background-color: $color-background-netacquire;
 	#game-history, #lobby, .chat-history {
@@ -100,6 +114,8 @@ body.color-scheme-netacquire {
 	.team-empty, .team-border-bottom, .team-border-right {
 		background-color: $color-background-netacquire;
 	}
+}
+body.enable-text-background-colors.color-scheme-netacquire {
 	span.username {
 		background-color: lightgrey;
 	}
@@ -326,7 +342,6 @@ body {
 }
 
 span.username {
-	background-color: $color-table-border;
 	white-space: nowrap;
 }
 

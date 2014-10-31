@@ -656,7 +656,7 @@ define(function(require) {
 			length = argument2.length;
 			for (index = 0; index < length; index++) {
 				name = enums.GameBoardTypes[argument2[index]];
-				parts.push('<span class="color-' + name.toLowerCase() + '">' + name + '</span>');
+				parts.push('<span class="chain color-' + name.toLowerCase() + '">' + name + '</span>');
 			}
 
 			if (parts.length === 2) {
@@ -675,7 +675,7 @@ define(function(require) {
 			for (index = 0; index < length; index++) {
 				entry = argument2[index];
 				name = enums.GameBoardTypes[entry[0]];
-				parts.push(entry[1] + ' <span class="color-' + name.toLowerCase() + '">' + name + '</span>');
+				parts.push(entry[1] + ' <span class="chain color-' + name.toLowerCase() + '">' + name + '</span>');
 			}
 
 			if (parts.length === 0) {
@@ -1054,7 +1054,7 @@ define(function(require) {
 			length = argument2.length;
 			for (index = 0; index < length; index++) {
 				name = enums.GameBoardTypes[argument2[index]];
-				parts.push('<span class="color-' + name.toLowerCase() + '">' + name[0] + '</span>');
+				parts.push('<span class="chain color-' + name.toLowerCase() + '">' + name[0] + '</span>');
 			}
 
 			if (parts.length === 2) {
