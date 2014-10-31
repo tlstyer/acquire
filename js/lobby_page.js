@@ -11,7 +11,7 @@ define(function(require) {
 		var half_window_width = Math.floor(window_width / 2),
 			left, top, width, height;
 
-		lobby.setPositionForPage('lobby', 5, 0, half_window_width - 5, window_height);
+		lobby.setPositionForPage('lobby', 0, 0, half_window_width, window_height);
 
 		left = half_window_width + 2;
 		top = 0;

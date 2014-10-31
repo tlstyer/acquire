@@ -141,7 +141,7 @@ define(function(require) {
 
 	function resize(window_width, window_height) {
 		var $score_sheet = $('#score-sheet'),
-			cell_width_gb_based_on_width, cell_width_gb_based_on_height, cell_width_gb, left, top, width, height, font_size, cell_width_ss, score_sheet_width, score_sheet_height;
+			cell_width_gb_based_on_width, cell_width_gb_based_on_height, cell_width_gb, left, top, width, height, font_size, cell_size_ss, cell_width_ss, cell_height_ss, score_sheet_width, score_sheet_height;
 
 		cell_width_gb_based_on_width = (window_width / 2) / 12;
 		cell_width_gb_based_on_height = (window_height - 129) / 9;
@@ -152,30 +152,32 @@ define(function(require) {
 		width = cell_width_gb * 12 + 2;
 		height = cell_width_gb * 9 + 2;
 		font_size = Math.floor(cell_width_gb * 2 / 5);
-		common_functions.setElementPosition($('#game-board'), left, top, cell_width_gb * 12 + 2, height, font_size);
+		common_functions.setElementPosition($('#game-board'), left, top, width, height, font_size);
 
 		common_functions.setElementPosition($('.button-hotel'), null, null, cell_width_gb, cell_width_gb, font_size);
 		$('#ps-cart .button-hotel').css('width', Math.floor(cell_width_gb * 4 / 3));
 
 		top += height + 2;
-		height = 25;
-		common_functions.setElementPosition($('#game-buttons'), left, top, width, height);
-
-		top += height + 2;
-		height = window_height - top;
+		height = window_height - top - 29;
 		message_windows_left = left;
 		message_windows_top = top;
 		message_windows_width = width;
 		message_windows_height = height;
 		setMessageWindowPositions();
 
+		top += height + 2;
+		height = 27;
+		common_functions.setElementPosition($('#game-buttons'), left, top, width, height);
+
 		left = width + 2;
 		top = 0;
-		cell_width_ss = Math.floor((Math.min(width, window_width - left) - 2) / 18);
+		cell_size_ss = (Math.min(width, window_width - left) - 2) / 18;
+		cell_width_ss = Math.floor(cell_size_ss);
+		cell_height_ss = Math.floor(cell_size_ss * .8);
 		score_sheet_width = cell_width_ss * 18 + 2;
-		score_sheet_height = (common_data.game_id_to_number_of_players[common_data.game_id] + 4) * cell_width_ss + 2;
-		common_functions.setElementPosition($score_sheet, left, top, score_sheet_width, null, Math.floor(cell_width_ss * 2 / 3));
-		$score_sheet.find('tr').css('height', cell_width_ss + 'px');
+		score_sheet_height = (common_data.game_id_to_number_of_players[common_data.game_id] + 4) * cell_height_ss + 2;
+		common_functions.setElementPosition($score_sheet, left, top, score_sheet_width, null, Math.floor(cell_size_ss * .6));
+		$score_sheet.find('tr').css('height', cell_height_ss + 'px');
 
 		top = score_sheet_height + 12;
 		width = window_width - left;
@@ -211,7 +213,7 @@ define(function(require) {
 		}
 
 		width = Math.floor(message_windows_width / number_of_message_windows) - 2;
-		left = message_windows_left + message_windows_width - number_of_message_windows * width - (number_of_message_windows - 1) * 2;
+		left = message_windows_left;
 
 		if (show_lobby) {
 			lobby.setPositionForPage('game', left, message_windows_top, width, message_windows_height);

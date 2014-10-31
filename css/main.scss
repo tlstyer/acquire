@@ -1,7 +1,8 @@
 @import '../node_modules/normalize.css/normalize.css';
 
-$color-background: rgb(255, 255, 255);
+$color-background: rgb(246, 244, 242);
 $color-table-border: rgb(246, 244, 242);
+$color-scroll-div-background: rgb(192, 192, 255);
 
 $color-luxor: rgb(255, 0, 0);
 $color-tower: rgb(255, 255, 0);
@@ -184,6 +185,7 @@ body {
 			border-right: 2px solid $color-table-border;
 		}
 		&.team-net {
+			background-color: white;
 			border: 2px solid $color-table-border;
 		}
 	}
@@ -225,6 +227,8 @@ body {
 	}
 }
 #game-history, #lobby, .chat-history {
+	padding: 0 2px;
+	background-color: $color-scroll-div-background;
 	overflow-y: scroll;
 }
 #game-history-new-messages, .chat-history-new-messages {
@@ -251,20 +255,19 @@ body {
 	overflow: hidden;
 	white-space: nowrap;
 }
-#game-buttons {
-	background-color: lightsteelblue;
-}
 #options .header {
 	font-weight: bold;
 }
 .disabled {
 	color: grey;
 }
-#global-chat .chat-message, #global-chat .chat-message-contents {
-	color: blue;
+#global-chat, #game-chat {
+	.chat-message, .chat-message-contents {
+		color: blue;
+	}
 }
-#game-chat .chat-message, #game-chat .chat-message-contents {
-	color: green;
+#game-buttons {
+	overflow: hidden;
 }
 
 #game-action-dispose-of-shares, #game-action-purchase-shares {
@@ -310,7 +313,7 @@ body {
 }
 
 span.username {
-	background-color: $color-table-border;
+	background-color: lightgrey;
 	white-space: nowrap;
 }
 
@@ -323,6 +326,7 @@ span.username {
 }
 
 #stats-body {
+	background-color: white;
 	padding-left: .5em;
 	padding-right: .5em;
 }
