@@ -5,6 +5,7 @@ define(function(require) {
 		enums = require('enums'),
 		pubsub = require('pubsub'),
 		current_page = null,
+		show_on_game_page = false,
 		page_to_position = {},
 		details = null;
 
@@ -17,11 +18,19 @@ define(function(require) {
 	function setPage(page) {
 		current_page = page;
 
-		if (page === 'lobby') {
+		if (page === 'lobby' || (page === 'game' && show_on_game_page)) {
 			setPosition();
 			$('#options').show();
 		} else {
 			$('#options').hide();
+		}
+	}
+
+	function setShowOnGamePage(show) {
+		show_on_game_page = show;
+
+		if (current_page === 'game') {
+			setPage(current_page);
 		}
 	}
 
@@ -169,6 +178,7 @@ define(function(require) {
 	pubsub.subscribe(enums.PubSub.Client_InitializationComplete, onInitializationComplete);
 
 	return {
+		setShowOnGamePage: setShowOnGamePage,
 		setPositionForPage: setPositionForPage
 	};
 });

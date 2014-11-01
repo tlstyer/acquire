@@ -15,6 +15,9 @@ define(function(require) {
 			enable_sound_notifications = value;
 		} else if (key === 'enable-page-title-notifications') {
 			enable_page_title_notifications = value;
+			if (!value) {
+				turnOff();
+			}
 		}
 	}
 

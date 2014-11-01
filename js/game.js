@@ -9,6 +9,7 @@ define(function(require) {
 		lobby = require('lobby'),
 		network = require('network'),
 		notification = require('notification'),
+		options = require('options'),
 		pubsub = require('pubsub'),
 		game_board_label_mode = null,
 		game_board_cell_types = [],
@@ -103,6 +104,7 @@ define(function(require) {
 			I: 6
 		},
 		show_lobby = false,
+		show_options = false,
 		show_global_chat = true,
 		show_game_chat = true,
 		message_windows_left = 0,
@@ -113,6 +115,7 @@ define(function(require) {
 	function setOption(key, value) {
 		if (key === 'game-board-label-mode') {
 			game_board_label_mode = value;
+			setGameBoard(game_board_cell_types);
 		}
 	}
 
@@ -205,7 +208,7 @@ define(function(require) {
 	}
 
 	function setMessageWindowPositions() {
-		var number_of_message_windows = (show_lobby ? 1 : 0) + (show_global_chat ? 1 : 0) + (show_game_chat ? 1 : 0),
+		var number_of_message_windows = (show_lobby ? 1 : 0) + (show_options ? 1 : 0) + (show_global_chat ? 1 : 0) + (show_game_chat ? 1 : 0),
 			width, left;
 
 		if (number_of_message_windows === 0) {
@@ -217,6 +220,11 @@ define(function(require) {
 
 		if (show_lobby) {
 			lobby.setPositionForPage('game', left, message_windows_top, width, message_windows_height);
+			left += width + 2;
+		}
+
+		if (show_options) {
+			options.setPositionForPage('game', left, message_windows_top, width, message_windows_height);
 			left += width + 2;
 		}
 
@@ -1243,6 +1251,10 @@ define(function(require) {
 		$('#show-lobby').prop('checked', show_lobby);
 		lobby.setPositionForPage('game', 0, 0, 100, 100);
 
+		options.setShowOnGamePage(show_options);
+		$('#show-options').prop('checked', show_options);
+		options.setPositionForPage('game', 0, 0, 100, 100);
+
 		global_chat.setShowOnGamePage(show_global_chat);
 		$('#show-global-chat').prop('checked', show_global_chat);
 		global_chat.setPositionForPage('game', 0, 0, 100, 100);
@@ -1262,6 +1274,10 @@ define(function(require) {
 		case 'lobby':
 			show_lobby = value;
 			lobby.setShowOnGamePage(value);
+			break;
+		case 'options':
+			show_options = value;
+			options.setShowOnGamePage(value);
 			break;
 		case 'global-chat':
 			show_global_chat = value;
