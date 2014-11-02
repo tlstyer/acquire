@@ -178,33 +178,35 @@ define(function(require) {
 		cell_width_ss = Math.floor(cell_size_ss);
 		cell_height_ss = Math.floor(cell_size_ss * 0.8);
 		score_sheet_width = cell_width_ss * 18 + 2;
-		score_sheet_height = (common_data.game_id_to_number_of_players[common_data.game_id] + 4) * cell_height_ss + 2;
 		common_functions.setElementPosition($score_sheet, left, top, score_sheet_width, null, Math.floor(cell_size_ss * 0.6));
-		$score_sheet.find('tr').css('height', cell_height_ss + 'px');
 
-		top = score_sheet_height + 12;
-		width = window_width - left;
-		height = cell_width_gb;
-		common_functions.setElementPosition($('#game-tile-rack'), left + 10, top, width - 10, height, font_size);
+		setTimeout(function() {
+			score_sheet_height = $score_sheet.height() + 2;
 
-		top += height + 12;
-		height = cell_width_gb * 3 + 25;
-		common_functions.setElementPosition($('#game-action'), left + 10, top, width - 10, height, font_size);
+			top = score_sheet_height + 12;
+			width = window_width - left;
+			height = cell_width_gb;
+			common_functions.setElementPosition($('#game-tile-rack'), left + 10, top, width - 10, height, font_size);
 
-		if (common_data.player_id === null) {
-			top = score_sheet_height + 2;
-		} else {
+			top += height + 12;
+			height = cell_width_gb * 3 + 25;
+			common_functions.setElementPosition($('#game-action'), left + 10, top, width - 10, height, font_size);
+
+			if (common_data.player_id === null) {
+				top = score_sheet_height + 2;
+			} else {
+				top += height + 2;
+			}
+			height = window_height - top - 24;
+			common_functions.setElementPosition($('#game-history'), left, top, width, height);
+			common_functions.scrollToBottom($('#game-history'));
+
+			common_functions.setElementPosition($('#game-history-new-messages'), left, top + height - 22, width - common_functions.getScrollbarWidth(), 22);
+
 			top += height + 2;
-		}
-		height = window_height - top - 24;
-		common_functions.setElementPosition($('#game-history'), left, top, width, height);
-		common_functions.scrollToBottom($('#game-history'));
-
-		common_functions.setElementPosition($('#game-history-new-messages'), left, top + height - 22, width - common_functions.getScrollbarWidth(), 22);
-
-		top += height + 2;
-		height = 22;
-		common_functions.setElementPosition($('#game-status'), left, top, width, height);
+			height = 22;
+			common_functions.setElementPosition($('#game-status'), left, top, width, height);
+		}, 0);
 	}
 
 	function setMessageWindowPositions() {

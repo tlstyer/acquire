@@ -189,6 +189,9 @@ body {
 			font-style: italic;
 		}
 	}
+	tr {
+		height: 0px;
+	}
 	tr.my-turn .name {
 		background-color: $color-my-turn;
 	}
