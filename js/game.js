@@ -176,10 +176,10 @@ define(function(require) {
 		top = 0;
 		cell_size_ss = (Math.min(width, window_width - left) - 2) / 18;
 		cell_width_ss = Math.floor(cell_size_ss);
-		cell_height_ss = Math.floor(cell_size_ss * .8);
+		cell_height_ss = Math.floor(cell_size_ss * 0.8);
 		score_sheet_width = cell_width_ss * 18 + 2;
 		score_sheet_height = (common_data.game_id_to_number_of_players[common_data.game_id] + 4) * cell_height_ss + 2;
-		common_functions.setElementPosition($score_sheet, left, top, score_sheet_width, null, Math.floor(cell_size_ss * .6));
+		common_functions.setElementPosition($score_sheet, left, top, score_sheet_width, null, Math.floor(cell_size_ss * 0.6));
 		$score_sheet.find('tr').css('height', cell_height_ss + 'px');
 
 		top = score_sheet_height + 12;
