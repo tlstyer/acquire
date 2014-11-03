@@ -144,7 +144,7 @@ define(function(require) {
 
 	function resize(window_width, window_height) {
 		var $score_sheet = $('#score-sheet'),
-			cell_width_gb_based_on_width, cell_width_gb_based_on_height, cell_width_gb, left, top, width, height, font_size, cell_size_ss, cell_width_ss, cell_height_ss, score_sheet_width, score_sheet_height;
+			cell_width_gb_based_on_width, cell_width_gb_based_on_height, cell_width_gb, left, top, width, height, font_size, cell_size_ss, score_sheet_height;
 
 		cell_width_gb_based_on_width = (window_width / 2) / 12;
 		cell_width_gb_based_on_height = (window_height - 129) / 9;
@@ -175,10 +175,7 @@ define(function(require) {
 		left = width + 2;
 		top = 0;
 		cell_size_ss = (Math.min(width, window_width - left) - 2) / 18;
-		cell_width_ss = Math.floor(cell_size_ss);
-		cell_height_ss = Math.floor(cell_size_ss * 0.8);
-		score_sheet_width = cell_width_ss * 18 + 2;
-		common_functions.setElementPosition($score_sheet, left, top, score_sheet_width, null, Math.floor(cell_size_ss * 0.6));
+		common_functions.setElementPosition($score_sheet, left, top, Math.floor(cell_size_ss) * 18 + 2, null, Math.floor(cell_size_ss * 0.6));
 
 		setTimeout(function() {
 			score_sheet_height = $score_sheet.height() + 2;
@@ -217,7 +214,7 @@ define(function(require) {
 			return;
 		}
 
-		width = Math.floor(message_windows_width / number_of_message_windows) - 2;
+		width = Math.floor((message_windows_width - 2 * (number_of_message_windows - 1)) / number_of_message_windows);
 		left = message_windows_left;
 
 		if (show_lobby) {
