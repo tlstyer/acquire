@@ -263,6 +263,9 @@ body {
 	padding: 0 2px;
 	overflow-y: scroll;
 }
+#game-history .game-state {
+	font-weight: bold;
+}
 #game-history-new-messages, .chat-history-new-messages {
 	display: none;
 	background-color: lightgreen;

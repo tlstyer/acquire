@@ -264,7 +264,7 @@ define(function(require) {
 
 	function joinGame() {
 		var player_id, player_data = common_data.game_id_to_player_data[common_data.game_id],
-			player_datum;
+			player_datum, $game_state = $('#game-state-template').clone().removeAttr('id');
 
 		for (player_id in player_data) {
 			if (player_data.hasOwnProperty(player_id) && player_id !== common_data.player_id) {
@@ -272,6 +272,10 @@ define(function(require) {
 				setGamePlayerData(common_data.game_id, player_id, player_datum.username, player_datum.client_id);
 			}
 		}
+
+		$game_state.find('.header').text('Game #' + common_data.game_id + ':');
+		$('#game-history').append($game_state);
+		setGameState(common_data.game_id);
 
 		$('body').on('keypress', keyPressed);
 	}
@@ -1095,6 +1099,8 @@ define(function(require) {
 		if (game_id === common_data.game_id) {
 			maybeNotifyStartingPlayerBecauseGameIsFull();
 			maybeShowTeamNetWorths();
+
+			$('#game-history .game-state .state').text(common_functions.getGameStateText(game_id));
 		}
 	}
 
