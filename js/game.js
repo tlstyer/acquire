@@ -803,7 +803,20 @@ define(function(require) {
 	}
 
 	function gameActionConstructorSelectChain(game_board_type_ids) {
-		var game_board_type_id, $button;
+		var instructions, game_board_type_id, $button;
+
+		switch (current_game_action_id) {
+		case enums.GameActions.SelectNewChain:
+			instructions = 'New chain';
+			break;
+		case enums.GameActions.SelectMergerSurvivor:
+			instructions = 'Merger survivor';
+			break;
+		case enums.GameActions.SelectChainToDisposeOfNext:
+			instructions = 'Chain to dispose of next';
+			break;
+		}
+		$('#game-select-chain-instructions').text(instructions);
 
 		for (game_board_type_id = 0; game_board_type_id < 7; game_board_type_id++) {
 			$button = $('#game-select-chain-' + game_board_type_id);
