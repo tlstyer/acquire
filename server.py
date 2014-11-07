@@ -1079,6 +1079,8 @@ class Game:
         if client_ids:
             message = [enums.CommandsToClient.AddGameHistoryMessage.value]
             message.extend(data)
+            if isinstance(message[2], str):
+                message[2] = self.score_sheet.username_to_player_id[message[2]]
             AcquireServerProtocol.add_pending_messages(client_ids, [message])
 
     def send_past_history_messages(self, client):
@@ -1086,6 +1088,9 @@ class Game:
         messages = []
         for target_player_id, message in self.history_messages:
             if target_player_id is None or target_player_id == player_id:
+                if isinstance(message[1], str):
+                    message = list(message)
+                    message[1] = self.score_sheet.username_to_player_id[message[1]]
                 messages.append(message)
 
         if messages:
