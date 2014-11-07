@@ -3,6 +3,7 @@
 import asyncio
 import collections
 import enums
+import heapq
 import math
 import random
 import re
@@ -56,12 +57,43 @@ class Server(asyncio.Protocol):
                 break
 
 
+class ReuseIdManager:
+    def __init__(self):
+        self._used = set()
+        self._unused = []
+
+    def get_id(self):
+        if len(self._unused):
+            next_id = heapq.heappop(self._unused)
+        else:
+            next_id = len(self._used) + 1
+        self._used.add(next_id)
+        return next_id
+
+    def return_id(self, returned_id):
+        self._used.remove(returned_id)
+        heapq.heappush(self._unused, returned_id)
+
+
+class IncrementIdManager:
+    def __init__(self):
+        self._last_id = 0
+
+    def get_id(self):
+        self._last_id += 1
+        return self._last_id
+
+    def return_id(self, returned_id):
+        pass
+
+
 class AcquireServerProtocol():
     next_client_id = 1
     client_id_to_client = {}
     client_ids = set()
     usernames = set()
-    next_game_id = 1
+    next_game_id_manager = ReuseIdManager()
+    next_internal_game_id_manager = IncrementIdManager()
     game_id_to_game = {}
     client_ids_and_messages = []
 
@@ -112,7 +144,7 @@ class AcquireServerProtocol():
             AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, [[enums.CommandsToClient.SetClientIdToData.value, self.client_id, self.username, self.ip_address]])
 
             # tell client about all games
-            for game_id, game in sorted(AcquireServerProtocol.game_id_to_game.items()):
+            for game_id, game in AcquireServerProtocol.game_id_to_game.items():
                 messages_client.append([enums.CommandsToClient.SetGameState.value, game_id, game.state, game.mode, game.max_players])
                 for player_id, player_datum in enumerate(game.score_sheet.player_data):
                     if player_datum[enums.ScoreSheetIndexes.Client.value]:
@@ -168,8 +200,9 @@ class AcquireServerProtocol():
 
     def on_message_create_game(self, mode, max_players):
         if not self.game_id and isinstance(mode, int) and 0 <= mode < enums.GameModes.Max.value and isinstance(max_players, int) and 1 <= max_players <= 6:
-            AcquireServerProtocol.game_id_to_game[AcquireServerProtocol.next_game_id] = Game(AcquireServerProtocol.next_game_id, self, mode, max_players)
-            AcquireServerProtocol.next_game_id += 1
+            game_id = AcquireServerProtocol.next_game_id_manager.get_id()
+            internal_game_id = AcquireServerProtocol.next_internal_game_id_manager.get_id()
+            AcquireServerProtocol.game_id_to_game[game_id] = Game(game_id, internal_game_id, self, mode, max_players)
 
     def on_message_join_game(self, game_id):
         if not self.game_id and game_id in AcquireServerProtocol.game_id_to_game:
@@ -243,16 +276,20 @@ class AcquireServerProtocol():
     @staticmethod
     def destroy_expired_games():
         current_time = time.time()
-        expired_game_ids = []
+        expired_games = []
 
         for game_id, game in AcquireServerProtocol.game_id_to_game.items():
             if game.expiration_time and game.expiration_time <= current_time:
-                expired_game_ids.append(game_id)
+                expired_games.append(game)
 
-        if expired_game_ids:
+        if expired_games:
             messages = []
-            for game_id in expired_game_ids:
-                print('game #%d expired' % game_id)
+            for game in expired_games:
+                game_id = game.game_id
+                internal_game_id = game.internal_game_id
+                print('game #%d expired (internal #%d)' % (game_id, internal_game_id))
+                AcquireServerProtocol.next_game_id_manager.return_id(game_id)
+                AcquireServerProtocol.next_internal_game_id_manager.return_id(internal_game_id)
                 del AcquireServerProtocol.game_id_to_game[game_id]
                 messages.append([enums.CommandsToClient.DestroyGame.value, game_id])
             AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, messages)
@@ -313,8 +350,9 @@ class GameBoard:
 
 
 class ScoreSheet:
-    def __init__(self, game_id, client_ids):
+    def __init__(self, game_id, internal_game_id, client_ids):
         self.game_id = game_id
+        self.internal_game_id = internal_game_id
         self.client_ids = client_ids
 
         self.player_data = []
@@ -352,7 +390,7 @@ class ScoreSheet:
                 else:
                     messages_all.append([enums.CommandsToClient.SetGamePlayerUsername.value, self.game_id, player_id, username])
                 self.username_to_player_id[username] = player_id
-                print(ujson.dumps({'_': 'game-player', 'game-id': self.game_id, 'player-id': player_id, 'username': username}))
+                print(ujson.dumps({'_': 'game-player', 'game-id': self.internal_game_id, 'external-game-id': self.game_id, 'player-id': player_id, 'username': username}))
 
             # tell client about other position tiles
             if player_id != client.player_id:
@@ -951,8 +989,9 @@ class ActionGameOver(Action):
 
 
 class Game:
-    def __init__(self, game_id, client, mode, max_players):
+    def __init__(self, game_id, internal_game_id, client, mode, max_players):
         self.game_id = game_id
+        self.internal_game_id = internal_game_id
         self.state = enums.GameStates.Starting.value
         self.mode = mode
         self.max_players = max_players if mode == enums.GameModes.Singles.value else 4
@@ -961,7 +1000,7 @@ class Game:
         self.watcher_client_ids = set()
 
         self.game_board = GameBoard(self.client_ids)
-        self.score_sheet = ScoreSheet(game_id, self.client_ids)
+        self.score_sheet = ScoreSheet(game_id, internal_game_id, self.client_ids)
         tiles = [(x, y) for x in range(12) for y in range(9)]
         random.shuffle(tiles)
         self.tile_bag = tiles
@@ -1045,7 +1084,7 @@ class Game:
 
     def set_state(self, state, mode=None, max_players=None):
         self.state = state
-        log = {'_': 'game', 'game-id': self.game_id, 'state': enums.GameStates(state).name}
+        log = {'_': 'game', 'game-id': self.internal_game_id, 'external-game-id': self.game_id, 'state': enums.GameStates(state).name}
         score = None
         if state == enums.GameStates.InProgress.value:
             log['begin'] = int(time.time())
