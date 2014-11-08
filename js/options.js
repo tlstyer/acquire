@@ -94,6 +94,11 @@ define(function(require) {
 					return document.getElementById('beep').pause === undefined;
 				}
 			},
+			'sound': {
+				'type': 'select',
+				'default': 'beep',
+				'valid': ['beep', 'cha-ching']
+			},
 			'enable-high-contrast-colors': {
 				'type': 'checkbox',
 				'default': false,

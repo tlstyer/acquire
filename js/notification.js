@@ -6,6 +6,7 @@ define(function(require) {
 		pubsub = require('pubsub'),
 		enable_sound_notifications = null,
 		enable_page_title_notifications = null,
+		sound = null,
 		title = '',
 		interval = null,
 		showing_title_prefix = false;
@@ -18,6 +19,8 @@ define(function(require) {
 			if (!value) {
 				turnOff();
 			}
+		} else if (key === 'sound') {
+			sound = value;
 		}
 	}
 
@@ -30,7 +33,7 @@ define(function(require) {
 		var beep;
 
 		if (enable_sound_notifications) {
-			beep = document.getElementById('beep');
+			beep = document.getElementById(sound);
 			if (typeof beep.readyState === 'number' && beep.readyState > 0) {
 				beep.pause();
 				beep.currentTime = 0;

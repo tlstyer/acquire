@@ -16,7 +16,7 @@ define(function(require) {
 		left = half_window_width + 2;
 		top = 0;
 		width = window_width - half_window_width - 2;
-		height = 160;
+		height = 190;
 		options.setPositionForPage('lobby', left, top, width, height);
 
 		top += height;

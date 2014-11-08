@@ -332,6 +332,13 @@
 				<label for="option-enable-sound-notifications">Enable sound notifications</label>
 			</div>
 			<div>
+				Sound:
+				<select id="option-sound">
+					<option value="beep">Beep</option>
+					<option value="cha-ching">Cha-Ching</option>
+				</select>
+			</div>
+			<div>
 				<input id="option-enable-high-contrast-colors" type="checkbox">
 				<label for="option-enable-high-contrast-colors">Enable high contrast colors</label>
 			</div>
@@ -441,6 +448,7 @@
 			<div id="game-status-purchase-shares">Waiting for <span class="username"></span> to purchase shares.</div>
 			<div id="game-status-game-over">Game over.</div>
 			<audio src="static/beep3.mp3" id="beep"></audio>
+			<audio src="static/cha-ching1.mp3" id="cha-ching"></audio>
 			<img src="static/merge1.png" alt="">
 		</div>
 	</body>
