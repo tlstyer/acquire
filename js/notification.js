@@ -4,21 +4,21 @@ define(function(require) {
 	var common_data = require('common_data'),
 		enums = require('enums'),
 		pubsub = require('pubsub'),
-		enable_sound_notifications = null,
 		enable_page_title_notifications = null,
+		enable_sound_notifications = null,
 		sound = null,
 		title = '',
 		interval = null,
 		showing_title_prefix = false;
 
 	function setOption(key, value) {
-		if (key === 'enable-sound-notifications') {
-			enable_sound_notifications = value;
-		} else if (key === 'enable-page-title-notifications') {
+		if (key === 'enable-page-title-notifications') {
 			enable_page_title_notifications = value;
 			if (!value) {
 				turnOff();
 			}
+		} else if (key === 'enable-sound-notifications') {
+			enable_sound_notifications = value;
 		} else if (key === 'sound') {
 			sound = value;
 		}
@@ -32,19 +32,19 @@ define(function(require) {
 	function turnOn() {
 		var beep;
 
+		if (enable_page_title_notifications) {
+			if (interval === null) {
+				interval = setInterval(intervalCallback, 500);
+				intervalCallback();
+			}
+		}
+
 		if (enable_sound_notifications) {
 			beep = document.getElementById(sound);
 			if (typeof beep.readyState === 'number' && beep.readyState > 0) {
 				beep.pause();
 				beep.currentTime = 0;
 				beep.play();
-			}
-		}
-
-		if (enable_page_title_notifications) {
-			if (interval === null) {
-				interval = setInterval(intervalCallback, 500);
-				intervalCallback();
 			}
 		}
 	}
