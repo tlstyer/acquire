@@ -111,8 +111,10 @@ body.color-scheme-netacquire {
 	#game-history, #lobby, .chat-history {
 		background-color: $color-scroll-div-background;
 	}
-	.team-empty, .team-border-bottom, .team-border-right {
-		background-color: $color-background-netacquire;
+	#score-sheet {
+		.team-empty, .team-border-bottom, .team-border-right {
+			background-color: $color-background-netacquire;
+		}
 	}
 }
 body.enable-text-background-colors.color-scheme-netacquire {
