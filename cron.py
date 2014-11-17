@@ -331,31 +331,5 @@ def main():
         time.sleep(60)
 
 
-def recalculate_ratings():
-    with orm.session_scope() as session:
-        lookup = orm.Lookup(session)
-        logs2db = Logs2DB(session, lookup)
-
-        query = sqlalchemy.sql.text('''
-            select game.log_time,
-                game.number,
-                count(distinct game_player.game_player_id) as num_players
-            from game
-            join game_state on game.game_state_id = game_state.game_state_id
-            join game_player on game.game_id = game_player.game_id
-            where game_state.name = 'Completed'
-            group by game.game_id
-            having num_players > 1
-            order by game.end_time asc
-        ''')
-        for row in session.execute(query):
-            game = lookup.get_game(row.log_time, row.number)
-            game_players = []
-            for player_index in range(row.num_players):
-                game_players.append(lookup.get_game_player(game, player_index))
-            logs2db.calculate_new_ratings(game, game_players)
-
-
 if __name__ == '__main__':
     main()
-    # recalculate_ratings()

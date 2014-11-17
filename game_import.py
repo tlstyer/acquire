@@ -207,13 +207,13 @@ def compare1():
 
 
 def cron1():
-    class cron1Logs2DB(cron.Logs2DB):
+    class Cron1Logs2DB(cron.Logs2DB):
         def calculate_new_ratings(self, game, game_players):
             return
 
     with orm.session_scope() as session:
         lookup = orm.Lookup(session)
-        logs2db = cron1Logs2DB(session, lookup)
+        logs2db = Cron1Logs2DB(session, lookup)
 
         with open('game_import_data.txt', 'r') as f:
             logs2db.process_logs(f, 'x')
