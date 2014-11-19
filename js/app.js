@@ -20,6 +20,12 @@ define(function(require) {
 				$('#login-form-username').focus();
 			}
 
+			if (page === 'lobby' || page === 'game') {
+				$('body').addClass('hide-overflow');
+			} else {
+				$('body').removeClass('hide-overflow');
+			}
+
 			current_page = page;
 
 			updateColorScheme();
