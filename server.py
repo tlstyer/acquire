@@ -97,7 +97,7 @@ class AcquireServerProtocol():
     next_client_id_manager = ReuseIdManager(60)
     client_id_to_client = {}
     client_ids = set()
-    usernames = set()
+    username_to_client = {}
     next_game_id_manager = ReuseIdManager(60)
     next_internal_game_id_manager = IncrementIdManager()
     game_id_to_game = {}
@@ -107,68 +107,68 @@ class AcquireServerProtocol():
 
     re_camelcase = re.compile(r'(.)([A-Z])')
 
-    def __init__(self, username, ip_address, socket_id):
+    def __init__(self, username, ip_address, socket_id, replace_existing_user):
         self.username = username
         self.ip_address = ip_address
         self.client_id = AcquireServerProtocol.next_client_id_manager.get_id()
         self.logged_in = False
-        self.allow_messages = False
         self.game_id = None
         self.player_id = None
 
         AcquireServerProtocol.client_id_to_client[self.client_id] = self
-        AcquireServerProtocol.client_ids.add(self.client_id)
         messages_client = []
 
-        print(self.client_id, 'connect', self.username, self.ip_address, socket_id)
+        print(self.client_id, 'connect', self.username, self.ip_address, socket_id, replace_existing_user)
         AcquireServerProtocol.server_transport.write(b'connect ' + ujson.dumps([socket_id, self.client_id]).encode() + b'\n')
 
-        if self.username in AcquireServerProtocol.usernames:
-            messages_client.append([enums.CommandsToClient.FatalError.value, enums.Errors.UsernameAlreadyInUse.value])
-            AcquireServerProtocol.add_pending_messages({self.client_id}, messages_client)
-            AcquireServerProtocol.flush_pending_messages()
-            self.send_disconnect()
-        else:
-            self.logged_in = True
-            self.allow_messages = True
-            self.on_message_lookup = []
-            for command_enum in enums.CommandsToServer:
-                self.on_message_lookup.append(getattr(self, 'on_message_' + AcquireServerProtocol.re_camelcase.sub(r'\1_\2', command_enum.name).lower()))
-            AcquireServerProtocol.usernames.add(self.username)
+        if self.username in AcquireServerProtocol.username_to_client:
+            if replace_existing_user:
+                AcquireServerProtocol.username_to_client[self.username].disconnect()
+            else:
+                messages_client.append([enums.CommandsToClient.FatalError.value, enums.Errors.UsernameAlreadyInUse.value])
+                AcquireServerProtocol.add_pending_messages({self.client_id}, messages_client)
+                AcquireServerProtocol.flush_pending_messages()
+                self.disconnect()
+                return
 
-            messages_client.append([enums.CommandsToClient.SetClientId.value, self.client_id])
+        AcquireServerProtocol.client_ids.add(self.client_id)
 
-            # tell client about other clients' data
-            for client in AcquireServerProtocol.client_id_to_client.values():
-                if client is not self:
-                    messages_client.append([enums.CommandsToClient.SetClientIdToData.value, client.client_id, client.username, client.ip_address])
-            AcquireServerProtocol.add_pending_messages({self.client_id}, messages_client)
-            messages_client = []
+        self.logged_in = True
+        self.on_message_lookup = []
+        for command_enum in enums.CommandsToServer:
+            self.on_message_lookup.append(getattr(self, 'on_message_' + AcquireServerProtocol.re_camelcase.sub(r'\1_\2', command_enum.name).lower()))
+        AcquireServerProtocol.username_to_client[self.username] = self
 
-            # tell all clients about client's data
-            AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, [[enums.CommandsToClient.SetClientIdToData.value, self.client_id, self.username, self.ip_address]])
+        messages_client.append([enums.CommandsToClient.SetClientId.value, self.client_id])
 
-            # tell client about all games
-            for game_id, game in AcquireServerProtocol.game_id_to_game.items():
-                messages_client.append([enums.CommandsToClient.SetGameState.value, game_id, game.state, game.mode, game.max_players])
-                for player_id, player_datum in enumerate(game.score_sheet.player_data):
-                    if player_datum[enums.ScoreSheetIndexes.Client.value]:
-                        messages_client.append([enums.CommandsToClient.SetGamePlayerClientId.value, game_id, player_id, player_datum[enums.ScoreSheetIndexes.Client.value].client_id])
-                    else:
-                        messages_client.append([enums.CommandsToClient.SetGamePlayerUsername.value, game_id, player_id, player_datum[enums.ScoreSheetIndexes.Username.value]])
-                for client_id in game.watcher_client_ids:
-                    messages_client.append([enums.CommandsToClient.SetGameWatcherClientId.value, game_id, client_id])
-            AcquireServerProtocol.add_pending_messages({self.client_id}, messages_client)
+        # tell client about other clients' data
+        for client in AcquireServerProtocol.client_id_to_client.values():
+            if client is not self:
+                messages_client.append([enums.CommandsToClient.SetClientIdToData.value, client.client_id, client.username, client.ip_address])
+        AcquireServerProtocol.add_pending_messages({self.client_id}, messages_client)
+        messages_client = []
 
-            AcquireServerProtocol.flush_pending_messages()
+        # tell all clients about client's data
+        AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, [[enums.CommandsToClient.SetClientIdToData.value, self.client_id, self.username, self.ip_address]])
 
-    def send_disconnect(self):
-        self.allow_messages = False
-        AcquireServerProtocol.client_ids.discard(self.client_id)
-        AcquireServerProtocol.server_transport.write(b'disconnect ' + str(self.client_id).encode() + b'\n')
+        # tell client about all games
+        for game_id, game in AcquireServerProtocol.game_id_to_game.items():
+            messages_client.append([enums.CommandsToClient.SetGameState.value, game_id, game.state, game.mode, game.max_players])
+            for player_id, player_datum in enumerate(game.score_sheet.player_data):
+                if player_datum[enums.ScoreSheetIndexes.Client.value]:
+                    messages_client.append([enums.CommandsToClient.SetGamePlayerClientId.value, game_id, player_id, player_datum[enums.ScoreSheetIndexes.Client.value].client_id])
+                else:
+                    messages_client.append([enums.CommandsToClient.SetGamePlayerUsername.value, game_id, player_id, player_datum[enums.ScoreSheetIndexes.Username.value]])
+            for client_id in game.watcher_client_ids:
+                messages_client.append([enums.CommandsToClient.SetGameWatcherClientId.value, game_id, client_id])
+        AcquireServerProtocol.add_pending_messages({self.client_id}, messages_client)
+
+        AcquireServerProtocol.flush_pending_messages()
 
     def disconnect(self):
         print(self.client_id, 'disconnect')
+
+        AcquireServerProtocol.server_transport.write(b'disconnect ' + str(self.client_id).encode() + b'\n')
 
         del AcquireServerProtocol.client_id_to_client[self.client_id]
         AcquireServerProtocol.client_ids.discard(self.client_id)
@@ -178,31 +178,30 @@ class AcquireServerProtocol():
             AcquireServerProtocol.game_id_to_game[self.game_id].leave_game(self)
 
         if self.logged_in:
-            AcquireServerProtocol.usernames.remove(self.username)
+            del AcquireServerProtocol.username_to_client[self.username]
             AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, [[enums.CommandsToClient.SetClientIdToData.value, self.client_id, None, None]])
             AcquireServerProtocol.flush_pending_messages()
         else:
             print()
 
     def on_message(self, payload):
-        if self.allow_messages:
-            try:
-                message = payload.decode()
-                print(self.client_id, '->', message)
-                message = ujson.decode(message)
-                method = self.on_message_lookup[message[0]]
-                arguments = message[1:]
-            except:
-                traceback.print_exc()
-                self.send_disconnect()
-                return
+        try:
+            message = payload.decode()
+            print(self.client_id, '->', message)
+            message = ujson.decode(message)
+            method = self.on_message_lookup[message[0]]
+            arguments = message[1:]
+        except:
+            traceback.print_exc()
+            self.disconnect()
+            return
 
-            try:
-                method(*arguments)
-                AcquireServerProtocol.flush_pending_messages()
-            except TypeError:
-                traceback.print_exc()
-                self.send_disconnect()
+        try:
+            method(*arguments)
+            AcquireServerProtocol.flush_pending_messages()
+        except TypeError:
+            traceback.print_exc()
+            self.disconnect()
 
     def on_message_create_game(self, mode, max_players):
         if not self.game_id and isinstance(mode, int) and 0 <= mode < enums.GameModes.Max.value and isinstance(max_players, int) and 1 <= max_players <= 6:

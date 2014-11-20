@@ -138,8 +138,6 @@
 					socket = client_id_to_socket[value];
 					if (socket) {
 						socket.disconnect();
-					} else {
-						console.log('ERROR! 1. client_id ===', value);
 					}
 				} else {
 					client_ids = key.split(',');
@@ -149,7 +147,7 @@
 						if (socket) {
 							socket.emit('x', value);
 						} else {
-							console.log('ERROR! 2. client_id ===', client_ids[i], value);
+							console.log('ERROR! client_id ===', client_ids[i], value);
 						}
 					}
 				}
@@ -183,9 +181,9 @@
 				]));
 				socket.disconnect();
 			};
-		var pass_to_python = function() {
+		var pass_to_python = function(replace_existing_user) {
 				console.log(socket.id, 'pass_to_python');
-				python_server.write('connect ' + JSON.stringify([username, ip_address, socket.id]) + '\n');
+				python_server.write('connect ' + JSON.stringify([username, ip_address, socket.id, replace_existing_user]) + '\n');
 			};
 		if (version !== server_version) {
 			return_fatal_error(enums.Errors.NotUsingLatestVersion);
@@ -200,7 +198,7 @@
 							if (password.length > 0) {
 								return_fatal_error(enums.Errors.ProvidedPassword);
 							} else {
-								pass_to_python();
+								pass_to_python(false);
 							}
 						} else {
 							if (password.length === 0) {
@@ -208,14 +206,14 @@
 							} else if (password !== results[0].password) {
 								return_fatal_error(enums.Errors.IncorrectPassword);
 							} else {
-								pass_to_python();
+								pass_to_python(true);
 							}
 						}
 					} else {
 						if (password.length > 0) {
 							return_fatal_error(enums.Errors.ProvidedPassword);
 						} else {
-							pass_to_python();
+							pass_to_python(false);
 						}
 					}
 				} else {
