@@ -94,7 +94,7 @@ class IncrementIdManager:
 
 
 class AcquireServerProtocol():
-    next_client_id = 1
+    next_client_id_manager = ReuseIdManager(60)
     client_id_to_client = {}
     client_ids = set()
     usernames = set()
@@ -110,13 +110,12 @@ class AcquireServerProtocol():
     def __init__(self, username, ip_address, socket_id):
         self.username = username
         self.ip_address = ip_address
-        self.client_id = AcquireServerProtocol.next_client_id
+        self.client_id = AcquireServerProtocol.next_client_id_manager.get_id()
         self.logged_in = False
         self.allow_messages = False
         self.game_id = None
         self.player_id = None
 
-        AcquireServerProtocol.next_client_id += 1
         AcquireServerProtocol.client_id_to_client[self.client_id] = self
         AcquireServerProtocol.client_ids.add(self.client_id)
         messages_client = []
@@ -173,6 +172,7 @@ class AcquireServerProtocol():
 
         del AcquireServerProtocol.client_id_to_client[self.client_id]
         AcquireServerProtocol.client_ids.discard(self.client_id)
+        AcquireServerProtocol.next_client_id_manager.return_id(self.client_id)
 
         if self.game_id:
             AcquireServerProtocol.game_id_to_game[self.game_id].leave_game(self)
