@@ -9,7 +9,10 @@ define(function(require) {
 		current_page = null,
 		show_on_game_page = false,
 		page_to_position = {},
-		initial_loading = true;
+		initial_loading = true,
+		lobby_client_ids_to_add = {},
+		lobby_client_ids_to_remove = {},
+		add_and_remove_lobby_clients = false;
 
 	function setPosition() {
 		var position = page_to_position[current_page];
@@ -82,13 +85,40 @@ define(function(require) {
 		$div.text(client_data.username);
 		$div.hide();
 		$div.appendTo('#clients-in-lobby');
-		showElement($div, 1);
+		lobby_client_ids_to_add[client_id] = 1;
+		add_and_remove_lobby_clients = true;
 	}
 
 	function removeLobbyClient(client_id) {
-		var $div = $('#clients-in-lobby .client-' + client_id);
+		lobby_client_ids_to_remove[client_id] = 1;
+		add_and_remove_lobby_clients = true;
+	}
 
-		removeElement($div, 1);
+	function addAndRemoveLobbyClients() {
+		var client_id, $element;
+
+		for (client_id in lobby_client_ids_to_add) {
+			if (lobby_client_ids_to_add.hasOwnProperty(client_id)) {
+				$element = $('#clients-in-lobby .client-' + client_id);
+
+				if (lobby_client_ids_to_remove.hasOwnProperty(client_id)) {
+					$element.remove();
+					delete lobby_client_ids_to_remove[client_id];
+				} else {
+					showElement($element, 1);
+				}
+			}
+		}
+		lobby_client_ids_to_add = {};
+
+		for (client_id in lobby_client_ids_to_remove) {
+			if (lobby_client_ids_to_remove.hasOwnProperty(client_id)) {
+				$element = $('#clients-in-lobby .client-' + client_id);
+
+				removeElement($element, 1);
+			}
+		}
+		lobby_client_ids_to_remove = {};
 	}
 
 	function removeUnusedPlayerDivs(game_id) {
@@ -246,6 +276,11 @@ define(function(require) {
 
 	function messageProcessingComplete() {
 		var game_id_to_state_id, game_id;
+
+		if (add_and_remove_lobby_clients) {
+			addAndRemoveLobbyClients();
+			add_and_remove_lobby_clients = false;
+		}
 
 		if (initial_loading) {
 			game_id_to_state_id = common_data.game_id_to_state_id;
