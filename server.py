@@ -58,21 +58,27 @@ class Server(asyncio.Protocol):
 
 
 class ReuseIdManager:
-    def __init__(self):
+    def __init__(self, return_wait):
+        self.return_wait = return_wait
         self._used = set()
         self._unused = []
+        self._unused_wait = []
 
     def get_id(self):
+        current_time = time.time()
+        while len(self._unused_wait) and self._unused_wait[0][0] <= current_time:
+            heapq.heappush(self._unused, heapq.heappop(self._unused_wait)[1])
+
         if len(self._unused):
             next_id = heapq.heappop(self._unused)
         else:
-            next_id = len(self._used) + 1
+            next_id = len(self._used) + len(self._unused_wait) + 1
         self._used.add(next_id)
         return next_id
 
     def return_id(self, returned_id):
         self._used.remove(returned_id)
-        heapq.heappush(self._unused, returned_id)
+        heapq.heappush(self._unused_wait, (time.time() + self.return_wait, returned_id))
 
 
 class IncrementIdManager:
@@ -92,7 +98,7 @@ class AcquireServerProtocol():
     client_id_to_client = {}
     client_ids = set()
     usernames = set()
-    next_game_id_manager = ReuseIdManager()
+    next_game_id_manager = ReuseIdManager(60)
     next_internal_game_id_manager = IncrementIdManager()
     game_id_to_game = {}
     client_ids_and_messages = []
