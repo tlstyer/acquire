@@ -1251,7 +1251,7 @@ define(function(require) {
 				}
 			} else if (key_code === 8 || key_char === '-') {
 				$('#ps-cart input:enabled').last().focus().click();
-			} else if (key_char === 'e') {
+			} else if (key_char === 'e' || key_char === '*') {
 				$('#ps-end-game').focus().click();
 			} else if (key_char === 'o') {
 				$('#ps-ok').focus();
