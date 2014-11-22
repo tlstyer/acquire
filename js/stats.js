@@ -138,7 +138,7 @@ $(function() {
 			player_data_length = player_data.length;
 			rating_type = game_mode_name === 'Singles' ? game_mode_name + player_data_length : game_mode_name;
 
-			if (player_data_length > 4) {
+			if (player_data_length === 1 || player_data_length > 4) {
 				continue;
 			}
 

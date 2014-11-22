@@ -106,13 +106,11 @@ class Logs2DB:
         game = self.lookup.get_game(params['_log-time'], params['game-id'])
 
         game_players = []
-        num_players = len(params['scores'])
         for player_index, score in enumerate(params['scores']):
             game_player = self.lookup.get_game_player(game, player_index)
             game_player.score = score
             game_players.append(game_player)
-            if num_players >= 2:
-                self.completed_game_users.add(game_player.user)
+            self.completed_game_users.add(game_player.user)
 
         self.calculate_new_ratings(game, game_players)
 
@@ -179,7 +177,6 @@ class StatsGen:
         select distinct user.user_id,
             user.name
         from user
-        join rating on user.user_id = rating.user_id
     ''')
     ratings_sql = sqlalchemy.sql.text('''
         select rating.user_id,
@@ -256,7 +253,6 @@ class StatsGen:
                 games.append([row.game_mode_id, row.end_time, []])
             games[-1][2].append([row.user_id, row.score])
             last_game_id = row.game_id
-        games = [game for game in games if len(game[2]) > 1]
 
         self.write_file('user' + str(user_id), {'ratings': ratings, 'games': games})
 
