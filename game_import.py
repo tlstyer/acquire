@@ -12,8 +12,8 @@ import subprocess
 import sys
 import ujson
 
-game_type_to_num_players = {'teams': 4, '2singles': 2, '3singles': 3, '4singles': 4}
-game_type_to_mode = {'teams': 'Teams', '2singles': 'Singles', '3singles': 'Singles', '4singles': 'Singles'}
+game_type_to_num_players = {'teams': 4, '1singles': 1, '2singles': 2, '3singles': 3, '4singles': 4}
+game_type_to_mode = {'teams': 'Teams', '1singles': 'Singles', '2singles': 'Singles', '3singles': 'Singles', '4singles': 'Singles'}
 starting_date = int(datetime.datetime(2014, 1, 1).timestamp())
 
 
@@ -85,7 +85,7 @@ def part1():
         pickle.dump(game_type_to_date_to_result, f)
 
 
-def part2(compare_mode=False, games_to_include=None):
+def get_game_data():
     with open('game_import_data.bin', 'rb') as f:
         game_type_to_date_to_result = pickle.load(f)
 
@@ -153,7 +153,17 @@ def part2(compare_mode=False, games_to_include=None):
 
     results.sort()
 
-    for date, game_type, scores in results:
+    return {'results': results, 'game_type_to_total_count': game_type_to_total_count, 'game_type_to_draw_count': game_type_to_draw_count}
+
+
+def print_game_import_row(end, mode, scores):
+    print('{"_":"game-import","end":' + str(end) + ',"mode":"' + mode + '","scores":' + ujson.dumps(scores) + '}')
+
+
+def part2():
+    game_data = get_game_data()
+
+    for date, game_type, scores in game_data['results']:
         num_players = len(scores)
         num_players_needed = game_type_to_num_players[game_type]
         if num_players == num_players_needed:
@@ -162,21 +172,15 @@ def part2(compare_mode=False, games_to_include=None):
             comp = 'lt'
         else:
             comp = 'gt'
-        if not compare_mode and not games_to_include:
-            print(comp, date, datetime.datetime.fromtimestamp(date), game_type, scores)
+        print(comp, date, datetime.datetime.fromtimestamp(date), game_type, scores)
 
         if num_players == num_players_needed:
-            if compare_mode:
-                print([date, game_type_to_mode[game_type], scores])
-            else:
-                if not games_to_include or (date, game_type_to_mode[game_type]) in games_to_include:
-                    print(ujson.dumps({'_': 'game-import', 'end': date, 'mode': game_type_to_mode[game_type], 'scores': scores}))
+            print_game_import_row(date, game_type_to_mode[game_type], scores)
 
     for game_type in sorted(game_type_to_mode.keys()):
-        draw_count = game_type_to_draw_count[game_type]
-        total_count = game_type_to_total_count[game_type]
-        if not compare_mode:
-            print(game_type, draw_count, total_count, 100 * draw_count / total_count)
+        draw_count = game_data['game_type_to_draw_count'][game_type]
+        total_count = game_data['game_type_to_total_count'][game_type]
+        print(game_type, draw_count, total_count, 100 * draw_count / total_count)
 
 
 def compare1():
@@ -203,10 +207,20 @@ def compare1():
 
         for game_id in sorted(game_id_to_data.keys()):
             data = game_id_to_data[game_id]
-            print([data['end_time'], data['game_mode'], data['scores']])
+            print_game_import_row(data['end_time'], data['game_mode'], data['scores'])
 
 
-def cron1():
+def compare2():
+    game_data = get_game_data()
+
+    for date, game_type, scores in game_data['results']:
+        num_players = len(scores)
+        num_players_needed = game_type_to_num_players[game_type]
+        if num_players == num_players_needed:
+            print_game_import_row(date, game_type_to_mode[game_type], scores)
+
+
+def import_into_database():
     class Cron1Logs2DB(cron.Logs2DB):
         def calculate_new_ratings(self, game, game_players):
             return
@@ -219,7 +233,7 @@ def cron1():
             logs2db.process_logs(f, 'x')
 
 
-def cron2():
+def calculate_ratings():
     with orm.session_scope() as session:
         lookup = orm.Lookup(session)
         logs2db = cron.Logs2DB(session, lookup)
@@ -244,30 +258,13 @@ def cron2():
             logs2db.calculate_new_ratings(game, game_players)
 
 
-def cron3():
+def generate_stats_json_files():
     with orm.session_scope() as session:
-        statsgen = cron.StatsGen(session, 'stats_temp')
+        statsgen = cron.StatsGen(session, 'web/stats')
         user_id_to_name = statsgen.get_user_id_to_name()
         statsgen.output_users(user_id_to_name)
         for user_id in user_id_to_name.keys():
             statsgen.output_user(user_id)
-
-        filenames = glob.glob('stats_temp/*.json')
-        if filenames:
-            all_filenames = filenames + [x + '.gz' for x in filenames]
-
-            command = ['zopfli']
-            command.extend(filenames)
-            subprocess.call(command)
-
-            command = ['touch', '-r', 'stats_temp/users.json']
-            command.extend(all_filenames)
-            subprocess.call(command)
-
-            command = ['mv']
-            command.extend(all_filenames)
-            command.append('web/stats')
-            subprocess.call(command)
 
 
 if __name__ == '__main__':
@@ -278,16 +275,12 @@ if __name__ == '__main__':
     elif sys.argv[1] == 'compare1':
         compare1()
     elif sys.argv[1] == 'compare2':
-        part2(compare_mode=True)
-    elif sys.argv[1] == 'final-game-list':
-        import compare12
-
-        part2(False, compare12.games)
-    elif sys.argv[1] == 'cron1':
-        cron1()
-    elif sys.argv[1] == 'cron2':
-        cron2()
-    elif sys.argv[1] == 'cron3':
-        cron3()
+        compare2()
+    elif sys.argv[1] == 'import_into_database':
+        import_into_database()
+    elif sys.argv[1] == 'calculate_ratings':
+        calculate_ratings()
+    elif sys.argv[1] == 'generate_stats_json_files':
+        generate_stats_json_files()
     else:
         print('bad mode')

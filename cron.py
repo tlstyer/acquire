@@ -76,7 +76,7 @@ class Logs2DB:
         game = orm.Game()
         self.session.add(game)
         game.log_time = params['end'] - 1000000000
-        game.number = len(params['scores']) - 1 if params['mode'] == 'Singles' else 4
+        game.number = len(params['scores']) if params['mode'] == 'Singles' else 5
         game.begin_time = params['end'] - 300
         game.end_time = params['end']
         game.game_state = self.lookup.get_game_state('Completed')
