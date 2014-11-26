@@ -15,7 +15,7 @@ $(function() {
 			1: 'Singles',
 			2: 'Teams'
 		},
-		games, games_length, games_num_shown;
+		games_user_id, games, games_length, games_num_shown;
 
 	function initializeUsers() {
 		$.ajax({
@@ -248,10 +248,52 @@ $(function() {
 		}
 	}
 
+	function compareScores(a, b) {
+		return b[1] - a[1];
+	}
+
+	function getRanks(game_mode_name, scores) {
+		var data = [],
+			num_scores, score_index, data_length, data_index, ranks = [];
+
+		if (game_mode_name === 'Teams') {
+			data.push([0, scores[0][1] + scores[2][1]]);
+			data.push([1, scores[1][1] + scores[3][1]]);
+		} else {
+			num_scores = scores.length;
+			for (score_index = 0; score_index < num_scores; score_index++) {
+				data.push([score_index, scores[score_index][1]]);
+			}
+		}
+
+		data.sort(compareScores);
+
+		data_length = data.length;
+		for (data_index = 0; data_index < data_length; data_index++) {
+			ranks.push(0);
+		}
+
+		ranks[data[0][0]] = 1;
+		for (data_index = 1; data_index < data_length; data_index++) {
+			if (data[data_index][1] === data[data_index - 1][1]) {
+				ranks[data[data_index][0]] = ranks[data[data_index - 1][0]];
+			} else {
+				ranks[data[data_index][0]] = data_index + 1;
+			}
+		}
+
+		if (game_mode_name === 'Teams') {
+			ranks.push(ranks[0]);
+			ranks.push(ranks[1]);
+		}
+
+		return ranks;
+	}
+
 	function showMoreGames(num_games_to_add) {
 		var $games = $('#stats-games'),
 			game_index, game_index_cutoff = Math.min(games_num_shown + num_games_to_add, games_length),
-			game, $div, game_mode_name, $table, $tbody, scores, num_scores, score_index, score, $tr, games_num_remaining, $stats_games_show_next_100 = $('#stats-games-show-next-100'),
+			game, $div, game_mode_name, $table, $tbody, scores, num_scores, ranks, score_index, score, $tr, games_num_remaining, $stats_games_show_next_100 = $('#stats-games-show-next-100'),
 			$stats_games_show_remaining = $('#stats-games-show-remaining');
 
 		for (game_index = games_num_shown; game_index < game_index_cutoff; game_index++) {
@@ -268,11 +310,16 @@ $(function() {
 			$table.append($tbody);
 
 			scores = game[2];
-			num_scores = game[2].length;
+			num_scores = scores.length;
+			ranks = getRanks(game_mode_name, scores);
 			for (score_index = 0; score_index < num_scores; score_index++) {
 				score = scores[score_index];
 
 				$tr = $('<tr/>');
+				if (score[0] === games_user_id) {
+					$tr.addClass('current_user');
+				}
+				$tr.append($('<td/>').text(ranks[score_index]));
 				$tr.append($('<td/>').text(user_id_to_username[score[0]]));
 				$tr.append($('<td/>').text(score[1] * 100));
 				if (game_mode_name === 'Teams') {
@@ -297,7 +344,8 @@ $(function() {
 		}
 	}
 
-	function populateGames(games_data) {
+	function populateGames(user_id, games_data) {
+		games_user_id = user_id;
 		games = games_data;
 		games_length = games_data.length;
 		games_num_shown = 0;
@@ -360,7 +408,7 @@ $(function() {
 					$('#stats-user-name').text(username);
 					populateSummary(user_id, data.ratings, data.games);
 					populateRatings(data.ratings);
-					populateGames(data.games);
+					populateGames(user_id, data.games);
 				},
 				error: function() {
 					setFormErrorMessage('Error while loading stats for ' + username + '.');
@@ -412,8 +460,7 @@ $(function() {
 
 	$('#stats-form input[type=button]').click(formButtonClicked);
 	$('#stats-form').submit(formSubmitted);
-	$('#stats-users').on('click', 'tr td:nth-child(2)', nameCellClicked);
-	$('#stats-games').on('click', 'tr td:nth-child(1)', nameCellClicked);
+	$('#stats-users, #stats-games').on('click', 'tr :nth-child(2)', nameCellClicked);
 	$('#stats-games-show-next-100').click(showNext100Clicked);
 	$('#stats-games-show-remaining').click(showRemainingClicked);
 	History.Adapter.bind(window, 'statechange', onStateChange);

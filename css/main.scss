@@ -380,7 +380,7 @@ span.username {
 		:nth-child(2), :nth-child(4), :nth-child(6) {
 			text-align: left;
 		}
-		td:nth-child(2) {
+		:nth-child(2) {
 			cursor: pointer;
 		}
 	}
@@ -418,16 +418,22 @@ span.username {
 		margin: .5em;
 	}
 	tr {
-		td:nth-child(1) {
-			cursor: pointer;
+		:nth-child(1), :nth-child(2)  {
+			text-align: left;
 		}
-		:nth-child(2), :nth-child(3)  {
+		:nth-child(3), :nth-child(4)  {
 			text-align: right;
+		}
+		:nth-child(2) {
+			cursor: pointer;
 		}
 	}
 	td {
 		border: 2px solid $color-table-border;
 		padding: 3px;
+	}
+	tr.current_user :nth-child(1) {
+		font-weight: bold;
 	}
 }
 #stats-games-links {
