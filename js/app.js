@@ -50,11 +50,14 @@ define(function(require) {
 	function initializeUsername() {
 		var username;
 
-		if (localStorage) {
-			username = localStorage.username;
-			if (username !== undefined) {
-				$('#login-form-username').val(username);
+		try {
+			if (localStorage) {
+				username = localStorage.username;
 			}
+		} catch (e) {}
+
+		if (username !== undefined) {
+			$('#login-form-username').val(username);
 		}
 	}
 
@@ -65,13 +68,11 @@ define(function(require) {
 		if (username.length === 0 || username.length > 32) {
 			setLoginErrorMessage(enums.Errors.InvalidUsername);
 		} else {
-			if (localStorage) {
-				try {
+			try {
+				if (localStorage) {
 					localStorage.username = username;
-				} catch (e) {
-					common_functions.reportError(e);
 				}
-			}
+			} catch (e) {}
 
 			showPage('connecting');
 			setLoginErrorMessage(enums.Errors.LostConnection);

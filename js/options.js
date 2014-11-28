@@ -50,17 +50,19 @@ define(function(require) {
 	function getStoredOptionValue(key) {
 		var value = null;
 
-		if (localStorage) {
-			value = localStorage[key];
+		try {
+			if (localStorage) {
+				value = localStorage[key];
+			}
+		} catch (e) {}
 
-			if (value === undefined) {
+		if (value === undefined) {
+			value = null;
+		} else {
+			try {
+				value = JSON.parse(value);
+			} catch (e) {
 				value = null;
-			} else {
-				try {
-					value = JSON.parse(value);
-				} catch (e) {
-					value = null;
-				}
 			}
 		}
 
@@ -68,13 +70,11 @@ define(function(require) {
 	}
 
 	function setStoredOptionValue(key, value) {
-		if (localStorage) {
-			try {
+		try {
+			if (localStorage) {
 				localStorage[key] = JSON.stringify(value);
-			} catch (e) {
-				common_functions.reportError(e);
 			}
-		}
+		} catch (e) {}
 	}
 
 	function initialize() {
