@@ -14,6 +14,7 @@ define(function(require) {
 		game_board_label_mode = null,
 		game_board_cell_types = [],
 		game_board_type_counts = [],
+		game_board_num_tiles = 0,
 		tile_rack = [null, null, null, null, null, null],
 		score_sheet_data = [
 			[0, 0, 0, 0, 0, 0, 0, 60, 60],
@@ -303,13 +304,22 @@ define(function(require) {
 	}
 
 	function setGameBoardCell(x, y, game_board_type_id) {
-		var $cell = $('#gb-' + x + '-' + y),
+		var old_game_board_type_id = game_board_cell_types[x][y],
+			old_game_board_type_id_is_tile = old_game_board_type_id !== enums.GameBoardTypes.Nothing && old_game_board_type_id !== enums.GameBoardTypes.IHaveThis,
+			game_board_type_id_is_tile = game_board_type_id !== enums.GameBoardTypes.Nothing && game_board_type_id !== enums.GameBoardTypes.IHaveThis,
+			$cell = $('#gb-' + x + '-' + y),
 			text;
 
-		game_board_type_counts[game_board_cell_types[x][y]]--;
+		game_board_type_counts[old_game_board_type_id]--;
 		game_board_type_counts[game_board_type_id]++;
 
 		game_board_cell_types[x][y] = game_board_type_id;
+
+		if (!old_game_board_type_id_is_tile && game_board_type_id_is_tile) {
+			game_board_num_tiles++;
+		} else if (old_game_board_type_id_is_tile && !game_board_type_id_is_tile) {
+			game_board_num_tiles--;
+		}
 
 		$cell.attr('class', 'color-' + common_functions.getHyphenatedStringFromEnumName(enums.GameBoardTypes[game_board_type_id]));
 
@@ -1057,7 +1067,11 @@ define(function(require) {
 
 		if (game_action_id !== enums.GameActions.StartGame) {
 			if (player_id !== null && player_id === common_data.player_id) {
-				notification.turnOn();
+				notification.turnOn(enums.Notifications.YourTurn);
+			} else if (game_board_num_tiles === common_data.game_id_to_number_of_players[common_data.game_id]) {
+				notification.turnOn(enums.Notifications.GameStarted);
+			} else if (game_action_id === enums.GameActions.GameOver) {
+				notification.turnOn(enums.Notifications.GameOver);
 			} else {
 				notification.turnOff();
 			}
@@ -1119,7 +1133,7 @@ define(function(require) {
 
 	function maybeNotifyStartingPlayerBecauseGameIsFull() {
 		if (common_data.game_id_to_state_id[common_data.game_id] === enums.GameStates.StartingFull && current_player_id === common_data.player_id) {
-			notification.turnOn();
+			notification.turnOn(enums.Notifications.GameFull);
 		}
 	}
 

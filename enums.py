@@ -126,6 +126,13 @@ class GameStates(AutoNumber):
     Completed = ()
 
 
+class Notifications(AutoNumber):
+    GameFull = ()
+    GameStarted = ()
+    YourTurn = ()
+    GameOver = ()
+
+
 class ScoreSheetIndexes(AutoNumber):
     Luxor = ()
     Tower = ()

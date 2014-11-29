@@ -9,7 +9,9 @@ define(function(require) {
 		sound = null,
 		title = '',
 		interval = null,
-		showing_title_prefix = false;
+		showing_title_prefix = false,
+		current_notification_id = null,
+		notification_id_to_message = {};
 
 	function setOption(key, value) {
 		if (key === 'enable-page-title-notifications') {
@@ -26,17 +28,19 @@ define(function(require) {
 
 	function intervalCallback() {
 		showing_title_prefix = !showing_title_prefix;
-		document.title = (showing_title_prefix ? '!!! YOUR TURN !!! ' : '') + title;
+		document.title = (showing_title_prefix ? '!!! ' + notification_id_to_message[current_notification_id] + ' !!! ' : '') + title;
 	}
 
-	function turnOn() {
+	function turnOn(notification_id) {
 		var beep;
 
 		if (enable_page_title_notifications) {
-			if (interval === null) {
-				interval = setInterval(intervalCallback, 500);
-				intervalCallback();
-			}
+			turnOff();
+
+			current_notification_id = notification_id;
+
+			interval = setInterval(intervalCallback, 500);
+			intervalCallback();
 		}
 
 		if (enable_sound_notifications) {
@@ -55,6 +59,8 @@ define(function(require) {
 			interval = null;
 			showing_title_prefix = false;
 			document.title = title;
+
+			current_notification_id = null;
 		}
 	}
 
@@ -70,9 +76,17 @@ define(function(require) {
 		intervalCallback();
 	}
 
+	function onInitializationComplete() {
+		notification_id_to_message[enums.Notifications.GameFull] = 'GAME FULL';
+		notification_id_to_message[enums.Notifications.GameStarted] = 'GAME STARTED';
+		notification_id_to_message[enums.Notifications.YourTurn] = 'YOUR TURN';
+		notification_id_to_message[enums.Notifications.GameOver] = 'GAME OVER';
+	}
+
 	pubsub.subscribe(enums.PubSub.Client_SetOption, setOption);
 	pubsub.subscribe(enums.PubSub.Client_SetClientData, onClientSetClientData);
 	pubsub.subscribe(enums.PubSub.Network_Disconnect, resetTitle);
+	pubsub.subscribe(enums.PubSub.Client_InitializationComplete, onInitializationComplete);
 
 	return {
 		turnOn: turnOn,
