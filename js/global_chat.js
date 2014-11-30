@@ -207,7 +207,7 @@ define(function(require) {
 		game_ids_with_changed_state.push(game_id);
 	}
 
-	function addClientLocationMessage(template_selector, client_id, game_id) {
+	function addClientLocationMessage(template_selector, client_id) {
 		var $message;
 
 		if (add_client_location_messages) {
@@ -215,36 +215,16 @@ define(function(require) {
 
 			$message.find('.username').text(common_data.client_id_to_data[client_id].username);
 
-			if (game_id !== null) {
-				$message.find('.game-id').text(game_id);
-			}
-
 			appendElement($message);
 		}
 	}
 
 	function addClient(client_id) {
-		addClientLocationMessage('#global-chat-add-client', client_id, null);
+		addClientLocationMessage('#global-chat-add-client', client_id);
 	}
 
 	function removeClient(client_id) {
-		addClientLocationMessage('#global-chat-remove-client', client_id, null);
-	}
-
-	function addGamePlayer(game_id, client_id) {
-		addClientLocationMessage('#global-chat-add-game-player', client_id, game_id);
-	}
-
-	function removeGamePlayer(game_id, client_id) {
-		addClientLocationMessage('#global-chat-remove-game-player', client_id, game_id);
-	}
-
-	function addGameWatcher(game_id, client_id) {
-		addClientLocationMessage('#global-chat-add-game-watcher', client_id, game_id);
-	}
-
-	function removeGameWatcher(game_id, client_id) {
-		addClientLocationMessage('#global-chat-remove-game-watcher', client_id, game_id);
+		addClientLocationMessage('#global-chat-remove-client', client_id);
 	}
 
 	function reset() {
@@ -266,10 +246,6 @@ define(function(require) {
 	pubsub.subscribe(enums.PubSub.Client_AddNewGamePlayer, gameStateChanged);
 	pubsub.subscribe(enums.PubSub.Client_AddClient, addClient);
 	pubsub.subscribe(enums.PubSub.Client_RemoveClient, removeClient);
-	pubsub.subscribe(enums.PubSub.Client_AddGamePlayer, addGamePlayer);
-	pubsub.subscribe(enums.PubSub.Client_RemoveGamePlayer, removeGamePlayer);
-	pubsub.subscribe(enums.PubSub.Client_AddGameWatcher, addGameWatcher);
-	pubsub.subscribe(enums.PubSub.Client_RemoveGameWatcher, removeGameWatcher);
 	pubsub.subscribe(enums.PubSub.Network_Disconnect, reset);
 	pubsub.subscribe(enums.PubSub.Client_InitializationComplete, onInitializationComplete);
 
