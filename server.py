@@ -156,9 +156,11 @@ class AcquireServerProtocol():
             messages_client.append([enums.CommandsToClient.SetGameState.value, game_id, game.state, game.mode, game.max_players])
             for player_id, player_datum in enumerate(game.score_sheet.player_data):
                 if player_datum[enums.ScoreSheetIndexes.Client.value]:
-                    messages_client.append([enums.CommandsToClient.SetGamePlayerClientId.value, game_id, player_id, player_datum[enums.ScoreSheetIndexes.Client.value].client_id])
+                    messages_client.append([enums.CommandsToClient.SetGamePlayerJoin.value, game_id, player_id, player_datum[enums.ScoreSheetIndexes.Client.value].client_id])
                 else:
-                    messages_client.append([enums.CommandsToClient.SetGamePlayerUsername.value, game_id, player_id, player_datum[enums.ScoreSheetIndexes.Username.value]])
+                    username = player_datum[enums.ScoreSheetIndexes.Username.value]
+                    client = AcquireServerProtocol.username_to_client.get(username)
+                    messages_client.append([enums.CommandsToClient.SetGamePlayerJoinMissing.value, game_id, player_id, client.client_id if client else username])
             for client_id in game.watcher_client_ids:
                 messages_client.append([enums.CommandsToClient.SetGameWatcherClientId.value, game_id, client_id])
         AcquireServerProtocol.add_pending_messages({self.client_id}, messages_client)
@@ -369,7 +371,6 @@ class ScoreSheet:
         self.username_to_player_id = {}
 
     def join_game(self, client, position_tile):
-        messages_all = []
         messages_client = []
 
         if not self.player_data:
@@ -387,13 +388,9 @@ class ScoreSheet:
         for player_id in range(len(self.player_data) - 1, -1, -1):
             player_datum = self.player_data[player_id]
 
-            # tell everybody about player changes
+            # update self.username_to_player_id
             if player_id >= client.player_id:
                 username = player_datum[enums.ScoreSheetIndexes.Username.value]
-                if player_datum[enums.ScoreSheetIndexes.Client.value]:
-                    messages_all.append([enums.CommandsToClient.SetGamePlayerClientId.value, self.game_id, player_id, player_datum[enums.ScoreSheetIndexes.Client.value].client_id])
-                else:
-                    messages_all.append([enums.CommandsToClient.SetGamePlayerUsername.value, self.game_id, player_id, username])
                 self.username_to_player_id[username] = player_id
                 print(ujson.dumps({'_': 'game-player', 'game-id': self.internal_game_id, 'external-game-id': self.game_id, 'player-id': player_id, 'username': username}))
 
@@ -402,7 +399,7 @@ class ScoreSheet:
                 x, y = player_datum[enums.ScoreSheetIndexes.PositionTile.value]
                 messages_client.append([enums.CommandsToClient.SetGameBoardCell.value, x, y, enums.GameBoardTypes.NothingYet.value])
 
-        AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, messages_all)
+        AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, [[enums.CommandsToClient.SetGamePlayerJoin.value, self.game_id, client.player_id, client.client_id]])
         if messages_client:
             AcquireServerProtocol.add_pending_messages({client.client_id}, messages_client)
 
@@ -410,13 +407,13 @@ class ScoreSheet:
         player_id = self.username_to_player_id[client.username]
         client.player_id = player_id
         self.player_data[player_id][enums.ScoreSheetIndexes.Client.value] = client
-        AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, [[enums.CommandsToClient.SetGamePlayerClientId.value, self.game_id, player_id, client.client_id]])
+        AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, [[enums.CommandsToClient.SetGamePlayerRejoin.value, self.game_id, player_id, client.client_id]])
 
     def leave_game(self, client):
         player_id = client.player_id
         client.player_id = None
         self.player_data[player_id][enums.ScoreSheetIndexes.Client.value] = None
-        AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, [[enums.CommandsToClient.SetGamePlayerClientId.value, self.game_id, player_id, None]])
+        AcquireServerProtocol.add_pending_messages(AcquireServerProtocol.client_ids, [[enums.CommandsToClient.SetGamePlayerLeave.value, self.game_id, player_id, client.client_id]])
 
     def is_username_in_game(self, username):
         return username in self.username_to_player_id

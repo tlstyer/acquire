@@ -55,79 +55,103 @@ define(function(require) {
 		pubsub.publish(enums.PubSub.Client_SetGameState, game_id);
 	}
 
-	function setGamePlayerUsername(game_id, player_id, username) {
-		data.game_id_to_number_of_players[game_id] = Math.max(data.game_id_to_number_of_players[game_id], player_id + 1);
+	function setGamePlayerJoin(game_id, player_id, client_id) {
+		var player_id2, number_of_players = data.game_id_to_number_of_players[game_id],
+			player_data = data.game_id_to_player_data[game_id],
+			player_datum, client_data = data.client_id_to_data[client_id];
 
+		// move later players' data back one spot
+		for (player_id2 = number_of_players - 1; player_id2 >= player_id; player_id2--) {
+			player_datum = player_data[player_id2];
+			player_data[player_id2 + 1] = player_datum;
+
+			// update user's player_id if applicable
+			if (player_datum.client_id === data.client_id) {
+				data.player_id = player_id2 + 1;
+			}
+		}
+
+		// insert new players' data
+		player_data[player_id] = {
+			username: client_data.username,
+			client_id: client_id
+		};
+
+		// increment number of players
+		number_of_players++;
+		data.game_id_to_number_of_players[game_id]++;
+
+		// set user's game_id and player_id if applicable
+		if (client_id === data.client_id) {
+			data.game_id = game_id;
+			data.player_id = player_id;
+		}
+
+		// publish
+		for (player_id2 = player_id; player_id2 < number_of_players; player_id2++) {
+			player_datum = player_data[player_id2];
+			pubsub.publish(enums.PubSub.Client_SetGamePlayerData, game_id, player_id2, player_datum.username, player_datum.client_id);
+		}
+		pubsub.publish(enums.PubSub.Client_RemoveLobbyClient, client_id);
+		pubsub.publish(enums.PubSub.Client_AddNewGamePlayer, game_id, client_id);
+		pubsub.publish(enums.PubSub.Client_AddGamePlayer, game_id, client_id);
+		if (client_id === data.client_id) {
+			pubsub.publish(enums.PubSub.Client_JoinGame);
+		}
+	}
+
+	function setGamePlayerRejoin(game_id, player_id, client_id) {
+		// update players' data
+		data.game_id_to_player_data[game_id][player_id].client_id = client_id;
+
+		// set user's game_id and player_id if applicable
+		if (client_id === data.client_id) {
+			data.game_id = game_id;
+			data.player_id = player_id;
+		}
+
+		// publish
+		pubsub.publish(enums.PubSub.Client_SetGamePlayerData, game_id, player_id, data.game_id_to_player_data[game_id][player_id].username, client_id);
+		pubsub.publish(enums.PubSub.Client_RemoveLobbyClient, client_id);
+		pubsub.publish(enums.PubSub.Client_AddGamePlayer, game_id, client_id);
+		if (client_id === data.client_id) {
+			pubsub.publish(enums.PubSub.Client_JoinGame);
+		}
+	}
+
+	function setGamePlayerLeave(game_id, player_id, client_id) {
+		// update players' data
+		data.game_id_to_player_data[game_id][player_id].client_id = null;
+
+		// set user's game_id and player_id if applicable
+		if (client_id === data.client_id) {
+			data.game_id = null;
+			data.player_id = null;
+		}
+
+		// publish
+		pubsub.publish(enums.PubSub.Client_SetGamePlayerData, game_id, player_id, data.game_id_to_player_data[game_id][player_id].username, null);
+		pubsub.publish(enums.PubSub.Client_AddLobbyClient, client_id);
+		pubsub.publish(enums.PubSub.Client_RemoveGamePlayer, game_id, client_id);
+		if (client_id === data.client_id) {
+			pubsub.publish(enums.PubSub.Client_LeaveGame);
+		}
+	}
+
+	function setGamePlayerJoinMissing(game_id, player_id, client_id_or_username) {
+		var username = typeof client_id_or_username === 'number' ? data.client_id_to_data[client_id_or_username].username : client_id_or_username;
+
+		// insert new players' data
 		data.game_id_to_player_data[game_id][player_id] = {
 			username: username,
 			client_id: null
 		};
 
+		// increment number of players
+		data.game_id_to_number_of_players[game_id]++;
+
+		// publish
 		pubsub.publish(enums.PubSub.Client_SetGamePlayerData, game_id, player_id, username, null);
-	}
-
-	function setGamePlayerClientId(game_id, player_id, client_id) {
-		var add_new_game_player = false,
-			player_data, old_client_id, client_data, old_game_id, client_already_in_game, player_id2;
-
-		if (player_id + 1 > data.game_id_to_number_of_players[game_id]) {
-			data.game_id_to_number_of_players[game_id] = player_id + 1;
-			add_new_game_player = true;
-		}
-
-		if (client_id === null) {
-			player_data = data.game_id_to_player_data[game_id][player_id];
-			old_client_id = player_data.client_id;
-
-			if (old_client_id === data.client_id) {
-				data.game_id = null;
-				data.player_id = null;
-			}
-
-			player_data.client_id = null;
-
-			pubsub.publish(enums.PubSub.Client_SetGamePlayerData, game_id, player_id, player_data.username, null);
-			pubsub.publish(enums.PubSub.Client_RemoveGamePlayer, game_id, old_client_id);
-			pubsub.publish(enums.PubSub.Client_AddLobbyClient, old_client_id);
-			if (old_client_id === data.client_id) {
-				pubsub.publish(enums.PubSub.Client_LeaveGame);
-			}
-		} else {
-			client_data = data.client_id_to_data[client_id];
-			old_game_id = data.game_id;
-
-			if (client_id === data.client_id) {
-				data.game_id = game_id;
-				data.player_id = player_id;
-			}
-
-			data.game_id_to_player_data[game_id][player_id] = {
-				username: client_data.username,
-				client_id: client_id
-			};
-
-			pubsub.publish(enums.PubSub.Client_RemoveLobbyClient, client_id);
-			pubsub.publish(enums.PubSub.Client_SetGamePlayerData, game_id, player_id, client_data.username, client_id);
-
-			client_already_in_game = false;
-			player_data = data.game_id_to_player_data[game_id];
-			for (player_id2 in player_data) {
-				if (player_data.hasOwnProperty(player_id2) && parseInt(player_id2, 10) !== player_id && client_id === player_data[player_id2].client_id) {
-					client_already_in_game = true;
-				}
-			}
-			if (!client_already_in_game) {
-				pubsub.publish(enums.PubSub.Client_AddGamePlayer, game_id, client_id);
-			}
-
-			if (game_id !== old_game_id && client_id === data.client_id) {
-				pubsub.publish(enums.PubSub.Client_JoinGame);
-			}
-		}
-
-		if (add_new_game_player) {
-			pubsub.publish(enums.PubSub.Client_AddNewGamePlayer, game_id);
-		}
 	}
 
 	function setGameWatcherClientId(game_id, client_id) {
@@ -189,8 +213,10 @@ define(function(require) {
 	pubsub.subscribe(enums.PubSub.Server_SetClientId, setClientId);
 	pubsub.subscribe(enums.PubSub.Server_SetClientIdToData, setClientIdToData);
 	pubsub.subscribe(enums.PubSub.Server_SetGameState, setGameState);
-	pubsub.subscribe(enums.PubSub.Server_SetGamePlayerUsername, setGamePlayerUsername);
-	pubsub.subscribe(enums.PubSub.Server_SetGamePlayerClientId, setGamePlayerClientId);
+	pubsub.subscribe(enums.PubSub.Server_SetGamePlayerJoin, setGamePlayerJoin);
+	pubsub.subscribe(enums.PubSub.Server_SetGamePlayerRejoin, setGamePlayerRejoin);
+	pubsub.subscribe(enums.PubSub.Server_SetGamePlayerLeave, setGamePlayerLeave);
+	pubsub.subscribe(enums.PubSub.Server_SetGamePlayerJoinMissing, setGamePlayerJoinMissing);
 	pubsub.subscribe(enums.PubSub.Server_SetGameWatcherClientId, setGameWatcherClientId);
 	pubsub.subscribe(enums.PubSub.Server_ReturnWatcherToLobby, returnWatcherToLobby);
 	pubsub.subscribe(enums.PubSub.Server_DestroyGame, destroyGame);
