@@ -93,8 +93,7 @@ define(function(require) {
 			pubsub.publish(enums.PubSub.Client_SetGamePlayerData, game_id, player_id2, player_datum.username, player_datum.client_id);
 		}
 		pubsub.publish(enums.PubSub.Client_RemoveLobbyClient, client_id);
-		pubsub.publish(enums.PubSub.Client_AddNewGamePlayer, game_id, client_id);
-		pubsub.publish(enums.PubSub.Client_AddGamePlayer, game_id, client_id);
+		pubsub.publish(enums.PubSub.Client_SetGamePlayerJoin, game_id, player_id, client_id);
 		if (client_id === data.client_id) {
 			pubsub.publish(enums.PubSub.Client_JoinGame);
 		}
@@ -113,7 +112,7 @@ define(function(require) {
 		// publish
 		pubsub.publish(enums.PubSub.Client_SetGamePlayerData, game_id, player_id, data.game_id_to_player_data[game_id][player_id].username, client_id);
 		pubsub.publish(enums.PubSub.Client_RemoveLobbyClient, client_id);
-		pubsub.publish(enums.PubSub.Client_AddGamePlayer, game_id, client_id);
+		pubsub.publish(enums.PubSub.Client_SetGamePlayerRejoin, game_id, player_id, client_id);
 		if (client_id === data.client_id) {
 			pubsub.publish(enums.PubSub.Client_JoinGame);
 		}
@@ -131,8 +130,8 @@ define(function(require) {
 
 		// publish
 		pubsub.publish(enums.PubSub.Client_SetGamePlayerData, game_id, player_id, data.game_id_to_player_data[game_id][player_id].username, null);
+		pubsub.publish(enums.PubSub.Client_SetGamePlayerLeave, game_id, player_id, client_id);
 		pubsub.publish(enums.PubSub.Client_AddLobbyClient, client_id);
-		pubsub.publish(enums.PubSub.Client_RemoveGamePlayer, game_id, client_id);
 		if (client_id === data.client_id) {
 			pubsub.publish(enums.PubSub.Client_LeaveGame);
 		}
@@ -152,6 +151,7 @@ define(function(require) {
 
 		// publish
 		pubsub.publish(enums.PubSub.Client_SetGamePlayerData, game_id, player_id, username, null);
+		pubsub.publish(enums.PubSub.Client_SetGamePlayerJoinMissing, game_id, player_id, username);
 	}
 
 	function setGameWatcherClientId(game_id, client_id) {

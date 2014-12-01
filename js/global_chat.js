@@ -243,7 +243,7 @@ define(function(require) {
 	pubsub.subscribe(enums.PubSub.Server_AddGlobalChatMessage, addGlobalChatMessage);
 	pubsub.subscribe(enums.PubSub.Network_MessageProcessingComplete, messageProcessingComplete);
 	pubsub.subscribe(enums.PubSub.Client_SetGameState, gameStateChanged);
-	pubsub.subscribe(enums.PubSub.Client_AddNewGamePlayer, gameStateChanged);
+	pubsub.subscribe(enums.PubSub.Client_SetGamePlayerJoin, gameStateChanged);
 	pubsub.subscribe(enums.PubSub.Client_AddClient, addClient);
 	pubsub.subscribe(enums.PubSub.Client_RemoveClient, removeClient);
 	pubsub.subscribe(enums.PubSub.Network_Disconnect, reset);

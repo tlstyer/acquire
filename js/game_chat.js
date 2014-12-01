@@ -127,11 +127,11 @@ define(function(require) {
 		}
 	}
 
-	function addGamePlayer(game_id, client_id) {
+	function addGamePlayer(game_id, player_id, client_id) {
 		addClientLocationMessage('#game-chat-add-game-player', client_id, game_id);
 	}
 
-	function removeGamePlayer(game_id, client_id) {
+	function removeGamePlayer(game_id, player_id, client_id) {
 		addClientLocationMessage('#game-chat-remove-game-player', client_id, game_id);
 	}
 
@@ -156,8 +156,9 @@ define(function(require) {
 	pubsub.subscribe(enums.PubSub.Client_SetPage, setPage);
 	pubsub.subscribe(enums.PubSub.Server_AddGameChatMessage, addGameChatMessage);
 	pubsub.subscribe(enums.PubSub.Client_LeaveGame, reset);
-	pubsub.subscribe(enums.PubSub.Client_AddGamePlayer, addGamePlayer);
-	pubsub.subscribe(enums.PubSub.Client_RemoveGamePlayer, removeGamePlayer);
+	pubsub.subscribe(enums.PubSub.Client_SetGamePlayerJoin, addGamePlayer);
+	pubsub.subscribe(enums.PubSub.Client_SetGamePlayerRejoin, addGamePlayer);
+	pubsub.subscribe(enums.PubSub.Client_SetGamePlayerLeave, removeGamePlayer);
 	pubsub.subscribe(enums.PubSub.Client_AddGameWatcher, addGameWatcher);
 	pubsub.subscribe(enums.PubSub.Client_RemoveGameWatcher, removeGameWatcher);
 	pubsub.subscribe(enums.PubSub.Network_Disconnect, reset);

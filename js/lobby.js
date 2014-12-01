@@ -12,7 +12,8 @@ define(function(require) {
 		initial_loading = true,
 		lobby_client_ids_to_add = {},
 		lobby_client_ids_to_remove = {},
-		add_and_remove_lobby_clients = false;
+		add_and_remove_lobby_clients = false,
+		game_ids_just_created = [];
 
 	function setPosition() {
 		var position = page_to_position[current_page];
@@ -138,10 +139,9 @@ define(function(require) {
 
 	function setGameState(game_id) {
 		var $lobby_section = $('#lobby-game-' + game_id),
-			$players, $player, max_players = common_data.game_id_to_max_players[game_id],
-			i, state_id = common_data.game_id_to_state_id[game_id],
 			in_this_game, player_id, player_data = common_data.game_id_to_player_data[game_id],
-			client_username = common_data.client_id_to_data[common_data.client_id].username;
+			client_username = common_data.client_id_to_data[common_data.client_id].username,
+			state_id = common_data.game_id_to_state_id[game_id];
 
 		// create and add lobby section if it doesn't exist
 		if ($lobby_section.length === 0) {
@@ -149,17 +149,14 @@ define(function(require) {
 			$lobby_section.attr('id', 'lobby-game-' + game_id);
 			$lobby_section.attr('data-game-id', game_id);
 			$lobby_section.find('.header').text('Game #' + game_id);
-			$players = $lobby_section.find('.players');
-			$player = $players.find('.player');
-			for (i = 1; i < max_players; i++) {
-				$players.append($player.clone());
-			}
 			if (current_page === 'game') {
 				$lobby_section.find('.game-buttons').hide();
 			}
 			$lobby_section.hide();
 			$('#lobby-games').prepend($lobby_section);
-			showElement($lobby_section, max_players + 2);
+			showElement($lobby_section, 3);
+
+			game_ids_just_created.push(game_id);
 		}
 
 		// set game state text
@@ -196,19 +193,73 @@ define(function(require) {
 		}
 	}
 
-	function setGamePlayerData(game_id, player_id, username, client_id) {
-		var $player = $('#lobby-game-' + game_id + ' .player:eq(' + player_id + ')'),
-			ip_address;
+	function setGamePlayerJoin(game_id, player_id, client_id) {
+		var $player, client_data = common_data.client_id_to_data[client_id],
+			username = client_data.username,
+			ip_address = client_data.ip_address;
 
-		if (client_id === null) {
-			$player.addClass('missing');
-			ip_address = 'missing';
+		if (game_ids_just_created.indexOf(game_id) >= 0 && player_id === 0) {
+			$player = $('#lobby-game-' + game_id + ' .player:eq(0)');
+			$player.attr('title', username + ' (' + ip_address + ')');
+			$player.text(username);
 		} else {
+			$player = $('#lobby-game-' + game_id + ' .player:eq(0)').clone();
 			$player.removeClass('missing');
-			ip_address = common_data.client_id_to_data[client_id].ip_address;
+			$player.attr('title', username + ' (' + ip_address + ')');
+			$player.text(username);
+			$player.hide();
+
+			if (player_id === 0) {
+				$('#lobby-game-' + game_id + ' .player:eq(0)').before($player);
+			} else {
+				$('#lobby-game-' + game_id + ' .player:eq(' + (player_id - 1) + ')').after($player);
+			}
+
+			showElement($player, 1);
 		}
-		$player.attr('title', username + ' (' + ip_address + ')');
-		$player.text(username);
+
+		setGameState(game_id);
+	}
+
+	function setGamePlayerRejoin(game_id, player_id, client_id) {
+		var $player = $('#lobby-game-' + game_id + ' .player:eq(' + player_id + ')'),
+			client_data = common_data.client_id_to_data[client_id];
+
+		$player.removeClass('missing');
+		$player.attr('title', client_data.username + ' (' + client_data.ip_address + ')');
+
+		setGameState(game_id);
+	}
+
+	function setGamePlayerLeave(game_id, player_id, client_id) {
+		var $player = $('#lobby-game-' + game_id + ' .player:eq(' + player_id + ')'),
+			client_data = common_data.client_id_to_data[client_id];
+
+		$player.addClass('missing');
+		$player.attr('title', client_data.username + ' (missing)');
+
+		setGameState(game_id);
+	}
+
+	function setGamePlayerJoinMissing(game_id, player_id, username) {
+		var $player;
+
+		if (player_id === 0) {
+			$player = $('#lobby-game-' + game_id + ' .player:eq(0)');
+			$player.addClass('missing');
+			$player.attr('title', username + ' (missing)');
+			$player.text(username);
+		} else {
+			$player = $('#lobby-game-' + game_id + ' .player:eq(0)').clone();
+			$player.addClass('missing');
+			$player.attr('title', username + ' (missing)');
+			$player.text(username);
+			$player.hide();
+
+			$('#lobby-game-' + game_id + ' .player:eq(' + (player_id - 1) + ')').after($player);
+
+			showElement($player, 1);
+		}
 
 		setGameState(game_id);
 	}
@@ -282,6 +333,10 @@ define(function(require) {
 			add_and_remove_lobby_clients = false;
 		}
 
+		if (game_ids_just_created.length > 0) {
+			game_ids_just_created = [];
+		}
+
 		if (initial_loading) {
 			game_id_to_state_id = common_data.game_id_to_state_id;
 			for (game_id in game_id_to_state_id) {
@@ -311,7 +366,10 @@ define(function(require) {
 	pubsub.subscribe(enums.PubSub.Client_AddLobbyClient, addLobbyClient);
 	pubsub.subscribe(enums.PubSub.Client_RemoveLobbyClient, removeLobbyClient);
 	pubsub.subscribe(enums.PubSub.Client_SetGameState, setGameState);
-	pubsub.subscribe(enums.PubSub.Client_SetGamePlayerData, setGamePlayerData);
+	pubsub.subscribe(enums.PubSub.Client_SetGamePlayerJoin, setGamePlayerJoin);
+	pubsub.subscribe(enums.PubSub.Client_SetGamePlayerRejoin, setGamePlayerRejoin);
+	pubsub.subscribe(enums.PubSub.Client_SetGamePlayerLeave, setGamePlayerLeave);
+	pubsub.subscribe(enums.PubSub.Client_SetGamePlayerJoinMissing, setGamePlayerJoinMissing);
 	pubsub.subscribe(enums.PubSub.Client_AddGameWatcher, addGameWatcher);
 	pubsub.subscribe(enums.PubSub.Client_RemoveGameWatcher, removeGameWatcher);
 	pubsub.subscribe(enums.PubSub.Server_DestroyGame, destroyGame);

@@ -385,9 +385,7 @@ class ScoreSheet:
                 player_datum[enums.ScoreSheetIndexes.Client.value].player_id = player_id
             player_id += 1
 
-        for player_id in range(len(self.player_data) - 1, -1, -1):
-            player_datum = self.player_data[player_id]
-
+        for player_id, player_datum in enumerate(self.player_data):
             # update self.username_to_player_id
             if player_id >= client.player_id:
                 username = player_datum[enums.ScoreSheetIndexes.Username.value]
