@@ -13,6 +13,10 @@ define(function(require) {
 		lobby_client_ids_to_add = {},
 		lobby_client_ids_to_remove = {},
 		add_and_remove_lobby_clients = false,
+		user_count_players = 0,
+		user_count_watchers = 0,
+		user_count_in_lobby = 0,
+		user_counts_modified = false,
 		game_ids_just_created = [];
 
 	function setPosition() {
@@ -88,11 +92,17 @@ define(function(require) {
 		$div.appendTo('#clients-in-lobby');
 		lobby_client_ids_to_add[client_id] = 1;
 		add_and_remove_lobby_clients = true;
+
+		user_count_in_lobby++;
+		user_counts_modified = true;
 	}
 
 	function removeLobbyClient(client_id) {
 		lobby_client_ids_to_remove[client_id] = 1;
 		add_and_remove_lobby_clients = true;
+
+		user_count_in_lobby--;
+		user_counts_modified = true;
 	}
 
 	function addAndRemoveLobbyClients() {
@@ -219,6 +229,9 @@ define(function(require) {
 		}
 
 		setGameState(game_id);
+
+		user_count_players++;
+		user_counts_modified = true;
 	}
 
 	function setGamePlayerRejoin(game_id, player_id, client_id) {
@@ -229,6 +242,9 @@ define(function(require) {
 		$player.attr('title', client_data.username + ' (' + client_data.ip_address + ')');
 
 		setGameState(game_id);
+
+		user_count_players++;
+		user_counts_modified = true;
 	}
 
 	function setGamePlayerLeave(game_id, player_id, client_id) {
@@ -239,6 +255,9 @@ define(function(require) {
 		$player.attr('title', client_data.username + ' (missing)');
 
 		setGameState(game_id);
+
+		user_count_players--;
+		user_counts_modified = true;
 	}
 
 	function setGamePlayerJoinMissing(game_id, player_id, username) {
@@ -274,12 +293,18 @@ define(function(require) {
 		$div.hide();
 		$div.appendTo('#lobby-game-' + game_id + ' .watchers');
 		showElement($div, 1);
+
+		user_count_watchers++;
+		user_counts_modified = true;
 	}
 
 	function removeGameWatcher(game_id, client_id) {
 		var $div = $('#lobby-game-' + game_id + ' .watchers .client-' + client_id);
 
 		removeElement($div, 1);
+
+		user_count_watchers--;
+		user_counts_modified = true;
 	}
 
 	function destroyGame(game_id) {
@@ -325,12 +350,24 @@ define(function(require) {
 		}
 	}
 
+	function updateUserCounts() {
+		$('#user-count-players').text(user_count_players);
+		$('#user-count-watchers').text(user_count_watchers);
+		$('#user-count-in-lobby').text(user_count_in_lobby);
+		$('#user-count-total').text(user_count_players + user_count_watchers + user_count_in_lobby);
+	}
+
 	function messageProcessingComplete() {
 		var game_id_to_state_id, game_id;
 
 		if (add_and_remove_lobby_clients) {
 			addAndRemoveLobbyClients();
 			add_and_remove_lobby_clients = false;
+		}
+
+		if (user_counts_modified) {
+			updateUserCounts();
+			user_counts_modified = false;
 		}
 
 		if (game_ids_just_created.length > 0) {
@@ -352,6 +389,10 @@ define(function(require) {
 	function reset() {
 		$('#clients-in-lobby').empty();
 		$('#lobby-games').empty();
+
+		user_count_players = 0;
+		user_count_watchers = 0;
+		user_count_in_lobby = 0;
 
 		initial_loading = true;
 	}
