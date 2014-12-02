@@ -17,9 +17,15 @@ define(function(require) {
 	}
 
 	function getHyphenatedStringFromEnumName(enum_name) {
-		return enum_name.replace(/([A-Z])/g, function($1) {
-			return '-' + $1.toLowerCase();
+		return enum_name.replace(/([A-Z])/g, function(match) {
+			return '-' + match.toLowerCase();
 		}).substring(1);
+	}
+
+	function getEnumNameFromHyphenatedString(hyphenated_string) {
+		return hyphenated_string.replace(/(?:^|-)(.)/g, function(match, p1) {
+			return p1.toUpperCase();
+		});
 	}
 
 	function getTileName(x, y) {
@@ -98,6 +104,7 @@ define(function(require) {
 
 	return {
 		getHyphenatedStringFromEnumName: getHyphenatedStringFromEnumName,
+		getEnumNameFromHyphenatedString: getEnumNameFromHyphenatedString,
 		getTileName: getTileName,
 		setElementPosition: setElementPosition,
 		isScrollAtBottom: isScrollAtBottom,

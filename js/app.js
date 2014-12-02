@@ -174,14 +174,14 @@ define(function(require) {
 		}
 	}
 
-	function onClientSetOption(key, value) {
-		if (key === 'enable-high-contrast-colors') {
+	function onClientSetOption(option_id, value) {
+		if (option_id === enums.Options.EnableHighContrastColors) {
 			if (value) {
 				$('body').addClass('enable-high-contrast-colors');
 			} else {
 				$('body').removeClass('enable-high-contrast-colors');
 			}
-		} else if (key === 'enable-text-background-colors') {
+		} else if (option_id === enums.Options.EnableTextBackgroundColors) {
 			if (value) {
 				$('body').addClass('enable-text-background-colors');
 				$('body').removeClass('disable-text-background-colors');
@@ -189,7 +189,7 @@ define(function(require) {
 				$('body').addClass('disable-text-background-colors');
 				$('body').removeClass('enable-text-background-colors');
 			}
-		} else if (key === 'color-scheme') {
+		} else if (option_id === enums.Options.ColorScheme) {
 			option_color_scheme = value;
 			updateColorScheme();
 		}

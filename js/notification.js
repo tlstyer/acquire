@@ -13,15 +13,15 @@ define(function(require) {
 		current_notification_id = null,
 		notification_id_to_message = {};
 
-	function setOption(key, value) {
-		if (key === 'enable-page-title-notifications') {
+	function setOption(option_id, value) {
+		if (option_id === enums.Options.EnablePageTitleNotifications) {
 			enable_page_title_notifications = value;
 			if (!value) {
 				turnOff();
 			}
-		} else if (key === 'enable-sound-notifications') {
+		} else if (option_id === enums.Options.EnableSoundNotifications) {
 			enable_sound_notifications = value;
-		} else if (key === 'sound') {
+		} else if (option_id === enums.Options.Sound) {
 			sound = value;
 		}
 	}

@@ -58,7 +58,7 @@ def generate_enums_js(mode):
             for match in re.finditer(r'(?<![A-Za-z0-9])enums\.([A-Za-z0-9]+)(?![A-Za-z0-9])', contents):
                 class_names.add(match.group(1))
         class_names = sorted(class_names)
-        class_names_include_str_to_int = {'GameModes'}
+        class_names_include_str_to_int = {'GameModes', 'Options'}
     elif mode == 'development':
         class_names_set = {obj[0] for obj in inspect.getmembers(enums) if inspect.isclass(obj[1])}
         class_names_set -= {'AutoNumber'}

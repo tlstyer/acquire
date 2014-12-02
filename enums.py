@@ -135,6 +135,16 @@ class Notifications(AutoNumber):
     GameOver = ()
 
 
+class Options(AutoNumber):
+    EnablePageTitleNotifications = ()
+    EnableSoundNotifications = ()
+    Sound = ()
+    EnableHighContrastColors = ()
+    EnableTextBackgroundColors = ()
+    ColorScheme = ()
+    GameBoardLabelMode = ()
+
+
 class ScoreSheetIndexes(AutoNumber):
     Luxor = ()
     Tower = ()

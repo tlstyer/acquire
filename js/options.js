@@ -7,7 +7,7 @@ define(function(require) {
 		current_page = null,
 		show_on_game_page = false,
 		page_to_position = {},
-		details = null;
+		details = {};
 
 	function setPosition() {
 		var position = page_to_position[current_page];
@@ -78,52 +78,52 @@ define(function(require) {
 	}
 
 	function initialize() {
-		var key, detail, value, disable, $input;
+		var option_id, key, detail, value, disable, $input;
 
-		details = {
-			'enable-page-title-notifications': {
-				'type': 'checkbox',
-				'default': true,
-				'valid': [true, false]
-			},
-			'enable-sound-notifications': {
-				'type': 'checkbox',
-				'default': true,
-				'valid': [true, false],
-				'disable': function() {
-					return document.getElementById('beep').pause === undefined;
-				}
-			},
-			'sound': {
-				'type': 'select',
-				'default': 'beep',
-				'valid': ['beep', 'cha-ching']
-			},
-			'enable-high-contrast-colors': {
-				'type': 'checkbox',
-				'default': false,
-				'valid': [true, false]
-			},
-			'enable-text-background-colors': {
-				'type': 'checkbox',
-				'default': true,
-				'valid': [true, false]
-			},
-			'color-scheme': {
-				'type': 'select',
-				'default': 'default',
-				'valid': ['default', 'netacquire']
-			},
-			'game-board-label-mode': {
-				'type': 'select',
-				'default': 'coordinates',
-				'valid': ['coordinates', 'hotel initials', 'nothing']
+		details[enums.Options.EnablePageTitleNotifications] = {
+			'type': 'checkbox',
+			'default': true,
+			'valid': [true, false]
+		};
+		details[enums.Options.EnableSoundNotifications] = {
+			'type': 'checkbox',
+			'default': true,
+			'valid': [true, false],
+			'disable': function() {
+				return document.getElementById('beep').pause === undefined;
 			}
 		};
+		details[enums.Options.Sound] = {
+			'type': 'select',
+			'default': 'beep',
+			'valid': ['beep', 'cha-ching']
+		};
+		details[enums.Options.EnableHighContrastColors] = {
+			'type': 'checkbox',
+			'default': false,
+			'valid': [true, false]
+		};
+		details[enums.Options.EnableTextBackgroundColors] = {
+			'type': 'checkbox',
+			'default': true,
+			'valid': [true, false]
+		};
+		details[enums.Options.ColorScheme] = {
+			'type': 'select',
+			'default': 'default',
+			'valid': ['default', 'netacquire']
+		};
+		details[enums.Options.GameBoardLabelMode] = {
+			'type': 'select',
+			'default': 'coordinates',
+			'valid': ['coordinates', 'hotel initials', 'nothing']
+		};
 
-		for (key in details) {
-			if (details.hasOwnProperty(key)) {
-				detail = details[key];
+		for (option_id in details) {
+			if (details.hasOwnProperty(option_id)) {
+				option_id = parseInt(option_id, 10);
+				key = common_functions.getHyphenatedStringFromEnumName(enums.Options[option_id]);
+				detail = details[option_id];
 
 				value = getStoredOptionValue(key);
 				if ($.inArray(value, detail.valid) === -1) {
@@ -148,7 +148,7 @@ define(function(require) {
 				}
 
 				setStoredOptionValue(key, value);
-				pubsub.publish(enums.PubSub.Client_SetOption, key, value);
+				pubsub.publish(enums.PubSub.Client_SetOption, option_id, value);
 			}
 		}
 	}
@@ -157,7 +157,8 @@ define(function(require) {
 		/* jshint validthis:true */
 		var $input = $(this),
 			key = $input.attr('id').substr(7),
-			detail = details[key],
+			option_id = enums.Options[common_functions.getEnumNameFromHyphenatedString(key)],
+			detail = details[option_id],
 			value;
 
 		switch (detail.type) {
@@ -170,7 +171,7 @@ define(function(require) {
 		}
 
 		setStoredOptionValue(key, value);
-		pubsub.publish(enums.PubSub.Client_SetOption, key, value);
+		pubsub.publish(enums.PubSub.Client_SetOption, option_id, value);
 	}
 
 	function onInitializationComplete() {

@@ -113,8 +113,8 @@ define(function(require) {
 		message_windows_width = 0,
 		message_windows_height = 0;
 
-	function setOption(key, value) {
-		if (key === 'game-board-label-mode') {
+	function setOption(option_id, value) {
+		if (option_id === enums.Options.GameBoardLabelMode) {
 			game_board_label_mode = value;
 			setGameBoard(game_board_cell_types);
 		}
