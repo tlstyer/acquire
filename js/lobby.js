@@ -213,8 +213,8 @@ define(function(require) {
 			$player.attr('title', username + ' (' + ip_address + ')');
 			$player.text(username);
 		} else {
-			$player = $('#lobby-game-' + game_id + ' .player:eq(0)').clone();
-			$player.removeClass('missing');
+			$player = $('<div/>');
+			$player.addClass('player');
 			$player.attr('title', username + ' (' + ip_address + ')');
 			$player.text(username);
 			$player.hide();
@@ -269,7 +269,8 @@ define(function(require) {
 			$player.attr('title', username + ' (missing)');
 			$player.text(username);
 		} else {
-			$player = $('#lobby-game-' + game_id + ' .player:eq(0)').clone();
+			$player = $('<div/>');
+			$player.addClass('player');
 			$player.addClass('missing');
 			$player.attr('title', username + ' (missing)');
 			$player.text(username);
