@@ -118,7 +118,7 @@ define(function(require) {
 	function addClientLocationMessage(template_selector, client_id, game_id) {
 		var $message;
 
-		if (game_id === common_data.game_id) {
+		if (game_id === common_data.game_id && client_id !== common_data.client_id) {
 			$message = $(template_selector).clone().removeAttr('id');
 
 			$message.find('.username').text(common_data.client_id_to_data[client_id].username);
