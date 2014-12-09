@@ -239,7 +239,15 @@ $(function() {
 
 					rating_type_to_dygraph[rating_type] = new Dygraph(document.getElementById('stats-rating-' + rating_type), dygraph_data, {
 						title: rating_type,
-						labels: ['Date', 'Rating']
+						labels: ['Date', 'Rating'],
+						labelsUTC: true,
+						axes: {
+							x: {
+								valueFormatter: function(ms) {
+									return formatDate(ms / 1000);
+								}
+							}
+						}
 					});
 				} else {
 					$rating.hide();

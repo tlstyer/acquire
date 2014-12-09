@@ -23,7 +23,7 @@ The apt-get packages are upgraded by your system. To upgrade the other dependenc
 
     cd lib
     curl http://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/sha256.js > crypto-js.rollups.sha256-3.1.2.min.js
-    curl http://cdnjs.cloudflare.com/ajax/libs/dygraph/1.0.1/dygraph-combined.min.js > dygraph-combined-1.0.1.min.js
+    curl http://cdnjs.cloudflare.com/ajax/libs/dygraph/1.1.0/dygraph-combined.js > dygraph-combined-1.1.0.min.js
     curl http://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js > jquery-1.11.1.min.js
     curl http://cdnjs.cloudflare.com/ajax/libs/json2/20140204/json2.min.js > json2-20140204.min.js
     curl http://cdnjs.cloudflare.com/ajax/libs/history.js/1.8/native.history.min.js > native.history-1.8.min.js
