@@ -276,7 +276,10 @@ def main():
 
             filenames = []
             for filename in os.listdir('logs_py'):
-                filename = int(filename)
+                try:
+                    filename = int(filename)
+                except:
+                    continue
                 if filename >= last_filename:
                     filenames.append(filename)
             filenames.sort()
