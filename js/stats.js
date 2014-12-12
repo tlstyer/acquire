@@ -17,6 +17,17 @@ $(function() {
 		},
 		games_user_id, games, games_length, games_num_shown;
 
+	function reportAjaxError(jqXHR, textStatus, errorThrown) {
+		$.post('/server/report-error', {
+			message: 'stats.js ajax error',
+			trace: JSON.stringify({
+				jqXHR: jqXHR,
+				textStatus: textStatus,
+				errorThrown: errorThrown
+			})
+		});
+	}
+
 	function initializeUsers() {
 		$.ajax({
 			url: 'web/stats/users.json',
@@ -36,6 +47,9 @@ $(function() {
 				setFormLoadingMessage(null);
 
 				initializeHistory();
+			},
+			error: function(jqXHR, textStatus, errorThrown) {
+				reportAjaxError(jqXHR, textStatus, errorThrown);
 			},
 			dataType: 'json'
 		});
@@ -418,7 +432,8 @@ $(function() {
 					populateRatings(data.ratings);
 					populateGames(user_id, data.games);
 				},
-				error: function() {
+				error: function(jqXHR, textStatus, errorThrown) {
+					reportAjaxError(jqXHR, textStatus, errorThrown);
 					setFormErrorMessage('Error while loading stats for ' + username + '.');
 				},
 				complete: function() {
@@ -465,6 +480,13 @@ $(function() {
 		showMoreGames(games_length - games_num_shown);
 		return false;
 	}
+
+	window.onerror = function(message, file, line_number) {
+		$.post('/server/report-error', {
+			message: message,
+			trace: file + ':' + line_number
+		});
+	};
 
 	$('#stats-form input[type=button]').click(formButtonClicked);
 	$('#stats-form').submit(formSubmitted);
