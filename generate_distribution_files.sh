@@ -34,13 +34,13 @@ cp ../../../node_modules/almond/almond.js .
 ../../../node_modules/requirejs/bin/r.js -o optimize=none baseUrl=. name=almond.js wrap=true preserveLicenseComments=false include=main out=../main1.js
 cd ../../..
 
-./node_modules/uglify-js/bin/uglifyjs js/polyfill.array.indexof.js js/polyfill.string.trim.js dist/build/main1.js -m -b indent-level=0 -o dist/build/main2.js
+./node_modules/uglify-js/bin/uglifyjs js/polyfill_array_indexof.js js/polyfill_string_trim.js dist/build/main1.js -m -b indent-level=0 -o dist/build/main2.js
 MAIN_JS=$(sha1sum dist/build/main2.js | awk '{ print $1 }').js
 cp dist/build/main2.js dist/web/static/${MAIN_JS}
 
 # stats.js
 sed "s/url: 'web\/stats\//url: '/" js/stats.js > dist/build/stats1.js
-./node_modules/uglify-js/bin/uglifyjs js/polyfill.string.trim.js dist/build/stats1.js -m -b indent-level=0 -o dist/build/stats2.js
+./node_modules/uglify-js/bin/uglifyjs js/polyfill_string_trim.js dist/build/stats1.js -m -b indent-level=0 -o dist/build/stats2.js
 STATS_JS=$(sha1sum dist/build/stats2.js | awk '{ print $1 }').js
 cp dist/build/stats2.js dist/web/static/${STATS_JS}
 
