@@ -8,7 +8,8 @@ define(function(require) {
 		periodic_resize_check_width = null,
 		periodic_resize_check_height = null,
 		error_message_lookup = {},
-		option_color_scheme = null;
+		option_color_scheme = null,
+		ready_state_check_interval = null;
 
 	function showPage(page) {
 		if (page !== current_page) {
@@ -241,6 +242,8 @@ define(function(require) {
 		});
 	};
 
+	showPage('loading');
+
 	pubsub.subscribe(enums.PubSub.Client_SetClientData, onClientSetClientData);
 	pubsub.subscribe(enums.PubSub.Server_FatalError, setLoginErrorMessage);
 	pubsub.subscribe(enums.PubSub.Client_SetOption, onClientSetOption);
@@ -249,7 +252,10 @@ define(function(require) {
 	pubsub.subscribe(enums.PubSub.Network_Disconnect, onNetworkDisconnect);
 	pubsub.subscribe(enums.PubSub.Client_InitializationComplete, onInitializationComplete);
 
-	$(function() {
-		pubsub.publish(enums.PubSub.Client_InitializationComplete);
-	});
+	ready_state_check_interval = setInterval(function() {
+		if (document.readyState === 'complete') {
+			pubsub.publish(enums.PubSub.Client_InitializationComplete);
+			clearInterval(ready_state_check_interval);
+		}
+	}, 10);
 });
