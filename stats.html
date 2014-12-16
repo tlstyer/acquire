@@ -19,62 +19,76 @@
 		<script src="js/stats.js"></script>
 	</head>
 	<body id="stats-body">
-		<h1>Acquire Stats</h1>
-		<form id="stats-form">
-			Ratings:
-			<input type="button" value="Singles2" disabled="disabled">
-			<input type="button" value="Singles3" disabled="disabled">
-			<input type="button" value="Singles4" disabled="disabled">
-			<input type="button" value="Teams" disabled="disabled">
-			<br>
-			Lookup Username:
-			<input type="text" id="stats-form-username" disabled="disabled">
-			<input type="submit" value="Lookup" disabled="disabled">
-			<span id="stats-form-error-message"></span>
-			<span id="stats-form-loading-message">Loading users and ratings...</span>
-		</form>
-		<div id="stats-users">
-			<h2>Acquire ratings for <span id="stats-ratings-type"></span></h2>
-			<table>
-				<thead>
-					<tr>
-						<th>Rank</th>
-						<th>Username</th>
-						<th>Rating</th>
-						<th>Rating Range</th>
-						<th># Games</th>
-						<th>Last Game Date</th>
-					</tr>
-				</thead>
-				<tbody></tbody>
-			</table>
+		<div class="page" id="page-loading">
+			<h1>Acquire Stats</h1>
+			<p>
+				Loading...
+			</p>
 		</div>
-		<div id="stats-user">
-			<h2>Acquire stats for <span id="stats-user-name"></span></h2>
-			<h3>Summary</h3>
-			<table id="stats-user-summary">
-				<thead>
-					<tr>
-						<th>Type</th>
-						<th>Rating</th>
-						<th>Rating Range</th>
-						<th># Games</th>
-						<th>Record</th>
-						<th>Last Game Date</th>
-					</tr>
-				</thead>
-				<tbody></tbody>
-			</table>
-			<h3>Ratings</h3>
-			<div id="stats-rating-Singles2" class="stats-rating"></div>
-			<div id="stats-rating-Singles3" class="stats-rating"></div>
-			<div id="stats-rating-Singles4" class="stats-rating"></div>
-			<div id="stats-rating-Teams" class="stats-rating"></div>
-			<h3>Games</h3>
-			<div id="stats-games"></div>
-			<div id="stats-games-links">
-				<a id="stats-games-show-next-100" href="#">Show next 100</a>
-				<a id="stats-games-show-remaining" href="#">Show remaining</a>
+		<div class="page" id="page-loading-error">
+			<h1>Acquire Stats</h1>
+			<p>
+				Loading error. Please reload this page.
+			</p>
+		</div>
+		<div class="page" id="page-stats">
+			<h1>Acquire Stats</h1>
+			<form id="stats-form">
+				Ratings:
+				<input type="button" value="Singles2" disabled="disabled">
+				<input type="button" value="Singles3" disabled="disabled">
+				<input type="button" value="Singles4" disabled="disabled">
+				<input type="button" value="Teams" disabled="disabled">
+				<br>
+				Lookup Username:
+				<input type="text" id="stats-form-username" disabled="disabled">
+				<input type="submit" value="Lookup" disabled="disabled">
+				<span id="stats-form-error-message"></span>
+				<span id="stats-form-loading-message">Loading users and ratings...</span>
+			</form>
+			<div id="stats-users">
+				<h2>Acquire ratings for <span id="stats-ratings-type"></span></h2>
+				<table>
+					<thead>
+						<tr>
+							<th>Rank</th>
+							<th>Username</th>
+							<th>Rating</th>
+							<th>Rating Range</th>
+							<th># Games</th>
+							<th>Last Game Date</th>
+						</tr>
+					</thead>
+					<tbody></tbody>
+				</table>
+			</div>
+			<div id="stats-user">
+				<h2>Acquire stats for <span id="stats-user-name"></span></h2>
+				<h3>Summary</h3>
+				<table id="stats-user-summary">
+					<thead>
+						<tr>
+							<th>Type</th>
+							<th>Rating</th>
+							<th>Rating Range</th>
+							<th># Games</th>
+							<th>Record</th>
+							<th>Last Game Date</th>
+						</tr>
+					</thead>
+					<tbody></tbody>
+				</table>
+				<h3>Ratings</h3>
+				<div id="stats-rating-Singles2" class="stats-rating"></div>
+				<div id="stats-rating-Singles3" class="stats-rating"></div>
+				<div id="stats-rating-Singles4" class="stats-rating"></div>
+				<div id="stats-rating-Teams" class="stats-rating"></div>
+				<h3>Games</h3>
+				<div id="stats-games"></div>
+				<div id="stats-games-links">
+					<a id="stats-games-show-next-100" href="#">Show next 100</a>
+					<a id="stats-games-show-remaining" href="#">Show remaining</a>
+				</div>
 			</div>
 		</div>
 	</body>

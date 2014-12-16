@@ -47,9 +47,13 @@ $(function() {
 				setFormLoadingMessage(null);
 
 				initializeHistory();
+
+				showStatsPageWhenReadyStateIsComplete();
 			},
 			error: function(jqXHR, textStatus, errorThrown) {
 				reportAjaxError(jqXHR, textStatus, errorThrown);
+
+				showPage('loading-error');
 			},
 			dataType: 'json'
 		});
@@ -481,12 +485,28 @@ $(function() {
 		return false;
 	}
 
+	function showPage(page) {
+		$('.page').hide();
+		$('#page-' + page).show();
+	}
+
+	function showStatsPageWhenReadyStateIsComplete() {
+		var ready_state_check_interval = setInterval(function() {
+			if (document.readyState === 'complete') {
+				showPage('stats');
+				clearInterval(ready_state_check_interval);
+			}
+		}, 10);
+	}
+
 	window.onerror = function(message, file, line_number) {
 		$.post('/server/report-error', {
 			message: message,
 			trace: file + ':' + line_number
 		});
 	};
+
+	showPage('loading');
 
 	$('#stats-form input[type=button]').click(formButtonClicked);
 	$('#stats-form').submit(formSubmitted);
