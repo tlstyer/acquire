@@ -26,18 +26,20 @@ define(function(require) {
 
 	function connect(username, password) {
 		if (socket === null) {
-			socket = io(server_url + '?version=' + encodeURIComponent(version) + '&username=' + encodeURIComponent(username) + '&password=' + encodeURIComponent(password), {
-				forceNew: true,
-				reconnection: false
-			});
+			socket = new SockJS(server_url + '/sockjs');
 
-			socket.on('disconnect', function() {
+			socket.onopen = function() {
+				socket.send(JSON.stringify([version, username, password]));
+			};
+
+			socket.onclose = function() {
 				socket = null;
 				pubsub.publish(enums.PubSub.Network_Disconnect);
-			});
+			};
 
-			socket.on('x', function(data) {
-				var data_length, i;
+			socket.onmessage = function(e) {
+				var data = e.data,
+					data_length, i;
 
 				try {
 					data = JSON.parse(data);
@@ -52,13 +54,13 @@ define(function(require) {
 
 					socket.disconnect();
 				}
-			});
+			};
 		}
 	}
 
 	function sendMessage() {
 		if (socket !== null) {
-			socket.emit('x', JSON.stringify(Array.prototype.slice.call(arguments, 0)));
+			socket.send(JSON.stringify(Array.prototype.slice.call(arguments, 0)));
 		}
 	}
 

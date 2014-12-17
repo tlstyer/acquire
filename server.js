@@ -3,14 +3,27 @@
 (function() {
 	'use strict';
 
-	var app = require('express')();
+	var express = require('express');
+	var app = express();
 	var body_parser = require('body-parser');
-	var http = require('http').Server(app);
-	var io = require('socket.io')(http, {
+	var http = require('http');
+	var server = http.createServer(app);
+
+	var sockjs = require('sockjs');
+	var sockjs_server = sockjs.createServer({
+		heartbeat_delay: 20000,
+		disconnect_delay: 35000,
+		sockjs_url: 'http://cdnjs.cloudflare.com/ajax/libs/sockjs-client/0.3.4/sockjs.min.js'
+	});
+
+	var socketio = require('socket.io');
+	var socketio_server = socketio(server, {
 		pingInterval: 20000,
 		pingTimeout: 35000
 	});
-	http.listen('javascript.sock');
+
+	server.listen('javascript.sock');
+
 
 	var mysql = require('mysql');
 	var pool = mysql.createPool({
@@ -137,7 +150,7 @@
 				} else if (key === 'disconnect') {
 					socket = client_id_to_socket[value];
 					if (socket) {
-						socket.disconnect();
+						socket.close();
 					}
 				} else {
 					client_ids = key.split(',');
@@ -145,7 +158,7 @@
 					for (i = 0; i < length; i++) {
 						socket = client_id_to_socket[client_ids[i]];
 						if (socket) {
-							socket.emit('x', value);
+							socket.write(value);
 						} else {
 							console.log('ERROR! client_id ===', client_ids[i], value);
 						}
@@ -163,28 +176,31 @@
 	var socket_id_to_client_id = {};
 	var client_id_to_socket = {};
 
-	io.on('connect', function(socket) {
-		var version = socket.handshake.query.hasOwnProperty('version') ? socket.handshake.query.version.replace(/\s+/g, ' ').trim() : '',
-			username = socket.handshake.query.hasOwnProperty('username') ? socket.handshake.query.username.replace(/\s+/g, ' ').trim() : '',
-			password = socket.handshake.query.hasOwnProperty('password') ? socket.handshake.query.password.replace(/\s+/g, ' ').trim() : '',
-			ip_address = socket.handshake.headers.hasOwnProperty('x-real-ip') ? socket.handshake.headers['x-real-ip'] : socket.handshake.address.address;
+	function handle_login(socket, version, username, password) {
+		var ip_address = socket.headers['x-real-ip'];
 
-		console.log(socket.id, 'connect', version, username, password, ip_address);
+		version = version.replace(/\s+/g, ' ').trim();
+		username = username.replace(/\s+/g, ' ').trim();
+		password = password.replace(/\s+/g, ' ').trim();
+
+		console.log(socket.id, 'login', version, username, password, ip_address);
 
 		socket_id_to_socket[socket.id] = socket;
 		socket_id_to_client_id[socket.id] = null;
 
 		var return_fatal_error = function(error_id) {
 				console.log(socket.id, 'return_fatal_error', error_id);
-				socket.emit('x', JSON.stringify([
+				socket.write(JSON.stringify([
 					[enums.CommandsToClient.FatalError, error_id]
 				]));
-				socket.disconnect();
+				socket.close();
 			};
+
 		var pass_to_python = function(replace_existing_user) {
 				console.log(socket.id, 'pass_to_python');
 				python_server.write('connect ' + JSON.stringify([username, ip_address, socket.id, replace_existing_user]) + '\n');
 			};
+
 		if (version !== server_version) {
 			return_fatal_error(enums.Errors.NotUsingLatestVersion);
 		} else if (username.length < 1 || username.length > 32) {
@@ -221,8 +237,14 @@
 				}
 			});
 		}
+	}
 
-		socket.on('disconnect', function() {
+	sockjs_server.on('connection', function(socket) {
+		var initializing = true;
+
+		console.log(socket.id, 'connect');
+
+		socket.on('close', function() {
 			var client_id = socket_id_to_client_id[socket.id];
 
 			console.log(socket.id, 'disconnect');
@@ -236,11 +258,41 @@
 			}
 		});
 
-		socket.on('x', function(data) {
-			var client_id = socket_id_to_client_id[socket.id];
-			if (client_id) {
-				python_server.write(client_id + ' ' + data.replace(/\s+/g, ' ') + '\n');
+		socket.on('data', function(data) {
+			if (initializing) {
+				var parsed_data, version, username, password;
+
+				try {
+					parsed_data = JSON.parse(data);
+					version = parsed_data[0];
+					username = parsed_data[1];
+					password = parsed_data[2];
+					handle_login(socket, version, username, password);
+				} catch (e) {
+					console.log('initializing error: ', JSON.stringify(e));
+					socket.close();
+				}
+
+				initializing = false;
+			} else {
+				var client_id = socket_id_to_client_id[socket.id];
+
+				if (client_id) {
+					python_server.write(client_id + ' ' + data.replace(/\s+/g, ' ') + '\n');
+				}
 			}
 		});
+	});
+
+	sockjs_server.installHandlers(server, {
+		prefix: '/sockjs'
+	});
+
+
+	socketio_server.on('connect', function(socket) {
+		socket.emit('x', JSON.stringify([
+			[enums.CommandsToClient.FatalError, enums.Errors.NotUsingLatestVersion]
+		]));
+		socket.disconnect();
 	});
 })();
