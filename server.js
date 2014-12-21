@@ -13,7 +13,7 @@
 	var sockjs_server = sockjs.createServer({
 		heartbeat_delay: 20000,
 		disconnect_delay: 35000,
-		sockjs_url: 'http://cdnjs.cloudflare.com/ajax/libs/sockjs-client/0.3.4/sockjs.min.js'
+		sockjs_url: '//cdnjs.cloudflare.com/ajax/libs/sockjs-client/0.3.4/sockjs.min.js'
 	});
 
 	var socketio = require('socket.io');
