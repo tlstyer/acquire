@@ -207,7 +207,7 @@ class StatsGen:
         order by rating.time asc, rating.rating_id asc
     ''')
     user_games_sql = sqlalchemy.sql.text('''
-        select game.game_id,
+        select distinct game.game_id,
             game.end_time,
             game.game_mode_id,
             game_player.user_id,
