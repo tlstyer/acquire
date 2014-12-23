@@ -985,6 +985,8 @@ class ActionPurchaseShares(Action):
 class ActionGameOver(Action):
     def __init__(self, game):
         super().__init__(game, None, enums.GameActions.GameOver.value)
+        game.turn_player_id = None
+        AcquireServerProtocol.add_pending_messages(game.client_ids, [[enums.CommandsToClient.SetTurn.value, None]])
         game.set_state(enums.GameStates.Completed.value)
 
 
