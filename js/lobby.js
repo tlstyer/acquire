@@ -316,21 +316,55 @@ define(function(require) {
 		removeElement($div, num_players + 2);
 	}
 
-	function createGameSelectChanged() {
-		/* jshint validthis:true */
-		var $this = $(this),
-			id = $this.attr('id'),
-			value = $this.val();
+	function initializeCreateGameForm() {
+		var mode, max_players;
 
-		switch (id) {
-		case 'cg-mode':
-			if (value === 'Singles') {
-				$('#cg-span-max-players').show();
-			} else if (value === 'Teams') {
-				$('#cg-span-max-players').hide();
+		try {
+			if (localStorage) {
+				mode = localStorage['create-game-mode'];
+				max_players = localStorage['create-game-max-players'];
 			}
-			break;
+		} catch (e) {}
+
+		if (['Singles', 'Teams'].indexOf(mode) < 0) {
+			mode = 'Singles';
 		}
+
+		if (['1', '2', '3', '4', '5', '6'].indexOf(max_players) < 0) {
+			max_players = '4';
+		}
+
+		$('#cg-mode').val(mode);
+		$('#cg-max-players').val(max_players);
+
+		createGameModeChanged();
+		createGameMaxPlayersChanged();
+	}
+
+	function createGameModeChanged() {
+		var value = $('#cg-mode').val();
+
+		if (value === 'Singles') {
+			$('#cg-span-max-players').show();
+		} else {
+			$('#cg-span-max-players').hide();
+		}
+
+		try {
+			if (localStorage) {
+				localStorage['create-game-mode'] = value;
+			}
+		} catch (e) {}
+	}
+
+	function createGameMaxPlayersChanged() {
+		var value = $('#cg-max-players').val();
+
+		try {
+			if (localStorage) {
+				localStorage['create-game-max-players'] = value;
+			}
+		} catch (e) {}
 	}
 
 	function createGameButtonClicked() {
@@ -399,7 +433,9 @@ define(function(require) {
 	}
 
 	function onInitializationComplete() {
-		$('#create-game-section select').change(createGameSelectChanged);
+		initializeCreateGameForm();
+		$('#cg-mode').change(createGameModeChanged);
+		$('#cg-max-players').change(createGameMaxPlayersChanged);
 		$('#button-create-game').click(createGameButtonClicked);
 		$('#lobby-games').on('click', 'input', gameButtonClicked);
 	}
