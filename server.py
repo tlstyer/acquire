@@ -1024,10 +1024,10 @@ class Game:
             client.game_id = self.game_id
             self.client_ids.add(client.client_id)
             position_tile = self.tile_bag.pop()
-            self.game_board.set_cell(position_tile, enums.GameBoardTypes.NothingYet.value)
             previous_creator_player_id = self.score_sheet.get_creator_player_id()
             self.score_sheet.join_game(client, position_tile)
             self.send_past_history_messages(client)
+            self.game_board.set_cell(position_tile, enums.GameBoardTypes.NothingYet.value)
             self.add_history_message(enums.GameHistoryMessages.DrewPositionTile.value, client.username, position_tile[0], position_tile[1])
             creator_player_id = self.score_sheet.get_creator_player_id()
             if creator_player_id != previous_creator_player_id:
