@@ -38,6 +38,20 @@
 	var enums = require('./js/enums');
 
 
+	function isASCII(string) {
+		var i, string_length = string.length,
+			char_code;
+
+		for (i = 0; i < string_length; i++) {
+			char_code = string.charCodeAt(i);
+			if (char_code < 32 || char_code > 126) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+
 	app.use(body_parser.urlencoded({
 		extended: false
 	}));
@@ -67,7 +81,7 @@
 
 		if (version !== server_version) {
 			return_result(enums.Errors.NotUsingLatestVersion);
-		} else if (username.length < 1 || username.length > 32) {
+		} else if (username.length < 1 || username.length > 32 || !isASCII(username)) {
 			return_result(enums.Errors.InvalidUsername);
 		} else if (!/^[0-9a-f]{64}$/.test(password)) {
 			return_result(enums.Errors.GenericError);
@@ -203,7 +217,7 @@
 
 		if (version !== server_version) {
 			return_fatal_error(enums.Errors.NotUsingLatestVersion);
-		} else if (username.length < 1 || username.length > 32) {
+		} else if (username.length < 1 || username.length > 32 || !isASCII(username)) {
 			return_fatal_error(enums.Errors.InvalidUsername);
 		} else {
 			pool.query('select * from user where name = ?', [username], function(err, results) {

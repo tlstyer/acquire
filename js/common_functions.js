@@ -86,6 +86,19 @@ define(function(require) {
 		});
 	}
 
+	function isASCII(string) {
+		var i, string_length = string.length,
+			char_code;
+
+		for (i = 0; i < string_length; i++) {
+			char_code = string.charCodeAt(i);
+			if (char_code < 32 || char_code > 126) {
+				return false;
+			}
+		}
+		return true;
+	}
+
 	function reportError(e) {
 		$.post('/server/report-error', {
 			message: e.message,
@@ -112,6 +125,7 @@ define(function(require) {
 		getScrollbarWidth: getScrollbarWidth,
 		getGameStateText: getGameStateText,
 		arrayUnique: arrayUnique,
+		isASCII: isASCII,
 		reportError: reportError
 	};
 });

@@ -1,7 +1,8 @@
 define(function(require) {
 	'use strict';
 
-	var enums = require('enums'),
+	var common_functions = require('common_functions'),
+		enums = require('enums'),
 		network = require('network'),
 		pubsub = require('pubsub'),
 		current_page = null,
@@ -65,7 +66,7 @@ define(function(require) {
 		var username = $('#login-form-username').val().replace(/\s+/g, ' ').trim(),
 			password = $('#login-form-password').val();
 
-		if (username.length === 0 || username.length > 32) {
+		if (username.length === 0 || username.length > 32 || !common_functions.isASCII(username)) {
 			setLoginErrorMessage(enums.Errors.InvalidUsername);
 		} else {
 			try {
@@ -88,7 +89,7 @@ define(function(require) {
 			password_repeat = $('#set-password-form-password-repeat').val(),
 			$inputs;
 
-		if (username.length < 1 || username.length > 32) {
+		if (username.length < 1 || username.length > 32 || !common_functions.isASCII(username)) {
 			setSetPasswordErrorMessage(enums.Errors.InvalidUsername);
 		} else if (password.length < 8) {
 			setSetPasswordErrorMessage(enums.Errors.InvalidPassword);
@@ -133,7 +134,7 @@ define(function(require) {
 	function initializeErrorMessageLookup() {
 		error_message_lookup[enums.Errors.NotUsingLatestVersion] = 'You are not using the latest version. Please reload this page to get it!';
 		error_message_lookup[enums.Errors.GenericError] = 'An error occurred during the processing of your request.';
-		error_message_lookup[enums.Errors.InvalidUsername] = 'Invalid username. Username must have between 1 and 32 characters.';
+		error_message_lookup[enums.Errors.InvalidUsername] = 'Invalid username. Username must have between 1 and 32 ASCII characters.';
 		error_message_lookup[enums.Errors.InvalidPassword] = 'Invalid password. Password must have at least 8 characters.';
 		error_message_lookup[enums.Errors.MissingPassword] = 'Password is required.';
 		error_message_lookup[enums.Errors.ProvidedPassword] = 'Password is not set for this user.';
