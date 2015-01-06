@@ -10,7 +10,7 @@ define(function(require) {
 		periodic_resize_check_height = null,
 		error_message_lookup = {},
 		option_color_scheme = null,
-		ready_state_check_interval = null;
+		check_interval = null;
 
 	function showPage(page) {
 		if (page !== current_page) {
@@ -251,10 +251,10 @@ define(function(require) {
 	pubsub.subscribe(enums.PubSub.Network_Disconnect, onNetworkDisconnect);
 	pubsub.subscribe(enums.PubSub.Client_InitializationComplete, onInitializationComplete);
 
-	ready_state_check_interval = setInterval(function() {
-		if (document.readyState === 'complete') {
+	check_interval = setInterval(function() {
+		if (JSON && $ && printStackTrace && CryptoJS && SockJS) {
 			pubsub.publish(enums.PubSub.Client_InitializationComplete);
-			clearInterval(ready_state_check_interval);
+			clearInterval(check_interval);
 		}
 	}, 10);
 });

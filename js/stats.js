@@ -491,10 +491,10 @@ $(function() {
 	}
 
 	function showStatsPageWhenReadyStateIsComplete() {
-		var ready_state_check_interval = setInterval(function() {
-			if (document.readyState === 'complete') {
+		var check_interval = setInterval(function() {
+			if (JSON && $ && Dygraph && History) {
 				onInitializationComplete();
-				clearInterval(ready_state_check_interval);
+				clearInterval(check_interval);
 			}
 		}, 10);
 	}
