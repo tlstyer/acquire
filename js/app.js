@@ -5,7 +5,7 @@ define(function(require) {
 		enums = require('enums'),
 		network = require('network'),
 		pubsub = require('pubsub'),
-		current_page = null,
+		current_page = 'loading',
 		periodic_resize_check_width = null,
 		periodic_resize_check_height = null,
 		error_message_lookup = {},
@@ -242,8 +242,6 @@ define(function(require) {
 			trace: file + ':' + line_number
 		});
 	};
-
-	showPage('loading');
 
 	pubsub.subscribe(enums.PubSub.Client_SetClientData, onClientSetClientData);
 	pubsub.subscribe(enums.PubSub.Server_FatalError, setLoginErrorMessage);

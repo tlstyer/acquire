@@ -507,8 +507,6 @@ $(function() {
 		});
 	};
 
-	showPage('loading');
-
 	$('#stats-form input[type=button]').click(formButtonClicked);
 	$('#stats-form').submit(formSubmitted);
 	$('#stats-users, #stats-games').on('click', 'tr :nth-child(2)', nameCellClicked);

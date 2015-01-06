@@ -138,6 +138,9 @@ body.hide-overflow {
 	padding-left: .5em;
 	padding-right: .5em;
 }
+#page-loading {
+	display: block;
+}
 
 #login-error-message, #set-password-error-message, #stats-form-error-message {
 	color: red;
