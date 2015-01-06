@@ -493,6 +493,7 @@ $(function() {
 	function showStatsPageWhenReadyStateIsComplete() {
 		var ready_state_check_interval = setInterval(function() {
 			if (document.readyState === 'complete') {
+				History.Adapter.bind(window, 'statechange', onStateChange);
 				showPage('stats');
 				clearInterval(ready_state_check_interval);
 			}
@@ -513,7 +514,6 @@ $(function() {
 	$('#stats-users, #stats-games').on('click', 'tr :nth-child(2)', nameCellClicked);
 	$('#stats-games-show-next-100').click(showNext100Clicked);
 	$('#stats-games-show-remaining').click(showRemainingClicked);
-	History.Adapter.bind(window, 'statechange', onStateChange);
 
 	initializeUsers();
 });
