@@ -493,11 +493,22 @@ $(function() {
 	function showStatsPageWhenReadyStateIsComplete() {
 		var ready_state_check_interval = setInterval(function() {
 			if (document.readyState === 'complete') {
-				History.Adapter.bind(window, 'statechange', onStateChange);
-				showPage('stats');
+				onInitializationComplete();
 				clearInterval(ready_state_check_interval);
 			}
 		}, 10);
+	}
+
+	function onInitializationComplete() {
+		History.Adapter.bind(window, 'statechange', onStateChange);
+
+		$('#stats-form input[type=button]').click(formButtonClicked);
+		$('#stats-form').submit(formSubmitted);
+		$('#stats-users, #stats-games').on('click', 'tr :nth-child(2)', nameCellClicked);
+		$('#stats-games-show-next-100').click(showNext100Clicked);
+		$('#stats-games-show-remaining').click(showRemainingClicked);
+
+		showPage('stats');
 	}
 
 	window.onerror = function(message, file, line_number) {
@@ -506,12 +517,6 @@ $(function() {
 			trace: file + ':' + line_number
 		});
 	};
-
-	$('#stats-form input[type=button]').click(formButtonClicked);
-	$('#stats-form').submit(formSubmitted);
-	$('#stats-users, #stats-games').on('click', 'tr :nth-child(2)', nameCellClicked);
-	$('#stats-games-show-next-100').click(showNext100Clicked);
-	$('#stats-games-show-remaining').click(showRemainingClicked);
 
 	initializeUsers();
 });
