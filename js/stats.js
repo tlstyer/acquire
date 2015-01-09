@@ -492,7 +492,7 @@ $(function() {
 
 	function showStatsPageWhenReadyStateIsComplete() {
 		var check_interval = setInterval(function() {
-			if (document.readyState === 'complete' && typeof JSON !== 'undefined' && typeof $ !== 'undefined' && typeof Dygraph !== 'undefined' && typeof History !== 'undefined') {
+			if (document.readyState === 'complete' && typeof $ !== 'undefined' && typeof Dygraph !== 'undefined' && typeof History !== 'undefined') {
 				onInitializationComplete();
 				clearInterval(check_interval);
 			}
