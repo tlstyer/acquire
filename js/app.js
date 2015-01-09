@@ -252,7 +252,7 @@ define(function(require) {
 	pubsub.subscribe(enums.PubSub.Client_InitializationComplete, onInitializationComplete);
 
 	check_interval = setInterval(function() {
-		if (JSON && $ && printStackTrace && CryptoJS && SockJS) {
+		if (document.readyState === 'complete' && JSON && $ && printStackTrace && CryptoJS && SockJS) {
 			pubsub.publish(enums.PubSub.Client_InitializationComplete);
 			clearInterval(check_interval);
 		}

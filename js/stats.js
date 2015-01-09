@@ -492,7 +492,7 @@ $(function() {
 
 	function showStatsPageWhenReadyStateIsComplete() {
 		var check_interval = setInterval(function() {
-			if (JSON && $ && Dygraph && History) {
+			if (document.readyState === 'complete' && JSON && $ && Dygraph && History) {
 				onInitializationComplete();
 				clearInterval(check_interval);
 			}
