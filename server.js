@@ -28,8 +28,8 @@
 	var mysql = require('mysql');
 	var pool = mysql.createPool({
 		socketPath: '/var/run/mysqld/mysqld.sock',
-		user: 'root',
-		password: 'root',
+		user: 'acquire',
+		password: 'acquire',
 		database: 'acquire',
 		charset: 'utf8mb4'
 	});

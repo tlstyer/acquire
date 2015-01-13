@@ -6,7 +6,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, sessionmaker
 
 Base = declarative_base()
-engine = create_engine('mysql+mysqlconnector://root:root@localhost:3306/acquire')
+engine = create_engine('mysql+mysqlconnector://acquire:acquire@localhost/acquire?unix_socket=/var/run/mysqld/mysqld.sock')
 Session = sessionmaker(bind=engine)
 
 
