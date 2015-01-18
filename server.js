@@ -16,12 +16,6 @@
 		sockjs_url: '//cdnjs.cloudflare.com/ajax/libs/sockjs-client/0.3.4/sockjs.min.js'
 	});
 
-	var socketio = require('socket.io');
-	var socketio_server = socketio(server, {
-		pingInterval: 20000,
-		pingTimeout: 35000
-	});
-
 	server.listen('javascript.sock');
 
 
@@ -300,13 +294,5 @@
 
 	sockjs_server.installHandlers(server, {
 		prefix: '/sockjs'
-	});
-
-
-	socketio_server.on('connect', function(socket) {
-		socket.emit('x', JSON.stringify([
-			[enums.CommandsToClient.FatalError, enums.Errors.NotUsingLatestVersion]
-		]));
-		socket.disconnect();
 	});
 })();

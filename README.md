@@ -5,14 +5,14 @@ This is the code for my Acquire board game program which can be played at [http:
 ## Install Development Dependencies
 
     sudo apt-get install nodejs npm python3-pip ruby zopfli
-    npm install almond amdefine body-parser clean-css express html-minifier mysql normalize.css requirejs socket.io sockjs uglify-js
+    npm install almond amdefine body-parser clean-css express html-minifier mysql normalize.css requirejs sockjs uglify-js
     sudo gem install sass
     sudo pip3 install --upgrade --allow-external mysql-connector-python mysql-connector-python==1.2.3 sqlalchemy trueskill ujson
 
 ## Install Server Dependencies
 
     sudo apt-get install nodejs npm python3-pip zopfli
-    npm install body-parser express mysql socket.io sockjs
+    npm install body-parser express mysql sockjs
     sudo pip3 install --upgrade --allow-external mysql-connector-python mysql-connector-python==1.2.3 sqlalchemy trueskill ujson
 
 ## Upgrade Dependencies
