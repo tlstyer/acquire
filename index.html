@@ -52,19 +52,31 @@
 			<h2>About</h2>
 			<p>
 				Here, you can play the Acquire board game.
+				Many user interface and game play elements are based on Kensit's <a href="http://www3.telus.net/kensit/NetAcquire/">NetAcquire</a> Windows application.
+				Thank you Kensit for the great design!
 			</p>
 			<p>
-				Some features that distinguish this from NetAcquire:
+				Notes regarding passwords:
 			</p>
 			<ul>
-				<li>You can play using a modern web browser. (You don't need Windows, Mac, or Java.)</li>
-				<li>You can play on your phone or tablet.</li>
-				<li>It's easy to tell what's going on in a game due to turn separators, coloring of hotel chain names, and the separation of game history, chat history, and current game status.</li>
-				<li>Full game history is shown upon entering a game.</li>
-				<li>Team net worths are shown in team games.</li>
-				<li>All players and games (including mode (singles or teams), status, and max players) are shown in the lobby,
-					reducing the need to advertise games and eliminating the need to ask for a list of players and games.</li>
-				<li>The IP address of any player can be seen by hovering over their name in the lobby or on the game score sheet.</li>
+				<li>If you set a password for your username, then your password will be required in order to login.</li>
+				<li>If you don't set a password for your username, then leave the password field empty in order to login.</li>
+				<li>You'll probably want to set a password for your username so that only you can use your username.</li>
+			</ul>
+			<p>
+				Notes regarding statistics:
+			</p>
+			<ul>
+				<li>View <a href="stats/">stats</a> calculated using the <a href="http://research.microsoft.com/en-us/projects/trueskill/">TrueSkill</a> algorithm.
+					Default parameters of a <a href="http://trueskill.org/">TrueSkill library</a> are used except
+					beta is set to sigma and the draw probabilities are set based on historical game results.</li>
+				<li>See the "How to Build a Leaderboard" section in an article about <a href="http://research.microsoft.com/en-us/projects/trueskill/details.aspx">TrueSkill Details</a>
+					for the reasoning behind the ratings. I set "k" to 3, as suggested in that section.</li>
+			</ul>
+			<p>
+				Some non-obvious features:
+			</p>
+			<ul>
 				<li>You can play a tile by clicking its associated location on the game board.</li>
 				<li>There are keyboard shortcuts, in addition to the normal Tab and Shift-Tab, for game actions:
 					<ul>
@@ -76,23 +88,7 @@
 							DELETE or MINUS to remove the right-most chain from the cart, E or ASTERISK to toggle the End Game checkbox, O to move to the OK button, enter to press it.</li>
 					</ul>
 				</li>
-				<li>There's no flood of messages at the end of a game. (The final score is in the net worths column.)</li>
-				<li>Disconnection detection is better.</li>
-				<li>It's easier to reconnect after a disconnection.</li>
-			</ul>
-			<p>
-				Notes:
-			</p>
-			<ul>
-				<li>If you set a password for your username, then your password will be required in order to login.</li>
-				<li>If you don't set a password for your username, then leave the password field empty in order to login.</li>
-				<li>You'll probably want to set a password for your username so that only you can use your username.</li>
-				<li>View <a href="stats/">stats</a> calculated using the <a href="http://research.microsoft.com/en-us/projects/trueskill/">TrueSkill</a> algorithm.
-					Default parameters of a <a href="http://trueskill.org/">TrueSkill library</a> are used except
-					beta is set to sigma and the draw probability is set to historical values based on game results from <a href="http://netacquire.ca/">netacquire.ca</a>.</li>
-				<li>See the "How to Build a Leaderboard" section in an article about <a href="http://research.microsoft.com/en-us/projects/trueskill/details.aspx">TrueSkill Details</a>
-					for the reasoning behind the ratings. I set "k" to 3, as suggested in that section.</li>
-				<li>Games from netacquire.ca have been imported, so you can see your stats based on games there and here.</li>
+				<li>The IP address of any player can be seen by hovering over their name in the lobby or on the game score sheet.</li>
 			</ul>
 			<p>
 				See <a href="https://github.com/tlstyer/acquire">my code</a> or <a href="https://trello.com/b/ddyGnH5l/acquire">my to-do list</a>.
