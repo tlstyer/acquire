@@ -619,7 +619,9 @@ class TileRacks:
                 if tile_data and tile_data[1] == enums.GameBoardTypes.CantPlayEver.value:
                     # remove tile from player's tile rack
                     rack[tile_index] = None
-                    AcquireServerProtocol.add_pending_messages({self.game.score_sheet.player_data[player_id][enums.ScoreSheetIndexes.Client.value].client_id}, [[enums.CommandsToClient.RemoveTile.value, tile_index]])
+                    client = self.game.score_sheet.player_data[player_id][enums.ScoreSheetIndexes.Client.value]
+                    if client:
+                        AcquireServerProtocol.add_pending_messages({client.client_id}, [[enums.CommandsToClient.RemoveTile.value, tile_index]])
 
                     # mark cell on game board as can't play ever
                     tile = tile_data[0]
