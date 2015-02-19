@@ -209,7 +209,9 @@ class AcquireServerProtocol():
         if not self.game_id and isinstance(mode, int) and 0 <= mode < enums.GameModes.Max.value and isinstance(max_players, int) and 1 <= max_players <= 6:
             game_id = AcquireServerProtocol.next_game_id_manager.get_id()
             internal_game_id = AcquireServerProtocol.next_internal_game_id_manager.get_id()
-            AcquireServerProtocol.game_id_to_game[game_id] = Game(game_id, internal_game_id, self, mode, max_players)
+            game = Game(game_id, internal_game_id, mode, max_players)
+            game.join_game(self)
+            AcquireServerProtocol.game_id_to_game[game_id] = game
 
     def on_message_join_game(self, game_id):
         if not self.game_id and game_id in AcquireServerProtocol.game_id_to_game:
@@ -993,7 +995,7 @@ class ActionGameOver(Action):
 
 
 class Game:
-    def __init__(self, game_id, internal_game_id, client, mode, max_players):
+    def __init__(self, game_id, internal_game_id, mode, max_players):
         self.game_id = game_id
         self.internal_game_id = internal_game_id
         self.state = enums.GameStates.Starting.value
@@ -1017,8 +1019,6 @@ class Game:
         self.expiration_time = None
 
         self.set_state(self.state, self.mode, self.max_players)
-
-        self.join_game(client)
 
     def join_game(self, client):
         if self.state == enums.GameStates.Starting.value and not self.score_sheet.is_username_in_game(client.username):
