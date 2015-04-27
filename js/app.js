@@ -132,7 +132,7 @@ define(function(require) {
 	}
 
 	function initializeErrorMessageLookup() {
-		error_message_lookup[enums.Errors.NotUsingLatestVersion] = 'You are not using the latest version. Please reload this page to get it!';
+		error_message_lookup[enums.Errors.NotUsingLatestVersion] = 'You are not using the latest version. Please <a href="#" class="link-reload-page">reload this page</a> to get it!';
 		error_message_lookup[enums.Errors.GenericError] = 'An error occurred during the processing of your request.';
 		error_message_lookup[enums.Errors.InvalidUsername] = 'Invalid username. Username must have between 1 and 32 ASCII characters.';
 		error_message_lookup[enums.Errors.InvalidPassword] = 'Invalid password. Password must have at least 8 characters.';
@@ -145,6 +145,11 @@ define(function(require) {
 		error_message_lookup[enums.Errors.LostConnection] = 'Lost connection to the server.';
 	}
 
+	function onClickLinkReloadPage() {
+		document.location.reload();
+		return false;
+	}
+
 	function setLoginErrorMessage(error_id) {
 		var message;
 
@@ -154,7 +159,7 @@ define(function(require) {
 			message = 'Unknown error.';
 		}
 
-		$('#login-error-message').html($('<p/>').text(message));
+		$('#login-error-message').html($('<p/>').html(message));
 	}
 
 	function setSetPasswordErrorMessage(error_id) {
@@ -172,7 +177,7 @@ define(function(require) {
 			}
 
 			$set_password_success_message.empty();
-			$set_password_error_message.html($('<p/>').text(message));
+			$set_password_error_message.html($('<p/>').html(message));
 		}
 	}
 
@@ -231,6 +236,7 @@ define(function(require) {
 
 		$('#login-form').submit(onSubmitLoginForm);
 		$('#set-password-form').submit(onSubmitSetPasswordForm);
+		$('#page-login').on('click', '.link-reload-page', onClickLinkReloadPage);
 	}
 
 	require('lobby_page');
