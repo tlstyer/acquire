@@ -30,8 +30,7 @@ cp js/* server.js dist/build/js
 ./enumsgen.py js release > dist/build/js/enums.js
 
 cd dist/build/js
-cp ../../../node_modules/almond/almond.js .
-../../../node_modules/requirejs/bin/r.js -o optimize=none baseUrl=. name=almond.js wrap=true preserveLicenseComments=false include=main out=../main1.js
+../../../node_modules/webpack/bin/webpack.js app.js ../main1.js
 cd ../../..
 
 ./node_modules/uglify-js/bin/uglifyjs js/polyfill_array_indexof.js js/polyfill_string_trim.js dist/build/main1.js -m -b indent-level=0 -o dist/build/main2.js
@@ -46,7 +45,7 @@ cp dist/build/stats2.js dist/web/static/${STATS_JS}
 
 # index.html
 sed "s/<link rel=\"stylesheet\" href=\"css\/main.css\">/<link rel=\"stylesheet\" href=\"static\/${MAIN_CSS}\">/" index.html | \
-sed "s/<script data-main=\"js\/main\" src=\"node_modules\/requirejs\/require.js\"><\/script>/<script src=\"static\/${MAIN_JS}\"><\/script>/" | \
+sed "s/<script src=\"js\/main.js\"><\/script>/<script src=\"static\/${MAIN_JS}\"><\/script>/" | \
 ./node_modules/html-minifier/cli.js \
 	--remove-comments --collapse-whitespace --conservative-collapse --collapse-boolean-attributes --remove-attribute-quotes --remove-redundant-attributes --remove-optional-tags | \
 sed 's/\s\s*/ /g' | sed 's/ $//' > dist/build/index.html

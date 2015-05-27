@@ -76,22 +76,13 @@ def generate_enums_js(mode):
         lookups = []
         for name, value in all_enums[class_name].items():
             if class_name in class_names_include_str_to_int:
-                lookups.append('\t\t\t{}: {}'.format(name, value))
-            lookups.append("\t\t\t{}: '{}'".format(value, name))
-        parts.append('\t\t' + class_name + ': {\n' + ',\n'.join(lookups) + '\n\t\t}')
+                lookups.append('\t\t{}: {}'.format(name, value))
+            lookups.append("\t\t{}: '{}'".format(value, name))
+        parts.append('\t' + class_name + ': {\n' + ',\n'.join(lookups) + '\n\t}')
 
-    print('if (typeof define !== \'function\') {')
-    print('\t/* global require, module */')
-    print('\tvar define = require(\'amdefine\')(module);')
-    print('}')
-    print()
-    print('define(function() {')
-    print('\treturn {')
-
+    print('module.exports = {')
     print(',\n'.join(parts))
-
-    print('\t};')
-    print('});')
+    print('};')
 
 
 def replace_enums(pathnames):

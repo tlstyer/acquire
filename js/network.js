@@ -1,76 +1,74 @@
-define(function(require) {
-	var common_functions = require('common_functions'),
-		enums = require('enums'),
-		pubsub = require('pubsub'),
-		server_url = null,
-		version = null,
-		socket = null;
+var common_functions = require('./common_functions'),
+	enums = require('./enums'),
+	pubsub = require('./pubsub'),
+	server_url = null,
+	version = null,
+	socket = null;
 
-	function initializeServerUrlData() {
-		var result = /^http(s?):\/\/([^\/]+)\//.exec(window.location.href);
+function initializeServerUrlData() {
+	var result = /^http(s?):\/\/([^\/]+)\//.exec(window.location.href);
 
-		if (result !== null) {
-			server_url = 'http' + result[1] + '://' + result[2];
-		} else {
-			server_url = 'http://127.0.0.1:9000';
-		}
-
-		version = $('#page-login').attr('data-version');
+	if (result !== null) {
+		server_url = 'http' + result[1] + '://' + result[2];
+	} else {
+		server_url = 'http://127.0.0.1:9000';
 	}
 
-	function getServerUrl() {
-		return server_url;
-	}
+	version = $('#page-login').attr('data-version');
+}
 
-	function connect(username, password) {
-		if (socket === null) {
-			socket = new SockJS(server_url + '/sockjs');
+function getServerUrl() {
+	return server_url;
+}
 
-			socket.onopen = function() {
-				socket.send(JSON.stringify([version, username, password]));
-			};
+function connect(username, password) {
+	if (socket === null) {
+		socket = new SockJS(server_url + '/sockjs');
 
-			socket.onclose = function() {
-				socket = null;
-				pubsub.publish(enums.PubSub.Network_Disconnect);
-			};
+		socket.onopen = function() {
+			socket.send(JSON.stringify([version, username, password]));
+		};
 
-			socket.onmessage = function(e) {
-				var data = e.data,
-					data_length, i;
+		socket.onclose = function() {
+			socket = null;
+			pubsub.publish(enums.PubSub.Network_Disconnect);
+		};
 
-				try {
-					data = JSON.parse(data);
-					data_length = data.length;
-					for (i = 0; i < data_length; i++) {
-						pubsub.publish.apply(null, data[i]);
-					}
+		socket.onmessage = function(e) {
+			var data = e.data,
+				data_length, i;
 
-					pubsub.publish(enums.PubSub.Network_MessageProcessingComplete);
-				} catch (e) {
-					common_functions.reportError(e);
-
-					socket.disconnect();
+			try {
+				data = JSON.parse(data);
+				data_length = data.length;
+				for (i = 0; i < data_length; i++) {
+					pubsub.publish.apply(null, data[i]);
 				}
-			};
-		}
+
+				pubsub.publish(enums.PubSub.Network_MessageProcessingComplete);
+			} catch (e) {
+				common_functions.reportError(e);
+
+				socket.disconnect();
+			}
+		};
 	}
+}
 
-	function sendMessage() {
-		if (socket !== null) {
-			socket.send(JSON.stringify(Array.prototype.slice.call(arguments, 0)));
-		}
+function sendMessage() {
+	if (socket !== null) {
+		socket.send(JSON.stringify(Array.prototype.slice.call(arguments, 0)));
 	}
+}
 
-	function onInitializationComplete() {
-		initializeServerUrlData();
-	}
+function onInitializationComplete() {
+	initializeServerUrlData();
+}
 
-	pubsub.subscribe(enums.PubSub.Client_InitializationComplete, onInitializationComplete);
+pubsub.subscribe(enums.PubSub.Client_InitializationComplete, onInitializationComplete);
 
-	return {
-		getServerUrl: getServerUrl,
-		connect: connect,
-		sendMessage: sendMessage
-	};
-});
+module.exports = {
+	getServerUrl: getServerUrl,
+	connect: connect,
+	sendMessage: sendMessage
+};
