@@ -1,6 +1,4 @@
 define(function(require) {
-	'use strict';
-
 	var global_chat = require('global_chat'),
 		enums = require('enums'),
 		lobby = require('lobby'),

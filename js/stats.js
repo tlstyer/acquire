@@ -1,6 +1,4 @@
 $(function() {
-	'use strict';
-
 	var user_id_to_username = null,
 		username_to_user_id = null,
 		rating_type_to_ratings = null,

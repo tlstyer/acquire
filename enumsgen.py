@@ -86,8 +86,6 @@ def generate_enums_js(mode):
     print('}')
     print()
     print('define(function() {')
-    print('\t\'use strict\';')
-    print()
     print('\treturn {')
 
     print(',\n'.join(parts))

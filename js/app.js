@@ -1,6 +1,4 @@
 define(function(require) {
-	'use strict';
-
 	var common_functions = require('common_functions'),
 		enums = require('enums'),
 		network = require('network'),
