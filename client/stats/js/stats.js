@@ -89,12 +89,12 @@ $(function() {
 	}
 
 	function setFormErrorMessage(message) {
-		$('#stats-form-error-message').text(message === null ? '' : message);
+		$('#form-error-message').text(message === null ? '' : message);
 	}
 
 	function setFormLoadingMessage(message) {
-		$('#stats-form input').prop('disabled', message !== null);
-		$('#stats-form-loading-message').text(message === null ? '' : message);
+		$('#form input').prop('disabled', message !== null);
+		$('#form-loading-message').text(message === null ? '' : message);
 	}
 
 	function formatDate(unix_timestamp) {
@@ -112,7 +112,7 @@ $(function() {
 	}
 
 	function populateRatingsTable(ratings) {
-		var $tbody = $('#stats-users tbody'),
+		var $tbody = $('#users tbody'),
 			ratings_index, ratings_length = ratings.length,
 			rating, $tr;
 
@@ -200,7 +200,7 @@ $(function() {
 	}
 
 	function populateSummary(user_id, ratings, games) {
-		var $tbody = $('#stats-user-summary tbody'),
+		var $tbody = $('#user-summary tbody'),
 			records, rating_type_index, rating_types_length = rating_types.length,
 			rating_type, num_ratings, rating, $tr;
 
@@ -235,7 +235,7 @@ $(function() {
 			rating_type = rating_types[rating_type_index];
 
 			if (rating_type_to_dygraph.hasOwnProperty(rating_type)) {
-				$rating = $('#stats-rating-' + rating_type);
+				$rating = $('#rating-' + rating_type);
 
 				if (ratings.hasOwnProperty(rating_type)) {
 					$rating.show();
@@ -253,7 +253,7 @@ $(function() {
 						rating_type_to_dygraph[rating_type] = null;
 					}
 
-					rating_type_to_dygraph[rating_type] = new Dygraph(document.getElementById('stats-rating-' + rating_type), dygraph_data, {
+					rating_type_to_dygraph[rating_type] = new Dygraph(document.getElementById('rating-' + rating_type), dygraph_data, {
 						title: rating_type,
 						labels: ['Date', 'Rating'],
 						labelsUTC: true,
@@ -315,10 +315,10 @@ $(function() {
 	}
 
 	function showMoreGames(num_games_to_add) {
-		var $games = $('#stats-games'),
+		var $games = $('#games'),
 			game_index, game_index_cutoff = Math.min(games_num_shown + num_games_to_add, games_length),
-			game, $div, game_mode_name, $table, $tbody, scores, num_scores, ranks, score_index, score, $tr, games_num_remaining, $stats_games_show_next_100 = $('#stats-games-show-next-100'),
-			$stats_games_show_remaining = $('#stats-games-show-remaining');
+			game, $div, game_mode_name, $table, $tbody, scores, num_scores, ranks, score_index, score, $tr, games_num_remaining, $stats_games_show_next_100 = $('#games-show-next-100'),
+			$stats_games_show_remaining = $('#games-show-remaining');
 
 		for (game_index = games_num_shown; game_index < game_index_cutoff; game_index++) {
 			game = games[game_index];
@@ -374,7 +374,7 @@ $(function() {
 		games_length = games_data.length;
 		games_num_shown = 0;
 
-		$('#stats-games').empty();
+		$('#games').empty();
 		showMoreGames(100);
 	}
 
@@ -393,9 +393,9 @@ $(function() {
 
 	function showRatings(rating_type) {
 		if (rating_type_to_ratings.hasOwnProperty(rating_type)) {
-			$('#stats-user').hide();
-			$('#stats-users').show();
-			$('#stats-ratings-type').text(rating_type);
+			$('#user').hide();
+			$('#users').show();
+			$('#ratings-type').text(rating_type);
 			populateRatingsTable(rating_type_to_ratings[rating_type]);
 		} else {
 			setFormErrorMessage('Invalid ratings type.');
@@ -403,7 +403,7 @@ $(function() {
 	}
 
 	function formSubmitted() {
-		var username = $('#stats-form-username').val().replace(/\s+/g, ' ').trim();
+		var username = $('#form-username').val().replace(/\s+/g, ' ').trim();
 
 		History.pushState.apply(History, getUsernameHistoryParams(username));
 
@@ -427,9 +427,9 @@ $(function() {
 			$.ajax({
 				url: 'data/user' + user_id + '.json',
 				success: function(data) {
-					$('#stats-users').hide();
-					$('#stats-user').show();
-					$('#stats-user-name').text(username);
+					$('#users').hide();
+					$('#user').show();
+					$('#user-name').text(username);
 					populateSummary(user_id, data.ratings, data.games);
 					populateRatings(data.ratings);
 					populateGames(user_id, data.games);
@@ -449,8 +449,8 @@ $(function() {
 	}
 
 	function showNothing() {
-		$('#stats-user').hide();
-		$('#stats-users').hide();
+		$('#user').hide();
+		$('#users').hide();
 	}
 
 	function onStateChange() {
@@ -469,7 +469,7 @@ $(function() {
 	function nameCellClicked() {
 		/* jshint validthis:true */
 		window.scrollTo(0, 0);
-		$('#stats-form-username').val($(this).text());
+		$('#form-username').val($(this).text());
 		formSubmitted();
 	}
 
@@ -500,11 +500,11 @@ $(function() {
 	function onInitializationComplete() {
 		History.Adapter.bind(window, 'statechange', onStateChange);
 
-		$('#stats-form input[type=button]').click(formButtonClicked);
-		$('#stats-form').submit(formSubmitted);
-		$('#stats-users, #stats-games').on('click', 'tr :nth-child(2)', nameCellClicked);
-		$('#stats-games-show-next-100').click(showNext100Clicked);
-		$('#stats-games-show-remaining').click(showRemainingClicked);
+		$('#form input[type=button]').click(formButtonClicked);
+		$('#form').submit(formSubmitted);
+		$('#users, #games').on('click', 'tr :nth-child(2)', nameCellClicked);
+		$('#games-show-next-100').click(showNext100Clicked);
+		$('#games-show-remaining').click(showRemainingClicked);
 
 		showPage('stats');
 	}

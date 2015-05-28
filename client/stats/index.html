@@ -16,7 +16,7 @@
 
 		<script src="js/stats.js"></script>
 	</head>
-	<body id="stats-body">
+	<body>
 		<div class="page" id="page-loading">
 			<h1>Acquire Stats</h1>
 			<p>
@@ -31,7 +31,7 @@
 		</div>
 		<div class="page" id="page-stats">
 			<h1>Acquire Stats</h1>
-			<form id="stats-form">
+			<form id="form">
 				Ratings:
 				<input type="button" value="Singles2" disabled="disabled">
 				<input type="button" value="Singles3" disabled="disabled">
@@ -39,13 +39,13 @@
 				<input type="button" value="Teams" disabled="disabled">
 				<br>
 				Lookup Username:
-				<input type="text" id="stats-form-username" disabled="disabled">
+				<input type="text" id="form-username" disabled="disabled">
 				<input type="submit" value="Lookup" disabled="disabled">
-				<span id="stats-form-error-message"></span>
-				<span id="stats-form-loading-message">Loading users and ratings...</span>
+				<span id="form-error-message"></span>
+				<span id="form-loading-message">Loading users and ratings...</span>
 			</form>
-			<div id="stats-users">
-				<h2>Acquire ratings for <span id="stats-ratings-type"></span></h2>
+			<div id="users">
+				<h2>Acquire ratings for <span id="ratings-type"></span></h2>
 				<table>
 					<thead>
 						<tr>
@@ -60,10 +60,10 @@
 					<tbody></tbody>
 				</table>
 			</div>
-			<div id="stats-user">
-				<h2>Acquire stats for <span id="stats-user-name"></span></h2>
+			<div id="user">
+				<h2>Acquire stats for <span id="user-name"></span></h2>
 				<h3>Summary</h3>
-				<table id="stats-user-summary">
+				<table id="user-summary">
 					<thead>
 						<tr>
 							<th>Type</th>
@@ -77,15 +77,15 @@
 					<tbody></tbody>
 				</table>
 				<h3>Ratings</h3>
-				<div id="stats-rating-Singles2" class="stats-rating"></div>
-				<div id="stats-rating-Singles3" class="stats-rating"></div>
-				<div id="stats-rating-Singles4" class="stats-rating"></div>
-				<div id="stats-rating-Teams" class="stats-rating"></div>
+				<div id="rating-Singles2" class="rating"></div>
+				<div id="rating-Singles3" class="rating"></div>
+				<div id="rating-Singles4" class="rating"></div>
+				<div id="rating-Teams" class="rating"></div>
 				<h3>Games</h3>
-				<div id="stats-games"></div>
-				<div id="stats-games-links">
-					<a id="stats-games-show-next-100" href="#">Show next 100</a>
-					<a id="stats-games-show-remaining" href="#">Show remaining</a>
+				<div id="games"></div>
+				<div id="games-links">
+					<a id="games-show-next-100" href="#">Show next 100</a>
+					<a id="games-show-remaining" href="#">Show remaining</a>
 				</div>
 			</div>
 		</div>
