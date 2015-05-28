@@ -28,7 +28,7 @@ $(function() {
 
 	function initializeUsers() {
 		$.ajax({
-			url: 'web/stats/users.json',
+			url: 'data/users.json',
 			success: function(data) {
 				var user_id;
 
@@ -425,7 +425,7 @@ $(function() {
 			setFormErrorMessage(null);
 
 			$.ajax({
-				url: 'web/stats/user' + user_id + '.json',
+				url: 'data/user' + user_id + '.json',
 				success: function(data) {
 					$('#stats-users').hide();
 					$('#stats-user').show();

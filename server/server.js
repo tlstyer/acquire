@@ -29,7 +29,7 @@
 	});
 
 	var server_version = 'VERSION';
-	var enums = require('./js/enums');
+	var enums = require('../client/main/js/enums');
 
 
 	function isASCII(string) {

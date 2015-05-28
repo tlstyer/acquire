@@ -1,0 +1,444 @@
+@import '../../../node_modules/normalize.css/normalize.css';
+
+$color-background-default: rgb(255, 255, 255);
+$color-background-netacquire: rgb(246, 244, 242);
+$color-table-border: rgb(246, 244, 242);
+$color-scroll-div-background: rgb(192, 192, 255);
+
+$color-luxor: rgb(255, 0, 0);
+$color-tower: rgb(255, 255, 0);
+$color-american: rgb(0, 0, 255);
+$color-festival: rgb(0, 255, 0);
+$color-worldwide: rgb(128, 64, 0);
+$color-continental: rgb(0, 255, 255);
+$color-imperial: rgb(255, 0, 255);
+$color-nothing: rgb(255, 255, 192);
+$color-nothing-yet: rgb(0, 0, 0);
+$color-cant-play-ever: rgb(128, 128, 128);
+$color-i-have-this: rgb(255, 224, 160);
+$color-will-put-lonely-tile-down: rgb(192, 192, 192);
+$color-have-neighboring-tile-too: rgb(192, 255, 192);
+$color-will-form-new-chain: rgb(255, 255, 255);
+$color-cant-play-now: rgb(96, 96, 96);
+
+$color-player: rgb(192, 192, 255);
+$color-cash-net: rgb(0, 128, 0);
+$color-available-chain-size-price: rgb(192, 255, 255);
+
+$color-my-turn: rgb(255, 192, 192);
+$color-my-sub-turn: rgb(255, 224, 224);
+$color-safe-chain: rgb(255, 192, 128);
+
+.color-luxor {
+	background-color: $color-luxor;
+}
+.color-tower {
+	background-color: $color-tower;
+}
+.color-american {
+	background-color: $color-american;
+}
+.color-festival {
+	background-color: $color-festival;
+}
+.color-worldwide {
+	background-color: $color-worldwide;
+}
+.color-continental {
+	background-color: $color-continental;
+}
+.color-imperial {
+	background-color: $color-imperial;
+}
+.color-nothing {
+	background-color: $color-nothing;
+}
+.color-nothing-yet {
+	background-color: $color-nothing-yet;
+	color: white;
+}
+.color-cant-play-ever {
+	background-color: $color-cant-play-ever;
+}
+.color-i-have-this {
+	background-color: $color-i-have-this;
+	cursor: pointer;
+}
+.color-will-put-lonely-tile-down {
+	background-color: $color-will-put-lonely-tile-down;
+}
+.color-have-neighboring-tile-too {
+	background-color: $color-have-neighboring-tile-too;
+}
+.color-will-form-new-chain {
+	background-color: $color-will-form-new-chain;
+}
+.color-will-merge-chains {
+	background: url(../static/merge1.png);
+}
+.color-cant-play-now {
+	background-color: $color-cant-play-now;
+}
+.color-player {
+	background-color: $color-player;
+}
+.color-cash-net {
+	background-color: $color-cash-net;
+}
+
+body.enable-high-contrast-colors {
+	.color-luxor, .color-american, .color-worldwide, .color-imperial, .color-cant-play-now, .color-cash-net {
+		color: white;
+	}
+}
+
+body.enable-text-background-colors {
+	span.username {
+		background-color: $color-table-border;
+	}
+}
+body.disable-text-background-colors {
+	span.chain {
+		&.color-luxor, &.color-tower, &.color-american, &.color-festival, &.color-worldwide, &.color-continental, &.color-imperial {
+			background-color: transparent;
+			color: black;
+		}
+	}
+}
+
+body.color-scheme-netacquire {
+	background-color: $color-background-netacquire;
+	#game-history, #lobby, .chat-history {
+		background-color: $color-scroll-div-background;
+	}
+	#score-sheet {
+		.team-empty, .team-border-bottom, .team-border-right {
+			background-color: $color-background-netacquire;
+		}
+	}
+}
+body.enable-text-background-colors.color-scheme-netacquire {
+	span.username {
+		background-color: lightgrey;
+	}
+}
+
+body {
+	background-color: $color-background-default;
+	color: black;
+	font-size: 16px;
+}
+
+body.hide-overflow {
+	overflow: hidden;
+}
+
+.page {
+	display: none;
+	padding-left: .5em;
+	padding-right: .5em;
+}
+#page-loading {
+	display: block;
+}
+
+#login-error-message, #set-password-error-message, #stats-form-error-message {
+	color: red;
+	font-weight: bold;
+}
+
+#set-password-success-message {
+	color: green;
+	font-weight: bold;
+}
+
+.lobby-section {
+	margin-bottom: 1em;
+	white-space: nowrap;
+	.header {
+		font-weight: bold;
+	}
+	.player {
+		font-weight: bold;
+		&.missing {
+			color: grey;
+			font-style: italic;
+		}
+	}
+}
+
+#game-board {
+	position: absolute;
+	text-align: center;
+	font-weight: bold;
+	table-layout: fixed;
+	td {
+		border: 2px solid $color-table-border;
+		width: percentage(1 / 12);
+		height: percentage(1 / 9);
+		overflow: hidden;
+	}
+}
+
+#score-sheet {
+	position: absolute;
+	font-weight: bold;
+	table-layout: fixed;
+	td {
+		border: 2px solid $color-table-border;
+		overflow: hidden;
+		white-space: nowrap;
+	}
+	.name {
+		width: percentage(5 / 18);
+		text-align: left;
+		padding-left: 3px;
+		&.missing {
+			color: grey;
+			font-style: italic;
+		}
+	}
+	tr {
+		height: 0px;
+	}
+	tr.my-turn .name {
+		background-color: $color-my-turn;
+	}
+	tr.my-sub-turn .name {
+		background-color: $color-my-sub-turn;
+	}
+	.luxor, .tower, .american, .festival, .worldwide, .continental, .imperial {
+		width: percentage(1 / 18);
+		text-align: center;
+	}
+	.cash, .net, .teams {
+		width: percentage(3 / 18);
+		text-align: right;
+		padding-right: 3px;
+	}
+	.teams {
+		border: none;
+		background-color: $color-background-default;
+		display: none;
+	}
+	.team-border-bottom {
+		border-bottom: 2px solid $color-table-border;
+	}
+	.team-border-right {
+		border-right: 2px solid $color-table-border;
+	}
+	.team-net {
+		background-color: white;
+		border: 2px solid $color-table-border;
+	}
+}
+
+.score-sheet-player {
+	background-color: white;
+	display: none;
+	.safe {
+		background-color: $color-safe-chain;
+	}
+}
+
+#score-sheet-available, #score-sheet-chain-size, #score-sheet-price {
+	td {
+		background-color: $color-available-chain-size-price;
+	}
+	.safe {
+		background-color: $color-safe-chain;
+	}
+}
+
+#lobby, #options, #global-chat, #game-chat, #templates {
+	display: none;
+}
+#game-tile-rack, #game-action, #game-history, #game-history-new-messages, #game-status, #game-buttons, #lobby, #options, .chat-history, .chat-history-new-messages, .chat-message {
+	position: absolute;
+	box-sizing: border-box;
+}
+#game-tile-rack {
+	.button-hotel {
+		visibility: hidden;
+	}
+}
+#game-action {
+	overflow: hidden;
+	> div {
+		display: none;
+	}
+}
+#lobby, #options, .chat-history, #game-history {
+	padding: 0 2px;
+	overflow-y: scroll;
+}
+#game-history .game-state {
+	font-weight: bold;
+}
+#game-history-new-messages, .chat-history-new-messages {
+	display: none;
+	background-color: lightgreen;
+	overflow: hidden;
+	line-height: 22px;
+}
+.game-history-turn-began {
+	border-top: 1px solid black;
+	border-bottom: none;
+	border-left: none;
+	border-right: none;
+	display: block;
+	text-align: center;
+	margin: 0;
+	padding: 0;
+	legend {
+		padding: 0 5px;
+	}
+}
+#game-status {
+	font-weight: bold;
+	overflow: hidden;
+	white-space: nowrap;
+}
+#options .header {
+	font-weight: bold;
+}
+.disabled {
+	color: grey;
+}
+#global-chat, #game-chat {
+	.chat-message, .chat-message-contents {
+		color: blue;
+	}
+}
+#game-buttons {
+	overflow: hidden;
+}
+
+#game-action {
+	fieldset {
+		display: inline-block;
+		margin: 0;
+		padding: 0 3px 3px;
+		legend {
+			padding: 0 5px;
+		}
+	}
+}
+#game-action-dispose-of-shares {
+	span {
+		display: inline-block;
+		text-align: right;
+		width: 1.5em;
+	}
+	input {
+		color: black;
+		&:disabled {
+			color: grey;
+		}
+	}
+}
+#game-action-purchase-shares {
+	input:disabled {
+		background-color: lightgrey;
+		color: #555;
+	}
+}
+#ps-row1 > * {
+	vertical-align: top;
+}
+#ps-cost-table tr {
+	:nth-child(1) {
+		text-align: left;
+	}
+	:nth-child(2) {
+		text-align: right;
+		width: 4em;
+	}
+}
+
+span.username {
+	white-space: nowrap;
+}
+
+.button-hotel {
+	font-weight: bold;
+	padding: 1px;
+	&:focus {
+		box-shadow: 0px 0px 2px 0px rgba(50, 50, 50, 1);
+	}
+}
+
+#stats-body {
+	padding-left: .5em;
+	padding-right: .5em;
+}
+#stats-users, #stats-user {
+	display: none;
+}
+#stats-users {
+	tr {
+		:nth-child(1), :nth-child(3), :nth-child(5) {
+			text-align: right;
+		}
+		:nth-child(2), :nth-child(4), :nth-child(6) {
+			text-align: left;
+		}
+		:nth-child(2) {
+			cursor: pointer;
+		}
+	}
+	th, td {
+		border: 2px solid $color-table-border;
+		padding: 3px;
+	}
+}
+#stats-user-summary {
+	tr {
+		:nth-child(1), :nth-child(3), :nth-child(5), :nth-child(6) {
+			text-align: left;
+		}
+		:nth-child(2), :nth-child(4) {
+			text-align: right;
+		}
+	}
+	th, td {
+		border: 2px solid $color-table-border;
+		padding: 3px;
+	}
+}
+.stats-rating {
+	display: inline-block;
+	margin: .5em;
+}
+.dygraph-legend {
+	left: 60px !important;
+	top: 25px !important;
+	width: 300px !important;
+}
+#stats-games {
+	div {
+		display: inline-block;
+		margin: .5em;
+	}
+	tr {
+		:nth-child(1), :nth-child(2)  {
+			text-align: left;
+		}
+		:nth-child(3), :nth-child(4)  {
+			text-align: right;
+		}
+		:nth-child(2) {
+			cursor: pointer;
+		}
+	}
+	td {
+		border: 2px solid $color-table-border;
+		padding: 3px;
+	}
+	tr.current_user :nth-child(1) {
+		font-weight: bold;
+	}
+}
+#stats-games-links {
+	text-align: right;
+}
