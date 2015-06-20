@@ -48,7 +48,7 @@ function setElementPosition($element, left, top, width, height, font_size) {
 }
 
 function isScrollAtBottom($element) {
-	return $element.scrollTop() + $element.innerHeight() >= $element[0].scrollHeight;
+	return $element.scrollTop() + $element.innerHeight() >= $element[0].scrollHeight - 2;
 }
 
 function scrollToBottom($element) {
