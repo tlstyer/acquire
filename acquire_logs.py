@@ -1,102 +1,80 @@
 #!/usr/bin/env python3.4m
 
-import collections
 import re
 import ujson
 import util
 
-re_connect1 = re.compile(r'^(\d+) connect \d+\.\d+\.\d+\.\d+ (.+)$')
-re_connect2 = re.compile(r'^(\d+) connect (.+) \d+\.\d+\.\d+\.\d+ \S+(?: (?:True|False))?$')
-re_disconnect = re.compile(r'^(\d+) disconnect$')
-re_disconnect_after_error = re.compile(r'^\d+ -> (\d+) disconnect$')
-re_command_to_server = re.compile(r'^(\d+) -> (.*)')
-re_command_to_client = re.compile(r'^([\d,]+) <- (.*)')
-re_game_expired = re.compile(r'^game #(\d+) expired( \(internal #(\d+)\))?$')
-re_error = re.compile(r'^(Traceback \(most recent call last\):|UnicodeEncodeError:)')
+
+class AcquireLogProcessor:
+    def __init__(self):
+        self.client_id_to_username = {}
+
+        self.line_matchers_and_handlers = [
+            ('empty', re.compile(r'^$'), None),
+            ('command to client', re.compile(r'^([\d,]+) <- (.*)'), None),
+            ('command to server', re.compile(r'^(\d+) -> (.*)'), self.handle_command_to_server),
+            ('log', re.compile(r'^{'), None),
+            ('connect2', re.compile(r'^(\d+) connect (.+) \d+\.\d+\.\d+\.\d+ \S+(?: (?:True|False))?$'), self.handle_connect1_and_connect2),
+            ('disconnect', re.compile(r'^(\d+) disconnect$'), None),
+            ('game expired', re.compile(r'^game #(\d+) expired( \(internal #(\d+)\))?$'), None),
+            ('connection made', re.compile(r'^connection_made$'), None),
+            ('connect1', re.compile(r'^(\d+) connect \d+\.\d+\.\d+\.\d+ (.+)$'), self.handle_connect1_and_connect2),
+            ('error', re.compile(r'^(Traceback \(most recent call last\):|UnicodeEncodeError:)'), None),
+            ('error detail', re.compile(r'^ '), None),
+            ('disconnect after error', re.compile(r'^\d+ -> (\d+) disconnect$'), None),
+        ]
+
+    def handle_command_to_server(self, match):
+        username = self.client_id_to_username[match.group(1)]
+        try:
+            command = ujson.decode(match.group(2))
+            return True
+        except ValueError:
+            pass
+
+    def handle_connect1_and_connect2(self, match):
+        self.client_id_to_username[match.group(1)] = match.group(2)
+        return True
+
+    def go(self):
+        line_type_to_count = {line_type: 0 for line_type, regex, handler in self.line_matchers_and_handlers}
+        line_type_to_count['other'] = 0
+
+        for path in util.get_log_file_paths('py'):
+            self.client_id_to_username = {}
+
+            with util.open_possibly_gzipped_file(path) as f:
+                print(path)
+                try:
+                    for line in f:
+                        line = line.rstrip()
+
+                        handled_line_type = 'other'
+                        for line_type, regex, handler in self.line_matchers_and_handlers:
+                            match = regex.match(line)
+                            if match:
+                                if handler:
+                                    if handler(match):
+                                        handled_line_type = line_type
+                                        break
+                                else:
+                                    handled_line_type = line_type
+                                    break
+
+                        line_type_to_count[handled_line_type] += 1
+
+                        if handled_line_type == 'other':
+                            print(line)
+                except KeyError:
+                    print('*** KeyError')
+
+        for line_type, count in sorted(line_type_to_count.items(), key=lambda x: (x[1], x[0]), reverse=True):
+            print(line_type, count)
 
 
 def main():
-    line_type_to_count = collections.defaultdict(int)
-
-    for path in util.get_log_file_paths('py'):
-        client_id_to_username = {}
-
-        with util.open_possibly_gzipped_file(path) as f:
-            print(path)
-            try:
-                for line in f:
-                    line = line.rstrip()
-
-                    if len(line) == 0:
-                        line_type_to_count['empty'] += 1
-                        continue
-
-                    match = re_command_to_client.match(line)
-                    if match:
-                        line_type_to_count['command to client'] += 1
-                        continue
-
-                    match = re_command_to_server.match(line)
-                    if match:
-                        username = client_id_to_username[match.group(1)]
-                        try:
-                            command = ujson.decode(match.group(2))
-                            line_type_to_count['command to server'] += 1
-                            continue
-                        except ValueError:
-                            match = re_disconnect_after_error.match(line)
-                            if match:
-                                line_type_to_count['disconnect after error'] += 1
-                                continue
-                            print('*** ValueError:', line)
-
-                    if line[0] == '{':
-                        line_type_to_count['log'] += 1
-                        continue
-
-                    match = re_connect2.match(line)
-                    if match:
-                        client_id_to_username[match.group(1)] = match.group(2)
-                        line_type_to_count['connect2'] += 1
-                        continue
-
-                    match = re_disconnect.match(line)
-                    if match:
-                        line_type_to_count['disconnect'] += 1
-                        continue
-
-                    match = re_game_expired.match(line)
-                    if match:
-                        line_type_to_count['game expired'] += 1
-                        continue
-
-                    if line == 'connection_made':
-                        line_type_to_count['connection made'] += 1
-                        continue
-
-                    match = re_connect1.match(line)
-                    if match:
-                        client_id_to_username[match.group(1)] = match.group(2)
-                        line_type_to_count['connect1'] += 1
-                        continue
-
-                    match = re_error.match(line)
-                    if match:
-                        line_type_to_count['error'] += 1
-                        continue
-
-                    if line[0] == ' ':
-                        line_type_to_count['error detail'] += 1
-                        continue
-
-                    line_type_to_count['other'] += 1
-
-                    print(line)
-            except KeyError:
-                print('*** KeyError')
-
-    for line_type, count in sorted(line_type_to_count.items(), key=lambda x: (x[1], x[0]), reverse=True):
-        print(line_type, count)
+    acquire_log_processor = AcquireLogProcessor()
+    acquire_log_processor.go()
 
 
 if __name__ == '__main__':
