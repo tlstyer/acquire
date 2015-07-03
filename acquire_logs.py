@@ -9,31 +9,61 @@ class AcquireLogProcessor:
     def __init__(self):
         self.client_id_to_username = {}
 
-        self.line_matchers_and_handlers = [
-            ('empty', re.compile(r'^$'), None),
-            ('command to client', re.compile(r'^([\d,]+) <- (.*)'), None),
-            ('command to server', re.compile(r'^(\d+) -> (.*)'), self.handle_command_to_server),
-            ('log', re.compile(r'^{'), None),
-            ('connect2', re.compile(r'^(\d+) connect (.+) \d+\.\d+\.\d+\.\d+ \S+(?: (?:True|False))?$'), self.handle_connect1_and_connect2),
-            ('disconnect', re.compile(r'^(\d+) disconnect$'), None),
-            ('game expired', re.compile(r'^game #(\d+) expired( \(internal #(\d+)\))?$'), None),
-            ('connection made', re.compile(r'^connection_made$'), None),
-            ('connect1', re.compile(r'^(\d+) connect \d+\.\d+\.\d+\.\d+ (.+)$'), self.handle_connect1_and_connect2),
-            ('error', re.compile(r'^(Traceback \(most recent call last\):|UnicodeEncodeError:)'), None),
-            ('error detail', re.compile(r'^ '), None),
-            ('disconnect after error', re.compile(r'^\d+ -> (\d+) disconnect$'), None),
+        regexes_to_ignore = [
+            r'^ ',
+            r'^$',
+            r'^AttributeError:',
+            r'^connection_lost$',
+            r'^connection_made$',
+            r'^\d+ receive timeout$',
+            r'^\d+ send timeout$',
+            r'^Exception in callback ',
+            r'^handle:',
+            r'^ImportError:',
+            r'^KeyError:',
+            r'^None close$',
+            r'^socket\.send\(\) raised exception\.$',
+            r'^Traceback \(most recent call last\):',
+            r'^UnicodeEncodeError:',
         ]
 
+        self.line_matchers_and_handlers = [
+            ('command to client', re.compile(r'^([\d,]+) <- (.*)'), None),
+            ('ignore', re.compile('|'.join(regexes_to_ignore)), None),
+            ('command to server', re.compile(r'^(?P<client_id>\d+) -> (?P<command>.*)'), self.handle_command_to_server),
+            ('log v2', re.compile(r'^({.*)'), None),
+            ('disconnect', re.compile(r'^(\d+) disconnect$'), None),
+            ('connect v3', re.compile(r'^(?P<client_id>\d+) connect (?P<username>.+) \d+\.\d+\.\d+\.\d+ \S+(?: (?:True|False))?$'), self.handle_connect_v2_and_v3),
+            ('game expired', re.compile(r'^game #(\d+) expired( \(internal #(\d+)\))?$'), None),
+            ('connect v1', re.compile(r'^X connect \d+\.\d+\.\d+\.\d+(?::\d+)? (?P<username>.*)$'), self.handle_connect_v1),
+            ('open', re.compile(r'^(?P<client_id>\d+) open \d+\.\d+\.\d+\.\d+(?::\d+)?$'), self.handle_open),
+            ('close', re.compile(r'^(\d+) close$'), None),
+            ('connect v2', re.compile(r'^(?P<client_id>\d+) connect \d+\.\d+\.\d+\.\d+ (?P<username>.+)$'), self.handle_connect_v2_and_v3),
+            ('disconnect after error', re.compile(r'^\d+ -> (\d+) disconnect$'), None),
+            ('log v1', re.compile(r'^result (.*)'), None),
+            ('command to server after connect printing error', re.compile(r'^\d+ connect (?P<client_id>\d+) -> (?P<command>.*)'), self.handle_command_to_server),
+        ]
+
+        self.connect_v1_username = None
+
     def handle_command_to_server(self, match):
-        username = self.client_id_to_username[match.group(1)]
+        username = self.client_id_to_username[match.group('client_id')]
         try:
-            command = ujson.decode(match.group(2))
+            command = ujson.decode(match.group('command'))
             return True
         except ValueError:
             pass
 
-    def handle_connect1_and_connect2(self, match):
-        self.client_id_to_username[match.group(1)] = match.group(2)
+    def handle_connect_v2_and_v3(self, match):
+        self.client_id_to_username[match.group('client_id')] = match.group('username')
+        return True
+
+    def handle_connect_v1(self, match):
+        self.connect_v1_username = match.group('username')
+        return True
+
+    def handle_open(self, match):
+        self.client_id_to_username[match.group('client_id')] = self.connect_v1_username
         return True
 
     def go(self):
@@ -47,7 +77,8 @@ class AcquireLogProcessor:
                 print(path)
                 try:
                     for line in f:
-                        line = line.rstrip()
+                        if len(line) and line[-1] == '\n':
+                            line = line[:-1]
 
                         handled_line_type = 'other'
                         for line_type, regex, handler in self.line_matchers_and_handlers:
@@ -68,7 +99,7 @@ class AcquireLogProcessor:
                 except KeyError:
                     print('*** KeyError')
 
-        for line_type, count in sorted(line_type_to_count.items(), key=lambda x: (x[1], x[0]), reverse=True):
+        for line_type, count in sorted(line_type_to_count.items(), key=lambda x: (-x[1], x[0])):
             print(line_type, count)
 
 
