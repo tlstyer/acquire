@@ -1,14 +1,14 @@
 #!/usr/bin/env python3.4m
 
-import enums
+import enums_preprocessed
 import inspect
 
 
 def get_lookups():
     lookups = {}
 
-    for class_name in [obj[0] for obj in inspect.getmembers(enums) if inspect.isclass(obj[1]) and obj[0] != 'AutoNumber']:
-        class_obj = getattr(enums, class_name)
+    for class_name in [obj[0] for obj in inspect.getmembers(enums_preprocessed) if inspect.isclass(obj[1]) and obj[0] != 'AutoNumber']:
+        class_obj = getattr(enums_preprocessed, class_name)
 
         lookup = []
         for name, member in class_obj.__members__.items():
