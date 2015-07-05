@@ -1,6 +1,8 @@
 #!/usr/bin/env python3.4m
 
+import enums
 import re
+import traceback
 import ujson
 import util
 
@@ -8,6 +10,8 @@ import util
 class AcquireLogProcessor:
     def __init__(self):
         self.client_id_to_username = {}
+
+        self.commands_to_client_translator = enums.CommandsToClientTranslator({})
 
         regexes_to_ignore = [
             r'^ ',
@@ -28,7 +32,7 @@ class AcquireLogProcessor:
         ]
 
         self.line_matchers_and_handlers = [
-            ('command to client', re.compile(r'^([\d,]+) <- (.*)'), None),
+            ('command to client', re.compile(r'^(?P<client_ids>[\d,]+) <- (?P<commands>.*)'), self.handle_command_to_client),
             ('ignore', re.compile('|'.join(regexes_to_ignore)), None),
             ('command to server', re.compile(r'^(?P<client_id>\d+) -> (?P<command>.*)'), self.handle_command_to_server),
             ('log v2', re.compile(r'^({.*)'), None),
@@ -46,13 +50,30 @@ class AcquireLogProcessor:
 
         self.connect_v1_username = None
 
+    def handle_command_to_client(self, match):
+        client_ids = match.group('client_ids').split(',')
+        try:
+            commands = ujson.decode(match.group('commands'))
+        except ValueError:
+            return
+
+        try:
+            self.commands_to_client_translator.translate(commands)
+            return True
+        except:
+            traceback.print_exc()
+
     def handle_command_to_server(self, match):
         username = self.client_id_to_username[match.group('client_id')]
         try:
             command = ujson.decode(match.group('command'))
-            return True
         except ValueError:
-            pass
+            return
+
+        try:
+            return True
+        except:
+            traceback.print_exc()
 
     def handle_connect_v2_and_v3(self, match):
         self.client_id_to_username[match.group('client_id')] = match.group('username')
@@ -70,11 +91,15 @@ class AcquireLogProcessor:
         line_type_to_count = {line_type: 0 for line_type, regex, handler in self.line_matchers_and_handlers}
         line_type_to_count['other'] = 0
 
-        for path in util.get_log_file_paths('py'):
+        for timestamp, path in util.get_log_file_paths('py', begin=1408905413):
+            print(path)
+
             self.client_id_to_username = {}
 
+            enums_translations = enums.get_translations(timestamp)
+            self.commands_to_client_translator = enums.CommandsToClientTranslator(enums_translations)
+
             with util.open_possibly_gzipped_file(path) as f:
-                print(path)
                 try:
                     for line in f:
                         if len(line) and line[-1] == '\n':

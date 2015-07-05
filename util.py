@@ -17,7 +17,7 @@ def get_log_file_paths(log_type, begin=None, end=None):
     if end:
         timestamp_and_path = filter(lambda x: x[0] <= end, timestamp_and_path)
 
-    return sorted(x[1] for x in timestamp_and_path)
+    return sorted(timestamp_and_path)
 
 
 re_gzip_filename = re.compile(r'.*\.gz$')
