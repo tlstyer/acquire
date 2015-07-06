@@ -42,6 +42,7 @@ class AcquireLogProcessor:
 
         command_to_client_entry_to_index = {entry: index for index, entry in enumerate(enums.lookups['CommandsToClient'])}
         self.commands_to_client_handlers = {
+            command_to_client_entry_to_index['SetGameBoardCell']: self.handle_command_to_client__set_game_board_cell,
             command_to_client_entry_to_index['SetGamePlayerJoin']: self.handle_command_to_client__set_game_player_join,
             command_to_client_entry_to_index['SetGamePlayerRejoin']: self.handle_command_to_client__set_game_player_rejoin,
             command_to_client_entry_to_index['SetGamePlayerLeave']: self.handle_command_to_client__set_game_player_leave,
@@ -53,6 +54,9 @@ class AcquireLogProcessor:
             command_to_server_entry_to_index['DoGameAction']: self.handle_command_to_server__do_game_action,
         }
 
+        self.enum_set_game_board_cell = command_to_client_entry_to_index['SetGameBoardCell']
+        self.enum_set_game_player = {index for entry, index in command_to_client_entry_to_index.items() if 'SetGamePlayer' in entry}
+
     def handle_command_to_client(self, match):
         client_ids = [int(x) for x in match.group('client_ids').split(',')]
         try:
@@ -62,6 +66,22 @@ class AcquireLogProcessor:
 
         try:
             self.commands_to_client_translator.translate(commands)
+
+            # move SetGamePlayer* commands to the beginning if one of them is after a SetGameBoardCell command
+            # reason: need to know what game the client belongs to
+            enum_set_game_board_cell_indexes = set()
+            enum_set_game_player_indexes = set()
+            for index, command in enumerate(commands):
+                if command[0] == self.enum_set_game_board_cell:
+                    enum_set_game_board_cell_indexes.add(index)
+                elif command[0] in self.enum_set_game_player:
+                    enum_set_game_player_indexes.add(index)
+
+            if enum_set_game_board_cell_indexes and enum_set_game_player_indexes and min(enum_set_game_board_cell_indexes) < min(enum_set_game_player_indexes):
+                # SetGamePlayer* commands are always right next to each other when there's a SetGameBoardCell command in the batch
+                min_index = min(enum_set_game_player_indexes)
+                max_index = max(enum_set_game_player_indexes)
+                commands = commands[min_index:max_index + 1] + commands[:min_index] + commands[max_index + 1:]
 
             for command in commands:
                 handler = self.commands_to_client_handlers.get(command[0])
@@ -77,6 +97,10 @@ class AcquireLogProcessor:
 
     def handle_command_to_client__set_game_player_rejoin(self, client_ids, command):
         self.server.add_client_id_to_game(command[1], command[3])
+
+    def handle_command_to_client__set_game_board_cell(self, client_ids, command):
+        for client_id in client_ids:
+            self.server.set_game_board_cell(client_id, command[1], command[2], command[3])
 
     def handle_command_to_client__set_game_player_leave(self, client_ids, command):
         self.server.remove_client_id_from_game(command[3])
@@ -232,6 +256,14 @@ class Server:
         if client_id in self.client_id_to_game_id:
             del self.client_id_to_game_id[client_id]
 
+    def set_game_board_cell(self, client_id, x, y, game_board_type_id):
+        game_id = self.client_id_to_game_id.get(client_id)
+        if game_id:
+            game = self.game_id_to_game[game_id]
+            if game.board[x][y] == Game.game_board_type__nothing:
+                game.played_tiles_order.append((x, y))
+            game.board[x][y] = game_board_type_id
+
     def add_game_action(self, client_id, action):
         game_id = self.client_id_to_game_id.get(client_id)
         if game_id:
@@ -251,6 +283,8 @@ class Server:
 
 
 class Game:
+    game_board_type__nothing = enums.lookups['GameBoardTypes'].index('Nothing')
+
     def __init__(self, game_id, internal_game_id):
         self.game_id = game_id
         self.internal_game_id = internal_game_id
@@ -263,6 +297,8 @@ class Game:
         self.player_id_to_username = {}
         self.username_to_player_id = {}
         self.player_join_order = []
+        self.board = [[Game.game_board_type__nothing for y in range(9)] for x in range(12)]
+        self.played_tiles_order = []
         self.actions = []
 
     def __repr__(self):
