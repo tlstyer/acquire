@@ -59,6 +59,11 @@ class AcquireLogProcessor:
             command_to_client_entry_to_index['SetGamePlayerClientId']: self.handle_command_to_client__set_game_player_client_id,
         }
 
+        command_to_server_entry_to_index = {entry: index for index, entry in enumerate(enums.lookups['CommandsToServer'])}
+        self.commands_to_server_handlers = {
+            command_to_server_entry_to_index['DoGameAction']: self.handle_command_to_server__do_game_action,
+        }
+
     def handle_command_to_client(self, match):
         client_ids = [int(x) for x in match.group('client_ids').split(',')]
         try:
@@ -104,9 +109,16 @@ class AcquireLogProcessor:
             return
 
         try:
+            handler = self.commands_to_server_handlers.get(command[0])
+            if handler:
+                handler(client_id, command)
+
             return True
         except:
             traceback.print_exc()
+
+    def handle_command_to_server__do_game_action(self, client_id, command):
+        self.server.add_game_action(client_id, command[1:])
 
     def handle_log_v2(self, match):
         try:
@@ -206,6 +218,7 @@ class Server:
 
         if entry['_'] == 'game-player':
             game.player_id_to_username[entry['player-id']] = entry['username']
+            game.username_to_player_id[entry['username']] = entry['player-id']
         else:
             if 'state' in entry:
                 game.state = entry['state']
@@ -235,6 +248,14 @@ class Server:
         if client_id in self.client_id_to_game_id:
             del self.client_id_to_game_id[client_id]
 
+    def add_game_action(self, client_id, action):
+        game_id = self.client_id_to_game_id.get(client_id)
+        if game_id:
+            game = self.game_id_to_game[game_id]
+            player_id = game.username_to_player_id.get(self.client_id_to_username[client_id])
+            if player_id is not None:
+                game.actions.append([player_id, action])
+
     def destroy_game(self, game_id):
         game = self.game_id_to_game[game_id]
         print(game)
@@ -256,6 +277,8 @@ class Game:
         self.end = None
         self.score = None
         self.player_id_to_username = {}
+        self.username_to_player_id = {}
+        self.actions = []
 
     def __repr__(self):
         return str(self.__dict__)
