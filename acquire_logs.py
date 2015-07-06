@@ -50,6 +50,15 @@ class AcquireLogProcessor:
 
         self.connect_v1_username = None
 
+        command_to_client_entry_to_index = {entry: index for index, entry in enumerate(enums.lookups['CommandsToClient'])}
+        self.commands_to_client_handlers = {
+            command_to_client_entry_to_index['SetGamePlayerJoin']: self.handle_command_to_client__set_game_player_join,
+            command_to_client_entry_to_index['SetGamePlayerRejoin']: self.handle_command_to_client__set_game_player_rejoin,
+            command_to_client_entry_to_index['SetGamePlayerLeave']: self.handle_command_to_client__set_game_player_leave,
+            command_to_client_entry_to_index['SetGamePlayerUsername']: self.handle_command_to_client__set_game_player_username,
+            command_to_client_entry_to_index['SetGamePlayerClientId']: self.handle_command_to_client__set_game_player_client_id,
+        }
+
     def handle_command_to_client(self, match):
         client_ids = [int(x) for x in match.group('client_ids').split(',')]
         try:
@@ -59,9 +68,33 @@ class AcquireLogProcessor:
 
         try:
             self.commands_to_client_translator.translate(commands)
+
+            for command in commands:
+                handler = self.commands_to_client_handlers.get(command[0])
+                if handler:
+                    handler(client_ids, command)
+
             return True
         except:
             traceback.print_exc()
+
+    def handle_command_to_client__set_game_player_join(self, client_ids, command):
+        self.server.add_client_id_to_game(command[1], command[3])
+
+    def handle_command_to_client__set_game_player_rejoin(self, client_ids, command):
+        self.server.add_client_id_to_game(command[1], command[3])
+
+    def handle_command_to_client__set_game_player_leave(self, client_ids, command):
+        self.server.remove_client_id_from_game(command[3])
+
+    def handle_command_to_client__set_game_player_username(self, client_ids, command):
+        self.server.add_username_to_game(command[1], command[3])
+
+    def handle_command_to_client__set_game_player_client_id(self, client_ids, command):
+        if command[3] is None:
+            self.server.remove_player_id_from_game(command[1], command[2])
+        else:
+            self.server.add_client_id_to_game(command[1], command[3])
 
     def handle_command_to_server(self, match):
         client_id = int(match.group('client_id'))
@@ -153,10 +186,13 @@ class AcquireLogProcessor:
 class Server:
     def __init__(self):
         self.client_id_to_username = {}
+        self.username_to_client_id = {}
+        self.client_id_to_game_id = {}
         self.game_id_to_game = {}
 
     def add_client(self, client_id, username):
         self.client_id_to_username[client_id] = username
+        self.username_to_client_id[username] = client_id
 
     def handle_log(self, entry):
         game_id = entry['external-game-id'] if 'external-game-id' in entry else entry['game-id']
@@ -183,6 +219,21 @@ class Server:
                 game.end = entry['end']
             if 'score' in entry:
                 game.score = entry['score']
+
+    def add_client_id_to_game(self, game_id, client_id):
+        self.client_id_to_game_id[client_id] = game_id
+
+    def add_username_to_game(self, game_id, username):
+        self.client_id_to_game_id[self.username_to_client_id[username]] = game_id
+
+    def remove_client_id_from_game(self, client_id):
+        if client_id in self.client_id_to_game_id:
+            del self.client_id_to_game_id[client_id]
+
+    def remove_player_id_from_game(self, game_id, player_id):
+        client_id = self.username_to_client_id[self.game_id_to_game[game_id].player_id_to_username[player_id]]
+        if client_id in self.client_id_to_game_id:
+            del self.client_id_to_game_id[client_id]
 
     def destroy_game(self, game_id):
         game = self.game_id_to_game[game_id]
