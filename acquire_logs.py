@@ -137,7 +137,7 @@ class AcquireLogProcessor:
         for timestamp, path in util.get_log_file_paths('py', begin=1408905413):
             print(path)
 
-            self.server = Server()
+            self.server = Server(timestamp)
 
             enums_translations = enums.get_translations(timestamp)
             self.commands_to_client_translator = enums.CommandsToClientTranslator(enums_translations)
@@ -174,7 +174,8 @@ class AcquireLogProcessor:
 
 
 class Server:
-    def __init__(self):
+    def __init__(self, log_timestamp=None):
+        self.log_timestamp = log_timestamp
         self.client_id_to_username = {}
         self.username_to_client_id = {}
         self.client_id_to_game_id = {}
