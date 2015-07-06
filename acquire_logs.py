@@ -196,8 +196,14 @@ class Server:
             self.game_id_to_game[game_id] = game
 
         if entry['_'] == 'game-player':
-            game.player_id_to_username[entry['player-id']] = entry['username']
-            game.username_to_player_id[entry['username']] = entry['player-id']
+            player_id = entry['player-id']
+            username = entry['username']
+
+            game.player_id_to_username[player_id] = username
+            game.username_to_player_id[username] = player_id
+
+            if username not in game.player_join_order:
+                game.player_join_order.append(username)
         else:
             if 'state' in entry:
                 game.state = entry['state']
@@ -256,6 +262,7 @@ class Game:
         self.score = None
         self.player_id_to_username = {}
         self.username_to_player_id = {}
+        self.player_join_order = []
         self.actions = []
 
     def __repr__(self):
