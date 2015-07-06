@@ -210,6 +210,8 @@ class Server:
                 game.end = entry['end']
             if 'score' in entry:
                 game.score = entry['score']
+            if 'scores' in entry:
+                game.score = entry['scores']
 
     def add_client_id_to_game(self, game_id, client_id):
         self.client_id_to_game_id[client_id] = game_id
