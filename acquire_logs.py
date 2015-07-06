@@ -45,7 +45,6 @@ class AcquireLogProcessor:
             command_to_client_entry_to_index['SetGamePlayerJoin']: self.handle_command_to_client__set_game_player_join,
             command_to_client_entry_to_index['SetGamePlayerRejoin']: self.handle_command_to_client__set_game_player_rejoin,
             command_to_client_entry_to_index['SetGamePlayerLeave']: self.handle_command_to_client__set_game_player_leave,
-            command_to_client_entry_to_index['SetGamePlayerUsername']: self.handle_command_to_client__set_game_player_username,
             command_to_client_entry_to_index['SetGamePlayerClientId']: self.handle_command_to_client__set_game_player_client_id,
         }
 
@@ -81,9 +80,6 @@ class AcquireLogProcessor:
 
     def handle_command_to_client__set_game_player_leave(self, client_ids, command):
         self.server.remove_client_id_from_game(command[3])
-
-    def handle_command_to_client__set_game_player_username(self, client_ids, command):
-        self.server.add_username_to_game(command[1], command[3])
 
     def handle_command_to_client__set_game_player_client_id(self, client_ids, command):
         if command[3] is None:
@@ -217,9 +213,6 @@ class Server:
 
     def add_client_id_to_game(self, game_id, client_id):
         self.client_id_to_game_id[client_id] = game_id
-
-    def add_username_to_game(self, game_id, username):
-        self.client_id_to_game_id[self.username_to_client_id[username]] = game_id
 
     def remove_client_id_from_game(self, client_id):
         if client_id in self.client_id_to_game_id:
