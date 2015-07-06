@@ -19,13 +19,9 @@ class AcquireLogProcessor:
             r'^AttributeError:',
             r'^connection_lost$',
             r'^connection_made$',
-            r'^\d+ receive timeout$',
-            r'^\d+ send timeout$',
             r'^Exception in callback ',
             r'^handle:',
             r'^ImportError:',
-            r'^KeyError:',
-            r'^None close$',
             r'^socket\.send\(\) raised exception\.$',
             r'^Traceback \(most recent call last\):',
             r'^UnicodeEncodeError:',
@@ -35,20 +31,14 @@ class AcquireLogProcessor:
             ('command to client', re.compile(r'^(?P<client_ids>[\d,]+) <- (?P<commands>.*)'), self.handle_command_to_client),
             ('ignore', re.compile('|'.join(regexes_to_ignore)), None),
             ('command to server', re.compile(r'^(?P<client_id>\d+) -> (?P<command>.*)'), self.handle_command_to_server),
-            ('log v2', re.compile(r'^(?P<entry>{.*)'), self.handle_log_v2),
+            ('log', re.compile(r'^(?P<entry>{.*)'), self.handle_log),
+            ('connect v2', re.compile(r'^(?P<client_id>\d+) connect (?P<username>.+) \d+\.\d+\.\d+\.\d+ \S+(?: (?:True|False))?$'), self.handle_connect),
             ('disconnect', re.compile(r'^(\d+) disconnect$'), None),
-            ('connect v3', re.compile(r'^(?P<client_id>\d+) connect (?P<username>.+) \d+\.\d+\.\d+\.\d+ \S+(?: (?:True|False))?$'), self.handle_connect_v2_and_v3),
             ('game expired', re.compile(r'^game #(?P<game_id>\d+) expired(?: \(internal #\d+\))?$'), self.handle_game_expired),
-            ('connect v1', re.compile(r'^X connect \d+\.\d+\.\d+\.\d+(?::\d+)? (?P<username>.*)$'), self.handle_connect_v1),
-            ('open', re.compile(r'^(?P<client_id>\d+) open \d+\.\d+\.\d+\.\d+(?::\d+)?$'), self.handle_open),
-            ('close', re.compile(r'^(\d+) close$'), None),
-            ('connect v2', re.compile(r'^(?P<client_id>\d+) connect \d+\.\d+\.\d+\.\d+ (?P<username>.+)$'), self.handle_connect_v2_and_v3),
+            ('connect v1', re.compile(r'^(?P<client_id>\d+) connect \d+\.\d+\.\d+\.\d+ (?P<username>.+)$'), self.handle_connect),
             ('disconnect after error', re.compile(r'^\d+ -> (\d+) disconnect$'), None),
-            ('log v1', re.compile(r'^result (.*)'), None),
             ('command to server after connect printing error', re.compile(r'^\d+ connect (?P<client_id>\d+) -> (?P<command>.*)'), self.handle_command_to_server),
         ]
-
-        self.connect_v1_username = None
 
         command_to_client_entry_to_index = {entry: index for index, entry in enumerate(enums.lookups['CommandsToClient'])}
         self.commands_to_client_handlers = {
@@ -120,7 +110,7 @@ class AcquireLogProcessor:
     def handle_command_to_server__do_game_action(self, client_id, command):
         self.server.add_game_action(client_id, command[1:])
 
-    def handle_log_v2(self, match):
+    def handle_log(self, match):
         try:
             entry = ujson.decode(match.group('entry'))
         except ValueError:
@@ -140,16 +130,8 @@ class AcquireLogProcessor:
         except:
             traceback.print_exc()
 
-    def handle_connect_v2_and_v3(self, match):
+    def handle_connect(self, match):
         self.server.add_client(int(match.group('client_id')), match.group('username'))
-        return True
-
-    def handle_connect_v1(self, match):
-        self.connect_v1_username = match.group('username')
-        return True
-
-    def handle_open(self, match):
-        self.server.add_client(int(match.group('client_id')), self.connect_v1_username)
         return True
 
     def go(self):
