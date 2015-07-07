@@ -93,7 +93,7 @@ class IncrementIdManager:
         pass
 
 
-class AcquireServerProtocol():
+class AcquireServerProtocol:
     next_client_id_manager = ReuseIdManager(60)
     client_id_to_client = {}
     client_ids = set()
