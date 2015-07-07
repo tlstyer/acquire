@@ -1,6 +1,8 @@
 #!/usr/bin/env python3.4m
 
+import random
 import re
+import server
 import traceback
 import ujson
 import util
@@ -576,7 +578,7 @@ class Server:
 
     def destroy_game(self, game_id):
         game = self.game_id_to_game[game_id]
-        print(game)
+        game.replay()
         del self.game_id_to_game[game_id]
 
     def cleanup(self):
@@ -607,8 +609,46 @@ class Game:
         self.tile_rack_tiles_order = []
         self.actions = []
 
-    def __repr__(self):
-        return str(self.__dict__)
+    def replay(self):
+        position_tiles = self.played_tiles_order[:len(self.player_id_to_username)]
+        remaining_tiles = list({(x, y) for x in range(12) for y in range(9)} - set(position_tiles) - self.tile_rack_tiles)
+        random.shuffle(remaining_tiles)
+        tile_bag = position_tiles + self.tile_rack_tiles_order + remaining_tiles
+        tile_bag.reverse()
+
+        server_game = server.Game(self.game_id, self.internal_game_id, Enums.lookups['GameModes'].index(self.mode), self.max_players, Game._add_pending_messages, False, tile_bag)
+
+        player_id_to_client = [Client(player_id, username) for player_id, username in sorted(self.player_id_to_username.items())]
+
+        for username in self.player_join_order:
+            client = player_id_to_client[self.username_to_player_id[username]]
+            server_game.join_game(client)
+
+        for player_id, action in self.actions:
+            game_action_id = action[0]
+            data = action[1:]
+            server_game.do_game_action(player_id_to_client[player_id], game_action_id, data)
+
+        has_identical_board = str(self.board) == str(server_game.game_board.x_to_y_to_board_type)
+        has_identical_score_sheet_players = str(self.score_sheet_players[:len(self.player_id_to_username)]) == str([x[:8] for x in server_game.score_sheet.player_data])
+        has_identical_score_sheet_chain_size = str(self.score_sheet_chain_size) == str(server_game.score_sheet.chain_size)
+
+        if has_identical_board and has_identical_score_sheet_players and has_identical_score_sheet_chain_size:
+            print('yay!')
+        else:
+            print('boo!')
+
+    @staticmethod
+    def _add_pending_messages(messages, client_ids=None):
+        pass
+
+
+class Client:
+    def __init__(self, player_id, username):
+        self.client_id = player_id + 1
+        self.username = username
+        self.game_id = None
+        self.player_id = None
 
 
 def main():
