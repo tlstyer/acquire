@@ -538,7 +538,7 @@ class Server:
             del self.client_id_to_game_id[client_id]
 
     def set_game_board_cell(self, client_id, x, y, game_board_type_id):
-        game_id = self.client_id_to_game_id.get(client_id)
+        game_id = self.client_id_to_game_id[client_id]
         game = self.game_id_to_game[game_id]
         if game.board[x][y] == Game.game_board_type__nothing:
             game.played_tiles_order.append((x, y))
@@ -561,7 +561,7 @@ class Server:
         game.score_sheet_chain_size = data[1]
 
     def set_tile(self, client_id, x, y):
-        game_id = self.client_id_to_game_id.get(client_id)
+        game_id = self.client_id_to_game_id[client_id]
         game = self.game_id_to_game[game_id]
         tile = (x, y)
         if tile not in game.tile_rack_tiles:
