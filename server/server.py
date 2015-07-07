@@ -996,7 +996,7 @@ class ActionGameOver(Action):
 
 
 class Game:
-    def __init__(self, game_id, internal_game_id, mode, max_players, add_pending_messages, logging_enabled=True):
+    def __init__(self, game_id, internal_game_id, mode, max_players, add_pending_messages, logging_enabled=True, tile_bag=None):
         self.game_id = game_id
         self.internal_game_id = internal_game_id
         self.state = enums.GameStates.Starting.value
@@ -1010,9 +1010,12 @@ class Game:
 
         self.game_board = GameBoard(self)
         self.score_sheet = ScoreSheet(self)
-        tiles = [(x, y) for x in range(12) for y in range(9)]
-        random.shuffle(tiles)
-        self.tile_bag = tiles
+        if tile_bag is None:
+            tiles = [(x, y) for x in range(12) for y in range(9)]
+            random.shuffle(tiles)
+            self.tile_bag = tiles
+        else:
+            self.tile_bag = tile_bag
         self.tile_racks = None
 
         self.actions = []
