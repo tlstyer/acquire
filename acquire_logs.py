@@ -376,6 +376,8 @@ class AcquireLogProcessor:
                 func(*args)
             del self.delayed_calls[:]
 
+        return True
+
     def handle_command_to_server(self, match):
         client_id = int(match.group('client_id'))
         try:
