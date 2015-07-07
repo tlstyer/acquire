@@ -392,7 +392,8 @@ class ScoreSheet:
             if player_id >= client.player_id:
                 username = player_datum[enums.ScoreSheetIndexes.Username.value]
                 self.username_to_player_id[username] = player_id
-                print(ujson.dumps({'_': 'game-player', 'game-id': self.game.internal_game_id, 'external-game-id': self.game.game_id, 'player-id': player_id, 'username': username}))
+                if self.game.logging_enabled:
+                    print(ujson.dumps({'_': 'game-player', 'game-id': self.game.internal_game_id, 'external-game-id': self.game.game_id, 'player-id': player_id, 'username': username}))
 
             # tell client about other position tiles
             if player_id != client.player_id:
@@ -995,13 +996,14 @@ class ActionGameOver(Action):
 
 
 class Game:
-    def __init__(self, game_id, internal_game_id, mode, max_players, add_pending_messages):
+    def __init__(self, game_id, internal_game_id, mode, max_players, add_pending_messages, logging_enabled=True):
         self.game_id = game_id
         self.internal_game_id = internal_game_id
         self.state = enums.GameStates.Starting.value
         self.mode = mode
         self.max_players = max_players if mode == enums.GameModes.Singles.value else 4
         self.add_pending_messages = add_pending_messages
+        self.logging_enabled = logging_enabled
         self.num_players = 0
         self.client_ids = set()
         self.watcher_client_ids = set()
@@ -1106,7 +1108,8 @@ class Game:
             log['max-players'] = max_players
 
         self.add_pending_messages([[enums.CommandsToClient.SetGameState.value, self.game_id, state, mode, max_players, score]])
-        print(ujson.dumps(log))
+        if self.logging_enabled:
+            print(ujson.dumps(log))
 
     def add_history_message(self, *data, player_id=None):
         self.history_messages.append([player_id, data])
