@@ -281,6 +281,8 @@ class AcquireLogProcessor:
         command_to_client_entry_to_index = {entry: index for index, entry in enumerate(Enums.lookups['CommandsToClient'])}
         self.commands_to_client_handlers = {
             command_to_client_entry_to_index['SetGameBoardCell']: self.handle_command_to_client__set_game_board_cell,
+            command_to_client_entry_to_index['SetScoreSheetCell']: self.handle_command_to_client__set_score_sheet_cell,
+            command_to_client_entry_to_index['SetScoreSheet']: self.handle_command_to_client__set_score_sheet,
             command_to_client_entry_to_index['SetGamePlayerJoin']: self.handle_command_to_client__set_game_player_join,
             command_to_client_entry_to_index['SetGamePlayerRejoin']: self.handle_command_to_client__set_game_player_rejoin,
             command_to_client_entry_to_index['SetGameWatcherClientId']: self.handle_command_to_client__set_game_watcher_client_id,
@@ -352,6 +354,12 @@ class AcquireLogProcessor:
 
     def handle_command_to_client__set_game_board_cell(self, client_ids, command):
         self.server.set_game_board_cell(client_ids[0], command[1], command[2], command[3])
+
+    def handle_command_to_client__set_score_sheet_cell(self, client_ids, command):
+        self.server.set_score_sheet_cell(client_ids[0], command[1], command[2], command[3])
+
+    def handle_command_to_client__set_score_sheet(self, client_ids, command):
+        self.server.set_score_sheet(client_ids[0], command[1])
 
     def handle_command_to_client__set_game_player_leave(self, client_ids, command):
         self.server.remove_client_id_from_game(command[3])
@@ -532,6 +540,22 @@ class Server:
             game.played_tiles_order.append((x, y))
         game.board[x][y] = game_board_type_id
 
+    def set_score_sheet_cell(self, client_id, row, index, value):
+        game_id = self.client_id_to_game_id[client_id]
+        game = self.game_id_to_game[game_id]
+
+        if row < 6:
+            game.score_sheet_players[row][index] = value
+        else:
+            game.score_sheet_chain_size[index] = value
+
+    def set_score_sheet(self, client_id, data):
+        game_id = self.client_id_to_game_id[client_id]
+        game = self.game_id_to_game[game_id]
+
+        game.score_sheet_players[:len(data[0])] = data[0]
+        game.score_sheet_chain_size = data[1]
+
     def set_tile(self, client_id, x, y):
         game_id = self.client_id_to_game_id.get(client_id)
         game = self.game_id_to_game[game_id]
@@ -574,6 +598,8 @@ class Game:
         self.username_to_player_id = {}
         self.player_join_order = []
         self.board = [[Game.game_board_type__nothing for y in range(9)] for x in range(12)]
+        self.score_sheet_players = [[0, 0, 0, 0, 0, 0, 0, 60], [0, 0, 0, 0, 0, 0, 0, 60], [0, 0, 0, 0, 0, 0, 0, 60], [0, 0, 0, 0, 0, 0, 0, 60], [0, 0, 0, 0, 0, 0, 0, 60], [0, 0, 0, 0, 0, 0, 0, 60]]
+        self.score_sheet_chain_size = [0, 0, 0, 0, 0, 0, 0]
         self.played_tiles_order = []
         self.tile_rack_tiles = set()
         self.tile_rack_tiles_order = []
