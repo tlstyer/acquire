@@ -45,6 +45,8 @@ class AcquireLogProcessor:
             command_to_client_entry_to_index['SetGameBoardCell']: self.handle_command_to_client__set_game_board_cell,
             command_to_client_entry_to_index['SetGamePlayerJoin']: self.handle_command_to_client__set_game_player_join,
             command_to_client_entry_to_index['SetGamePlayerRejoin']: self.handle_command_to_client__set_game_player_rejoin,
+            command_to_client_entry_to_index['SetGameWatcherClientId']: self.handle_command_to_client__set_game_watcher_client_id,
+            command_to_client_entry_to_index['ReturnWatcherToLobby']: self.handle_command_to_client__return_watcher_to_lobby,
             command_to_client_entry_to_index['SetGamePlayerLeave']: self.handle_command_to_client__set_game_player_leave,
             command_to_client_entry_to_index['SetGamePlayerClientId']: self.handle_command_to_client__set_game_player_client_id,
         }
@@ -98,9 +100,14 @@ class AcquireLogProcessor:
     def handle_command_to_client__set_game_player_rejoin(self, client_ids, command):
         self.server.add_client_id_to_game(command[1], command[3])
 
+    def handle_command_to_client__set_game_watcher_client_id(self, client_ids, command):
+        self.server.add_client_id_to_game(command[1], command[2])
+
+    def handle_command_to_client__return_watcher_to_lobby(self, client_ids, command):
+        self.server.remove_client_id_from_game(command[2])
+
     def handle_command_to_client__set_game_board_cell(self, client_ids, command):
-        for client_id in client_ids:
-            self.server.set_game_board_cell(client_id, command[1], command[2], command[3])
+        self.server.set_game_board_cell(client_ids[0], command[1], command[2], command[3])
 
     def handle_command_to_client__set_game_player_leave(self, client_ids, command):
         self.server.remove_client_id_from_game(command[3])
@@ -258,11 +265,10 @@ class Server:
 
     def set_game_board_cell(self, client_id, x, y, game_board_type_id):
         game_id = self.client_id_to_game_id.get(client_id)
-        if game_id:
-            game = self.game_id_to_game[game_id]
-            if game.board[x][y] == Game.game_board_type__nothing:
-                game.played_tiles_order.append((x, y))
-            game.board[x][y] = game_board_type_id
+        game = self.game_id_to_game[game_id]
+        if game.board[x][y] == Game.game_board_type__nothing:
+            game.played_tiles_order.append((x, y))
+        game.board[x][y] = game_board_type_id
 
     def add_game_action(self, client_id, action):
         game_id = self.client_id_to_game_id.get(client_id)
