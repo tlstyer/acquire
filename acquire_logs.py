@@ -253,7 +253,6 @@ class AcquireLogProcessor:
 
         regexes_to_ignore = [
             r'^ ',
-            r'^$',
             r'^AttributeError:',
             r'^connection_lost$',
             r'^connection_made$',
@@ -267,15 +266,16 @@ class AcquireLogProcessor:
 
         self.line_matchers_and_handlers = [
             ('command to client', re.compile(r'^(?P<client_ids>[\d,]+) <- (?P<commands>.*)'), self.handle_command_to_client),
-            ('ignore', re.compile('|'.join(regexes_to_ignore)), None),
+            ('blank line', re.compile(r'^$'), self.handle_blank_line),
             ('command to server', re.compile(r'^(?P<client_id>\d+) -> (?P<command>.*)'), self.handle_command_to_server),
             ('log', re.compile(r'^(?P<entry>{.*)'), self.handle_log),
             ('connect v2', re.compile(r'^(?P<client_id>\d+) connect (?P<username>.+) \d+\.\d+\.\d+\.\d+ \S+(?: (?:True|False))?$'), self.handle_connect),
-            ('disconnect', re.compile(r'^(\d+) disconnect$'), None),
+            ('disconnect', re.compile(r'^(?P<client_id>\d+) disconnect$'), self.handle_disconnect),
             ('game expired', re.compile(r'^game #(?P<game_id>\d+) expired(?: \(internal #\d+\))?$'), self.handle_game_expired),
             ('connect v1', re.compile(r'^(?P<client_id>\d+) connect \d+\.\d+\.\d+\.\d+ (?P<username>.+)$'), self.handle_connect),
-            ('disconnect after error', re.compile(r'^\d+ -> (\d+) disconnect$'), None),
+            ('disconnect after error', re.compile(r'^\d+ -> (?P<client_id>\d+) disconnect$'), self.handle_disconnect),
             ('command to server after connect printing error', re.compile(r'^\d+ connect (?P<client_id>\d+) -> (?P<command>.*)'), self.handle_command_to_server),
+            ('ignore', re.compile('|'.join(regexes_to_ignore)), None),
         ]
 
         command_to_client_entry_to_index = {entry: index for index, entry in enumerate(Enums.lookups['CommandsToClient'])}
@@ -297,6 +297,8 @@ class AcquireLogProcessor:
 
         self.enum_set_game_board_cell = command_to_client_entry_to_index['SetGameBoardCell']
         self.enum_set_game_player = {index for entry, index in command_to_client_entry_to_index.items() if 'SetGamePlayer' in entry}
+
+        self.delayed_calls = []
 
     def handle_command_to_client(self, match):
         client_ids = [int(x) for x in match.group('client_ids').split(',')]
@@ -360,6 +362,12 @@ class AcquireLogProcessor:
         else:
             self.server.add_client_id_to_game(command[1], command[3])
 
+    def handle_blank_line(self, match):
+        if self.delayed_calls:
+            for func, args in self.delayed_calls:
+                func(*args)
+            del self.delayed_calls[:]
+
     def handle_command_to_server(self, match):
         client_id = int(match.group('client_id'))
         try:
@@ -401,6 +409,10 @@ class AcquireLogProcessor:
 
     def handle_connect(self, match):
         self.server.add_client(int(match.group('client_id')), match.group('username'))
+        return True
+
+    def handle_disconnect(self, match):
+        self.delayed_calls.append([self.server.remove_client, [int(match.group('client_id'))]])
         return True
 
     def go(self):
@@ -457,6 +469,14 @@ class Server:
     def add_client(self, client_id, username):
         self.client_id_to_username[client_id] = username
         self.username_to_client_id[username] = client_id
+
+    def remove_client(self, client_id):
+        del self.client_id_to_username[client_id]
+        self.username_to_client_id = {username: client_id for client_id, username in self.client_id_to_username.items()}
+        if len(self.client_id_to_username) != len(self.username_to_client_id):
+            print('remove_client: huh?')
+            print(self.client_id_to_username)
+            print(self.username_to_client_id)
 
     def handle_log(self, entry):
         game_id = entry['external-game-id'] if 'external-game-id' in entry else entry['game-id']
