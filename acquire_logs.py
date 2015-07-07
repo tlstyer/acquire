@@ -47,6 +47,7 @@ class AcquireLogProcessor:
             command_to_client_entry_to_index['SetGamePlayerRejoin']: self.handle_command_to_client__set_game_player_rejoin,
             command_to_client_entry_to_index['SetGameWatcherClientId']: self.handle_command_to_client__set_game_watcher_client_id,
             command_to_client_entry_to_index['ReturnWatcherToLobby']: self.handle_command_to_client__return_watcher_to_lobby,
+            command_to_client_entry_to_index['SetTile']: self.handle_command_to_client__set_tile,
             command_to_client_entry_to_index['SetGamePlayerLeave']: self.handle_command_to_client__set_game_player_leave,
             command_to_client_entry_to_index['SetGamePlayerClientId']: self.handle_command_to_client__set_game_player_client_id,
         }
@@ -105,6 +106,9 @@ class AcquireLogProcessor:
 
     def handle_command_to_client__return_watcher_to_lobby(self, client_ids, command):
         self.server.remove_client_id_from_game(command[2])
+
+    def handle_command_to_client__set_tile(self, client_ids, command):
+        self.server.set_tile(client_ids[0], command[2], command[3])
 
     def handle_command_to_client__set_game_board_cell(self, client_ids, command):
         self.server.set_game_board_cell(client_ids[0], command[1], command[2], command[3])
@@ -270,6 +274,14 @@ class Server:
             game.played_tiles_order.append((x, y))
         game.board[x][y] = game_board_type_id
 
+    def set_tile(self, client_id, x, y):
+        game_id = self.client_id_to_game_id.get(client_id)
+        game = self.game_id_to_game[game_id]
+        tile = (x, y)
+        if tile not in game.tile_rack_tiles:
+            game.tile_rack_tiles.add(tile)
+            game.tile_rack_tiles_order.append(tile)
+
     def add_game_action(self, client_id, action):
         game_id = self.client_id_to_game_id.get(client_id)
         if game_id:
@@ -305,6 +317,8 @@ class Game:
         self.player_join_order = []
         self.board = [[Game.game_board_type__nothing for y in range(9)] for x in range(12)]
         self.played_tiles_order = []
+        self.tile_rack_tiles = set()
+        self.tile_rack_tiles_order = []
         self.actions = []
 
     def __repr__(self):
