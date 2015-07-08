@@ -286,11 +286,12 @@ class LogProcessor:
 
         self.commands_to_client_translator = CommandsToClientTranslator({})
 
+        self.connection_made_count = 0
+
         regexes_to_ignore = [
             r'^ ',
             r'^AttributeError:',
             r'^connection_lost$',
-            r'^connection_made$',
             r'^Exception in callback ',
             r'^handle:',
             r'^ImportError:',
@@ -310,6 +311,7 @@ class LogProcessor:
             ('connect v1', re.compile(r'^(?P<client_id>\d+) connect \d+\.\d+\.\d+\.\d+ (?P<username>.+)$'), self.handle_connect),
             ('disconnect after error', re.compile(r'^\d+ -> (?P<client_id>\d+) disconnect$'), self.handle_disconnect),
             ('command to server after connect printing error', re.compile(r'^\d+ connect (?P<client_id>\d+) -> (?P<command>.*)'), self.handle_command_to_server),
+            ('connection made', re.compile(r'^connection_made$'), self.handle_connection_made),
             ('ignore', re.compile('|'.join(regexes_to_ignore)), None),
         ]
 
@@ -460,6 +462,14 @@ class LogProcessor:
         self.delayed_calls.append([self.server.remove_client, [int(match.group('client_id'))]])
         return True
 
+    def handle_connection_made(self, match):
+        self.connection_made_count += 1
+        if self.connection_made_count == 1:
+            return True
+        else:
+            print('got a second connection_made line. stopping the processing of this file...')
+            return 'stop'
+
     def go(self):
         line_type_to_count = {line_type: 0 for line_type, regex, handler in self.line_matchers_and_handlers}
         line_type_to_count['other'] = 0
@@ -472,6 +482,10 @@ class LogProcessor:
             enums_translations = Enums.get_translations(timestamp)
             self.commands_to_client_translator = CommandsToClientTranslator(enums_translations)
 
+            self.connection_made_count = 0
+
+            stop_processing_file = False
+
             try:
                 with util.open_possibly_gzipped_file(path) as f:
                     for line in f:
@@ -483,8 +497,13 @@ class LogProcessor:
                             match = regex.match(line)
                             if match:
                                 if handler:
-                                    if handler(match):
+                                    result = handler(match)
+                                    if result is True:
                                         handled_line_type = line_type
+                                        break
+                                    elif result == 'stop':
+                                        handled_line_type = line_type
+                                        stop_processing_file = True
                                         break
                                 else:
                                     handled_line_type = line_type
@@ -494,8 +513,11 @@ class LogProcessor:
 
                         if handled_line_type == 'other':
                             print(line)
+
+                        if stop_processing_file:
+                            break
             except KeyError:
-                print('*** KeyError')
+                traceback.print_exc()
             finally:
                 self.server.cleanup()
 
