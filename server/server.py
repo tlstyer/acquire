@@ -310,12 +310,17 @@ class AcquireServerProtocol:
 
 
 class GameBoard:
-    def __init__(self, game):
+    def __init__(self, game, board=None):
         self.game = game
 
-        self.x_to_y_to_board_type = [[enums.GameBoardTypes.Nothing.value for y in range(9)] for x in range(12)]
+        if board is None:
+            board = [[enums.GameBoardTypes.Nothing.value for y in range(9)] for x in range(12)]
+        self.x_to_y_to_board_type = board
+
         self.board_type_to_coordinates = [set() for t in range(enums.GameBoardTypes.Max.value)]
-        self.board_type_to_coordinates[enums.GameBoardTypes.Nothing.value].update((x, y) for x in range(12) for y in range(9))
+        for x in range(12):
+            for y in range(9):
+                self.board_type_to_coordinates[board[x][y]].add((x, y))
 
     def _set_cell(self, coordinates, board_type):
         x, y = coordinates
@@ -1171,6 +1176,54 @@ class Game:
 
         # action
         self.actions[-1].send_message({client.client_id})
+
+
+def recreate_game(filename):
+    import pickle
+
+    with open(filename, 'rb') as f:
+        game_data = pickle.load(f)
+
+    game = Game.__new__(Game)
+
+    game.game_id = game_data['game_id']
+    game.internal_game_id = game_data['internal_game_id']
+    game.state = game_data['state']
+    game.mode = game_data['mode']
+    game.max_players = game_data['max_players']
+    game.num_players = game_data['num_players']
+    game.tile_bag = game_data['tile_bag']
+    game.turn_player_id = game_data['turn_player_id']
+    game.turns_without_played_tiles_count = game_data['turns_without_played_tiles_count']
+    game.history_messages = game_data['history_messages']
+
+    game.add_pending_messages = AcquireServerProtocol.add_pending_messages
+    game.logging_enabled = True
+    game.client_ids = set()
+    game.watcher_client_ids = set()
+    game.expiration_time = None
+
+    game.game_board = GameBoard(game, game_data['game_board'])
+
+    game.score_sheet = ScoreSheet.__new__(ScoreSheet)
+    game.score_sheet.game = game
+    game.score_sheet.__dict__.update(game_data['score_sheet'])
+
+    game.tile_racks = TileRacks.__new__(TileRacks)
+    game.tile_racks.game = game
+    game.tile_racks.racks = game_data['tile_racks']
+
+    game.actions = []
+    for action_data in game_data['actions']:
+        cls = globals()[action_data['__name__']]
+        action = cls.__new__(cls)
+        action.game = game
+        for key, value in action_data.items():
+            if key != '__name__':
+                action.__dict__[key] = value
+        game.actions.append(action)
+
+    AcquireServerProtocol.game_id_to_game[game.game_id] = game
 
 
 def main():
