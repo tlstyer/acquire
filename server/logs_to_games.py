@@ -385,7 +385,7 @@ class LogProcessor:
         self.server.remove_client_id_from_game(command[2])
 
     def handle_command_to_client__set_tile(self, client_ids, command):
-        self.server.set_tile(client_ids[0], command[2], command[3])
+        self.server.set_tile(client_ids[0], command[1], command[2], command[3])
 
     def handle_command_to_client__set_game_board_cell(self, client_ids, command):
         self.server.set_game_board_cell(client_ids[0], command[1], command[2], command[3])
@@ -593,13 +593,19 @@ class Server:
         game.score_sheet_players[:len(data[0])] = data[0]
         game.score_sheet_chain_size = data[1]
 
-    def set_tile(self, client_id, x, y):
+    def set_tile(self, client_id, tile_index, x, y):
         game_id = self.client_id_to_game_id[client_id]
         game = self.game_id_to_game[game_id]
+
+        player_id = game.username_to_player_id[self.client_id_to_username[client_id]]
         tile = (x, y)
-        if tile not in game.tile_rack_tiles:
+
+        if game.initial_tile_racks[player_id][tile_index] is None:
             game.tile_rack_tiles.add(tile)
-            game.tile_rack_tiles_order.append(tile)
+            game.initial_tile_racks[player_id][tile_index] = tile
+        elif tile not in game.tile_rack_tiles:
+            game.tile_rack_tiles.add(tile)
+            game.additional_tile_rack_tiles_order.append(tile)
 
     def add_game_action(self, client_id, action):
         game_id = self.client_id_to_game_id.get(client_id)
@@ -637,18 +643,22 @@ class Game:
         self.username_to_player_id = {}
         self.player_join_order = []
         self.board = [[Game.game_board_type__nothing for y in range(9)] for x in range(12)]
-        self.score_sheet_players = [[0, 0, 0, 0, 0, 0, 0, 60], [0, 0, 0, 0, 0, 0, 0, 60], [0, 0, 0, 0, 0, 0, 0, 60], [0, 0, 0, 0, 0, 0, 0, 60], [0, 0, 0, 0, 0, 0, 0, 60], [0, 0, 0, 0, 0, 0, 0, 60]]
+        self.score_sheet_players = [[0, 0, 0, 0, 0, 0, 0, 60] for x in range(6)]
         self.score_sheet_chain_size = [0, 0, 0, 0, 0, 0, 0]
         self.played_tiles_order = []
         self.tile_rack_tiles = set()
-        self.tile_rack_tiles_order = []
+        self.initial_tile_racks = [[None, None, None, None, None, None] for x in range(6)]
+        self.additional_tile_rack_tiles_order = []
         self.actions = []
 
     def replay(self):
-        position_tiles = self.played_tiles_order[:len(self.player_id_to_username)]
+        num_players = len(self.player_id_to_username)
+
+        position_tiles = self.played_tiles_order[:num_players]
+        initial_tile_rack_tiles = [tile for tile_rack in self.initial_tile_racks[:num_players] for tile in tile_rack if tile is not None]
         remaining_tiles = list({(x, y) for x in range(12) for y in range(9)} - set(position_tiles) - self.tile_rack_tiles)
         random.shuffle(remaining_tiles)
-        tile_bag = position_tiles + self.tile_rack_tiles_order + remaining_tiles
+        tile_bag = position_tiles + initial_tile_rack_tiles + self.additional_tile_rack_tiles_order + remaining_tiles
         tile_bag.reverse()
 
         server_game = server.Game(self.game_id, self.internal_game_id, Enums.lookups['GameModes'].index(self.mode), self.max_players, Game._add_pending_messages, False, tile_bag)
@@ -665,7 +675,7 @@ class Game:
             server_game.do_game_action(player_id_to_client[player_id], game_action_id, data)
 
         has_identical_board = str(self.board) == str(server_game.game_board.x_to_y_to_board_type)
-        has_identical_score_sheet_players = str(self.score_sheet_players[:len(self.player_id_to_username)]) == str([x[:8] for x in server_game.score_sheet.player_data])
+        has_identical_score_sheet_players = str(self.score_sheet_players[:num_players]) == str([x[:8] for x in server_game.score_sheet.player_data])
         has_identical_score_sheet_chain_size = str(self.score_sheet_chain_size) == str(server_game.score_sheet.chain_size)
 
         messages = [self.log_timestamp, self.internal_game_id]
