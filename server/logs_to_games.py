@@ -226,6 +226,38 @@ class Enums:
 
         return translations_for_timestamp
 
+    @staticmethod
+    def get_lookups_from_enums_module():
+        import enums
+        import inspect
+
+        lookups = {}
+
+        for class_name in [obj[0] for obj in inspect.getmembers(enums) if inspect.isclass(obj[1]) and obj[0] != 'AutoNumber']:
+            class_obj = getattr(enums, class_name)
+
+            lookup = []
+            for name, member in class_obj.__members__.items():
+                lookup.append(name)
+
+            lookups[class_name] = lookup
+
+        return lookups
+
+    @staticmethod
+    def pretty_print_lookups(lookups):
+        parts = []
+        for class_name, members in sorted(lookups.items()):
+            part = ["    '" + class_name + "': ["]
+            for member in members:
+                part.append("        '" + member + "',")
+            part.append("    ]")
+            parts.append('\n'.join(part))
+
+        print('lookups = {')
+        print(',\n'.join(parts))
+        print('}')
+
 
 Enums.initialize()
 
@@ -248,7 +280,7 @@ class CommandsToClientTranslator:
                     command[1] = self.errors[command[1]]
 
 
-class AcquireLogProcessor:
+class LogProcessor:
     def __init__(self):
         self.server = Server()
 
@@ -711,9 +743,10 @@ class Client:
 
 
 def main():
-    acquire_log_processor = AcquireLogProcessor()
-    acquire_log_processor.go()
+    log_processor = LogProcessor()
+    log_processor.go()
 
 
 if __name__ == '__main__':
     main()
+    # Enums.pretty_print_lookups(Enums.get_lookups_from_enums_module())
