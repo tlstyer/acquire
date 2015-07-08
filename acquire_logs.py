@@ -1,5 +1,6 @@
 #!/usr/bin/env python3.4m
 
+import pickle
 import random
 import re
 import server
@@ -497,7 +498,7 @@ class Server:
         if game_id in self.game_id_to_game:
             game = self.game_id_to_game[game_id]
         else:
-            game = Game(game_id, internal_game_id)
+            game = Game(self.log_timestamp, game_id, internal_game_id)
             self.game_id_to_game[game_id] = game
 
         if entry['_'] == 'game-player':
@@ -588,8 +589,10 @@ class Server:
 
 class Game:
     game_board_type__nothing = Enums.lookups['GameBoardTypes'].index('Nothing')
+    score_sheet_indexes__client = Enums.lookups['ScoreSheetIndexes'].index('Client')
 
-    def __init__(self, game_id, internal_game_id):
+    def __init__(self, log_timestamp, game_id, internal_game_id):
+        self.log_timestamp = log_timestamp
         self.game_id = game_id
         self.internal_game_id = internal_game_id
         self.state = None
@@ -633,10 +636,66 @@ class Game:
         has_identical_score_sheet_players = str(self.score_sheet_players[:len(self.player_id_to_username)]) == str([x[:8] for x in server_game.score_sheet.player_data])
         has_identical_score_sheet_chain_size = str(self.score_sheet_chain_size) == str(server_game.score_sheet.chain_size)
 
+        messages = [self.log_timestamp, self.internal_game_id]
         if has_identical_board and has_identical_score_sheet_players and has_identical_score_sheet_chain_size:
-            print('yay!')
+            messages.append('yay!')
+            if server_game.state == Enums.lookups['GameStates'].index('InProgress') and len(self.player_id_to_username) > 1:
+                filename = self.make_game_file(server_game)
+                messages.append(filename)
         else:
-            print('boo!')
+            messages.append('boo!')
+
+        print(*messages)
+
+    def make_game_file(self, server_game):
+        num_tiles_on_board = len([1 for row in self.board for cell in row if cell != self.game_board_type__nothing])
+
+        game_data = {}
+
+        game_data['game_id'] = server_game.game_id
+        game_data['internal_game_id'] = server_game.internal_game_id
+        game_data['state'] = server_game.state
+        game_data['mode'] = server_game.mode
+        game_data['max_players'] = server_game.max_players
+        game_data['num_players'] = server_game.num_players
+        game_data['tile_bag'] = server_game.tile_bag
+        game_data['turn_player_id'] = server_game.turn_player_id
+        game_data['turns_without_played_tiles_count'] = server_game.turns_without_played_tiles_count
+        game_data['history_messages'] = server_game.history_messages
+
+        # game_data['add_pending_messages'] -- exclude
+        # game_data['logging_enabled'] -- exclude
+        # game_data['client_ids'] -- exclude
+        # game_data['watcher_client_ids'] -- exclude
+        # game_data['expiration_time'] -- exclude
+
+        game_data['game_board'] = server_game.game_board.x_to_y_to_board_type
+
+        score_sheet = server_game.score_sheet
+        game_data['score_sheet'] = {
+            'player_data': [row[:self.score_sheet_indexes__client] + [None] for row in score_sheet.player_data],
+            'available': score_sheet.available,
+            'chain_size': score_sheet.chain_size,
+            'price': score_sheet.price,
+            'creator_username': score_sheet.creator_username,
+            'username_to_player_id': score_sheet.username_to_player_id,
+        }
+
+        game_data['tile_racks'] = server_game.tile_racks.racks
+
+        game_data_actions = []
+        for action in server_game.actions:
+            game_data_action = dict(action.__dict__)
+            game_data_action['__name__'] = action.__class__.__name__
+            del game_data_action['game']
+            game_data_actions.append(game_data_action)
+        game_data['actions'] = game_data_actions
+
+        filename = '%d_%05d_%03d.bin' % (self.log_timestamp, self.internal_game_id, num_tiles_on_board)
+        with open('/opt/data/tim/' + filename, 'wb') as f:
+            pickle.dump(game_data, f)
+
+        return filename
 
     @staticmethod
     def _add_pending_messages(messages, client_ids=None):
