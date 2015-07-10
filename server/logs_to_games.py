@@ -611,10 +611,13 @@ class LogProcessor:
             del self._client_id_to_game_id[client_id]
 
     def _remove_player_id_from_game(self, game_id, player_id):
-        client_id = self._username_to_client_id[self._game_id_to_game[game_id].player_id_to_username[player_id]]
+        game = self._game_id_to_game.get(game_id)
 
-        if client_id in self._client_id_to_game_id:
-            del self._client_id_to_game_id[client_id]
+        if game:
+            client_id = self._username_to_client_id[game.player_id_to_username[player_id]]
+
+            if client_id in self._client_id_to_game_id:
+                del self._client_id_to_game_id[client_id]
 
     def _handle_command_to_server(self, client_id, command):
         try:
@@ -806,6 +809,299 @@ class Client:
         self.username = username
         self.game_id = None
         self.player_id = None
+
+
+class IndividualGameLogMaker:
+    def __init__(self, log_timestamp, file):
+        self._log_timestamp = log_timestamp
+
+        self._client_id_to_username = {}
+        self._username_to_client_id = {}
+        self._client_id_to_game_id = {}
+
+        self._log_parser = LogParser(log_timestamp, file)
+
+        self._line_type_to_handler = {
+            LineTypes.connect: self._handle_connect,
+            LineTypes.disconnect: self._handle_disconnect,
+            LineTypes.command_to_client: self._handle_command_to_client,
+            LineTypes.command_to_server: self._handle_command_to_server,
+            LineTypes.game_expired: self._handle_game_expired,
+            LineTypes.log: self._handle_log,
+            LineTypes.blank_line: self._handle_blank_line,
+        }
+
+        command_to_client_entry_to_index = {entry: index for index, entry in enumerate(Enums.lookups['CommandsToClient'])}
+        self._commands_to_client_handlers = {
+            # 'FatalError',
+            # 'SetClientId',
+            # 'SetClientIdToData',
+            # 'SetGameState',
+            command_to_client_entry_to_index['SetGameBoardCell']: self._handle_command_to_client__set_game_board_cell,
+            # 'SetGameBoard',
+            command_to_client_entry_to_index['SetScoreSheetCell']: self._handle_command_to_client__set_score_sheet_cell,
+            command_to_client_entry_to_index['SetScoreSheet']: self._handle_command_to_client__set_score_sheet,
+            command_to_client_entry_to_index['SetGamePlayerJoin']: self._handle_command_to_client__set_game_player_join,
+            command_to_client_entry_to_index['SetGamePlayerRejoin']: self._handle_command_to_client__set_game_player_rejoin,
+            command_to_client_entry_to_index['SetGamePlayerLeave']: self._handle_command_to_client__set_game_player_leave,
+            # 'SetGamePlayerJoinMissing',
+            command_to_client_entry_to_index['SetGameWatcherClientId']: self._handle_command_to_client__set_game_watcher_client_id,
+            command_to_client_entry_to_index['ReturnWatcherToLobby']: self._handle_command_to_client__return_watcher_to_lobby,
+            # 'AddGameHistoryMessage',
+            # 'AddGameHistoryMessages',
+            # 'SetTurn',
+            # 'SetGameAction',
+            command_to_client_entry_to_index['SetTile']: self._handle_command_to_client__set_tile,
+            # 'SetTileGameBoardType',
+            # 'RemoveTile',
+            # 'AddGlobalChatMessage',
+            # 'AddGameChatMessage',
+            # 'DestroyGame',
+            # # defunct
+            # 'SetGamePlayerUsername',
+            command_to_client_entry_to_index['SetGamePlayerClientId']: self._handle_command_to_client__set_game_player_client_id,
+        }
+
+        command_to_server_entry_to_index = {entry: index for index, entry in enumerate(Enums.lookups['CommandsToServer'])}
+        self._commands_to_server_handlers = {
+            # 'CreateGame',
+            # 'JoinGame',
+            # 'RejoinGame',
+            # 'WatchGame',
+            # 'LeaveGame',
+            command_to_server_entry_to_index['DoGameAction']: self._handle_command_to_server__do_game_action,
+            # 'SendGlobalChatMessage',
+            # 'SendGameChatMessage',
+        }
+
+        self._delayed_calls = []
+
+        self._line_number = 1
+        self._batch_line_number = 1
+        self._batch = []
+
+        self._game_id_to_game_log = {}
+        self._batch_add_client_id = None
+        self._batch_remove_client_id = None
+        self._batch_game_id = None
+        self._batch_game_client_ids = []
+        self._batch_destroy_game_ids = []
+        self._client_id_to_add_batch = {}
+        self._re_disconnect = re.compile(r'^\d+ disconnect$')
+
+    def go(self):
+        for line_type, line_number, line, parse_line_data in self._log_parser.go():
+            self._batch.append(line)
+
+            handler = self._line_type_to_handler.get(line_type)
+            if handler:
+                self._line_number = line_number
+                handler(*parse_line_data)
+
+        game_ids = list(self._game_id_to_game_log.keys())
+        for game_id in game_ids:
+            self._handle_game_expired(game_id)
+        self._batch_destroy_game_ids = game_ids
+        self._batch_completed(None, None)
+
+    def _handle_connect(self, client_id, username):
+        if self._client_id_to_username.get(client_id) != username:
+            self._batch_add_client_id = client_id
+
+        self._client_id_to_username[client_id] = username
+        self._username_to_client_id[username] = client_id
+
+    def _handle_disconnect(self, client_id):
+        self._delayed_calls.append([self._handle_disconnect__delayed, [client_id]])
+
+    def _handle_disconnect__delayed(self, client_id):
+        if self._client_id_to_username.get(client_id):
+            self._batch_remove_client_id = client_id
+
+        del self._client_id_to_username[client_id]
+        self._username_to_client_id = {username: client_id for client_id, username in self._client_id_to_username.items()}
+
+        if len(self._client_id_to_username) != len(self._username_to_client_id):
+            print('remove_client: huh?')
+            print(self._client_id_to_username)
+            print(self._username_to_client_id)
+
+    def _handle_command_to_client(self, client_ids, commands):
+        for command in commands:
+            try:
+                handler = self._commands_to_client_handlers.get(command[0])
+                if handler:
+                    handler(client_ids, command)
+            except:
+                traceback.print_exc()
+
+    def _handle_command_to_client__set_game_board_cell(self, client_ids, command):
+        client_id, x, y, game_board_type_id = client_ids[0], command[1], command[2], command[3]
+
+        game_id = self._client_id_to_game_id[client_id]
+
+        self._batch_game_id = game_id
+
+    def _handle_command_to_client__set_score_sheet_cell(self, client_ids, command):
+        client_id, row, index, value = client_ids[0], command[1], command[2], command[3]
+
+        game_id = self._client_id_to_game_id[client_id]
+
+        self._batch_game_id = game_id
+
+    def _handle_command_to_client__set_score_sheet(self, client_ids, command):
+        client_id, score_sheet_data = client_ids[0], command[1]
+
+        game_id = self._client_id_to_game_id[client_id]
+
+        self._batch_game_id = game_id
+
+    def _handle_command_to_client__set_game_player_join(self, client_ids, command):
+        self._add_client_id_to_game(command[1], command[3])
+
+    def _handle_command_to_client__set_game_player_rejoin(self, client_ids, command):
+        self._add_client_id_to_game(command[1], command[3])
+
+    def _handle_command_to_client__set_game_player_leave(self, client_ids, command):
+        self._remove_client_id_from_game(command[3])
+
+    def _handle_command_to_client__set_game_watcher_client_id(self, client_ids, command):
+        self._add_client_id_to_game(command[1], command[2])
+
+    def _handle_command_to_client__return_watcher_to_lobby(self, client_ids, command):
+        self._remove_client_id_from_game(command[2])
+
+    def _handle_command_to_client__set_tile(self, client_ids, command):
+        client_id, tile_index, x, y = client_ids[0], command[1], command[2], command[3]
+
+        game_id = self._client_id_to_game_id[client_id]
+
+        self._batch_game_id = game_id
+
+    def _handle_command_to_client__set_game_player_client_id(self, client_ids, command):
+        if command[3] is None:
+            self._remove_player_id_from_game(command[1], command[2])
+        else:
+            self._add_client_id_to_game(command[1], command[3])
+
+    def _add_client_id_to_game(self, game_id, client_id):
+        self._client_id_to_game_id[client_id] = game_id
+
+        self._batch_game_id = game_id
+
+    def _remove_client_id_from_game(self, client_id):
+        if client_id in self._client_id_to_game_id:
+            self._batch_game_id = self._client_id_to_game_id[client_id]
+
+            del self._client_id_to_game_id[client_id]
+
+    def _remove_player_id_from_game(self, game_id, player_id):
+        client_id = self._username_to_client_id[self._game_id_to_game_log[game_id].player_id_to_username[player_id]]
+
+        if client_id in self._client_id_to_game_id:
+            self._batch_game_id = game_id
+
+            del self._client_id_to_game_id[client_id]
+
+    def _handle_command_to_server(self, client_id, command):
+        try:
+            handler = self._commands_to_server_handlers.get(command[0])
+            if handler:
+                handler(client_id, command)
+        except:
+            traceback.print_exc()
+
+    def _handle_command_to_server__do_game_action(self, client_id, command):
+        game_id = self._client_id_to_game_id.get(client_id)
+
+        if game_id:
+            game_log = self._game_id_to_game_log[game_id]
+            player_id = game_log.username_to_player_id.get(self._client_id_to_username[client_id])
+
+            if player_id is not None:
+                self._batch_game_id = game_id
+
+    def _handle_game_expired(self, game_id):
+        self._batch_destroy_game_ids.append(game_id)
+
+    def _handle_log(self, entry):
+        game_id = entry['external-game-id'] if 'external-game-id' in entry else entry['game-id']
+        internal_game_id = entry['game-id']
+
+        if game_id in self._game_id_to_game_log:
+            game_log = self._game_id_to_game_log[game_id]
+        else:
+            game_log = IndividualGameLog(self._log_timestamp, internal_game_id)
+            self._game_id_to_game_log[game_id] = game_log
+
+            for client_id, add_batch in self._client_id_to_add_batch.items():
+                batch_line_number, batch = add_batch
+                batch = [line for line in batch if not self._re_disconnect.match(line)]
+                game_log.line_number_to_batch[batch_line_number] = batch
+
+        if entry['_'] == 'game-player':
+            player_id = entry['player-id']
+            username = entry['username']
+
+            game_log.player_id_to_username[player_id] = username
+            game_log.username_to_player_id[username] = player_id
+
+    def _handle_blank_line(self):
+        if self._delayed_calls:
+            for func, args in self._delayed_calls:
+                func(*args)
+            del self._delayed_calls[:]
+
+        self._batch_completed(self._batch_line_number, self._batch)
+        self._batch_line_number = self._line_number + 1
+        self._batch = []
+
+    def _batch_completed(self, batch_line_number, batch):
+        if self._batch_add_client_id:
+            for game_log in self._game_id_to_game_log.values():
+                game_log.line_number_to_batch[batch_line_number] = batch
+
+            self._client_id_to_add_batch[self._batch_add_client_id] = [batch_line_number, batch]
+            self._batch_add_client_id = None
+
+        if self._batch_remove_client_id:
+            for game_log in self._game_id_to_game_log.values():
+                game_log.line_number_to_batch[batch_line_number] = batch
+
+            del self._client_id_to_add_batch[self._batch_remove_client_id]
+            self._batch_remove_client_id = None
+
+        if self._batch_game_id:
+            game_log = self._game_id_to_game_log[self._batch_game_id]
+            game_log.line_number_to_batch[batch_line_number] = batch
+
+            self._batch_game_id = None
+
+        if self._batch_destroy_game_ids:
+            for game_id in self._batch_destroy_game_ids:
+                game_log = self._game_id_to_game_log[game_id]
+                game_log.output()
+                del self._game_id_to_game_log[game_id]
+            self._batch_destroy_game_ids = []
+
+
+class IndividualGameLog:
+    def __init__(self, log_timestamp, internal_game_id):
+        self.log_timestamp = log_timestamp
+        self.internal_game_id = internal_game_id
+
+        self.player_id_to_username = {}
+        self.username_to_player_id = {}
+
+        self.line_number_to_batch = {}
+
+    def output(self):
+        filename = '%d_%05d.txt' % (self.log_timestamp, self.internal_game_id)
+        with open('/opt/data/tim/' + filename, 'w') as f:
+            for line_number, batch in sorted(self.line_number_to_batch.items()):
+                f.write('--- batch line number: ' + str(line_number) + '\n')
+                f.write('\n'.join(batch))
+                f.write('\n')
 
 
 def main():
