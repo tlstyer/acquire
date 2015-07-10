@@ -891,6 +891,8 @@ class IndividualGameLogMaker:
         self._client_id_to_add_batch = {}
         self._re_disconnect = re.compile(r'^\d+ disconnect$')
 
+        self._completed_game_logs = []
+
     def go(self):
         for line_type, line_number, line, parse_line_data in self._log_parser.go():
             self._batch.append(line)
@@ -900,11 +902,19 @@ class IndividualGameLogMaker:
                 self._line_number = line_number
                 handler(*parse_line_data)
 
+            if self._completed_game_logs:
+                for game_log in self._completed_game_logs:
+                    yield game_log
+                self._completed_game_logs = []
+
         game_ids = list(self._game_id_to_game_log.keys())
         for game_id in game_ids:
             self._handle_game_expired(game_id)
         self._batch_destroy_game_ids = game_ids
         self._batch_completed(None, None)
+
+        for game_log in self._completed_game_logs:
+            yield game_log
 
     def _handle_connect(self, client_id, username):
         if self._client_id_to_username.get(client_id) != username:
@@ -1065,9 +1075,9 @@ class IndividualGameLogMaker:
 
         if self._batch_destroy_game_ids:
             for game_id in self._batch_destroy_game_ids:
-                game_log = self._game_id_to_game_log[game_id]
-                game_log.output()
+                self._completed_game_logs.append(self._game_id_to_game_log[game_id])
                 del self._game_id_to_game_log[game_id]
+
             self._batch_destroy_game_ids = []
 
 
@@ -1081,7 +1091,7 @@ class IndividualGameLog:
 
         self.line_number_to_batch = {}
 
-    def output(self):
+    def make_game_log_file(self):
         filename = '%d_%05d.txt' % (self.log_timestamp, self.internal_game_id)
         with open('/opt/data/tim/' + filename, 'w') as f:
             for line_number, batch in sorted(self.line_number_to_batch.items()):
@@ -1112,6 +1122,45 @@ def main():
                 print(*messages)
 
 
+def output_game_file(directory, game):
+    with open('/opt/data/tim/%s/%d_%05d.json' % (directory, game.log_timestamp, game.internal_game_id), 'w') as f:
+        for key, value in sorted(game.__dict__.items()):
+            f.write(key)
+            f.write(': ')
+            if key == 'username_to_player_id':
+                value = sorted(value.items())
+            f.write(str(value))
+            f.write('\n')
+
+
+def test_individual_game_log():
+    timestamp = 1424164983
+
+    for timestamp, path in util.get_log_file_paths('py', begin=timestamp, end=timestamp):
+        with util.open_possibly_gzipped_file(path) as file:
+            log_processor = LogProcessor(timestamp, file)
+            for game in log_processor.go():
+                print('stage1', game.internal_game_id)
+                output_game_file('1', game)
+
+    for timestamp, path in util.get_log_file_paths('py', begin=timestamp, end=timestamp):
+        with util.open_possibly_gzipped_file(path) as file:
+            individual_game_log_maker = IndividualGameLogMaker(timestamp, file)
+            for individual_game_log in individual_game_log_maker.go():
+                print('stage2', individual_game_log.internal_game_id)
+                individual_game_log.make_game_log_file()
+
+    import glob
+
+    for path in sorted(glob.glob('/opt/data/tim/' + str(timestamp) + '_*.txt')):
+        with util.open_possibly_gzipped_file(path) as file:
+            log_processor = LogProcessor(timestamp, file)
+            for game in log_processor.go():
+                print('stage3', game.internal_game_id)
+                output_game_file('2', game)
+
+
 if __name__ == '__main__':
     main()
+    # test_individual_game_log()
     # Enums.pretty_print_lookups(Enums.get_lookups_from_enums_module())
