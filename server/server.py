@@ -1209,9 +1209,12 @@ def recreate_game(filename):
     game.score_sheet.game = game
     game.score_sheet.__dict__.update(game_data['score_sheet'])
 
-    game.tile_racks = TileRacks.__new__(TileRacks)
-    game.tile_racks.game = game
-    game.tile_racks.racks = game_data['tile_racks']
+    if game_data['tile_racks'] is None:
+        game.tile_racks = None
+    else:
+        game.tile_racks = TileRacks.__new__(TileRacks)
+        game.tile_racks.game = game
+        game.tile_racks.racks = game_data['tile_racks']
 
     game.actions = []
     for action_data in game_data['actions']:

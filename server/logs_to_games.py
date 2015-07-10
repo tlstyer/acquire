@@ -782,7 +782,7 @@ class Game:
             'username_to_player_id': score_sheet.username_to_player_id,
         }
 
-        game_data['tile_racks'] = server_game.tile_racks.racks
+        game_data['tile_racks'] = server_game.tile_racks.racks if server_game.tile_racks else None
 
         game_data_actions = []
         for action in server_game.actions:
