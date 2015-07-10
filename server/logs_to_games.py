@@ -1,5 +1,6 @@
 #!/usr/bin/env python3.4m
 
+import enums
 import pickle
 import random
 import re
@@ -280,13 +281,20 @@ class CommandsToClientTranslator:
                     command[1] = self.errors[command[1]]
 
 
-class LogProcessor:
-    def __init__(self):
-        self.server = Server()
+class LineTypes(enums.AutoNumber):
+    connect = ()
+    disconnect = ()
+    command_to_client = ()
+    command_to_server = ()
+    game_expired = ()
+    log = ()
+    blank_line = ()
+    ignore = ()
 
-        self.commands_to_client_translator = CommandsToClientTranslator({})
 
-        self.connection_made_count = 0
+class LogParser:
+    def __init__(self, log_timestamp, file):
+        self._file = file
 
         regexes_to_ignore = [
             r'^ ',
@@ -300,260 +308,346 @@ class LogProcessor:
             r'^UnicodeEncodeError:',
         ]
 
-        self.line_matchers_and_handlers = [
-            ('command to client', re.compile(r'^(?P<client_ids>[\d,]+) <- (?P<commands>.*)'), self.handle_command_to_client),
-            ('blank line', re.compile(r'^$'), self.handle_blank_line),
-            ('command to server', re.compile(r'^(?P<client_id>\d+) -> (?P<command>.*)'), self.handle_command_to_server),
-            ('log', re.compile(r'^(?P<entry>{.*)'), self.handle_log),
-            ('connect v2', re.compile(r'^(?P<client_id>\d+) connect (?P<username>.+) \d+\.\d+\.\d+\.\d+ \S+(?: (?:True|False))?$'), self.handle_connect),
-            ('disconnect', re.compile(r'^(?P<client_id>\d+) disconnect$'), self.handle_disconnect),
-            ('game expired', re.compile(r'^game #(?P<game_id>\d+) expired(?: \(internal #\d+\))?$'), self.handle_game_expired),
-            ('connect v1', re.compile(r'^(?P<client_id>\d+) connect \d+\.\d+\.\d+\.\d+ (?P<username>.+)$'), self.handle_connect),
-            ('disconnect after error', re.compile(r'^\d+ -> (?P<client_id>\d+) disconnect$'), self.handle_disconnect),
-            ('command to server after connect printing error', re.compile(r'^\d+ connect (?P<client_id>\d+) -> (?P<command>.*)'), self.handle_command_to_server),
-            ('connection made', re.compile(r'^connection_made$'), self.handle_connection_made),
-            ('ignore', re.compile('|'.join(regexes_to_ignore)), None),
+        self._line_matchers_and_handlers = [
+            (LineTypes.command_to_client, re.compile(r'^(?P<client_ids>[\d,]+) <- (?P<commands>.*)'), self._handle_command_to_client),
+            (LineTypes.blank_line, re.compile(r'^$'), None),
+            (LineTypes.command_to_server, re.compile(r'^(?P<client_id>\d+) -> (?P<command>.*)'), self._handle_command_to_server),
+            (LineTypes.log, re.compile(r'^(?P<entry>{.*)'), self._handle_log),
+            (LineTypes.connect, re.compile(r'^(?P<client_id>\d+) connect (?P<username>.+) \d+\.\d+\.\d+\.\d+ \S+(?: (?:True|False))?$'), self._handle_connect),
+            (LineTypes.disconnect, re.compile(r'^(?P<client_id>\d+) disconnect$'), self._handle_disconnect),
+            (LineTypes.game_expired, re.compile(r'^game #(?P<game_id>\d+) expired(?: \(internal #\d+\))?$'), self._handle_game_expired),
+            (LineTypes.connect, re.compile(r'^(?P<client_id>\d+) connect \d+\.\d+\.\d+\.\d+ (?P<username>.+)$'), self._handle_connect),
+            (LineTypes.disconnect, re.compile(r'^\d+ -> (?P<client_id>\d+) disconnect$'), self._handle_disconnect),  # disconnect after error
+            (LineTypes.command_to_server, re.compile(r'^\d+ connect (?P<client_id>\d+) -> (?P<command>.*)'), self._handle_command_to_server),  # command to server after connect printing error
+            (LineTypes.ignore, re.compile(r'^connection_made$'), self._handle_connection_made),
+            (LineTypes.ignore, re.compile('|'.join(regexes_to_ignore)), None),
         ]
 
+        enums_translations = Enums.get_translations(log_timestamp)
+        self._commands_to_client_translator = CommandsToClientTranslator(enums_translations)
+
+        self._connection_made_count = 0
+
         command_to_client_entry_to_index = {entry: index for index, entry in enumerate(Enums.lookups['CommandsToClient'])}
-        self.commands_to_client_handlers = {
-            command_to_client_entry_to_index['SetGameBoardCell']: self.handle_command_to_client__set_game_board_cell,
-            command_to_client_entry_to_index['SetScoreSheetCell']: self.handle_command_to_client__set_score_sheet_cell,
-            command_to_client_entry_to_index['SetScoreSheet']: self.handle_command_to_client__set_score_sheet,
-            command_to_client_entry_to_index['SetGamePlayerJoin']: self.handle_command_to_client__set_game_player_join,
-            command_to_client_entry_to_index['SetGamePlayerRejoin']: self.handle_command_to_client__set_game_player_rejoin,
-            command_to_client_entry_to_index['SetGameWatcherClientId']: self.handle_command_to_client__set_game_watcher_client_id,
-            command_to_client_entry_to_index['ReturnWatcherToLobby']: self.handle_command_to_client__return_watcher_to_lobby,
-            command_to_client_entry_to_index['SetTile']: self.handle_command_to_client__set_tile,
-            command_to_client_entry_to_index['SetGamePlayerLeave']: self.handle_command_to_client__set_game_player_leave,
-            command_to_client_entry_to_index['SetGamePlayerClientId']: self.handle_command_to_client__set_game_player_client_id,
-        }
+        self._enum_set_game_board_cell = command_to_client_entry_to_index['SetGameBoardCell']
+        self._enum_set_game_player = {index for entry, index in command_to_client_entry_to_index.items() if 'SetGamePlayer' in entry}
 
-        command_to_server_entry_to_index = {entry: index for index, entry in enumerate(Enums.lookups['CommandsToServer'])}
-        self.commands_to_server_handlers = {
-            command_to_server_entry_to_index['DoGameAction']: self.handle_command_to_server__do_game_action,
-        }
+    def go(self):
+        handled_line_type = None
+        line_number = 0
+        stop_processing_file = False
 
-        self.enum_set_game_board_cell = command_to_client_entry_to_index['SetGameBoardCell']
-        self.enum_set_game_player = {index for entry, index in command_to_client_entry_to_index.items() if 'SetGamePlayer' in entry}
+        for line in self._file:
+            line_number += 1
 
-        self.delayed_calls = []
+            if len(line) and line[-1] == '\n':
+                line = line[:-1]
 
-    def handle_command_to_client(self, match):
-        client_ids = [int(x) for x in match.group('client_ids').split(',')]
+            handled_line_type = None
+            parse_line_data = None
+
+            for line_type, regex, handler in self._line_matchers_and_handlers:
+                match = regex.match(line)
+                if match:
+                    handled_line_type = line_type
+                    if handler:
+                        parse_line_data = handler(match)
+
+                        if parse_line_data is None:
+                            handled_line_type = None
+                            continue
+                        elif parse_line_data == 'stop':
+                            stop_processing_file = True
+                            break
+                        else:
+                            break
+                    else:
+                        parse_line_data = ()
+                        break
+
+            if stop_processing_file:
+                break
+
+            yield (handled_line_type, line_number, line, parse_line_data)
+
+        # make sure last line type is always LineTypes.blank_line
+        if handled_line_type != LineTypes.blank_line:
+            yield (LineTypes.blank_line, line_number + 1, '', ())
+
+    def _handle_command_to_client(self, match):
         try:
+            client_ids = [int(x) for x in match.group('client_ids').split(',')]
             commands = ujson.decode(match.group('commands'))
         except ValueError:
             return
 
+        self._commands_to_client_translator.translate(commands)
+
+        # move SetGamePlayer* commands to the beginning if one of them is after a SetGameBoardCell command
+        # reason: need to know what game the client belongs to
+        enum_set_game_board_cell_indexes = set()
+        enum_set_game_player_indexes = set()
+        for index, command in enumerate(commands):
+            if command[0] == self._enum_set_game_board_cell:
+                enum_set_game_board_cell_indexes.add(index)
+            elif command[0] in self._enum_set_game_player:
+                enum_set_game_player_indexes.add(index)
+
+        if enum_set_game_board_cell_indexes and enum_set_game_player_indexes and min(enum_set_game_board_cell_indexes) < min(enum_set_game_player_indexes):
+            # SetGamePlayer* commands are always right next to each other when there's a SetGameBoardCell command in the batch
+            min_index = min(enum_set_game_player_indexes)
+            max_index = max(enum_set_game_player_indexes)
+            commands = commands[min_index:max_index + 1] + commands[:min_index] + commands[max_index + 1:]
+
+        return client_ids, commands
+
+    def _handle_command_to_server(self, match):
         try:
-            self.commands_to_client_translator.translate(commands)
-
-            # move SetGamePlayer* commands to the beginning if one of them is after a SetGameBoardCell command
-            # reason: need to know what game the client belongs to
-            enum_set_game_board_cell_indexes = set()
-            enum_set_game_player_indexes = set()
-            for index, command in enumerate(commands):
-                if command[0] == self.enum_set_game_board_cell:
-                    enum_set_game_board_cell_indexes.add(index)
-                elif command[0] in self.enum_set_game_player:
-                    enum_set_game_player_indexes.add(index)
-
-            if enum_set_game_board_cell_indexes and enum_set_game_player_indexes and min(enum_set_game_board_cell_indexes) < min(enum_set_game_player_indexes):
-                # SetGamePlayer* commands are always right next to each other when there's a SetGameBoardCell command in the batch
-                min_index = min(enum_set_game_player_indexes)
-                max_index = max(enum_set_game_player_indexes)
-                commands = commands[min_index:max_index + 1] + commands[:min_index] + commands[max_index + 1:]
-
-            for command in commands:
-                handler = self.commands_to_client_handlers.get(command[0])
-                if handler:
-                    handler(client_ids, command)
-
-            return True
-        except:
-            traceback.print_exc()
-
-    def handle_command_to_client__set_game_player_join(self, client_ids, command):
-        self.server.add_client_id_to_game(command[1], command[3])
-
-    def handle_command_to_client__set_game_player_rejoin(self, client_ids, command):
-        self.server.add_client_id_to_game(command[1], command[3])
-
-    def handle_command_to_client__set_game_watcher_client_id(self, client_ids, command):
-        self.server.add_client_id_to_game(command[1], command[2])
-
-    def handle_command_to_client__return_watcher_to_lobby(self, client_ids, command):
-        self.server.remove_client_id_from_game(command[2])
-
-    def handle_command_to_client__set_tile(self, client_ids, command):
-        self.server.set_tile(client_ids[0], command[1], command[2], command[3])
-
-    def handle_command_to_client__set_game_board_cell(self, client_ids, command):
-        self.server.set_game_board_cell(client_ids[0], command[1], command[2], command[3])
-
-    def handle_command_to_client__set_score_sheet_cell(self, client_ids, command):
-        self.server.set_score_sheet_cell(client_ids[0], command[1], command[2], command[3])
-
-    def handle_command_to_client__set_score_sheet(self, client_ids, command):
-        self.server.set_score_sheet(client_ids[0], command[1])
-
-    def handle_command_to_client__set_game_player_leave(self, client_ids, command):
-        self.server.remove_client_id_from_game(command[3])
-
-    def handle_command_to_client__set_game_player_client_id(self, client_ids, command):
-        if command[3] is None:
-            self.server.remove_player_id_from_game(command[1], command[2])
-        else:
-            self.server.add_client_id_to_game(command[1], command[3])
-
-    def handle_blank_line(self, match):
-        if self.delayed_calls:
-            for func, args in self.delayed_calls:
-                func(*args)
-            del self.delayed_calls[:]
-
-        return True
-
-    def handle_command_to_server(self, match):
-        client_id = int(match.group('client_id'))
-        try:
+            client_id = int(match.group('client_id'))
             command = ujson.decode(match.group('command'))
         except ValueError:
             return
 
-        try:
-            handler = self.commands_to_server_handlers.get(command[0])
-            if handler:
-                handler(client_id, command)
+        return client_id, command
 
-            return True
-        except:
-            traceback.print_exc()
-
-    def handle_command_to_server__do_game_action(self, client_id, command):
-        self.server.add_game_action(client_id, command[1:])
-
-    def handle_log(self, match):
+    def _handle_log(self, match):
         try:
             entry = ujson.decode(match.group('entry'))
         except ValueError:
-            traceback.print_exc()
             return
 
-        try:
-            self.server.handle_log(entry)
-            return True
-        except:
-            traceback.print_exc()
+        return entry,
 
-    def handle_game_expired(self, match):
-        try:
-            self.server.destroy_game(int(match.group('game_id')))
-            return True
-        except:
-            traceback.print_exc()
+    def _handle_connect(self, match):
+        return int(match.group('client_id')), match.group('username')
 
-    def handle_connect(self, match):
-        self.server.add_client(int(match.group('client_id')), match.group('username'))
-        return True
+    def _handle_disconnect(self, match):
+        return int(match.group('client_id')),
 
-    def handle_disconnect(self, match):
-        self.delayed_calls.append([self.server.remove_client, [int(match.group('client_id'))]])
-        return True
+    def _handle_game_expired(self, match):
+        return int(match.group('game_id')),
 
-    def handle_connection_made(self, match):
-        self.connection_made_count += 1
-        if self.connection_made_count == 1:
-            return True
+    def _handle_connection_made(self, match):
+        self._connection_made_count += 1
+        if self._connection_made_count == 1:
+            return ()
         else:
-            print('got a second connection_made line. stopping the processing of this file...')
             return 'stop'
 
+
+class LogProcessor:
+    def __init__(self, log_timestamp, file):
+        self._log_timestamp = log_timestamp
+
+        self._client_id_to_username = {}
+        self._username_to_client_id = {}
+        self._client_id_to_game_id = {}
+        self._game_id_to_game = {}
+
+        self._log_parser = LogParser(log_timestamp, file)
+
+        self._line_type_to_handler = {
+            LineTypes.connect: self._handle_connect,
+            LineTypes.disconnect: self._handle_disconnect,
+            LineTypes.command_to_client: self._handle_command_to_client,
+            LineTypes.command_to_server: self._handle_command_to_server,
+            LineTypes.game_expired: self._handle_game_expired,
+            LineTypes.log: self._handle_log,
+            LineTypes.blank_line: self._handle_blank_line,
+        }
+
+        command_to_client_entry_to_index = {entry: index for index, entry in enumerate(Enums.lookups['CommandsToClient'])}
+        self._commands_to_client_handlers = {
+            # 'FatalError',
+            # 'SetClientId',
+            # 'SetClientIdToData',
+            # 'SetGameState',
+            command_to_client_entry_to_index['SetGameBoardCell']: self._handle_command_to_client__set_game_board_cell,
+            # 'SetGameBoard',
+            command_to_client_entry_to_index['SetScoreSheetCell']: self._handle_command_to_client__set_score_sheet_cell,
+            command_to_client_entry_to_index['SetScoreSheet']: self._handle_command_to_client__set_score_sheet,
+            command_to_client_entry_to_index['SetGamePlayerJoin']: self._handle_command_to_client__set_game_player_join,
+            command_to_client_entry_to_index['SetGamePlayerRejoin']: self._handle_command_to_client__set_game_player_rejoin,
+            command_to_client_entry_to_index['SetGamePlayerLeave']: self._handle_command_to_client__set_game_player_leave,
+            # 'SetGamePlayerJoinMissing',
+            command_to_client_entry_to_index['SetGameWatcherClientId']: self._handle_command_to_client__set_game_watcher_client_id,
+            command_to_client_entry_to_index['ReturnWatcherToLobby']: self._handle_command_to_client__return_watcher_to_lobby,
+            # 'AddGameHistoryMessage',
+            # 'AddGameHistoryMessages',
+            # 'SetTurn',
+            # 'SetGameAction',
+            command_to_client_entry_to_index['SetTile']: self._handle_command_to_client__set_tile,
+            # 'SetTileGameBoardType',
+            # 'RemoveTile',
+            # 'AddGlobalChatMessage',
+            # 'AddGameChatMessage',
+            # 'DestroyGame',
+            # # defunct
+            # 'SetGamePlayerUsername',
+            command_to_client_entry_to_index['SetGamePlayerClientId']: self._handle_command_to_client__set_game_player_client_id,
+        }
+
+        command_to_server_entry_to_index = {entry: index for index, entry in enumerate(Enums.lookups['CommandsToServer'])}
+        self._commands_to_server_handlers = {
+            # 'CreateGame',
+            # 'JoinGame',
+            # 'RejoinGame',
+            # 'WatchGame',
+            # 'LeaveGame',
+            command_to_server_entry_to_index['DoGameAction']: self._handle_command_to_server__do_game_action,
+            # 'SendGlobalChatMessage',
+            # 'SendGameChatMessage',
+        }
+
+        self._delayed_calls = []
+
     def go(self):
-        line_type_to_count = {line_type: 0 for line_type, regex, handler in self.line_matchers_and_handlers}
-        line_type_to_count['other'] = 0
+        for line_type, line_number, line, parse_line_data in self._log_parser.go():
+            handler = self._line_type_to_handler.get(line_type)
+            if handler:
+                handler(*parse_line_data)
 
-        for timestamp, path in util.get_log_file_paths('py', begin=1408905413):
-            print(path)
+        for game_id in list(self._game_id_to_game.keys()):
+            self._handle_game_expired(game_id)
 
-            self.server = Server(timestamp)
+    def _handle_connect(self, client_id, username):
+        self._client_id_to_username[client_id] = username
+        self._username_to_client_id[username] = client_id
 
-            enums_translations = Enums.get_translations(timestamp)
-            self.commands_to_client_translator = CommandsToClientTranslator(enums_translations)
+    def _handle_disconnect(self, client_id):
+        self._delayed_calls.append([self._handle_disconnect__delayed, [client_id]])
 
-            self.connection_made_count = 0
+    def _handle_disconnect__delayed(self, client_id):
+        del self._client_id_to_username[client_id]
+        self._username_to_client_id = {username: client_id for client_id, username in self._client_id_to_username.items()}
 
-            stop_processing_file = False
-
-            try:
-                with util.open_possibly_gzipped_file(path) as f:
-                    for line in f:
-                        if len(line) and line[-1] == '\n':
-                            line = line[:-1]
-
-                        handled_line_type = 'other'
-                        for line_type, regex, handler in self.line_matchers_and_handlers:
-                            match = regex.match(line)
-                            if match:
-                                if handler:
-                                    result = handler(match)
-                                    if result is True:
-                                        handled_line_type = line_type
-                                        break
-                                    elif result == 'stop':
-                                        handled_line_type = line_type
-                                        stop_processing_file = True
-                                        break
-                                else:
-                                    handled_line_type = line_type
-                                    break
-
-                        line_type_to_count[handled_line_type] += 1
-
-                        if handled_line_type == 'other':
-                            print(line)
-
-                        if stop_processing_file:
-                            break
-            except KeyError:
-                traceback.print_exc()
-            finally:
-                self.server.cleanup()
-
-        for line_type, count in sorted(line_type_to_count.items(), key=lambda x: (-x[1], x[0])):
-            print(line_type, count)
-
-
-class Server:
-    def __init__(self, log_timestamp=None):
-        self.log_timestamp = log_timestamp
-        self.client_id_to_username = {}
-        self.username_to_client_id = {}
-        self.client_id_to_game_id = {}
-        self.game_id_to_game = {}
-
-    def add_client(self, client_id, username):
-        self.client_id_to_username[client_id] = username
-        self.username_to_client_id[username] = client_id
-
-    def remove_client(self, client_id):
-        del self.client_id_to_username[client_id]
-        self.username_to_client_id = {username: client_id for client_id, username in self.client_id_to_username.items()}
-        if len(self.client_id_to_username) != len(self.username_to_client_id):
+        if len(self._client_id_to_username) != len(self._username_to_client_id):
             print('remove_client: huh?')
-            print(self.client_id_to_username)
-            print(self.username_to_client_id)
+            print(self._client_id_to_username)
+            print(self._username_to_client_id)
 
-    def handle_log(self, entry):
+    def _handle_command_to_client(self, client_ids, commands):
+        for command in commands:
+            try:
+                handler = self._commands_to_client_handlers.get(command[0])
+                if handler:
+                    handler(client_ids, command)
+            except:
+                traceback.print_exc()
+
+    def _handle_command_to_client__set_game_board_cell(self, client_ids, command):
+        client_id, x, y, game_board_type_id = client_ids[0], command[1], command[2], command[3]
+
+        game_id = self._client_id_to_game_id[client_id]
+        game = self._game_id_to_game[game_id]
+
+        if game.board[x][y] == Game.game_board_type__nothing:
+            game.played_tiles_order.append((x, y))
+
+        game.board[x][y] = game_board_type_id
+
+    def _handle_command_to_client__set_score_sheet_cell(self, client_ids, command):
+        client_id, row, index, value = client_ids[0], command[1], command[2], command[3]
+
+        game_id = self._client_id_to_game_id[client_id]
+        game = self._game_id_to_game[game_id]
+
+        if row < 6:
+            game.score_sheet_players[row][index] = value
+        else:
+            game.score_sheet_chain_size[index] = value
+
+    def _handle_command_to_client__set_score_sheet(self, client_ids, command):
+        client_id, score_sheet_data = client_ids[0], command[1]
+
+        game_id = self._client_id_to_game_id[client_id]
+        game = self._game_id_to_game[game_id]
+
+        game.score_sheet_players[:len(score_sheet_data[0])] = score_sheet_data[0]
+        game.score_sheet_chain_size = score_sheet_data[1]
+
+    def _handle_command_to_client__set_game_player_join(self, client_ids, command):
+        self._add_client_id_to_game(command[1], command[3])
+
+    def _handle_command_to_client__set_game_player_rejoin(self, client_ids, command):
+        self._add_client_id_to_game(command[1], command[3])
+
+    def _handle_command_to_client__set_game_player_leave(self, client_ids, command):
+        self._remove_client_id_from_game(command[3])
+
+    def _handle_command_to_client__set_game_watcher_client_id(self, client_ids, command):
+        self._add_client_id_to_game(command[1], command[2])
+
+    def _handle_command_to_client__return_watcher_to_lobby(self, client_ids, command):
+        self._remove_client_id_from_game(command[2])
+
+    def _handle_command_to_client__set_tile(self, client_ids, command):
+        client_id, tile_index, x, y = client_ids[0], command[1], command[2], command[3]
+
+        game_id = self._client_id_to_game_id[client_id]
+        game = self._game_id_to_game[game_id]
+
+        player_id = game.username_to_player_id[self._client_id_to_username[client_id]]
+        tile = (x, y)
+
+        if game.initial_tile_racks[player_id][tile_index] is None:
+            game.tile_rack_tiles.add(tile)
+            game.initial_tile_racks[player_id][tile_index] = tile
+        elif tile not in game.tile_rack_tiles:
+            game.tile_rack_tiles.add(tile)
+            game.additional_tile_rack_tiles_order.append(tile)
+
+    def _handle_command_to_client__set_game_player_client_id(self, client_ids, command):
+        if command[3] is None:
+            self._remove_player_id_from_game(command[1], command[2])
+        else:
+            self._add_client_id_to_game(command[1], command[3])
+
+    def _add_client_id_to_game(self, game_id, client_id):
+        self._client_id_to_game_id[client_id] = game_id
+
+    def _remove_client_id_from_game(self, client_id):
+        if client_id in self._client_id_to_game_id:
+            del self._client_id_to_game_id[client_id]
+
+    def _remove_player_id_from_game(self, game_id, player_id):
+        client_id = self._username_to_client_id[self._game_id_to_game[game_id].player_id_to_username[player_id]]
+
+        if client_id in self._client_id_to_game_id:
+            del self._client_id_to_game_id[client_id]
+
+    def _handle_command_to_server(self, client_id, command):
+        try:
+            handler = self._commands_to_server_handlers.get(command[0])
+            if handler:
+                handler(client_id, command)
+        except:
+            traceback.print_exc()
+
+    def _handle_command_to_server__do_game_action(self, client_id, command):
+        game_id = self._client_id_to_game_id.get(client_id)
+
+        if game_id:
+            game = self._game_id_to_game[game_id]
+            player_id = game.username_to_player_id.get(self._client_id_to_username[client_id])
+
+            if player_id is not None:
+                game.actions.append([player_id, command[1:]])
+
+    def _handle_game_expired(self, game_id):
+        game = self._game_id_to_game[game_id]
+        game.replay()
+        del self._game_id_to_game[game_id]
+
+    def _handle_log(self, entry):
         game_id = entry['external-game-id'] if 'external-game-id' in entry else entry['game-id']
         internal_game_id = entry['game-id']
 
-        if game_id in self.game_id_to_game:
-            game = self.game_id_to_game[game_id]
+        if game_id in self._game_id_to_game:
+            game = self._game_id_to_game[game_id]
         else:
-            game = Game(self.log_timestamp, game_id, internal_game_id)
-            self.game_id_to_game[game_id] = game
+            game = Game(self._log_timestamp, game_id, internal_game_id)
+            self._game_id_to_game[game_id] = game
 
         if entry['_'] == 'game-player':
             player_id = entry['player-id']
@@ -580,71 +674,11 @@ class Server:
             if 'scores' in entry:
                 game.score = entry['scores']
 
-    def add_client_id_to_game(self, game_id, client_id):
-        self.client_id_to_game_id[client_id] = game_id
-
-    def remove_client_id_from_game(self, client_id):
-        if client_id in self.client_id_to_game_id:
-            del self.client_id_to_game_id[client_id]
-
-    def remove_player_id_from_game(self, game_id, player_id):
-        client_id = self.username_to_client_id[self.game_id_to_game[game_id].player_id_to_username[player_id]]
-        if client_id in self.client_id_to_game_id:
-            del self.client_id_to_game_id[client_id]
-
-    def set_game_board_cell(self, client_id, x, y, game_board_type_id):
-        game_id = self.client_id_to_game_id[client_id]
-        game = self.game_id_to_game[game_id]
-        if game.board[x][y] == Game.game_board_type__nothing:
-            game.played_tiles_order.append((x, y))
-        game.board[x][y] = game_board_type_id
-
-    def set_score_sheet_cell(self, client_id, row, index, value):
-        game_id = self.client_id_to_game_id[client_id]
-        game = self.game_id_to_game[game_id]
-
-        if row < 6:
-            game.score_sheet_players[row][index] = value
-        else:
-            game.score_sheet_chain_size[index] = value
-
-    def set_score_sheet(self, client_id, data):
-        game_id = self.client_id_to_game_id[client_id]
-        game = self.game_id_to_game[game_id]
-
-        game.score_sheet_players[:len(data[0])] = data[0]
-        game.score_sheet_chain_size = data[1]
-
-    def set_tile(self, client_id, tile_index, x, y):
-        game_id = self.client_id_to_game_id[client_id]
-        game = self.game_id_to_game[game_id]
-
-        player_id = game.username_to_player_id[self.client_id_to_username[client_id]]
-        tile = (x, y)
-
-        if game.initial_tile_racks[player_id][tile_index] is None:
-            game.tile_rack_tiles.add(tile)
-            game.initial_tile_racks[player_id][tile_index] = tile
-        elif tile not in game.tile_rack_tiles:
-            game.tile_rack_tiles.add(tile)
-            game.additional_tile_rack_tiles_order.append(tile)
-
-    def add_game_action(self, client_id, action):
-        game_id = self.client_id_to_game_id.get(client_id)
-        if game_id:
-            game = self.game_id_to_game[game_id]
-            player_id = game.username_to_player_id.get(self.client_id_to_username[client_id])
-            if player_id is not None:
-                game.actions.append([player_id, action])
-
-    def destroy_game(self, game_id):
-        game = self.game_id_to_game[game_id]
-        game.replay()
-        del self.game_id_to_game[game_id]
-
-    def cleanup(self):
-        for game_id in list(self.game_id_to_game.keys()):
-            self.destroy_game(game_id)
+    def _handle_blank_line(self):
+        if self._delayed_calls:
+            for func, args in self._delayed_calls:
+                func(*args)
+            del self._delayed_calls[:]
 
 
 class Game:
@@ -775,8 +809,11 @@ class Client:
 
 
 def main():
-    log_processor = LogProcessor()
-    log_processor.go()
+    for timestamp, path in util.get_log_file_paths('py', begin=1408905413):
+        print(path)
+        with util.open_possibly_gzipped_file(path) as file:
+            log_processor = LogProcessor(timestamp, file)
+            log_processor.go()
 
 
 if __name__ == '__main__':
