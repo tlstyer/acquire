@@ -1,6 +1,7 @@
 #!/usr/bin/env python3.4m
 
 import enums
+import inspect
 import pickle
 import random
 import re
@@ -229,9 +230,6 @@ class Enums:
 
     @staticmethod
     def get_lookups_from_enums_module():
-        import enums
-        import inspect
-
         lookups = {}
 
         for class_name in [obj[0] for obj in inspect.getmembers(enums) if inspect.isclass(obj[1]) and obj[0] != 'AutoNumber']:
@@ -265,20 +263,20 @@ Enums.initialize()
 
 class CommandsToClientTranslator:
     def __init__(self, translations):
-        self.commands_to_client = translations.get('CommandsToClient')
-        self.errors = translations.get('Errors')
+        self._commands_to_client = translations.get('CommandsToClient')
+        self._errors = translations.get('Errors')
 
-        self.fatal_error = Enums.lookups['CommandsToClient'].index('FatalError')
+        self._fatal_error = Enums.lookups['CommandsToClient'].index('FatalError')
 
     def translate(self, commands):
-        if self.commands_to_client:
+        if self._commands_to_client:
             for command in commands:
-                command[0] = self.commands_to_client[command[0]]
+                command[0] = self._commands_to_client[command[0]]
 
-        if self.errors:
+        if self._errors:
             for command in commands:
-                if command[0] == self.fatal_error:
-                    command[1] = self.errors[command[1]]
+                if command[0] == self._fatal_error:
+                    command[1] = self._errors[command[1]]
 
 
 class LineTypes(enums.AutoNumber):
@@ -436,6 +434,8 @@ class LogParser:
 
 
 class LogProcessor:
+    _game_board_type__nothing = Enums.lookups['GameBoardTypes'].index('Nothing')
+
     def __init__(self, log_timestamp, file):
         self._log_timestamp = log_timestamp
 
@@ -541,7 +541,7 @@ class LogProcessor:
         game_id = self._client_id_to_game_id[client_id]
         game = self._game_id_to_game[game_id]
 
-        if game.board[x][y] == Game.game_board_type__nothing:
+        if game.board[x][y] == LogProcessor._game_board_type__nothing:
             game.played_tiles_order.append((x, y))
 
         game.board[x][y] = game_board_type_id
@@ -639,7 +639,9 @@ class LogProcessor:
 
     def _handle_game_expired(self, game_id):
         game = self._game_id_to_game[game_id]
+
         game.replay()
+
         del self._game_id_to_game[game_id]
 
     def _handle_log(self, entry):
@@ -685,8 +687,8 @@ class LogProcessor:
 
 
 class Game:
-    game_board_type__nothing = Enums.lookups['GameBoardTypes'].index('Nothing')
-    score_sheet_indexes__client = Enums.lookups['ScoreSheetIndexes'].index('Client')
+    _game_board_type__nothing = Enums.lookups['GameBoardTypes'].index('Nothing')
+    _score_sheet_indexes__client = Enums.lookups['ScoreSheetIndexes'].index('Client')
 
     def __init__(self, log_timestamp, game_id, internal_game_id):
         self.log_timestamp = log_timestamp
@@ -701,7 +703,7 @@ class Game:
         self.player_id_to_username = {}
         self.username_to_player_id = {}
         self.player_join_order = []
-        self.board = [[Game.game_board_type__nothing for y in range(9)] for x in range(12)]
+        self.board = [[Game._game_board_type__nothing for y in range(9)] for x in range(12)]
         self.score_sheet_players = [[0, 0, 0, 0, 0, 0, 0, 60] for x in range(6)]
         self.score_sheet_chain_size = [0, 0, 0, 0, 0, 0, 0]
         self.played_tiles_order = []
@@ -740,7 +742,7 @@ class Game:
         messages = [self.log_timestamp, self.internal_game_id]
         if has_identical_board and has_identical_score_sheet_players and has_identical_score_sheet_chain_size:
             messages.append('yay!')
-            if server_game.state == Enums.lookups['GameStates'].index('InProgress') and len(self.player_id_to_username) > 1:
+            if server_game.state == Enums.lookups['GameStates'].index('InProgress') and num_players > 1:
                 filename = self.make_game_file(server_game)
                 messages.append(filename)
         else:
@@ -749,7 +751,7 @@ class Game:
         print(*messages)
 
     def make_game_file(self, server_game):
-        num_tiles_on_board = len([1 for row in self.board for cell in row if cell != self.game_board_type__nothing])
+        num_tiles_on_board = len([1 for row in self.board for cell in row if cell != Game._game_board_type__nothing])
 
         game_data = {}
 
@@ -774,7 +776,7 @@ class Game:
 
         score_sheet = server_game.score_sheet
         game_data['score_sheet'] = {
-            'player_data': [row[:self.score_sheet_indexes__client] + [None] for row in score_sheet.player_data],
+            'player_data': [row[:Game._score_sheet_indexes__client] + [None] for row in score_sheet.player_data],
             'available': score_sheet.available,
             'chain_size': score_sheet.chain_size,
             'price': score_sheet.price,
@@ -936,25 +938,13 @@ class IndividualGameLogMaker:
                 traceback.print_exc()
 
     def _handle_command_to_client__set_game_board_cell(self, client_ids, command):
-        client_id, x, y, game_board_type_id = client_ids[0], command[1], command[2], command[3]
-
-        game_id = self._client_id_to_game_id[client_id]
-
-        self._batch_game_id = game_id
+        self._batch_game_id = self._client_id_to_game_id[client_ids[0]]
 
     def _handle_command_to_client__set_score_sheet_cell(self, client_ids, command):
-        client_id, row, index, value = client_ids[0], command[1], command[2], command[3]
-
-        game_id = self._client_id_to_game_id[client_id]
-
-        self._batch_game_id = game_id
+        self._batch_game_id = self._client_id_to_game_id[client_ids[0]]
 
     def _handle_command_to_client__set_score_sheet(self, client_ids, command):
-        client_id, score_sheet_data = client_ids[0], command[1]
-
-        game_id = self._client_id_to_game_id[client_id]
-
-        self._batch_game_id = game_id
+        self._batch_game_id = self._client_id_to_game_id[client_ids[0]]
 
     def _handle_command_to_client__set_game_player_join(self, client_ids, command):
         self._add_client_id_to_game(command[1], command[3])
@@ -972,11 +962,7 @@ class IndividualGameLogMaker:
         self._remove_client_id_from_game(command[2])
 
     def _handle_command_to_client__set_tile(self, client_ids, command):
-        client_id, tile_index, x, y = client_ids[0], command[1], command[2], command[3]
-
-        game_id = self._client_id_to_game_id[client_id]
-
-        self._batch_game_id = game_id
+        self._batch_game_id = self._client_id_to_game_id[client_ids[0]]
 
     def _handle_command_to_client__set_game_player_client_id(self, client_ids, command):
         if command[3] is None:
