@@ -501,14 +501,21 @@ class LogProcessor:
 
         self._delayed_calls = []
 
+        self._expired_games = []
+
     def go(self):
         for line_type, line_number, line, parse_line_data in self._log_parser.go():
             handler = self._line_type_to_handler.get(line_type)
             if handler:
                 handler(*parse_line_data)
 
-        for game_id in list(self._game_id_to_game.keys()):
-            self._handle_game_expired(game_id)
+            if self._expired_games:
+                for game in self._expired_games:
+                    yield game
+                self._expired_games = []
+
+        for game in self._game_id_to_game.values():
+            yield game
 
     def _handle_connect(self, client_id, username):
         self._client_id_to_username[client_id] = username
@@ -638,9 +645,7 @@ class LogProcessor:
                 game.actions.append([player_id, command[1:]])
 
     def _handle_game_expired(self, game_id):
-        game = self._game_id_to_game[game_id]
-
-        game.replay()
+        self._expired_games.append(self._game_id_to_game[game_id])
 
         del self._game_id_to_game[game_id]
 
@@ -712,7 +717,7 @@ class Game:
         self.additional_tile_rack_tiles_order = []
         self.actions = []
 
-    def replay(self):
+    def get_server_game(self):
         num_players = len(self.player_id_to_username)
 
         position_tiles = self.played_tiles_order[:num_players]
@@ -735,20 +740,15 @@ class Game:
             data = action[1:]
             server_game.do_game_action(player_id_to_client[player_id], game_action_id, data)
 
+        return server_game
+
+    def is_identical(self, server_game):
+        num_players = len(self.player_id_to_username)
         has_identical_board = str(self.board) == str(server_game.game_board.x_to_y_to_board_type)
         has_identical_score_sheet_players = str(self.score_sheet_players[:num_players]) == str([x[:8] for x in server_game.score_sheet.player_data])
         has_identical_score_sheet_chain_size = str(self.score_sheet_chain_size) == str(server_game.score_sheet.chain_size)
 
-        messages = [self.log_timestamp, self.internal_game_id]
-        if has_identical_board and has_identical_score_sheet_players and has_identical_score_sheet_chain_size:
-            messages.append('yay!')
-            if server_game.state == Enums.lookups['GameStates'].index('InProgress') and num_players > 1:
-                filename = self.make_game_file(server_game)
-                messages.append(filename)
-        else:
-            messages.append('boo!')
-
-        print(*messages)
+        return has_identical_board and has_identical_score_sheet_players and has_identical_score_sheet_chain_size
 
     def make_game_file(self, server_game):
         num_tiles_on_board = len([1 for row in self.board for cell in row if cell != Game._game_board_type__nothing])
@@ -1093,9 +1093,23 @@ class IndividualGameLog:
 def main():
     for timestamp, path in util.get_log_file_paths('py', begin=1408905413):
         print(path)
+
         with util.open_possibly_gzipped_file(path) as file:
             log_processor = LogProcessor(timestamp, file)
-            log_processor.go()
+
+            for game in log_processor.go():
+                server_game = game.get_server_game()
+
+                messages = [game.log_timestamp, game.internal_game_id]
+                if game.is_identical(server_game):
+                    messages.append('yay!')
+                    if server_game.state == Enums.lookups['GameStates'].index('InProgress') and len(game.player_id_to_username) > 1:
+                        filename = game.make_game_file(server_game)
+                        messages.append(filename)
+                else:
+                    messages.append('boo!')
+
+                print(*messages)
 
 
 if __name__ == '__main__':
