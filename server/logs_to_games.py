@@ -545,8 +545,7 @@ class LogProcessor:
     def _handle_command_to_client__set_game_board_cell(self, client_ids, command):
         client_id, x, y, game_board_type_id = client_ids[0], command[1], command[2], command[3]
 
-        game_id = self._client_id_to_game_id[client_id]
-        game = self._game_id_to_game[game_id]
+        game = self._game_id_to_game[self._client_id_to_game_id[client_id]]
 
         if game.board[x][y] == LogProcessor._game_board_type__nothing:
             game.played_tiles_order.append((x, y))
@@ -556,8 +555,7 @@ class LogProcessor:
     def _handle_command_to_client__set_score_sheet_cell(self, client_ids, command):
         client_id, row, index, value = client_ids[0], command[1], command[2], command[3]
 
-        game_id = self._client_id_to_game_id[client_id]
-        game = self._game_id_to_game[game_id]
+        game = self._game_id_to_game[self._client_id_to_game_id[client_id]]
 
         if row < 6:
             game.score_sheet_players[row][index] = value
@@ -567,8 +565,7 @@ class LogProcessor:
     def _handle_command_to_client__set_score_sheet(self, client_ids, command):
         client_id, score_sheet_data = client_ids[0], command[1]
 
-        game_id = self._client_id_to_game_id[client_id]
-        game = self._game_id_to_game[game_id]
+        game = self._game_id_to_game[self._client_id_to_game_id[client_id]]
 
         game.score_sheet_players[:len(score_sheet_data[0])] = score_sheet_data[0]
         game.score_sheet_chain_size = score_sheet_data[1]
@@ -591,8 +588,7 @@ class LogProcessor:
     def _handle_command_to_client__set_tile(self, client_ids, command):
         client_id, tile_index, x, y = client_ids[0], command[1], command[2], command[3]
 
-        game_id = self._client_id_to_game_id[client_id]
-        game = self._game_id_to_game[game_id]
+        game = self._game_id_to_game[self._client_id_to_game_id[client_id]]
 
         player_id = game.username_to_player_id[self._client_id_to_username[client_id]]
         tile = (x, y)
