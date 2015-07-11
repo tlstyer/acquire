@@ -773,48 +773,38 @@ class Game:
             client = self._server_game_player_id_to_client[self.username_to_player_id[username]]
             self.server_game.join_game(client)
 
-        if self._do_detailed_move_by_move_comparison:
-            self._do_game_actions_with_detailed_move_by_move_comparison()
-        else:
-            self._do_game_actions_with_quick_comparison()
-
-    def _do_game_actions_with_detailed_move_by_move_comparison(self):
-        num_players = len(self.player_id_to_username)
-
         self.is_server_game_synchronized = True
         self.sync_log = []
 
-        if len(self.actions) != len(self.sync_data):
-            self.is_server_game_synchronized = False
+        if self._do_detailed_move_by_move_comparison:
+            self._sync_compare('len(self.actions), len(self.sync_data)', len(self.actions), len(self.sync_data))
 
-        self.sync_log.append('len(self.actions), len(self.sync_data) %d %d' % (len(self.actions), len(self.sync_data)))
-
-        for player_id_and_action, sync_data in zip(self.actions, self.sync_data):
+        for index, player_id_and_action in enumerate(self.actions):
             player_id, action = player_id_and_action
-            board, score_sheet_players, score_sheet_chain_size, tile_racks = sync_data
 
             game_action_id = action[0]
             data = action[1:]
             self.server_game.do_game_action(self._server_game_player_id_to_client[player_id], game_action_id, data)
 
-            self.sync_log.append('action %d %s' % (player_id, str(action)))
+            if self._do_detailed_move_by_move_comparison:
+                self.sync_log.append('action %d %s' % (player_id, str(action)))
+                self._sync_compare_stuff_with_server_game(*self.sync_data[index])
+                self.sync_log.append('')
 
-            # board
-            if str(board) != str(self.server_game.game_board.x_to_y_to_board_type):
-                self.is_server_game_synchronized = False
-                self.sync_log.append('board diff!')
+        self._sync_compare_stuff_with_server_game(self.board, self.score_sheet_players[:num_players], self.score_sheet_chain_size, self.tile_racks[:num_players])
 
-            # score sheet players
-            if str(score_sheet_players) != str([x[:8] for x in self.server_game.score_sheet.player_data]):
-                self.is_server_game_synchronized = False
-                self.sync_log.append('score_sheet_players diff!')
+    def _sync_compare_stuff_with_server_game(self, board, score_sheet_players, score_sheet_chain_size, tile_racks):
+        # board
+        self._sync_compare('board', board, self.server_game.game_board.x_to_y_to_board_type)
 
-            # score sheet chain size
-            if str(score_sheet_chain_size) != str(self.server_game.score_sheet.chain_size):
-                self.is_server_game_synchronized = False
-                self.sync_log.append('score_sheet_chain_size diff!')
+        # score sheet players
+        self._sync_compare('score_sheet_players', score_sheet_players, [x[:8] for x in self.server_game.score_sheet.player_data])
 
-            # tile racks
+        # score sheet chain size
+        self._sync_compare('score_sheet_chain_size', score_sheet_chain_size, self.server_game.score_sheet.chain_size)
+
+        # tile racks
+        if self.server_game.tile_racks:
             server_tile_racks = []
             for server_tile_rack in self.server_game.tile_racks.racks:
                 rack = []
@@ -822,7 +812,7 @@ class Game:
                     rack.append(tile_data[:2] if tile_data else None)
                 server_tile_racks.append(rack)
 
-            for player_id, rack1, rack2 in zip(range(num_players), tile_racks, server_tile_racks):
+            for player_id, rack1, rack2 in zip(range(len(tile_racks)), tile_racks, server_tile_racks):
                 okay = True
 
                 for tile_data1, tile_data2 in zip(rack1, rack2):
@@ -835,20 +825,15 @@ class Game:
                     self.sync_log.append(str(rack1))
                     self.sync_log.append(str(rack2))
 
-            self.sync_log.append('')
+    def _sync_compare(self, name, first, second):
+        is_equal = str(first) == str(second)
 
-    def _do_game_actions_with_quick_comparison(self):
-        for player_id, action in self.actions:
-            game_action_id = action[0]
-            data = action[1:]
-            self.server_game.do_game_action(self._server_game_player_id_to_client[player_id], game_action_id, data)
+        if not is_equal:
+            self.is_server_game_synchronized = False
 
-        num_players = len(self.player_id_to_username)
-        has_identical_board = str(self.board) == str(self.server_game.game_board.x_to_y_to_board_type)
-        has_identical_score_sheet_players = str(self.score_sheet_players[:num_players]) == str([x[:8] for x in self.server_game.score_sheet.player_data])
-        has_identical_score_sheet_chain_size = str(self.score_sheet_chain_size) == str(self.server_game.score_sheet.chain_size)
-
-        self.is_server_game_synchronized = has_identical_board and has_identical_score_sheet_players and has_identical_score_sheet_chain_size
+            self.sync_log.append(name + ' diff!')
+            self.sync_log.append(str(first))
+            self.sync_log.append(str(second))
 
     def make_server_game_file(self):
         num_tiles_on_board = len([1 for row in self.board for cell in row if cell != Game._game_board_type__nothing])
