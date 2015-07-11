@@ -3,6 +3,7 @@
 import copy
 import enums
 import inspect
+import itertools
 import pickle
 import random
 import re
@@ -474,8 +475,8 @@ class LogProcessor:
             # 'SetGamePlayerJoinMissing',
             command_to_client_entry_to_index['SetGameWatcherClientId']: self._handle_command_to_client__set_game_watcher_client_id,
             command_to_client_entry_to_index['ReturnWatcherToLobby']: self._handle_command_to_client__return_watcher_to_lobby,
-            # 'AddGameHistoryMessage',
-            # 'AddGameHistoryMessages',
+            command_to_client_entry_to_index['AddGameHistoryMessage']: self._handle_command_to_client__add_game_history_message,
+            command_to_client_entry_to_index['AddGameHistoryMessages']: self._handle_command_to_client__add_game_history_messages,
             # 'SetTurn',
             # 'SetGameAction',
             command_to_client_entry_to_index['SetTile']: self._handle_command_to_client__set_tile,
@@ -589,6 +590,22 @@ class LogProcessor:
     def _handle_command_to_client__return_watcher_to_lobby(self, client_ids, command):
         self._remove_client_id_from_game(command[2])
 
+    def _handle_command_to_client__add_game_history_message(self, client_ids, command):
+        for client_id in client_ids:
+            game = self._game_id_to_game[self._client_id_to_game_id[client_id]]
+            username = self._client_id_to_username[client_id]
+            player_id = game.username_to_player_id.get(username)
+            if player_id is not None:
+                game.username_to_game_history[username].append(game.translate_add_game_history_message(command[1:]))
+
+    def _handle_command_to_client__add_game_history_messages(self, client_ids, command):
+        for client_id in client_ids:
+            game = self._game_id_to_game[self._client_id_to_game_id[client_id]]
+            username = self._client_id_to_username[client_id]
+            player_id = game.username_to_player_id.get(username)
+            if player_id is not None:
+                game.username_to_game_history[username] = [game.translate_add_game_history_message(message) for message in command[1]]
+
     def _handle_command_to_client__set_tile(self, client_ids, command):
         client_id, tile_index, x, y, game_board_type_id = client_ids[0], command[1], command[2], command[3], command[4]
 
@@ -690,6 +707,9 @@ class LogProcessor:
 
             if username not in game.player_join_order:
                 game.player_join_order.append(username)
+
+            if username not in game.username_to_game_history:
+                game.username_to_game_history[username] = []
         else:
             if 'state' in entry:
                 game.state = entry['state']
@@ -723,7 +743,11 @@ class LogProcessor:
 
 class Game:
     _game_board_type__nothing = Enums.lookups['GameBoardTypes'].index('Nothing')
+    _game_history_messages__drew_position_tile = Enums.lookups['GameHistoryMessages'].index('DrewPositionTile')
     _score_sheet_indexes__client = Enums.lookups['ScoreSheetIndexes'].index('Client')
+    _game_history_messages_lookup = {name: index for index, name in enumerate(Enums.lookups['GameHistoryMessages'])}
+    _turn_began_message_id = _game_history_messages_lookup['TurnBegan']
+    _drew_or_replaced_tile_message_ids = {_game_history_messages_lookup['DrewPositionTile'], _game_history_messages_lookup['DrewTile'], _game_history_messages_lookup['ReplacedDeadTile']}
 
     def __init__(self, log_timestamp, game_id, internal_game_id, do_detailed_move_by_move_comparison):
         self.log_timestamp = log_timestamp
@@ -748,6 +772,7 @@ class Game:
         self.tile_racks = [[None, None, None, None, None, None] for x in range(6)]
         self.additional_tile_rack_tiles_order = []
         self.actions = []
+        self.username_to_game_history = {}
         self.sync_data = []
 
         self.server_game = None
@@ -755,15 +780,17 @@ class Game:
         self.is_server_game_synchronized = None
         self.sync_log = None
 
+    def translate_add_game_history_message(self, message):
+        if message[0] == Game._game_history_messages__drew_position_tile:
+            if isinstance(message[1], int):
+                message = message[:1] + [self.player_id_to_username[message[1]]] + message[2:]
+
+        return message
+
     def make_server_game(self):
         num_players = len(self.player_id_to_username)
 
-        position_tiles = self.played_tiles_order[:num_players]
-        initial_tile_rack_tiles = [tile for tile_rack in self.initial_tile_racks[:num_players] for tile in tile_rack if tile is not None]
-        remaining_tiles = list({(x, y) for x in range(12) for y in range(9)} - set(position_tiles) - self.tile_rack_tiles)
-        random.shuffle(remaining_tiles)
-        tile_bag = position_tiles + initial_tile_rack_tiles + self.additional_tile_rack_tiles_order + remaining_tiles
-        tile_bag.reverse()
+        tile_bag = self._get_initial_tile_bag()
 
         self.server_game = server.Game(self.game_id, self.internal_game_id, Enums.lookups['GameModes'].index(self.mode), self.max_players, Game._add_pending_messages, False, tile_bag)
 
@@ -834,6 +861,45 @@ class Game:
             self.sync_log.append(name + ' diff!')
             self.sync_log.append(str(first))
             self.sync_log.append(str(second))
+
+    def _get_initial_tile_bag(self):
+        player_id_to_game_history = [self.username_to_game_history[username] for username in self.player_id_to_username.values()]
+
+        player_id_to_turn_by_turn_tiles_drawn_or_replaced = []
+        for player_id, game_history in enumerate(player_id_to_game_history):
+            turn_by_turn_tiles_drawn_or_replaced = []
+            turn_tiles_drawn_or_replaced = []
+
+            for message in game_history:
+                if message[0] in Game._drew_or_replaced_tile_message_ids:
+                    turn_tiles_drawn_or_replaced.append((message[2], message[3]))
+                elif message[0] == Game._turn_began_message_id:
+                    turn_by_turn_tiles_drawn_or_replaced.append(turn_tiles_drawn_or_replaced)
+                    turn_tiles_drawn_or_replaced = []
+            turn_by_turn_tiles_drawn_or_replaced.append(turn_tiles_drawn_or_replaced)
+
+            player_id_to_turn_by_turn_tiles_drawn_or_replaced.append(turn_by_turn_tiles_drawn_or_replaced)
+
+        included_tiles = set()
+        tile_bag = []
+
+        for players_tiles_by_turn in itertools.zip_longest(*player_id_to_turn_by_turn_tiles_drawn_or_replaced):
+            # put current player's tiles first. current player will have more tiles.
+            players_tiles_by_turn = sorted([player_tiles_by_turn for player_tiles_by_turn in players_tiles_by_turn if player_tiles_by_turn], key=lambda x: -len(x))
+
+            for player_tiles_by_turn in players_tiles_by_turn:
+                if player_tiles_by_turn:
+                    for tile in player_tiles_by_turn:
+                        if tile not in included_tiles:
+                            included_tiles.add(tile)
+                            tile_bag.append(tile)
+
+        remaining_tiles = list({(x, y) for x in range(12) for y in range(9)} - included_tiles)
+        random.shuffle(remaining_tiles)
+        tile_bag.extend(remaining_tiles)
+        tile_bag.reverse()
+
+        return tile_bag
 
     def make_server_game_file(self):
         num_tiles_on_board = len([1 for row in self.board for cell in row if cell != Game._game_board_type__nothing])
