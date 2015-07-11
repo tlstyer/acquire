@@ -1,5 +1,6 @@
 #!/usr/bin/env python3.4m
 
+import copy
 import enums
 import inspect
 import pickle
@@ -436,8 +437,9 @@ class LogParser:
 class LogProcessor:
     _game_board_type__nothing = Enums.lookups['GameBoardTypes'].index('Nothing')
 
-    def __init__(self, log_timestamp, file):
+    def __init__(self, log_timestamp, file, do_detailed_move_by_move_comparison=False):
         self._log_timestamp = log_timestamp
+        self._do_detailed_move_by_move_comparison = do_detailed_move_by_move_comparison
 
         self._client_id_to_username = {}
         self._username_to_client_id = {}
@@ -477,8 +479,8 @@ class LogProcessor:
             # 'SetTurn',
             # 'SetGameAction',
             command_to_client_entry_to_index['SetTile']: self._handle_command_to_client__set_tile,
-            # 'SetTileGameBoardType',
-            # 'RemoveTile',
+            command_to_client_entry_to_index['SetTileGameBoardType']: self._handle_command_to_client__set_tile_game_board_type,
+            command_to_client_entry_to_index['RemoveTile']: self._handle_command_to_client__remove_tile,
             # 'AddGlobalChatMessage',
             # 'AddGameChatMessage',
             # 'DestroyGame',
@@ -502,6 +504,8 @@ class LogProcessor:
         self._delayed_calls = []
 
         self._expired_games = []
+
+        self._on_empty_line_add_sync_data = None
 
     def go(self):
         for line_type, line_number, line, parse_line_data in self._log_parser.go():
@@ -586,7 +590,7 @@ class LogProcessor:
         self._remove_client_id_from_game(command[2])
 
     def _handle_command_to_client__set_tile(self, client_ids, command):
-        client_id, tile_index, x, y = client_ids[0], command[1], command[2], command[3]
+        client_id, tile_index, x, y, game_board_type_id = client_ids[0], command[1], command[2], command[3], command[4]
 
         game = self._game_id_to_game[self._client_id_to_game_id[client_id]]
 
@@ -599,6 +603,26 @@ class LogProcessor:
         elif tile not in game.tile_rack_tiles:
             game.tile_rack_tiles.add(tile)
             game.additional_tile_rack_tiles_order.append(tile)
+
+        game.tile_racks[player_id][tile_index] = [tile, game_board_type_id]
+
+    def _handle_command_to_client__set_tile_game_board_type(self, client_ids, command):
+        client_id, tile_index, game_board_type_id = client_ids[0], command[1], command[2]
+
+        game = self._game_id_to_game[self._client_id_to_game_id[client_id]]
+
+        player_id = game.username_to_player_id[self._client_id_to_username[client_id]]
+
+        game.tile_racks[player_id][tile_index][1] = game_board_type_id
+
+    def _handle_command_to_client__remove_tile(self, client_ids, command):
+        client_id, tile_index = client_ids[0], command[1]
+
+        game = self._game_id_to_game[self._client_id_to_game_id[client_id]]
+
+        player_id = game.username_to_player_id[self._client_id_to_username[client_id]]
+
+        game.tile_racks[player_id][tile_index] = None
 
     def _handle_command_to_client__set_game_player_client_id(self, client_ids, command):
         if command[3] is None:
@@ -639,6 +663,8 @@ class LogProcessor:
 
             if player_id is not None:
                 game.actions.append([player_id, command[1:]])
+                if self._do_detailed_move_by_move_comparison:
+                    self._on_empty_line_add_sync_data = game
 
     def _handle_game_expired(self, game_id):
         self._expired_games.append(self._game_id_to_game[game_id])
@@ -652,7 +678,7 @@ class LogProcessor:
         if game_id in self._game_id_to_game:
             game = self._game_id_to_game[game_id]
         else:
-            game = Game(self._log_timestamp, game_id, internal_game_id)
+            game = Game(self._log_timestamp, game_id, internal_game_id, self._do_detailed_move_by_move_comparison)
             self._game_id_to_game[game_id] = game
 
         if entry['_'] == 'game-player':
@@ -686,15 +712,24 @@ class LogProcessor:
                 func(*args)
             del self._delayed_calls[:]
 
+        if self._on_empty_line_add_sync_data:
+            game = self._on_empty_line_add_sync_data
+
+            num_players = len(game.player_id_to_username)
+            game.sync_data.append([copy.deepcopy(game.board), copy.deepcopy(game.score_sheet_players[:num_players]), copy.deepcopy(game.score_sheet_chain_size), copy.deepcopy(game.tile_racks[:num_players])])
+
+            self._on_empty_line_add_sync_data = None
+
 
 class Game:
     _game_board_type__nothing = Enums.lookups['GameBoardTypes'].index('Nothing')
     _score_sheet_indexes__client = Enums.lookups['ScoreSheetIndexes'].index('Client')
 
-    def __init__(self, log_timestamp, game_id, internal_game_id):
+    def __init__(self, log_timestamp, game_id, internal_game_id, do_detailed_move_by_move_comparison):
         self.log_timestamp = log_timestamp
         self.game_id = game_id
         self.internal_game_id = internal_game_id
+        self._do_detailed_move_by_move_comparison = do_detailed_move_by_move_comparison
         self.state = None
         self.mode = None
         self.max_players = None
@@ -710,10 +745,15 @@ class Game:
         self.played_tiles_order = []
         self.tile_rack_tiles = set()
         self.initial_tile_racks = [[None, None, None, None, None, None] for x in range(6)]
+        self.tile_racks = [[None, None, None, None, None, None] for x in range(6)]
         self.additional_tile_rack_tiles_order = []
         self.actions = []
+        self.sync_data = []
 
         self.server_game = None
+        self._server_game_player_id_to_client = None
+        self.is_server_game_synchronized = None
+        self.sync_log = None
 
     def make_server_game(self):
         num_players = len(self.player_id_to_username)
@@ -727,24 +767,88 @@ class Game:
 
         self.server_game = server.Game(self.game_id, self.internal_game_id, Enums.lookups['GameModes'].index(self.mode), self.max_players, Game._add_pending_messages, False, tile_bag)
 
-        player_id_to_client = [Client(player_id, username) for player_id, username in sorted(self.player_id_to_username.items())]
+        self._server_game_player_id_to_client = [Client(player_id, username) for player_id, username in sorted(self.player_id_to_username.items())]
 
         for username in self.player_join_order:
-            client = player_id_to_client[self.username_to_player_id[username]]
+            client = self._server_game_player_id_to_client[self.username_to_player_id[username]]
             self.server_game.join_game(client)
 
+        if self._do_detailed_move_by_move_comparison:
+            self._do_game_actions_with_detailed_move_by_move_comparison()
+        else:
+            self._do_game_actions_with_quick_comparison()
+
+    def _do_game_actions_with_detailed_move_by_move_comparison(self):
+        num_players = len(self.player_id_to_username)
+
+        self.is_server_game_synchronized = True
+        self.sync_log = []
+
+        if len(self.actions) != len(self.sync_data):
+            self.is_server_game_synchronized = False
+
+        self.sync_log.append('len(self.actions), len(self.sync_data) %d %d' % (len(self.actions), len(self.sync_data)))
+
+        for player_id_and_action, sync_data in zip(self.actions, self.sync_data):
+            player_id, action = player_id_and_action
+            board, score_sheet_players, score_sheet_chain_size, tile_racks = sync_data
+
+            game_action_id = action[0]
+            data = action[1:]
+            self.server_game.do_game_action(self._server_game_player_id_to_client[player_id], game_action_id, data)
+
+            self.sync_log.append('action %d %s' % (player_id, str(action)))
+
+            # board
+            if str(board) != str(self.server_game.game_board.x_to_y_to_board_type):
+                self.is_server_game_synchronized = False
+                self.sync_log.append('board diff!')
+
+            # score sheet players
+            if str(score_sheet_players) != str([x[:8] for x in self.server_game.score_sheet.player_data]):
+                self.is_server_game_synchronized = False
+                self.sync_log.append('score_sheet_players diff!')
+
+            # score sheet chain size
+            if str(score_sheet_chain_size) != str(self.server_game.score_sheet.chain_size):
+                self.is_server_game_synchronized = False
+                self.sync_log.append('score_sheet_chain_size diff!')
+
+            # tile racks
+            server_tile_racks = []
+            for server_tile_rack in self.server_game.tile_racks.racks:
+                rack = []
+                for tile_data in server_tile_rack:
+                    rack.append(tile_data[:2] if tile_data else None)
+                server_tile_racks.append(rack)
+
+            for player_id, rack1, rack2 in zip(range(num_players), tile_racks, server_tile_racks):
+                okay = True
+
+                for tile_data1, tile_data2 in zip(rack1, rack2):
+                    if tile_data2 is not None and tile_data1 != tile_data2:
+                        okay = False
+
+                if not okay:
+                    self.is_server_game_synchronized = False
+                    self.sync_log.append('tile_racks diff! player_id ' + str(player_id))
+                    self.sync_log.append(str(rack1))
+                    self.sync_log.append(str(rack2))
+
+            self.sync_log.append('')
+
+    def _do_game_actions_with_quick_comparison(self):
         for player_id, action in self.actions:
             game_action_id = action[0]
             data = action[1:]
-            self.server_game.do_game_action(player_id_to_client[player_id], game_action_id, data)
+            self.server_game.do_game_action(self._server_game_player_id_to_client[player_id], game_action_id, data)
 
-    def is_server_game_identical(self):
         num_players = len(self.player_id_to_username)
         has_identical_board = str(self.board) == str(self.server_game.game_board.x_to_y_to_board_type)
         has_identical_score_sheet_players = str(self.score_sheet_players[:num_players]) == str([x[:8] for x in self.server_game.score_sheet.player_data])
         has_identical_score_sheet_chain_size = str(self.score_sheet_chain_size) == str(self.server_game.score_sheet.chain_size)
 
-        return has_identical_board and has_identical_score_sheet_players and has_identical_score_sheet_chain_size
+        self.is_server_game_synchronized = has_identical_board and has_identical_score_sheet_players and has_identical_score_sheet_chain_size
 
     def make_server_game_file(self):
         num_tiles_on_board = len([1 for row in self.board for cell in row if cell != Game._game_board_type__nothing])
@@ -1101,19 +1205,26 @@ def main():
         print(path)
 
         with util.open_possibly_gzipped_file(path) as file:
-            log_processor = LogProcessor(timestamp, file)
+            log_processor = LogProcessor(timestamp, file, True)
 
             for game in log_processor.go():
                 game.make_server_game()
 
                 messages = [game.log_timestamp, game.internal_game_id]
-                if game.is_server_game_identical():
+                if game.is_server_game_synchronized:
                     messages.append('yay!')
                     if game.server_game.state == Enums.lookups['GameStates'].index('InProgress') and len(game.player_id_to_username) > 1:
                         filename = game.make_server_game_file()
                         messages.append(filename)
                 else:
                     messages.append('boo!')
+
+                    if game.sync_log is not None:
+                        filename = '/opt/data/tim/%d_%05d_sync_log.txt' % (game.log_timestamp, game.internal_game_id)
+                        messages.append(filename)
+                        with open(filename, 'w') as f:
+                            f.write('\n'.join(game.sync_log))
+                            f.write('\n')
 
                 print(*messages)
 
