@@ -713,7 +713,9 @@ class Game:
         self.additional_tile_rack_tiles_order = []
         self.actions = []
 
-    def get_server_game(self):
+        self.server_game = None
+
+    def make_server_game(self):
         num_players = len(self.player_id_to_username)
 
         position_tiles = self.played_tiles_order[:num_players]
@@ -723,44 +725,42 @@ class Game:
         tile_bag = position_tiles + initial_tile_rack_tiles + self.additional_tile_rack_tiles_order + remaining_tiles
         tile_bag.reverse()
 
-        server_game = server.Game(self.game_id, self.internal_game_id, Enums.lookups['GameModes'].index(self.mode), self.max_players, Game._add_pending_messages, False, tile_bag)
+        self.server_game = server.Game(self.game_id, self.internal_game_id, Enums.lookups['GameModes'].index(self.mode), self.max_players, Game._add_pending_messages, False, tile_bag)
 
         player_id_to_client = [Client(player_id, username) for player_id, username in sorted(self.player_id_to_username.items())]
 
         for username in self.player_join_order:
             client = player_id_to_client[self.username_to_player_id[username]]
-            server_game.join_game(client)
+            self.server_game.join_game(client)
 
         for player_id, action in self.actions:
             game_action_id = action[0]
             data = action[1:]
-            server_game.do_game_action(player_id_to_client[player_id], game_action_id, data)
+            self.server_game.do_game_action(player_id_to_client[player_id], game_action_id, data)
 
-        return server_game
-
-    def is_identical(self, server_game):
+    def is_server_game_identical(self):
         num_players = len(self.player_id_to_username)
-        has_identical_board = str(self.board) == str(server_game.game_board.x_to_y_to_board_type)
-        has_identical_score_sheet_players = str(self.score_sheet_players[:num_players]) == str([x[:8] for x in server_game.score_sheet.player_data])
-        has_identical_score_sheet_chain_size = str(self.score_sheet_chain_size) == str(server_game.score_sheet.chain_size)
+        has_identical_board = str(self.board) == str(self.server_game.game_board.x_to_y_to_board_type)
+        has_identical_score_sheet_players = str(self.score_sheet_players[:num_players]) == str([x[:8] for x in self.server_game.score_sheet.player_data])
+        has_identical_score_sheet_chain_size = str(self.score_sheet_chain_size) == str(self.server_game.score_sheet.chain_size)
 
         return has_identical_board and has_identical_score_sheet_players and has_identical_score_sheet_chain_size
 
-    def make_game_file(self, server_game):
+    def make_server_game_file(self):
         num_tiles_on_board = len([1 for row in self.board for cell in row if cell != Game._game_board_type__nothing])
 
         game_data = {}
 
-        game_data['game_id'] = server_game.game_id
-        game_data['internal_game_id'] = server_game.internal_game_id
-        game_data['state'] = server_game.state
-        game_data['mode'] = server_game.mode
-        game_data['max_players'] = server_game.max_players
-        game_data['num_players'] = server_game.num_players
-        game_data['tile_bag'] = server_game.tile_bag
-        game_data['turn_player_id'] = server_game.turn_player_id
-        game_data['turns_without_played_tiles_count'] = server_game.turns_without_played_tiles_count
-        game_data['history_messages'] = server_game.history_messages
+        game_data['game_id'] = self.server_game.game_id
+        game_data['internal_game_id'] = self.server_game.internal_game_id
+        game_data['state'] = self.server_game.state
+        game_data['mode'] = self.server_game.mode
+        game_data['max_players'] = self.server_game.max_players
+        game_data['num_players'] = self.server_game.num_players
+        game_data['tile_bag'] = self.server_game.tile_bag
+        game_data['turn_player_id'] = self.server_game.turn_player_id
+        game_data['turns_without_played_tiles_count'] = self.server_game.turns_without_played_tiles_count
+        game_data['history_messages'] = self.server_game.history_messages
 
         # game_data['add_pending_messages'] -- exclude
         # game_data['logging_enabled'] -- exclude
@@ -768,9 +768,9 @@ class Game:
         # game_data['watcher_client_ids'] -- exclude
         # game_data['expiration_time'] -- exclude
 
-        game_data['game_board'] = server_game.game_board.x_to_y_to_board_type
+        game_data['game_board'] = self.server_game.game_board.x_to_y_to_board_type
 
-        score_sheet = server_game.score_sheet
+        score_sheet = self.server_game.score_sheet
         game_data['score_sheet'] = {
             'player_data': [row[:Game._score_sheet_indexes__client] + [None] for row in score_sheet.player_data],
             'available': score_sheet.available,
@@ -780,10 +780,10 @@ class Game:
             'username_to_player_id': score_sheet.username_to_player_id,
         }
 
-        game_data['tile_racks'] = server_game.tile_racks.racks if server_game.tile_racks else None
+        game_data['tile_racks'] = self.server_game.tile_racks.racks if self.server_game.tile_racks else None
 
         game_data_actions = []
-        for action in server_game.actions:
+        for action in self.server_game.actions:
             game_data_action = dict(action.__dict__)
             game_data_action['__name__'] = action.__class__.__name__
             del game_data_action['game']
@@ -1104,13 +1104,13 @@ def main():
             log_processor = LogProcessor(timestamp, file)
 
             for game in log_processor.go():
-                server_game = game.get_server_game()
+                game.make_server_game()
 
                 messages = [game.log_timestamp, game.internal_game_id]
-                if game.is_identical(server_game):
+                if game.is_server_game_identical():
                     messages.append('yay!')
-                    if server_game.state == Enums.lookups['GameStates'].index('InProgress') and len(game.player_id_to_username) > 1:
-                        filename = game.make_game_file(server_game)
+                    if game.server_game.state == Enums.lookups['GameStates'].index('InProgress') and len(game.player_id_to_username) > 1:
+                        filename = game.make_server_game_file()
                         messages.append(filename)
                 else:
                     messages.append('boo!')
