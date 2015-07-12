@@ -289,7 +289,8 @@ class LineTypes(enums.AutoNumber):
     game_expired = ()
     log = ()
     blank_line = ()
-    ignore = ()
+    connection_made = ()
+    error = ()
 
 
 class LogParser:
@@ -319,8 +320,8 @@ class LogParser:
             (LineTypes.connect, re.compile(r'^(?P<client_id>\d+) connect \d+\.\d+\.\d+\.\d+ (?P<username>.+)$'), self._handle_connect),
             (LineTypes.disconnect, re.compile(r'^\d+ -> (?P<client_id>\d+) disconnect$'), self._handle_disconnect),  # disconnect after error
             (LineTypes.command_to_server, re.compile(r'^\d+ connect (?P<client_id>\d+) -> (?P<command>.*)'), self._handle_command_to_server),  # command to server after connect printing error
-            (LineTypes.ignore, re.compile(r'^connection_made$'), self._handle_connection_made),
-            (LineTypes.ignore, re.compile('|'.join(regexes_to_ignore)), None),
+            (LineTypes.connection_made, re.compile(r'^connection_made$'), self._handle_connection_made),
+            (LineTypes.error, re.compile('|'.join(regexes_to_ignore)), None),
         ]
 
         enums_translations = Enums.get_translations(log_timestamp)
@@ -457,6 +458,8 @@ class LogProcessor:
             LineTypes.game_expired: self._handle_game_expired,
             LineTypes.log: self._handle_log,
             LineTypes.blank_line: self._handle_blank_line,
+            LineTypes.connection_made: self._handle_blank_line,
+            LineTypes.error: self._handle_blank_line,
         }
 
         command_to_client_entry_to_index = {entry: index for index, entry in enumerate(Enums.lookups['CommandsToClient'])}
@@ -973,6 +976,8 @@ class IndividualGameLogMaker:
             LineTypes.game_expired: self._handle_game_expired,
             LineTypes.log: self._handle_log,
             LineTypes.blank_line: self._handle_blank_line,
+            LineTypes.connection_made: self._handle_blank_line,
+            LineTypes.error: self._handle_blank_line,
         }
 
         command_to_client_entry_to_index = {entry: index for index, entry in enumerate(Enums.lookups['CommandsToClient'])}
