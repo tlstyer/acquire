@@ -773,13 +773,13 @@ class LogProcessor:
                 game.make_server_game()
 
                 game.make_server_game_file('partial_game_%06d' % (self._line_number,))
+                print('\n'.join(game.sync_log))
 
                 messages = [game.log_timestamp, game.internal_game_id, self._line_number]
                 if game.is_server_game_synchronized:
                     messages.append('yay!')
                 else:
                     messages.append('boo!')
-                    print('\n'.join(game.sync_log))
                 print(*messages)
                 print()
                 print()
@@ -801,6 +801,18 @@ class Game:
     _game_history_messages_lookup = {name: index for index, name in enumerate(Enums.lookups['GameHistoryMessages'])}
     _turn_began_message_id = _game_history_messages_lookup['TurnBegan']
     _drew_or_replaced_tile_message_ids = {_game_history_messages_lookup['DrewPositionTile'], _game_history_messages_lookup['DrewTile'], _game_history_messages_lookup['ReplacedDeadTile']}
+
+    _tile_bag_tweaks = {
+        (1414827614, 43): [[34, (1, 5)]],
+        (1415355783, 106): [[68, (11, 1)]],
+        (1421578193, 3366): [[80, (9, 6)]],
+        (1427270069, 3903): [[53, (0, 8)]],
+        (1430041771, 1330): [[63, (0, 8)]],
+        (1432033655, 1965): [[91, (5, 5)]],
+        (1433241253, 1336): [[69, (7, 5)]],
+        (1433837429, 1110): [[73, (7, 1)]],
+        (1435226336, 3165): [[88, (2, 7)], [89, (11, 3)]],
+    }
 
     def __init__(self, log_timestamp, game_id, internal_game_id, do_detailed_move_by_move_comparison, verbose):
         self.log_timestamp = log_timestamp
@@ -890,25 +902,26 @@ class Game:
 
             self._sync_compare('tile_racks', tile_racks, server_tile_racks)
 
-            if self._verbose:
-                print('tile_racks:')
-                print(tile_racks)
-                print(server_tile_racks)
+    def _sync_compare(self, name, first, second):
+        str_first = str(first)
+        str_second = str(second)
 
         if self._verbose:
-            print('score_sheet_players:')
-            print(score_sheet_players)
-            print([x[:8] for x in self.server_game.score_sheet.player_data])
+            self.sync_log.append(name + ': ' + str_first)
 
-    def _sync_compare(self, name, first, second):
-        is_equal = str(first) == str(second)
-
-        if not is_equal:
+        if str_first != str_second:
             self.is_server_game_synchronized = False
 
-            self.sync_log.append(name + ' diff!')
-            self.sync_log.append(str(first))
-            self.sync_log.append(str(second))
+            if name == 'tile_racks':
+                for player_id, rack1, rack2 in zip(range(len(first)), first, second):
+                    if rack1 != rack2:
+                        self.sync_log.append(name + ' diff for player_id ' + str(player_id) + '!')
+                        self.sync_log.append(str(rack1))
+                        self.sync_log.append(str(rack2))
+            else:
+                self.sync_log.append(name + ' diff!')
+                self.sync_log.append(str_first)
+                self.sync_log.append(str_second)
 
     def _get_initial_tile_bag(self):
         if self._verbose:
@@ -971,7 +984,23 @@ class Game:
         if self._verbose:
             print('len(tile_bag):', len(tile_bag))
 
-        remaining_tiles = list({(x, y) for x in range(12) for y in range(9)} - included_tiles)
+        remaining_tiles = {(x, y) for x in range(12) for y in range(9)} - included_tiles
+
+        # do tile bag tweaks
+        tile_bag_tweaks = Game._tile_bag_tweaks.get((self.log_timestamp, self.internal_game_id))
+        if tile_bag_tweaks:
+            for index, tile in tile_bag_tweaks:
+                if len(tile_bag) >= index:
+                    if tile is None:
+                        tile = random.sample(remaining_tiles, 1)[0]
+                        if self._verbose:
+                            print('random tile chosen for insertion:', tile)
+                    else:
+                        print('specified tile for insertion:', tile)
+                    tile_bag.insert(index, tile)
+                    remaining_tiles.remove(tile)
+
+        remaining_tiles = list(remaining_tiles)
         random.shuffle(remaining_tiles)
         tile_bag.extend(remaining_tiles)
         tile_bag.reverse()
