@@ -439,9 +439,10 @@ class LogParser:
 class LogProcessor:
     _game_board_type__nothing = Enums.lookups['GameBoardTypes'].index('Nothing')
 
-    def __init__(self, log_timestamp, file, do_detailed_move_by_move_comparison=False):
+    def __init__(self, log_timestamp, file, do_detailed_move_by_move_comparison=False, verbose=False):
         self._log_timestamp = log_timestamp
         self._do_detailed_move_by_move_comparison = do_detailed_move_by_move_comparison
+        self._verbose = verbose
 
         self._client_id_to_username = {}
         self._username_to_client_id = {}
@@ -511,8 +512,14 @@ class LogProcessor:
 
         self._on_empty_line_add_sync_data = None
 
+        self._line_number = 0
+
     def go(self):
         for line_type, line_number, line, parse_line_data in self._log_parser.go():
+            if self._verbose:
+                self._line_number = line_number
+                print(line)
+
             handler = self._line_type_to_handler.get(line_type)
             if handler:
                 handler(*parse_line_data)
@@ -542,8 +549,12 @@ class LogProcessor:
             print(self._username_to_client_id)
 
     def _handle_command_to_client(self, client_ids, commands):
+        if self._verbose:
+            print('~~~', [self._client_id_to_username.get(client_id) for client_id in client_ids])
         for command in commands:
             try:
+                if self._verbose:
+                    print('~~~', Enums.lookups['CommandsToClient'][command[0]], command)
                 handler = self._commands_to_client_handlers.get(command[0])
                 if handler:
                     handler(client_ids, command)
@@ -594,12 +605,17 @@ class LogProcessor:
         self._remove_client_id_from_game(command[2])
 
     def _handle_command_to_client__add_game_history_message(self, client_ids, command):
+        printed_message = False
         for client_id in client_ids:
             game = self._game_id_to_game[self._client_id_to_game_id[client_id]]
             username = self._client_id_to_username[client_id]
             player_id = game.username_to_player_id.get(username)
             if player_id is not None:
                 game.username_to_game_history[username].append(game.translate_add_game_history_message(command[1:]))
+                if self._verbose and not printed_message:
+                    message = game.username_to_game_history[username][-1]
+                    print('  ~~~', Enums.lookups['GameHistoryMessages'][message[0]], message)
+                    printed_message = True
 
     def _handle_command_to_client__add_game_history_messages(self, client_ids, command):
         for client_id in client_ids:
@@ -608,6 +624,9 @@ class LogProcessor:
             player_id = game.username_to_player_id.get(username)
             if player_id is not None:
                 game.username_to_game_history[username] = [game.translate_add_game_history_message(message) for message in command[1]]
+                if self._verbose:
+                    for message in game.username_to_game_history[username]:
+                        print('  ~~~', Enums.lookups['GameHistoryMessages'][message[0]], message)
 
     def _handle_command_to_client__set_tile(self, client_ids, command):
         client_id, tile_index, x, y = client_ids[0], command[1], command[2], command[3]
@@ -659,6 +678,12 @@ class LogProcessor:
 
     def _handle_command_to_server(self, client_id, command):
         try:
+            if self._verbose:
+                print('~~~', self._client_id_to_username.get(client_id))
+                command_name = Enums.lookups['CommandsToServer'][command[0]]
+                print('~~~', command_name, command)
+                if command_name == 'DoGameAction':
+                    print('  ~~~', Enums.lookups['GameActions'][command[1]], command[1:])
             handler = self._commands_to_server_handlers.get(command[0])
             if handler:
                 handler(client_id, command)
@@ -689,7 +714,7 @@ class LogProcessor:
         if game_id in self._game_id_to_game:
             game = self._game_id_to_game[game_id]
         else:
-            game = Game(self._log_timestamp, game_id, internal_game_id, self._do_detailed_move_by_move_comparison)
+            game = Game(self._log_timestamp, game_id, internal_game_id, self._do_detailed_move_by_move_comparison, self._verbose)
             self._game_id_to_game[game_id] = game
 
         if entry['_'] == 'game-player':
@@ -734,6 +759,31 @@ class LogProcessor:
 
             self._on_empty_line_add_sync_data = None
 
+        if self._verbose:
+            for game in self._game_id_to_game.values():
+                game.make_server_game()
+
+                game.make_server_game_file('partial_game_%06d' % (self._line_number,))
+
+                messages = [game.log_timestamp, game.internal_game_id, self._line_number]
+                if game.is_server_game_synchronized:
+                    messages.append('yay!')
+                else:
+                    messages.append('boo!')
+                    print('\n'.join(game.sync_log))
+                print(*messages)
+                print()
+                print()
+
+                for username, game_history in game.username_to_game_history.items():
+                    player_id = game.username_to_player_id[username]
+
+                    filename = '/opt/data/tim/%d_%05d_%05d_%d_game_history.txt' % (game.log_timestamp, game.internal_game_id, self._line_number, player_id)
+                    messages.append(filename)
+                    with open(filename, 'w') as f:
+                        for message in game_history:
+                            f.write(Enums.lookups['GameHistoryMessages'][message[0]] + ' ' + str(message) + '\n')
+
 
 class Game:
     _game_board_type__nothing = Enums.lookups['GameBoardTypes'].index('Nothing')
@@ -743,11 +793,12 @@ class Game:
     _turn_began_message_id = _game_history_messages_lookup['TurnBegan']
     _drew_or_replaced_tile_message_ids = {_game_history_messages_lookup['DrewPositionTile'], _game_history_messages_lookup['DrewTile'], _game_history_messages_lookup['ReplacedDeadTile']}
 
-    def __init__(self, log_timestamp, game_id, internal_game_id, do_detailed_move_by_move_comparison):
+    def __init__(self, log_timestamp, game_id, internal_game_id, do_detailed_move_by_move_comparison, verbose):
         self.log_timestamp = log_timestamp
         self.game_id = game_id
         self.internal_game_id = internal_game_id
         self._do_detailed_move_by_move_comparison = do_detailed_move_by_move_comparison
+        self._verbose = verbose
         self.state = None
         self.mode = None
         self.max_players = None
@@ -846,6 +897,16 @@ class Game:
                     self.sync_log.append(str(rack1))
                     self.sync_log.append(str(rack2))
 
+            if self._verbose:
+                print('tile_racks:')
+                print(tile_racks)
+                print(server_tile_racks)
+
+        if self._verbose:
+            print('score_sheet_players:')
+            print(score_sheet_players)
+            print([x[:8] for x in self.server_game.score_sheet.player_data])
+
     def _sync_compare(self, name, first, second):
         is_equal = str(first) == str(second)
 
@@ -857,6 +918,11 @@ class Game:
             self.sync_log.append(str(second))
 
     def _get_initial_tile_bag(self):
+        if self._verbose:
+            print('username_to_game_history:')
+            for username in self.player_id_to_username.values():
+                print(username, self.username_to_game_history[username])
+
         player_id_to_game_history = [self.username_to_game_history[username] for username in self.player_id_to_username.values()]
 
         player_id_to_turn_by_turn_tiles_drawn_or_replaced = []
@@ -877,9 +943,30 @@ class Game:
         included_tiles = set()
         tile_bag = []
 
+        index = 0
+        if self._verbose:
+            max_len = max(len(x) for x in player_id_to_turn_by_turn_tiles_drawn_or_replaced)
+
+            print('all:')
+            for turn_by_turn_tiles_drawn_or_replaced in player_id_to_turn_by_turn_tiles_drawn_or_replaced:
+                print(turn_by_turn_tiles_drawn_or_replaced)
+
         for players_tiles_by_turn in itertools.zip_longest(*player_id_to_turn_by_turn_tiles_drawn_or_replaced):
+            if self._verbose:
+                index += 1
+                if index == max_len:
+                    print('before:')
+                    for player_tiles_by_turn in players_tiles_by_turn:
+                        print(player_tiles_by_turn)
+
             # put current player's tiles first. current player will have more tiles.
             players_tiles_by_turn = sorted([player_tiles_by_turn for player_tiles_by_turn in players_tiles_by_turn if player_tiles_by_turn], key=lambda x: -len(x))
+
+            if self._verbose:
+                if index == max_len:
+                    print('after:')
+                    for player_tiles_by_turn in players_tiles_by_turn:
+                        print(player_tiles_by_turn)
 
             for player_tiles_by_turn in players_tiles_by_turn:
                 if player_tiles_by_turn:
@@ -888,6 +975,9 @@ class Game:
                             included_tiles.add(tile)
                             tile_bag.append(tile)
 
+        if self._verbose:
+            print('len(tile_bag):', len(tile_bag))
+
         remaining_tiles = list({(x, y) for x in range(12) for y in range(9)} - included_tiles)
         random.shuffle(remaining_tiles)
         tile_bag.extend(remaining_tiles)
@@ -895,9 +985,7 @@ class Game:
 
         return tile_bag
 
-    def make_server_game_file(self):
-        num_tiles_on_board = len([1 for row in self.board for cell in row if cell != Game._game_board_type__nothing])
-
+    def make_server_game_file(self, filename_part=None):
         game_data = {}
 
         game_data['game_id'] = self.server_game.game_id
@@ -939,7 +1027,8 @@ class Game:
             game_data_actions.append(game_data_action)
         game_data['actions'] = game_data_actions
 
-        filename = '%d_%05d_%03d.bin' % (self.log_timestamp, self.internal_game_id, num_tiles_on_board)
+        num_tiles_on_board = len([1 for row in self.board for cell in row if cell != Game._game_board_type__nothing])
+        filename = '%d_%05d_%03d%s.bin' % (self.log_timestamp, self.internal_game_id, num_tiles_on_board, '_' + filename_part if filename_part else '')
         with open('/opt/data/tim/' + filename, 'wb') as f:
             pickle.dump(game_data, f)
 
