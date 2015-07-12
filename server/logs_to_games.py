@@ -480,7 +480,7 @@ class LogProcessor:
             # 'SetTurn',
             # 'SetGameAction',
             command_to_client_entry_to_index['SetTile']: self._handle_command_to_client__set_tile,
-            command_to_client_entry_to_index['SetTileGameBoardType']: self._handle_command_to_client__set_tile_game_board_type,
+            # 'SetTileGameBoardType',
             command_to_client_entry_to_index['RemoveTile']: self._handle_command_to_client__remove_tile,
             # 'AddGlobalChatMessage',
             # 'AddGameChatMessage',
@@ -607,7 +607,7 @@ class LogProcessor:
                 game.username_to_game_history[username] = [game.translate_add_game_history_message(message) for message in command[1]]
 
     def _handle_command_to_client__set_tile(self, client_ids, command):
-        client_id, tile_index, x, y, game_board_type_id = client_ids[0], command[1], command[2], command[3], command[4]
+        client_id, tile_index, x, y = client_ids[0], command[1], command[2], command[3]
 
         game = self._game_id_to_game[self._client_id_to_game_id[client_id]]
 
@@ -621,16 +621,7 @@ class LogProcessor:
             game.tile_rack_tiles.add(tile)
             game.additional_tile_rack_tiles_order.append(tile)
 
-        game.tile_racks[player_id][tile_index] = [tile, game_board_type_id]
-
-    def _handle_command_to_client__set_tile_game_board_type(self, client_ids, command):
-        client_id, tile_index, game_board_type_id = client_ids[0], command[1], command[2]
-
-        game = self._game_id_to_game[self._client_id_to_game_id[client_id]]
-
-        player_id = game.username_to_player_id[self._client_id_to_username[client_id]]
-
-        game.tile_racks[player_id][tile_index][1] = game_board_type_id
+        game.tile_racks[player_id][tile_index] = tile
 
     def _handle_command_to_client__remove_tile(self, client_ids, command):
         client_id, tile_index = client_ids[0], command[1]
@@ -836,7 +827,7 @@ class Game:
             for server_tile_rack in self.server_game.tile_racks.racks:
                 rack = []
                 for tile_data in server_tile_rack:
-                    rack.append(tile_data[:2] if tile_data else None)
+                    rack.append(tile_data[0] if tile_data else None)
                 server_tile_racks.append(rack)
 
             for player_id, rack1, rack2 in zip(range(len(tile_racks)), tile_racks, server_tile_racks):
