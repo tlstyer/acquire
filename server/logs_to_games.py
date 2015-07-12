@@ -567,7 +567,16 @@ class LogProcessor:
         game = self._game_id_to_game[self._client_id_to_game_id[client_id]]
 
         if game.board[x][y] == LogProcessor._game_board_type__nothing:
-            game.played_tiles_order.append((x, y))
+            tile = (x, y)
+
+            game.played_tiles_order.append(tile)
+
+            # remove tile from tile racks
+            for tile_rack in game.tile_racks[:len(game.player_id_to_username)]:
+                for index, entry in enumerate(tile_rack):
+                    if entry == tile:
+                        tile_rack[index] = None
+                        break
 
         game.board[x][y] = game_board_type_id
 
@@ -877,25 +886,9 @@ class Game:
 
         # tile racks
         if self.server_game.tile_racks:
-            server_tile_racks = []
-            for server_tile_rack in self.server_game.tile_racks.racks:
-                rack = []
-                for tile_data in server_tile_rack:
-                    rack.append(tile_data[0] if tile_data else None)
-                server_tile_racks.append(rack)
+            server_tile_racks = [[tile_data[0] if tile_data else None for tile_data in rack] for rack in self.server_game.tile_racks.racks]
 
-            for player_id, rack1, rack2 in zip(range(len(tile_racks)), tile_racks, server_tile_racks):
-                okay = True
-
-                for tile_data1, tile_data2 in zip(rack1, rack2):
-                    if tile_data2 is not None and tile_data1 != tile_data2:
-                        okay = False
-
-                if not okay:
-                    self.is_server_game_synchronized = False
-                    self.sync_log.append('tile_racks diff! player_id ' + str(player_id))
-                    self.sync_log.append(str(rack1))
-                    self.sync_log.append(str(rack2))
+            self._sync_compare('tile_racks', tile_racks, server_tile_racks)
 
             if self._verbose:
                 print('tile_racks:')
