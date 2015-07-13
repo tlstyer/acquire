@@ -1,7 +1,6 @@
 #!/usr/bin/env python3.4m
 
 import collections
-import copy
 import enums
 import inspect
 import itertools
@@ -443,9 +442,8 @@ class LogParser:
 class LogProcessor:
     _game_board_type__nothing = Enums.lookups['GameBoardTypes'].index('Nothing')
 
-    def __init__(self, log_timestamp, file, do_detailed_move_by_move_comparison=False, verbose=False, verbose_output_path=''):
+    def __init__(self, log_timestamp, file, verbose=False, verbose_output_path=''):
         self._log_timestamp = log_timestamp
-        self._do_detailed_move_by_move_comparison = do_detailed_move_by_move_comparison
         self._verbose = verbose
         self._verbose_output_path = verbose_output_path
 
@@ -514,8 +512,6 @@ class LogProcessor:
         self._delayed_calls = []
 
         self._expired_games = []
-
-        self._on_empty_line_add_sync_data = None
 
         self._line_number = 0
 
@@ -713,8 +709,6 @@ class LogProcessor:
 
             if player_id is not None:
                 game.actions.append([player_id, command[1:]])
-                if self._do_detailed_move_by_move_comparison:
-                    self._on_empty_line_add_sync_data = game
 
     def _handle_game_expired(self, game_id):
         self._expired_games.append(self._game_id_to_game[game_id])
@@ -728,7 +722,7 @@ class LogProcessor:
         if game_id in self._game_id_to_game:
             game = self._game_id_to_game[game_id]
         else:
-            game = Game(self._log_timestamp, game_id, internal_game_id, self._do_detailed_move_by_move_comparison, self._verbose)
+            game = Game(self._log_timestamp, game_id, internal_game_id, self._verbose)
             self._game_id_to_game[game_id] = game
 
         if entry['_'] == 'game-player':
@@ -764,14 +758,6 @@ class LogProcessor:
             for func, args in self._delayed_calls:
                 func(*args)
             del self._delayed_calls[:]
-
-        if self._on_empty_line_add_sync_data:
-            game = self._on_empty_line_add_sync_data
-
-            num_players = len(game.player_id_to_username)
-            game.sync_data.append(list(map(copy.deepcopy, [game.board, game.score_sheet_players[:num_players], game.score_sheet_chain_size, game.tile_racks[:num_players], game.username_to_game_history])))
-
-            self._on_empty_line_add_sync_data = None
 
         if self._verbose:
             for game in self._game_id_to_game.values():
@@ -811,11 +797,10 @@ class Game:
         (1435226336, 3165): [[88, (2, 7)], [89, (11, 3)]],
     }
 
-    def __init__(self, log_timestamp, game_id, internal_game_id, do_detailed_move_by_move_comparison, verbose):
+    def __init__(self, log_timestamp, game_id, internal_game_id, verbose):
         self.log_timestamp = log_timestamp
         self.game_id = game_id
         self.internal_game_id = internal_game_id
-        self._do_detailed_move_by_move_comparison = do_detailed_move_by_move_comparison
         self._verbose = verbose
         self.state = None
         self.mode = None
@@ -836,7 +821,6 @@ class Game:
         self.additional_tile_rack_tiles_order = []
         self.actions = []
         self.username_to_game_history = {}
-        self.sync_data = []
 
         self.server_game = None
         self._server_game_player_id_to_client = None
@@ -866,20 +850,12 @@ class Game:
         self.is_server_game_synchronized = True
         self.sync_log = []
 
-        if self._do_detailed_move_by_move_comparison:
-            self._sync_compare('len(self.actions), len(self.sync_data)', len(self.actions), len(self.sync_data))
-
         for index, player_id_and_action in enumerate(self.actions):
             player_id, action = player_id_and_action
 
             game_action_id = action[0]
             data = action[1:]
             self.server_game.do_game_action(self._server_game_player_id_to_client[player_id], game_action_id, data)
-
-            if self._do_detailed_move_by_move_comparison:
-                self.sync_log.append('action %d %s' % (player_id, str(action)))
-                self._sync_compare_stuff_with_server_game(*self.sync_data[index])
-                self.sync_log.append('')
 
         self._sync_compare_stuff_with_server_game(self.board, self.score_sheet_players[:num_players], self.score_sheet_chain_size, self.tile_racks[:num_players], self.username_to_game_history)
 
