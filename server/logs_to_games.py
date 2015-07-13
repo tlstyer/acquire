@@ -790,15 +790,6 @@ class LogProcessor:
                 print()
                 print()
 
-                for username, game_history in game.username_to_game_history.items():
-                    player_id = game.username_to_player_id[username]
-
-                    filename = os.path.join(self._verbose_output_path, '%d_%05d_%06d_%d_game_history.txt' % (game.log_timestamp, game.internal_game_id, self._line_number, player_id))
-                    messages.append(filename)
-                    with open(filename, 'w') as f:
-                        for message in game_history:
-                            f.write(Enums.lookups['GameHistoryMessages'][message[0]] + ' ' + str(message) + '\n')
-
 
 class Game:
     _game_board_type__nothing = Enums.lookups['GameBoardTypes'].index('Nothing')
