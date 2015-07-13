@@ -1015,7 +1015,8 @@ class Game:
                         if self._verbose:
                             print('random tile chosen for insertion:', tile)
                     else:
-                        print('specified tile for insertion:', tile)
+                        if self._verbose:
+                            print('specified tile for insertion:', tile)
                     tile_bag.insert(index, tile)
                     remaining_tiles.remove(tile)
 
