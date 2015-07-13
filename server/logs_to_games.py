@@ -1,13 +1,17 @@
 #!/usr/bin/env python3.4m
 
+import collections
 import copy
 import enums
 import inspect
 import itertools
+import os
+import os.path
 import pickle
 import random
 import re
 import server
+import sys
 import traceback
 import ujson
 import util
@@ -439,10 +443,11 @@ class LogParser:
 class LogProcessor:
     _game_board_type__nothing = Enums.lookups['GameBoardTypes'].index('Nothing')
 
-    def __init__(self, log_timestamp, file, do_detailed_move_by_move_comparison=False, verbose=False):
+    def __init__(self, log_timestamp, file, do_detailed_move_by_move_comparison=False, verbose=False, verbose_output_path=''):
         self._log_timestamp = log_timestamp
         self._do_detailed_move_by_move_comparison = do_detailed_move_by_move_comparison
         self._verbose = verbose
+        self._verbose_output_path = verbose_output_path
 
         self._client_id_to_username = {}
         self._username_to_client_id = {}
@@ -772,7 +777,8 @@ class LogProcessor:
             for game in self._game_id_to_game.values():
                 game.make_server_game()
 
-                game.make_server_game_file('partial_game_%06d' % (self._line_number,))
+                filename = os.path.join(self._verbose_output_path, '%d_%05d_%06d.bin' % (game.log_timestamp, game.internal_game_id, self._line_number))
+                game.make_server_game_file(filename)
                 print('\n'.join(game.sync_log))
 
                 messages = [game.log_timestamp, game.internal_game_id, self._line_number]
@@ -787,7 +793,7 @@ class LogProcessor:
                 for username, game_history in game.username_to_game_history.items():
                     player_id = game.username_to_player_id[username]
 
-                    filename = '/opt/data/tim/%d_%05d_%05d_%d_game_history.txt' % (game.log_timestamp, game.internal_game_id, self._line_number, player_id)
+                    filename = os.path.join(self._verbose_output_path, '%d_%05d_%06d_%d_game_history.txt' % (game.log_timestamp, game.internal_game_id, self._line_number, player_id))
                     messages.append(filename)
                     with open(filename, 'w') as f:
                         for message in game_history:
@@ -802,7 +808,7 @@ class Game:
     _turn_began_message_id = _game_history_messages_lookup['TurnBegan']
     _drew_or_replaced_tile_message_ids = {_game_history_messages_lookup['DrewPositionTile'], _game_history_messages_lookup['DrewTile'], _game_history_messages_lookup['ReplacedDeadTile']}
 
-    _tile_bag_tweaks = {
+    tile_bag_tweaks = {
         (1414827614, 43): [[34, (1, 5)]],
         (1415355783, 106): [[68, (11, 1)]],
         (1421578193, 3366): [[80, (9, 6)]],
@@ -1006,7 +1012,7 @@ class Game:
         remaining_tiles = {(x, y) for x in range(12) for y in range(9)} - included_tiles
 
         # do tile bag tweaks
-        tile_bag_tweaks = Game._tile_bag_tweaks.get((self.log_timestamp, self.internal_game_id))
+        tile_bag_tweaks = Game.tile_bag_tweaks.get((self.log_timestamp, self.internal_game_id))
         if tile_bag_tweaks:
             for index, tile in tile_bag_tweaks:
                 if len(tile_bag) >= index:
@@ -1027,7 +1033,7 @@ class Game:
 
         return tile_bag
 
-    def make_server_game_file(self, filename_part=None):
+    def make_server_game_file(self, filename):
         game_data = {}
 
         game_data['game_id'] = self.server_game.game_id
@@ -1069,12 +1075,8 @@ class Game:
             game_data_actions.append(game_data_action)
         game_data['actions'] = game_data_actions
 
-        num_tiles_on_board = len([1 for row in self.board for cell in row if cell != Game._game_board_type__nothing])
-        filename = '%d_%05d_%03d%s.bin' % (self.log_timestamp, self.internal_game_id, num_tiles_on_board, '_' + filename_part if filename_part else '')
-        with open('/opt/data/tim/' + filename, 'wb') as f:
+        with open(filename, 'wb') as f:
             pickle.dump(game_data, f)
-
-        return filename
 
     @staticmethod
     def _add_pending_messages(messages, client_ids=None):
@@ -1369,46 +1371,44 @@ class IndividualGameLog:
 
         self.line_number_to_batch = {}
 
-    def make_game_log_file(self):
-        filename = '%d_%05d.txt' % (self.log_timestamp, self.internal_game_id)
-        with open('/opt/data/tim/' + filename, 'w') as f:
+    def make_game_log_file(self, filename):
+        with open(filename, 'w') as f:
             for line_number, batch in sorted(self.line_number_to_batch.items()):
                 f.write('--- batch line number: ' + str(line_number) + '\n')
                 f.write('\n'.join(batch))
                 f.write('\n')
 
 
-def main():
-    for timestamp, path in util.get_log_file_paths('py', begin=1408905413):
-        print(path)
+def test_individual_game_log(output_dir):
+    log_timestamp = 1432798259
 
-        with util.open_possibly_gzipped_file(path) as file:
-            log_processor = LogProcessor(timestamp, file, True)
-
+    for log_timestamp, filename in util.get_log_file_filenames('py', begin=log_timestamp, end=log_timestamp):
+        with util.open_possibly_gzipped_file(filename) as file:
+            log_processor = LogProcessor(log_timestamp, file)
             for game in log_processor.go():
-                game.make_server_game()
+                print('stage1', game.internal_game_id)
+                _test_individual_game_log__output_game_file(os.path.join(output_dir, '1'), game)
 
-                messages = [game.log_timestamp, game.internal_game_id]
-                if game.is_server_game_synchronized:
-                    messages.append('yay!')
-                    if game.server_game.state == Enums.lookups['GameStates'].index('InProgress') and len(game.player_id_to_username) > 1:
-                        filename = game.make_server_game_file()
-                        messages.append(filename)
-                else:
-                    messages.append('boo!')
+    log_timestamps_and_filenames = []
+    for log_timestamp, filename in util.get_log_file_filenames('py', begin=log_timestamp, end=log_timestamp):
+        with util.open_possibly_gzipped_file(filename) as file:
+            individual_game_log_maker = IndividualGameLogMaker(log_timestamp, file)
+            for individual_game_log in individual_game_log_maker.go():
+                print('stage2', individual_game_log.internal_game_id)
+                filename = os.path.join(output_dir, '%d_%05d.txt' % (individual_game_log.log_timestamp, individual_game_log.internal_game_id))
+                individual_game_log.make_game_log_file(filename)
+                log_timestamps_and_filenames.append((log_timestamp, filename))
 
-                    if game.sync_log is not None:
-                        filename = '/opt/data/tim/%d_%05d_sync_log.txt' % (game.log_timestamp, game.internal_game_id)
-                        messages.append(filename)
-                        with open(filename, 'w') as f:
-                            f.write('\n'.join(game.sync_log))
-                            f.write('\n')
-
-                print(*messages)
+    for log_timestamp, filename in log_timestamps_and_filenames:
+        with util.open_possibly_gzipped_file(filename) as file:
+            log_processor = LogProcessor(log_timestamp, file)
+            for game in log_processor.go():
+                print('stage3', game.internal_game_id)
+                _test_individual_game_log__output_game_file(os.path.join(output_dir, '2'), game)
 
 
-def output_game_file(directory, game):
-    with open('/opt/data/tim/%s/%d_%05d.json' % (directory, game.log_timestamp, game.internal_game_id), 'w') as f:
+def _test_individual_game_log__output_game_file(output_dir, game):
+    with open(os.path.join(output_dir, '%d_%05d.json' % (game.log_timestamp, game.internal_game_id)), 'w') as f:
         for key, value in sorted(game.__dict__.items()):
             f.write(key)
             f.write(': ')
@@ -1418,34 +1418,142 @@ def output_game_file(directory, game):
             f.write('\n')
 
 
-def test_individual_game_log():
-    timestamp = 1424164983
+def output_sync_logs_for_all_unsynchronized_games(output_dir):
+    for log_timestamp, filename in util.get_log_file_filenames('py', begin=1408905413):
+        print(filename)
 
-    for timestamp, path in util.get_log_file_paths('py', begin=timestamp, end=timestamp):
-        with util.open_possibly_gzipped_file(path) as file:
-            log_processor = LogProcessor(timestamp, file)
-            for game in log_processor.go():
-                print('stage1', game.internal_game_id)
-                output_game_file('1', game)
+        _generate_sync_logs(log_timestamp, filename, output_dir)
 
-    for timestamp, path in util.get_log_file_paths('py', begin=timestamp, end=timestamp):
-        with util.open_possibly_gzipped_file(path) as file:
-            individual_game_log_maker = IndividualGameLogMaker(timestamp, file)
-            for individual_game_log in individual_game_log_maker.go():
-                print('stage2', individual_game_log.internal_game_id)
-                individual_game_log.make_game_log_file()
 
-    import glob
+def report_on_sync_logs(output_dir):
+    regex = re.compile(r'^(\d+)_0*(\d+)_0*(\d+)_sync_log.txt$')
 
-    for path in sorted(glob.glob('/opt/data/tim/' + str(timestamp) + '_*.txt')):
-        with util.open_possibly_gzipped_file(path) as file:
-            log_processor = LogProcessor(timestamp, file)
-            for game in log_processor.go():
-                print('stage3', game.internal_game_id)
-                output_game_file('2', game)
+    sync_logs_with_fully_unknown_tile_racks = []
+    sync_logs_without_fully_unknown_tile_racks = []
+
+    for filename in os.listdir(output_dir):
+        match = regex.match(filename)
+        if match:
+            has_full_unknown_tile_rack = False
+            with open(os.path.join(output_dir, filename), 'r') as f:
+                for line in f:
+                    if line == '[None, None, None, None, None, None]\n':
+                        has_full_unknown_tile_rack = True
+
+            data = (int(match.group(1)), int(match.group(2)), int(match.group(3)))
+            if has_full_unknown_tile_rack:
+                sync_logs_with_fully_unknown_tile_racks.append(data)
+            else:
+                sync_logs_without_fully_unknown_tile_racks.append(data)
+
+    sync_logs_with_fully_unknown_tile_racks.sort(reverse=True)
+    sync_logs_without_fully_unknown_tile_racks.sort(reverse=True)
+
+    print('without fully unknown tile racks:')
+    for log_timestamp, internal_game_id, num_tiles_on_board in sync_logs_without_fully_unknown_tile_racks:
+        print(log_timestamp, internal_game_id, num_tiles_on_board)
+    print()
+    print('with fully unknown tile racks:')
+    for log_timestamp, internal_game_id, num_tiles_on_board in sync_logs_with_fully_unknown_tile_racks:
+        print(log_timestamp, internal_game_id, num_tiles_on_board)
+
+
+def make_individual_game_logs_for_each_sync_log(input_dir, output_dir):
+    regex = re.compile(r'^(\d+)_0*(\d+)_0*(\d+)_sync_log.txt$')
+
+    log_timestamp_to_internal_game_ids = collections.defaultdict(set)
+    for filename in os.listdir(input_dir):
+        match = regex.match(filename)
+        if match:
+            log_timestamp_to_internal_game_ids[int(match.group(1))].add(int(match.group(2)))
+
+    for log_timestamp, internal_game_ids in sorted(log_timestamp_to_internal_game_ids.items()):
+        for log_timestamp_, filename in util.get_log_file_filenames('py', begin=log_timestamp, end=log_timestamp):
+            print(filename)
+            with util.open_possibly_gzipped_file(filename) as file:
+                individual_game_log_maker = IndividualGameLogMaker(log_timestamp, file)
+                for individual_game_log in individual_game_log_maker.go():
+                    if individual_game_log.internal_game_id in internal_game_ids:
+                        filename = os.path.join(output_dir, '%d_%05d.txt' % (individual_game_log.log_timestamp, individual_game_log.internal_game_id))
+                        individual_game_log.make_game_log_file(filename)
+                        print(log_timestamp, individual_game_log.internal_game_id, filename)
+
+
+def run_all_game_logs_with_tile_bag_tweaks(input_dir, output_dir):
+    for log_timestamp, internal_game_id in sorted(Game.tile_bag_tweaks.keys()):
+        filename = os.path.join(input_dir, '%d_%05d.txt' % (log_timestamp, internal_game_id))
+
+        _generate_sync_logs(log_timestamp, filename, output_dir)
+
+
+def verbosely_compare_individual_game_logs_with_tile_bag_tweaks(input_dir, output_dir):
+    for log_timestamp, internal_game_id in sorted(Game.tile_bag_tweaks.keys()):
+        filename = os.path.join(output_dir, '%d_%05d_verbose_comparison.txt' % (log_timestamp, internal_game_id))
+        print(filename)
+        with open(filename, 'w') as f:
+            old_stdout = sys.stdout
+            sys.stdout = f
+            verbosely_compare_individual_game_log(log_timestamp, internal_game_id, input_dir, output_dir)
+            sys.stdout = old_stdout
+
+
+def verbosely_compare_individual_game_log(log_timestamp, internal_game_id, input_dir, output_dir):
+    filename = os.path.join(input_dir, '%d_%05d.txt' % (log_timestamp, internal_game_id))
+
+    with util.open_possibly_gzipped_file(filename) as file:
+        log_processor = LogProcessor(log_timestamp, file, verbose=True, verbose_output_path=output_dir)
+
+        for game in log_processor.go():
+            game.make_server_game()
+
+            messages = [game.log_timestamp, game.internal_game_id]
+            if game.is_server_game_synchronized:
+                messages.append('yay!')
+            else:
+                messages.append('boo!')
+                print('sync_log:')
+                print('\n'.join(game.sync_log))
+
+            print(*messages)
+
+
+def _generate_sync_logs(log_timestamp, filename, output_dir):
+    with util.open_possibly_gzipped_file(filename) as file:
+        log_processor = LogProcessor(log_timestamp, file)
+
+        for game in log_processor.go():
+            game.make_server_game()
+
+            messages = [game.log_timestamp, game.internal_game_id]
+            if game.is_server_game_synchronized:
+                messages.append('yay!')
+            else:
+                messages.append('boo!')
+
+                if game.sync_log is not None:
+                    filename = os.path.join(output_dir, '%d_%05d_%03d_sync_log.txt' % (game.log_timestamp, game.internal_game_id, len(game.played_tiles_order)))
+                    messages.append(filename)
+                    with open(filename, 'w') as f:
+                        f.write('\n'.join(game.sync_log))
+                        f.write('\n')
+
+            print(*messages)
+
+
+def main():
+    output_dir = '/opt/data/tim'
+    output_logs_dir = output_dir + '/logs'
+
+    # test_individual_game_log(output_dir)
+
+    # output_sync_logs_for_all_unsynchronized_games(output_logs_dir)
+    # report_on_sync_logs(output_logs_dir)
+    # make_individual_game_logs_for_each_sync_log(output_logs_dir, output_logs_dir)
+    # run_all_game_logs_with_tile_bag_tweaks(output_logs_dir, output_dir)
+    # verbosely_compare_individual_game_logs_with_tile_bag_tweaks(output_logs_dir, output_dir)
+
+    # Enums.pretty_print_lookups(Enums.get_lookups_from_enums_module())
 
 
 if __name__ == '__main__':
     main()
-    # test_individual_game_log()
-    # Enums.pretty_print_lookups(Enums.get_lookups_from_enums_module())
