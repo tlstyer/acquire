@@ -958,7 +958,7 @@ class ActionPurchaseShares(Action):
         if self.can_not_afford_any_shares:
             self.game.add_history_message(enums.GameHistoryMessages.CouldNotAffordAnyShares.value, self.player_id)
         else:
-            self.game.add_history_message(enums.GameHistoryMessages.PurchasedShares.value, self.player_id, sorted(game_board_type_id_to_count.items()))
+            self.game.add_history_message(enums.GameHistoryMessages.PurchasedShares.value, self.player_id, sorted(list(x) for x in game_board_type_id_to_count.items()))
 
         if end_game and self.can_end_game:
             self.end_game = True
@@ -1120,6 +1120,8 @@ class Game:
             print(ujson.dumps(log))
 
     def add_history_message(self, *data, player_id=None):
+        data = list(data)
+
         self.history_messages.append([player_id, data])
 
         if player_id is None:

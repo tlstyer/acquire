@@ -764,7 +764,7 @@ class LogProcessor:
             game = self._on_empty_line_add_sync_data
 
             num_players = len(game.player_id_to_username)
-            game.sync_data.append([copy.deepcopy(game.board), copy.deepcopy(game.score_sheet_players[:num_players]), copy.deepcopy(game.score_sheet_chain_size), copy.deepcopy(game.tile_racks[:num_players])])
+            game.sync_data.append(list(map(copy.deepcopy, [game.board, game.score_sheet_players[:num_players], game.score_sheet_chain_size, game.tile_racks[:num_players], game.username_to_game_history])))
 
             self._on_empty_line_add_sync_data = None
 
@@ -884,9 +884,9 @@ class Game:
                 self._sync_compare_stuff_with_server_game(*self.sync_data[index])
                 self.sync_log.append('')
 
-        self._sync_compare_stuff_with_server_game(self.board, self.score_sheet_players[:num_players], self.score_sheet_chain_size, self.tile_racks[:num_players])
+        self._sync_compare_stuff_with_server_game(self.board, self.score_sheet_players[:num_players], self.score_sheet_chain_size, self.tile_racks[:num_players], self.username_to_game_history)
 
-    def _sync_compare_stuff_with_server_game(self, board, score_sheet_players, score_sheet_chain_size, tile_racks):
+    def _sync_compare_stuff_with_server_game(self, board, score_sheet_players, score_sheet_chain_size, tile_racks, username_to_game_history):
         # board
         self._sync_compare('board', board, self.server_game.game_board.x_to_y_to_board_type)
 
@@ -901,6 +901,30 @@ class Game:
             server_tile_racks = [[tile_data[0] if tile_data else None for tile_data in rack] for rack in self.server_game.tile_racks.racks]
 
             self._sync_compare('tile_racks', tile_racks, server_tile_racks)
+
+        # player id to game history
+        local_player_id_to_game_history = [username_to_game_history[username] for username in self.player_id_to_username.values()]
+
+        server_player_id_to_game_history = [[] for x in range(len(self.server_game.score_sheet.username_to_player_id))]
+        for target_player_id, message in self.server_game.history_messages:
+            if target_player_id is None:
+                for game_history in server_player_id_to_game_history:
+                    game_history.append(message)
+            else:
+                server_player_id_to_game_history[target_player_id].append(message)
+
+        if self._verbose:
+            self.sync_log.append('player_id_to_game_history:')
+            for username in self.player_id_to_username.values():
+                self.sync_log.append(str(self.username_to_game_history[username]))
+
+        for player_id, local_game_history, server_game_history in zip(range(len(local_player_id_to_game_history)), local_player_id_to_game_history, server_player_id_to_game_history):
+            server_game_history_under_consideration = server_game_history[:len(local_game_history)]
+            if local_game_history != server_game_history_under_consideration:
+                self.is_server_game_synchronized = False
+                self.sync_log.append('player_id_to_game_history diff for player_id ' + str(player_id) + '!')
+                self.sync_log.append(str(local_game_history))
+                self.sync_log.append(str(server_game_history_under_consideration))
 
     def _sync_compare(self, name, first, second):
         str_first = str(first)
@@ -924,11 +948,6 @@ class Game:
                 self.sync_log.append(str_second)
 
     def _get_initial_tile_bag(self):
-        if self._verbose:
-            print('username_to_game_history:')
-            for username in self.player_id_to_username.values():
-                print(username, self.username_to_game_history[username])
-
         player_id_to_game_history = [self.username_to_game_history[username] for username in self.player_id_to_username.values()]
 
         player_id_to_turn_by_turn_tiles_drawn_or_replaced = []
