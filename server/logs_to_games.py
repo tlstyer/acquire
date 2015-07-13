@@ -372,11 +372,11 @@ class LogParser:
             if stop_processing_file:
                 break
 
-            yield (handled_line_type, line_number, line, parse_line_data)
+            yield handled_line_type, line_number, line, parse_line_data
 
         # make sure last line type is always LineTypes.blank_line
         if handled_line_type != LineTypes.blank_line:
-            yield (LineTypes.blank_line, line_number + 1, '', ())
+            yield LineTypes.blank_line, line_number + 1, '', ()
 
     def _handle_command_to_client(self, match):
         try:
