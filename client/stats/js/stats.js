@@ -397,6 +397,7 @@ $(function() {
 			$('#users').show();
 			$('#ratings-type').text(rating_type);
 			populateRatingsTable(rating_type_to_ratings[rating_type]);
+			setFormErrorMessage(null);
 		} else {
 			setFormErrorMessage('Invalid ratings type.');
 		}

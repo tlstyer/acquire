@@ -8,7 +8,6 @@ import html.parser
 import orm
 import pickle
 import sqlalchemy.sql
-import subprocess
 import sys
 import ujson
 
@@ -75,7 +74,7 @@ class MyHTMLParser(html.parser.HTMLParser):
 
 def part1():
     game_type_to_date_to_result = {game_type: {} for game_type in game_type_to_mode.keys()}
-    for filename in glob.iglob('../../netacquire.ca/players/*.html'):
+    for filename in glob.iglob('../../../netacquire.ca/players/*.html'):
         with open(filename, 'r', encoding='latin_1') as f:
             contents = f.read()
         parser = MyHTMLParser(game_type_to_date_to_result)

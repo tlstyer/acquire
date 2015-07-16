@@ -51,21 +51,21 @@ class Logs2DB:
     def process_game(self, params):
         game = self.lookup.get_game(params['_log-time'], params['game-id'])
 
-        begin_time = params.get('begin', None)
+        begin_time = params.get('begin')
         if begin_time:
             game.begin_time = begin_time
 
-        end_time = params.get('end', None)
+        end_time = params.get('end')
         if end_time:
             game.end_time = end_time
 
         game.game_state = self.lookup.get_game_state(params['state'])
 
-        game_mode = params.get('mode', None)
+        game_mode = params.get('mode')
         if game_mode:
             game.game_mode = self.lookup.get_game_mode(game_mode)
 
-        score = params.get('score', None)
+        score = params.get('score')
         if score:
             params['scores'] = score
             self.process_game_result(params)
