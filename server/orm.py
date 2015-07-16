@@ -33,14 +33,15 @@ class Game(Base):
     game_state_id = Column(TINYINT(unsigned=True), ForeignKey('game_state.game_state_id'), nullable=False)
     game_mode_id = Column(TINYINT(unsigned=True), ForeignKey('game_mode.game_mode_id'), nullable=False)
     imported = Column(TINYINT(unsigned=True), nullable=False)
+    completed_by_admin = Column(TINYINT(unsigned=True), nullable=False)
     __table_args__ = (UniqueConstraint('log_time', 'number'), Index('end_time', 'end_time'))
 
     game_state = relationship('GameState')
     game_mode = relationship('GameMode')
 
     def __repr__(self):
-        params = (repr(self.game_id), repr(self.log_time), repr(self.number), repr(self.begin_time), repr(self.end_time), repr(self.game_state_id), repr(self.game_mode_id), repr(self.imported))
-        return 'Game(game_id=%s, log_time=%s, number=%s, begin_time=%s, end_time=%s, game_state_id=%s, game_mode_id=%s, imported=%s)' % params
+        params = (repr(self.game_id), repr(self.log_time), repr(self.number), repr(self.begin_time), repr(self.end_time), repr(self.game_state_id), repr(self.game_mode_id), repr(self.imported), repr(self.completed_by_admin))
+        return 'Game(game_id=%s, log_time=%s, number=%s, begin_time=%s, end_time=%s, game_state_id=%s, game_mode_id=%s, imported=%s, completed_by_admin=%s)' % params
 
 
 class GameMode(Base):

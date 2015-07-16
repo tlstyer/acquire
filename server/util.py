@@ -1,6 +1,8 @@
-import glob
 import gzip
+import os
+import os.path
 import re
+import settings
 
 _log_type_to_log_file_filenames = {}
 re_timestamp_in_path = re.compile(r'([^/]*?)(\.gz)?$')
@@ -10,22 +12,25 @@ def get_log_file_filenames(log_type, begin=None, end=None):
     global _log_type_to_log_file_filenames
 
     if log_type in _log_type_to_log_file_filenames:
-        timestamp_and_filename = _log_type_to_log_file_filenames[log_type]
+        timestamps_and_filenames = _log_type_to_log_file_filenames[log_type]
     else:
-        filenames = glob.glob('/home/tim/server_mirror-archive/acquire.tlstyer.com/live/logs_' + log_type + '/*')
-        filenames.extend(glob.glob('/home/tim/server_mirror/acquire.tlstyer.com/live/logs_' + log_type + '/*'))
+        filenames = []
+        for path_prefix in settings.util__get_log_file_filenames__path_prefixes:
+            path = path_prefix + log_type
+            for filename in os.listdir(path):
+                filenames.append(os.path.join(path, filename))
 
-        timestamp_and_filename = [(int(re_timestamp_in_path.search(filename).group(1)), filename) for filename in filenames]
+        timestamps_and_filenames = [(int(re_timestamp_in_path.search(filename).group(1)), filename) for filename in filenames]
 
-        _log_type_to_log_file_filenames[log_type] = timestamp_and_filename
+        _log_type_to_log_file_filenames[log_type] = timestamps_and_filenames
 
     if begin:
-        timestamp_and_filename = filter(lambda x: x[0] >= begin, timestamp_and_filename)
+        timestamps_and_filenames = filter(lambda x: x[0] >= begin, timestamps_and_filenames)
 
     if end:
-        timestamp_and_filename = filter(lambda x: x[0] <= end, timestamp_and_filename)
+        timestamps_and_filenames = filter(lambda x: x[0] <= end, timestamps_and_filenames)
 
-    return sorted(timestamp_and_filename)
+    return sorted(timestamps_and_filenames)
 
 
 re_gzip_filename = re.compile(r'.*\.gz$')

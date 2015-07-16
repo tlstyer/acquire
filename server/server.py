@@ -1029,6 +1029,8 @@ class Game:
         self.history_messages = []
         self.expiration_time = None
 
+        self.log_data_overrides = {}
+
         self.set_state(self.state, self.mode, self.max_players)
 
     def join_game(self, client):
@@ -1115,6 +1117,13 @@ class Game:
             self.max_players = max_players
             log['max-players'] = max_players
 
+        if self.log_data_overrides:
+            if 'log-time' in self.log_data_overrides:
+                log['log-time'] = self.log_data_overrides['log-time']
+            for key, value in self.log_data_overrides.items():
+                if key in log:
+                    log[key] = value
+
         self.add_pending_messages([[enums.CommandsToClient.SetGameState.value, self.game_id, state, mode, max_players, score]])
         if self.logging_enabled:
             print(ujson.dumps(log))
@@ -1188,8 +1197,8 @@ def recreate_game(filename):
 
     game = Game.__new__(Game)
 
-    game.game_id = game_data['game_id']
-    game.internal_game_id = game_data['internal_game_id']
+    game.game_id = AcquireServerProtocol.next_game_id_manager.get_id()
+    game.internal_game_id = AcquireServerProtocol.next_internal_game_id_manager.get_id()
     game.state = game_data['state']
     game.mode = game_data['mode']
     game.max_players = game_data['max_players']
@@ -1228,10 +1237,51 @@ def recreate_game(filename):
                 action.__dict__[key] = value
         game.actions.append(action)
 
+    game.log_data_overrides = {'log-time': game_data['log_time'], 'game-id': game_data['internal_game_id'], 'external-game-id': game_data['game_id'], 'end': game_data['begin'] + 1800}
+
     AcquireServerProtocol.game_id_to_game[game.game_id] = game
 
 
+def recreate_some_games():
+    import orm
+    import os
+    import sqlalchemy.sql
+
+    input_dir = '/opt/data/tim/'
+    regex = re.compile(r'^(\d+)_0*(\d+)_0*(\d+).bin$')
+
+    in_progress_game_files = {}
+    for filename in os.listdir(input_dir):
+        match = regex.match(filename)
+        if match:
+            log_timestamp, internal_game_id, num_tiles_played = int(match.group(1)), int(match.group(2)), int(match.group(3))
+            in_progress_game_files[(log_timestamp, internal_game_id)] = (num_tiles_played, filename)
+
+    sql = sqlalchemy.sql.text('''
+        select
+            log_time,
+            number
+        from game
+        where completed_by_admin = 1
+    ''')
+    with orm.session_scope() as session:
+        for row in session.execute(sql):
+            key = (row.log_time, row.number)
+            if key in in_progress_game_files:
+                del in_progress_game_files[key]
+
+    num_tiles_played_and_filenames = sorted(in_progress_game_files.values(), key=lambda x: (-x[0], x[1]))
+
+    for num_tiles_played_and_filenames in num_tiles_played_and_filenames[:5]:
+        num_tiles_played, filename = num_tiles_played_and_filenames
+        filename = input_dir + filename
+        print(filename)
+        recreate_game(filename)
+
+
 def main():
+    # recreate_some_games()
+
     loop = asyncio.get_event_loop()
     loop.call_soon(AcquireServerProtocol.destroy_expired_games)
     coro = loop.create_unix_server(Server, 'python.sock')

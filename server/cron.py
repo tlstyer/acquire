@@ -12,6 +12,7 @@ import subprocess
 import time
 import trueskill
 import ujson
+import util
 
 
 class Logs2DB:
@@ -42,14 +43,17 @@ class Logs2DB:
             if line and line[-1] == '\n':
                 if line[0] == '{':
                     params = ujson.decode(line)
-                    params['_log-time'] = log_time
+                    if 'log-time' in params:
+                        params['log-time-specified'] = True
+                    else:
+                        params['log-time'] = log_time
                     self.method_lookup[params['_']](params)
             else:
                 len_last_line = len(line.encode())
         return file.tell() - len_last_line, self.completed_game_users
 
     def process_game(self, params):
-        game = self.lookup.get_game(params['_log-time'], params['game-id'])
+        game = self.lookup.get_game(params['log-time'], params['game-id'])
 
         begin_time = params.get('begin')
         if begin_time:
@@ -72,6 +76,8 @@ class Logs2DB:
 
         game.imported = 0
 
+        game.completed_by_admin = 1 if params.get('log-time-specified') else 0
+
     def process_game_import(self, params):
         game = orm.Game()
         self.session.add(game)
@@ -82,6 +88,7 @@ class Logs2DB:
         game.game_state = self.lookup.get_game_state('Completed')
         game.game_mode = self.lookup.get_game_mode(params['mode'])
         game.imported = 1
+        game.completed_by_admin = 0
 
         game_players = []
         for player_index, name_and_score in enumerate(params['scores']):
@@ -98,12 +105,12 @@ class Logs2DB:
         self.calculate_new_ratings(game, game_players)
 
     def process_game_player(self, params):
-        game = self.lookup.get_game(params['_log-time'], params['game-id'])
+        game = self.lookup.get_game(params['log-time'], params['game-id'])
         game_player = self.lookup.get_game_player(game, params['player-id'])
         game_player.user = self.lookup.get_user(params['username'])
 
     def process_game_result(self, params):
-        game = self.lookup.get_game(params['_log-time'], params['game-id'])
+        game = self.lookup.get_game(params['log-time'], params['game-id'])
 
         game_players = []
         for player_index, score in enumerate(params['scores']):
@@ -269,34 +276,26 @@ def main():
             lookup = orm.Lookup(session)
             logs2db = Logs2DB(session, lookup)
 
-            kv_last_filename = lookup.get_key_value('cron last filename')
-            last_filename = 0 if kv_last_filename.value is None else int(kv_last_filename.value)
+            kv_last_log_timestamp = lookup.get_key_value('cron last log timestamp')
+            last_log_timestamp = 1408905413 if kv_last_log_timestamp.value is None else int(kv_last_log_timestamp.value)
             kv_last_offset = lookup.get_key_value('cron last offset')
             last_offset = 0 if kv_last_offset.value is None else int(kv_last_offset.value)
 
-            filenames = []
-            for filename in os.listdir('logs_py'):
-                try:
-                    filename = int(filename)
-                except:
-                    continue
-                if filename >= last_filename:
-                    filenames.append(filename)
-            filenames.sort()
-
-            filename = 0
-            offset = 0
             completed_game_users = set()
-            for filename in filenames:
-                offset = last_offset if filename == last_filename else 0
-                with open('logs_py/' + str(filename), 'r') as f:
-                    if offset:
-                        f.seek(offset)
-                    offset, new_completed_game_users = logs2db.process_logs(f, filename)
+            for log_timestamp, filename in util.get_log_file_filenames('py', begin=last_log_timestamp):
+                if log_timestamp != last_log_timestamp:
+                    last_offset = 0
+
+                with util.open_possibly_gzipped_file(filename) as f:
+                    if last_offset:
+                        f.seek(last_offset)
+                    last_offset, new_completed_game_users = logs2db.process_logs(f, log_timestamp)
                     completed_game_users.update(new_completed_game_users)
 
-            kv_last_filename.value = filename
-            kv_last_offset.value = offset
+                last_log_timestamp = log_timestamp
+
+            kv_last_log_timestamp.value = last_log_timestamp
+            kv_last_offset.value = last_offset
 
             session.flush()
 
