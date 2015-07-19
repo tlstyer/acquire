@@ -88,6 +88,41 @@ def part1():
         pickle.dump(game_type_to_date_to_result, f)
 
 
+game_type_to_date_to_tweaked_dates_and_results = {
+    'teams': {
+        1388700206: [
+            [1388700206, {'Wasabis': (672, 452), '32': (672, 220), 'Bur Jr': (573, 393), 'Ackwyerkk': (573, 180)}],
+            [1388700207, {'Alias': (669, 207), 'CJ TEAMS': (669, 462), 'disenchanted 66.234': (570, 254), 'Road Runner': (570, 316)}],
+        ],
+
+        1392757040: [
+            [1392757040, {'RT-TEAM-GAMES-PARTNERS': (786, 360), 'Koda': (786, 426), 'solrei': (665, 425), 'Alias': (665, 240)}],
+            [1392757041, {'THE HABS': (644, 311), 'BooYahh': (644, 333), 'Neomdivad': (628, 281), 'YATEAM': (628, 347)}],
+        ],
+
+        1395966664: [
+            [1395966664, {'larry1959': (860, 445), 'Players': (860, 415), 'Sneaky': (733, 440), 'Tax Man': (733, 293)}],
+        ],
+        1395966666: [
+            [1395966666, {'UdaFool': (677, 383), 'solrei': (677, 294), 'Alias': (577, 307), 'RT-TEAM-GAMES-PARTNERS': (577, 270)}],
+        ],
+        1395966667: [],
+
+        1405040656: [
+            [1405040656, {'knicks1': (774, 353), 'Marvelous': (774, 421), 'Wasabis': (625, 240), 'disenchanted 66.234': (625, 385), }],
+            [1405040657, {'solrei': (751, 425), 'dj174.52': (751, 326), 'Honokai': (672, 458), 'Players': (672, 214)}],
+        ],
+
+        1412536558: [
+            [1412536558, {'dj174.52': (807, 549), 'marshal': (807, 258), 'foxx': (753, 350), 'solrei': (753, 403)}],
+        ],
+        1412536559: [
+            [1412536559, {'KABOOK-TEAMGAME': (696, 369), 'Rooster Cogburn': (696, 327), 'Alias': (596, 322), 'mansoor': (596, 274)}],
+        ],
+    }
+}
+
+
 def get_game_data():
     with open('game_import_data.bin', 'rb') as f:
         game_type_to_date_to_result = pickle.load(f)
@@ -120,6 +155,8 @@ def get_game_data():
     game_type_to_total_count = {game_type: 0 for game_type in game_type_to_mode.keys()}
     game_type_to_draw_count = {game_type: 0 for game_type in game_type_to_mode.keys()}
     for game_type, date_to_result in game_type_to_date_to_result.items():
+        date_to_tweaked_dates_and_results = game_type_to_date_to_tweaked_dates_and_results.get(game_type, {})
+
         num_players_needed = game_type_to_num_players[game_type]
 
         if game_type == 'teams':
@@ -127,32 +164,38 @@ def get_game_data():
         else:
             key = lambda x: (-x[1], x[0].lower())
 
-        for date, result in sorted(date_to_result.items()):
-            num_players = len(result)
-            scores = sorted(result.items(), key=key)
+        for date_, result_ in sorted(date_to_result.items()):
+            dates_and_results = [(date_, result_)]
 
-            if num_players == num_players_needed:
-                has_draw = False
-                if game_type == 'teams':
-                    if scores[1][1][0] == scores[2][1][0]:
-                        has_draw = True
-                        scores = sorted(result.items(), key=lambda x: (-x[1][1], x[0].lower()))
-                        scores = [scores[0], scores[1], scores[3], scores[2]]
-                        if scores[0] == scores[1]:
-                            print('huh?')
-                    else:
-                        scores = [scores[0], scores[2], scores[1], scores[3]]
-                    scores = [(x[0], x[1][1]) for x in scores]
-                else:
-                    for i in range(len(scores) - 1):
-                        if scores[i][1] == scores[i + 1][1]:
+            if date_ in date_to_tweaked_dates_and_results:
+                dates_and_results = date_to_tweaked_dates_and_results[date_]
+
+            for date, result in dates_and_results:
+                num_players = len(result)
+                scores = sorted(result.items(), key=key)
+
+                if num_players == num_players_needed:
+                    has_draw = False
+                    if game_type == 'teams':
+                        if scores[1][1][0] == scores[2][1][0]:
                             has_draw = True
+                            scores = sorted(result.items(), key=lambda x: (-x[1][1], x[0].lower()))
+                            scores = [scores[0], scores[1], scores[3], scores[2]]
+                            if scores[0] == scores[1]:
+                                print('huh?')
+                        else:
+                            scores = [scores[0], scores[2], scores[1], scores[3]]
+                        scores = [(x[0], x[1][1]) for x in scores]
+                    else:
+                        for i in range(len(scores) - 1):
+                            if scores[i][1] == scores[i + 1][1]:
+                                has_draw = True
 
-                game_type_to_total_count[game_type] += 1
-                if has_draw:
-                    game_type_to_draw_count[game_type] += 1
+                    game_type_to_total_count[game_type] += 1
+                    if has_draw:
+                        game_type_to_draw_count[game_type] += 1
 
-            results.append([date, game_type, scores])
+                results.append([date, game_type, scores])
 
     results.sort()
 
@@ -179,6 +222,8 @@ def part2():
 
         if num_players == num_players_needed:
             print_game_import_row(date, game_type_to_mode[game_type], scores)
+        else:
+            print('#', {key: value for key, value in scores})
 
     for game_type in sorted(game_type_to_mode.keys()):
         draw_count = game_data['game_type_to_draw_count'][game_type]
