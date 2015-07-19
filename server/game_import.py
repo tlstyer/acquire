@@ -7,6 +7,8 @@ import glob
 import html.parser
 import orm
 import pickle
+import pytz
+import re
 import sqlalchemy.sql
 import sys
 import ujson
@@ -17,6 +19,8 @@ starting_date = int(datetime.datetime(2014, 1, 1).timestamp())
 
 
 class MyHTMLParser(html.parser.HTMLParser):
+    datetime_regex = re.compile('(\d+)-0?(\d+)-0?(\d+) 0?(\d+):0?(\d+):0?(\d+)')
+
     def __init__(self, game_type_to_date_to_result):
         super().__init__()
 
@@ -44,7 +48,7 @@ class MyHTMLParser(html.parser.HTMLParser):
                     if len(self._result) == 8:
                         player, game_type, win, score, team_total, team_differential, average_turn, game_date = self._result
                         player = ' '.join(player.split())
-                        game_date = int(datetime.datetime.strptime(game_date, '%Y-%m-%d %H:%M:%S').timestamp())
+                        game_date = int(datetime.datetime(*map(int, MyHTMLParser.datetime_regex.match(game_date).groups()), tzinfo=pytz.utc).timestamp())
 
                         if game_date >= starting_date and game_type in game_type_to_num_players:
                             date_to_result = self.game_type_to_date_to_result[game_type]
@@ -171,7 +175,7 @@ def part2():
             comp = 'lt'
         else:
             comp = 'gt'
-        print(comp, date, datetime.datetime.fromtimestamp(date), game_type, scores)
+        print(comp, date, datetime.datetime.fromtimestamp(date, tz=pytz.utc), game_type, scores)
 
         if num_players == num_players_needed:
             print_game_import_row(date, game_type_to_mode[game_type], scores)
