@@ -1511,7 +1511,7 @@ def _generate_sync_logs(log_timestamp, filename, output_dir):
             print(*messages)
 
 
-def output_server_game_files_for_all_significantly_in_progress_games(output_dir):
+def output_server_game_files_for_all_in_progress_games(output_dir):
     for log_timestamp, filename in util.get_log_file_filenames('py', begin=1408905413):
         with util.open_possibly_gzipped_file(filename) as file:
             log_processor = LogProcessor(log_timestamp, file)
@@ -1520,7 +1520,7 @@ def output_server_game_files_for_all_significantly_in_progress_games(output_dir)
                 num_players = len(game.player_id_to_username)
                 num_tiles_played = len(game.played_tiles_order)
 
-                if game.state == 'InProgress' and num_tiles_played >= 40 and num_players >= 2:
+                if game.state == 'InProgress' and num_players >= 2:
                     game.make_server_game()
                     filename = os.path.join(output_dir, '%d_%05d_%03d.bin' % (game.log_timestamp, game.internal_game_id, num_tiles_played))
                     game.make_server_game_file(filename)
@@ -1539,7 +1539,7 @@ def main():
     # make_individual_game_logs_for_each_sync_log(output_logs_dir, output_logs_dir)
     # run_all_game_logs_with_tile_bag_tweaks(output_logs_dir, output_dir)
     # verbosely_compare_individual_game_logs_with_tile_bag_tweaks(output_logs_dir, output_dir)
-    # output_server_game_files_for_all_significantly_in_progress_games(output_dir)
+    # output_server_game_files_for_all_in_progress_games(output_dir)
 
     # Enums.pretty_print_lookups(Enums.get_lookups_from_enums_module())
 
