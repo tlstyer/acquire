@@ -15,7 +15,7 @@ cp -a client/main/static/* dist/web/static
 cp server/server.py dist/server.py
 
 # other .py files
-cp -a server/cron.py server/enums.py server/orm.py dist
+cp -a server/cron.py server/enums.py server/orm.py server/settings.py server/util.py dist
 
 # main.css
 ./node_modules/clean-css/bin/cleancss --s0 client/main/css/main.css | sed "s/\.\.\/static\///" > dist/build/main.css
