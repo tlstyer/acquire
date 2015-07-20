@@ -17,10 +17,10 @@ import util
 
 class Logs2DB:
     rating_type_to_draw_probability = {
-        'Singles2': .0042,
-        'Singles3': .0022,
-        'Singles4': .0161,
-        'Teams': .0023,
+        'Singles2': 0.00271,
+        'Singles3': 0.00421,
+        'Singles4': 0.01664,
+        'Teams': 0.00221,
     }
 
     def __init__(self, session, lookup):
