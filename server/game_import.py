@@ -295,7 +295,7 @@ def calculate_ratings():
             join game_player on game.game_id = game_player.game_id
             where game_state.name = 'Completed'
             group by game.game_id
-            having num_players > 1
+            having num_players between 2 and 4
             order by game.end_time asc
         ''')
         for row in session.execute(query):
@@ -308,14 +308,14 @@ def calculate_ratings():
 
 def generate_stats_json_files():
     with orm.session_scope() as session:
-        statsgen = cron.StatsGen(session, 'web/stats')
+        statsgen = cron.StatsGen(session, '/opt/data/tim/stats')
         user_id_to_name = statsgen.get_user_id_to_name()
         statsgen.output_users(user_id_to_name)
         for user_id in user_id_to_name.keys():
             statsgen.output_user(user_id)
 
 
-if __name__ == '__main__':
+def main():
     if sys.argv[1] == 'part1':
         part1()
     elif sys.argv[1] == 'part2':
@@ -332,3 +332,7 @@ if __name__ == '__main__':
         generate_stats_json_files()
     else:
         print('bad mode')
+
+
+if __name__ == '__main__':
+    main()

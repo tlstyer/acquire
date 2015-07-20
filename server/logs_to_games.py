@@ -1158,10 +1158,8 @@ class IndividualGameLogMaker:
                     yield game_log
                 self._completed_game_logs = []
 
-        game_ids = list(self._game_id_to_game_log.keys())
-        for game_id in game_ids:
+        for game_id in self._game_id_to_game_log.keys():
             self._handle_game_expired(game_id)
-        self._batch_destroy_game_ids = game_ids
         self._batch_completed(None, None)
 
         for game_log in self._completed_game_logs:
