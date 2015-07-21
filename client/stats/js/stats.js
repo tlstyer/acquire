@@ -42,8 +42,6 @@ $(function() {
 
 				rating_type_to_ratings = data.ratings;
 
-				setFormLoadingMessage(null);
-
 				initializeHistory();
 
 				showStatsPageWhenReadyStateIsComplete();
