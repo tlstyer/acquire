@@ -29,11 +29,12 @@ def get_pubsub_enums():
 
     names = set()
     for filename in glob.glob('client/main/js/*.js'):
-        with open(filename, 'r') as f:
-            contents = f.read()
-        for match in re.finditer(r'(?<![A-Za-z0-9])enums\.PubSub\.([A-Za-z0-9]+)_([A-Za-z0-9]+)(?![A-Za-z0-9])', contents):
-            if match.group(1) != 'Server':
-                names.add(match.group(1) + '_' + match.group(2))
+        if filename != 'client/main/js/main.js':
+            with open(filename, 'r') as f:
+                contents = f.read()
+            for match in re.finditer(r'(?<![A-Za-z0-9])enums\.PubSub\.([A-Za-z0-9]+)_([A-Za-z0-9]+)(?![A-Za-z0-9])', contents):
+                if match.group(1) != 'Server':
+                    names.add(match.group(1) + '_' + match.group(2))
 
     for name in sorted(names):
         lookup[name] = len(lookup)
