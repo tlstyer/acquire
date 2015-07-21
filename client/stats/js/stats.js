@@ -26,7 +26,7 @@ $(function() {
 		});
 	}
 
-	function initializeUsers() {
+	function initialize() {
 		$.ajax({
 			url: 'data/users.json',
 			success: function(data) {
@@ -42,9 +42,7 @@ $(function() {
 
 				rating_type_to_ratings = data.ratings;
 
-				initializeHistory();
-
-				showStatsPageWhenReadyStateIsComplete();
+				completeInitializationWhenReady();
 			},
 			error: function(jqXHR, textStatus, errorThrown) {
 				reportAjaxError(jqXHR, textStatus, errorThrown);
@@ -53,6 +51,24 @@ $(function() {
 			},
 			dataType: 'json'
 		});
+	}
+
+	function completeInitializationWhenReady() {
+		if (document.readyState === 'complete' && typeof $ !== 'undefined' && typeof Dygraph !== 'undefined' && typeof History !== 'undefined') {
+			initializeHistory();
+
+			History.Adapter.bind(window, 'statechange', onStateChange);
+
+			$('#form input[type=button]').click(formButtonClicked);
+			$('#form').submit(formSubmitted);
+			$('#users, #games').on('click', 'tr :nth-child(2)', nameCellClicked);
+			$('#games-show-next-100').click(showNext100Clicked);
+			$('#games-show-remaining').click(showRemainingClicked);
+
+			showPage('stats');
+		} else {
+			setTimeout(completeInitializationWhenReady, 10);
+		}
 	}
 
 	function getQueryStringParams() {
@@ -487,27 +503,6 @@ $(function() {
 		$('#page-' + page).show();
 	}
 
-	function showStatsPageWhenReadyStateIsComplete() {
-		var check_interval = setInterval(function() {
-			if (document.readyState === 'complete' && typeof $ !== 'undefined' && typeof Dygraph !== 'undefined' && typeof History !== 'undefined') {
-				onInitializationComplete();
-				clearInterval(check_interval);
-			}
-		}, 10);
-	}
-
-	function onInitializationComplete() {
-		History.Adapter.bind(window, 'statechange', onStateChange);
-
-		$('#form input[type=button]').click(formButtonClicked);
-		$('#form').submit(formSubmitted);
-		$('#users, #games').on('click', 'tr :nth-child(2)', nameCellClicked);
-		$('#games-show-next-100').click(showNext100Clicked);
-		$('#games-show-remaining').click(showRemainingClicked);
-
-		showPage('stats');
-	}
-
 	window.onerror = function(message, file, line_number) {
 		$.post('/server/report-error', {
 			message: message,
@@ -515,5 +510,5 @@ $(function() {
 		});
 	};
 
-	initializeUsers();
+	initialize();
 });
