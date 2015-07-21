@@ -236,6 +236,14 @@ function onInitializationComplete() {
 	$('#page-login').on('click', '.link-reload-page', onClickLinkReloadPage);
 }
 
+function publishInitializationCompleteWhenReady() {
+	if (document.readyState === 'complete' && typeof JSON !== 'undefined' && typeof $ !== 'undefined' && typeof printStackTrace !== 'undefined' && typeof CryptoJS !== 'undefined' && typeof SockJS !== 'undefined') {
+		pubsub.publish(enums.PubSub.Client_InitializationComplete);
+	} else {
+		setTimeout(publishInitializationCompleteWhenReady, 10);
+	}
+}
+
 require('./lobby_page');
 require('./game');
 
@@ -254,9 +262,4 @@ pubsub.subscribe(enums.PubSub.Client_LeaveGame, onClientLeaveGame);
 pubsub.subscribe(enums.PubSub.Network_Disconnect, onNetworkDisconnect);
 pubsub.subscribe(enums.PubSub.Client_InitializationComplete, onInitializationComplete);
 
-check_interval = setInterval(function() {
-	if (document.readyState === 'complete' && typeof JSON !== 'undefined' && typeof $ !== 'undefined' && typeof printStackTrace !== 'undefined' && typeof CryptoJS !== 'undefined' && typeof SockJS !== 'undefined') {
-		pubsub.publish(enums.PubSub.Client_InitializationComplete);
-		clearInterval(check_interval);
-	}
-}, 10);
+publishInitializationCompleteWhenReady();
