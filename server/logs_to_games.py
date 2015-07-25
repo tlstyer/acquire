@@ -762,6 +762,7 @@ class LogProcessor:
         if self._verbose:
             for game in self._game_id_to_game.values():
                 game.make_server_game()
+                game.compare_with_server_game()
 
                 filename = os.path.join(self._verbose_output_path, '%d_%05d_%06d.bin' % (game.log_timestamp, game.internal_game_id, self._line_number))
                 game.make_server_game_file(filename)
@@ -835,8 +836,6 @@ class Game:
         return message
 
     def make_server_game(self):
-        num_players = len(self.player_id_to_username)
-
         tile_bag = self._get_initial_tile_bag()
 
         self.server_game = server.Game(self.game_id, self.internal_game_id, Enums.lookups['GameModes'].index(self.mode), self.max_players, Game._add_pending_messages, False, tile_bag)
@@ -847,9 +846,6 @@ class Game:
             client = self._server_game_player_id_to_client[self.username_to_player_id[username]]
             self.server_game.join_game(client)
 
-        self.is_server_game_synchronized = True
-        self.sync_log = []
-
         for index, player_id_and_action in enumerate(self.actions):
             player_id, action = player_id_and_action
 
@@ -857,26 +853,29 @@ class Game:
             data = action[1:]
             self.server_game.do_game_action(self._server_game_player_id_to_client[player_id], game_action_id, data)
 
-        self._sync_compare_stuff_with_server_game(self.board, self.score_sheet_players[:num_players], self.score_sheet_chain_size, self.tile_racks[:num_players], self.username_to_game_history)
+    def compare_with_server_game(self):
+        num_players = len(self.player_id_to_username)
 
-    def _sync_compare_stuff_with_server_game(self, board, score_sheet_players, score_sheet_chain_size, tile_racks, username_to_game_history):
+        self.is_server_game_synchronized = True
+        self.sync_log = []
+
         # board
-        self._sync_compare('board', board, self.server_game.game_board.x_to_y_to_board_type)
+        self._sync_compare('board', self.board, self.server_game.game_board.x_to_y_to_board_type)
 
         # score sheet players
-        self._sync_compare('score_sheet_players', score_sheet_players, [x[:8] for x in self.server_game.score_sheet.player_data])
+        self._sync_compare('score_sheet_players', self.score_sheet_players[:num_players], [x[:8] for x in self.server_game.score_sheet.player_data])
 
         # score sheet chain size
-        self._sync_compare('score_sheet_chain_size', score_sheet_chain_size, self.server_game.score_sheet.chain_size)
+        self._sync_compare('score_sheet_chain_size', self.score_sheet_chain_size, self.server_game.score_sheet.chain_size)
 
         # tile racks
         if self.server_game.tile_racks:
             server_tile_racks = [[tile_data[0] if tile_data else None for tile_data in rack] for rack in self.server_game.tile_racks.racks]
 
-            self._sync_compare('tile_racks', tile_racks, server_tile_racks)
+            self._sync_compare('tile_racks', self.tile_racks[:num_players], server_tile_racks)
 
         # player id to game history
-        local_player_id_to_game_history = [username_to_game_history[username] for username in self.player_id_to_username.values()]
+        local_player_id_to_game_history = [self.username_to_game_history[username] for username in self.player_id_to_username.values()]
 
         server_player_id_to_game_history = [[] for x in range(len(self.server_game.score_sheet.username_to_player_id))]
         for target_player_id, message in self.server_game.history_messages:
@@ -1474,6 +1473,7 @@ def verbosely_compare_individual_game_log(log_timestamp, internal_game_id, input
 
         for game in log_processor.go():
             game.make_server_game()
+            game.compare_with_server_game()
 
             messages = [game.log_timestamp, game.internal_game_id]
             if game.is_server_game_synchronized:
@@ -1492,6 +1492,7 @@ def _generate_sync_logs(log_timestamp, filename, output_dir):
 
         for game in log_processor.go():
             game.make_server_game()
+            game.compare_with_server_game()
 
             messages = [game.log_timestamp, game.internal_game_id]
             if game.is_server_game_synchronized:
