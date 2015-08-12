@@ -711,7 +711,10 @@ class LogProcessor:
                 game.actions.append([player_id, command[1:]])
 
     def _handle_game_expired(self, game_id):
-        self._expired_games.append(self._game_id_to_game[game_id])
+        game = self._game_id_to_game[game_id]
+
+        game.expired = True
+        self._expired_games.append(game)
 
         del self._game_id_to_game[game_id]
 
@@ -822,6 +825,7 @@ class Game:
         self.additional_tile_rack_tiles_order = []
         self.actions = []
         self.username_to_game_history = {}
+        self.expired = False
 
         self.server_game = None
         self._server_game_player_id_to_client = None
