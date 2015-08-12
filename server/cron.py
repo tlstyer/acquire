@@ -47,7 +47,9 @@ class Logs2DB:
                         params['log-time-specified'] = True
                     else:
                         params['log-time'] = log_time
-                    self.method_lookup[params['_']](params)
+                    method = self.method_lookup.get(params['_'])
+                    if method:
+                        method(params)
             else:
                 len_last_line = len(line.encode())
         return file.tell() - len_last_line, self.completed_game_users
