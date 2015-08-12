@@ -4,6 +4,7 @@ import asyncio
 import collections
 import enums
 import heapq
+import json
 import math
 import random
 import re
@@ -398,7 +399,13 @@ class ScoreSheet:
                 username = player_datum[enums.ScoreSheetIndexes.Username.value]
                 self.username_to_player_id[username] = player_id
                 if self.game.logging_enabled:
-                    print(ujson.dumps({'_': 'game-player', 'game-id': self.game.internal_game_id, 'external-game-id': self.game.game_id, 'player-id': player_id, 'username': username}))
+                    log = collections.OrderedDict()
+                    log['_'] = 'game-player'
+                    log['game-id'] = self.game.internal_game_id
+                    log['external-game-id'] = self.game.game_id
+                    log['player-id'] = player_id
+                    log['username'] = username
+                    print(json.dumps(log, separators=(',', ':')))
 
             # tell client about other position tiles
             if player_id != client.player_id:
@@ -1091,8 +1098,14 @@ class Game:
         if client.player_id is not None and client.player_id == action.player_id and game_action_id == action.game_action_id:
             new_actions = action.execute(*data)
             if self.logging_enabled:
-                log = {'_': 'game-action', 'game-id': self.internal_game_id, 'external-game-id': self.game_id, 'player-id': action.player_id, 'action': action.__class__.__name__[6:], 'params': data}
-                print(ujson.dumps(log))
+                log = collections.OrderedDict()
+                log['_'] = 'game-action'
+                log['game-id'] = self.internal_game_id
+                log['external-game-id'] = self.game_id
+                log['player-id'] = action.player_id
+                log['action'] = action.__class__.__name__[6:]
+                log['params'] = data
+                print(json.dumps(log, separators=(',', ':')))
             while new_actions:
                 self.actions.pop()
                 if isinstance(new_actions, list):
@@ -1103,9 +1116,20 @@ class Game:
             action.send_message(self.client_ids)
 
     def set_state(self, state, mode=None, max_players=None):
+        log = collections.OrderedDict()
+        log['_'] = 'game'
+        log['game-id'] = self.internal_game_id
+        log['external-game-id'] = self.game_id
+        log['state'] = enums.GameStates(state).name
+
         self.state = state
-        log = {'_': 'game', 'game-id': self.internal_game_id, 'external-game-id': self.game_id, 'state': enums.GameStates(state).name}
-        score = None
+        if mode is not None:
+            self.mode = mode
+            log['mode'] = enums.GameModes(mode).name
+        if max_players is not None:
+            self.max_players = max_players
+            log['max-players'] = max_players
+
         if state == enums.GameStates.Starting.value:
             log['tile-bag'] = self.tile_bag
         if state == enums.GameStates.InProgress.value:
@@ -1115,12 +1139,8 @@ class Game:
             self.score_sheet.update_net_worths()
             score = [player_datum[enums.ScoreSheetIndexes.Net.value] for player_datum in self.score_sheet.player_data]
             log['score'] = score
-        if mode is not None:
-            self.mode = mode
-            log['mode'] = enums.GameModes(mode).name
-        if max_players is not None:
-            self.max_players = max_players
-            log['max-players'] = max_players
+        else:
+            score = None
 
         if self.log_data_overrides:
             if 'log-time' in self.log_data_overrides:
@@ -1139,7 +1159,7 @@ class Game:
         self.add_pending_messages([message])
 
         if self.logging_enabled:
-            print(ujson.dumps(log))
+            print(json.dumps(log, separators=(',', ':')))
 
     def add_history_message(self, *data, player_id=None):
         data = list(data)
