@@ -1090,6 +1090,9 @@ class Game:
         action = self.actions[-1]
         if client.player_id is not None and client.player_id == action.player_id and game_action_id == action.game_action_id:
             new_actions = action.execute(*data)
+            if self.logging_enabled:
+                log = {'_': 'game-action', 'game-id': self.internal_game_id, 'external-game-id': self.game_id, 'player-id': action.player_id, 'action': action.__class__.__name__[6:], 'params': data}
+                print(ujson.dumps(log))
             while new_actions:
                 self.actions.pop()
                 if isinstance(new_actions, list):
@@ -1103,6 +1106,8 @@ class Game:
         self.state = state
         log = {'_': 'game', 'game-id': self.internal_game_id, 'external-game-id': self.game_id, 'state': enums.GameStates(state).name}
         score = None
+        if state == enums.GameStates.Starting.value:
+            log['tile-bag'] = self.tile_bag
         if state == enums.GameStates.InProgress.value:
             log['begin'] = int(time.time())
         if state == enums.GameStates.Completed.value:
