@@ -28,13 +28,13 @@ function setClientIdToData(client_id, username, ip_address) {
 
 function setGameState(game_id, state_id, mode_id, max_players, score) {
 	data.game_id_to_state_id[game_id] = state_id;
-	if (mode_id !== null) {
+	if (mode_id !== undefined) {
 		data.game_id_to_mode_id[game_id] = mode_id;
 	}
-	if (max_players !== null) {
+	if (max_players !== undefined) {
 		data.game_id_to_max_players[game_id] = max_players;
 	}
-	if (score !== null) {
+	if (score !== undefined) {
 		data.game_id_to_score[game_id] = score;
 	} else if (!data.game_id_to_score.hasOwnProperty(game_id)) {
 		data.game_id_to_score[game_id] = null;

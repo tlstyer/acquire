@@ -1124,7 +1124,15 @@ class Game:
                 if key in log:
                     log[key] = value
 
-        self.add_pending_messages([[enums.CommandsToClient.SetGameState.value, self.game_id, state, mode, max_players, score]])
+        message = [enums.CommandsToClient.SetGameState.value, self.game_id, self.state]
+        if mode is not None or max_players or score:
+            message.append(self.mode)
+        if max_players or score:
+            message.append(self.max_players)
+        if score:
+            message.append(score)
+        self.add_pending_messages([message])
+
         if self.logging_enabled:
             print(ujson.dumps(log))
 
