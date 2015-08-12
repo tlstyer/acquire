@@ -1527,6 +1527,88 @@ def output_server_game_files_for_all_in_progress_games(output_dir):
                     print(filename)
 
 
+def output_first_merge_bonuses_and_final_scores_of_all_completed_games(output_dir):
+    received_bonus_id = enums.GameHistoryMessages.ReceivedBonus.value
+
+    mode_to_game_data = collections.defaultdict(list)
+
+    for log_timestamp, filename in util.get_log_file_filenames('py', begin=1408905413):
+        with util.open_possibly_gzipped_file(filename) as file:
+            log_processor = LogProcessor(log_timestamp, file)
+
+            for game in log_processor.go():
+                num_players = len(game.player_id_to_username)
+
+                if game.state == 'Completed' and num_players >= 2:
+                    type_to_player_id_to_amount = collections.defaultdict(dict)
+
+                    for game_history_message in game.username_to_game_history[game.player_id_to_username[0]]:
+                        if game_history_message[0] == received_bonus_id:
+                            type_to_player_id_to_amount[game_history_message[2]][game_history_message[1]] = game_history_message[3]
+                        elif type_to_player_id_to_amount:
+                            break
+
+                    mode = game.mode + (str(num_players) if game.mode == 'Singles' else '')
+
+                    mode_to_game_data[mode].append((dict(type_to_player_id_to_amount), game.score))
+
+    with open(os.path.join(output_dir, 'first_merge_bonuses_and_final_scores_of_all_completed_games.bin'), 'wb') as f:
+        pickle.dump(dict(mode_to_game_data), f)
+
+
+def report_on_first_merge_bonuses_and_final_scores_of_all_completed_games(output_dir):
+    with open(os.path.join(output_dir, 'first_merge_bonuses_and_final_scores_of_all_completed_games.bin'), 'rb') as f:
+        mode_to_game_data = pickle.load(f)
+
+    for mode, game_data in sorted(mode_to_game_data.items()):
+        if mode in ['Singles5', 'Singles6']:
+            continue
+
+        ranking_to_count = collections.defaultdict(int)
+        not_applicable_count = 0
+
+        for type_to_player_id_to_amount, score in game_data:
+            player_id_under_consideration = None
+            if len(type_to_player_id_to_amount) == 1:
+                player_id_to_amount = list(type_to_player_id_to_amount.values())[0]
+                max_amount = max(player_id_to_amount.values())
+                player_ids_with_max_amount = [player_id for player_id, amount in player_id_to_amount.items() if amount == max_amount]
+                if len(player_ids_with_max_amount) == 1:
+                    player_id_under_consideration = player_ids_with_max_amount[0]
+
+            if player_id_under_consideration is None:
+                not_applicable_count += 1
+            else:
+                if mode == 'Teams':
+                    player_id_under_consideration %= 2
+                    score = [score[0] + score[2], score[1] + score[3]]
+
+                score_to_player_ids = collections.defaultdict(set)
+                for player_id, amount in enumerate(score):
+                    score_to_player_ids[amount].add(player_id)
+
+                rankings = [player_ids for score, player_ids in sorted(score_to_player_ids.items(), reverse=True)]
+
+                player_id_to_ranking = {}
+                ranking = 1
+                for player_ids in rankings:
+                    for player_id in player_ids:
+                        player_id_to_ranking[player_id] = ranking
+                    ranking += len(player_ids)
+
+                ranking_to_count[player_id_to_ranking[player_id_under_consideration]] += 1
+
+        print(mode)
+        running_count = 0
+        sum_counts = sum(ranking_to_count.values())
+        for ranking, count in sorted(ranking_to_count.items()):
+            running_count += count
+            print('%3d %4d %4.1f%% %5.1f%%' % (ranking, count, count / sum_counts * 100, running_count / sum_counts * 100))
+        running_count += not_applicable_count
+        print('N/A %d/%d %.1f%%' % (not_applicable_count, running_count, not_applicable_count / running_count * 100))
+        print()
+
+
 def main():
     output_dir = '/opt/data/tim'
     output_logs_dir = output_dir + '/logs'
@@ -1539,6 +1621,8 @@ def main():
     # run_all_game_logs_with_tile_bag_tweaks(output_logs_dir, output_dir)
     # verbosely_compare_individual_game_logs_with_tile_bag_tweaks(output_logs_dir, output_dir)
     # output_server_game_files_for_all_in_progress_games(output_dir)
+    # output_first_merge_bonuses_and_final_scores_of_all_completed_games(output_dir)
+    # report_on_first_merge_bonuses_and_final_scores_of_all_completed_games(output_dir)
 
     # Enums.pretty_print_lookups(Enums.get_lookups_from_enums_module())
 
