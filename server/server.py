@@ -1103,7 +1103,7 @@ class Game:
                 log['game-id'] = self.internal_game_id
                 log['external-game-id'] = self.game_id
                 log['player-id'] = action.player_id
-                log['action'] = action.__class__.__name__[6:]
+                log['action'] = enums.GameActions(action.game_action_id).name
                 log['params'] = data
                 print(json.dumps(log, separators=(',', ':')))
             while new_actions:
