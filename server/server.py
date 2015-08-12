@@ -1148,6 +1148,7 @@ class Game:
             for key, value in self.log_data_overrides.items():
                 if key in log:
                     log[key] = value
+            log['used-log-data-overrides'] = True
 
         message = [enums.CommandsToClient.SetGameState.value, self.game_id, self.state]
         if mode is not None or max_players or score:

@@ -43,9 +43,7 @@ class Logs2DB:
             if line and line[-1] == '\n':
                 if line[0] == '{':
                     params = ujson.decode(line)
-                    if 'log-time' in params:
-                        params['log-time-specified'] = True
-                    else:
+                    if 'log-time' not in params:
                         params['log-time'] = log_time
                     method = self.method_lookup.get(params['_'])
                     if method:
@@ -78,7 +76,7 @@ class Logs2DB:
 
         game.imported = 0
 
-        game.completed_by_admin = 1 if params.get('log-time-specified') else 0
+        game.completed_by_admin = 1 if params.get('used-log-data-overrides') else 0
 
     def process_game_import(self, params):
         game = orm.Game()
