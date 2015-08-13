@@ -21,10 +21,12 @@ class Server(asyncio.Protocol):
     def connection_made(self, transport):
         self.transport = transport
         AcquireServerProtocol.server_transport = transport
+        print('time:', time.time())
         print('connection_made')
         print()
 
     def connection_lost(self, exc):
+        print('time:', time.time())
         print('connection_lost')
         print()
 
@@ -119,6 +121,7 @@ class AcquireServerProtocol:
         AcquireServerProtocol.client_id_to_client[self.client_id] = self
         messages_client = []
 
+        print('time:', time.time())
         print(self.client_id, 'connect', self.username, self.ip_address, socket_id, replace_existing_user)
         AcquireServerProtocol.server_transport.write(b'connect ' + ujson.dumps([socket_id, self.client_id]).encode() + b'\n')
 
@@ -169,6 +172,7 @@ class AcquireServerProtocol:
         AcquireServerProtocol.flush_pending_messages()
 
     def disconnect(self):
+        print('time:', time.time())
         print(self.client_id, 'disconnect')
 
         AcquireServerProtocol.server_transport.write(b'disconnect ' + str(self.client_id).encode() + b'\n')
@@ -190,6 +194,7 @@ class AcquireServerProtocol:
     def on_message(self, payload):
         try:
             message = payload.decode()
+            print('time:', time.time())
             print(self.client_id, '->', message)
             message = ujson.decode(message)
             method = self.on_message_lookup[message[0]]
@@ -296,6 +301,7 @@ class AcquireServerProtocol:
 
         if expired_games:
             messages = []
+            print('time:', current_time)
             for game in expired_games:
                 game_id = game.game_id
                 internal_game_id = game.internal_game_id
@@ -393,7 +399,6 @@ class ScoreSheet:
                 player_datum[enums.ScoreSheetIndexes.Client.value].player_id = player_id
             player_id += 1
 
-        timestamp = time.time()
         for player_id, player_datum in enumerate(self.player_data):
             # update self.username_to_player_id
             if player_id >= client.player_id:
@@ -406,7 +411,6 @@ class ScoreSheet:
                     log['external-game-id'] = self.game.game_id
                     log['player-id'] = player_id
                     log['username'] = username
-                    log['time'] = timestamp
                     print(json.dumps(log, separators=(',', ':')))
 
             # tell client about other position tiles
@@ -1099,8 +1103,6 @@ class Game:
         action = self.actions[-1]
         if client.player_id is not None and client.player_id == action.player_id and game_action_id == action.game_action_id:
             new_actions = action.execute(*data)
-            if self.logging_enabled:
-                print(ujson.dumps({'time': time.time()}))
             while new_actions:
                 self.actions.pop()
                 if isinstance(new_actions, list):
@@ -1111,8 +1113,6 @@ class Game:
             action.send_message(self.client_ids)
 
     def set_state(self, state, mode=None, max_players=None):
-        timestamp = time.time()
-
         log = collections.OrderedDict()
         log['_'] = 'game'
         log['game-id'] = self.internal_game_id
@@ -1130,16 +1130,14 @@ class Game:
         if state == enums.GameStates.Starting.value:
             log['tile-bag'] = self.tile_bag
         if state == enums.GameStates.InProgress.value:
-            log['begin'] = int(timestamp)
+            log['begin'] = int(time.time())
         if state == enums.GameStates.Completed.value:
-            log['end'] = int(timestamp)
+            log['end'] = int(time.time())
             self.score_sheet.update_net_worths()
             score = [player_datum[enums.ScoreSheetIndexes.Net.value] for player_datum in self.score_sheet.player_data]
             log['score'] = score
         else:
             score = None
-
-        log['time'] = timestamp
 
         if self.log_data_overrides:
             if 'log-time' in self.log_data_overrides:
