@@ -747,6 +747,8 @@ class LogProcessor:
                 game.mode = entry['mode']
             if 'max-players' in entry:
                 game.max_players = entry['max-players']
+            if 'tile-bag' in entry:
+                game.tile_bag = [tuple(x) for x in entry['tile-bag']]
             if 'begin' in entry:
                 game.begin = entry['begin']
             if 'end' in entry:
@@ -810,6 +812,7 @@ class Game:
         self.state = None
         self.mode = None
         self.max_players = None
+        self.tile_bag = None
         self.begin = None
         self.end = None
         self.score = None
@@ -925,6 +928,9 @@ class Game:
                 self.sync_log.append(str_second)
 
     def _get_initial_tile_bag(self):
+        if self.tile_bag:
+            return list(self.tile_bag)
+
         player_id_to_game_history = [self.username_to_game_history[username] for username in self.player_id_to_username.values()]
 
         player_id_to_turn_by_turn_tiles_drawn_or_replaced = []
