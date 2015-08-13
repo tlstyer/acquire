@@ -285,6 +285,7 @@ class CommandsToClientTranslator:
 
 
 class LineTypes(enums.AutoNumber):
+    time = ()
     connect = ()
     disconnect = ()
     command_to_client = ()
@@ -313,6 +314,7 @@ class LogParser:
         ]
 
         self._line_matchers_and_handlers = [
+            (LineTypes.time, re.compile(r'^time: (?P<time>[\d\.]+)$'), self._handle_time),
             (LineTypes.command_to_client, re.compile(r'^(?P<client_ids>[\d,]+) <- (?P<commands>.*)'), self._handle_command_to_client),
             (LineTypes.blank_line, re.compile(r'^$'), None),
             (LineTypes.command_to_server, re.compile(r'^(?P<client_id>\d+) -> (?P<command>.*)'), self._handle_command_to_server),
@@ -377,6 +379,9 @@ class LogParser:
         # make sure last line type is always LineTypes.blank_line
         if handled_line_type != LineTypes.blank_line:
             yield LineTypes.blank_line, line_number + 1, '', ()
+
+    def _handle_time(self, match):
+        return float(match.group('time')),
 
     def _handle_command_to_client(self, match):
         try:
@@ -455,6 +460,7 @@ class LogProcessor:
         self._log_parser = LogParser(log_timestamp, file)
 
         self._line_type_to_handler = {
+            LineTypes.time: self._handle_time,
             LineTypes.connect: self._handle_connect,
             LineTypes.disconnect: self._handle_disconnect,
             LineTypes.command_to_client: self._handle_command_to_client,
@@ -515,6 +521,8 @@ class LogProcessor:
 
         self._line_number = 0
 
+        self._time = None
+
     def go(self):
         for line_type, line_number, line, parse_line_data in self._log_parser.go():
             if self._verbose:
@@ -532,6 +540,9 @@ class LogProcessor:
 
         for game in self._game_id_to_game.values():
             yield game
+
+    def _handle_time(self, time):
+        self._time = time
 
     def _handle_connect(self, client_id, username):
         self._client_id_to_username[client_id] = username
