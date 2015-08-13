@@ -1004,6 +1004,7 @@ class Game:
                     remaining_tiles.remove(tile)
 
         remaining_tiles = list(remaining_tiles)
+        random.seed(str(self.log_timestamp) + '-' + str(self.internal_game_id))
         random.shuffle(remaining_tiles)
         tile_bag.extend(remaining_tiles)
         tile_bag.reverse()
