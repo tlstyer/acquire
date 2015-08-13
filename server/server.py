@@ -1100,15 +1100,7 @@ class Game:
         if client.player_id is not None and client.player_id == action.player_id and game_action_id == action.game_action_id:
             new_actions = action.execute(*data)
             if self.logging_enabled:
-                log = collections.OrderedDict()
-                log['_'] = 'game-action'
-                log['game-id'] = self.internal_game_id
-                log['external-game-id'] = self.game_id
-                log['player-id'] = action.player_id
-                log['action'] = enums.GameActions(action.game_action_id).name
-                log['params'] = data
-                log['time'] = time.time()
-                print(json.dumps(log, separators=(',', ':')))
+                print(ujson.dumps({'time': time.time()}))
             while new_actions:
                 self.actions.pop()
                 if isinstance(new_actions, list):

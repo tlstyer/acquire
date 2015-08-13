@@ -45,7 +45,7 @@ class Logs2DB:
                     params = ujson.decode(line)
                     if 'log-time' not in params:
                         params['log-time'] = log_time
-                    method = self.method_lookup.get(params['_'])
+                    method = self.method_lookup.get(params.get('_'))
                     if method:
                         method(params)
             else:
