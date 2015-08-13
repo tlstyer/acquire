@@ -927,7 +927,7 @@ class Game:
         player_id_to_game_history = [self.username_to_game_history[username] for username in self.player_id_to_username.values()]
 
         player_id_to_turn_by_turn_tiles_drawn_or_replaced = []
-        for player_id, game_history in enumerate(player_id_to_game_history):
+        for game_history in player_id_to_game_history:
             turn_by_turn_tiles_drawn_or_replaced = []
             turn_tiles_drawn_or_replaced = []
 
