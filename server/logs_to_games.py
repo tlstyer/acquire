@@ -1579,56 +1579,81 @@ def output_first_merge_bonuses_and_final_scores_of_all_completed_games(output_di
         pickle.dump(dict(mode_to_game_data), f)
 
 
+def print_table(table):
+    column_lengths = [max(map(len, column)) for column in zip(*table)]
+    for row in table:
+        print('  '.join((' ' * (column_length - len(cell))) + cell for cell, column_length in zip(row, column_lengths)))
+
+
 def report_on_first_merge_bonuses_and_final_scores_of_all_completed_games(output_dir):
     with open(os.path.join(output_dir, 'first_merge_bonuses_and_final_scores_of_all_completed_games.bin'), 'rb') as f:
         mode_to_game_data = pickle.load(f)
 
-    for mode, game_data in sorted(mode_to_game_data.items()):
-        if mode in ['Singles5', 'Singles6']:
-            continue
+    for mode, num_players in [('Singles2', 2), ('Singles3', 3), ('Singles4', 4), ('Teams', 4)]:
+        game_data = mode_to_game_data[mode]
 
-        ranking_to_count = collections.defaultdict(int)
-        not_applicable_count = 0
+        bucket_to_ranking_to_count = collections.defaultdict(lambda: collections.defaultdict(int))
+        bucket_to_not_applicable_count = collections.defaultdict(int)
 
         for type_to_player_id_to_amount, score in game_data:
-            player_id_under_consideration = None
+            player_id_to_bucket = None
             if len(type_to_player_id_to_amount) == 1:
                 player_id_to_amount = list(type_to_player_id_to_amount.values())[0]
-                max_amount = max(player_id_to_amount.values())
-                player_ids_with_max_amount = [player_id for player_id, amount in player_id_to_amount.items() if amount == max_amount]
-                if len(player_ids_with_max_amount) == 1:
-                    player_id_under_consideration = player_ids_with_max_amount[0]
+                if len(player_id_to_amount) == 2:
+                    sorted_player_id_and_amount = sorted(player_id_to_amount.items(), key=lambda x: -x[1])
+                    if sorted_player_id_and_amount[0][1] != sorted_player_id_and_amount[1][1]:
+                        player_id_to_bucket = {sorted_player_id_and_amount[0][0]: 0, sorted_player_id_and_amount[1][0]: 1}
+                        for player_id in range(num_players):
+                            if player_id not in player_id_to_bucket:
+                                player_id_to_bucket[player_id] = 2
 
-            if player_id_under_consideration is None:
-                not_applicable_count += 1
-            else:
+            if player_id_to_bucket:
                 if mode == 'Teams':
-                    player_id_under_consideration %= 2
                     score = [score[0] + score[2], score[1] + score[3]]
 
-                score_to_player_ids = collections.defaultdict(set)
-                for player_id, amount in enumerate(score):
-                    score_to_player_ids[amount].add(player_id)
-
-                rankings = [player_ids for score, player_ids in sorted(score_to_player_ids.items(), reverse=True)]
-
                 player_id_to_ranking = {}
-                ranking = 1
-                for player_ids in rankings:
-                    for player_id in player_ids:
-                        player_id_to_ranking[player_id] = ranking
-                    ranking += len(player_ids)
+                last_amount = None
+                last_ranking = None
+                for player_id, amount in sorted(enumerate(score), key=lambda x: -x[1]):
+                    if amount == last_amount:
+                        ranking = last_ranking
+                    else:
+                        ranking = len(player_id_to_ranking) + 1
+                    last_amount = amount
+                    last_ranking = ranking
+                    player_id_to_ranking[player_id] = ranking
 
-                ranking_to_count[player_id_to_ranking[player_id_under_consideration]] += 1
+                for player_id, bucket in player_id_to_bucket.items():
+                    if mode == 'Teams':
+                        player_id %= 2
+                    bucket_to_ranking_to_count[bucket][player_id_to_ranking[player_id]] += 1
+            else:
+                bucket_to_not_applicable_count[0] += 1
+                bucket_to_not_applicable_count[1] += 1
+                bucket_to_not_applicable_count[2] += num_players - 2
+
+        table = [[str(ranking)] for ranking in sorted(bucket_to_ranking_to_count[0].keys())]
+        table.append(['N/A'])
+
+        for bucket in range(3):
+            ranking_to_count = bucket_to_ranking_to_count[bucket]
+            not_applicable_count = bucket_to_not_applicable_count[bucket]
+
+            if ranking_to_count:
+                running_count = 0
+                sum_counts = sum(ranking_to_count.values())
+                for ranking, count in sorted(ranking_to_count.items()):
+                    running_count += count
+                    table[ranking - 1].append('%d/%d' % (count, sum_counts))
+                    table[ranking - 1].append('%.1f%%' % (count / sum_counts * 100,))
+                    table[ranking - 1].append('%.1f%%' % (running_count / sum_counts * 100,))
+                running_count += not_applicable_count
+                table[-1].append('%d/%d' % (not_applicable_count, running_count))
+                table[-1].append('%.1f%%' % (not_applicable_count / running_count * 100,))
+                table[-1].append('')
 
         print(mode)
-        running_count = 0
-        sum_counts = sum(ranking_to_count.values())
-        for ranking, count in sorted(ranking_to_count.items()):
-            running_count += count
-            print('%3d %4d %4.1f%% %5.1f%%' % (ranking, count, count / sum_counts * 100, running_count / sum_counts * 100))
-        running_count += not_applicable_count
-        print('N/A %d/%d %.1f%%' % (not_applicable_count, running_count, not_applicable_count / running_count * 100))
+        print_table(table)
         print()
 
 
