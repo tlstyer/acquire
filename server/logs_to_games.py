@@ -2,7 +2,6 @@
 
 import collections
 import enums
-import inspect
 import itertools
 import os
 import os.path
@@ -18,159 +17,8 @@ import util
 
 class Enums:
     lookups = {
-        'CommandsToClient': [
-            'FatalError',
-            'SetClientId',
-            'SetClientIdToData',
-            'SetGameState',
-            'SetGameBoardCell',
-            'SetGameBoard',
-            'SetScoreSheetCell',
-            'SetScoreSheet',
-            'SetGamePlayerJoin',
-            'SetGamePlayerRejoin',
-            'SetGamePlayerLeave',
-            'SetGamePlayerJoinMissing',
-            'SetGameWatcherClientId',
-            'ReturnWatcherToLobby',
-            'AddGameHistoryMessage',
-            'AddGameHistoryMessages',
-            'SetTurn',
-            'SetGameAction',
-            'SetTile',
-            'SetTileGameBoardType',
-            'RemoveTile',
-            'AddGlobalChatMessage',
-            'AddGameChatMessage',
-            'DestroyGame',
-            # defunct
-            'SetGamePlayerUsername',
-            'SetGamePlayerClientId',
-        ],
-        'CommandsToServer': [
-            'CreateGame',
-            'JoinGame',
-            'RejoinGame',
-            'WatchGame',
-            'LeaveGame',
-            'DoGameAction',
-            'SendGlobalChatMessage',
-            'SendGameChatMessage',
-        ],
-        'Errors': [
-            'NotUsingLatestVersion',
-            'GenericError',
-            'InvalidUsername',
-            'InvalidPassword',
-            'MissingPassword',
-            'ProvidedPassword',
-            'IncorrectPassword',
-            'NonMatchingPasswords',
-            'ExistingPassword',
-            'UsernameAlreadyInUse',
-            'LostConnection',
-        ],
-        'GameActions': [
-            'StartGame',
-            'PlayTile',
-            'SelectNewChain',
-            'SelectMergerSurvivor',
-            'SelectChainToDisposeOfNext',
-            'DisposeOfShares',
-            'PurchaseShares',
-            'GameOver',
-        ],
-        'GameBoardTypes': [
-            'Luxor',
-            'Tower',
-            'American',
-            'Festival',
-            'Worldwide',
-            'Continental',
-            'Imperial',
-            'Nothing',
-            'NothingYet',
-            'CantPlayEver',
-            'IHaveThis',
-            'WillPutLonelyTileDown',
-            'HaveNeighboringTileToo',
-            'WillFormNewChain',
-            'WillMergeChains',
-            'CantPlayNow',
-            'Max',
-        ],
-        'GameHistoryMessages': [
-            'TurnBegan',
-            'DrewPositionTile',
-            'StartedGame',
-            'DrewTile',
-            'HasNoPlayableTile',
-            'PlayedTile',
-            'FormedChain',
-            'MergedChains',
-            'SelectedMergerSurvivor',
-            'SelectedChainToDisposeOfNext',
-            'ReceivedBonus',
-            'DisposedOfShares',
-            'CouldNotAffordAnyShares',
-            'PurchasedShares',
-            'DrewLastTile',
-            'ReplacedDeadTile',
-            'EndedGame',
-            'NoTilesPlayedForEntireRound',
-            'AllTilesPlayed',
-        ],
-        'GameModes': [
-            'Singles',
-            'Teams',
-            'Max',
-        ],
-        'GameStates': [
-            'Starting',
-            'StartingFull',
-            'InProgress',
-            'Completed',
-        ],
-        'Notifications': [
-            'GameFull',
-            'GameStarted',
-            'YourTurn',
-            'GameOver',
-        ],
-        'Options': [
-            'EnablePageTitleNotifications',
-            'EnableSoundNotifications',
-            'Sound',
-            'EnableHighContrastColors',
-            'EnableTextBackgroundColors',
-            'ColorScheme',
-            'GameBoardLabelMode',
-        ],
-        'ScoreSheetIndexes': [
-            'Luxor',
-            'Tower',
-            'American',
-            'Festival',
-            'Worldwide',
-            'Continental',
-            'Imperial',
-            'Cash',
-            'Net',
-            'Username',
-            'PositionTile',
-            'Client',
-        ],
-        'ScoreSheetRows': [
-            'Player0',
-            'Player1',
-            'Player2',
-            'Player3',
-            'Player4',
-            'Player5',
-            'Available',
-            'ChainSize',
-            'Price',
-        ]
+        'CommandsToClient': list(enums.CommandsToClient.__members__.keys()) + ['SetGamePlayerUsername', 'SetGamePlayerClientId'],
+        'Errors': list(enums.Errors.__members__.keys()),
     }
 
     _lookups_changes = {
@@ -222,45 +70,13 @@ class Enums:
             Enums._translations[timestamp] = translation
 
     @staticmethod
-    def get_translations(timestamp=None):
-        if timestamp is None:
-            return {}
-
+    def get_translations(timestamp):
         translations_for_timestamp = {}
         for trans_timestamp, trans_changes in sorted(Enums._translations.items(), reverse=True):
             if timestamp <= trans_timestamp:
                 translations_for_timestamp.update(trans_changes)
 
         return translations_for_timestamp
-
-    @staticmethod
-    def get_lookups_from_enums_module():
-        lookups = {}
-
-        for class_name in [obj[0] for obj in inspect.getmembers(enums) if inspect.isclass(obj[1]) and obj[0] != 'AutoNumber']:
-            class_obj = getattr(enums, class_name)
-
-            lookup = []
-            for name, member in class_obj.__members__.items():
-                lookup.append(name)
-
-            lookups[class_name] = lookup
-
-        return lookups
-
-    @staticmethod
-    def pretty_print_lookups(lookups):
-        parts = []
-        for class_name, members in sorted(lookups.items()):
-            part = ["    '" + class_name + "': ["]
-            for member in members:
-                part.append("        '" + member + "',")
-            part.append("    ]")
-            parts.append('\n'.join(part))
-
-        print('lookups = {')
-        print(',\n'.join(parts))
-        print('}')
 
 
 Enums.initialize()
@@ -271,7 +87,7 @@ class CommandsToClientTranslator:
         self._commands_to_client = translations.get('CommandsToClient')
         self._errors = translations.get('Errors')
 
-        self._fatal_error = Enums.lookups['CommandsToClient'].index('FatalError')
+        self._fatal_error = enums.CommandsToClient.FatalError.value
 
     def translate(self, commands):
         if self._commands_to_client:
@@ -334,9 +150,8 @@ class LogParser:
 
         self._connection_made_count = 0
 
-        command_to_client_entry_to_index = {entry: index for index, entry in enumerate(Enums.lookups['CommandsToClient'])}
-        self._enum_set_game_board_cell = command_to_client_entry_to_index['SetGameBoardCell']
-        self._enum_set_game_player = {index for entry, index in command_to_client_entry_to_index.items() if 'SetGamePlayer' in entry}
+        self._enum_set_game_board_cell = enums.CommandsToClient.SetGameBoardCell.value
+        self._enum_set_game_player = {index for index, entry in enumerate(Enums.lookups['CommandsToClient']) if 'SetGamePlayer' in entry}
 
     def go(self):
         handled_line_type = None
@@ -445,7 +260,7 @@ class LogParser:
 
 
 class LogProcessor:
-    _game_board_type__nothing = Enums.lookups['GameBoardTypes'].index('Nothing')
+    _game_board_type__nothing = enums.GameBoardTypes.Nothing.value
 
     def __init__(self, log_timestamp, file, verbose=False, verbose_output_path=''):
         self._log_timestamp = log_timestamp
@@ -472,47 +287,45 @@ class LogProcessor:
             LineTypes.error: self._handle_blank_line,
         }
 
-        command_to_client_entry_to_index = {entry: index for index, entry in enumerate(Enums.lookups['CommandsToClient'])}
         self._commands_to_client_handlers = {
-            # 'FatalError',
-            # 'SetClientId',
-            # 'SetClientIdToData',
-            # 'SetGameState',
-            command_to_client_entry_to_index['SetGameBoardCell']: self._handle_command_to_client__set_game_board_cell,
-            # 'SetGameBoard',
-            command_to_client_entry_to_index['SetScoreSheetCell']: self._handle_command_to_client__set_score_sheet_cell,
-            command_to_client_entry_to_index['SetScoreSheet']: self._handle_command_to_client__set_score_sheet,
-            command_to_client_entry_to_index['SetGamePlayerJoin']: self._handle_command_to_client__set_game_player_join,
-            command_to_client_entry_to_index['SetGamePlayerRejoin']: self._handle_command_to_client__set_game_player_rejoin,
-            command_to_client_entry_to_index['SetGamePlayerLeave']: self._handle_command_to_client__set_game_player_leave,
-            # 'SetGamePlayerJoinMissing',
-            command_to_client_entry_to_index['SetGameWatcherClientId']: self._handle_command_to_client__set_game_watcher_client_id,
-            command_to_client_entry_to_index['ReturnWatcherToLobby']: self._handle_command_to_client__return_watcher_to_lobby,
-            command_to_client_entry_to_index['AddGameHistoryMessage']: self._handle_command_to_client__add_game_history_message,
-            command_to_client_entry_to_index['AddGameHistoryMessages']: self._handle_command_to_client__add_game_history_messages,
-            # 'SetTurn',
-            # 'SetGameAction',
-            command_to_client_entry_to_index['SetTile']: self._handle_command_to_client__set_tile,
-            # 'SetTileGameBoardType',
-            command_to_client_entry_to_index['RemoveTile']: self._handle_command_to_client__remove_tile,
-            # 'AddGlobalChatMessage',
-            # 'AddGameChatMessage',
-            # 'DestroyGame',
+            # FatalError
+            # SetClientId
+            # SetClientIdToData
+            # SetGameState
+            enums.CommandsToClient.SetGameBoardCell.value: self._handle_command_to_client__set_game_board_cell,
+            # SetGameBoard
+            enums.CommandsToClient.SetScoreSheetCell.value: self._handle_command_to_client__set_score_sheet_cell,
+            enums.CommandsToClient.SetScoreSheet.value: self._handle_command_to_client__set_score_sheet,
+            enums.CommandsToClient.SetGamePlayerJoin.value: self._handle_command_to_client__set_game_player_join,
+            enums.CommandsToClient.SetGamePlayerRejoin.value: self._handle_command_to_client__set_game_player_rejoin,
+            enums.CommandsToClient.SetGamePlayerLeave.value: self._handle_command_to_client__set_game_player_leave,
+            # SetGamePlayerJoinMissing
+            enums.CommandsToClient.SetGameWatcherClientId.value: self._handle_command_to_client__set_game_watcher_client_id,
+            enums.CommandsToClient.ReturnWatcherToLobby.value: self._handle_command_to_client__return_watcher_to_lobby,
+            enums.CommandsToClient.AddGameHistoryMessage.value: self._handle_command_to_client__add_game_history_message,
+            enums.CommandsToClient.AddGameHistoryMessages.value: self._handle_command_to_client__add_game_history_messages,
+            # SetTurn
+            # SetGameAction
+            enums.CommandsToClient.SetTile.value: self._handle_command_to_client__set_tile,
+            # SetTileGameBoardType
+            enums.CommandsToClient.RemoveTile.value: self._handle_command_to_client__remove_tile,
+            # AddGlobalChatMessage
+            # AddGameChatMessage
+            # DestroyGame
             # # defunct
-            # 'SetGamePlayerUsername',
-            command_to_client_entry_to_index['SetGamePlayerClientId']: self._handle_command_to_client__set_game_player_client_id,
+            # SetGamePlayerUsername
+            Enums.lookups['CommandsToClient'].index('SetGamePlayerClientId'): self._handle_command_to_client__set_game_player_client_id,
         }
 
-        command_to_server_entry_to_index = {entry: index for index, entry in enumerate(Enums.lookups['CommandsToServer'])}
         self._commands_to_server_handlers = {
-            # 'CreateGame',
-            # 'JoinGame',
-            # 'RejoinGame',
-            # 'WatchGame',
-            # 'LeaveGame',
-            command_to_server_entry_to_index['DoGameAction']: self._handle_command_to_server__do_game_action,
-            # 'SendGlobalChatMessage',
-            # 'SendGameChatMessage',
+            # CreateGame
+            # JoinGame
+            # RejoinGame
+            # WatchGame
+            # LeaveGame
+            enums.CommandsToServer.DoGameAction.value: self._handle_command_to_server__do_game_action,
+            # SendGlobalChatMessage
+            # SendGameChatMessage
         }
 
         self._delayed_calls = []
@@ -635,7 +448,7 @@ class LogProcessor:
                 game.username_to_game_history[username].append(game.translate_add_game_history_message(command[1:]))
                 if self._verbose and not printed_message:
                     message = game.username_to_game_history[username][-1]
-                    print('  ~~~', Enums.lookups['GameHistoryMessages'][message[0]], message)
+                    print('  ~~~', enums.GameHistoryMessages(message[0]).name, message)
                     printed_message = True
 
     def _handle_command_to_client__add_game_history_messages(self, client_ids, command):
@@ -647,7 +460,7 @@ class LogProcessor:
                 game.username_to_game_history[username] = [game.translate_add_game_history_message(message) for message in command[1]]
                 if self._verbose:
                     for message in game.username_to_game_history[username]:
-                        print('  ~~~', Enums.lookups['GameHistoryMessages'][message[0]], message)
+                        print('  ~~~', enums.GameHistoryMessages(message[0]).name, message)
 
     def _handle_command_to_client__set_tile(self, client_ids, command):
         client_id, tile_index, x, y = client_ids[0], command[1], command[2], command[3]
@@ -701,10 +514,10 @@ class LogProcessor:
         try:
             if self._verbose:
                 print('~~~', self._client_id_to_username.get(client_id))
-                command_name = Enums.lookups['CommandsToServer'][command[0]]
+                command_name = enums.CommandsToServer(command[0]).name
                 print('~~~', command_name, command)
                 if command_name == 'DoGameAction':
-                    print('  ~~~', Enums.lookups['GameActions'][command[1]], command[1:])
+                    print('  ~~~', enums.GameActions(command[1]).name, command[1:])
             handler = self._commands_to_server_handlers.get(command[0])
             if handler:
                 handler(client_id, command)
@@ -795,12 +608,11 @@ class LogProcessor:
 
 
 class Game:
-    _game_board_type__nothing = Enums.lookups['GameBoardTypes'].index('Nothing')
-    _game_history_messages__drew_position_tile = Enums.lookups['GameHistoryMessages'].index('DrewPositionTile')
-    _score_sheet_indexes__client = Enums.lookups['ScoreSheetIndexes'].index('Client')
-    _game_history_messages_lookup = {name: index for index, name in enumerate(Enums.lookups['GameHistoryMessages'])}
-    _turn_began_message_id = _game_history_messages_lookup['TurnBegan']
-    _drew_or_replaced_tile_message_ids = {_game_history_messages_lookup['DrewPositionTile'], _game_history_messages_lookup['DrewTile'], _game_history_messages_lookup['ReplacedDeadTile']}
+    _game_board_type__nothing = enums.GameBoardTypes.Nothing.value
+    _game_history_messages__drew_position_tile = enums.GameHistoryMessages.DrewPositionTile.value
+    _score_sheet_indexes__client = enums.ScoreSheetIndexes.Client.value
+    _turn_began_message_id = enums.GameHistoryMessages.TurnBegan.value
+    _drew_or_replaced_tile_message_ids = {enums.GameHistoryMessages.DrewPositionTile.value, enums.GameHistoryMessages.DrewTile.value, enums.GameHistoryMessages.ReplacedDeadTile.value}
 
     tile_bag_tweaks = {
         (1414827614, 43): [[34, (1, 5)]],
@@ -857,7 +669,7 @@ class Game:
     def make_server_game(self):
         tile_bag = self._get_initial_tile_bag()
 
-        self.server_game = server.Game(self.game_id, self.internal_game_id, Enums.lookups['GameModes'].index(self.mode), self.max_players, Game._add_pending_messages, False, tile_bag)
+        self.server_game = server.Game(self.game_id, self.internal_game_id, enums.GameModes[self.mode].value, self.max_players, Game._add_pending_messages, False, tile_bag)
 
         self._server_game_player_id_to_client = [Client(player_id, username) for player_id, username in sorted(self.player_id_to_username.items())]
 
@@ -1106,47 +918,45 @@ class IndividualGameLogMaker:
             LineTypes.error: self._handle_blank_line,
         }
 
-        command_to_client_entry_to_index = {entry: index for index, entry in enumerate(Enums.lookups['CommandsToClient'])}
         self._commands_to_client_handlers = {
-            # 'FatalError',
-            # 'SetClientId',
-            # 'SetClientIdToData',
-            # 'SetGameState',
-            command_to_client_entry_to_index['SetGameBoardCell']: self._handle_command_to_client__set_game_board_cell,
-            # 'SetGameBoard',
-            command_to_client_entry_to_index['SetScoreSheetCell']: self._handle_command_to_client__set_score_sheet_cell,
-            command_to_client_entry_to_index['SetScoreSheet']: self._handle_command_to_client__set_score_sheet,
-            command_to_client_entry_to_index['SetGamePlayerJoin']: self._handle_command_to_client__set_game_player_join,
-            command_to_client_entry_to_index['SetGamePlayerRejoin']: self._handle_command_to_client__set_game_player_rejoin,
-            command_to_client_entry_to_index['SetGamePlayerLeave']: self._handle_command_to_client__set_game_player_leave,
-            # 'SetGamePlayerJoinMissing',
-            command_to_client_entry_to_index['SetGameWatcherClientId']: self._handle_command_to_client__set_game_watcher_client_id,
-            command_to_client_entry_to_index['ReturnWatcherToLobby']: self._handle_command_to_client__return_watcher_to_lobby,
-            # 'AddGameHistoryMessage',
-            # 'AddGameHistoryMessages',
-            # 'SetTurn',
-            # 'SetGameAction',
-            command_to_client_entry_to_index['SetTile']: self._handle_command_to_client__set_tile,
-            # 'SetTileGameBoardType',
-            # 'RemoveTile',
-            # 'AddGlobalChatMessage',
-            # 'AddGameChatMessage',
-            # 'DestroyGame',
+            # FatalError
+            # SetClientId
+            # SetClientIdToData
+            # SetGameState
+            enums.CommandsToClient.SetGameBoardCell.value: self._handle_command_to_client__set_game_board_cell,
+            # SetGameBoard
+            enums.CommandsToClient.SetScoreSheetCell.value: self._handle_command_to_client__set_score_sheet_cell,
+            enums.CommandsToClient.SetScoreSheet.value: self._handle_command_to_client__set_score_sheet,
+            enums.CommandsToClient.SetGamePlayerJoin.value: self._handle_command_to_client__set_game_player_join,
+            enums.CommandsToClient.SetGamePlayerRejoin.value: self._handle_command_to_client__set_game_player_rejoin,
+            enums.CommandsToClient.SetGamePlayerLeave.value: self._handle_command_to_client__set_game_player_leave,
+            # SetGamePlayerJoinMissing
+            enums.CommandsToClient.SetGameWatcherClientId.value: self._handle_command_to_client__set_game_watcher_client_id,
+            enums.CommandsToClient.ReturnWatcherToLobby.value: self._handle_command_to_client__return_watcher_to_lobby,
+            # AddGameHistoryMessage
+            # AddGameHistoryMessages
+            # SetTurn
+            # SetGameAction
+            enums.CommandsToClient.SetTile.value: self._handle_command_to_client__set_tile,
+            # SetTileGameBoardType
+            # RemoveTile
+            # AddGlobalChatMessage
+            # AddGameChatMessage
+            # DestroyGame
             # # defunct
-            # 'SetGamePlayerUsername',
-            command_to_client_entry_to_index['SetGamePlayerClientId']: self._handle_command_to_client__set_game_player_client_id,
+            # SetGamePlayerUsername
+            Enums.lookups['CommandsToClient'].index('SetGamePlayerClientId'): self._handle_command_to_client__set_game_player_client_id,
         }
 
-        command_to_server_entry_to_index = {entry: index for index, entry in enumerate(Enums.lookups['CommandsToServer'])}
         self._commands_to_server_handlers = {
-            # 'CreateGame',
-            # 'JoinGame',
-            # 'RejoinGame',
-            # 'WatchGame',
-            # 'LeaveGame',
-            command_to_server_entry_to_index['DoGameAction']: self._handle_command_to_server__do_game_action,
-            # 'SendGlobalChatMessage',
-            # 'SendGameChatMessage',
+            # CreateGame
+            # JoinGame
+            # RejoinGame
+            # WatchGame
+            # LeaveGame
+            enums.CommandsToServer.DoGameAction.value: self._handle_command_to_server__do_game_action,
+            # SendGlobalChatMessage
+            # SendGameChatMessage
         }
 
         self._delayed_calls = []
@@ -1671,8 +1481,6 @@ def main():
     # output_server_game_files_for_all_in_progress_games(output_dir)
     # output_first_merge_bonuses_and_final_scores_of_all_completed_games(output_dir)
     # report_on_first_merge_bonuses_and_final_scores_of_all_completed_games(output_dir)
-
-    # Enums.pretty_print_lookups(Enums.get_lookups_from_enums_module())
 
 
 if __name__ == '__main__':
