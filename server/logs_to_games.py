@@ -1450,17 +1450,14 @@ def report_on_first_merge_bonuses_and_final_scores_of_all_completed_games(output
             not_applicable_count = bucket_to_not_applicable_count[bucket]
 
             if ranking_to_count:
-                running_count = 0
                 sum_counts = sum(ranking_to_count.values())
                 for ranking, count in sorted(ranking_to_count.items()):
-                    running_count += count
                     table[ranking - 1].append('%d/%d' % (count, sum_counts))
                     table[ranking - 1].append('%.1f%%' % (count / sum_counts * 100,))
-                    table[ranking - 1].append('%.1f%%' % (running_count / sum_counts * 100,))
-                running_count += not_applicable_count
-                table[-1].append('%d/%d' % (not_applicable_count, running_count))
-                table[-1].append('%.1f%%' % (not_applicable_count / running_count * 100,))
-                table[-1].append('')
+
+                sum_counts += not_applicable_count
+                table[-1].append('%d/%d' % (not_applicable_count, sum_counts))
+                table[-1].append('%.1f%%' % (not_applicable_count / sum_counts * 100,))
 
         print(mode)
         print_table(table)
