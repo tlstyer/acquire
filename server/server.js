@@ -169,6 +169,7 @@
 							socket.write(value);
 						} else {
 							console.log('ERROR! client_id ===', client_ids[i], value);
+							python_server.write('disconnect ' + client_ids[i] + '\n');
 						}
 					}
 				}
