@@ -13,14 +13,15 @@ import traceback
 import ujson
 
 
-class Server(asyncio.Protocol):
-    def __init__(self):
+class ServerProtocol(asyncio.Protocol):
+    def __init__(self, server):
+        self.server = server
         self.transport = None
         self.unprocessed_data = []
 
     def connection_made(self, transport):
         self.transport = transport
-        AcquireServerProtocol.server_transport = transport
+        self.server.transport_write = transport.write
         print('time:', time.time())
         print('connection_made')
         print()
@@ -46,13 +47,13 @@ class Server(asyncio.Protocol):
                 key, value = key_and_value.split(b' ', 1)
                 if key == b'connect':
                     value = ujson.decode(value.decode())
-                    AcquireServerProtocol(*value)
+                    Client(self.server, *value)
                 elif key == b'disconnect':
-                    client = AcquireServerProtocol.client_id_to_client.get(int(value.decode()), None)
+                    client = self.server.client_id_to_client.get(int(value.decode()), None)
                     if client:
                         client.disconnect()
                 else:
-                    client = AcquireServerProtocol.client_id_to_client.get(int(key.decode()), None)
+                    client = self.server.client_id_to_client.get(int(key.decode()), None)
                     if client:
                         client.on_message(value)
             else:
@@ -96,102 +97,168 @@ class IncrementIdManager:
         pass
 
 
-class AcquireServerProtocol:
-    next_client_id_manager = ReuseIdManager(60)
-    client_id_to_client = {}
-    client_ids = set()
-    username_to_client = {}
-    next_game_id_manager = ReuseIdManager(60)
-    next_internal_game_id_manager = IncrementIdManager()
-    game_id_to_game = {}
-    client_ids_and_messages = []
-
-    server_transport = None
-
+class Server:
     re_camelcase = re.compile(r'(.)([A-Z])')
 
-    def __init__(self, username, ip_address, socket_id, replace_existing_user):
+    def __init__(self):
+        self.next_client_id_manager = ReuseIdManager(60)
+        self.client_id_to_client = {}
+        self.client_ids = set()
+        self.username_to_client = {}
+        self.next_game_id_manager = ReuseIdManager(60)
+        self.next_internal_game_id_manager = IncrementIdManager()
+        self.game_id_to_game = {}
+        self.client_ids_and_messages = []
+
+        self.transport_write = None
+
+    def add_pending_messages(self, messages, client_ids=None):
+        if client_ids is None:
+            client_ids = self.client_ids
+        client_ids = client_ids.copy()
+        new_list = []
+        for client_ids2, messages2 in self.client_ids_and_messages:
+            client_ids_in_group = client_ids2 & client_ids
+            if len(client_ids_in_group) == len(client_ids2):
+                messages2.extend(messages)
+                new_list.append([client_ids2, messages2])
+            elif client_ids_in_group:
+                new_list.append([client_ids_in_group, messages2 + messages])
+                client_ids2 -= client_ids_in_group
+                new_list.append([client_ids2, messages2])
+            else:
+                new_list.append([client_ids2, messages2])
+            client_ids -= client_ids_in_group
+        if client_ids:
+            new_list.append([client_ids, messages])
+        self.client_ids_and_messages = new_list
+
+    def flush_pending_messages(self):
+        outgoing = []
+        for client_ids, messages in self.client_ids_and_messages:
+            client_ids_string = ','.join(str(x) for x in sorted(client_ids))
+            messages_json = ujson.dumps(messages)
+            print(client_ids_string, '<-', messages_json)
+
+            outgoing.append(client_ids_string.encode())
+            outgoing.append(b' ')
+            outgoing.append(messages_json.encode())
+            outgoing.append(b'\n')
+
+        del self.client_ids_and_messages[:]
+        print()
+
+        self.transport_write(b''.join(outgoing))
+
+    def destroy_expired_games(self):
+        current_time = time.time()
+        expired_games = []
+
+        for game_id, game in self.game_id_to_game.items():
+            if game.expiration_time and game.expiration_time <= current_time:
+                expired_games.append(game)
+
+        if expired_games:
+            messages = []
+            print('time:', current_time)
+            for game in expired_games:
+                game_id = game.game_id
+                internal_game_id = game.internal_game_id
+                print('game #%d expired (internal #%d)' % (game_id, internal_game_id))
+                self.next_game_id_manager.return_id(game_id)
+                self.next_internal_game_id_manager.return_id(internal_game_id)
+                del self.game_id_to_game[game_id]
+                messages.append([enums.CommandsToClient.DestroyGame.value, game_id])
+            self.add_pending_messages(messages)
+            self.flush_pending_messages()
+
+        asyncio.get_event_loop().call_later(15, self.destroy_expired_games)
+
+
+class Client:
+    def __init__(self, server, username, ip_address, socket_id, replace_existing_user):
+        self.server = server
         self.username = username
         self.ip_address = ip_address
-        self.client_id = AcquireServerProtocol.next_client_id_manager.get_id()
+        self.client_id = self.server.next_client_id_manager.get_id()
         self.logged_in = False
         self.game_id = None
         self.player_id = None
 
-        AcquireServerProtocol.client_id_to_client[self.client_id] = self
+        self.server.client_id_to_client[self.client_id] = self
         messages_client = []
 
         def output_connect_messages():
             print('time:', time.time())
             print(self.client_id, 'connect', self.username, self.ip_address, socket_id, replace_existing_user)
-            AcquireServerProtocol.server_transport.write(b'connect ' + ujson.dumps([socket_id, self.client_id]).encode() + b'\n')
+            self.server.transport_write(b'connect ' + ujson.dumps([socket_id, self.client_id]).encode() + b'\n')
 
-        if self.username in AcquireServerProtocol.username_to_client:
+        if self.username in self.server.username_to_client:
             if replace_existing_user:
-                AcquireServerProtocol.username_to_client[self.username].disconnect()
+                self.server.username_to_client[self.username].disconnect()
             else:
                 output_connect_messages()
                 messages_client.append([enums.CommandsToClient.FatalError.value, enums.Errors.UsernameAlreadyInUse.value])
-                AcquireServerProtocol.add_pending_messages(messages_client, {self.client_id})
-                AcquireServerProtocol.flush_pending_messages()
+                self.server.add_pending_messages(messages_client, {self.client_id})
+                self.server.flush_pending_messages()
                 self.disconnect()
                 return
 
         output_connect_messages()
 
-        AcquireServerProtocol.client_ids.add(self.client_id)
+        self.server.client_ids.add(self.client_id)
 
         self.logged_in = True
         self.on_message_lookup = []
         for command_enum in enums.CommandsToServer:
-            self.on_message_lookup.append(getattr(self, 'on_message_' + AcquireServerProtocol.re_camelcase.sub(r'\1_\2', command_enum.name).lower()))
-        AcquireServerProtocol.username_to_client[self.username] = self
+            self.on_message_lookup.append(getattr(self, 'on_message_' + self.server.re_camelcase.sub(r'\1_\2', command_enum.name).lower()))
+        self.server.username_to_client[self.username] = self
 
         messages_client.append([enums.CommandsToClient.SetClientId.value, self.client_id])
 
         # tell client about other clients' data
-        for client in AcquireServerProtocol.client_id_to_client.values():
+        for client in self.server.client_id_to_client.values():
             if client is not self:
                 messages_client.append([enums.CommandsToClient.SetClientIdToData.value, client.client_id, client.username, client.ip_address])
-        AcquireServerProtocol.add_pending_messages(messages_client, {self.client_id})
+        self.server.add_pending_messages(messages_client, {self.client_id})
         messages_client = []
 
         # tell all clients about client's data
-        AcquireServerProtocol.add_pending_messages([[enums.CommandsToClient.SetClientIdToData.value, self.client_id, self.username, self.ip_address]])
+        self.server.add_pending_messages([[enums.CommandsToClient.SetClientIdToData.value, self.client_id, self.username, self.ip_address]])
 
         # tell client about all games
-        for game_id, game in AcquireServerProtocol.game_id_to_game.items():
+        for game_id, game in self.server.game_id_to_game.items():
             messages_client.append([enums.CommandsToClient.SetGameState.value, game_id, game.state, game.mode, game.max_players])
             for player_id, player_datum in enumerate(game.score_sheet.player_data):
                 if player_datum[enums.ScoreSheetIndexes.Client.value]:
                     messages_client.append([enums.CommandsToClient.SetGamePlayerJoin.value, game_id, player_id, player_datum[enums.ScoreSheetIndexes.Client.value].client_id])
                 else:
                     username = player_datum[enums.ScoreSheetIndexes.Username.value]
-                    client = AcquireServerProtocol.username_to_client.get(username)
+                    client = self.server.username_to_client.get(username)
                     messages_client.append([enums.CommandsToClient.SetGamePlayerJoinMissing.value, game_id, player_id, client.client_id if client else username])
             for client_id in game.watcher_client_ids:
                 messages_client.append([enums.CommandsToClient.SetGameWatcherClientId.value, game_id, client_id])
-        AcquireServerProtocol.add_pending_messages(messages_client, {self.client_id})
+        self.server.add_pending_messages(messages_client, {self.client_id})
 
-        AcquireServerProtocol.flush_pending_messages()
+        self.server.flush_pending_messages()
 
     def disconnect(self):
         print('time:', time.time())
         print(self.client_id, 'disconnect')
 
-        AcquireServerProtocol.server_transport.write(b'disconnect ' + str(self.client_id).encode() + b'\n')
+        self.server.transport_write(b'disconnect ' + str(self.client_id).encode() + b'\n')
 
-        del AcquireServerProtocol.client_id_to_client[self.client_id]
-        AcquireServerProtocol.client_ids.discard(self.client_id)
-        AcquireServerProtocol.next_client_id_manager.return_id(self.client_id)
+        del self.server.client_id_to_client[self.client_id]
+        self.server.client_ids.discard(self.client_id)
+        self.server.next_client_id_manager.return_id(self.client_id)
 
         if self.game_id:
-            AcquireServerProtocol.game_id_to_game[self.game_id].leave_game(self)
+            self.server.game_id_to_game[self.game_id].leave_game(self)
 
         if self.logged_in:
-            del AcquireServerProtocol.username_to_client[self.username]
-            AcquireServerProtocol.add_pending_messages([[enums.CommandsToClient.SetClientIdToData.value, self.client_id, None, None]])
-            AcquireServerProtocol.flush_pending_messages()
+            del self.server.username_to_client[self.username]
+            self.server.add_pending_messages([[enums.CommandsToClient.SetClientIdToData.value, self.client_id, None, None]])
+            self.server.flush_pending_messages()
         else:
             print()
 
@@ -210,114 +277,49 @@ class AcquireServerProtocol:
 
         try:
             method(*arguments)
-            AcquireServerProtocol.flush_pending_messages()
+            self.server.flush_pending_messages()
         except TypeError:
             traceback.print_exc()
             self.disconnect()
 
     def on_message_create_game(self, mode, max_players):
         if not self.game_id and isinstance(mode, int) and 0 <= mode < enums.GameModes.Max.value and isinstance(max_players, int) and 1 <= max_players <= 6:
-            game_id = AcquireServerProtocol.next_game_id_manager.get_id()
-            internal_game_id = AcquireServerProtocol.next_internal_game_id_manager.get_id()
-            game = Game(game_id, internal_game_id, mode, max_players, AcquireServerProtocol.add_pending_messages)
+            game_id = self.server.next_game_id_manager.get_id()
+            internal_game_id = self.server.next_internal_game_id_manager.get_id()
+            game = Game(game_id, internal_game_id, mode, max_players, self.server.add_pending_messages)
             game.join_game(self)
-            AcquireServerProtocol.game_id_to_game[game_id] = game
+            self.server.game_id_to_game[game_id] = game
 
     def on_message_join_game(self, game_id):
-        if not self.game_id and game_id in AcquireServerProtocol.game_id_to_game:
-            AcquireServerProtocol.game_id_to_game[game_id].join_game(self)
+        if not self.game_id and game_id in self.server.game_id_to_game:
+            self.server.game_id_to_game[game_id].join_game(self)
 
     def on_message_rejoin_game(self, game_id):
-        if not self.game_id and game_id in AcquireServerProtocol.game_id_to_game:
-            AcquireServerProtocol.game_id_to_game[game_id].rejoin_game(self)
+        if not self.game_id and game_id in self.server.game_id_to_game:
+            self.server.game_id_to_game[game_id].rejoin_game(self)
 
     def on_message_watch_game(self, game_id):
-        if not self.game_id and game_id in AcquireServerProtocol.game_id_to_game:
-            AcquireServerProtocol.game_id_to_game[game_id].watch_game(self)
+        if not self.game_id and game_id in self.server.game_id_to_game:
+            self.server.game_id_to_game[game_id].watch_game(self)
 
     def on_message_leave_game(self):
         if self.game_id:
-            AcquireServerProtocol.game_id_to_game[self.game_id].leave_game(self)
+            self.server.game_id_to_game[self.game_id].leave_game(self)
 
     def on_message_do_game_action(self, game_action_id, *data):
         if self.game_id:
-            AcquireServerProtocol.game_id_to_game[self.game_id].do_game_action(self, game_action_id, data)
+            self.server.game_id_to_game[self.game_id].do_game_action(self, game_action_id, data)
 
     def on_message_send_global_chat_message(self, chat_message):
         chat_message = ' '.join(chat_message.split())
         if chat_message:
-            AcquireServerProtocol.add_pending_messages([[enums.CommandsToClient.AddGlobalChatMessage.value, self.client_id, chat_message]])
+            self.server.add_pending_messages([[enums.CommandsToClient.AddGlobalChatMessage.value, self.client_id, chat_message]])
 
     def on_message_send_game_chat_message(self, chat_message):
         if self.game_id:
             chat_message = ' '.join(chat_message.split())
             if chat_message:
-                AcquireServerProtocol.add_pending_messages([[enums.CommandsToClient.AddGameChatMessage.value, self.client_id, chat_message]], AcquireServerProtocol.game_id_to_game[self.game_id].client_ids)
-
-    @staticmethod
-    def add_pending_messages(messages, client_ids=None):
-        if client_ids is None:
-            client_ids = AcquireServerProtocol.client_ids
-        client_ids = client_ids.copy()
-        new_list = []
-        for client_ids2, messages2 in AcquireServerProtocol.client_ids_and_messages:
-            client_ids_in_group = client_ids2 & client_ids
-            if len(client_ids_in_group) == len(client_ids2):
-                messages2.extend(messages)
-                new_list.append([client_ids2, messages2])
-            elif client_ids_in_group:
-                new_list.append([client_ids_in_group, messages2 + messages])
-                client_ids2 -= client_ids_in_group
-                new_list.append([client_ids2, messages2])
-            else:
-                new_list.append([client_ids2, messages2])
-            client_ids -= client_ids_in_group
-        if client_ids:
-            new_list.append([client_ids, messages])
-        AcquireServerProtocol.client_ids_and_messages = new_list
-
-    @staticmethod
-    def flush_pending_messages():
-        outgoing = []
-        for client_ids, messages in AcquireServerProtocol.client_ids_and_messages:
-            client_ids_string = ','.join(str(x) for x in sorted(client_ids))
-            messages_json = ujson.dumps(messages)
-            print(client_ids_string, '<-', messages_json)
-
-            outgoing.append(client_ids_string.encode())
-            outgoing.append(b' ')
-            outgoing.append(messages_json.encode())
-            outgoing.append(b'\n')
-
-        del AcquireServerProtocol.client_ids_and_messages[:]
-        print()
-
-        AcquireServerProtocol.server_transport.write(b''.join(outgoing))
-
-    @staticmethod
-    def destroy_expired_games():
-        current_time = time.time()
-        expired_games = []
-
-        for game_id, game in AcquireServerProtocol.game_id_to_game.items():
-            if game.expiration_time and game.expiration_time <= current_time:
-                expired_games.append(game)
-
-        if expired_games:
-            messages = []
-            print('time:', current_time)
-            for game in expired_games:
-                game_id = game.game_id
-                internal_game_id = game.internal_game_id
-                print('game #%d expired (internal #%d)' % (game_id, internal_game_id))
-                AcquireServerProtocol.next_game_id_manager.return_id(game_id)
-                AcquireServerProtocol.next_internal_game_id_manager.return_id(internal_game_id)
-                del AcquireServerProtocol.game_id_to_game[game_id]
-                messages.append([enums.CommandsToClient.DestroyGame.value, game_id])
-            AcquireServerProtocol.add_pending_messages(messages)
-            AcquireServerProtocol.flush_pending_messages()
-
-        asyncio.get_event_loop().call_later(15, AcquireServerProtocol.destroy_expired_games)
+                self.server.add_pending_messages([[enums.CommandsToClient.AddGameChatMessage.value, self.client_id, chat_message]], self.server.game_id_to_game[self.game_id].client_ids)
 
 
 class GameBoard:
@@ -1224,7 +1226,7 @@ class Game:
         self.actions[-1].send_message({client.client_id})
 
 
-def recreate_game(filename):
+def recreate_game(server, filename):
     import pickle
 
     with open(filename, 'rb') as f:
@@ -1232,8 +1234,8 @@ def recreate_game(filename):
 
     game = Game.__new__(Game)
 
-    game.game_id = AcquireServerProtocol.next_game_id_manager.get_id()
-    game.internal_game_id = AcquireServerProtocol.next_internal_game_id_manager.get_id()
+    game.game_id = server.next_game_id_manager.get_id()
+    game.internal_game_id = server.next_internal_game_id_manager.get_id()
     game.state = game_data['state']
     game.mode = game_data['mode']
     game.max_players = game_data['max_players']
@@ -1243,7 +1245,7 @@ def recreate_game(filename):
     game.turns_without_played_tiles_count = game_data['turns_without_played_tiles_count']
     game.history_messages = game_data['history_messages']
 
-    game.add_pending_messages = AcquireServerProtocol.add_pending_messages
+    game.add_pending_messages = server.add_pending_messages
     game.logging_enabled = True
     game.client_ids = set()
     game.watcher_client_ids = set()
@@ -1274,10 +1276,10 @@ def recreate_game(filename):
 
     game.log_data_overrides = {'log-time': game_data['log_time'], 'game-id': game_data['internal_game_id'], 'external-game-id': game_data['game_id'], 'end': game_data['begin'] + 1800}
 
-    AcquireServerProtocol.game_id_to_game[game.game_id] = game
+    server.game_id_to_game[game.game_id] = game
 
 
-def recreate_some_games():
+def recreate_some_games(server):
     import orm
     import os
     import sqlalchemy.sql
@@ -1311,16 +1313,18 @@ def recreate_some_games():
         num_tiles_played, filename = num_tiles_played_and_filenames
         filename = input_dir + filename
         print(filename)
-        recreate_game(filename)
+        recreate_game(server, filename)
 
 
 def main():
-    # recreate_some_games()
+    server = Server()
+    server_protocol = ServerProtocol(server)
+
+    # recreate_some_games(server)
 
     loop = asyncio.get_event_loop()
-    loop.call_soon(AcquireServerProtocol.destroy_expired_games)
-    coro = loop.create_unix_server(Server, 'python.sock')
-    server = loop.run_until_complete(coro)
+    loop.call_soon(server.destroy_expired_games)
+    loop.run_until_complete(loop.create_unix_server(lambda: server_protocol, 'python.sock'))
 
     try:
         loop.run_forever()
@@ -1328,9 +1332,6 @@ def main():
         pass
     except:
         traceback.print_exc()
-    finally:
-        server.close()
-        loop.close()
 
 
 if __name__ == '__main__':
