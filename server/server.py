@@ -121,19 +121,23 @@ class AcquireServerProtocol:
         AcquireServerProtocol.client_id_to_client[self.client_id] = self
         messages_client = []
 
-        print('time:', time.time())
-        print(self.client_id, 'connect', self.username, self.ip_address, socket_id, replace_existing_user)
-        AcquireServerProtocol.server_transport.write(b'connect ' + ujson.dumps([socket_id, self.client_id]).encode() + b'\n')
+        def output_connect_messages():
+            print('time:', time.time())
+            print(self.client_id, 'connect', self.username, self.ip_address, socket_id, replace_existing_user)
+            AcquireServerProtocol.server_transport.write(b'connect ' + ujson.dumps([socket_id, self.client_id]).encode() + b'\n')
 
         if self.username in AcquireServerProtocol.username_to_client:
             if replace_existing_user:
                 AcquireServerProtocol.username_to_client[self.username].disconnect()
             else:
+                output_connect_messages()
                 messages_client.append([enums.CommandsToClient.FatalError.value, enums.Errors.UsernameAlreadyInUse.value])
                 AcquireServerProtocol.add_pending_messages(messages_client, {self.client_id})
                 AcquireServerProtocol.flush_pending_messages()
                 self.disconnect()
                 return
+
+        output_connect_messages()
 
         AcquireServerProtocol.client_ids.add(self.client_id)
 
