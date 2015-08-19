@@ -177,88 +177,88 @@ class Server:
 
 class Client:
     def __init__(self, server, username, ip_address, socket_id, replace_existing_user):
-        self.server = server
+        self._server = server
         self.username = username
         self.ip_address = ip_address
-        self.client_id = self.server.next_client_id_manager.get_id()
-        self.logged_in = False
+        self.client_id = self._server.next_client_id_manager.get_id()
+        self._logged_in = False
         self.game_id = None
         self.player_id = None
 
-        self.server.client_id_to_client[self.client_id] = self
+        self._server.client_id_to_client[self.client_id] = self
         messages_client = []
 
         def output_connect_messages():
             print('time:', time.time())
             print(self.client_id, 'connect', self.username, self.ip_address, socket_id, replace_existing_user)
-            self.server.transport_write(b'connect ' + ujson.dumps([socket_id, self.client_id]).encode() + b'\n')
+            self._server.transport_write(b'connect ' + ujson.dumps([socket_id, self.client_id]).encode() + b'\n')
 
-        if self.username in self.server.username_to_client:
+        if self.username in self._server.username_to_client:
             if replace_existing_user:
-                self.server.username_to_client[self.username].disconnect()
+                self._server.username_to_client[self.username].disconnect()
             else:
                 output_connect_messages()
                 messages_client.append([enums.CommandsToClient.FatalError.value, enums.Errors.UsernameAlreadyInUse.value])
-                self.server.add_pending_messages(messages_client, {self.client_id})
-                self.server.flush_pending_messages()
+                self._server.add_pending_messages(messages_client, {self.client_id})
+                self._server.flush_pending_messages()
                 self.disconnect()
                 return
 
         output_connect_messages()
 
-        self.server.client_ids.add(self.client_id)
+        self._server.client_ids.add(self.client_id)
 
-        self.logged_in = True
+        self._logged_in = True
         self.on_message_lookup = []
         for command_enum in enums.CommandsToServer:
-            self.on_message_lookup.append(getattr(self, 'on_message_' + self.server.re_camelcase.sub(r'\1_\2', command_enum.name).lower()))
-        self.server.username_to_client[self.username] = self
+            self.on_message_lookup.append(getattr(self, '_on_message_' + self._server.re_camelcase.sub(r'\1_\2', command_enum.name).lower()))
+        self._server.username_to_client[self.username] = self
 
         messages_client.append([enums.CommandsToClient.SetClientId.value, self.client_id])
 
         # tell client about other clients' data
-        for client in self.server.client_id_to_client.values():
+        for client in self._server.client_id_to_client.values():
             if client is not self:
                 messages_client.append([enums.CommandsToClient.SetClientIdToData.value, client.client_id, client.username, client.ip_address])
-        self.server.add_pending_messages(messages_client, {self.client_id})
+        self._server.add_pending_messages(messages_client, {self.client_id})
         messages_client = []
 
         # tell all clients about client's data
-        self.server.add_pending_messages([[enums.CommandsToClient.SetClientIdToData.value, self.client_id, self.username, self.ip_address]])
+        self._server.add_pending_messages([[enums.CommandsToClient.SetClientIdToData.value, self.client_id, self.username, self.ip_address]])
 
         # tell client about all games
-        for game_id, game in self.server.game_id_to_game.items():
+        for game_id, game in self._server.game_id_to_game.items():
             messages_client.append([enums.CommandsToClient.SetGameState.value, game_id, game.state, game.mode, game.max_players])
             for player_id, player_datum in enumerate(game.score_sheet.player_data):
                 if player_datum[enums.ScoreSheetIndexes.Client.value]:
                     messages_client.append([enums.CommandsToClient.SetGamePlayerJoin.value, game_id, player_id, player_datum[enums.ScoreSheetIndexes.Client.value].client_id])
                 else:
                     username = player_datum[enums.ScoreSheetIndexes.Username.value]
-                    client = self.server.username_to_client.get(username)
+                    client = self._server.username_to_client.get(username)
                     messages_client.append([enums.CommandsToClient.SetGamePlayerJoinMissing.value, game_id, player_id, client.client_id if client else username])
             for client_id in game.watcher_client_ids:
                 messages_client.append([enums.CommandsToClient.SetGameWatcherClientId.value, game_id, client_id])
-        self.server.add_pending_messages(messages_client, {self.client_id})
+        self._server.add_pending_messages(messages_client, {self.client_id})
 
-        self.server.flush_pending_messages()
+        self._server.flush_pending_messages()
 
     def disconnect(self):
         print('time:', time.time())
         print(self.client_id, 'disconnect')
 
-        self.server.transport_write(b'disconnect ' + str(self.client_id).encode() + b'\n')
+        self._server.transport_write(b'disconnect ' + str(self.client_id).encode() + b'\n')
 
-        del self.server.client_id_to_client[self.client_id]
-        self.server.client_ids.discard(self.client_id)
-        self.server.next_client_id_manager.return_id(self.client_id)
+        del self._server.client_id_to_client[self.client_id]
+        self._server.client_ids.discard(self.client_id)
+        self._server.next_client_id_manager.return_id(self.client_id)
 
         if self.game_id:
-            self.server.game_id_to_game[self.game_id].leave_game(self)
+            self._server.game_id_to_game[self.game_id].leave_game(self)
 
-        if self.logged_in:
-            del self.server.username_to_client[self.username]
-            self.server.add_pending_messages([[enums.CommandsToClient.SetClientIdToData.value, self.client_id, None, None]])
-            self.server.flush_pending_messages()
+        if self._logged_in:
+            del self._server.username_to_client[self.username]
+            self._server.add_pending_messages([[enums.CommandsToClient.SetClientIdToData.value, self.client_id, None, None]])
+            self._server.flush_pending_messages()
         else:
             print()
 
@@ -277,49 +277,49 @@ class Client:
 
         try:
             method(*arguments)
-            self.server.flush_pending_messages()
+            self._server.flush_pending_messages()
         except TypeError:
             traceback.print_exc()
             self.disconnect()
 
-    def on_message_create_game(self, mode, max_players):
+    def _on_message_create_game(self, mode, max_players):
         if not self.game_id and isinstance(mode, int) and 0 <= mode < enums.GameModes.Max.value and isinstance(max_players, int) and 1 <= max_players <= 6:
-            game_id = self.server.next_game_id_manager.get_id()
-            internal_game_id = self.server.next_internal_game_id_manager.get_id()
-            game = Game(game_id, internal_game_id, mode, max_players, self.server.add_pending_messages)
+            game_id = self._server.next_game_id_manager.get_id()
+            internal_game_id = self._server.next_internal_game_id_manager.get_id()
+            game = Game(game_id, internal_game_id, mode, max_players, self._server.add_pending_messages)
             game.join_game(self)
-            self.server.game_id_to_game[game_id] = game
+            self._server.game_id_to_game[game_id] = game
 
-    def on_message_join_game(self, game_id):
-        if not self.game_id and game_id in self.server.game_id_to_game:
-            self.server.game_id_to_game[game_id].join_game(self)
+    def _on_message_join_game(self, game_id):
+        if not self.game_id and game_id in self._server.game_id_to_game:
+            self._server.game_id_to_game[game_id].join_game(self)
 
-    def on_message_rejoin_game(self, game_id):
-        if not self.game_id and game_id in self.server.game_id_to_game:
-            self.server.game_id_to_game[game_id].rejoin_game(self)
+    def _on_message_rejoin_game(self, game_id):
+        if not self.game_id and game_id in self._server.game_id_to_game:
+            self._server.game_id_to_game[game_id].rejoin_game(self)
 
-    def on_message_watch_game(self, game_id):
-        if not self.game_id and game_id in self.server.game_id_to_game:
-            self.server.game_id_to_game[game_id].watch_game(self)
+    def _on_message_watch_game(self, game_id):
+        if not self.game_id and game_id in self._server.game_id_to_game:
+            self._server.game_id_to_game[game_id].watch_game(self)
 
-    def on_message_leave_game(self):
+    def _on_message_leave_game(self):
         if self.game_id:
-            self.server.game_id_to_game[self.game_id].leave_game(self)
+            self._server.game_id_to_game[self.game_id].leave_game(self)
 
-    def on_message_do_game_action(self, game_action_id, *data):
+    def _on_message_do_game_action(self, game_action_id, *data):
         if self.game_id:
-            self.server.game_id_to_game[self.game_id].do_game_action(self, game_action_id, data)
+            self._server.game_id_to_game[self.game_id].do_game_action(self, game_action_id, data)
 
-    def on_message_send_global_chat_message(self, chat_message):
+    def _on_message_send_global_chat_message(self, chat_message):
         chat_message = ' '.join(chat_message.split())
         if chat_message:
-            self.server.add_pending_messages([[enums.CommandsToClient.AddGlobalChatMessage.value, self.client_id, chat_message]])
+            self._server.add_pending_messages([[enums.CommandsToClient.AddGlobalChatMessage.value, self.client_id, chat_message]])
 
-    def on_message_send_game_chat_message(self, chat_message):
+    def _on_message_send_game_chat_message(self, chat_message):
         if self.game_id:
             chat_message = ' '.join(chat_message.split())
             if chat_message:
-                self.server.add_pending_messages([[enums.CommandsToClient.AddGameChatMessage.value, self.client_id, chat_message]], self.server.game_id_to_game[self.game_id].client_ids)
+                self._server.add_pending_messages([[enums.CommandsToClient.AddGameChatMessage.value, self.client_id, chat_message]], self._server.game_id_to_game[self.game_id].client_ids)
 
 
 class GameBoard:
@@ -1060,7 +1060,7 @@ class Game:
             position_tile = self.tile_bag.pop()
             previous_creator_player_id = self.score_sheet.get_creator_player_id()
             self.score_sheet.join_game(client, position_tile)
-            self.send_past_history_messages(client)
+            self._send_past_history_messages(client)
             self.game_board.set_cell(position_tile, enums.GameBoardTypes.NothingYet.value)
             self.add_history_message(enums.GameHistoryMessages.DrewPositionTile.value, client.username, position_tile[0], position_tile[1])
             creator_player_id = self.score_sheet.get_creator_player_id()
@@ -1079,8 +1079,8 @@ class Game:
             client.game_id = self.game_id
             self.client_ids.add(client.client_id)
             self.score_sheet.rejoin_game(client)
-            self.send_initialization_messages(client)
-            self.send_past_history_messages(client)
+            self._send_initialization_messages(client)
+            self._send_past_history_messages(client)
             self.expiration_time = None
 
     def watch_game(self, client):
@@ -1089,8 +1089,8 @@ class Game:
             self.client_ids.add(client.client_id)
             self.watcher_client_ids.add(client.client_id)
             self.add_pending_messages([[enums.CommandsToClient.SetGameWatcherClientId.value, self.game_id, client.client_id]])
-            self.send_initialization_messages(client)
-            self.send_past_history_messages(client)
+            self._send_initialization_messages(client)
+            self._send_past_history_messages(client)
             self.expiration_time = None
 
     def leave_game(self, client):
@@ -1186,7 +1186,7 @@ class Game:
                 message[2] = self.score_sheet.username_to_player_id[message[2]]
             self.add_pending_messages([message], client_ids)
 
-    def send_past_history_messages(self, client):
+    def _send_past_history_messages(self, client):
         player_id = client.player_id
         messages = []
         for target_player_id, message in self.history_messages:
@@ -1199,7 +1199,7 @@ class Game:
         if messages:
             self.add_pending_messages([[enums.CommandsToClient.AddGameHistoryMessages.value, messages]], {client.client_id})
 
-    def send_initialization_messages(self, client):
+    def _send_initialization_messages(self, client):
         # game board
         messages = [[enums.CommandsToClient.SetGameBoard.value, self.game_board.x_to_y_to_board_type]]
 
