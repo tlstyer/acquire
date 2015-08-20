@@ -172,8 +172,6 @@ class Server:
             self.add_pending_messages(messages)
             self.flush_pending_messages()
 
-        asyncio.get_event_loop().call_later(15, self.destroy_expired_games)
-
 
 class Client:
     def __init__(self, server, username, ip_address, socket_id, replace_existing_user):
@@ -1323,8 +1321,14 @@ def main():
     # recreate_some_games(server)
 
     loop = asyncio.get_event_loop()
-    loop.call_soon(server.destroy_expired_games)
+
     loop.run_until_complete(loop.create_unix_server(lambda: server_protocol, 'python.sock'))
+
+    def destroy_expired_games_loop():
+        server.destroy_expired_games()
+        loop.call_later(15, destroy_expired_games_loop)
+
+    loop.call_later(15, destroy_expired_games_loop)
 
     try:
         loop.run_forever()
