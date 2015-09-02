@@ -62,8 +62,8 @@ def generate_enums_js(mode):
         class_names_include_str_to_int = {'GameModes', 'Options'}
     elif mode == 'development':
         class_names_set = {obj[0] for obj in inspect.getmembers(enums) if inspect.isclass(obj[1])}
-        class_names_set -= {'AutoNumber'}
-        class_names_set |= {'PubSub'}
+        class_names_set.remove('AutoNumber')
+        class_names_set.add('PubSub')
         class_names = sorted(class_names_set)
         class_names_include_str_to_int = class_names_set
     else:

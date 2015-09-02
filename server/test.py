@@ -5,7 +5,7 @@ import time
 import unittest
 
 
-class TestReuseIdManagerWithoutWait(unittest.TestCase):
+class TestReuseIdManager(unittest.TestCase):
     def setUp(self):
         self.id_manager = server.ReuseIdManager(0)
 

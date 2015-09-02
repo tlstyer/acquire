@@ -154,7 +154,7 @@ class Server:
         current_time = time.time()
         expired_games = []
 
-        for game_id, game in self.game_id_to_game.items():
+        for game in self.game_id_to_game.values():
             if game.expiration_time and game.expiration_time <= current_time:
                 expired_games.append(game)
 
