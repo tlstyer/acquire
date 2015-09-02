@@ -125,6 +125,10 @@ $(function() {
 		return date + ' ' + time;
 	}
 
+	function formatDateMilliseconds(unix_timestamp_milliseconds) {
+		return formatDate(unix_timestamp_milliseconds / 1000);
+	}
+
 	function populateRatingsTable(ratings) {
 		var $tbody = $('#users tbody'),
 			ratings_index, ratings_length = ratings.length,
@@ -273,9 +277,7 @@ $(function() {
 						labelsUTC: true,
 						axes: {
 							x: {
-								valueFormatter: function(ms) {
-									return formatDate(ms / 1000);
-								}
+								valueFormatter: formatDateMilliseconds
 							}
 						}
 					});

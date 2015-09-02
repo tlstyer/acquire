@@ -6,8 +6,7 @@ var common_functions = require('./common_functions'),
 	periodic_resize_check_width = null,
 	periodic_resize_check_height = null,
 	error_message_lookup = {},
-	option_color_scheme = null,
-	check_interval = null;
+	option_color_scheme = null;
 
 function showPage(page) {
 	if (page !== current_page) {
