@@ -137,8 +137,8 @@ class Notifications(AutoNumber):
 
 class Options(AutoNumber):
     EnablePageTitleNotifications = ()
-    EnableSoundNotifications = ()
     Sound = ()
+    Volume = ()
     EnableHighContrastColors = ()
     EnableTextBackgroundColors = ()
     ColorScheme = ()

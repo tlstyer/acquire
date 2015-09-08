@@ -75,25 +75,24 @@ function setStoredOptionValue(key, value) {
 }
 
 function initialize() {
-	var option_id, key, detail, value, disable, $input;
+	var option_id, key, detail, $input, value;
 
 	details[enums.Options.EnablePageTitleNotifications] = {
 		'type': 'checkbox',
 		'default': true,
 		'valid': [true, false]
 	};
-	details[enums.Options.EnableSoundNotifications] = {
-		'type': 'checkbox',
-		'default': true,
-		'valid': [true, false],
-		'disable': function() {
-			return document.getElementById('beep').pause === undefined;
-		}
-	};
 	details[enums.Options.Sound] = {
 		'type': 'select',
 		'default': 'beep',
 		'valid': ['beep', 'cha-ching']
+	};
+	details[enums.Options.Volume] = {
+		'type': 'select',
+		'default': '100',
+		'valid': ['100', '90', '80', '70', '60', '50', '40', '30', '20', '10', '0'],
+		'disable': document.getElementById('beep').pause === undefined,
+		'disabled-value': '0'
 	};
 	details[enums.Options.EnableHighContrastColors] = {
 		'type': 'checkbox',
@@ -121,22 +120,28 @@ function initialize() {
 			option_id = parseInt(option_id, 10);
 			key = common_functions.getHyphenatedStringFromEnumName(enums.Options[option_id]);
 			detail = details[option_id];
-
+			$input = $('#option-' + key);
 			value = getStoredOptionValue(key);
+
+			// smooth transition from EnableSoundNotifications to Volume
+			if (option_id === enums.Options.Volume && value === null) {
+				if (getStoredOptionValue('enable-sound-notifications') === false) {
+					value = '0';
+				}
+			}
+
 			if ($.inArray(value, detail.valid) === -1) {
 				value = detail['default'];
 			}
 
-			disable = detail.hasOwnProperty('disable') && detail.disable();
+			if (detail.hasOwnProperty('disable') && detail.disable) {
+				value = detail.hasOwnProperty('disable-value') ? detail['disable-value'] : false;
+				$input.prop('disabled', true);
+				$input.parent().addClass('disabled');
+			}
 
-			$input = $('#option-' + key);
 			switch (detail.type) {
 			case 'checkbox':
-				if (disable) {
-					value = false;
-					$input.prop('disabled', true);
-					$input.next().addClass('disabled');
-				}
 				$input.prop('checked', value);
 				break;
 			case 'select':

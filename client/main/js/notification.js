@@ -2,8 +2,8 @@ var common_data = require('./common_data'),
 	enums = require('./enums'),
 	pubsub = require('./pubsub'),
 	enable_page_title_notifications = null,
-	enable_sound_notifications = null,
 	sound = null,
+	volume = null,
 	title = '',
 	interval = null,
 	showing_title_prefix = false,
@@ -16,10 +16,10 @@ function setOption(option_id, value) {
 		if (!value) {
 			turnOff();
 		}
-	} else if (option_id === enums.Options.EnableSoundNotifications) {
-		enable_sound_notifications = value;
 	} else if (option_id === enums.Options.Sound) {
 		sound = value;
+	} else if (option_id === enums.Options.Volume) {
+		volume = parseInt(value, 10) / 100;
 	}
 }
 
@@ -40,11 +40,12 @@ function turnOn(notification_id) {
 		intervalCallback();
 	}
 
-	if (enable_sound_notifications) {
+	if (volume) {
 		beep = document.getElementById(sound);
 		if (typeof beep.readyState === 'number' && beep.readyState > 0) {
 			beep.pause();
 			beep.currentTime = 0;
+			beep.volume = volume;
 			beep.play();
 		}
 	}
