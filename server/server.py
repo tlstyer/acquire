@@ -225,7 +225,8 @@ class Client:
         self._server.add_pending_messages([[enums.CommandsToClient.SetClientIdToData.value, self.client_id, self.username, self.ip_address]])
 
         # tell client about all games
-        for game_id, game in self._server.game_id_to_game.items():
+        for game in sorted(self._server.game_id_to_game.values(), key=lambda x: x.internal_game_id):
+            game_id = game.game_id
             messages_client.append([enums.CommandsToClient.SetGameState.value, game_id, game.state, game.mode, game.max_players])
             for player_id, player_datum in enumerate(game.score_sheet.player_data):
                 if player_datum[enums.ScoreSheetIndexes.Client.value]:
