@@ -1395,6 +1395,22 @@ def print_table(table):
         print('  '.join((' ' * (column_length - len(cell))) + cell for cell, column_length in zip(row, column_lengths)))
 
 
+def get_player_id_to_ranking(score):
+    player_id_to_ranking = {}
+    last_amount = None
+    last_ranking = None
+    for player_id, amount in sorted(enumerate(score), key=lambda x: -x[1]):
+        if amount == last_amount:
+            ranking = last_ranking
+        else:
+            ranking = len(player_id_to_ranking) + 1
+        last_amount = amount
+        last_ranking = ranking
+        player_id_to_ranking[player_id] = ranking
+
+    return player_id_to_ranking
+
+
 def report_on_first_merge_bonuses_and_final_scores_of_all_completed_games(output_dir):
     with open(os.path.join(output_dir, 'first_merge_bonuses_and_final_scores_of_all_completed_games.bin'), 'rb') as f:
         mode_to_game_data = pickle.load(f)
@@ -1421,17 +1437,7 @@ def report_on_first_merge_bonuses_and_final_scores_of_all_completed_games(output
                 if mode == 'Teams':
                     score = [score[0] + score[2], score[1] + score[3]]
 
-                player_id_to_ranking = {}
-                last_amount = None
-                last_ranking = None
-                for player_id, amount in sorted(enumerate(score), key=lambda x: -x[1]):
-                    if amount == last_amount:
-                        ranking = last_ranking
-                    else:
-                        ranking = len(player_id_to_ranking) + 1
-                    last_amount = amount
-                    last_ranking = ranking
-                    player_id_to_ranking[player_id] = ranking
+                player_id_to_ranking = get_player_id_to_ranking(score)
 
                 for player_id, bucket in player_id_to_bucket.items():
                     if mode == 'Teams':
@@ -1464,6 +1470,29 @@ def report_on_first_merge_bonuses_and_final_scores_of_all_completed_games(output
         print()
 
 
+def report_on_player_ranking_distribution(output_dir):
+    with open(os.path.join(output_dir, 'first_merge_bonuses_and_final_scores_of_all_completed_games.bin'), 'rb') as f:
+        mode_to_game_data = pickle.load(f)
+
+    for mode, num_players in [('Singles2', 2), ('Singles3', 3), ('Singles4', 4), ('Teams', 4)]:
+        game_data = mode_to_game_data[mode]
+
+        rankings_to_count = collections.defaultdict(int)
+
+        for type_to_player_id_to_amount, score in game_data:
+            if mode == 'Teams':
+                score = [score[0] + score[2], score[1] + score[3]]
+
+            player_id_to_ranking = tuple(get_player_id_to_ranking(score).values())
+
+            rankings_to_count[player_id_to_ranking] += 1
+
+        print(mode)
+        for rankings, count in sorted(rankings_to_count.items(), key=lambda x: -x[1]):
+            print(rankings, count)
+        print()
+
+
 def main():
     output_dir = '/opt/data/tim'
     output_logs_dir = output_dir + '/logs'
@@ -1478,6 +1507,7 @@ def main():
     # output_server_game_files_for_all_in_progress_games(output_dir)
     # output_first_merge_bonuses_and_final_scores_of_all_completed_games(output_dir)
     # report_on_first_merge_bonuses_and_final_scores_of_all_completed_games(output_dir)
+    # report_on_player_ranking_distribution(output_dir)
 
 
 if __name__ == '__main__':
