@@ -54,7 +54,7 @@ $(function() {
 	}
 
 	function completeInitializationWhenReady() {
-		if (document.readyState === 'complete' && $ !== undefined && Dygraph !== undefined && History !== undefined) {
+		if (document.readyState === 'complete' && typeof $ !== 'undefined' && typeof Dygraph !== 'undefined' && typeof History !== 'undefined') {
 			initializeHistory();
 
 			History.Adapter.bind(window, 'statechange', onStateChange);

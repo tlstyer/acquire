@@ -236,7 +236,7 @@ function onInitializationComplete() {
 }
 
 function publishInitializationCompleteWhenReady() {
-	if (document.readyState === 'complete' && JSON !== undefined && $ !== undefined && printStackTrace !== undefined && CryptoJS !== undefined && SockJS !== undefined) {
+	if (document.readyState === 'complete' && typeof JSON !== 'undefined' && typeof $ !== 'undefined' && typeof printStackTrace !== 'undefined' && typeof CryptoJS !== 'undefined' && typeof SockJS !== 'undefined') {
 		pubsub.publish(enums.PubSub.Client_InitializationComplete);
 	} else {
 		setTimeout(publishInitializationCompleteWhenReady, 10);
