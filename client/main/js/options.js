@@ -96,7 +96,7 @@ function initialize() {
 	};
 	details[enums.Options.EnableHighContrastColors] = {
 		'type': 'checkbox',
-		'default': false,
+		'default': true,
 		'valid': [true, false]
 	};
 	details[enums.Options.EnableTextBackgroundColors] = {
@@ -106,13 +106,13 @@ function initialize() {
 	};
 	details[enums.Options.ColorScheme] = {
 		'type': 'select',
-		'default': 'default',
-		'valid': ['default', 'netacquire']
+		'default': 'netacquire',
+		'valid': ['netacquire', 'white']
 	};
 	details[enums.Options.GameBoardLabelMode] = {
 		'type': 'select',
-		'default': 'coordinates',
-		'valid': ['coordinates', 'hotel initials', 'nothing']
+		'default': 'nothing',
+		'valid': ['nothing', 'coordinates', 'hotel initials']
 	};
 
 	for (option_id in details) {
