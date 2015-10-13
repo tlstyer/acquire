@@ -97,12 +97,18 @@ function isASCII(string) {
 }
 
 function reportError(e) {
-	$.post('/server/report-error', {
-		message: e.message,
-		trace: printStackTrace({
-			e: e,
-			guess: false
-		}).join('\n')
+	StackTrace.fromError(e).then(function(stackframes) {
+		var i, stackframes_length = stackframes.length,
+			stackframes_strings = [];
+
+		for (i = 0; i < stackframes_length; i++) {
+			stackframes_strings.push(stackframes[i].toString());
+		}
+
+		$.post('/server/report-error', {
+			message: e.message,
+			trace: stackframes_strings.join('\n')
+		});
 	});
 }
 
