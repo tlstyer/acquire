@@ -28,4 +28,4 @@ The apt-get packages are upgraded by your system. To upgrade the other dependenc
     curl http://cdnjs.cloudflare.com/ajax/libs/json3/3.3.2/json3.min.js > json3-3.3.2.js
     curl http://cdnjs.cloudflare.com/ajax/libs/history.js/1.8/native.history.min.js > native.history-1.8.js
     curl http://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.0.3/sockjs.min.js > sockjs-1.0.3.js
-    curl http://cdnjs.cloudflare.com/ajax/libs/stacktrace.js/1.0.0/stacktrace-with-polyfills.min.js > stacktrace-1.0.0.js
+    curl http://cdnjs.cloudflare.com/ajax/libs/stacktrace.js/1.0.1/stacktrace-with-polyfills.min.js > stacktrace-1.0.1.js
