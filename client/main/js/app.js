@@ -106,7 +106,15 @@ function onSubmitSetPasswordForm() {
 			success: function(data) {
 				setSetPasswordErrorMessage(data);
 			},
-			error: function() {
+			error: function(jqXHR, textStatus, errorThrown) {
+				$.post('/server/report-error', {
+					message: 'set-password ajax error',
+					trace: JSON.stringify({
+						jqXHR: jqXHR,
+						textStatus: textStatus,
+						errorThrown: errorThrown
+					})
+				});
 				setSetPasswordErrorMessage(enums.Errors.GenericError);
 			},
 			complete: function() {
