@@ -4,15 +4,19 @@ This is the code for my Acquire board game program which can be played at [http:
 
 ## Install Development Dependencies
 
-    sudo apt-get install nodejs npm python3-pip ruby zopfli
-    npm install body-parser clean-css express html-minifier mysql normalize.css sockjs uglify-js webpack
+Install [yarn](https://yarnpkg.com/en/docs/cli/install).
+
+    sudo apt-get install nodejs python3-pip ruby zopfli
+    yarn
     sudo gem install sass
     sudo pip3 install --upgrade --allow-external mysql-connector-python mysql-connector-python==1.2.3 pytz sqlalchemy trueskill ujson
 
 ## Install Server Dependencies
 
-    sudo apt-get install nodejs npm python3-pip zopfli
-    npm install body-parser express mysql sockjs
+Install [yarn](https://yarnpkg.com/en/docs/cli/install).
+
+    sudo apt-get install nodejs python3-pip zopfli
+    yarn --prod
     sudo pip3 install --upgrade --allow-external mysql-connector-python mysql-connector-python==1.2.3 sqlalchemy trueskill ujson
 
 ## Upgrade Dependencies
