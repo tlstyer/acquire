@@ -2,28 +2,35 @@
 
 This is the code for my Acquire board game program which can be played at [http://acquire.tlstyer.com/](http://acquire.tlstyer.com/).
 
-## Install Development Dependencies
+## Install dependencies
 
-Install [yarn](https://yarnpkg.com/en/docs/cli/install).
+Install nodejs. I followed the [official instructions](https://nodejs.org/en/download/package-manager/#debian-and-ubuntu-based-linux-distributions):
+```bash
+curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
+sudo apt-get install -y nodejs
+```
 
-    sudo apt-get install nodejs python3-pip ruby zopfli
-    yarn
-    sudo gem install sass
-    sudo pip3 install --upgrade --allow-external mysql-connector-python mysql-connector-python==1.2.3 pytz sqlalchemy trueskill ujson
+Install yarn. I followed the [official instructions](https://yarnpkg.com/en/docs/cli/install):
+```bash
+curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
+echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
+sudo apt-get update && sudo apt-get install yarn
+```
 
-## Install Server Dependencies
+Install other dependencies.
+```bash
+sudo apt-get install python3-pip ruby zopfli
+sudo gem install sass
+sudo pip3 install virtualenv
 
-Install [yarn](https://yarnpkg.com/en/docs/cli/install).
+virtualenv venv
+source venv/bin/activate
+pip3 install -r requirements.txt
 
-    sudo apt-get install nodejs python3-pip zopfli
-    yarn --prod
-    sudo pip3 install --upgrade --allow-external mysql-connector-python mysql-connector-python==1.2.3 sqlalchemy trueskill ujson
+yarn
+```
 
-## Upgrade Dependencies
-
-The apt-get packages are upgraded by your system. To upgrade the other dependencies, rerun the relevant commands.
-
-## Download Libraries
+## Download libraries for development use:
 
     cd lib
     curl http://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/sha256.js > crypto-js.rollups.sha256-3.1.2.js
