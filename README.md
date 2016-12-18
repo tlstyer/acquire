@@ -24,8 +24,8 @@ The apt-get packages are upgraded by your system. To upgrade the other dependenc
     cd lib
     curl http://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/sha256.js > crypto-js.rollups.sha256-3.1.2.js
     curl http://cdnjs.cloudflare.com/ajax/libs/dygraph/1.1.1/dygraph-combined.js > dygraph-combined-1.1.1.js
-    curl http://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.3/jquery.min.js > jquery-1.11.3.js
+    curl http://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js > jquery-1.12.4.js
     curl http://cdnjs.cloudflare.com/ajax/libs/json3/3.3.2/json3.min.js > json3-3.3.2.js
     curl http://cdnjs.cloudflare.com/ajax/libs/history.js/1.8/native.history.min.js > native.history-1.8.js
-    curl http://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.0.3/sockjs.min.js > sockjs-1.0.3.js
-    curl http://cdnjs.cloudflare.com/ajax/libs/stacktrace.js/1.0.1/stacktrace-with-polyfills.min.js > stacktrace-1.0.1.js
+    curl http://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.1/sockjs.min.js > sockjs-1.1.1.js
+    curl http://cdnjs.cloudflare.com/ajax/libs/stacktrace.js/1.3.1/stacktrace-with-promises-and-json-polyfills.min.js > stacktrace-1.3.1.js
