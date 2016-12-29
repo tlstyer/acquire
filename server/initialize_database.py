@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.4m
+#!/usr/bin/env python3
 
 import orm
 import subprocess
