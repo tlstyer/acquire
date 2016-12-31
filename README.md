@@ -19,7 +19,7 @@ sudo apt-get update && sudo apt-get install yarn
 
 Install other dependencies.
 ```bash
-sudo apt-get install python3-pip zopfli
+sudo apt-get install mysql-server python3-pip zopfli
 sudo pip3 install virtualenv
 
 virtualenv venv
