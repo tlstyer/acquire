@@ -1,4 +1,4 @@
-rm -rf dist
+rm -rf dist/*
 mkdir -p dist/build/js dist/web/static dist/web/stats
 
 # external dependencies
