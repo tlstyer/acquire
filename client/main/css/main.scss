@@ -1,5 +1,10 @@
 @import '../../../node_modules/normalize.css/normalize.css';
 
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
 $color-background-default: rgb(255, 255, 255);
 $color-background-netacquire: rgb(246, 244, 242);
 $color-table-border: rgb(246, 244, 242);
