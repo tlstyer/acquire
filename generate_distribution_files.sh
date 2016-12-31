@@ -40,9 +40,7 @@ rm dist/build/js/main.js*
 # finish main.js
 ./server/enumsgen.py js release > dist/build/js/enums.js
 
-cd dist/build/js
-../../../node_modules/webpack/bin/webpack.js app.js ../main1.js
-cd ../../..
+./node_modules/webpack/bin/webpack.js dist/build/js/app.js dist/build/main1.js
 
 ./node_modules/uglify-js/bin/uglifyjs client/misc/js/polyfill_array_indexof.js client/misc/js/polyfill_string_trim.js dist/build/main1.js -m -b indent-level=0 -o dist/build/main2.js
 MAIN_JS=$(sha1sum dist/build/main2.js | awk '{ print $1 }').js
