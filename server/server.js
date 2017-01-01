@@ -50,8 +50,8 @@
 		extended: false
 	}));
 	app.post('/server/report-error', function(req, res) {
-		var message = req.body.hasOwnProperty('message') ? req.body.message.replace(/\n/g, '\n\t') : '<null>',
-			trace = req.body.hasOwnProperty('trace') ? req.body.trace.replace(/\n/g, '\n\t') : '<null>';
+		var message = Object.prototype.hasOwnProperty.call(req.body, 'message') ? req.body.message.replace(/\n/g, '\n\t') : '<null>',
+			trace = Object.prototype.hasOwnProperty.call(req.body, 'trace') ? req.body.trace.replace(/\n/g, '\n\t') : '<null>';
 
 		console.log('/server/report-error:', message);
 		console.log('\t' + trace);
@@ -60,10 +60,10 @@
 		res.end();
 	});
 	app.post('/server/set-password', function(req, res) {
-		var version = req.body.hasOwnProperty('version') ? req.body.version.replace(/\s+/g, ' ').trim() : '',
-			username = req.body.hasOwnProperty('username') ? req.body.username.replace(/\s+/g, ' ').trim() : '',
-			password = req.body.hasOwnProperty('password') ? req.body.password.replace(/\s+/g, ' ').trim() : '',
-			ip_address = req.headers.hasOwnProperty('x-real-ip') ? req.headers['x-real-ip'] : req.address.address,
+		var version = Object.prototype.hasOwnProperty.call(req.body, 'version') ? req.body.version.replace(/\s+/g, ' ').trim() : '',
+			username = Object.prototype.hasOwnProperty.call(req.body, 'username') ? req.body.username.replace(/\s+/g, ' ').trim() : '',
+			password = Object.prototype.hasOwnProperty.call(req.body, 'password') ? req.body.password.replace(/\s+/g, ' ').trim() : '',
+			ip_address = Object.prototype.hasOwnProperty.call(req.headers, 'x-real-ip') ? req.headers['x-real-ip'] : req.address.address,
 			fields;
 
 		res.setHeader('Content-Type', 'application/json');
