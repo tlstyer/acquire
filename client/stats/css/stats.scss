@@ -1,4 +1,27 @@
-@import '../../../node_modules/normalize.css/normalize.css';
+/* selected styles from normalize.css */
+
+html {
+	font-family: sans-serif;
+	-ms-text-size-adjust: 100%;
+	-webkit-text-size-adjust: 100%;
+}
+body {
+	margin: 0;
+}
+button, input, select {
+	font-family: sans-serif;
+	font-size: 100%;
+	margin: 0;
+}
+button, input {
+	overflow: visible;
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
+/* my styles */
 
 $color-background-default: rgb(255, 255, 255);
 $color-table-border: rgb(246, 244, 242);
