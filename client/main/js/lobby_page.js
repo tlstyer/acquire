@@ -13,7 +13,7 @@ function resize(window_width, window_height) {
 	left = half_window_width + 2;
 	top = 0;
 	width = window_width - half_window_width - 2;
-	height = 195;
+	height = 220;
 	options.setPositionForPage('lobby', left, top, width, height);
 
 	top += height;
