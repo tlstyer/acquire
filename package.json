@@ -8,7 +8,7 @@
   "devDependencies": {
     "clean-css": "^3.4.23",
     "html-minifier": "^3.2.3",
-    "node-sass": "^4.0.0",
+    "node-sass": "^4.2.0",
     "uglify-js": "^2.7.5",
     "webpack": "^1.14.0"
   }
