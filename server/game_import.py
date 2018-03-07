@@ -19,7 +19,7 @@ starting_date = int(datetime.datetime(2014, 1, 1).timestamp())
 
 
 class MyHTMLParser(html.parser.HTMLParser):
-    datetime_regex = re.compile('(\d+)-0?(\d+)-0?(\d+) 0?(\d+):0?(\d+):0?(\d+)')
+    datetime_regex = re.compile(r'(\d+)-0?(\d+)-0?(\d+) 0?(\d+):0?(\d+):0?(\d+)')
 
     def __init__(self, game_type_to_date_to_result):
         super().__init__()
