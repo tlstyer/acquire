@@ -1499,7 +1499,7 @@ def report_on_player_ranking_distribution(output_dir):
 
 
 def main():
-    output_dir = '/opt/data/tim'
+    output_dir = '/home/tim/tmp/acquire'
     output_logs_dir = output_dir + '/logs'
 
     # test_individual_game_log(output_dir)
