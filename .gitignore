@@ -4,9 +4,8 @@
 /client/stats/css/stats.css
 /client/stats/data
 /dist
-/.idea
 /lib
-/nbproject
 /node_modules
 /server/__pycache__
 /venv
+/.vscode
