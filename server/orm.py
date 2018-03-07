@@ -48,7 +48,7 @@ class GameMode(Base):
     __tablename__ = 'game_mode'
     game_mode_id = Column(TINYINT(unsigned=True), primary_key=True, nullable=False)
     name = Column(String(8, convert_unicode='force'), nullable=False)
-    __table_args__ = (UniqueConstraint('name'),)
+    __table_args__ = (UniqueConstraint('name'), )
 
     def __repr__(self):
         params = (repr(self.game_mode_id), repr(self.name))
@@ -62,7 +62,7 @@ class GamePlayer(Base):
     player_index = Column(TINYINT(unsigned=True), nullable=False)
     user_id = Column(INTEGER(unsigned=True), ForeignKey('user.user_id'), nullable=False)
     score = Column(SMALLINT(unsigned=True))
-    __table_args__ = (UniqueConstraint('game_id', 'player_index'),)
+    __table_args__ = (UniqueConstraint('game_id', 'player_index'), )
 
     game = relationship('Game')
     user = relationship('User')
@@ -76,7 +76,7 @@ class GameState(Base):
     __tablename__ = 'game_state'
     game_state_id = Column(TINYINT(unsigned=True), primary_key=True, nullable=False)
     name = Column(String(16, convert_unicode='force'), nullable=False)
-    __table_args__ = (UniqueConstraint('name'),)
+    __table_args__ = (UniqueConstraint('name'), )
 
     def __repr__(self):
         params = (repr(self.game_state_id), repr(self.name))
@@ -88,7 +88,7 @@ class KeyValue(Base):
     key_value_id = Column(TINYINT(unsigned=True), primary_key=True, nullable=False)
     key = Column(String(32, convert_unicode='force'), nullable=False)
     value = Column(Text(convert_unicode='force'), nullable=False)
-    __table_args__ = (UniqueConstraint('key'),)
+    __table_args__ = (UniqueConstraint('key'), )
 
     def __repr__(self):
         params = (repr(self.key_value_id), repr(self.key), repr(self.value))
@@ -103,7 +103,7 @@ class Rating(Base):
     time = Column(INTEGER(unsigned=True), nullable=False)
     mu = Column(FLOAT(), nullable=False)
     sigma = Column(FLOAT(), nullable=False)
-    __table_args__ = (Index('user_id_rating_type_id', 'user_id', 'rating_type_id'),)
+    __table_args__ = (Index('user_id_rating_type_id', 'user_id', 'rating_type_id'), )
 
     user = relationship('User')
     rating_type = relationship('RatingType')
@@ -117,7 +117,7 @@ class RatingType(Base):
     __tablename__ = 'rating_type'
     rating_type_id = Column(TINYINT(unsigned=True), primary_key=True, nullable=False)
     name = Column(String(8, convert_unicode='force'), nullable=False)
-    __table_args__ = (UniqueConstraint('name'),)
+    __table_args__ = (UniqueConstraint('name'), )
 
     def __repr__(self):
         params = (repr(self.rating_type_id), repr(self.name))
@@ -129,7 +129,7 @@ class User(Base):
     user_id = Column(INTEGER(unsigned=True), primary_key=True, nullable=False)
     name = Column(String(32, convert_unicode='force'), nullable=False)
     password = Column(String(64, convert_unicode='force'))
-    __table_args__ = (UniqueConstraint('name'),)
+    __table_args__ = (UniqueConstraint('name'), )
 
     def __repr__(self):
         params = (repr(self.user_id), repr(self.name), repr(self.password))
