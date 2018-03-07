@@ -1,172 +1,163 @@
-import enum
+from enum import Enum
 
 
-# from https://docs.python.org/3/library/enum.html#autonumber, slightly modified
-class AutoNumber(enum.Enum):
-    def __new__(cls):
-        value = len(cls.__members__)
-        obj = object.__new__(cls)
-        obj._value_ = value
-        return obj
+class CommandsToClient(Enum):
+    FatalError = 0
+    SetClientId = 1
+    SetClientIdToData = 2
+    SetGameState = 3
+    SetGameBoardCell = 4
+    SetGameBoard = 5
+    SetScoreSheetCell = 6
+    SetScoreSheet = 7
+    SetGamePlayerJoin = 8
+    SetGamePlayerRejoin = 9
+    SetGamePlayerLeave = 10
+    SetGamePlayerJoinMissing = 11
+    SetGameWatcherClientId = 12
+    ReturnWatcherToLobby = 13
+    AddGameHistoryMessage = 14
+    AddGameHistoryMessages = 15
+    SetTurn = 16
+    SetGameAction = 17
+    SetTile = 18
+    SetTileGameBoardType = 19
+    RemoveTile = 20
+    AddGlobalChatMessage = 21
+    AddGameChatMessage = 22
+    DestroyGame = 23
 
 
-class CommandsToClient(AutoNumber):
-    FatalError = ()
-    SetClientId = ()
-    SetClientIdToData = ()
-    SetGameState = ()
-    SetGameBoardCell = ()
-    SetGameBoard = ()
-    SetScoreSheetCell = ()
-    SetScoreSheet = ()
-    SetGamePlayerJoin = ()
-    SetGamePlayerRejoin = ()
-    SetGamePlayerLeave = ()
-    SetGamePlayerJoinMissing = ()
-    SetGameWatcherClientId = ()
-    ReturnWatcherToLobby = ()
-    AddGameHistoryMessage = ()
-    AddGameHistoryMessages = ()
-    SetTurn = ()
-    SetGameAction = ()
-    SetTile = ()
-    SetTileGameBoardType = ()
-    RemoveTile = ()
-    AddGlobalChatMessage = ()
-    AddGameChatMessage = ()
-    DestroyGame = ()
+class CommandsToServer(Enum):
+    CreateGame = 0
+    JoinGame = 1
+    RejoinGame = 2
+    WatchGame = 3
+    LeaveGame = 4
+    DoGameAction = 5
+    SendGlobalChatMessage = 6
+    SendGameChatMessage = 7
 
 
-class CommandsToServer(AutoNumber):
-    CreateGame = ()
-    JoinGame = ()
-    RejoinGame = ()
-    WatchGame = ()
-    LeaveGame = ()
-    DoGameAction = ()
-    SendGlobalChatMessage = ()
-    SendGameChatMessage = ()
+class Errors(Enum):
+    NotUsingLatestVersion = 0
+    GenericError = 1
+    InvalidUsername = 2
+    InvalidPassword = 3
+    MissingPassword = 4
+    ProvidedPassword = 5
+    IncorrectPassword = 6
+    NonMatchingPasswords = 7
+    ExistingPassword = 8
+    UsernameAlreadyInUse = 9
+    LostConnection = 10
 
 
-class Errors(AutoNumber):
-    NotUsingLatestVersion = ()
-    GenericError = ()
-    InvalidUsername = ()
-    InvalidPassword = ()
-    MissingPassword = ()
-    ProvidedPassword = ()
-    IncorrectPassword = ()
-    NonMatchingPasswords = ()
-    ExistingPassword = ()
-    UsernameAlreadyInUse = ()
-    LostConnection = ()
+class GameActions(Enum):
+    StartGame = 0
+    PlayTile = 1
+    SelectNewChain = 2
+    SelectMergerSurvivor = 3
+    SelectChainToDisposeOfNext = 4
+    DisposeOfShares = 5
+    PurchaseShares = 6
+    GameOver = 7
 
 
-class GameActions(AutoNumber):
-    StartGame = ()
-    PlayTile = ()
-    SelectNewChain = ()
-    SelectMergerSurvivor = ()
-    SelectChainToDisposeOfNext = ()
-    DisposeOfShares = ()
-    PurchaseShares = ()
-    GameOver = ()
+class GameBoardTypes(Enum):
+    Luxor = 0
+    Tower = 1
+    American = 2
+    Festival = 3
+    Worldwide = 4
+    Continental = 5
+    Imperial = 6
+    Nothing = 7
+    NothingYet = 8
+    CantPlayEver = 9
+    IHaveThis = 10
+    WillPutLonelyTileDown = 11
+    HaveNeighboringTileToo = 12
+    WillFormNewChain = 13
+    WillMergeChains = 14
+    CantPlayNow = 15
+    Max = 16
 
 
-class GameBoardTypes(AutoNumber):
-    Luxor = ()
-    Tower = ()
-    American = ()
-    Festival = ()
-    Worldwide = ()
-    Continental = ()
-    Imperial = ()
-    Nothing = ()
-    NothingYet = ()
-    CantPlayEver = ()
-    IHaveThis = ()
-    WillPutLonelyTileDown = ()
-    HaveNeighboringTileToo = ()
-    WillFormNewChain = ()
-    WillMergeChains = ()
-    CantPlayNow = ()
-    Max = ()
+class GameHistoryMessages(Enum):
+    TurnBegan = 0
+    DrewPositionTile = 1
+    StartedGame = 2
+    DrewTile = 3
+    HasNoPlayableTile = 4
+    PlayedTile = 5
+    FormedChain = 6
+    MergedChains = 7
+    SelectedMergerSurvivor = 8
+    SelectedChainToDisposeOfNext = 9
+    ReceivedBonus = 10
+    DisposedOfShares = 11
+    CouldNotAffordAnyShares = 12
+    PurchasedShares = 13
+    DrewLastTile = 14
+    ReplacedDeadTile = 15
+    EndedGame = 16
+    NoTilesPlayedForEntireRound = 17
+    AllTilesPlayed = 18
 
 
-class GameHistoryMessages(AutoNumber):
-    TurnBegan = ()
-    DrewPositionTile = ()
-    StartedGame = ()
-    DrewTile = ()
-    HasNoPlayableTile = ()
-    PlayedTile = ()
-    FormedChain = ()
-    MergedChains = ()
-    SelectedMergerSurvivor = ()
-    SelectedChainToDisposeOfNext = ()
-    ReceivedBonus = ()
-    DisposedOfShares = ()
-    CouldNotAffordAnyShares = ()
-    PurchasedShares = ()
-    DrewLastTile = ()
-    ReplacedDeadTile = ()
-    EndedGame = ()
-    NoTilesPlayedForEntireRound = ()
-    AllTilesPlayed = ()
+class GameModes(Enum):
+    Singles = 0
+    Teams = 1
+    Max = 2
 
 
-class GameModes(AutoNumber):
-    Singles = ()
-    Teams = ()
-    Max = ()
+class GameStates(Enum):
+    Starting = 0
+    StartingFull = 1
+    InProgress = 2
+    Completed = 3
 
 
-class GameStates(AutoNumber):
-    Starting = ()
-    StartingFull = ()
-    InProgress = ()
-    Completed = ()
+class Notifications(Enum):
+    GameFull = 0
+    GameStarted = 1
+    YourTurn = 2
+    GameOver = 3
 
 
-class Notifications(AutoNumber):
-    GameFull = ()
-    GameStarted = ()
-    YourTurn = ()
-    GameOver = ()
+class Options(Enum):
+    EnablePageTitleNotifications = 0
+    Sound = 1
+    Volume = 2
+    EnableHighContrastColors = 3
+    EnableTextBackgroundColors = 4
+    ColorScheme = 5
+    GameBoardLabelMode = 6
 
 
-class Options(AutoNumber):
-    EnablePageTitleNotifications = ()
-    Sound = ()
-    Volume = ()
-    EnableHighContrastColors = ()
-    EnableTextBackgroundColors = ()
-    ColorScheme = ()
-    GameBoardLabelMode = ()
+class ScoreSheetIndexes(Enum):
+    Luxor = 0
+    Tower = 1
+    American = 2
+    Festival = 3
+    Worldwide = 4
+    Continental = 5
+    Imperial = 6
+    Cash = 7
+    Net = 8
+    Username = 9
+    PositionTile = 10
+    Client = 11
 
 
-class ScoreSheetIndexes(AutoNumber):
-    Luxor = ()
-    Tower = ()
-    American = ()
-    Festival = ()
-    Worldwide = ()
-    Continental = ()
-    Imperial = ()
-    Cash = ()
-    Net = ()
-    Username = ()
-    PositionTile = ()
-    Client = ()
-
-
-class ScoreSheetRows(AutoNumber):
-    Player0 = ()
-    Player1 = ()
-    Player2 = ()
-    Player3 = ()
-    Player4 = ()
-    Player5 = ()
-    Available = ()
-    ChainSize = ()
-    Price = ()
+class ScoreSheetRows(Enum):
+    Player0 = 0
+    Player1 = 1
+    Player2 = 2
+    Player3 = 3
+    Player4 = 4
+    Player5 = 5
+    Available = 6
+    ChainSize = 7
+    Price = 8

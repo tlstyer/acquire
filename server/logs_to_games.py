@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import collections
+from enum import Enum
 import enums
 import itertools
 import os
@@ -100,17 +101,17 @@ class CommandsToClientTranslator:
                     command[1] = self._errors[command[1]]
 
 
-class LineTypes(enums.AutoNumber):
-    time = ()
-    connect = ()
-    disconnect = ()
-    command_to_client = ()
-    command_to_server = ()
-    game_expired = ()
-    log = ()
-    blank_line = ()
-    connection_made = ()
-    error = ()
+class LineTypes(Enum):
+    time = 0
+    connect = 1
+    disconnect = 2
+    command_to_client = 3
+    command_to_server = 4
+    game_expired = 5
+    log = 6
+    blank_line = 7
+    connection_made = 8
+    error = 9
 
 
 class LogParser:
