@@ -46,7 +46,7 @@ class MyHTMLParser(html.parser.HTMLParser):
             if tag == 'tr' and self._tr_count > 1:
                 try:
                     if len(self._result) == 8:
-                        player, game_type, win, score, team_total, team_differential, average_turn, game_date = self._result
+                        player, game_type, _, score, team_total, _, _, game_date = self._result
                         player = ' '.join(player.split())
                         game_date = int(datetime.datetime(*map(int, MyHTMLParser.datetime_regex.match(game_date).groups()), tzinfo=pytz.utc).timestamp())
 

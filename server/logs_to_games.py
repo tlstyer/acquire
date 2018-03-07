@@ -678,7 +678,7 @@ class Game:
             client = self._server_game_player_id_to_client[self.username_to_player_id[username]]
             self.server_game.join_game(client)
 
-        for index, player_id_and_action in enumerate(self.actions):
+        for _, player_id_and_action in enumerate(self.actions):
             player_id, action = player_id_and_action
 
             game_action_id = action[0]
@@ -1112,7 +1112,7 @@ class IndividualGameLogMaker:
             game_log = IndividualGameLog(self._log_timestamp, internal_game_id)
             self._game_id_to_game_log[game_id] = game_log
 
-            for client_id, add_batch in self._client_id_to_add_batch.items():
+            for _, add_batch in self._client_id_to_add_batch.items():
                 batch_line_number, batch = add_batch
                 batch = [line for line in batch if not self._re_disconnect.match(line)]
                 game_log.line_number_to_batch[batch_line_number] = batch
@@ -1270,7 +1270,7 @@ def make_individual_game_logs_for_each_sync_log(input_dir, output_dir):
             log_timestamp_to_internal_game_ids[int(match.group(1))].add(int(match.group(2)))
 
     for log_timestamp, internal_game_ids in sorted(log_timestamp_to_internal_game_ids.items()):
-        for log_timestamp_, filename in util.get_log_file_filenames('py', begin=log_timestamp, end=log_timestamp):
+        for _, filename in util.get_log_file_filenames('py', begin=log_timestamp, end=log_timestamp):
             print(filename)
             with util.open_possibly_gzipped_file(filename) as file:
                 individual_game_log_maker = IndividualGameLogMaker(log_timestamp, file)
@@ -1480,12 +1480,12 @@ def report_on_player_ranking_distribution(output_dir):
     with open(os.path.join(output_dir, 'first_merge_bonuses_and_final_scores_of_all_completed_games.bin'), 'rb') as f:
         mode_to_game_data = pickle.load(f)
 
-    for mode, num_players in [('Singles2', 2), ('Singles3', 3), ('Singles4', 4), ('Teams', 4)]:
+    for mode in ['Singles2', 'Singles3', 'Singles4', 'Teams']:
         game_data = mode_to_game_data[mode]
 
         rankings_to_count = collections.defaultdict(int)
 
-        for type_to_player_id_to_amount, score in game_data:
+        for _, score in game_data:
             if mode == 'Teams':
                 score = [score[0] + score[2], score[1] + score[3]]
 
