@@ -594,9 +594,10 @@ class LogProcessor:
                 game.make_server_game()
                 game.compare_with_server_game()
 
-                filename = os.path.join(self._verbose_output_path, '%d_%05d_%06d.bin' % (game.log_timestamp, game.internal_game_id, self._line_number))
-                game.make_server_game_file(filename)
-                print('\n'.join(game.sync_log))
+                if self._verbose_output_path:
+                    filename = os.path.join(self._verbose_output_path, '%d_%05d_%06d.bin' % (game.log_timestamp, game.internal_game_id, self._line_number))
+                    game.make_server_game_file(filename)
+                    print('\n'.join(game.sync_log))
 
                 messages = [game.log_timestamp, game.internal_game_id, self._line_number]
                 if game.is_server_game_synchronized:
