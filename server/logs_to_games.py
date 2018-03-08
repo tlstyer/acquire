@@ -1503,6 +1503,18 @@ def report_on_player_ranking_distribution(output_dir):
         print()
 
 
+def make_individual_game_log(log_timestamp, internal_game_id, output_dir):
+    for log_timestamp, filename in util.get_log_file_filenames('py', begin=log_timestamp, end=log_timestamp):
+        with util.open_possibly_gzipped_file(filename) as file:
+            individual_game_log_maker = IndividualGameLogMaker(log_timestamp, file)
+            for individual_game_log in individual_game_log_maker.go():
+                if individual_game_log.internal_game_id == internal_game_id:
+                    filename = os.path.join(output_dir, '%d_%05d.txt' % (individual_game_log.log_timestamp, individual_game_log.internal_game_id))
+                    individual_game_log.make_game_log_file(filename)
+                    print(log_timestamp, individual_game_log.internal_game_id, filename)
+                    return
+
+
 def main():
     output_dir = '/home/tim/tmp/acquire'
     output_logs_dir = output_dir + '/logs'
@@ -1518,6 +1530,7 @@ def main():
     # output_first_merge_bonuses_and_final_scores_of_all_completed_games(output_dir)
     # report_on_first_merge_bonuses_and_final_scores_of_all_completed_games(output_dir)
     # report_on_player_ranking_distribution(output_dir)
+    # make_individual_game_log(1483363628, 893, output_dir)
 
 
 if __name__ == '__main__':
