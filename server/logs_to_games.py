@@ -684,7 +684,10 @@ class Game:
 
             game_action_id = action[0]
             data = action[1:]
-            self.server_game.do_game_action(self._server_game_player_id_to_client[player_id], game_action_id, data)
+            try:
+                self.server_game.do_game_action(self._server_game_player_id_to_client[player_id], game_action_id, data)
+            except:
+                pass
 
     def compare_with_server_game(self):
         num_players = len(self.player_id_to_username)
