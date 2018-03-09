@@ -97,6 +97,10 @@ class IncrementIdManager:
         pass
 
 
+def dummy_transport_write(data):
+    pass
+
+
 class Server:
     re_camelcase = re.compile(r'(.)([A-Z])')
 
@@ -110,7 +114,7 @@ class Server:
         self.game_id_to_game = {}
         self.client_ids_and_messages = []
 
-        self.transport_write = None
+        self.transport_write = dummy_transport_write
 
     def add_pending_messages(self, messages, client_ids=None):
         if client_ids is None:
