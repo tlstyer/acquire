@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import collections
-from enum import Enum
+import enum
 import enums
 import itertools
 import os
@@ -101,7 +101,7 @@ class CommandsToClientTranslator:
                     command[1] = self._errors[command[1]]
 
 
-class LineTypes(Enum):
+class LineTypes(enum.Enum):
     time = 0
     connect = 1
     disconnect = 2

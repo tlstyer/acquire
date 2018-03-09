@@ -1,7 +1,7 @@
-from enum import Enum
+import enum
 
 
-class CommandsToClient(Enum):
+class CommandsToClient(enum.Enum):
     FatalError = 0
     SetClientId = 1
     SetClientIdToData = 2
@@ -28,7 +28,7 @@ class CommandsToClient(Enum):
     DestroyGame = 23
 
 
-class CommandsToServer(Enum):
+class CommandsToServer(enum.Enum):
     CreateGame = 0
     JoinGame = 1
     RejoinGame = 2
@@ -39,7 +39,7 @@ class CommandsToServer(Enum):
     SendGameChatMessage = 7
 
 
-class Errors(Enum):
+class Errors(enum.Enum):
     NotUsingLatestVersion = 0
     GenericError = 1
     InvalidUsername = 2
@@ -53,7 +53,7 @@ class Errors(Enum):
     LostConnection = 10
 
 
-class GameActions(Enum):
+class GameActions(enum.Enum):
     StartGame = 0
     PlayTile = 1
     SelectNewChain = 2
@@ -64,7 +64,7 @@ class GameActions(Enum):
     GameOver = 7
 
 
-class GameBoardTypes(Enum):
+class GameBoardTypes(enum.Enum):
     Luxor = 0
     Tower = 1
     American = 2
@@ -84,7 +84,7 @@ class GameBoardTypes(Enum):
     Max = 16
 
 
-class GameHistoryMessages(Enum):
+class GameHistoryMessages(enum.Enum):
     TurnBegan = 0
     DrewPositionTile = 1
     StartedGame = 2
@@ -106,27 +106,27 @@ class GameHistoryMessages(Enum):
     AllTilesPlayed = 18
 
 
-class GameModes(Enum):
+class GameModes(enum.Enum):
     Singles = 0
     Teams = 1
     Max = 2
 
 
-class GameStates(Enum):
+class GameStates(enum.Enum):
     Starting = 0
     StartingFull = 1
     InProgress = 2
     Completed = 3
 
 
-class Notifications(Enum):
+class Notifications(enum.Enum):
     GameFull = 0
     GameStarted = 1
     YourTurn = 2
     GameOver = 3
 
 
-class Options(Enum):
+class Options(enum.Enum):
     EnablePageTitleNotifications = 0
     Sound = 1
     Volume = 2
@@ -136,7 +136,7 @@ class Options(Enum):
     GameBoardLabelMode = 6
 
 
-class ScoreSheetIndexes(Enum):
+class ScoreSheetIndexes(enum.Enum):
     Luxor = 0
     Tower = 1
     American = 2
@@ -151,7 +151,7 @@ class ScoreSheetIndexes(Enum):
     Client = 11
 
 
-class ScoreSheetRows(Enum):
+class ScoreSheetRows(enum.Enum):
     Player0 = 0
     Player1 = 1
     Player2 = 2
