@@ -8,7 +8,7 @@ export function getNewTileBag() {
 }
 
 // from https://stackoverflow.com/questions/6274339/how-can-i-shuffle-an-array
-function shuffle(a) {
+function shuffle(a: number[]) {
     let j, x, i;
     for (i = a.length - 1; i > 0; i--) {
         j = Math.floor(Math.random() * (i + 1));
