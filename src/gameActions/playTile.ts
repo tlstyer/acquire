@@ -1,6 +1,6 @@
 import { ActionBase } from './base';
-import { GameAction } from '../enums';
-import { Game } from '../game';
+import { GameAction, GameHistoryMessage } from '../enums';
+import { Game, GameHistoryMessageData } from '../game';
 
 export class ActionPlayTile extends ActionBase {
     constructor(game: Game, playerID: number) {
@@ -8,6 +8,10 @@ export class ActionPlayTile extends ActionBase {
     }
 
     prepare() {
+        const moveData = this.game.getCurrentMoveData();
+
+        moveData.addGameHistoryMessage(new GameHistoryMessageData(GameHistoryMessage.TurnBegan, this.playerID, []));
+
         return null;
     }
 
