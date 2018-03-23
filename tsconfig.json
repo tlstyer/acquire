@@ -1,6 +1,10 @@
 {
     "compilerOptions": {
+        "target": "es5",
+        "lib": ["esnext"],
         "noImplicitAny": true,
+        "sourceMap": true,
         "strictNullChecks": true
-    }
+    },
+    "include": ["src/**/*"]
 }

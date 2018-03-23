@@ -8,8 +8,8 @@ Array of:
     * Array of user IDs in player order
 * Tile bag
     * Array of tiles in the order they were drawn
-        * 0 for 1A, 1 for 2A, 2 for 3A, ...
-        * 12 for 1B, 13 for 2B, ...
+        * 0 for 1A, 1 for 1B, 2 for 1C, ...
+        * 9 for 2A, 10 for 2B, 11 for 2C, ...
     * Tiles that weren't drawn are excluded
 * Game actions
     * Only the parameters
@@ -21,3 +21,38 @@ Array of:
         * nothing for no
 * Game end timestamp
 * When forfeits occurred
+
+# Game history message types and their parameters
+| game history message type    | has playerID? | parameters                      |
+|------------------------------|---------------|---------------------------------|
+| TurnBegan                    | yes           |                                 |
+| DrewPositionTile             | yes           | tile                            |
+| StartedGame                  | yes           |                                 |
+| DrewTile                     | yes           | tile                            |
+| HasNoPlayableTile            | yes           |                                 |
+| PlayedTile                   | yes           | tile                            |
+| FormedChain                  | yes           | typeID                          |
+| MergedChains                 | yes           | typeID[]                        |
+| SelectedMergerSurvivor       | yes           | typeID                          |
+| SelectedChainToDisposeOfNext | yes           | typeID                          |
+| ReceivedBonus                | yes           | typeID, bonus                   |
+| DisposedOfShares             | yes           | typeID, tradeAmount, sellAmount |
+| CouldNotAffordAnyShares      | yes           |                                 |
+| PurchasedShares              | yes           | typeID[]                        |
+| DrewLastTile                 | yes           |                                 |
+| ReplacedDeadTile             | yes           | tile                            |
+| EndedGame                    | yes           |                                 |
+| NoTilesPlayedForEntireRound  | no            |                                 |
+| AllTilesPlayed               | no            |                                 |
+
+# Game action types and their parameters
+| game action type           | parameters              |
+|----------------------------|-------------------------|
+| StartGame                  |                         |
+| PlayTile                   | tile                    |
+| SelectNewChain             | typeId                  |
+| SelectMergerSurvivor       | typeId                  |
+| SelectChainToDisposeOfNext | typeId                  |
+| DisposeOfShares            | tradeAmount, sellAmount |
+| PurchaseShares             | typeId[], endGame       |
+| GameOver                   |                         |
