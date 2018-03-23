@@ -3,54 +3,58 @@ import { Game, GameHistoryMessageData, MoveData } from './game';
 import { getNewTileBag } from './gamePreparation';
 
 function main() {
+    console.log('________________________________________________________________________________');
+
     let game = new Game(getNewTileBag(), [5, 7, 9], 7, 5);
 
-    console.log('________________________________________________________________________________');
+    let lines: string[] = [];
 
     game.doGameAction(7, 0, []);
 
     game.moveDataHistory.forEach((moveData, index) => {
-        console.log();
-        console.log(getMoveDataString(moveData));
+        lines.push('');
+        lines.push(...getMoveDataLines(moveData));
     });
+
+    console.log(lines.join('\n'));
 }
 
 const gameBoardStringSpacer = '            ';
 
-function getMoveDataString(moveData: MoveData) {
-    let parts: string[] = [];
+function getMoveDataLines(moveData: MoveData) {
+    let lines: string[] = [];
 
-    parts.push(`action: ${moveData.playerID} ${GameAction[moveData.gameAction]}`);
+    lines.push(`action: ${moveData.playerID} ${GameAction[moveData.gameAction]}`);
 
-    const gameBoardStrings = getGameBoardStrings(moveData.gameBoard);
-    const scoreBoardStrings = getScoreBoardStrings(moveData.scoreBoard, moveData.scoreBoardAvailable, moveData.scoreBoardChainSize, moveData.scoreBoardPrice);
-    const numLines = Math.max(gameBoardStrings.length, scoreBoardStrings.length);
+    const gameBoardLines = getGameBoardLines(moveData.gameBoard);
+    const scoreBoardLines = getScoreBoardLines(moveData.scoreBoard, moveData.scoreBoardAvailable, moveData.scoreBoardChainSize, moveData.scoreBoardPrice);
+    const numLines = Math.max(gameBoardLines.length, scoreBoardLines.length);
     for (let i = 0; i < numLines; i++) {
         let lineParts = [];
-        lineParts.push(i < gameBoardStrings.length ? gameBoardStrings[i] : gameBoardStringSpacer);
-        if (i < scoreBoardStrings.length) {
+        lineParts.push(i < gameBoardLines.length ? gameBoardLines[i] : gameBoardStringSpacer);
+        if (i < scoreBoardLines.length) {
             lineParts.push('  ');
-            lineParts.push(scoreBoardStrings[i]);
+            lineParts.push(scoreBoardLines[i]);
         }
-        parts.push(lineParts.join(''));
+        lines.push(lineParts.join(''));
     }
 
-    parts.push('new known tiles:');
+    lines.push('new known tiles:');
     moveData.newPlayerKnownTiles.forEach((tiles, playerIndex) => {
         if (tiles.length > 0) {
-            parts.push(`  ${playerIndex}: ${getTileStrings(tiles)}`);
+            lines.push(`  ${playerIndex}: ${getTilesString(tiles)}`);
         }
     });
     if (moveData.newWatcherKnownTiles.length > 0) {
-        parts.push(`  w: ${getTileStrings(moveData.newWatcherKnownTiles)}`);
+        lines.push(`  w: ${getTilesString(moveData.newWatcherKnownTiles)}`);
     }
 
-    parts.push('history messages:');
+    lines.push('history messages:');
     moveData.gameHistoryMessages.forEach(ghm => {
-        parts.push(`  ${getGameHistoryMessageString(ghm)}`);
+        lines.push(`  ${getGameHistoryMessageString(ghm)}`);
     });
 
-    return parts.join('\n');
+    return lines;
 }
 
 const gameBoardTypeToCharacter: { [key: number]: string } = {
@@ -71,31 +75,31 @@ const gameBoardTypeToCharacter: { [key: number]: string } = {
     [GameBoardType.WillMergeChains]: 'm',
     [GameBoardType.CantPlayNow]: 'c',
 };
-function getGameBoardStrings(gameBoard: GameBoardType[][]) {
-    let parts: string[] = [];
+function getGameBoardLines(gameBoard: GameBoardType[][]) {
+    let lines: string[] = [];
     gameBoard.forEach(row => {
         let chars = row.map(char => gameBoardTypeToCharacter[char]);
-        parts.push(chars.join(''));
+        lines.push(chars.join(''));
     });
-    return parts;
+    return lines;
 }
 
-function getScoreBoardStrings(scoreBoard: number[][], scoreBoardAvailable: number[], scoreBoardChainSize: number[], scoreBoardPrice: number[]) {
-    let parts: string[] = [];
-    parts.push(formatScoreBoardLine(['L', 'T', 'A', 'F', 'W', 'C', 'I', 'Cash', 'Net']));
+function getScoreBoardLines(scoreBoard: number[][], scoreBoardAvailable: number[], scoreBoardChainSize: number[], scoreBoardPrice: number[]) {
+    let lines: string[] = [];
+    lines.push(formatScoreBoardLine(['L', 'T', 'A', 'F', 'W', 'C', 'I', 'Cash', 'Net']));
     scoreBoard.forEach(row => {
         let entries = row.map((val, index) => (index <= ScoreBoardIndex.Imperial && val === 0 ? '' : val.toString()));
-        parts.push(formatScoreBoardLine(entries));
+        lines.push(formatScoreBoardLine(entries));
     });
-    parts.push(formatScoreBoardLine(scoreBoardAvailable.map(val => val.toString())));
-    parts.push(formatScoreBoardLine(scoreBoardChainSize.map(val => (val === 0 ? '-' : val.toString()))));
-    parts.push(formatScoreBoardLine(scoreBoardPrice.map(val => (val === 0 ? '-' : val.toString()))));
-    return parts;
+    lines.push(formatScoreBoardLine(scoreBoardAvailable.map(val => val.toString())));
+    lines.push(formatScoreBoardLine(scoreBoardChainSize.map(val => (val === 0 ? '-' : val.toString()))));
+    lines.push(formatScoreBoardLine(scoreBoardPrice.map(val => (val === 0 ? '-' : val.toString()))));
+    return lines;
 }
 
 const scoreBoardColumnWidths = [2, 2, 2, 2, 2, 2, 2, 4, 4];
 function formatScoreBoardLine(entries: string[]) {
-    let parts = entries.map((entry, index) => {
+    let lineParts = entries.map((entry, index) => {
         const numSpacesToAdd = scoreBoardColumnWidths[index] - entry.length;
         if (numSpacesToAdd === 1) {
             entry = ' ' + entry;
@@ -106,10 +110,10 @@ function formatScoreBoardLine(entries: string[]) {
         }
         return entry;
     });
-    return parts.join(' ');
+    return lineParts.join(' ');
 }
 
-function getTileStrings(tiles: number[]) {
+function getTilesString(tiles: number[]) {
     return tiles.map(getTileString).join(', ');
 }
 
