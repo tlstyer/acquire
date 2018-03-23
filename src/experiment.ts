@@ -15,14 +15,25 @@ function main() {
     });
 }
 
+const gameBoardStringSpacer = '            ';
+
 function getMoveDataString(moveData: MoveData) {
     let parts: string[] = [];
 
     parts.push(`action: ${moveData.playerID} ${GameAction[moveData.gameAction]}`);
 
-    parts.push(getGameBoardString(moveData.gameBoard));
-
-    parts.push(getScoreBoardString(moveData.scoreBoard, moveData.scoreBoardAvailable, moveData.scoreBoardChainSize, moveData.scoreBoardPrice));
+    const gameBoardStrings = getGameBoardStrings(moveData.gameBoard);
+    const scoreBoardStrings = getScoreBoardStrings(moveData.scoreBoard, moveData.scoreBoardAvailable, moveData.scoreBoardChainSize, moveData.scoreBoardPrice);
+    const numLines = Math.max(gameBoardStrings.length, scoreBoardStrings.length);
+    for (let i = 0; i < numLines; i++) {
+        let lineParts = [];
+        lineParts.push(i < gameBoardStrings.length ? gameBoardStrings[i] : gameBoardStringSpacer);
+        if (i < scoreBoardStrings.length) {
+            lineParts.push('  ');
+            lineParts.push(scoreBoardStrings[i]);
+        }
+        parts.push(lineParts.join(''));
+    }
 
     parts.push('new known tiles:');
     moveData.newPlayerKnownTiles.forEach((tiles, playerIndex) => {
@@ -60,17 +71,18 @@ const gameBoardTypeToCharacter: { [key: number]: string } = {
     [GameBoardType.WillMergeChains]: 'm',
     [GameBoardType.CantPlayNow]: 'c',
 };
-function getGameBoardString(gameBoard: GameBoardType[][]) {
+function getGameBoardStrings(gameBoard: GameBoardType[][]) {
     let parts: string[] = [];
     gameBoard.forEach(row => {
         let chars = row.map(char => gameBoardTypeToCharacter[char]);
         parts.push(chars.join(''));
     });
-    return parts.join('\n');
+    return parts;
 }
 
-function getScoreBoardString(scoreBoard: number[][], scoreBoardAvailable: number[], scoreBoardChainSize: number[], scoreBoardPrice: number[]) {
+function getScoreBoardStrings(scoreBoard: number[][], scoreBoardAvailable: number[], scoreBoardChainSize: number[], scoreBoardPrice: number[]) {
     let parts: string[] = [];
+    parts.push(formatScoreBoardLine(['L', 'T', 'A', 'F', 'W', 'C', 'I', 'Cash', 'Net']));
     scoreBoard.forEach(row => {
         let entries = row.map((val, index) => (index <= ScoreBoardIndex.Imperial && val === 0 ? '' : val.toString()));
         parts.push(formatScoreBoardLine(entries));
@@ -78,7 +90,7 @@ function getScoreBoardString(scoreBoard: number[][], scoreBoardAvailable: number
     parts.push(formatScoreBoardLine(scoreBoardAvailable.map(val => val.toString())));
     parts.push(formatScoreBoardLine(scoreBoardChainSize.map(val => (val === 0 ? '-' : val.toString()))));
     parts.push(formatScoreBoardLine(scoreBoardPrice.map(val => (val === 0 ? '-' : val.toString()))));
-    return parts.join('\n');
+    return parts;
 }
 
 const scoreBoardColumnWidths = [2, 2, 2, 2, 2, 2, 2, 4, 4];
