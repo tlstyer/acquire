@@ -4,10 +4,21 @@ import { getNewTileBag } from './gamePreparation';
 
 function main() {
     console.log('________________________________________________________________________________');
-
-    let game = new Game(getNewTileBag(), [5, 7, 9], 7, 5);
+    console.log();
 
     let lines: string[] = [];
+
+    const tileBag = getNewTileBag();
+    const userIDs = [5, 7, 9];
+    const starterUserID = 7;
+    const myUserID = 5;
+
+    lines.push(`tile bag: ${getTilesString(tileBag)}`);
+    lines.push(`user IDs: ${userIDs.join(', ')}`);
+    lines.push(`starter user ID: ${starterUserID}`);
+    lines.push(`my user ID: ${myUserID}`);
+
+    let game = new Game(tileBag, userIDs, starterUserID, myUserID);
 
     game.doGameAction(7, 0, []);
 
