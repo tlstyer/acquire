@@ -5,8 +5,8 @@ import { ActionStartGame } from './gameActions/startGame';
 export class Game {
     nextTileBagIndex: number = 0;
     tileToTileBagIndex: Map<number, number> = new Map();
-    tileRacks: (number | null)[][] = [];
-    gameBoard: GameBoardType[][] = [];
+    tileRacks: (number | null)[][];
+    gameBoard: GameBoardType[][];
     protected currentMoveData: MoveData | null = null;
     moveDataHistory: MoveData[] = [];
     gameActionStack: ActionBase[] = [];
@@ -18,21 +18,23 @@ export class Game {
         }
 
         // initialize this.tileRacks
-        for (let playerIndex = 0; playerIndex < userIDs.length; playerIndex++) {
-            let tileRack: Array<number | null> = new Array(6);
+        this.tileRacks = new Array(userIDs.length);
+        for (let playerID = 0; playerID < userIDs.length; playerID++) {
+            let tileRack = new Array(6);
             for (let i = 0; i < 6; i++) {
                 tileRack[i] = null;
             }
-            this.tileRacks.push(tileRack);
+            this.tileRacks[playerID] = tileRack;
         }
 
         // initialize this.gameBoard
+        this.gameBoard = new Array(9);
         for (let y = 0; y < 9; y++) {
-            let row = [];
+            let row = new Array(12);
             for (let x = 0; x < 12; x++) {
-                row.push(GameBoardType.Nothing);
+                row[x] = GameBoardType.Nothing;
             }
-            this.gameBoard.push(row);
+            this.gameBoard[y] = row;
         }
 
         // initialize this.gameActionStack
@@ -105,14 +107,15 @@ export class MoveData {
     playerID: number = -1;
     gameAction: GameAction = GameAction.StartGame;
     gameActionParameters: any[] = [];
-    newPlayerKnownTiles: number[][] = [];
+    newPlayerKnownTiles: number[][];
     newWatcherKnownTiles: number[] = [];
     gameHistoryMessages: GameHistoryMessageData[] = [];
     gameBoard: GameBoardType[][] = [];
 
     constructor(public game: Game) {
-        for (let playerIndex = 0; playerIndex < game.userIDs.length; playerIndex++) {
-            this.newPlayerKnownTiles.push([]);
+        this.newPlayerKnownTiles = new Array(game.userIDs.length);
+        for (let playerID = 0; playerID < game.userIDs.length; playerID++) {
+            this.newPlayerKnownTiles[playerID] = [];
         }
     }
 
@@ -141,11 +144,10 @@ export class MoveData {
     }
 
     endMove() {
-        let clonedGameBoard = [];
-        for (let y = 0; y < this.game.gameBoard.length; y++) {
-            clonedGameBoard.push([...this.game.gameBoard[y]]);
+        let clonedGameBoard = new Array(9);
+        for (let y = 0; y < 9; y++) {
+            clonedGameBoard[y] = [...this.game.gameBoard[y]];
         }
-
         this.gameBoard = clonedGameBoard;
     }
 }
