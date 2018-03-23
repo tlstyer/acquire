@@ -1,12 +1,18 @@
-import { GameAction, GameBoardType, GameHistoryMessage } from './enums';
+import { GameAction, GameBoardType, GameHistoryMessage, ScoreBoardIndex } from './enums';
 import { ActionBase } from './gameActions/base';
 import { ActionStartGame } from './gameActions/startGame';
+
+const initialScoreBoardRow = [0, 0, 0, 0, 0, 0, 0, 60, 60];
 
 export class Game {
     nextTileBagIndex: number = 0;
     tileToTileBagIndex: Map<number, number> = new Map();
     tileRacks: (number | null)[][];
     gameBoard: GameBoardType[][];
+    scoreBoard: number[][];
+    scoreBoardAvailable: number[] = [25, 25, 25, 25, 25, 25, 25];
+    scoreBoardChainSize: number[] = [0, 0, 0, 0, 0, 0, 0];
+    scoreBoardPrice: number[] = [0, 0, 0, 0, 0, 0, 0];
     protected currentMoveData: MoveData | null = null;
     moveDataHistory: MoveData[] = [];
     gameActionStack: ActionBase[] = [];
@@ -35,6 +41,12 @@ export class Game {
                 row[x] = GameBoardType.Nothing;
             }
             this.gameBoard[y] = row;
+        }
+
+        // initialize this.scoreBoard
+        this.scoreBoard = new Array(userIDs.length);
+        for (let playerID = 0; playerID < userIDs.length; playerID++) {
+            this.scoreBoard[playerID] = [...initialScoreBoardRow];
         }
 
         // initialize this.gameActionStack
@@ -111,6 +123,10 @@ export class MoveData {
     newWatcherKnownTiles: number[] = [];
     gameHistoryMessages: GameHistoryMessageData[] = [];
     gameBoard: GameBoardType[][] = [];
+    scoreBoard: number[][] = [];
+    scoreBoardAvailable: number[] = [];
+    scoreBoardChainSize: number[] = [];
+    scoreBoardPrice: number[] = [];
 
     constructor(public game: Game) {
         this.newPlayerKnownTiles = new Array(game.userIDs.length);
@@ -149,6 +165,16 @@ export class MoveData {
             clonedGameBoard[y] = [...this.game.gameBoard[y]];
         }
         this.gameBoard = clonedGameBoard;
+
+        let clonedScoreBoard = new Array(this.game.userIDs.length);
+        for (let playerID = 0; playerID < clonedScoreBoard.length; playerID++) {
+            clonedScoreBoard[playerID] = [...this.game.scoreBoard[playerID]];
+        }
+        this.scoreBoard = clonedScoreBoard;
+
+        this.scoreBoardAvailable = [...this.game.scoreBoardAvailable];
+        this.scoreBoardChainSize = [...this.game.scoreBoardChainSize];
+        this.scoreBoardPrice = [...this.game.scoreBoardPrice];
     }
 }
 

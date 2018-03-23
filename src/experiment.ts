@@ -1,4 +1,4 @@
-import { GameAction, GameBoardType, GameHistoryMessage } from './enums';
+import { GameAction, GameBoardType, GameHistoryMessage, ScoreBoardIndex } from './enums';
 import { Game, GameHistoryMessageData, MoveData } from './game';
 import { getNewTileBag } from './gamePreparation';
 
@@ -21,6 +21,8 @@ function getMoveDataString(moveData: MoveData) {
     parts.push(`action: ${moveData.playerID} ${GameAction[moveData.gameAction]}`);
 
     parts.push(getGameBoardString(moveData.gameBoard));
+
+    parts.push(getScoreBoardString(moveData.scoreBoard, moveData.scoreBoardAvailable, moveData.scoreBoardChainSize, moveData.scoreBoardPrice));
 
     parts.push('new known tiles:');
     moveData.newPlayerKnownTiles.forEach((tiles, playerIndex) => {
@@ -65,6 +67,34 @@ function getGameBoardString(gameBoard: GameBoardType[][]) {
         parts.push(chars.join(''));
     });
     return parts.join('\n');
+}
+
+function getScoreBoardString(scoreBoard: number[][], scoreBoardAvailable: number[], scoreBoardChainSize: number[], scoreBoardPrice: number[]) {
+    let parts: string[] = [];
+    scoreBoard.forEach(row => {
+        let entries = row.map((val, index) => (index <= ScoreBoardIndex.Imperial && val === 0 ? '' : val.toString()));
+        parts.push(formatScoreBoardLine(entries));
+    });
+    parts.push(formatScoreBoardLine(scoreBoardAvailable.map(val => val.toString())));
+    parts.push(formatScoreBoardLine(scoreBoardChainSize.map(val => (val === 0 ? '-' : val.toString()))));
+    parts.push(formatScoreBoardLine(scoreBoardPrice.map(val => (val === 0 ? '-' : val.toString()))));
+    return parts.join('\n');
+}
+
+const scoreBoardColumnWidths = [2, 2, 2, 2, 2, 2, 2, 4, 4];
+function formatScoreBoardLine(entries: string[]) {
+    let parts = entries.map((entry, index) => {
+        const numSpacesToAdd = scoreBoardColumnWidths[index] - entry.length;
+        if (numSpacesToAdd === 1) {
+            entry = ' ' + entry;
+        } else if (numSpacesToAdd === 2) {
+            entry = '  ' + entry;
+        } else if (numSpacesToAdd === 3) {
+            entry = '   ' + entry;
+        }
+        return entry;
+    });
+    return parts.join(' ');
 }
 
 function getTileStrings(tiles: number[]) {

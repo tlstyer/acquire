@@ -50,3 +50,16 @@ export enum GameHistoryMessage {
     NoTilesPlayedForEntireRound,
     AllTilesPlayed,
 }
+
+export enum ScoreBoardIndex {
+    Luxor,
+    Tower,
+    American,
+    Festival,
+    Worldwide,
+    Continental,
+    Imperial,
+    Cash,
+    Net,
+    Max,
+}
