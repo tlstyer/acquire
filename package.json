@@ -16,6 +16,7 @@
         "@types/mocha": "^2.2.48"
     },
     "scripts": {
-        "test": "mocha -r ts-node/register src/**/*.spec.ts"
+        "test": "mocha -r ts-node/register src/**/*.spec.ts",
+        "generateGameTestFilesSpec": "ts-node src/generateGameTestFilesSpec.ts"
     }
 }
