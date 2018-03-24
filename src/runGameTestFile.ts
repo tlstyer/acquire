@@ -1,11 +1,14 @@
 import { assert } from 'chai';
-import { readFileSync } from 'fs';
+import * as fs from 'fs';
+import * as path from 'path';
 import { GameAction, GameBoardType, GameHistoryMessage, ScoreBoardIndex } from './enums';
 import { Game, GameHistoryMessageData, MoveData } from './game';
 import { getNewTileBag } from './gamePreparation';
 
-export function runGameTestFile(path: string) {
-    const inputFileContents = readFileSync(`${__dirname}/gameTestFiles/${path}`).toString();
+const outputBasePath: string = '';
+
+export function runGameTestFile(pathToFile: string) {
+    const inputFileContents = fs.readFileSync(`${__dirname}/gameTestFiles/${pathToFile}`).toString();
 
     let readingGameParameters = true;
     let tileBag: number[] = [];
@@ -68,6 +71,12 @@ export function runGameTestFile(path: string) {
         });
     }
     outputLines.push('');
+
+    if (outputBasePath !== '') {
+        let outputFilePath = path.join(outputBasePath, pathToFile);
+        ensureDirectoryExistence(outputFilePath);
+        fs.writeFileSync(outputFilePath, outputLines.join('\n'));
+    }
 
     assert.deepEqual(outputLines, inputLines, 'output lines do not match input lines');
 }
@@ -228,4 +237,14 @@ const gameHistoryMessageStringHandlers: { [key: number]: Function } = {
 
 function getGameHistoryMessageString(gameHistoryMessage: GameHistoryMessageData) {
     return gameHistoryMessageStringHandlers[gameHistoryMessage.gameHistoryMessage](gameHistoryMessage);
+}
+
+// from https://stackoverflow.com/questions/13542667/create-directory-when-writing-to-file-in-node-js
+function ensureDirectoryExistence(filePath: string) {
+    var dirname = path.dirname(filePath);
+    if (fs.existsSync(dirname)) {
+        return true;
+    }
+    ensureDirectoryExistence(dirname);
+    fs.mkdirSync(dirname);
 }
