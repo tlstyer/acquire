@@ -1,33 +1,75 @@
+import { assert } from 'chai';
+import { readFileSync } from 'fs';
 import { GameAction, GameBoardType, GameHistoryMessage, ScoreBoardIndex } from './enums';
 import { Game, GameHistoryMessageData, MoveData } from './game';
 import { getNewTileBag } from './gamePreparation';
 
-function main() {
-    console.log('________________________________________________________________________________');
-    console.log();
+export function runGameTestFile(path: string) {
+    const inputFileContents = readFileSync(`${__dirname}/gameTestFiles/${path}`).toString();
 
-    let lines: string[] = [];
+    let readingGameParameters = true;
+    let tileBag: number[] = [];
+    let userIDs: number[] = [];
+    let starterUserID: number = 0;
+    let myUserID: number | null = null;
+    let game: Game | null = null;
 
-    const tileBag = getNewTileBag();
-    const userIDs = [5, 7, 9];
-    const starterUserID = 7;
-    const myUserID = 5;
+    const inputLines = inputFileContents.split('\n');
+    let outputLines: string[] = [];
 
-    lines.push(`tile bag: ${getTilesString(tileBag)}`);
-    lines.push(`user IDs: ${userIDs.join(', ')}`);
-    lines.push(`starter user ID: ${starterUserID}`);
-    lines.push(`my user ID: ${myUserID}`);
+    for (let i = 0; i < inputLines.length; i++) {
+        let line = inputLines[i];
+        if (readingGameParameters) {
+            if (line.length > 0) {
+                const [key, value] = line.split(': ');
+                switch (key) {
+                    case 'tile bag':
+                        tileBag = fromTilesString(value);
+                        break;
+                    case 'user IDs':
+                        userIDs = value.split(', ').map(x => parseInt(x, 10));
+                        break;
+                    case 'starter user ID':
+                        starterUserID = parseInt(value, 10);
+                        break;
+                    case 'my user ID':
+                        myUserID = parseInt(value, 10);
+                        break;
+                    default:
+                        outputLines.push(`unrecognized line: ${line}`);
+                }
+            } else {
+                readingGameParameters = false;
+                outputLines.push(`tile bag: ${toTilesString(tileBag)}`);
+                outputLines.push(`user IDs: ${userIDs.join(', ')}`);
+                outputLines.push(`starter user ID: ${starterUserID}`);
+                outputLines.push(`my user ID: ${myUserID}`);
+                game = new Game(tileBag, userIDs, starterUserID, myUserID);
+            }
+        } else {
+            const lineParts = line.split(': ');
+            if (lineParts.length === 2 && lineParts[0] === 'action' && game !== null) {
+                const actionParts = lineParts[1].split(' ');
 
-    let game = new Game(tileBag, userIDs, starterUserID, myUserID);
+                const playerID = parseInt(actionParts[0], 10);
 
-    game.doGameAction(7, 0, []);
+                const userID: number = game.userIDs[playerID];
+                const moveIndex: number = game.moveDataHistory.length;
+                const parameters: any[] = [];
+                game.doGameAction(userID, moveIndex, parameters);
+            }
+        }
+    }
 
-    game.moveDataHistory.forEach((moveData, index) => {
-        lines.push('');
-        lines.push(...getMoveDataLines(moveData));
-    });
+    if (game !== null) {
+        game.moveDataHistory.forEach((moveData, index) => {
+            outputLines.push('');
+            outputLines.push(...getMoveDataLines(moveData));
+        });
+    }
+    outputLines.push('');
 
-    console.log(lines.join('\n'));
+    assert.deepEqual(outputLines, inputLines, 'output lines do not match input lines');
 }
 
 const gameBoardStringSpacer = '            ';
@@ -53,11 +95,11 @@ function getMoveDataLines(moveData: MoveData) {
     lines.push('new known tiles:');
     moveData.newPlayerKnownTiles.forEach((tiles, playerIndex) => {
         if (tiles.length > 0) {
-            lines.push(`  ${playerIndex}: ${getTilesString(tiles)}`);
+            lines.push(`  ${playerIndex}: ${toTilesString(tiles)}`);
         }
     });
     if (moveData.newWatcherKnownTiles.length > 0) {
-        lines.push(`  w: ${getTilesString(moveData.newWatcherKnownTiles)}`);
+        lines.push(`  w: ${toTilesString(moveData.newWatcherKnownTiles)}`);
     }
 
     lines.push('history messages:');
@@ -124,14 +166,26 @@ function formatScoreBoardLine(entries: string[]) {
     return lineParts.join(' ');
 }
 
-function getTilesString(tiles: number[]) {
-    return tiles.map(getTileString).join(', ');
+function toTilesString(tiles: number[]) {
+    return tiles.map(toTileString).join(', ');
 }
 
-function getTileString(tile: number) {
+function fromTilesString(str: string) {
+    return str.split(', ').map(fromTileString);
+}
+
+const yTileNames = 'ABCDEFGHI';
+
+function toTileString(tile: number) {
     let x = Math.floor(tile / 9) + 1;
-    let y = 'ABCDEFGHI'[tile % 9];
+    let y = yTileNames[tile % 9];
     return x + y;
+}
+
+function fromTileString(str: string) {
+    let x = parseInt(str.slice(0, str.length - 1), 10) - 1;
+    let y = yTileNames.indexOf(str.slice(str.length - 1));
+    return x * 9 + y;
 }
 
 const ghmsh = (ghmd: GameHistoryMessageData) => {
@@ -141,7 +195,7 @@ const ghmshPlayerID = (ghmd: GameHistoryMessageData) => {
     return [ghmd.playerID, GameHistoryMessage[ghmd.gameHistoryMessage]].join(' ');
 };
 const ghmshPlayerIDTile = (ghmd: GameHistoryMessageData) => {
-    return [ghmd.playerID, GameHistoryMessage[ghmd.gameHistoryMessage], getTileString(ghmd.parameters[0])].join(' ');
+    return [ghmd.playerID, GameHistoryMessage[ghmd.gameHistoryMessage], toTileString(ghmd.parameters[0])].join(' ');
 };
 const ghmshPlayerIDType = (ghmd: GameHistoryMessageData) => {
     return [ghmd.playerID, GameHistoryMessage[ghmd.gameHistoryMessage], GameBoardType[ghmd.parameters[0]], ...ghmd.parameters.slice(1)].join(' ');
@@ -175,5 +229,3 @@ const gameHistoryMessageStringHandlers: { [key: number]: Function } = {
 function getGameHistoryMessageString(gameHistoryMessage: GameHistoryMessageData) {
     return gameHistoryMessageStringHandlers[gameHistoryMessage.gameHistoryMessage](gameHistoryMessage);
 }
-
-main();

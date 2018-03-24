@@ -1,0 +1,32 @@
+tile bag: 4I, 2B, 11F, 8G, 4B, 10H, 2G, 1D, 11D, 7E, 1B, 12H, 7B, 11I, 12C, 12E, 11B, 9E, 9A, 9I, 3F, 12I, 6A, 7I, 8E, 8D, 2I, 1G, 8H, 10E, 6F, 4F, 9H, 2C, 2E, 9B, 1F, 3I, 3E, 7G, 5G, 12F, 7D, 6G, 6H, 4G, 6E, 10D, 1I, 8C, 4E, 9D, 3G, 10G, 4A, 5B, 11E, 2F, 8F, 8I, 8A, 7F, 6C, 4C, 1C, 5D, 8B, 11A, 6D, 9F, 5A, 5H, 3C, 3B, 10A, 9C, 11G, 10F, 3H, 12B, 2D, 4D, 3D, 11C, 5I, 4H, 7C, 10I, 1E, 12G, 12D, 5C, 7A, 10C, 10B, 1A, 1H, 6I, 2A, 5E, 12A, 3A, 6B, 2H, 5F, 9G, 7H, 11H
+user IDs: 5, 7, 9
+starter user ID: 7
+my user ID: 5
+
+action: 1 StartGame
+············   L  T  A  F  W  C  I Cash  Net
+·O··········                         60   60
+············                         60   60
+············                         60   60
+············  25 25 25 25 25 25 25
+··········O·   -  -  -  -  -  -  -
+············   -  -  -  -  -  -  -
+············
+···O········
+new known tiles:
+  0: 2B, 4I, 11F, 8G, 4B, 10H, 2G, 1D, 11D
+  1: 2B, 4I, 11F, 7E, 1B, 12H, 7B, 11I, 12C
+  2: 2B, 4I, 11F, 12E, 11B, 9E, 9A, 9I, 3F
+  w: 2B, 4I, 11F
+history messages:
+  0 DrewPositionTile 2B
+  1 DrewPositionTile 4I
+  2 DrewPositionTile 11F
+  1 StartedGame
+  0 DrewTile 8G
+  0 DrewTile 4B
+  0 DrewTile 10H
+  0 DrewTile 2G
+  0 DrewTile 1D
+  0 DrewTile 11D
+  0 TurnBegan
