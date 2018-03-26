@@ -10,19 +10,18 @@ const outputBasePath: string = '';
 export function runGameTestFile(pathToFile: string) {
     const inputFileContents = fs.readFileSync(`${__dirname}/gameTestFiles/${pathToFile}`).toString();
 
-    let readingGameParameters = true;
+    let game: Game | null = null;
     let tileBag: number[] = [];
     let userIDs: number[] = [];
     let starterUserID: number = 0;
     let myUserID: number | null = null;
-    let game: Game | null = null;
 
     const inputLines = inputFileContents.split('\n');
     let outputLines: string[] = [];
 
     for (let i = 0; i < inputLines.length; i++) {
         let line = inputLines[i];
-        if (readingGameParameters) {
+        if (game === null) {
             if (line.length > 0) {
                 const [key, value] = line.split(': ');
                 switch (key) {
@@ -42,7 +41,6 @@ export function runGameTestFile(pathToFile: string) {
                         outputLines.push(`unrecognized line: ${line}`);
                 }
             } else {
-                readingGameParameters = false;
                 outputLines.push(`tile bag: ${toTilesString(tileBag)}`);
                 outputLines.push(`user IDs: ${userIDs.join(', ')}`);
                 outputLines.push(`starter user ID: ${starterUserID}`);
@@ -51,7 +49,7 @@ export function runGameTestFile(pathToFile: string) {
             }
         } else {
             const lineParts = line.split(': ');
-            if (lineParts.length === 2 && lineParts[0] === 'action' && game !== null) {
+            if (lineParts.length === 2 && lineParts[0] === 'action') {
                 const actionParts = lineParts[1].split(' ');
 
                 const playerID = parseInt(actionParts[0], 10);
