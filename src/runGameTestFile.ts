@@ -5,10 +5,11 @@ import { GameAction, GameBoardType, GameHistoryMessage, ScoreBoardIndex } from '
 import { Game, GameHistoryMessageData, MoveData } from './game';
 import { getNewTileBag } from './gamePreparation';
 
+const inputBasePath: string = `${__dirname}/gameTestFiles/`;
 const outputBasePath: string = '';
 
 export function runGameTestFile(pathToFile: string) {
-    const inputFileContents = fs.readFileSync(`${__dirname}/gameTestFiles/${pathToFile}`).toString();
+    const inputFileContents = fs.readFileSync(path.join(inputBasePath, pathToFile)).toString();
 
     let game: Game | null = null;
     let tileBag: number[] = [];
