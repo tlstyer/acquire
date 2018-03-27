@@ -109,6 +109,10 @@ export class Game {
             if (isMe) {
                 this.getCurrentMoveData().addGameHistoryMessage(new GameHistoryMessageData(GameHistoryMessage.DrewTile, playerIndex, [tile]));
             }
+
+            if (this.nextTileBagIndex === 108) {
+                this.getCurrentMoveData().addGameHistoryMessage(new GameHistoryMessageData(GameHistoryMessage.DrewLastTile, playerIndex, []));
+            }
         }
     }
 
