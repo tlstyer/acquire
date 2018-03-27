@@ -16,7 +16,7 @@ function main() {
     fs.writeFileSync(`${__dirname}/gameTestFiles.spec.ts`, lines.join('\n'));
 }
 
-function processDirectory(base, dir, lines) {
+function processDirectory(base: string, dir: string, lines: string[]) {
     lines.push(`describe(${JSON.stringify(base === __dirname ? 'game test files' : dir)}, () => {`);
 
     const dirPath = path.join(base, dir);
