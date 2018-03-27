@@ -44,6 +44,7 @@ export function runGameTestFile(pathToFile: string) {
                         break;
                     default:
                         outputLines.push(`unrecognized line: ${line}`);
+                        break;
                 }
             } else {
                 outputLines.push(`tile bag: ${toTilesString(tileBag)}`);
