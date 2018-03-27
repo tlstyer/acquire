@@ -36,7 +36,7 @@ export function runGameTestFile(pathToFile: string) {
                         starterUserID = parseInt(value, 10);
                         break;
                     case 'my user ID':
-                        myUserID = parseInt(value, 10);
+                        myUserID = value === 'null' ? null : parseInt(value, 10);
                         break;
                     default:
                         outputLines.push(`unrecognized line: ${line}`);
@@ -99,6 +99,12 @@ function getMoveDataLines(moveData: MoveData) {
         }
         lines.push(lineParts.join(''));
     }
+
+    lines.push('tile racks:');
+    moveData.tileRacks.forEach((tileRack, playerIndex) => {
+        let tileTypes = moveData.tileRackTypes[playerIndex];
+        lines.push(`  ${playerIndex}: ${getTileRackString(tileRack, tileTypes)}`);
+    });
 
     lines.push('new known tiles:');
     moveData.newPlayerKnownTiles.forEach((tiles, playerIndex) => {
@@ -172,6 +178,19 @@ function formatScoreBoardLine(entries: string[]) {
         return entry;
     });
     return lineParts.join(' ');
+}
+
+function getTileRackString(tiles: (number | null)[], tileTypes: (GameBoardType | null)[]) {
+    return tiles
+        .map((tile, tileIndex) => {
+            let tileType = tileTypes[tileIndex];
+            if (tile !== null && tileType !== null) {
+                return `${toTileString(tile)}(${gameBoardTypeToCharacter[tileType]})`;
+            } else {
+                return 'none';
+            }
+        })
+        .join(' ');
 }
 
 function toTilesString(tiles: number[]) {

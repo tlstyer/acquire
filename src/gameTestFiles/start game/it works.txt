@@ -13,6 +13,10 @@ action: 1 StartGame
 ············   -  -  -  -  -  -  -
 ············
 ···O········
+tile racks:
+  0: 8G(l) 4B(l) 10H(l) 2G(l) 1D(l) 11D(l)
+  1: 7E(l) 1B(n) 12H(l) 7B(l) 11I(l) 12C(l)
+  2: 12E(l) 11B(l) 9E(l) 9A(l) 9I(l) 3F(l)
 new known tiles:
   0: 2B, 4I, 11F, 8G, 4B, 10H, 2G, 1D, 11D
   1: 2B, 4I, 11F, 7E, 1B, 12H, 7B, 11I, 12C

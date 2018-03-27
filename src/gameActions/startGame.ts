@@ -33,6 +33,8 @@ export class ActionStartGame extends ActionBase {
             this.game.drawTiles(playerIndex);
         }
 
+        this.game.determineTileRackTypesForEverybody();
+
         return [new ActionPlayTile(this.game, 0), new ActionPurchaseShares(this.game, 0)];
     }
 }

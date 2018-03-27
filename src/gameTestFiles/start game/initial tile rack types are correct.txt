@@ -1,0 +1,30 @@
+tile bag: 3C, 5D, 7E, 1A, 2A, 5A, 6A, 11A, 12A, 12B, 12C, 12E, 12F, 12H, 12I, 3B, 3D, 2C, 4C, 11F, 7G
+user IDs: 5, 7, 9
+starter user ID: 7
+my user ID: null
+
+action: 1 StartGame
+············   L  T  A  F  W  C  I Cash  Net
+············                         60   60
+··O·········                         60   60
+····O·······                         60   60
+······O·····  25 25 25 25 25 25 25
+············   -  -  -  -  -  -  -
+············   -  -  -  -  -  -  -
+············
+············
+tile racks:
+  0: 1A(h) 2A(h) 5A(h) 6A(h) 11A(h) 12A(h)
+  1: 12B(h) 12C(h) 12E(h) 12F(h) 12H(h) 12I(h)
+  2: 3B(n) 3D(n) 2C(n) 4C(n) 11F(l) 7G(l)
+new known tiles:
+  0: 3C, 5D, 7E, 1A, 2A, 5A, 6A, 11A, 12A
+  1: 3C, 5D, 7E, 12B, 12C, 12E, 12F, 12H, 12I
+  2: 3C, 5D, 7E, 3B, 3D, 2C, 4C, 11F, 7G
+  w: 3C, 5D, 7E
+history messages:
+  0 DrewPositionTile 3C
+  1 DrewPositionTile 5D
+  2 DrewPositionTile 7E
+  1 StartedGame
+  0 TurnBegan

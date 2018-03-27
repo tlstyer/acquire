@@ -8,7 +8,9 @@ export class Game {
     nextTileBagIndex: number = 0;
     tileToTileBagIndex: Map<number, number> = new Map();
     tileRacks: (number | null)[][];
+    tileRackTypes: (GameBoardType | null)[][];
     gameBoard: GameBoardType[][];
+    gameBoardTypeCounts: number[];
     scoreBoard: number[][];
     scoreBoardAvailable: number[] = [25, 25, 25, 25, 25, 25, 25];
     scoreBoardChainSize: number[] = [0, 0, 0, 0, 0, 0, 0];
@@ -33,6 +35,16 @@ export class Game {
             this.tileRacks[playerID] = tileRack;
         }
 
+        // initialize this.tileRackTypes
+        this.tileRackTypes = new Array(userIDs.length);
+        for (let playerID = 0; playerID < userIDs.length; playerID++) {
+            let tileRackTypes = new Array(6);
+            for (let i = 0; i < 6; i++) {
+                tileRackTypes[i] = null;
+            }
+            this.tileRackTypes[playerID] = tileRackTypes;
+        }
+
         // initialize this.gameBoard
         this.gameBoard = new Array(9);
         for (let y = 0; y < 9; y++) {
@@ -42,6 +54,13 @@ export class Game {
             }
             this.gameBoard[y] = row;
         }
+
+        // initialize this.gameBoardTypeCounts
+        this.gameBoardTypeCounts = new Array(GameBoardType.Max);
+        for (let i = 0; i < GameBoardType.Max; i++) {
+            this.gameBoardTypeCounts[i] = 0;
+        }
+        this.gameBoardTypeCounts[GameBoardType.Nothing] = 108;
 
         // initialize this.scoreBoard
         this.scoreBoard = new Array(userIDs.length);
@@ -93,10 +112,124 @@ export class Game {
         }
     }
 
+    determineTileRackTypesForEverybody() {
+        for (let playerID = 0; playerID < this.userIDs.length; playerID++) {
+            this.determineTileRackTypesForPlayer(playerID);
+        }
+    }
+
+    determineTileRackTypesForPlayer(playerID: number) {
+        let tileTypes: (GameBoardType | null)[] = [];
+        let lonelyTileIndexes: number[] = [];
+        let lonelyTileBorderTiles: { [key: number]: boolean } = {};
+
+        let canStartNewChain: boolean = false;
+        for (let i = 0; i <= GameBoardType.Imperial; i++) {
+            if (this.gameBoardTypeCounts[i] === 0) {
+                canStartNewChain = true;
+                break;
+            }
+        }
+
+        for (let tileIndex = 0; tileIndex < 6; tileIndex++) {
+            let tile = this.tileRacks[playerID][tileIndex];
+            let tileType = null;
+
+            if (tile !== null) {
+                let x = Math.floor(tile / 9);
+                let y = tile % 9;
+
+                let borderTiles: number[] = [];
+                let borderTypes: GameBoardType[] = [];
+                if (x > 0) {
+                    borderTiles.push(tile - 9);
+                    borderTypes.push(this.gameBoard[y][x - 1]);
+                }
+                if (x < 11) {
+                    borderTiles.push(tile + 9);
+                    borderTypes.push(this.gameBoard[y][x + 1]);
+                }
+                if (y > 0) {
+                    borderTiles.push(tile - 1);
+                    borderTypes.push(this.gameBoard[y - 1][x]);
+                }
+                if (y < 8) {
+                    borderTiles.push(tile + 1);
+                    borderTypes.push(this.gameBoard[y + 1][x]);
+                }
+
+                borderTypes = borderTypes.filter((type, index) => {
+                    if (type === GameBoardType.Nothing || type === GameBoardType.CantPlayEver) {
+                        return false;
+                    }
+                    if (borderTypes.indexOf(type) !== index) {
+                        // exclude this as it is already in the array
+                        return false;
+                    }
+                    return true;
+                });
+                if (borderTypes.length > 1) {
+                    borderTypes = borderTypes.filter(type => type !== GameBoardType.NothingYet);
+                }
+
+                if (borderTypes.length === 0) {
+                    tileType = GameBoardType.WillPutLonelyTileDown;
+                    lonelyTileIndexes.push(tileIndex);
+                    for (let i = 0; i < borderTiles.length; i++) {
+                        lonelyTileBorderTiles[borderTiles[i]] = true;
+                    }
+                } else if (borderTypes.length === 1) {
+                    if (borderTypes.indexOf(GameBoardType.NothingYet) !== -1) {
+                        if (canStartNewChain) {
+                            tileType = GameBoardType.WillFormNewChain;
+                        } else {
+                            tileType = GameBoardType.CantPlayNow;
+                        }
+                    } else {
+                        tileType = borderTypes[0];
+                    }
+                } else {
+                    let safeCount = 0;
+                    for (let i = 0; i < borderTypes.length; i++) {
+                        if (this.gameBoardTypeCounts[borderTypes[i]] >= 11) {
+                            safeCount++;
+                        }
+                    }
+
+                    if (safeCount >= 2) {
+                        tileType = GameBoardType.CantPlayEver;
+                    } else {
+                        tileType = GameBoardType.WillMergeChains;
+                    }
+                }
+            }
+
+            tileTypes.push(tileType);
+        }
+
+        if (canStartNewChain) {
+            for (let i = 0; i < lonelyTileIndexes.length; i++) {
+                let tileIndex = lonelyTileIndexes[i];
+
+                let tileType = tileTypes[tileIndex];
+                if (tileType === GameBoardType.WillPutLonelyTileDown) {
+                    let tile = this.tileRacks[playerID][tileIndex];
+                    if (tile !== null && lonelyTileBorderTiles[tile] === true) {
+                        tileTypes[tileIndex] = GameBoardType.HaveNeighboringTileToo;
+                    }
+                }
+            }
+        }
+
+        this.tileRackTypes[playerID] = tileTypes;
+    }
+
     setGameBoardPosition(tile: number, gameBoardType: GameBoardType) {
         let x = Math.floor(tile / 9);
         let y = tile % 9;
+        this.gameBoardTypeCounts[this.gameBoard[y][x]]--;
         this.gameBoard[y][x] = gameBoardType;
+        this.gameBoardTypeCounts[gameBoardType]++;
     }
 
     getCurrentMoveData() {
@@ -122,6 +255,8 @@ export class MoveData {
     newPlayerKnownTiles: number[][];
     newWatcherKnownTiles: number[] = [];
     gameHistoryMessages: GameHistoryMessageData[] = [];
+    tileRacks: (number | null)[][];
+    tileRackTypes: (GameBoardType | null)[][];
     gameBoard: GameBoardType[][] = [];
     scoreBoard: number[][] = [];
     scoreBoardAvailable: number[] = [];
@@ -160,6 +295,18 @@ export class MoveData {
     }
 
     endMove() {
+        let clonedTileRacks = new Array(this.game.userIDs.length);
+        for (let playerID = 0; playerID < clonedTileRacks.length; playerID++) {
+            clonedTileRacks[playerID] = [...this.game.tileRacks[playerID]];
+        }
+        this.tileRacks = clonedTileRacks;
+
+        let clonedTileRackTypes = new Array(this.game.userIDs.length);
+        for (let playerID = 0; playerID < clonedTileRackTypes.length; playerID++) {
+            clonedTileRackTypes[playerID] = [...this.game.tileRackTypes[playerID]];
+        }
+        this.tileRackTypes = clonedTileRackTypes;
+
         let clonedGameBoard = new Array(9);
         for (let y = 0; y < 9; y++) {
             clonedGameBoard[y] = [...this.game.gameBoard[y]];
