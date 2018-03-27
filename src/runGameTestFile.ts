@@ -27,6 +27,11 @@ export function runGameTestFile(pathToFile: string) {
                 switch (key) {
                     case 'tile bag':
                         tileBag = fromTilesString(value);
+
+                        let unique = new Set(tileBag);
+                        if (unique.size !== tileBag.length) {
+                            outputLines.push('duplicate tiles in tile bag');
+                        }
                         break;
                     case 'user IDs':
                         userIDs = value.split(', ').map(x => parseInt(x, 10));
