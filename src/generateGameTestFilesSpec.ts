@@ -29,9 +29,8 @@ function processDirectory(base, dir, lines) {
         if (stats.isDirectory()) {
             processDirectory(dirPath, file, lines);
         } else if (stats.isFile()) {
-            const testName = file.slice(0, file.length - path.extname(file).length);
             const relativeFilePath = filePath.slice(inputBasePath.length);
-            lines.push(`it(${JSON.stringify(testName)}, () => runGameTestFile(${JSON.stringify(relativeFilePath)}));`);
+            lines.push(`it(${JSON.stringify(file)}, () => runGameTestFile(${JSON.stringify(relativeFilePath)}));`);
         }
     }
 
