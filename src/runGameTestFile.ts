@@ -3,7 +3,6 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { GameAction, GameBoardType, GameHistoryMessage, ScoreBoardIndex } from './enums';
 import { Game, GameHistoryMessageData, MoveData } from './game';
-import { getNewTileBag } from './gamePreparation';
 
 const inputBasePath: string = `${__dirname}/gameTestFiles/`;
 const outputBasePath: string = '';
