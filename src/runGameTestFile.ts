@@ -121,7 +121,7 @@ export function runGameTestFile(pathToFile: string) {
 
     if (outputBasePath !== '') {
         let outputFilePath = path.join(outputBasePath, pathToFile);
-        ensureDirectoryExistence(outputFilePath);
+        ensureDirectoryExists(outputFilePath);
         fs.writeFileSync(outputFilePath, outputLines.join('\n'));
     }
 
@@ -250,8 +250,7 @@ function getScoreBoardLines(
     let lines: string[] = [];
     lines.push(formatScoreBoardLine(['L', 'T', 'A', 'F', 'W', 'C', 'I', 'Cash', 'Net']));
     scoreBoard.forEach(row => {
-        let entries = row.toArray().map((val, index) => (index <= ScoreBoardIndex.Imperial && val === 0 ? '' : val.toString()));
-        lines.push(formatScoreBoardLine(entries));
+        lines.push(formatScoreBoardLine(row.toArray().map((val, index) => (index <= ScoreBoardIndex.Imperial && val === 0 ? '' : val.toString()))));
     });
     lines.push(formatScoreBoardLine(scoreBoardAvailable.toArray().map(val => val.toString())));
     lines.push(formatScoreBoardLine(scoreBoardChainSize.toArray().map(val => (val === 0 ? '-' : val.toString()))));
@@ -347,17 +346,15 @@ const gameHistoryMessageStringHandlers: { [key: number]: Function } = {
     [GameHistoryMessage.NoTilesPlayedForEntireRound]: ghmsh,
     [GameHistoryMessage.AllTilesPlayed]: ghmsh,
 };
-
 function getGameHistoryMessageString(gameHistoryMessage: GameHistoryMessageData) {
     return gameHistoryMessageStringHandlers[gameHistoryMessage.gameHistoryMessage](gameHistoryMessage);
 }
 
-// from https://stackoverflow.com/questions/13542667/create-directory-when-writing-to-file-in-node-js
-function ensureDirectoryExistence(filePath: string) {
-    var dirname = path.dirname(filePath);
-    if (fs.existsSync(dirname)) {
-        return true;
+// based on https://stackoverflow.com/questions/13542667/create-directory-when-writing-to-file-in-node-js
+function ensureDirectoryExists(filePath: string) {
+    let dirname = path.dirname(filePath);
+    if (!fs.existsSync(dirname)) {
+        ensureDirectoryExists(dirname);
+        fs.mkdirSync(dirname);
     }
-    ensureDirectoryExistence(dirname);
-    fs.mkdirSync(dirname);
 }
