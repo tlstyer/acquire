@@ -22,6 +22,8 @@ export function runGameTestFile(pathToFile: string) {
     const inputLines = inputFileContents.split('\n');
     let outputLines: string[] = [];
 
+    let lastMoveData: MoveData | null = null;
+
     for (let lineNumber = 0; lineNumber < inputLines.length; lineNumber++) {
         let line = inputLines[lineNumber];
         if (game === null) {
@@ -58,6 +60,12 @@ export function runGameTestFile(pathToFile: string) {
             }
         } else {
             const lineParts = line.split(': ');
+
+            if (lastMoveData !== null) {
+                outputLines.push(...getMoveDataLines(lastMoveData, line !== ''));
+                lastMoveData = null;
+            }
+
             if (lineParts.length === 2 && lineParts[0] === 'action') {
                 const actionParts = lineParts[1].split(' ');
 
@@ -90,7 +98,7 @@ export function runGameTestFile(pathToFile: string) {
 
                 try {
                     game.doGameAction(userID, moveIndex, parameters);
-                    outputLines.push(...getMoveDataLines(game.moveDataHistory[game.moveDataHistory.length - 1]));
+                    lastMoveData = game.moveDataHistory[game.moveDataHistory.length - 1];
                 } catch (error) {
                     if (error instanceof UserInputError) {
                         let stringParameters = '';
@@ -164,7 +172,7 @@ function toParameterStrings(gameAction: GameAction, parameters: any[]) {
 
 const gameBoardStringSpacer = '            ';
 
-function getMoveDataLines(moveData: MoveData) {
+function getMoveDataLines(moveData: MoveData, detailed: boolean) {
     let lines: string[] = [];
 
     let arr = toParameterStrings(moveData.gameAction, moveData.gameActionParameters);
@@ -174,39 +182,41 @@ function getMoveDataLines(moveData: MoveData) {
     }
     lines.push(`action: ${moveData.playerID} ${GameAction[moveData.gameAction]}${stringParameters}`);
 
-    const gameBoardLines = getGameBoardLines(moveData.gameBoard);
-    const scoreBoardLines = getScoreBoardLines(moveData.scoreBoard, moveData.scoreBoardAvailable, moveData.scoreBoardChainSize, moveData.scoreBoardPrice);
-    const numLines = Math.max(gameBoardLines.length, scoreBoardLines.length);
-    for (let i = 0; i < numLines; i++) {
-        let lineParts = [];
-        lineParts.push(i < gameBoardLines.length ? gameBoardLines[i] : gameBoardStringSpacer);
-        if (i < scoreBoardLines.length) {
-            lineParts.push('  ');
-            lineParts.push(scoreBoardLines[i]);
+    if (detailed) {
+        const gameBoardLines = getGameBoardLines(moveData.gameBoard);
+        const scoreBoardLines = getScoreBoardLines(moveData.scoreBoard, moveData.scoreBoardAvailable, moveData.scoreBoardChainSize, moveData.scoreBoardPrice);
+        const numLines = Math.max(gameBoardLines.length, scoreBoardLines.length);
+        for (let i = 0; i < numLines; i++) {
+            let lineParts = [];
+            lineParts.push(i < gameBoardLines.length ? gameBoardLines[i] : gameBoardStringSpacer);
+            if (i < scoreBoardLines.length) {
+                lineParts.push('  ');
+                lineParts.push(scoreBoardLines[i]);
+            }
+            lines.push(lineParts.join(''));
         }
-        lines.push(lineParts.join(''));
-    }
 
-    lines.push('tile racks:');
-    moveData.tileRacks.forEach((tileRack, playerID) => {
-        let tileTypes = moveData.tileRackTypes.get(playerID, defaultTileRackTypes);
-        lines.push(`  ${playerID}: ${getTileRackString(tileRack, tileTypes)}`);
-    });
+        lines.push('tile racks:');
+        moveData.tileRacks.forEach((tileRack, playerID) => {
+            let tileTypes = moveData.tileRackTypes.get(playerID, defaultTileRackTypes);
+            lines.push(`  ${playerID}: ${getTileRackString(tileRack, tileTypes)}`);
+        });
 
-    lines.push('new known tiles:');
-    moveData.newPlayerKnownTiles.forEach((tiles, playerID) => {
-        if (tiles.length > 0) {
-            lines.push(`  ${playerID}: ${toTilesString(tiles)}`);
+        lines.push('new known tiles:');
+        moveData.newPlayerKnownTiles.forEach((tiles, playerID) => {
+            if (tiles.length > 0) {
+                lines.push(`  ${playerID}: ${toTilesString(tiles)}`);
+            }
+        });
+        if (moveData.newWatcherKnownTiles.length > 0) {
+            lines.push(`  w: ${toTilesString(moveData.newWatcherKnownTiles)}`);
         }
-    });
-    if (moveData.newWatcherKnownTiles.length > 0) {
-        lines.push(`  w: ${toTilesString(moveData.newWatcherKnownTiles)}`);
-    }
 
-    lines.push('history messages:');
-    moveData.gameHistoryMessages.forEach(ghm => {
-        lines.push(`  ${getGameHistoryMessageString(ghm)}`);
-    });
+        lines.push('history messages:');
+        moveData.gameHistoryMessages.forEach(ghm => {
+            lines.push(`  ${getGameHistoryMessageString(ghm)}`);
+        });
+    }
 
     return lines;
 }
