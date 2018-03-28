@@ -3,6 +3,7 @@ import { defaultTileRack, defaultTileRackTypes } from '../defaults';
 import { GameAction, GameBoardType, GameHistoryMessage } from '../enums';
 import { UserInputError } from '../error';
 import { Game, GameHistoryMessageData } from '../game';
+import { ActionSelectNewChain } from './selectNewChain';
 
 export class ActionPlayTile extends ActionBase {
     constructor(game: Game, playerID: number) {
@@ -48,11 +49,22 @@ export class ActionPlayTile extends ActionBase {
         }
         const tileType = this.game.tileRackTypes.get(this.playerID, defaultTileRackTypes).get(tileRackIndex, 0);
 
+        let response: ActionBase[] = [];
         switch (tileType) {
             case GameBoardType.WillPutLonelyTileDown:
             case GameBoardType.HaveNeighboringTileToo:
                 this.game.getCurrentMoveData().addNewGloballyKnownTile(tile, this.playerID);
                 this.game.setGameBoardPosition(tile, GameBoardType.NothingYet);
+                break;
+            case GameBoardType.WillFormNewChain:
+                let availableChains: GameBoardType[] = [];
+                let scoreBoardChainSize = this.game.scoreBoardChainSize;
+                for (let type = 0; type < scoreBoardChainSize.size; type++) {
+                    if (scoreBoardChainSize.get(type, 0) === 0) {
+                        availableChains.push(type);
+                    }
+                }
+                response = [new ActionSelectNewChain(this.game, this.playerID, availableChains, tile)];
                 break;
             default:
                 throw new UserInputError('unhandled tile type');
@@ -62,6 +74,6 @@ export class ActionPlayTile extends ActionBase {
 
         this.game.getCurrentMoveData().addGameHistoryMessage(new GameHistoryMessageData(GameHistoryMessage.PlayedTile, this.playerID, [tile]));
 
-        return [];
+        return response;
     }
 }

@@ -1,4 +1,4 @@
-tile bag: 4I, 2B, 8G, 8H, 10H, 2G, 1D, 11D, 7E, 1B, 12H, 7B, 11I, 12C
+tile bag: 4I, 2B, 8G, 8H, 10H, 2G, 1D, 11D, 7E, 1B, 12H, 7B, 11I, 12C, 1A
 user IDs: 5, 7
 starter user ID: 7
 my user ID: 5
@@ -43,10 +43,13 @@ action: 0 PlayTile 8G
 ············
 ···O········
 tile racks:
-  0: none 8H(h) 10H(l) 2G(l) 1D(l) 11D(l)
+  0: 1A(l) 8H(n) 10H(l) 2G(l) 1D(l) 11D(l)
   1: 7E(l) 1B(n) 12H(l) 7B(l) 11I(l) 12C(l)
 new known tiles:
+  0: 1A
   1: 8G
   w: 8G
 history messages:
   0 PlayedTile 8G
+  0 DrewTile 1A
+  1 TurnBegan

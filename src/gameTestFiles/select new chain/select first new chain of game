@@ -1,0 +1,134 @@
+tile bag: 2C, 2B, 1D, 2E, 7E, 7B, 11I, 12C, 3D, 2D, 8H, 10H, 2G, 8G, 11A, 4B, 1A, 3I
+user IDs: 5, 7
+starter user ID: 7
+my user ID: 5
+
+action: 1 StartGame
+············   L  T  A  F  W  C  I Cash  Net
+·O··········                         60   60
+·O··········                         60   60
+············  25 25 25 25 25 25 25
+············   -  -  -  -  -  -  -
+············   -  -  -  -  -  -  -
+············
+············
+············
+tile racks:
+  0: 1D(l) 2E(l) 7E(l) 7B(l) 11I(l) 12C(l)
+  1: 3D(l) 2D(n) 8H(h) 10H(l) 2G(l) 8G(h)
+new known tiles:
+  0: 2B, 2C, 1D, 2E, 7E, 7B, 11I, 12C
+  1: 2B, 2C, 3D, 2D, 8H, 10H, 2G, 8G
+  w: 2B, 2C
+history messages:
+  0 DrewPositionTile 2B
+  1 DrewPositionTile 2C
+  1 StartedGame
+  0 DrewTile 1D
+  0 DrewTile 2E
+  0 DrewTile 7E
+  0 DrewTile 7B
+  0 DrewTile 11I
+  0 DrewTile 12C
+  0 TurnBegan
+
+action: 0 PlayTile 1D
+············   L  T  A  F  W  C  I Cash  Net
+·O··········                         60   60
+·O··········                         60   60
+O···········  25 25 25 25 25 25 25
+············   -  -  -  -  -  -  -
+············   -  -  -  -  -  -  -
+············
+············
+············
+tile racks:
+  0: 11A(l) 2E(l) 7E(l) 7B(l) 11I(l) 12C(l)
+  1: 3D(l) 2D(n) 8H(h) 10H(l) 2G(l) 8G(h)
+new known tiles:
+  0: 11A
+  1: 1D
+  w: 1D
+history messages:
+  0 PlayedTile 1D
+  0 DrewTile 11A
+  1 TurnBegan
+
+action: 1 PlayTile 3D
+············   L  T  A  F  W  C  I Cash  Net
+·O··········                         60   60
+·O··········                         60   60
+O·O·········  25 25 25 25 25 25 25
+············   -  -  -  -  -  -  -
+············   -  -  -  -  -  -  -
+············
+············
+············
+tile racks:
+  0: 11A(l) 2E(l) 7E(l) 7B(l) 11I(l) 12C(l)
+  1: 4B(l) 2D(n) 8H(h) 10H(l) 2G(l) 8G(h)
+new known tiles:
+  0: 3D
+  1: 4B
+  w: 3D
+history messages:
+  1 PlayedTile 3D
+  0 TurnBegan
+
+action: 0 PlayTile 2E
+············   L  T  A  F  W  C  I Cash  Net
+·O··········                         60   60
+·O··········                         60   60
+O·O·········  25 25 25 25 25 25 25
+·O··········   -  -  -  -  -  -  -
+············   -  -  -  -  -  -  -
+············
+············
+············
+tile racks:
+  0: 11A(l) 1A(l) 7E(l) 7B(l) 11I(l) 12C(l)
+  1: 4B(l) 2D(n) 8H(h) 10H(l) 2G(l) 8G(h)
+new known tiles:
+  0: 1A
+  1: 2E
+  w: 2E
+history messages:
+  0 PlayedTile 2E
+  0 DrewTile 1A
+  1 TurnBegan
+
+action: 1 PlayTile 2D
+············   L  T  A  F  W  C  I Cash  Net
+·O··········                         60   60
+·O··········                         60   60
+OOO·········  25 25 25 25 25 25 25
+·O··········   -  -  -  -  -  -  -
+············   -  -  -  -  -  -  -
+············
+············
+············
+tile racks:
+  0: 11A(l) 1A(l) 7E(l) 7B(l) 11I(l) 12C(l)
+  1: 4B(l) none 8H(h) 10H(l) 2G(l) 8G(h)
+new known tiles:
+history messages:
+  1 PlayedTile 2D
+
+action: 1 SelectNewChain Luxor
+············   L  T  A  F  W  C  I Cash  Net
+·L··········                         60   60
+·L··········   1                     60   60
+LLL·········  25 25 25 25 25 25 25
+·L··········   6  -  -  -  -  -  -
+············   -  -  -  -  -  -  -
+············
+············
+············
+tile racks:
+  0: 11A(l) 1A(l) 7E(l) 7B(l) 11I(l) 12C(l)
+  1: 4B(l) 3I(l) 8H(h) 10H(l) 2G(l) 8G(h)
+new known tiles:
+  1: 3I
+history messages:
+  1 FormedChain Luxor
+  0 TurnBegan

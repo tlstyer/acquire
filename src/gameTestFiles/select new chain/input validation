@@ -1,0 +1,26 @@
+tile bag: 4I, 2B, 7E, 1B, 12H, 7B, 11I, 12C, 8G, 8H, 10H, 2G, 1D, 11D
+user IDs: 5, 7
+starter user ID: 7
+my user ID: 5
+
+action: 1 StartGame
+
+action: 0 PlayTile 1B
+
+action: 1 SelectNewChain -- []
+error: player cannot play right now
+
+action: 0 SelectNewChain -- []
+error: did not get exactly 1 parameter
+
+action: 0 SelectNewChain -- ["hello!"]
+error: parameter is not an integer
+
+action: 0 SelectNewChain -- [true]
+error: parameter is not an integer
+
+action: 0 SelectNewChain -- [-1]
+error: selected chain cannot be formed
+
+action: 0 SelectNewChain -- [7]
+error: selected chain cannot be formed

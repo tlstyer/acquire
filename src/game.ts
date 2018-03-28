@@ -236,6 +236,58 @@ export class Game {
         this.gameBoardTypeCounts[gameBoardType]++;
     }
 
+    fillCells(tile: number, gameBoardType: GameBoardType) {
+        let pending: number[] = [tile];
+        let found: { [key: number]: boolean } = {};
+        found[tile] = true;
+        const excludedTypes: { [key: number]: boolean } = {};
+        excludedTypes[GameBoardType.Nothing] = true;
+        excludedTypes[GameBoardType.CantPlayEver] = true;
+        excludedTypes[gameBoardType] = true;
+
+        this.gameBoard = this.gameBoard.asMutable();
+
+        let t: number | undefined;
+        while ((t = pending.pop()) !== undefined) {
+            this.setGameBoardPosition(t, gameBoardType);
+
+            let possibilities: number[] = [];
+            let x = Math.floor(t / 9);
+            let y = t % 9;
+            if (x > 0) {
+                possibilities.push(t - 9);
+            }
+            if (x < 11) {
+                possibilities.push(t + 9);
+            }
+            if (y > 0) {
+                possibilities.push(t - 1);
+            }
+            if (y < 8) {
+                possibilities.push(t + 1);
+            }
+
+            for (let i = 0; i < possibilities.length; i++) {
+                let possibility = possibilities[i];
+                if (found[possibility] !== true && excludedTypes[this.gameBoard.get(possibility, 0)] !== true) {
+                    pending.push(possibility);
+                    found[possibility] = true;
+                }
+            }
+        }
+
+        this.gameBoard = this.gameBoard.asImmutable();
+    }
+
+    adjustPlayerScoreSheetCell(playerID: number, gameBoardType: GameBoardType, change: number) {
+        let value = this.scoreBoard.get(playerID, defaultScoreBoardRow).get(gameBoardType, 0);
+        this.scoreBoard = this.scoreBoard.setIn([playerID, gameBoardType], value + change);
+    }
+
+    setChainSize(gameBoardType: GameBoardType, size: number) {
+        this.scoreBoardChainSize = this.scoreBoardChainSize.set(gameBoardType, size);
+    }
+
     getCurrentMoveData() {
         if (this.currentMoveData === null) {
             this.currentMoveData = new MoveData(this);

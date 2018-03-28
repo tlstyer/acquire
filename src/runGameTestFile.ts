@@ -165,9 +165,12 @@ function fromParameterStrings(gameAction: GameAction, strings: string[]) {
         case GameAction.PlayTile:
             parameters.push(fromTileString(strings[0]));
             break;
-        // case GameAction.SelectNewChain:
-        // case GameAction.SelectMergerSurvivor:
-        // case GameAction.SelectChainToDisposeOfNext:
+        case GameAction.SelectNewChain:
+        case GameAction.SelectMergerSurvivor:
+        case GameAction.SelectChainToDisposeOfNext:
+            // @ts-ignore
+            parameters.push(GameBoardType[strings[0]]);
+            break;
         // case GameAction.DisposeOfShares:
         // case GameAction.PurchaseShares:
     }
@@ -182,9 +185,11 @@ function toParameterStrings(gameAction: GameAction, parameters: any[]) {
         case GameAction.PlayTile:
             strings.push(toTileString(parameters[0]));
             break;
-        // case GameAction.SelectNewChain:
-        // case GameAction.SelectMergerSurvivor:
-        // case GameAction.SelectChainToDisposeOfNext:
+        case GameAction.SelectNewChain:
+        case GameAction.SelectMergerSurvivor:
+        case GameAction.SelectChainToDisposeOfNext:
+            strings.push(GameBoardType[parameters[0]]);
+            break;
         // case GameAction.DisposeOfShares:
         // case GameAction.PurchaseShares:
     }
