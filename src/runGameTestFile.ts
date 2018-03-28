@@ -33,9 +33,9 @@ export function runGameTestFile(pathToFile: string) {
                     case 'tile bag':
                         tileBag = fromTilesString(value);
 
-                        let unique = new Set(tileBag);
-                        if (unique.size !== tileBag.length) {
-                            outputLines.push('duplicate tiles in tile bag');
+                        const duplicatedTiles = getDuplicatedTiles(tileBag);
+                        if (duplicatedTiles.length > 0) {
+                            outputLines.push(`duplicated tiles in tile bag: ${toTilesString(duplicatedTiles)}`);
                         }
                         break;
                     case 'user IDs':
@@ -134,6 +134,28 @@ export function runGameTestFile(pathToFile: string) {
     }
 
     assert.deepEqual(outputLines, inputLines, 'output lines do not match input lines');
+}
+
+function getDuplicatedTiles(tileBag: number[]) {
+    let tileCounts: { [key: number]: number } = {};
+    for (let i = 0; i < tileBag.length; i++) {
+        let tile = tileBag[i];
+        if (typeof tileCounts[tile] === 'undefined') {
+            tileCounts[tile] = 0;
+        }
+        tileCounts[tile]++;
+    }
+
+    let duplicatedTiles: number[] = [];
+    for (let tile in tileCounts) {
+        if (tileCounts.hasOwnProperty(tile)) {
+            if (tileCounts[tile] > 1) {
+                duplicatedTiles.push(parseInt(tile, 10));
+            }
+        }
+    }
+
+    return duplicatedTiles;
 }
 
 function fromParameterStrings(gameAction: GameAction, strings: string[]) {
