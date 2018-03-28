@@ -47,7 +47,7 @@ export class ActionPlayTile extends ActionBase {
         if (tileRackIndex === -1) {
             throw new UserInputError('player does not have given tile');
         }
-        const tileType = this.game.tileRackTypes.get(this.playerID, defaultTileRackTypes).get(tileRackIndex, 0);
+        const tileType = this.game.tileRackTypes.getIn([this.playerID, tileRackIndex], 0);
 
         let response: ActionBase[] = [];
         switch (tileType) {

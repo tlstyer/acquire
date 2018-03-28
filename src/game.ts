@@ -84,7 +84,7 @@ export class Game {
         let isMe = this.userIDs[playerID] === this.myUserID;
 
         for (let i = 0; i < 6; i++) {
-            if (this.tileRacks.get(playerID, defaultTileRack).get(i, 0) !== null) {
+            if (this.tileRacks.getIn([playerID, i], 0) !== null) {
                 continue;
             }
 
@@ -133,7 +133,7 @@ export class Game {
         }
 
         for (let tileIndex = 0; tileIndex < 6; tileIndex++) {
-            let tile = this.tileRacks.get(playerID, defaultTileRack).get(tileIndex, 0);
+            let tile = this.tileRacks.getIn([playerID, tileIndex], 0);
             let tileType = null;
 
             if (tile !== null) {
@@ -218,7 +218,7 @@ export class Game {
 
                 let tileType = tileTypes[tileIndex];
                 if (tileType === GameBoardType.WillPutLonelyTileDown) {
-                    let tile = this.tileRacks.get(playerID, defaultTileRack).get(tileIndex, 0);
+                    let tile = this.tileRacks.getIn([playerID, tileIndex], 0);
                     if (tile !== null && lonelyTileBorderTiles[tile] === true) {
                         tileTypes[tileIndex] = GameBoardType.HaveNeighboringTileToo;
                     }
@@ -283,7 +283,7 @@ export class Game {
     }
 
     adjustPlayerScoreSheetCell(playerID: number, scoreBoardIndex: ScoreBoardIndex, change: number) {
-        let value = this.scoreBoard.get(playerID, defaultScoreBoardRow).get(scoreBoardIndex, 0);
+        let value = this.scoreBoard.getIn([playerID, scoreBoardIndex], 0);
         this.scoreBoard = this.scoreBoard.setIn([playerID, scoreBoardIndex], value + change);
     }
 
