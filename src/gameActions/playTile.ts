@@ -1,4 +1,5 @@
 import { ActionBase } from './base';
+import { defaultTileRack, defaultTileRackTypes } from '../defaults';
 import { GameAction, GameBoardType, GameHistoryMessage } from '../enums';
 import { UserInputError } from '../error';
 import { Game, GameHistoryMessageData } from '../game';
@@ -14,8 +15,9 @@ export class ActionPlayTile extends ActionBase {
         moveData.addGameHistoryMessage(new GameHistoryMessageData(GameHistoryMessage.TurnBegan, this.playerID, []));
 
         let hasAPlayableTile = false;
+        let tileRackTypes = this.game.tileRackTypes.get(this.playerID, defaultTileRackTypes);
         for (let i = 0; i < 6; i++) {
-            let tileType = this.game.tileRackTypes[this.playerID][i];
+            let tileType = tileRackTypes.get(i, 0);
             if (tileType !== null && tileType !== GameBoardType.CantPlayNow && tileType !== GameBoardType.CantPlayEver) {
                 hasAPlayableTile = true;
                 break;
@@ -40,11 +42,11 @@ export class ActionPlayTile extends ActionBase {
         if (!Number.isInteger(tile)) {
             throw new UserInputError('parameter is not an integer');
         }
-        const tileRackIndex = this.game.tileRacks[this.playerID].indexOf(tile);
+        const tileRackIndex = this.game.tileRacks.get(this.playerID, defaultTileRack).indexOf(tile);
         if (tileRackIndex === -1) {
             throw new UserInputError('player does not have given tile');
         }
-        const tileType = this.game.tileRackTypes[this.playerID][tileRackIndex];
+        const tileType = this.game.tileRackTypes.get(this.playerID, defaultTileRackTypes).get(tileRackIndex, 0);
 
         switch (tileType) {
             case GameBoardType.WillPutLonelyTileDown:

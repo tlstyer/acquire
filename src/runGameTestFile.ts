@@ -1,6 +1,8 @@
 import { assert } from 'chai';
 import * as fs from 'fs';
+import { List } from 'immutable';
 import * as path from 'path';
+import { defaultTileRackTypes } from './defaults';
 import { GameAction, GameBoardType, GameHistoryMessage, ScoreBoardIndex } from './enums';
 import { UserInputError } from './error';
 import { Game, GameHistoryMessageData, MoveData } from './game';
@@ -106,6 +108,9 @@ export function runGameTestFile(pathToFile: string) {
                     } else {
                         outputLines.push(`line with unknown error: ${line}`);
                         outputLines.push(`unknown error: ${error.toString()}`);
+                        if (error instanceof Error) {
+                            outputLines.push(`stack trace: ${error.stack}`);
+                        }
                     }
                 }
             }
@@ -184,7 +189,7 @@ function getMoveDataLines(moveData: MoveData) {
 
     lines.push('tile racks:');
     moveData.tileRacks.forEach((tileRack, playerID) => {
-        let tileTypes = moveData.tileRackTypes[playerID];
+        let tileTypes = moveData.tileRackTypes.get(playerID, defaultTileRackTypes);
         lines.push(`  ${playerID}: ${getTileRackString(tileRack, tileTypes)}`);
     });
 
@@ -224,28 +229,33 @@ const gameBoardTypeToCharacter: { [key: number]: string } = {
     [GameBoardType.WillMergeChains]: 'm',
     [GameBoardType.CantPlayNow]: 'c',
 };
-function getGameBoardLines(gameBoard: GameBoardType[]) {
+function getGameBoardLines(gameBoard: List<GameBoardType>) {
     let lines: string[] = new Array(9);
     let chars: string[] = new Array(12);
     for (let y = 0; y < 9; y++) {
         for (let x = 0; x < 12; x++) {
-            chars[x] = gameBoardTypeToCharacter[gameBoard[x * 9 + y]];
+            chars[x] = gameBoardTypeToCharacter[gameBoard.get(x * 9 + y, 0)];
         }
         lines[y] = chars.join('');
     }
     return lines;
 }
 
-function getScoreBoardLines(scoreBoard: number[][], scoreBoardAvailable: number[], scoreBoardChainSize: number[], scoreBoardPrice: number[]) {
+function getScoreBoardLines(
+    scoreBoard: List<List<number>>,
+    scoreBoardAvailable: List<number>,
+    scoreBoardChainSize: List<number>,
+    scoreBoardPrice: List<number>
+) {
     let lines: string[] = [];
     lines.push(formatScoreBoardLine(['L', 'T', 'A', 'F', 'W', 'C', 'I', 'Cash', 'Net']));
     scoreBoard.forEach(row => {
-        let entries = row.map((val, index) => (index <= ScoreBoardIndex.Imperial && val === 0 ? '' : val.toString()));
+        let entries = row.toArray().map((val, index) => (index <= ScoreBoardIndex.Imperial && val === 0 ? '' : val.toString()));
         lines.push(formatScoreBoardLine(entries));
     });
-    lines.push(formatScoreBoardLine(scoreBoardAvailable.map(val => val.toString())));
-    lines.push(formatScoreBoardLine(scoreBoardChainSize.map(val => (val === 0 ? '-' : val.toString()))));
-    lines.push(formatScoreBoardLine(scoreBoardPrice.map(val => (val === 0 ? '-' : val.toString()))));
+    lines.push(formatScoreBoardLine(scoreBoardAvailable.toArray().map(val => val.toString())));
+    lines.push(formatScoreBoardLine(scoreBoardChainSize.toArray().map(val => (val === 0 ? '-' : val.toString()))));
+    lines.push(formatScoreBoardLine(scoreBoardPrice.toArray().map(val => (val === 0 ? '-' : val.toString()))));
     return lines;
 }
 
@@ -265,10 +275,10 @@ function formatScoreBoardLine(entries: string[]) {
     return lineParts.join(' ');
 }
 
-function getTileRackString(tiles: (number | null)[], tileTypes: (GameBoardType | null)[]) {
+function getTileRackString(tiles: List<number | null>, tileTypes: List<GameBoardType | null>) {
     return tiles
         .map((tile, tileIndex) => {
-            let tileType = tileTypes[tileIndex];
+            let tileType = tileTypes.get(tileIndex, 0);
             if (tile !== null && tileType !== null) {
                 return `${toTileString(tile)}(${gameBoardTypeToCharacter[tileType]})`;
             } else {
