@@ -17,7 +17,6 @@
         "typescript": "^2.8.1"
     },
     "scripts": {
-        "test": "mocha -r ts-node/register src/**/*.spec.ts",
-        "generateGameTestFilesSpec": "ts-node src/generateGameTestFilesSpec.ts"
+        "test": "mocha -r ts-node/register src/**/*.spec.ts"
     }
 }
