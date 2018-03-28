@@ -89,6 +89,9 @@ export class Game {
             }
 
             if (this.nextTileBagIndex >= this.tileBag.length) {
+                if (this.tileBag.length < 108) {
+                    throw new Error('missing tiles from tile bag');
+                }
                 return;
             }
             let tile = this.tileBag[this.nextTileBagIndex++];
