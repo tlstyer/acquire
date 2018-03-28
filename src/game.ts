@@ -98,11 +98,11 @@ export class Game {
         this.endCurrentMove();
     }
 
-    drawTiles(playerIndex: number) {
-        let isMe = this.userIDs[playerIndex] === this.myUserID;
+    drawTiles(playerID: number) {
+        let isMe = this.userIDs[playerID] === this.myUserID;
 
         for (let i = 0; i < 6; i++) {
-            if (this.tileRacks[playerIndex][i] !== null) {
+            if (this.tileRacks[playerID][i] !== null) {
                 continue;
             }
 
@@ -111,21 +111,21 @@ export class Game {
             }
             let tile = this.tileBag[this.nextTileBagIndex++];
 
-            this.tileRacks[playerIndex][i] = tile;
-            this.getCurrentMoveData().addNewPlayerKnownTile(tile, playerIndex);
+            this.tileRacks[playerID][i] = tile;
+            this.getCurrentMoveData().addNewPlayerKnownTile(tile, playerID);
             if (isMe) {
-                this.getCurrentMoveData().addGameHistoryMessage(new GameHistoryMessageData(GameHistoryMessage.DrewTile, playerIndex, [tile]));
+                this.getCurrentMoveData().addGameHistoryMessage(new GameHistoryMessageData(GameHistoryMessage.DrewTile, playerID, [tile]));
             }
 
             if (this.nextTileBagIndex === 108) {
-                this.getCurrentMoveData().addGameHistoryMessage(new GameHistoryMessageData(GameHistoryMessage.DrewLastTile, playerIndex, []));
+                this.getCurrentMoveData().addGameHistoryMessage(new GameHistoryMessageData(GameHistoryMessage.DrewLastTile, playerID, []));
             }
         }
     }
 
-    removeTile(playerIndex: number, tileIndex: number) {
-        this.tileRacks[playerIndex][tileIndex] = null;
-        this.tileRackTypes[playerIndex][tileIndex] = null;
+    removeTile(playerID: number, tileIndex: number) {
+        this.tileRacks[playerID][tileIndex] = null;
+        this.tileRackTypes[playerID][tileIndex] = null;
     }
 
     determineTileRackTypesForEverybody() {
@@ -292,14 +292,14 @@ export class MoveData {
         this.gameActionParameters = parameters;
     }
 
-    addNewPlayerKnownTile(tile: number, playerIndex: number) {
-        this.newPlayerKnownTiles[playerIndex].push(tile);
+    addNewPlayerKnownTile(tile: number, playerID: number) {
+        this.newPlayerKnownTiles[playerID].push(tile);
     }
 
-    addNewGloballyKnownTile(tile: number, playerIndexWhoAlreadyKnows?: number) {
-        for (let playerIndex = 0; playerIndex < this.newPlayerKnownTiles.length; playerIndex++) {
-            if (playerIndex !== playerIndexWhoAlreadyKnows) {
-                this.newPlayerKnownTiles[playerIndex].push(tile);
+    addNewGloballyKnownTile(tile: number, playerIDWhoAlreadyKnows?: number) {
+        for (let playerID = 0; playerID < this.newPlayerKnownTiles.length; playerID++) {
+            if (playerID !== playerIDWhoAlreadyKnows) {
+                this.newPlayerKnownTiles[playerID].push(tile);
             }
         }
 

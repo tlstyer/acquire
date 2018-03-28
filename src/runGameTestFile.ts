@@ -183,15 +183,15 @@ function getMoveDataLines(moveData: MoveData) {
     }
 
     lines.push('tile racks:');
-    moveData.tileRacks.forEach((tileRack, playerIndex) => {
-        let tileTypes = moveData.tileRackTypes[playerIndex];
-        lines.push(`  ${playerIndex}: ${getTileRackString(tileRack, tileTypes)}`);
+    moveData.tileRacks.forEach((tileRack, playerID) => {
+        let tileTypes = moveData.tileRackTypes[playerID];
+        lines.push(`  ${playerID}: ${getTileRackString(tileRack, tileTypes)}`);
     });
 
     lines.push('new known tiles:');
-    moveData.newPlayerKnownTiles.forEach((tiles, playerIndex) => {
+    moveData.newPlayerKnownTiles.forEach((tiles, playerID) => {
         if (tiles.length > 0) {
-            lines.push(`  ${playerIndex}: ${toTilesString(tiles)}`);
+            lines.push(`  ${playerID}: ${toTilesString(tiles)}`);
         }
     });
     if (moveData.newWatcherKnownTiles.length > 0) {

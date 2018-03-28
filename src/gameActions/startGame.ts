@@ -29,8 +29,8 @@ export class ActionStartGame extends ActionBase {
 
         // start game
         moveData.addGameHistoryMessage(new GameHistoryMessageData(GameHistoryMessage.StartedGame, this.playerID, []));
-        for (let playerIndex = 0; playerIndex < this.game.userIDs.length; playerIndex++) {
-            this.game.drawTiles(playerIndex);
+        for (let playerID = 0; playerID < this.game.userIDs.length; playerID++) {
+            this.game.drawTiles(playerID);
         }
 
         this.game.determineTileRackTypesForEverybody();
