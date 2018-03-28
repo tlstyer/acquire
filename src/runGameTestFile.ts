@@ -2,6 +2,7 @@ import { assert } from 'chai';
 import * as fs from 'fs';
 import * as path from 'path';
 import { GameAction, GameBoardType, GameHistoryMessage, ScoreBoardIndex } from './enums';
+import { UserInputError } from './error';
 import { Game, GameHistoryMessageData, MoveData } from './game';
 
 const inputBasePath: string = `${__dirname}/gameTestFiles/`;
@@ -19,8 +20,8 @@ export function runGameTestFile(pathToFile: string) {
     const inputLines = inputFileContents.split('\n');
     let outputLines: string[] = [];
 
-    for (let i = 0; i < inputLines.length; i++) {
-        let line = inputLines[i];
+    for (let lineNumber = 0; lineNumber < inputLines.length; lineNumber++) {
+        let line = inputLines[lineNumber];
         if (game === null) {
             if (line.length > 0) {
                 const [key, value] = line.split(': ');
@@ -62,18 +63,55 @@ export function runGameTestFile(pathToFile: string) {
 
                 const userID: number = game.userIDs[playerID];
                 const moveIndex: number = game.moveDataHistory.length;
-                const parameters: any[] = [];
-                game.doGameAction(userID, moveIndex, parameters);
+
+                const actualGameActionName = game.gameActionStack[game.gameActionStack.length - 1].constructor.name.slice(6);
+                // @ts-ignore actualGameActionName is in GameAction
+                const actualGameAction = GameAction[actualGameActionName];
+
+                let parameters: any[] = [];
+                let usingJSONParameters = false;
+                if (actionParts.length > 2) {
+                    if (actionParts[2] === '--') {
+                        usingJSONParameters = true;
+                        try {
+                            parameters = JSON.parse(actionParts.slice(3).join(' '));
+                        } catch (error) {
+                            assert.isTrue(false, `line ${lineNumber} has invalid JSON`);
+                        }
+                        assert.isArray(parameters, `line ${lineNumber} has parameters that are not an array`);
+                    } else {
+                        parameters = fromParameterStrings(actualGameAction, actionParts.slice(2));
+                    }
+                }
+
+                outputLines.push('');
+
+                try {
+                    game.doGameAction(userID, moveIndex, parameters);
+                    outputLines.push(...getMoveDataLines(game.moveDataHistory[game.moveDataHistory.length - 1]));
+                } catch (error) {
+                    if (error instanceof UserInputError) {
+                        let stringParameters = '';
+                        if (usingJSONParameters) {
+                            stringParameters = ` -- ${JSON.stringify(parameters)}`;
+                        } else {
+                            let arr = toParameterStrings(actualGameAction, parameters);
+                            if (arr.length > 0) {
+                                stringParameters = ` ${arr.join(' ')}`;
+                            }
+                        }
+
+                        outputLines.push(`action: ${playerID} ${actualGameActionName}${stringParameters}`);
+                        outputLines.push(`error: ${error.message}`);
+                    } else {
+                        outputLines.push(`line with unknown error: ${line}`);
+                        outputLines.push(`unknown error: ${error.toString()}`);
+                    }
+                }
             }
         }
     }
 
-    if (game !== null) {
-        game.moveDataHistory.forEach((moveData, index) => {
-            outputLines.push('');
-            outputLines.push(...getMoveDataLines(moveData));
-        });
-    }
     outputLines.push('');
 
     if (outputBasePath !== '') {
@@ -85,12 +123,51 @@ export function runGameTestFile(pathToFile: string) {
     assert.deepEqual(outputLines, inputLines, 'output lines do not match input lines');
 }
 
+function fromParameterStrings(gameAction: GameAction, strings: string[]) {
+    let parameters: any[] = [];
+
+    switch (gameAction) {
+        case GameAction.PlayTile:
+            parameters.push(fromTileString(strings[0]));
+            break;
+        // case GameAction.SelectNewChain:
+        // case GameAction.SelectMergerSurvivor:
+        // case GameAction.SelectChainToDisposeOfNext:
+        // case GameAction.DisposeOfShares:
+        // case GameAction.PurchaseShares:
+    }
+
+    return parameters;
+}
+
+function toParameterStrings(gameAction: GameAction, parameters: any[]) {
+    let strings: any[] = [];
+
+    switch (gameAction) {
+        case GameAction.PlayTile:
+            strings.push(toTileString(parameters[0]));
+            break;
+        // case GameAction.SelectNewChain:
+        // case GameAction.SelectMergerSurvivor:
+        // case GameAction.SelectChainToDisposeOfNext:
+        // case GameAction.DisposeOfShares:
+        // case GameAction.PurchaseShares:
+    }
+
+    return strings;
+}
+
 const gameBoardStringSpacer = '            ';
 
 function getMoveDataLines(moveData: MoveData) {
     let lines: string[] = [];
 
-    lines.push(`action: ${moveData.playerID} ${GameAction[moveData.gameAction]}`);
+    let arr = toParameterStrings(moveData.gameAction, moveData.gameActionParameters);
+    let stringParameters = '';
+    if (arr.length > 0) {
+        stringParameters = ` ${arr.join(' ')}`;
+    }
+    lines.push(`action: ${moveData.playerID} ${GameAction[moveData.gameAction]}${stringParameters}`);
 
     const gameBoardLines = getGameBoardLines(moveData.gameBoard);
     const scoreBoardLines = getScoreBoardLines(moveData.scoreBoard, moveData.scoreBoardAvailable, moveData.scoreBoardChainSize, moveData.scoreBoardPrice);

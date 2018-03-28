@@ -3,6 +3,11 @@
 import { runGameTestFile } from './runGameTestFile';
 
 describe('game test files', () => {
+    describe('play tile', () => {
+        it('input validation', () => runGameTestFile('play tile/input validation'));
+        it('play HaveNeighboringTileToo tile', () => runGameTestFile('play tile/play HaveNeighboringTileToo tile'));
+        it('play WillPutLonelyTileDown tile', () => runGameTestFile('play tile/play WillPutLonelyTileDown tile'));
+    });
     describe('start game', () => {
         it('initial tile rack types are correct', () => runGameTestFile('start game/initial tile rack types are correct'));
         it('it works', () => runGameTestFile('start game/it works'));

@@ -1,4 +1,5 @@
 import { GameAction, GameBoardType, GameHistoryMessage, ScoreBoardIndex } from './enums';
+import { UserInputError } from './error';
 import { ActionBase } from './gameActions/base';
 import { ActionStartGame } from './gameActions/startGame';
 
@@ -18,6 +19,7 @@ export class Game {
     protected currentMoveData: MoveData | null = null;
     moveDataHistory: MoveData[] = [];
     gameActionStack: ActionBase[] = [];
+    numTurnsWithoutPlayedTiles: number = 0;
 
     constructor(public tileBag: number[], public userIDs: number[], starterUserID: number, public myUserID: number | null) {
         // initialize this.tileToTileBagIndex
@@ -76,19 +78,24 @@ export class Game {
         let playerID = this.userIDs.indexOf(userID);
         let currentAction = this.gameActionStack[this.gameActionStack.length - 1];
 
-        if (playerID === currentAction.playerID && moveIndex === this.moveDataHistory.length) {
-            let newActions = currentAction.execute(parameters);
-            this.getCurrentMoveData().setGameAction(playerID, currentAction.gameAction, parameters);
-
-            while (newActions !== null) {
-                this.gameActionStack.pop();
-                this.gameActionStack.push(...newActions.reverse());
-                currentAction = this.gameActionStack[this.gameActionStack.length - 1];
-                newActions = currentAction.prepare();
-            }
-
-            this.endCurrentMove();
+        if (playerID !== currentAction.playerID) {
+            throw new UserInputError('player cannot play right now');
         }
+        if (moveIndex !== this.moveDataHistory.length) {
+            throw new UserInputError('incorrect move index');
+        }
+
+        let newActions = currentAction.execute(parameters);
+        this.getCurrentMoveData().setGameAction(playerID, currentAction.gameAction, parameters);
+
+        while (newActions !== null) {
+            this.gameActionStack.pop();
+            this.gameActionStack.push(...newActions.reverse());
+            currentAction = this.gameActionStack[this.gameActionStack.length - 1];
+            newActions = currentAction.prepare();
+        }
+
+        this.endCurrentMove();
     }
 
     drawTiles(playerIndex: number) {
@@ -114,6 +121,11 @@ export class Game {
                 this.getCurrentMoveData().addGameHistoryMessage(new GameHistoryMessageData(GameHistoryMessage.DrewLastTile, playerIndex, []));
             }
         }
+    }
+
+    removeTile(playerIndex: number, tileIndex: number) {
+        this.tileRacks[playerIndex][tileIndex] = null;
+        this.tileRackTypes[playerIndex][tileIndex] = null;
     }
 
     determineTileRackTypesForEverybody() {
