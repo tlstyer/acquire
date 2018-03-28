@@ -224,12 +224,15 @@ const gameBoardTypeToCharacter: { [key: number]: string } = {
     [GameBoardType.WillMergeChains]: 'm',
     [GameBoardType.CantPlayNow]: 'c',
 };
-function getGameBoardLines(gameBoard: GameBoardType[][]) {
-    let lines: string[] = [];
-    gameBoard.forEach(row => {
-        let chars = row.map(char => gameBoardTypeToCharacter[char]);
-        lines.push(chars.join(''));
-    });
+function getGameBoardLines(gameBoard: GameBoardType[]) {
+    let lines: string[] = new Array(9);
+    let chars: string[] = new Array(12);
+    for (let y = 0; y < 9; y++) {
+        for (let x = 0; x < 12; x++) {
+            chars[x] = gameBoardTypeToCharacter[gameBoard[x * 9 + y]];
+        }
+        lines[y] = chars.join('');
+    }
     return lines;
 }
 

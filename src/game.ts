@@ -10,7 +10,7 @@ export class Game {
     tileToTileBagIndex: Map<number, number> = new Map();
     tileRacks: (number | null)[][];
     tileRackTypes: (GameBoardType | null)[][];
-    gameBoard: GameBoardType[][];
+    gameBoard: GameBoardType[];
     gameBoardTypeCounts: number[];
     scoreBoard: number[][];
     scoreBoardAvailable: number[] = [25, 25, 25, 25, 25, 25, 25];
@@ -48,13 +48,9 @@ export class Game {
         }
 
         // initialize this.gameBoard
-        this.gameBoard = new Array(9);
-        for (let y = 0; y < 9; y++) {
-            let row = new Array(12);
-            for (let x = 0; x < 12; x++) {
-                row[x] = GameBoardType.Nothing;
-            }
-            this.gameBoard[y] = row;
+        this.gameBoard = new Array(108);
+        for (let i = 0; i < 108; i++) {
+            this.gameBoard[i] = GameBoardType.Nothing;
         }
 
         // initialize this.gameBoardTypeCounts
@@ -158,20 +154,24 @@ export class Game {
                 let borderTiles: number[] = [];
                 let borderTypes: GameBoardType[] = [];
                 if (x > 0) {
-                    borderTiles.push(tile - 9);
-                    borderTypes.push(this.gameBoard[y][x - 1]);
+                    let neighbor = tile - 9;
+                    borderTiles.push(neighbor);
+                    borderTypes.push(this.gameBoard[neighbor]);
                 }
                 if (x < 11) {
-                    borderTiles.push(tile + 9);
-                    borderTypes.push(this.gameBoard[y][x + 1]);
+                    let neighbor = tile + 9;
+                    borderTiles.push(neighbor);
+                    borderTypes.push(this.gameBoard[neighbor]);
                 }
                 if (y > 0) {
-                    borderTiles.push(tile - 1);
-                    borderTypes.push(this.gameBoard[y - 1][x]);
+                    let neighbor = tile - 1;
+                    borderTiles.push(neighbor);
+                    borderTypes.push(this.gameBoard[neighbor]);
                 }
                 if (y < 8) {
-                    borderTiles.push(tile + 1);
-                    borderTypes.push(this.gameBoard[y + 1][x]);
+                    let neighbor = tile + 1;
+                    borderTiles.push(neighbor);
+                    borderTypes.push(this.gameBoard[neighbor]);
                 }
 
                 borderTypes = borderTypes.filter((type, index) => {
@@ -241,10 +241,8 @@ export class Game {
     }
 
     setGameBoardPosition(tile: number, gameBoardType: GameBoardType) {
-        let x = Math.floor(tile / 9);
-        let y = tile % 9;
-        this.gameBoardTypeCounts[this.gameBoard[y][x]]--;
-        this.gameBoard[y][x] = gameBoardType;
+        this.gameBoardTypeCounts[this.gameBoard[tile]]--;
+        this.gameBoard[tile] = gameBoardType;
         this.gameBoardTypeCounts[gameBoardType]++;
     }
 
@@ -273,7 +271,7 @@ export class MoveData {
     gameHistoryMessages: GameHistoryMessageData[] = [];
     tileRacks: (number | null)[][];
     tileRackTypes: (GameBoardType | null)[][];
-    gameBoard: GameBoardType[][] = [];
+    gameBoard: GameBoardType[] = [];
     scoreBoard: number[][] = [];
     scoreBoardAvailable: number[] = [];
     scoreBoardChainSize: number[] = [];
@@ -323,11 +321,7 @@ export class MoveData {
         }
         this.tileRackTypes = clonedTileRackTypes;
 
-        let clonedGameBoard = new Array(9);
-        for (let y = 0; y < 9; y++) {
-            clonedGameBoard[y] = [...this.game.gameBoard[y]];
-        }
-        this.gameBoard = clonedGameBoard;
+        this.gameBoard = [...this.game.gameBoard];
 
         let clonedScoreBoard = new Array(this.game.userIDs.length);
         for (let playerID = 0; playerID < clonedScoreBoard.length; playerID++) {
