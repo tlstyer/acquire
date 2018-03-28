@@ -282,13 +282,13 @@ export class Game {
         this.gameBoard = this.gameBoard.asImmutable();
     }
 
-    adjustPlayerScoreSheetCell(playerID: number, gameBoardType: GameBoardType, change: number) {
-        let value = this.scoreBoard.get(playerID, defaultScoreBoardRow).get(gameBoardType, 0);
-        this.scoreBoard = this.scoreBoard.setIn([playerID, gameBoardType], value + change);
+    adjustPlayerScoreSheetCell(playerID: number, scoreBoardIndex: ScoreBoardIndex, change: number) {
+        let value = this.scoreBoard.get(playerID, defaultScoreBoardRow).get(scoreBoardIndex, 0);
+        this.scoreBoard = this.scoreBoard.setIn([playerID, scoreBoardIndex], value + change);
     }
 
-    setChainSize(gameBoardType: GameBoardType, size: number) {
-        this.scoreBoardChainSize = this.scoreBoardChainSize.set(gameBoardType, size);
+    setChainSize(scoreBoardIndex: ScoreBoardIndex, size: number) {
+        this.scoreBoardChainSize = this.scoreBoardChainSize.set(scoreBoardIndex, size);
     }
 
     getCurrentMoveData() {

@@ -1,5 +1,5 @@
 import { ActionBase } from './base';
-import { GameAction, GameBoardType, GameHistoryMessage } from '../enums';
+import { GameAction, GameBoardType, GameHistoryMessage, ScoreBoardIndex } from '../enums';
 import { UserInputError } from '../error';
 import { Game, GameHistoryMessageData } from '../game';
 
@@ -38,10 +38,13 @@ export class ActionSelectNewChain extends ActionBase {
     }
 
     protected createNewChain(chain: GameBoardType) {
+        // @ts-ignore
+        let scoreBoardIndex: ScoreBoardIndex = chain;
+
         this.game.fillCells(this.tile, chain);
-        this.game.setChainSize(chain, this.game.gameBoardTypeCounts[chain]);
-        if (this.game.scoreBoardAvailable.get(chain, 0) > 0) {
-            this.game.adjustPlayerScoreSheetCell(this.playerID, chain, 1);
+        this.game.setChainSize(scoreBoardIndex, this.game.gameBoardTypeCounts[chain]);
+        if (this.game.scoreBoardAvailable.get(scoreBoardIndex, 0) > 0) {
+            this.game.adjustPlayerScoreSheetCell(this.playerID, scoreBoardIndex, 1);
         }
 
         this.game.getCurrentMoveData().addGameHistoryMessage(new GameHistoryMessageData(GameHistoryMessage.FormedChain, this.playerID, [chain]));
