@@ -7,7 +7,7 @@ const initialScoreBoardRow = [0, 0, 0, 0, 0, 0, 0, 60, 60];
 
 export class Game {
     nextTileBagIndex: number = 0;
-    tileToTileBagIndex: Map<number, number> = new Map();
+    tileToTileBagIndex: { [key: number]: number } = {};
     tileRacks: (number | null)[][];
     tileRackTypes: (GameBoardType | null)[][];
     gameBoard: GameBoardType[];
@@ -24,7 +24,7 @@ export class Game {
     constructor(public tileBag: number[], public userIDs: number[], starterUserID: number, public myUserID: number | null) {
         // initialize this.tileToTileBagIndex
         for (let tileBagIndex = 0; tileBagIndex < tileBag.length; tileBagIndex++) {
-            this.tileToTileBagIndex.set(tileBag[tileBagIndex], tileBagIndex);
+            this.tileToTileBagIndex[tileBag[tileBagIndex]] = tileBagIndex;
         }
 
         // initialize this.tileRacks
