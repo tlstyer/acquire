@@ -223,9 +223,11 @@ export class Game {
             }
         }
 
+        let tileRackTypes = this.tileRackTypes.asMutable();
         for (let tileIndex = 0; tileIndex < 6; tileIndex++) {
-            this.tileRackTypes = this.tileRackTypes.setIn([playerID, tileIndex], tileTypes[tileIndex]);
+            tileRackTypes.setIn([playerID, tileIndex], tileTypes[tileIndex]);
         }
+        this.tileRackTypes = tileRackTypes.asImmutable();
     }
 
     setGameBoardPosition(tile: number, gameBoardType: GameBoardType) {
