@@ -17,3 +17,65 @@ function shuffle(a: number[]) {
         a[j] = x;
     }
 }
+
+export function calculateBonuses(sharesOwned: number[], sharePrice: number) {
+    const bonuses: PlayerIDAndAmount[] = [];
+
+    const bonusPrice = sharePrice * 10;
+
+    const playerIDAndAmountArray: PlayerIDAndAmount[] = [];
+    for (let playerID = 0; playerID < sharesOwned.length; playerID++) {
+        if (sharesOwned[playerID] > 0) {
+            playerIDAndAmountArray.push(new PlayerIDAndAmount(playerID, sharesOwned[playerID]));
+        }
+    }
+    playerIDAndAmountArray.sort((a, b) => {
+        if (a.amount !== b.amount) {
+            return b.amount - a.amount;
+        }
+        return a.playerID - b.playerID;
+    });
+
+    if (playerIDAndAmountArray.length === 0) {
+        // if nobody has stock in this chain, then don't pay anybody (not going to happen in a normal game)
+    } else if (playerIDAndAmountArray.length === 1) {
+        // if only one player holds stock in defunct chain, he receives both bonuses
+        bonuses.push(new PlayerIDAndAmount(playerIDAndAmountArray[0].playerID, bonusPrice + bonusPrice / 2));
+    } else if (playerIDAndAmountArray[0].amount === playerIDAndAmountArray[1].amount) {
+        // in case of tie for largest shareholder, first and second bonuses are combined and divided equally between tying shareholders
+        let numTying = 2;
+        while (numTying < playerIDAndAmountArray.length && playerIDAndAmountArray[numTying].amount === playerIDAndAmountArray[0].amount) {
+            numTying++;
+        }
+        const bonus = Math.ceil((bonusPrice + bonusPrice / 2) / numTying);
+        for (let i = 0; i < numTying; i++) {
+            bonuses.push(new PlayerIDAndAmount(playerIDAndAmountArray[i].playerID, bonus));
+        }
+    } else {
+        // pay largest shareholder
+        bonuses.push(new PlayerIDAndAmount(playerIDAndAmountArray[0].playerID, bonusPrice));
+
+        // see if there's a tie for 2nd place
+        let numTying = 1;
+        while (numTying < playerIDAndAmountArray.length - 1 && playerIDAndAmountArray[numTying + 1].amount === playerIDAndAmountArray[1].amount) {
+            numTying++;
+        }
+
+        if (numTying === 1) {
+            // stock market pays compensatory bonuses to two largest shareholders in defunct chain
+            bonuses.push(new PlayerIDAndAmount(playerIDAndAmountArray[1].playerID, bonusPrice / 2));
+        } else {
+            // in case of tie for second largest shareholder, second bonus is divided equally between tying players
+            const bonus = Math.ceil(bonusPrice / 2 / numTying);
+            for (let i = 1; i <= numTying; i++) {
+                bonuses.push(new PlayerIDAndAmount(playerIDAndAmountArray[i].playerID, bonus));
+            }
+        }
+    }
+
+    return bonuses;
+}
+
+export class PlayerIDAndAmount {
+    constructor(public playerID: number, public amount: number) {}
+}
