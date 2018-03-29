@@ -304,6 +304,23 @@ export class Game {
 
     setChainSize(scoreBoardIndex: ScoreBoardIndex, size: number) {
         this.scoreBoardChainSize = this.scoreBoardChainSize.set(scoreBoardIndex, size);
+
+        let price = 0;
+        if (size > 0) {
+            if (size < 11) {
+                price = Math.min(size, 6);
+            } else {
+                price = Math.min(Math.floor((size - 1) / 10) + 6, 10);
+            }
+            if (scoreBoardIndex >= ScoreBoardIndex.American) {
+                price++;
+            }
+            if (scoreBoardIndex >= ScoreBoardIndex.Continental) {
+                price++;
+            }
+        }
+
+        this.scoreBoardPrice = this.scoreBoardPrice.set(scoreBoardIndex, price);
     }
 
     getCurrentMoveData() {
