@@ -44,7 +44,7 @@ export class ActionSelectNewChain extends ActionBase {
         this.game.fillCells(this.tile, chain);
         this.game.setChainSize(scoreBoardIndex, this.game.gameBoardTypeCounts[chain]);
         if (this.game.scoreBoardAvailable.get(scoreBoardIndex, 0) > 0) {
-            this.game.adjustPlayerScoreSheetCell(this.playerID, scoreBoardIndex, 1);
+            this.game.adjustPlayerScoreBoardRow(this.playerID, [[scoreBoardIndex, 1]]);
         }
 
         this.game.getCurrentMoveData().addGameHistoryMessage(new GameHistoryMessageData(GameHistoryMessage.FormedChain, this.playerID, [chain]));

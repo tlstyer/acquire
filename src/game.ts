@@ -282,9 +282,24 @@ export class Game {
         this.gameBoard = this.gameBoard.asImmutable();
     }
 
-    adjustPlayerScoreSheetCell(playerID: number, scoreBoardIndex: ScoreBoardIndex, change: number) {
-        let value = this.scoreBoard.getIn([playerID, scoreBoardIndex], 0);
-        this.scoreBoard = this.scoreBoard.setIn([playerID, scoreBoardIndex], value + change);
+    adjustPlayerScoreBoardRow(playerID: number, adjustments: [ScoreBoardIndex, number][]) {
+        let scoreBoard = this.scoreBoard.asMutable();
+        let scoreBoardAvailable = this.scoreBoardAvailable.asMutable();
+
+        for (let i = 0; i < adjustments.length; i++) {
+            const [scoreBoardIndex, change] = adjustments[i];
+
+            let value = scoreBoard.getIn([playerID, scoreBoardIndex], 0);
+            scoreBoard = scoreBoard.setIn([playerID, scoreBoardIndex], value + change);
+
+            if (scoreBoardIndex <= ScoreBoardIndex.Imperial) {
+                let value = scoreBoardAvailable.get(scoreBoardIndex, 0);
+                scoreBoardAvailable = scoreBoardAvailable.set(scoreBoardIndex, value - change);
+            }
+        }
+
+        this.scoreBoard = scoreBoard.asImmutable();
+        this.scoreBoardAvailable = scoreBoardAvailable.asImmutable();
     }
 
     setChainSize(scoreBoardIndex: ScoreBoardIndex, size: number) {
