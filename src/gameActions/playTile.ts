@@ -50,7 +50,10 @@ export class ActionPlayTile extends ActionBase {
         const tileType = this.game.tileRackTypes.getIn([this.playerID, tileRackIndex], 0);
 
         let response: ActionBase[] = [];
-        if (tileType === GameBoardType.WillPutLonelyTileDown || tileType === GameBoardType.HaveNeighboringTileToo) {
+        if (tileType <= GameBoardType.Imperial) {
+            this.game.fillCells(tile, tileType);
+            this.game.setChainSize(tileType, this.game.gameBoardTypeCounts[tileType]);
+        } else if (tileType === GameBoardType.WillPutLonelyTileDown || tileType === GameBoardType.HaveNeighboringTileToo) {
             this.game.getCurrentMoveData().addNewGloballyKnownTile(tile, this.playerID);
             this.game.setGameBoardPosition(tile, GameBoardType.NothingYet);
         } else if (tileType === GameBoardType.WillFormNewChain) {

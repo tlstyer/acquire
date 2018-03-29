@@ -1,0 +1,47 @@
+tile bag: 3A, 2B, 7E, 1B, 12H, 7B, 11I, 12C, 2A, 8H, 10H, 2G, 1D, 11D, 7G
+user IDs: 5, 7
+starter user ID: 7
+my user ID: 5
+
+action: 1 StartGame
+
+action: 0 PlayTile 1B
+
+action: 0 SelectNewChain Luxor
+
+action: 0 PurchaseShares Luxor Luxor Luxor 0
+··O·········   L  T  A  F  W  C  I Cash  Net
+LL··········   4                     54   60
+············                         60   60
+············  21 25 25 25 25 25 25
+············   2  -  -  -  -  -  -
+············   2  -  -  -  -  -  -
+············
+············
+············
+tile racks:
+  0: 7E(l) 7G(l) 12H(l) 7B(l) 11I(l) 12C(l)
+  1: 2A(L) 8H(l) 10H(l) 2G(l) 1D(l) 11D(l)
+new known tiles:
+  0: 7G
+history messages:
+  0 PurchasedShares 3 Luxor
+  0 DrewTile 7G
+  1 TurnBegan
+
+action: 1 PlayTile 2A
+·LL·········   L  T  A  F  W  C  I Cash  Net
+LL··········   4                     54   60
+············                         60   60
+············  21 25 25 25 25 25 25
+············   4  -  -  -  -  -  -
+············   4  -  -  -  -  -  -
+············
+············
+············
+tile racks:
+  0: 7E(l) 7G(l) 12H(l) 7B(l) 11I(l) 12C(l)
+  1: none 8H(l) 10H(l) 2G(l) 1D(l) 11D(l)
+new known tiles:
+history messages:
+  1 PlayedTile 2A
