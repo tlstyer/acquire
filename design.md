@@ -38,7 +38,7 @@ Array of:
 | ReceivedBonus                | yes           | typeID, bonus                   |
 | DisposedOfShares             | yes           | typeID, tradeAmount, sellAmount |
 | CouldNotAffordAnyShares      | yes           |                                 |
-| PurchasedShares              | yes           | typeID[]                        |
+| PurchasedShares              | yes           | [typeID, count][]               |
 | DrewLastTile                 | yes           |                                 |
 | ReplacedDeadTile             | yes           | tile                            |
 | EndedGame                    | yes           |                                 |

@@ -172,7 +172,11 @@ function fromParameterStrings(gameAction: GameAction, strings: string[]) {
             parameters.push(GameBoardType[strings[0]]);
             break;
         // case GameAction.DisposeOfShares:
-        // case GameAction.PurchaseShares:
+        case GameAction.PurchaseShares:
+            // @ts-ignore
+            parameters.push(strings.slice(0, strings.length - 1).map(s => GameBoardType[s]));
+            parameters.push(parseInt(strings[strings.length - 1]));
+            break;
     }
 
     return parameters;
@@ -191,7 +195,10 @@ function toParameterStrings(gameAction: GameAction, parameters: any[]) {
             strings.push(GameBoardType[parameters[0]]);
             break;
         // case GameAction.DisposeOfShares:
-        // case GameAction.PurchaseShares:
+        case GameAction.PurchaseShares:
+            strings.push(...parameters[0].map((p: number) => GameBoardType[p]));
+            strings.push(parameters[1].toString());
+            break;
     }
 
     return strings;
@@ -358,8 +365,15 @@ const ghmshPlayerIDTile = (ghmd: GameHistoryMessageData) => {
 const ghmshPlayerIDType = (ghmd: GameHistoryMessageData) => {
     return [ghmd.playerID, GameHistoryMessage[ghmd.gameHistoryMessage], GameBoardType[ghmd.parameters[0]], ...ghmd.parameters.slice(1)].join(' ');
 };
-const ghmshPlayerIDTypes = (ghmd: GameHistoryMessageData) => {
-    return [ghmd.playerID, GameHistoryMessage[ghmd.gameHistoryMessage], ghmd.parameters[0].map((x: GameBoardType) => GameBoardType[x])].join(' ');
+const ghmshMergedChains = (ghmd: GameHistoryMessageData) => {
+    return [ghmd.playerID, GameHistoryMessage[ghmd.gameHistoryMessage], ghmd.parameters[0].map((x: GameBoardType) => GameBoardType[x]).join(', ')].join(' ');
+};
+const ghmshPurchasedShares = (ghmd: GameHistoryMessageData) => {
+    return [
+        ghmd.playerID,
+        GameHistoryMessage[ghmd.gameHistoryMessage],
+        ghmd.parameters.map(([type, count]) => `${count} ${GameBoardType[type]}`).join(', '),
+    ].join(' ');
 };
 
 const gameHistoryMessageStringHandlers: { [key: number]: Function } = {
@@ -370,13 +384,13 @@ const gameHistoryMessageStringHandlers: { [key: number]: Function } = {
     [GameHistoryMessage.HasNoPlayableTile]: ghmshPlayerID,
     [GameHistoryMessage.PlayedTile]: ghmshPlayerIDTile,
     [GameHistoryMessage.FormedChain]: ghmshPlayerIDType,
-    [GameHistoryMessage.MergedChains]: ghmshPlayerIDTypes,
+    [GameHistoryMessage.MergedChains]: ghmshMergedChains,
     [GameHistoryMessage.SelectedMergerSurvivor]: ghmshPlayerIDType,
     [GameHistoryMessage.SelectedChainToDisposeOfNext]: ghmshPlayerIDType,
     [GameHistoryMessage.ReceivedBonus]: ghmshPlayerIDType,
     [GameHistoryMessage.DisposedOfShares]: ghmshPlayerIDType,
     [GameHistoryMessage.CouldNotAffordAnyShares]: ghmshPlayerID,
-    [GameHistoryMessage.PurchasedShares]: ghmshPlayerIDTypes,
+    [GameHistoryMessage.PurchasedShares]: ghmshPurchasedShares,
     [GameHistoryMessage.DrewLastTile]: ghmshPlayerID,
     [GameHistoryMessage.ReplacedDeadTile]: ghmshPlayerIDTile,
     [GameHistoryMessage.EndedGame]: ghmshPlayerID,
