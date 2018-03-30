@@ -32,8 +32,6 @@ export class ActionSelectMergerSurvivor extends ActionBase {
         }
 
         this.chainsBySize = chainsBySize;
-
-        this.parameters.push(this.chainsBySize[0], tile);
     }
 
     prepare() {

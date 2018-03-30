@@ -5,8 +5,6 @@ import { Game } from '../game';
 export class ActionSelectChainToDisposeOfNext extends ActionBase {
     constructor(game: Game, playerID: number, public defunctChains: GameBoardType[], public controllingChain: GameBoardType) {
         super(game, playerID, GameAction.SelectChainToDisposeOfNext);
-
-        this.parameters.push(defunctChains);
     }
 
     prepare() {

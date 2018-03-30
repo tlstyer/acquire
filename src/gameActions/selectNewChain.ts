@@ -6,8 +6,6 @@ import { Game, GameHistoryMessageData } from '../game';
 export class ActionSelectNewChain extends ActionBase {
     constructor(game: Game, playerID: number, public availableChains: GameBoardType[], public tile: number) {
         super(game, playerID, GameAction.SelectNewChain);
-
-        this.parameters.push(availableChains, tile);
     }
 
     prepare() {
