@@ -13,7 +13,7 @@ action: 0 PlayTile 2E
 
 action: 1 PlayTile 2D
 
-action: 1 SelectNewChain Luxor
+action: 1 SelectNewChain L
 ············   L  T  A  F  W  C  I Cash  Net
 ·L··········                         60   60
 ·L··········   1                     60   60
@@ -30,7 +30,7 @@ new known tiles:
 history messages:
   1 FormedChain Luxor
 
-action: 1 PurchaseShares Luxor Luxor 1
+action: 1 PurchaseShares L,L 1
 ············   L  T  A  F  W  C  I Cash  Net
 ·L··········                         60   60
 ·L··········   3                     48   60

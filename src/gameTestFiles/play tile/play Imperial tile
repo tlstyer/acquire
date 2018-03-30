@@ -7,9 +7,9 @@ action: 1 StartGame
 
 action: 0 PlayTile 1B
 
-action: 0 SelectNewChain Imperial
+action: 0 SelectNewChain I
 
-action: 0 PurchaseShares Imperial Imperial Imperial 0
+action: 0 PurchaseShares I,I,I 0
 ··O·········   L  T  A  F  W  C  I Cash  Net
 II··········                     4   48   60
 ············                         60   60

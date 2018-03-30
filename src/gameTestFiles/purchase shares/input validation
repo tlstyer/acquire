@@ -13,7 +13,7 @@ action: 0 PlayTile 2E
 
 action: 1 PlayTile 2D
 
-action: 1 SelectNewChain Luxor
+action: 1 SelectNewChain L
 ············   L  T  A  F  W  C  I Cash  Net
 ·L··········                         60   60
 ·L··········   1                     60   60
@@ -69,8 +69,8 @@ error: end game parameter is not 0 or 1
 action: 1 PurchaseShares -- [[],2]
 error: end game parameter is not 0 or 1
 
-action: 1 PurchaseShares Tower 0
+action: 1 PurchaseShares T 0
 error: a requested chain does not have enough shares available
 
-action: 1 PurchaseShares Luxor Tower Imperial 1
+action: 1 PurchaseShares L,T,I 1
 error: a requested chain does not have enough shares available

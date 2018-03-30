@@ -7,19 +7,19 @@ action: 1 StartGame
 
 action: 0 PlayTile 4C
 
-action: 0 SelectNewChain American
+action: 0 SelectNewChain A
 
-action: 0 PurchaseShares American American American 0
+action: 0 PurchaseShares A,A,A 0
 
 action: 1 PlayTile 2C
 
-action: 1 SelectNewChain Continental
+action: 1 SelectNewChain C
 
-action: 1 PurchaseShares American Continental Continental 0
+action: 1 PurchaseShares A,C,C 0
 
 action: 2 PlayTile 1B
 
-action: 2 PurchaseShares American American American 0
+action: 2 PurchaseShares A,A,A 0
 ············   L  T  A  F  W  C  I Cash  Net
 CC·A········         4               51   60
 ·C·A········         1        3      49   60

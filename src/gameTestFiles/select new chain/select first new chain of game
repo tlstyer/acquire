@@ -114,7 +114,7 @@ new known tiles:
 history messages:
   1 PlayedTile 2D
 
-action: 1 SelectNewChain Luxor
+action: 1 SelectNewChain L
 ············   L  T  A  F  W  C  I Cash  Net
 ·L··········                         60   60
 ·L··········   1                     60   60

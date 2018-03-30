@@ -7,9 +7,9 @@ action: 1 StartGame
 
 action: 0 PlayTile 1B
 
-action: 0 SelectNewChain Luxor
+action: 0 SelectNewChain L
 
-action: 0 PurchaseShares Luxor Luxor Luxor 0
+action: 0 PurchaseShares L,L,L 0
 ··O·········   L  T  A  F  W  C  I Cash  Net
 LL··········   4                     54   60
 ············                         60   60

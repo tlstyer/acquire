@@ -158,6 +158,16 @@ function getDuplicatedTiles(tileBag: number[]) {
     return duplicatedTiles;
 }
 
+const abbreviationToGameBoardType: { [key: string]: GameBoardType } = {
+    L: GameBoardType.Luxor,
+    T: GameBoardType.Tower,
+    A: GameBoardType.American,
+    F: GameBoardType.Festival,
+    W: GameBoardType.Worldwide,
+    C: GameBoardType.Continental,
+    I: GameBoardType.Imperial,
+};
+
 function fromParameterStrings(gameAction: GameAction, strings: string[]) {
     let parameters: any[] = [];
 
@@ -169,13 +179,13 @@ function fromParameterStrings(gameAction: GameAction, strings: string[]) {
         case GameAction.SelectMergerSurvivor:
         case GameAction.SelectChainToDisposeOfNext:
             // @ts-ignore
-            parameters.push(GameBoardType[strings[0]]);
+            parameters.push(abbreviationToGameBoardType[strings[0]]);
             break;
         // case GameAction.DisposeOfShares:
         case GameAction.PurchaseShares:
             // @ts-ignore
-            parameters.push(strings.slice(0, strings.length - 1).map(s => GameBoardType[s]));
-            parameters.push(parseInt(strings[strings.length - 1]));
+            parameters.push(strings[0].split(',').map(s => abbreviationToGameBoardType[s]));
+            parameters.push(parseInt(strings[1]));
             break;
     }
 
@@ -192,11 +202,11 @@ function toParameterStrings(gameAction: GameAction, parameters: any[]) {
         case GameAction.SelectNewChain:
         case GameAction.SelectMergerSurvivor:
         case GameAction.SelectChainToDisposeOfNext:
-            strings.push(GameBoardType[parameters[0]]);
+            strings.push(gameBoardTypeToCharacter[parameters[0]]);
             break;
         // case GameAction.DisposeOfShares:
         case GameAction.PurchaseShares:
-            strings.push(...parameters[0].map((p: number) => GameBoardType[p]));
+            strings.push(parameters[0].map((p: number) => gameBoardTypeToCharacter[p]).join(','));
             strings.push(parameters[1].toString());
             break;
     }
