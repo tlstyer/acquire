@@ -269,6 +269,14 @@ export class Game {
         this.gameBoard = this.gameBoard.asImmutable();
     }
 
+    getScoreBoardColumnArray(scoreBoardIndex: GameBoardType | ScoreBoardIndex) {
+        const column: number[] = new Array(this.userIDs.length);
+        for (let playerID = 0; playerID < this.userIDs.length; playerID++) {
+            column[playerID] = this.scoreBoard.getIn([playerID, scoreBoardIndex], 0);
+        }
+        return column;
+    }
+
     adjustPlayerScoreBoardRow(playerID: number, adjustments: [ScoreBoardIndex, number][]) {
         let scoreBoard = this.scoreBoard.asMutable();
         let scoreBoardAvailable = this.scoreBoardAvailable.asMutable();
@@ -287,6 +295,20 @@ export class Game {
 
         this.scoreBoard = scoreBoard.asImmutable();
         this.scoreBoardAvailable = scoreBoardAvailable.asImmutable();
+    }
+
+    adjustScoreBoardColumn(scoreBoardIndex: ScoreBoardIndex, adjustments: number[]) {
+        let scoreBoard = this.scoreBoard.asMutable();
+
+        for (let playerID = 0; playerID < adjustments.length; playerID++) {
+            let change = adjustments[playerID];
+            if (change !== 0) {
+                let value = scoreBoard.getIn([playerID, scoreBoardIndex], 0);
+                scoreBoard = scoreBoard.setIn([playerID, scoreBoardIndex], value + change);
+            }
+        }
+
+        this.scoreBoard = scoreBoard.asImmutable();
     }
 
     setChainSize(scoreBoardIndex: ScoreBoardIndex, size: number) {

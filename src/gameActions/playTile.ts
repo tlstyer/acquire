@@ -1,9 +1,11 @@
 import { ActionBase } from './base';
+import { ActionSelectMergerSurvivor } from './selectMergerSurvivor';
+import { ActionSelectNewChain } from './selectNewChain';
 import { defaultTileRack, defaultTileRackTypes } from '../defaults';
 import { GameAction, GameBoardType, GameHistoryMessage } from '../enums';
 import { UserInputError } from '../error';
 import { Game, GameHistoryMessageData } from '../game';
-import { ActionSelectNewChain } from './selectNewChain';
+import { getNeighboringTiles } from '../helpers';
 
 export class ActionPlayTile extends ActionBase {
     constructor(game: Game, playerID: number) {
@@ -65,6 +67,8 @@ export class ActionPlayTile extends ActionBase {
                 }
             }
             response = [new ActionSelectNewChain(this.game, this.playerID, availableChains, tile)];
+        } else if (tileType === GameBoardType.WillMergeChains) {
+            response = [new ActionSelectMergerSurvivor(this.game, this.playerID, this.getMergedChains(tile), tile)];
         } else {
             throw new UserInputError('unhandled tile type');
         }
@@ -74,5 +78,21 @@ export class ActionPlayTile extends ActionBase {
         this.game.getCurrentMoveData().addGameHistoryMessage(new GameHistoryMessageData(GameHistoryMessage.PlayedTile, this.playerID, [tile]));
 
         return response;
+    }
+
+    protected getMergedChains(tile: number) {
+        const neighboringTiles = getNeighboringTiles(tile);
+
+        let chains: GameBoardType[] = [];
+        for (let i = 0; i < neighboringTiles.length; i++) {
+            let type = this.game.gameBoard.get(neighboringTiles[i], 0);
+            if (type <= GameBoardType.Imperial && chains.indexOf(type) === -1) {
+                chains.push(type);
+            }
+        }
+
+        chains.sort((a, b) => (a < b ? -1 : 1));
+
+        return chains;
     }
 }
