@@ -18,26 +18,36 @@ function shuffle(a: number[]) {
     }
 }
 
+let neighboringTiles: number[][];
+function initializeNeighboringTiles() {
+    neighboringTiles = new Array(108);
+
+    for (let tile = 0; tile < 108; tile++) {
+        let possibilities: number[] = [];
+
+        let x = tile % 9;
+        let y = Math.floor(tile / 9);
+
+        if (y > 0) {
+            possibilities.push(tile - 9);
+        }
+        if (x > 0) {
+            possibilities.push(tile - 1);
+        }
+        if (x < 8) {
+            possibilities.push(tile + 1);
+        }
+        if (y < 11) {
+            possibilities.push(tile + 9);
+        }
+
+        neighboringTiles[tile] = possibilities;
+    }
+}
+initializeNeighboringTiles();
+
 export function getNeighboringTiles(tile: number) {
-    let possibilities: number[] = [];
-
-    let x = tile % 9;
-    let y = Math.floor(tile / 9);
-
-    if (y > 0) {
-        possibilities.push(tile - 9);
-    }
-    if (x > 0) {
-        possibilities.push(tile - 1);
-    }
-    if (x < 8) {
-        possibilities.push(tile + 1);
-    }
-    if (y < 11) {
-        possibilities.push(tile + 9);
-    }
-
-    return possibilities;
+    return neighboringTiles[tile];
 }
 
 export function calculateBonuses(sharesOwned: number[], sharePrice: number) {
