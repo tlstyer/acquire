@@ -14,6 +14,7 @@ import { GameAction, GameBoardType, GameHistoryMessage, ScoreBoardIndex } from '
 import { UserInputError } from './error';
 import { ActionBase } from './gameActions/base';
 import { ActionStartGame } from './gameActions/startGame';
+import { getNeighboringTiles } from './helpers';
 
 export class Game {
     nextTileBagIndex: number = 0;
@@ -254,21 +255,7 @@ export class Game {
         while ((t = pending.pop()) !== undefined) {
             this.setGameBoardPosition(t, gameBoardType);
 
-            let possibilities: number[] = [];
-            let x = Math.floor(t / 9);
-            let y = t % 9;
-            if (x > 0) {
-                possibilities.push(t - 9);
-            }
-            if (x < 11) {
-                possibilities.push(t + 9);
-            }
-            if (y > 0) {
-                possibilities.push(t - 1);
-            }
-            if (y < 8) {
-                possibilities.push(t + 1);
-            }
+            const possibilities = getNeighboringTiles(t);
 
             for (let i = 0; i < possibilities.length; i++) {
                 let possibility = possibilities[i];

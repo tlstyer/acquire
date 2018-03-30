@@ -18,6 +18,28 @@ function shuffle(a: number[]) {
     }
 }
 
+export function getNeighboringTiles(tile: number) {
+    let possibilities: number[] = [];
+
+    let x = tile % 9;
+    let y = Math.floor(tile / 9);
+
+    if (y > 0) {
+        possibilities.push(tile - 9);
+    }
+    if (x > 0) {
+        possibilities.push(tile - 1);
+    }
+    if (x < 8) {
+        possibilities.push(tile + 1);
+    }
+    if (y < 11) {
+        possibilities.push(tile + 9);
+    }
+
+    return possibilities;
+}
+
 export function calculateBonuses(sharesOwned: number[], sharePrice: number) {
     const bonuses: PlayerIDAndAmount[] = [];
 

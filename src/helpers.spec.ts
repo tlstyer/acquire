@@ -1,5 +1,5 @@
 import { assert } from 'chai';
-import { getNewTileBag, calculateBonuses, PlayerIDAndAmount } from './helpers';
+import { getNewTileBag, calculateBonuses, PlayerIDAndAmount, getNeighboringTiles } from './helpers';
 
 describe('helpers', () => {
     describe('getNewTileBag', () => {
@@ -14,6 +14,25 @@ describe('helpers', () => {
 
             tileBag.sort((a, b) => (a < b ? -1 : 1));
             assert.deepEqual(tileBag, tileBagInOrder);
+        });
+    });
+
+    describe('getNeighboringTiles', () => {
+        it('returns neighboring tiles', () => {
+            // corner tiles
+            assert.deepEqual(getNeighboringTiles(0), [1, 9]);
+            assert.deepEqual(getNeighboringTiles(8), [7, 17]);
+            assert.deepEqual(getNeighboringTiles(99), [90, 100]);
+            assert.deepEqual(getNeighboringTiles(107), [98, 106]);
+
+            // some side tiles
+            assert.deepEqual(getNeighboringTiles(4), [3, 5, 13]);
+            assert.deepEqual(getNeighboringTiles(54), [45, 55, 63]);
+            assert.deepEqual(getNeighboringTiles(62), [53, 61, 71]);
+            assert.deepEqual(getNeighboringTiles(103), [94, 102, 104]);
+
+            // a middle tile
+            assert.deepEqual(getNeighboringTiles(58), [49, 57, 59, 67]);
         });
     });
 
