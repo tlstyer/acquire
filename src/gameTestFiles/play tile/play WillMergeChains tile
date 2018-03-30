@@ -36,7 +36,7 @@ tile racks:
 new known tiles:
   2: 12F
 history messages:
-  2 PurchasedShares 3 American
+  2 PurchasedShares Ax3
   0 TurnBegan
 
 action: 0 PlayTile 3B
@@ -56,6 +56,6 @@ tile racks:
 new known tiles:
 history messages:
   0 PlayedTile 3B
-  0 MergedChains American, Continental
-  0 ReceivedBonus American 30
-  2 ReceivedBonus American 15
+  0 MergedChains A,C
+  0 ReceivedBonus A 30
+  2 ReceivedBonus A 15

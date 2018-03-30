@@ -373,16 +373,16 @@ const ghmshPlayerIDTile = (ghmd: GameHistoryMessageData) => {
     return [ghmd.playerID, GameHistoryMessage[ghmd.gameHistoryMessage], toTileString(ghmd.parameters[0])].join(' ');
 };
 const ghmshPlayerIDType = (ghmd: GameHistoryMessageData) => {
-    return [ghmd.playerID, GameHistoryMessage[ghmd.gameHistoryMessage], GameBoardType[ghmd.parameters[0]], ...ghmd.parameters.slice(1)].join(' ');
+    return [ghmd.playerID, GameHistoryMessage[ghmd.gameHistoryMessage], GameBoardType[ghmd.parameters[0]][0], ...ghmd.parameters.slice(1)].join(' ');
 };
 const ghmshMergedChains = (ghmd: GameHistoryMessageData) => {
-    return [ghmd.playerID, GameHistoryMessage[ghmd.gameHistoryMessage], ghmd.parameters[0].map((x: GameBoardType) => GameBoardType[x]).join(', ')].join(' ');
+    return [ghmd.playerID, GameHistoryMessage[ghmd.gameHistoryMessage], ghmd.parameters[0].map((x: GameBoardType) => GameBoardType[x][0]).join(',')].join(' ');
 };
 const ghmshPurchasedShares = (ghmd: GameHistoryMessageData) => {
     return [
         ghmd.playerID,
         GameHistoryMessage[ghmd.gameHistoryMessage],
-        ghmd.parameters.map(([type, count]) => `${count} ${GameBoardType[type]}`).join(', '),
+        ghmd.parameters.map(([type, count]) => `${GameBoardType[type][0]}x${count}`).join(','),
     ].join(' ');
 };
 
