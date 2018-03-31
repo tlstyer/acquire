@@ -68,7 +68,7 @@ export class Game {
             throw new UserInputError('incorrect move index');
         }
 
-        let newActions = currentAction.execute(parameters);
+        let newActions: ActionBase[] | null = currentAction.execute(parameters);
         this.getCurrentMoveData().setGameAction(playerID, currentAction.gameAction, parameters);
 
         while (newActions !== null) {

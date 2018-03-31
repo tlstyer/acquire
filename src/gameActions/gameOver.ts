@@ -1,5 +1,6 @@
 import { ActionBase } from './base';
 import { GameAction } from '../enums';
+import { UserInputError } from '../error';
 import { Game } from '../game';
 
 export class ActionGameOver extends ActionBase {
@@ -11,7 +12,7 @@ export class ActionGameOver extends ActionBase {
         return null;
     }
 
-    execute(parameters: any[]) {
-        return null;
+    execute(parameters: any[]): ActionBase[] {
+        throw new UserInputError('cannot make any more moves');
     }
 }

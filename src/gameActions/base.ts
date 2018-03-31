@@ -6,5 +6,5 @@ export abstract class ActionBase {
 
     abstract prepare(): ActionBase[] | null;
 
-    abstract execute(parameters: any[]): ActionBase[] | null;
+    abstract execute(parameters: any[]): ActionBase[];
 }
