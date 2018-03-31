@@ -38,6 +38,9 @@ error: player cannot play right now
 action: 0 PlayTile -- []
 error: did not get exactly 1 parameter
 
+action: 0 PlayTile -- ["hello","world!"]
+error: did not get exactly 1 parameter
+
 action: 0 PlayTile -- ["hello!"]
 error: parameter is not an integer
 
