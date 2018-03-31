@@ -94,12 +94,16 @@ export class ActionSelectMergerSurvivor extends ActionBase {
         }
         this.game.adjustScoreBoardColumn(ScoreBoardIndex.Cash, bonuses);
 
-        this.chainsBySize[0] = this.chainsBySize[0].filter(c => c !== controllingChain);
-
         let actions: ActionBase[] = [];
         for (let i = 0; i < this.chainsBySize.length; i++) {
-            const chains = this.chainsBySize[i];
-            actions.push(new ActionSelectChainToDisposeOfNext(this.game, this.playerID, chains, controllingChain));
+            let chains = this.chainsBySize[i];
+            if (i === 0) {
+                chains = chains.filter(c => c !== controllingChain);
+            }
+
+            if (chains.length > 0) {
+                actions.push(new ActionSelectChainToDisposeOfNext(this.game, this.playerID, chains, controllingChain));
+            }
         }
 
         return actions;
