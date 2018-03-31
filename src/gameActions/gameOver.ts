@@ -3,8 +3,8 @@ import { GameAction } from '../enums';
 import { Game } from '../game';
 
 export class ActionGameOver extends ActionBase {
-    constructor(game: Game) {
-        super(game, null, GameAction.GameOver);
+    constructor(game: Game, playerID: number) {
+        super(game, playerID, GameAction.GameOver);
     }
 
     prepare() {

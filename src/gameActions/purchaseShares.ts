@@ -143,7 +143,7 @@ export class ActionPurchaseShares extends ActionBase {
                 this.game.getCurrentMoveData().addGameHistoryMessage(new GameHistoryMessageData(GameHistoryMessage.NoTilesPlayedForEntireRound, null, []));
             }
 
-            return [new ActionGameOver(this.game)];
+            return [new ActionGameOver(this.game, this.playerID)];
         } else {
             this.game.drawTiles(this.playerID);
             this.game.determineTileRackTypesForPlayer(this.playerID);
@@ -152,7 +152,7 @@ export class ActionPurchaseShares extends ActionBase {
             allTilesPlayed = this.game.gameBoardTypeCounts[GameBoardType.Nothing] === 0;
             if (allTilesPlayed) {
                 this.game.getCurrentMoveData().addGameHistoryMessage(new GameHistoryMessageData(GameHistoryMessage.AllTilesPlayed, null, []));
-                return [new ActionGameOver(this.game)];
+                return [new ActionGameOver(this.game, this.playerID)];
             }
 
             const nextPlayerID = (this.playerID + 1) % this.game.userIDs.length;
