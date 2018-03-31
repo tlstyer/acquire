@@ -1,9 +1,10 @@
 import { ActionBase } from './base';
-import { GameHistoryMessage, GameAction, GameBoardType, ScoreBoardIndex } from '../enums';
-import { Game, GameHistoryMessageData } from '../game';
-import { calculateBonuses } from '../helpers';
 import { ActionDisposeOfShares } from './disposeOfShares';
 import { ActionSelectChainToDisposeOfNext } from './selectChainToDisposeOfNext';
+import { GameHistoryMessage, GameAction, GameBoardType, ScoreBoardIndex } from '../enums';
+import { UserInputError } from '../error';
+import { Game, GameHistoryMessageData } from '../game';
+import { calculateBonuses } from '../helpers';
 
 export class ActionSelectMergerSurvivor extends ActionBase {
     chainsBySize: GameBoardType[][];
@@ -40,12 +41,28 @@ export class ActionSelectMergerSurvivor extends ActionBase {
         if (this.chainsBySize[0].length === 1) {
             return this.completeAction(this.chainsBySize[0][0]);
         } else {
+            this.game.setGameBoardPosition(this.tile, GameBoardType.NothingYet);
+            this.game.determineTileRackTypesForEverybody();
             return null;
         }
     }
 
     execute(parameters: any[]) {
-        return null;
+        if (parameters.length !== 1) {
+            throw new UserInputError('did not get exactly 1 parameter');
+        }
+        const controllingChain: GameBoardType = parameters[0];
+        if (!Number.isInteger(controllingChain)) {
+            throw new UserInputError('parameter is not an integer');
+        }
+        if (controllingChain < GameBoardType.Luxor || controllingChain > GameBoardType.Imperial) {
+            throw new UserInputError('parameter provided is not a valid chain');
+        }
+        if (this.chainsBySize[0].indexOf(controllingChain) === -1) {
+            throw new UserInputError('cannot select chain provided as the controlling chain');
+        }
+
+        return this.completeAction(controllingChain);
     }
 
     protected completeAction(controllingChain: GameBoardType): ActionBase[] {
