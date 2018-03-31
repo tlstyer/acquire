@@ -1,0 +1,144 @@
+tile bag: 3G, 6G, 5F, 5H, 4G, 8H, 4C, 5C, 1F, 3F, 5I, 10B, 1B, 8G, 3A, 9I, 7G, 11G, 4I, 4D, 1G, 2I, 5E, 12H, 10I, 5G, 6E, 4B, 6F, 12E, 6I, 12B, 11B, 5D, 7F
+user IDs: 6, 7, 8, 9
+starter user ID: 9
+my user ID: 8
+
+action: 3 StartGame
+
+action: 0 PlayTile 4G
+
+action: 0 SelectNewChain L
+
+action: 0 PurchaseShares L,L,L 0
+
+action: 1 PlayTile 5I
+
+action: 1 SelectNewChain T
+
+action: 1 PurchaseShares T,T,T 1
+
+action: 2 PlayTile 7G
+
+action: 2 SelectNewChain C
+
+action: 2 PurchaseShares C,C,C 0
+
+action: 3 PlayTile 5E
+
+action: 3 SelectNewChain I
+
+action: 3 PurchaseShares T,T,T 1
+
+action: 0 PlayTile 3F
+
+action: 0 PurchaseShares T,L,T 0
+
+action: 1 PlayTile 8G
+
+action: 1 PurchaseShares C,T,I 0
+
+action: 2 PlayTile 4I
+
+action: 2 PurchaseShares I,L,C 1
+
+action: 3 PlayTile 5G
+············   L  T  A  F  W  C  I Cash  Net
+············   5  2                  47   60
+············      5           1  1   43   60
+············   1              5  1   36   60
+····I·······      3              1   54   60
+··L·I·······  19 15 25 25 25 19 22
+··LLOCCC····   3  3  -  -  -  3  2
+····T·······   3  3  -  -  -  5  4
+···TT·······
+tile racks:
+  0: 6F(m) 8H(C) 4C(h) 5C(h) 1F(l) 11B(l)
+  1: 12E(l) 10B(l) 1B(l) 5D(I) 3A(l) 9I(l)
+  2: 6I(T) 11G(l) 7F(C) 4D(l) 1G(l) 2I(l)
+  3: 12B(l) 12H(l) 10I(l) none 6E(I) 4B(l)
+new known tiles:
+history messages:
+  3 PlayedTile 5G
+  3 MergedChains L,T,C,I
+next action: 3 SelectMergerSurvivor L,T,C
+
+action: 3 SelectMergerSurvivor T
+············   L  T  A  F  W  C  I Cash  Net
+············   5  2                  77   60
+············      5           1  1   88   60
+············   1              5  1  121   60
+····T·······      3              1   74   60
+··T·T·······  19 15 25 25 25 19 22
+··TTTTTT····   3 12  -  -  -  3  2
+····T·······   3  7  -  -  -  5  4
+···TT·······
+tile racks:
+  0: 6F(T) 8H(T) 4C(h) 5C(h) 1F(l) 11B(l)
+  1: 12E(l) 10B(l) 1B(l) 5D(T) 3A(l) 9I(l)
+  2: 6I(T) 11G(l) 7F(T) 4D(l) 1G(l) 2I(l)
+  3: 12B(l) 12H(l) 10I(l) none 6E(T) 4B(l)
+new known tiles:
+history messages:
+  0 ReceivedBonus L 30
+  2 ReceivedBonus L 15
+  2 ReceivedBonus C 50
+  1 ReceivedBonus C 25
+  1 ReceivedBonus I 20
+  2 ReceivedBonus I 20
+  3 ReceivedBonus I 20
+next action: 3 SelectChainToDisposeOfNext L,C
+
+action: 3 SelectChainToDisposeOfNext C
+············   L  T  A  F  W  C  I Cash  Net
+············   5  2                  77   60
+············      5           1  1   88   60
+············   1              5  1  121   60
+····T·······      3              1   74   60
+··T·T·······  19 15 25 25 25 19 22
+··TTTTTT····   3 12  -  -  -  3  2
+····T·······   3  7  -  -  -  5  4
+···TT·······
+tile racks:
+  0: 6F(T) 8H(T) 4C(h) 5C(h) 1F(l) 11B(l)
+  1: 12E(l) 10B(l) 1B(l) 5D(T) 3A(l) 9I(l)
+  2: 6I(T) 11G(l) 7F(T) 4D(l) 1G(l) 2I(l)
+  3: 12B(l) 12H(l) 10I(l) none 6E(T) 4B(l)
+new known tiles:
+history messages:
+  3 SelectedChainToDisposeOfNext C
+next action: 1 DisposeOfShares C
+
+action: 1 DisposeOfShares 0 1
+
+action: 2 DisposeOfShares 0 0
+
+action: 0 DisposeOfShares 4 1
+
+action: 2 DisposeOfShares 0 0
+
+action: 3 DisposeOfShares 0 1
+
+action: 1 DisposeOfShares 0 1
+
+action: 2 DisposeOfShares 0 0
+
+action: 3 PurchaseShares T,T,T 1
+············   L  T  A  F  W  C  I Cash  Net
+············      4                  80   60
+············      5                  97   60
+············   1              5  1  121   60
+····T·······      6                  57   60
+··T·T·······  24 10 25 25 25 20 24
+··TTTTTT····   - 12  -  -  -  -  -
+····T·······   -  7  -  -  -  -  -
+···TT·······
+tile racks:
+  0: 6F(T) 8H(T) 4C(h) 5C(h) 1F(l) 11B(l)
+  1: 12E(l) 10B(l) 1B(l) 5D(T) 3A(l) 9I(l)
+  2: 6I(T) 11G(l) 7F(T) 4D(l) 1G(l) 2I(l)
+  3: 12B(l) 12H(l) 10I(l) none 6E(T) 4B(l)
+new known tiles:
+history messages:
+  3 PurchasedShares Tx3
+  3 EndedGame
+next action: 3 GameOver

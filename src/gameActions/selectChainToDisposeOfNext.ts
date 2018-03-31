@@ -1,7 +1,8 @@
 import { ActionBase } from './base';
 import { ActionDisposeOfShares } from './disposeOfShares';
-import { GameAction, GameBoardType } from '../enums';
-import { Game } from '../game';
+import { GameAction, GameBoardType, GameHistoryMessage } from '../enums';
+import { Game, GameHistoryMessageData } from '../game';
+import { UserInputError } from '../error';
 
 export class ActionSelectChainToDisposeOfNext extends ActionBase {
     constructor(game: Game, playerID: number, public defunctChains: GameBoardType[], public controllingChain: GameBoardType) {
@@ -17,7 +18,25 @@ export class ActionSelectChainToDisposeOfNext extends ActionBase {
     }
 
     execute(parameters: any[]) {
-        return [];
+        if (parameters.length !== 1) {
+            throw new UserInputError('did not get exactly 1 parameter');
+        }
+        const nextChain: GameBoardType = parameters[0];
+        if (!Number.isInteger(nextChain)) {
+            throw new UserInputError('parameter is not an integer');
+        }
+        if (nextChain < GameBoardType.Luxor || nextChain > GameBoardType.Imperial) {
+            throw new UserInputError('parameter provided is not a valid chain');
+        }
+        if (this.defunctChains.indexOf(nextChain) === -1) {
+            throw new UserInputError('cannot select chain provided as the next chain');
+        }
+
+        this.game
+            .getCurrentMoveData()
+            .addGameHistoryMessage(new GameHistoryMessageData(GameHistoryMessage.SelectedChainToDisposeOfNext, this.playerID, [nextChain]));
+
+        return this.completeAction(nextChain);
     }
 
     protected completeAction(nextChain: GameBoardType) {

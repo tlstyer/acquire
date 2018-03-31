@@ -1,0 +1,109 @@
+tile bag: 3G, 6G, 5F, 5H, 4G, 5G, 4C, 5C, 1F, 8G, 5I, 10B, 1B, 11I, 3A, 9I, 7G, 11G, 10D, 4D, 1G, 2I, 5E, 12H, 10I, 8H, 3F, 11H, 2D, 4F, 9C, 5D
+user IDs: 6, 7, 8, 9
+starter user ID: 9
+my user ID: 8
+
+action: 3 StartGame
+
+action: 0 PlayTile 4G
+
+action: 0 SelectNewChain L
+
+action: 0 PurchaseShares L,L,L 0
+
+action: 1 PlayTile 5I
+
+action: 1 SelectNewChain T
+
+action: 1 PurchaseShares T,T,T 0
+
+action: 2 PlayTile 7G
+
+action: 2 SelectNewChain C
+
+action: 2 PurchaseShares C,C,C 0
+
+action: 3 PlayTile 5E
+
+action: 3 SelectNewChain I
+
+action: 3 PurchaseShares C,T,L 0
+
+action: 0 PlayTile 5G
+············   L  T  A  F  W  C  I Cash  Net
+············   4                     54   60
+············      4                  54   60
+············                  4      48   60
+····I·······   1  1           1  1   52   60
+····I·······  20 20 25 25 25 20 24
+··LLOCC·····   2  2  -  -  -  2  2
+····T·······   2  2  -  -  -  4  4
+····T·······
+tile racks:
+  0: 2D(l) none 4C(h) 5C(h) 1F(l) 8G(C)
+  1: 4F(m) 10B(l) 1B(l) 11I(l) 3A(l) 9I(l)
+  2: 9C(l) 11G(l) 10D(l) 4D(l) 1G(l) 2I(l)
+  3: 5D(I) 12H(h) 10I(l) 8H(l) 3F(L) 11H(h)
+new known tiles:
+history messages:
+  0 PlayedTile 5G
+  0 MergedChains L,T,C,I
+next action: 0 SelectMergerSurvivor L,T,C,I
+
+action: 0 SelectMergerSurvivor I
+············   L  T  A  F  W  C  I Cash  Net
+············   4                     74   60
+············      4                  74   60
+············                  4      88   60
+····I·······   1  1           1  1   92   60
+····I·······  20 20 25 25 25 20 24
+··IIIII·····   2  2  -  -  -  2  9
+····I·······   2  2  -  -  -  4  8
+····I·······
+tile racks:
+  0: 2D(l) none 4C(h) 5C(h) 1F(l) 8G(I)
+  1: 4F(I) 10B(l) 1B(l) 11I(l) 3A(l) 9I(l)
+  2: 9C(l) 11G(l) 10D(l) 4D(l) 1G(l) 2I(l)
+  3: 5D(I) 12H(h) 10I(l) 8H(l) 3F(I) 11H(h)
+new known tiles:
+history messages:
+  0 ReceivedBonus L 20
+  3 ReceivedBonus L 10
+  1 ReceivedBonus T 20
+  3 ReceivedBonus T 10
+  2 ReceivedBonus C 40
+  3 ReceivedBonus C 20
+next action: 0 SelectChainToDisposeOfNext L,T,C
+
+action: 1 SelectChainToDisposeOfNext -- []
+error: player cannot play right now
+
+action: 0 SelectChainToDisposeOfNext -- []
+error: did not get exactly 1 parameter
+
+action: 0 SelectChainToDisposeOfNext -- ["hello","world!"]
+error: did not get exactly 1 parameter
+
+action: 0 SelectChainToDisposeOfNext -- ["hello!"]
+error: parameter is not an integer
+
+action: 0 SelectChainToDisposeOfNext -- [true]
+error: parameter is not an integer
+
+action: 0 SelectChainToDisposeOfNext -- [-1]
+error: parameter provided is not a valid chain
+
+action: 0 SelectChainToDisposeOfNext -- [7]
+error: parameter provided is not a valid chain
+
+action: 0 SelectChainToDisposeOfNext A
+error: cannot select chain provided as the next chain
+
+action: 0 SelectChainToDisposeOfNext F
+error: cannot select chain provided as the next chain
+
+action: 0 SelectChainToDisposeOfNext W
+error: cannot select chain provided as the next chain
+
+action: 0 SelectChainToDisposeOfNext I
+error: cannot select chain provided as the next chain
