@@ -14,7 +14,7 @@ import { GameAction, GameBoardType, GameHistoryMessage, ScoreBoardIndex } from '
 import { UserInputError } from './error';
 import { ActionBase } from './gameActions/base';
 import { ActionStartGame } from './gameActions/startGame';
-import { getNeighboringTiles } from './helpers';
+import { calculateBonuses, getNeighboringTiles } from './helpers';
 
 export class Game {
     nextTileBagIndex: number = 0;
@@ -311,6 +311,16 @@ export class Game {
         this.scoreBoard = scoreBoard.asImmutable();
     }
 
+    setScoreBoardColumn(scoreBoardIndex: ScoreBoardIndex, values: number[]) {
+        let scoreBoard = this.scoreBoard.asMutable();
+
+        for (let playerID = 0; playerID < values.length; playerID++) {
+            scoreBoard = scoreBoard.setIn([playerID, scoreBoardIndex], values[playerID]);
+        }
+
+        this.scoreBoard = scoreBoard.asImmutable();
+    }
+
     setChainSize(scoreBoardIndex: GameBoardType | ScoreBoardIndex, size: number) {
         this.scoreBoardChainSize = this.scoreBoardChainSize.set(scoreBoardIndex, size);
 
@@ -332,6 +342,31 @@ export class Game {
         this.scoreBoardPrice = this.scoreBoardPrice.set(scoreBoardIndex, price);
     }
 
+    updateNetWorths() {
+        const netWorths = this.getScoreBoardColumnArray(ScoreBoardIndex.Cash);
+
+        const prices = this.scoreBoardPrice.toArray();
+        for (let chain = 0; chain < prices.length; chain++) {
+            const price = prices[chain];
+            if (price > 0) {
+                const sharesOwned = this.getScoreBoardColumnArray(chain);
+                for (let playerID = 0; playerID < sharesOwned.length; playerID++) {
+                    const numShares = sharesOwned[playerID];
+                    netWorths[playerID] += numShares * price;
+                }
+                if (this.gameBoardTypeCounts[chain] > 0) {
+                    const bonuses = calculateBonuses(sharesOwned, price);
+                    for (let i = 0; i < bonuses.length; i++) {
+                        const bonus = bonuses[i];
+                        netWorths[bonus.playerID] += bonus.amount;
+                    }
+                }
+            }
+        }
+
+        this.setScoreBoardColumn(ScoreBoardIndex.Net, netWorths);
+    }
+
     getCurrentMoveData() {
         if (this.currentMoveData === null) {
             this.currentMoveData = new MoveData(this);
@@ -340,11 +375,12 @@ export class Game {
     }
 
     endCurrentMove() {
-        if (this.currentMoveData !== null) {
-            this.currentMoveData.endMove();
-            this.moveDataHistory.push(this.currentMoveData);
-            this.currentMoveData = null;
-        }
+        this.updateNetWorths();
+
+        this.currentMoveData = this.getCurrentMoveData();
+        this.currentMoveData.endMove();
+        this.moveDataHistory.push(this.currentMoveData);
+        this.currentMoveData = null;
     }
 }
 

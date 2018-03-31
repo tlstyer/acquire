@@ -11,7 +11,7 @@ action: 0 SelectNewChain I
 
 action: 0 PurchaseShares I,I,I 0
 ··O·········   L  T  A  F  W  C  I Cash  Net
-II··········                     4   48   60
+II··········                     4   48  124
 ············                         60   60
 ············  25 25 25 25 25 25 21
 ············   -  -  -  -  -  -  2
@@ -32,7 +32,7 @@ next action: 1 PlayTile
 
 action: 1 PlayTile 2A
 ·II·········   L  T  A  F  W  C  I Cash  Net
-II··········                     4   48   60
+II··········                     4   48  162
 ············                         60   60
 ············  25 25 25 25 25 25 21
 ············   -  -  -  -  -  -  4

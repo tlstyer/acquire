@@ -122,7 +122,7 @@ next action: 1 SelectNewChain L,T,A,F,W,C,I
 action: 1 SelectNewChain L
 ············   L  T  A  F  W  C  I Cash  Net
 ·L··········                         60   60
-·L··········   1                     60   60
+·L··········   1                     60  156
 LLL·········  24 25 25 25 25 25 25
 ·L··········   6  -  -  -  -  -  -
 ············   6  -  -  -  -  -  -
