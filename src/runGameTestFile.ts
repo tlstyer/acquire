@@ -6,6 +6,11 @@ import { defaultTileRackTypes } from './defaults';
 import { GameAction, GameBoardType, GameHistoryMessage, ScoreBoardIndex } from './enums';
 import { UserInputError } from './error';
 import { Game, GameHistoryMessageData, MoveData } from './game';
+import { ActionBase } from './gameActions/base';
+import { ActionSelectNewChain } from './gameActions/selectNewChain';
+import { ActionSelectMergerSurvivor } from './gameActions/selectMergerSurvivor';
+import { ActionSelectChainToDisposeOfNext } from './gameActions/selectChainToDisposeOfNext';
+import { ActionDisposeOfShares } from './gameActions/disposeOfShares';
 
 const inputBasePath: string = `${__dirname}/gameTestFiles/`;
 const outputBasePath: string = '';
@@ -262,6 +267,8 @@ function getMoveDataLines(moveData: MoveData, detailed: boolean) {
         moveData.gameHistoryMessages.forEach(ghm => {
             lines.push(`  ${getGameHistoryMessageString(ghm)}`);
         });
+
+        lines.push(`next action: ${getNextActionString(moveData.nextGameAction)}`);
     }
 
     return lines;
@@ -411,6 +418,24 @@ const gameHistoryMessageStringHandlers: { [key: number]: Function } = {
 };
 function getGameHistoryMessageString(gameHistoryMessage: GameHistoryMessageData) {
     return gameHistoryMessageStringHandlers[gameHistoryMessage.gameHistoryMessage](gameHistoryMessage);
+}
+
+function getNextActionString(action: ActionBase) {
+    const nextPlayerID = action.playerID;
+    const nextActionName = action.constructor.name.slice(6);
+
+    let parameters = '';
+    if (action instanceof ActionSelectNewChain) {
+        parameters = action.availableChains.map((x: GameBoardType) => GameBoardType[x][0]).join(',');
+    } else if (action instanceof ActionSelectMergerSurvivor) {
+        parameters = action.chainsBySize[0].map((x: GameBoardType) => GameBoardType[x][0]).join(',');
+    } else if (action instanceof ActionSelectChainToDisposeOfNext) {
+        parameters = action.defunctChains.map((x: GameBoardType) => GameBoardType[x][0]).join(',');
+    } else if (action instanceof ActionDisposeOfShares) {
+        parameters = GameBoardType[action.defunctChain][0];
+    }
+
+    return `${nextPlayerID} ${nextActionName}${parameters !== '' ? ' ' : ''}${parameters}`;
 }
 
 // based on https://stackoverflow.com/questions/13542667/create-directory-when-writing-to-file-in-node-js

@@ -28,6 +28,7 @@ history messages:
   0 PurchasedShares Ix3
   0 DrewTile 7G
   1 TurnBegan
+next action: 1 PlayTile
 
 action: 1 PlayTile 2A
 ·II·········   L  T  A  F  W  C  I Cash  Net
@@ -45,3 +46,4 @@ tile racks:
 new known tiles:
 history messages:
   1 PlayedTile 2A
+next action: 1 PurchaseShares

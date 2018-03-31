@@ -355,6 +355,7 @@ export class MoveData {
     newPlayerKnownTiles: number[][];
     newWatcherKnownTiles: number[] = [];
     gameHistoryMessages: GameHistoryMessageData[] = [];
+    nextGameAction: ActionBase;
 
     tileRacks = defaultTileRacks;
     tileRackTypes = defaultTileRackTypesList;
@@ -369,6 +370,9 @@ export class MoveData {
         for (let playerID = 0; playerID < game.userIDs.length; playerID++) {
             this.newPlayerKnownTiles[playerID] = [];
         }
+
+        // assign something to this.nextGameAction so it gets set in the constructor
+        this.nextGameAction = game.gameActionStack[game.gameActionStack.length - 1];
     }
 
     setGameAction(playerID: number, gameAction: GameAction, parameters: any[]) {
@@ -403,6 +407,7 @@ export class MoveData {
         this.scoreBoardAvailable = this.game.scoreBoardAvailable;
         this.scoreBoardChainSize = this.game.scoreBoardChainSize;
         this.scoreBoardPrice = this.game.scoreBoardPrice;
+        this.nextGameAction = this.game.gameActionStack[this.game.gameActionStack.length - 1];
     }
 }
 

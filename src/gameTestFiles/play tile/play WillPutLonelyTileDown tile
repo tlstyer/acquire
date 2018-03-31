@@ -31,6 +31,7 @@ history messages:
   0 DrewTile 1D
   0 DrewTile 11D
   0 TurnBegan
+next action: 0 PlayTile
 
 action: 0 PlayTile 8G
 ············   L  T  A  F  W  C  I Cash  Net
@@ -53,3 +54,4 @@ history messages:
   0 PlayedTile 8G
   0 DrewTile 1A
   1 TurnBegan
+next action: 1 PlayTile

@@ -38,6 +38,7 @@ new known tiles:
 history messages:
   2 PurchasedShares Ax3
   0 TurnBegan
+next action: 0 PlayTile
 
 action: 0 PlayTile 3B
 ············   L  T  A  F  W  C  I Cash  Net
@@ -59,3 +60,4 @@ history messages:
   0 MergedChains A,C
   0 ReceivedBonus A 30
   2 ReceivedBonus A 15
+next action: 0 DisposeOfShares A

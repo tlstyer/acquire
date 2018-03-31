@@ -31,6 +31,7 @@ history messages:
   0 DrewTile 11I
   0 DrewTile 12C
   0 TurnBegan
+next action: 0 PlayTile
 
 action: 0 PlayTile 1B
 ············   L  T  A  F  W  C  I Cash  Net
@@ -48,3 +49,4 @@ tile racks:
 new known tiles:
 history messages:
   0 PlayedTile 1B
+next action: 0 SelectNewChain L,T,A,F,W,C,I

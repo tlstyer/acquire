@@ -29,6 +29,7 @@ tile racks:
 new known tiles:
 history messages:
   1 FormedChain L
+next action: 1 PurchaseShares
 
 action: 1 PurchaseShares -- []
 error: did not get exactly 2 parameters

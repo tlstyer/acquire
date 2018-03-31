@@ -31,6 +31,7 @@ history messages:
   0 DrewTile 1D
   0 DrewTile 11D
   0 TurnBegan
+next action: 0 PlayTile
 
 action: 1 PlayTile -- []
 error: player cannot play right now

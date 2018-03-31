@@ -45,6 +45,7 @@ new known tiles:
 history messages:
   1 ReceivedBonus C 40
   0 ReceivedBonus C 20
+next action: 1 DisposeOfShares C
 
 action: 1 DisposeOfShares 2 1
 ············   L  T  A  F  W  C  I Cash  Net
@@ -63,6 +64,7 @@ tile racks:
 new known tiles:
 history messages:
   1 DisposedOfShares C 2 1
+next action: 0 DisposeOfShares C
 
 action: 0 DisposeOfShares 0 0
 ············   L  T  A  F  W  C  I Cash  Net
@@ -81,3 +83,4 @@ tile racks:
 new known tiles:
 history messages:
   0 DisposedOfShares C 0 0
+next action: 1 PurchaseShares

@@ -29,6 +29,7 @@ tile racks:
 new known tiles:
 history messages:
   1 FormedChain L
+next action: 1 PurchaseShares
 
 action: 1 PurchaseShares L,L 1
 ············   L  T  A  F  W  C  I Cash  Net
@@ -48,3 +49,4 @@ new known tiles:
 history messages:
   1 PurchasedShares Lx2
   0 TurnBegan
+next action: 0 PlayTile

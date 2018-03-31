@@ -31,6 +31,7 @@ history messages:
   0 DrewTile 11I
   0 DrewTile 12C
   0 TurnBegan
+next action: 0 PlayTile
 
 action: 0 PlayTile 1D
 ············   L  T  A  F  W  C  I Cash  Net
@@ -53,6 +54,7 @@ history messages:
   0 PlayedTile 1D
   0 DrewTile 11A
   1 TurnBegan
+next action: 1 PlayTile
 
 action: 1 PlayTile 3D
 ············   L  T  A  F  W  C  I Cash  Net
@@ -74,6 +76,7 @@ new known tiles:
 history messages:
   1 PlayedTile 3D
   0 TurnBegan
+next action: 0 PlayTile
 
 action: 0 PlayTile 2E
 ············   L  T  A  F  W  C  I Cash  Net
@@ -96,6 +99,7 @@ history messages:
   0 PlayedTile 2E
   0 DrewTile 1A
   1 TurnBegan
+next action: 1 PlayTile
 
 action: 1 PlayTile 2D
 ············   L  T  A  F  W  C  I Cash  Net
@@ -113,6 +117,7 @@ tile racks:
 new known tiles:
 history messages:
   1 PlayedTile 2D
+next action: 1 SelectNewChain L,T,A,F,W,C,I
 
 action: 1 SelectNewChain L
 ············   L  T  A  F  W  C  I Cash  Net
@@ -130,3 +135,4 @@ tile racks:
 new known tiles:
 history messages:
   1 FormedChain L
+next action: 1 PurchaseShares
