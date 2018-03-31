@@ -311,7 +311,7 @@ export class Game {
         this.scoreBoard = scoreBoard.asImmutable();
     }
 
-    setChainSize(scoreBoardIndex: ScoreBoardIndex, size: number) {
+    setChainSize(scoreBoardIndex: GameBoardType | ScoreBoardIndex, size: number) {
         this.scoreBoardChainSize = this.scoreBoardChainSize.set(scoreBoardIndex, size);
 
         let price = 0;

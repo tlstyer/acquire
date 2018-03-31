@@ -178,14 +178,12 @@ function fromParameterStrings(gameAction: GameAction, strings: string[]) {
         case GameAction.SelectNewChain:
         case GameAction.SelectMergerSurvivor:
         case GameAction.SelectChainToDisposeOfNext:
-            // @ts-ignore
             parameters.push(abbreviationToGameBoardType[strings[0]]);
             break;
         case GameAction.DisposeOfShares:
             parameters.push(...strings.map(s => parseInt(s, 10)));
             break;
         case GameAction.PurchaseShares:
-            // @ts-ignore
             parameters.push(strings[0].split(',').map(s => abbreviationToGameBoardType[s]));
             parameters.push(parseInt(strings[1]));
             break;

@@ -69,7 +69,6 @@ export class ActionSelectMergerSurvivor extends ActionBase {
         const moveData = this.game.getCurrentMoveData();
 
         this.game.fillCells(this.tile, controllingChain);
-        // @ts-ignore
         this.game.setChainSize(controllingChain, this.game.gameBoardTypeCounts[controllingChain]);
         this.game.determineTileRackTypesForEverybody();
 
