@@ -2,15 +2,16 @@ import { assert } from 'chai';
 import * as fs from 'fs';
 import { List } from 'immutable';
 import * as path from 'path';
+
 import { defaultTileRackTypes } from './defaults';
 import { GameAction, GameBoardType, GameHistoryMessage, ScoreBoardIndex } from './enums';
 import { UserInputError } from './error';
 import { Game, GameHistoryMessageData, MoveData } from './game';
 import { ActionBase } from './gameActions/base';
-import { ActionSelectNewChain } from './gameActions/selectNewChain';
-import { ActionSelectMergerSurvivor } from './gameActions/selectMergerSurvivor';
-import { ActionSelectChainToDisposeOfNext } from './gameActions/selectChainToDisposeOfNext';
 import { ActionDisposeOfShares } from './gameActions/disposeOfShares';
+import { ActionSelectChainToDisposeOfNext } from './gameActions/selectChainToDisposeOfNext';
+import { ActionSelectMergerSurvivor } from './gameActions/selectMergerSurvivor';
+import { ActionSelectNewChain } from './gameActions/selectNewChain';
 
 const inputBasePath: string = `${__dirname}/gameTestFiles/`;
 const outputBasePath: string = '';

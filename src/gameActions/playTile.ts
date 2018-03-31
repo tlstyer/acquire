@@ -1,11 +1,11 @@
-import { ActionBase } from './base';
-import { ActionSelectMergerSurvivor } from './selectMergerSurvivor';
-import { ActionSelectNewChain } from './selectNewChain';
 import { defaultTileRack, defaultTileRackTypes } from '../defaults';
 import { GameAction, GameBoardType, GameHistoryMessage } from '../enums';
 import { UserInputError } from '../error';
 import { Game, GameHistoryMessageData } from '../game';
 import { getNeighboringTiles } from '../helpers';
+import { ActionBase } from './base';
+import { ActionSelectMergerSurvivor } from './selectMergerSurvivor';
+import { ActionSelectNewChain } from './selectNewChain';
 
 export class ActionPlayTile extends ActionBase {
     constructor(game: Game, playerID: number) {

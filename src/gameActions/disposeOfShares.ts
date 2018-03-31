@@ -1,7 +1,7 @@
-import { ActionBase } from './base';
-import { GameAction, GameBoardType, ScoreBoardIndex, GameHistoryMessage } from '../enums';
+import { GameAction, GameBoardType, GameHistoryMessage, ScoreBoardIndex } from '../enums';
 import { UserInputError } from '../error';
 import { Game, GameHistoryMessageData } from '../game';
+import { ActionBase } from './base';
 
 export class ActionDisposeOfShares extends ActionBase {
     sharesOwnedInDefunctChain: number;

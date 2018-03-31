@@ -1,8 +1,8 @@
+import { GameAction, GameBoardType, GameHistoryMessage } from '../enums';
+import { Game, GameHistoryMessageData } from '../game';
 import { ActionBase } from './base';
 import { ActionPlayTile } from './playTile';
 import { ActionPurchaseShares } from './purchaseShares';
-import { GameBoardType, GameHistoryMessage, GameAction } from '../enums';
-import { Game, GameHistoryMessageData } from '../game';
 
 export class ActionStartGame extends ActionBase {
     constructor(game: Game, playerID: number) {

@@ -1,10 +1,9 @@
+import { GameAction, GameBoardType, GameHistoryMessage, ScoreBoardIndex } from '../enums';
+import { UserInputError } from '../error';
+import { Game, GameHistoryMessageData } from '../game';
 import { ActionBase } from './base';
 import { ActionGameOver } from './gameOver';
 import { ActionPlayTile } from './playTile';
-import { defaultTileRack } from '../defaults';
-import { GameAction, GameBoardType, ScoreBoardIndex, GameHistoryMessage } from '../enums';
-import { UserInputError } from '../error';
-import { Game, GameHistoryMessageData } from '../game';
 
 export class ActionPurchaseShares extends ActionBase {
     cannotAffordAnyShares = false;

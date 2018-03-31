@@ -1,14 +1,14 @@
 import {
-    defaultTileRacks,
-    defaultTileRack,
-    defaultTileRackTypesList,
-    defaultTileRackTypes,
     defaultGameBoard,
     defaultScoreBoard,
-    defaultScoreBoardRow,
     defaultScoreBoardAvailable,
     defaultScoreBoardChainSize,
     defaultScoreBoardPrice,
+    defaultScoreBoardRow,
+    defaultTileRack,
+    defaultTileRacks,
+    defaultTileRackTypes,
+    defaultTileRackTypesList,
 } from './defaults';
 import { GameAction, GameBoardType, GameHistoryMessage, ScoreBoardIndex } from './enums';
 import { UserInputError } from './error';

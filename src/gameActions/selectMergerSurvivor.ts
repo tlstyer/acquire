@@ -1,10 +1,9 @@
-import { ActionBase } from './base';
-import { ActionDisposeOfShares } from './disposeOfShares';
-import { ActionSelectChainToDisposeOfNext } from './selectChainToDisposeOfNext';
-import { GameHistoryMessage, GameAction, GameBoardType, ScoreBoardIndex } from '../enums';
+import { GameAction, GameBoardType, GameHistoryMessage, ScoreBoardIndex } from '../enums';
 import { UserInputError } from '../error';
 import { Game, GameHistoryMessageData } from '../game';
 import { calculateBonuses } from '../helpers';
+import { ActionBase } from './base';
+import { ActionSelectChainToDisposeOfNext } from './selectChainToDisposeOfNext';
 
 export class ActionSelectMergerSurvivor extends ActionBase {
     chainsBySize: GameBoardType[][];

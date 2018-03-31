@@ -1,5 +1,6 @@
 import { assert } from 'chai';
-import { getNewTileBag, calculateBonuses, PlayerIDAndAmount, getNeighboringTiles } from './helpers';
+
+import { calculateBonuses, getNeighboringTiles, getNewTileBag, PlayerIDAndAmount } from './helpers';
 
 describe('helpers', () => {
     describe('getNewTileBag', () => {

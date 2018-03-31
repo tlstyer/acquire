@@ -1,8 +1,8 @@
+import { GameAction, GameBoardType, GameHistoryMessage } from '../enums';
+import { UserInputError } from '../error';
+import { Game, GameHistoryMessageData } from '../game';
 import { ActionBase } from './base';
 import { ActionDisposeOfShares } from './disposeOfShares';
-import { GameAction, GameBoardType, GameHistoryMessage } from '../enums';
-import { Game, GameHistoryMessageData } from '../game';
-import { UserInputError } from '../error';
 
 export class ActionSelectChainToDisposeOfNext extends ActionBase {
     constructor(game: Game, playerID: number, public defunctChains: GameBoardType[], public controllingChain: GameBoardType) {

@@ -1,7 +1,7 @@
-import { ActionBase } from './base';
 import { GameAction } from '../enums';
 import { UserInputError } from '../error';
 import { Game } from '../game';
+import { ActionBase } from './base';
 
 export class ActionGameOver extends ActionBase {
     constructor(game: Game, playerID: number) {

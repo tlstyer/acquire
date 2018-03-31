@@ -1,4 +1,5 @@
 import { List } from 'immutable';
+
 import { GameBoardType } from './enums';
 
 export const defaultTileRacks = List<List<number | null>>([]);

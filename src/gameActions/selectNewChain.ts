@@ -1,7 +1,7 @@
-import { ActionBase } from './base';
-import { GameAction, GameBoardType, GameHistoryMessage, ScoreBoardIndex } from '../enums';
+import { GameAction, GameBoardType, GameHistoryMessage } from '../enums';
 import { UserInputError } from '../error';
 import { Game, GameHistoryMessageData } from '../game';
+import { ActionBase } from './base';
 
 export class ActionSelectNewChain extends ActionBase {
     constructor(game: Game, playerID: number, public availableChains: GameBoardType[], public tile: number) {
