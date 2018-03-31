@@ -47,6 +47,9 @@ error: player cannot play right now
 action: 0 SelectMergerSurvivor -- []
 error: did not get exactly 1 parameter
 
+action: 0 SelectMergerSurvivor -- ["hello","world!"]
+error: did not get exactly 1 parameter
+
 action: 0 SelectMergerSurvivor -- ["hello!"]
 error: parameter is not an integer
 

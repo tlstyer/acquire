@@ -6,11 +6,30 @@ my user ID: 5
 action: 1 StartGame
 
 action: 0 PlayTile 1B
+············   L  T  A  F  W  C  I Cash  Net
+OO··········                         60   60
+············                         60   60
+············  25 25 25 25 25 25 25
+············   -  -  -  -  -  -  -
+············   -  -  -  -  -  -  -
+············
+············
+···O········
+tile racks:
+  0: 7E(l) none 12H(l) 7B(l) 11I(l) 12C(l)
+  1: 8G(h) 8H(h) 10H(l) 2G(l) 1D(l) 11D(l)
+new known tiles:
+history messages:
+  0 PlayedTile 1B
+next action: 0 SelectNewChain L,T,A,F,W,C,I
 
 action: 1 SelectNewChain -- []
 error: player cannot play right now
 
 action: 0 SelectNewChain -- []
+error: did not get exactly 1 parameter
+
+action: 0 SelectNewChain -- ["hello","world!"]
 error: did not get exactly 1 parameter
 
 action: 0 SelectNewChain -- ["hello!"]
