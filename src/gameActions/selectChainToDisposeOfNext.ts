@@ -1,4 +1,5 @@
 import { ActionBase } from './base';
+import { ActionDisposeOfShares } from './disposeOfShares';
 import { GameAction, GameBoardType } from '../enums';
 import { Game } from '../game';
 
@@ -20,6 +21,22 @@ export class ActionSelectChainToDisposeOfNext extends ActionBase {
     }
 
     protected completeAction(nextChain: GameBoardType) {
-        return null;
+        let actions: ActionBase[] = [];
+
+        const sharesOwned = this.game.getScoreBoardColumnArray(nextChain);
+        let playerID = this.playerID;
+        do {
+            if (sharesOwned[playerID] > 0) {
+                actions.push(new ActionDisposeOfShares(this.game, playerID, nextChain, this.controllingChain));
+            }
+            playerID = (playerID + 1) % this.game.userIDs.length;
+        } while (playerID !== this.playerID);
+
+        const remainingDefunctChains = this.defunctChains.filter(c => c !== nextChain);
+        if (remainingDefunctChains.length > 0) {
+            actions.push(new ActionSelectChainToDisposeOfNext(this.game, this.playerID, remainingDefunctChains, this.controllingChain));
+        }
+
+        return actions;
     }
 }

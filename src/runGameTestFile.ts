@@ -181,7 +181,9 @@ function fromParameterStrings(gameAction: GameAction, strings: string[]) {
             // @ts-ignore
             parameters.push(abbreviationToGameBoardType[strings[0]]);
             break;
-        // case GameAction.DisposeOfShares:
+        case GameAction.DisposeOfShares:
+            parameters.push(...strings.map(s => parseInt(s, 10)));
+            break;
         case GameAction.PurchaseShares:
             // @ts-ignore
             parameters.push(strings[0].split(',').map(s => abbreviationToGameBoardType[s]));
@@ -204,7 +206,9 @@ function toParameterStrings(gameAction: GameAction, parameters: any[]) {
         case GameAction.SelectChainToDisposeOfNext:
             strings.push(gameBoardTypeToCharacter[parameters[0]]);
             break;
-        // case GameAction.DisposeOfShares:
+        case GameAction.DisposeOfShares:
+            strings.push(...parameters.map(p => p.toString()));
+            break;
         case GameAction.PurchaseShares:
             strings.push(parameters[0].map((p: number) => gameBoardTypeToCharacter[p]).join(','));
             strings.push(parameters[1].toString());

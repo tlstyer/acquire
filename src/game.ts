@@ -277,7 +277,7 @@ export class Game {
         return column;
     }
 
-    adjustPlayerScoreBoardRow(playerID: number, adjustments: [ScoreBoardIndex, number][]) {
+    adjustPlayerScoreBoardRow(playerID: number, adjustments: [GameBoardType | ScoreBoardIndex, number][]) {
         let scoreBoard = this.scoreBoard.asMutable();
         let scoreBoardAvailable = this.scoreBoardAvailable.asMutable();
 
