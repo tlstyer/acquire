@@ -17,12 +17,12 @@ tile racks:
   0: 1D(l) 2E(l) 7E(l) 7B(l) 11I(l) 12C(l)
   1: 3D(l) 2D(n) 8H(h) 10H(l) 2G(l) 8G(h)
 new known tiles:
-  0: 2B, 2C, 1D, 2E, 7E, 7B, 11I, 12C
-  1: 2B, 2C, 3D, 2D, 8H, 10H, 2G, 8G
-  w: 2B, 2C
+  0: 2C, 2B, 1D, 2E, 7E, 7B, 11I, 12C
+  1: 2C, 2B, 3D, 2D, 8H, 10H, 2G, 8G
+  w: 2C, 2B
 history messages:
-  0 DrewPositionTile 2B
   1 DrewPositionTile 2C
+  0 DrewPositionTile 2B
   1 StartedGame
   0 DrewTile 1D
   0 DrewTile 2E

@@ -17,15 +17,23 @@ export class ActionStartGame extends ActionBase {
         const moveData = this.game.getCurrentMoveData();
 
         // draw position tiles
-        const positionTiles = this.game.tileBag.slice(0, this.game.userIDs.length);
-        this.game.nextTileBagIndex = this.game.userIDs.length;
-        positionTiles.sort((a, b) => (a < b ? -1 : 1));
-        for (let i = 0; i < positionTiles.length; i++) {
-            const tile = positionTiles[i];
-            moveData.addNewGloballyKnownTile(tile);
-            this.game.setGameBoardPosition(tile, GameBoardType.NothingYet);
-            moveData.addGameHistoryMessage(new GameHistoryMessageData(GameHistoryMessage.DrewPositionTile, i, [tile]));
+        const positionTiles: PositionTileData[] = new Array(this.game.userIDs.length);
+        for (let tileBagIndex = 0; tileBagIndex < positionTiles.length; tileBagIndex++) {
+            positionTiles[tileBagIndex] = new PositionTileData(this.game.tileBag[tileBagIndex], tileBagIndex);
         }
+        positionTiles.sort((a, b) => (a.tile < b.tile ? -1 : 1));
+        for (let playerID = 0; playerID < positionTiles.length; playerID++) {
+            positionTiles[playerID].playerID = playerID;
+        }
+        positionTiles.sort((a, b) => (a.tileBagIndex < b.tileBagIndex ? -1 : 1));
+        for (let i = 0; i < positionTiles.length; i++) {
+            const positionTile = positionTiles[i];
+            moveData.addNewGloballyKnownTile(positionTile.tile);
+            this.game.setGameBoardPosition(positionTile.tile, GameBoardType.NothingYet);
+            moveData.addGameHistoryMessage(new GameHistoryMessageData(GameHistoryMessage.DrewPositionTile, positionTile.playerID, [positionTile.tile]));
+        }
+
+        this.game.nextTileBagIndex = this.game.userIDs.length;
 
         // start game
         moveData.addGameHistoryMessage(new GameHistoryMessageData(GameHistoryMessage.StartedGame, this.playerID, []));
@@ -37,4 +45,10 @@ export class ActionStartGame extends ActionBase {
 
         return [new ActionPlayTile(this.game, 0), new ActionPurchaseShares(this.game, 0)];
     }
+}
+
+class PositionTileData {
+    playerID: number = 0;
+
+    constructor(public tile: number, public tileBagIndex: number) {}
 }

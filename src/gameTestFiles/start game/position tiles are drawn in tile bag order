@@ -1,0 +1,40 @@
+tile bag: 11F, 4I, 8G, 2B, 9H, 11A, 7F, 10A, 10B, 6F, 11E, 7D, 12A, 12H, 3E, 7G, 2D, 2I, 1D, 3D, 2G, 11G, 10I, 1I, 6G, 11B, 5H, 7B
+user IDs: 5, 7, 9, 10
+starter user ID: 7
+my user ID: 10
+
+action: 1 StartGame
+············   L  T  A  F  W  C  I Cash  Net
+·O··········                         60   60
+············                         60   60
+············                         60   60
+············                         60   60
+··········O·  25 25 25 25 25 25 25
+·······O····   -  -  -  -  -  -  -
+············   -  -  -  -  -  -  -
+···O········
+tile racks:
+  0: 9H(l) 11A(h) 7F(h) 10A(h) 10B(h) 6F(h)
+  1: 11E(n) 7D(l) 12A(l) 12H(l) 3E(l) 7G(n)
+  2: 2D(h) 2I(l) 1D(h) 3D(h) 2G(l) 11G(n)
+  3: 10I(l) 1I(l) 6G(l) 11B(l) 5H(l) 7B(l)
+new known tiles:
+  0: 11F, 4I, 8G, 2B, 9H, 11A, 7F, 10A, 10B, 6F
+  1: 11F, 4I, 8G, 2B, 11E, 7D, 12A, 12H, 3E, 7G
+  2: 11F, 4I, 8G, 2B, 2D, 2I, 1D, 3D, 2G, 11G
+  3: 11F, 4I, 8G, 2B, 10I, 1I, 6G, 11B, 5H, 7B
+  w: 11F, 4I, 8G, 2B
+history messages:
+  3 DrewPositionTile 11F
+  1 DrewPositionTile 4I
+  2 DrewPositionTile 8G
+  0 DrewPositionTile 2B
+  1 StartedGame
+  3 DrewTile 10I
+  3 DrewTile 1I
+  3 DrewTile 6G
+  3 DrewTile 11B
+  3 DrewTile 5H
+  3 DrewTile 7B
+  0 TurnBegan
+next action: 0 PlayTile
