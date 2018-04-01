@@ -138,30 +138,13 @@ export class Game {
             let tileType = null;
 
             if (tile !== null) {
-                let x = Math.floor(tile / 9);
-                let y = tile % 9;
-
                 let borderTiles: number[] = [];
                 let borderTypes: GameBoardType[] = [];
-                if (x > 0) {
-                    let neighbor = tile - 9;
-                    borderTiles.push(neighbor);
-                    borderTypes.push(this.gameBoard.get(neighbor, 0));
-                }
-                if (x < 11) {
-                    let neighbor = tile + 9;
-                    borderTiles.push(neighbor);
-                    borderTypes.push(this.gameBoard.get(neighbor, 0));
-                }
-                if (y > 0) {
-                    let neighbor = tile - 1;
-                    borderTiles.push(neighbor);
-                    borderTypes.push(this.gameBoard.get(neighbor, 0));
-                }
-                if (y < 8) {
-                    let neighbor = tile + 1;
-                    borderTiles.push(neighbor);
-                    borderTypes.push(this.gameBoard.get(neighbor, 0));
+                const neighboringTiles = getNeighboringTiles(tile);
+                for (let i = 0; i < neighboringTiles.length; i++) {
+                    let neighboringTile = neighboringTiles[i];
+                    borderTiles.push(neighboringTile);
+                    borderTypes.push(this.gameBoard.get(neighboringTile, 0));
                 }
 
                 borderTypes = borderTypes.filter((type, index) => {
