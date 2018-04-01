@@ -81,11 +81,10 @@ export class ActionPlayTile extends ActionBase {
     }
 
     protected getMergedChains(tile: number) {
-        const neighboringTiles = getNeighboringTiles(tile);
-
         let chains: GameBoardType[] = [];
+        const neighboringTiles = getNeighboringTiles(tile);
         for (let i = 0; i < neighboringTiles.length; i++) {
-            let type = this.game.gameBoard.get(neighboringTiles[i], 0);
+            const type = this.game.gameBoard.get(neighboringTiles[i], 0);
             if (type <= GameBoardType.Imperial && chains.indexOf(type) === -1) {
                 chains.push(type);
             }

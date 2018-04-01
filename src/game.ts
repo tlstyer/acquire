@@ -142,7 +142,7 @@ export class Game {
                 let borderTypes: GameBoardType[] = [];
                 const neighboringTiles = getNeighboringTiles(tile);
                 for (let i = 0; i < neighboringTiles.length; i++) {
-                    let neighboringTile = neighboringTiles[i];
+                    const neighboringTile = neighboringTiles[i];
                     borderTiles.push(neighboringTile);
                     borderTypes.push(this.gameBoard.get(neighboringTile, 0));
                 }
@@ -238,13 +238,12 @@ export class Game {
         while ((t = pending.pop()) !== undefined) {
             this.setGameBoardPosition(t, gameBoardType);
 
-            const possibilities = getNeighboringTiles(t);
-
-            for (let i = 0; i < possibilities.length; i++) {
-                let possibility = possibilities[i];
-                if (found[possibility] !== true && excludedTypes[this.gameBoard.get(possibility, 0)] !== true) {
-                    pending.push(possibility);
-                    found[possibility] = true;
+            const neighboringTiles = getNeighboringTiles(t);
+            for (let i = 0; i < neighboringTiles.length; i++) {
+                const neighboringTile = neighboringTiles[i];
+                if (found[neighboringTile] !== true && excludedTypes[this.gameBoard.get(neighboringTile, 0)] !== true) {
+                    pending.push(neighboringTile);
+                    found[neighboringTile] = true;
                 }
             }
         }
