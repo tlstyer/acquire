@@ -1,7 +1,5 @@
 import { assert } from 'chai';
-import * as fs from 'fs';
 import { List } from 'immutable';
-import * as path from 'path';
 
 import { defaultTileRackTypes } from './defaults';
 import { GameAction, GameBoardType, GameHistoryMessage, ScoreBoardIndex } from './enums';
@@ -13,19 +11,13 @@ import { ActionSelectChainToDisposeOfNext } from './gameActions/selectChainToDis
 import { ActionSelectMergerSurvivor } from './gameActions/selectMergerSurvivor';
 import { ActionSelectNewChain } from './gameActions/selectNewChain';
 
-const inputBasePath: string = `${__dirname}/gameTestFiles/`;
-const outputBasePath: string = '';
-
-export function runGameTestFile(pathToFile: string) {
-    const inputFileContents = fs.readFileSync(path.join(inputBasePath, pathToFile)).toString();
-
+export function runGameTestFile(inputLines: string[]) {
     let game: Game | null = null;
     let tileBag: number[] = [];
     let userIDs: number[] = [];
     let starterUserID: number = 0;
     let myUserID: number | null = null;
 
-    const inputLines = inputFileContents.split('\n');
     let outputLines: string[] = [];
 
     let lastMoveData: MoveData | null = null;
@@ -133,13 +125,7 @@ export function runGameTestFile(pathToFile: string) {
 
     outputLines.push('');
 
-    if (outputBasePath !== '') {
-        let outputFilePath = path.join(outputBasePath, pathToFile);
-        ensureDirectoryExists(outputFilePath);
-        fs.writeFileSync(outputFilePath, outputLines.join('\n'));
-    }
-
-    assert.deepEqual(outputLines, inputLines, 'output lines do not match input lines');
+    return outputLines;
 }
 
 function getDuplicatedTiles(tileBag: number[]) {
@@ -437,13 +423,4 @@ function getNextActionString(action: ActionBase) {
     }
 
     return `${nextPlayerID} ${nextActionName}${parameters !== '' ? ' ' : ''}${parameters}`;
-}
-
-// based on https://stackoverflow.com/questions/13542667/create-directory-when-writing-to-file-in-node-js
-function ensureDirectoryExists(filePath: string) {
-    let dirname = path.dirname(filePath);
-    if (!fs.existsSync(dirname)) {
-        ensureDirectoryExists(dirname);
-        fs.mkdirSync(dirname);
-    }
 }
