@@ -25,19 +25,19 @@ function initializeNeighboringTiles() {
     for (let tile = 0; tile < 108; tile++) {
         let possibilities: number[] = [];
 
-        let x = tile % 9;
-        let y = Math.floor(tile / 9);
+        let x = Math.floor(tile / 9);
+        let y = tile % 9;
 
-        if (y > 0) {
+        if (x > 0) {
             possibilities.push(tile - 9);
         }
-        if (x > 0) {
+        if (y > 0) {
             possibilities.push(tile - 1);
         }
-        if (x < 8) {
+        if (y < 8) {
             possibilities.push(tile + 1);
         }
-        if (y < 11) {
+        if (x < 11) {
             possibilities.push(tile + 9);
         }
 
