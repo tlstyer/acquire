@@ -56,7 +56,6 @@ export class ActionPlayTile extends ActionBase {
             this.game.fillCells(tile, tileType);
             this.game.setChainSize(tileType, this.game.gameBoardTypeCounts[tileType]);
         } else if (tileType === GameBoardType.WillPutLonelyTileDown || tileType === GameBoardType.HaveNeighboringTileToo) {
-            this.game.getCurrentMoveData().addNewGloballyKnownTile(tile, this.playerID);
             this.game.setGameBoardPosition(tile, GameBoardType.NothingYet);
         } else if (tileType === GameBoardType.WillFormNewChain) {
             let availableChains: GameBoardType[] = [];

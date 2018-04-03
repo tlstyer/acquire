@@ -248,16 +248,6 @@ function getMoveDataLines(moveData: MoveData, detailed: boolean) {
             lines.push(`  ${playerID}: ${getTileRackString(tileRack, tileTypes)}`);
         });
 
-        lines.push('new known tiles:');
-        moveData.newPlayerKnownTiles.forEach((tiles, playerID) => {
-            if (tiles.length > 0) {
-                lines.push(`  ${playerID}: ${toTilesString(tiles)}`);
-            }
-        });
-        if (moveData.newWatcherKnownTiles.length > 0) {
-            lines.push(`  w: ${toTilesString(moveData.newWatcherKnownTiles)}`);
-        }
-
         lines.push('history messages:');
         moveData.gameHistoryMessages.forEach(ghm => {
             lines.push(`  ${getGameHistoryMessageString(ghm)}`);

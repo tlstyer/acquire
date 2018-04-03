@@ -18,7 +18,6 @@ import { calculateBonuses, getNeighboringTiles } from './helpers';
 
 export class Game {
     nextTileBagIndex: number = 0;
-    tileToTileBagIndex: { [key: number]: number } = {};
     gameBoardTypeCounts: number[];
     protected currentMoveData: MoveData | null = null;
     moveDataHistory: MoveData[] = [];
@@ -34,11 +33,6 @@ export class Game {
     scoreBoardPrice = defaultScoreBoardPrice;
 
     constructor(public tileBag: number[], public userIDs: number[], starterUserID: number, public myUserID: number | null) {
-        // initialize this.tileToTileBagIndex
-        for (let tileBagIndex = 0; tileBagIndex < tileBag.length; tileBagIndex++) {
-            this.tileToTileBagIndex[tileBag[tileBagIndex]] = tileBagIndex;
-        }
-
         // initialize this.gameBoardTypeCounts
         this.gameBoardTypeCounts = new Array(GameBoardType.Max);
         for (let i = 0; i < GameBoardType.Max; i++) {
@@ -98,7 +92,6 @@ export class Game {
             let tile = this.tileBag[this.nextTileBagIndex++];
 
             this.tileRacks = this.tileRacks.setIn([playerID, i], tile);
-            this.getCurrentMoveData().addNewPlayerKnownTile(tile, playerID);
             if (addDrewTileMessage) {
                 this.getCurrentMoveData().addGameHistoryMessage(new GameHistoryMessageData(GameHistoryMessage.DrewTile, playerID, [tile]));
             }
@@ -393,8 +386,6 @@ export class MoveData {
     playerID: number = -1;
     gameAction: GameAction = GameAction.StartGame;
     gameActionParameters: any[] = [];
-    newPlayerKnownTiles: number[][];
-    newWatcherKnownTiles: number[] = [];
     gameHistoryMessages: GameHistoryMessageData[] = [];
     nextGameAction: ActionBase;
 
@@ -407,11 +398,6 @@ export class MoveData {
     scoreBoardPrice = defaultScoreBoardPrice;
 
     constructor(public game: Game) {
-        this.newPlayerKnownTiles = new Array(game.userIDs.length);
-        for (let playerID = 0; playerID < game.userIDs.length; playerID++) {
-            this.newPlayerKnownTiles[playerID] = [];
-        }
-
         // assign something to this.nextGameAction so it gets set in the constructor
         this.nextGameAction = game.gameActionStack[game.gameActionStack.length - 1];
     }
@@ -420,20 +406,6 @@ export class MoveData {
         this.playerID = playerID;
         this.gameAction = gameAction;
         this.gameActionParameters = parameters;
-    }
-
-    addNewPlayerKnownTile(tile: number, playerID: number) {
-        this.newPlayerKnownTiles[playerID].push(tile);
-    }
-
-    addNewGloballyKnownTile(tile: number, playerIDWhoAlreadyKnows?: number) {
-        for (let playerID = 0; playerID < this.newPlayerKnownTiles.length; playerID++) {
-            if (playerID !== playerIDWhoAlreadyKnows) {
-                this.newPlayerKnownTiles[playerID].push(tile);
-            }
-        }
-
-        this.newWatcherKnownTiles.push(tile);
     }
 
     addGameHistoryMessage(gameHistoryMessageData: GameHistoryMessageData) {

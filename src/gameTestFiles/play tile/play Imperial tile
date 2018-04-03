@@ -22,8 +22,6 @@ II··········                     4   48  124
 tile racks:
   0: 7E(l) 7G(l) 12H(l) 7B(l) 11I(l) 12C(l)
   1: 2A(I) 8H(l) 10H(l) 2G(l) 1D(l) 11D(l)
-new known tiles:
-  0: 7G
 history messages:
   0 PurchasedShares 3I
   0 DrewTile 7G
@@ -43,7 +41,6 @@ II··········                     4   48  162
 tile racks:
   0: 7E(l) 7G(l) 12H(l) 7B(l) 11I(l) 12C(l)
   1: none 8H(l) 10H(l) 2G(l) 1D(l) 11D(l)
-new known tiles:
 history messages:
   1 PlayedTile 2A
 next action: 1 PurchaseShares

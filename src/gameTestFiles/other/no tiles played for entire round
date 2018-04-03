@@ -146,10 +146,6 @@ O··T·FF·O···
 tile racks:
   0: 2I(c) 7G(c) 5E(c) 1H(c) 3D(c) 4C(c)
   1: 10H(c) 10G(c) 11B(c) 11I(c) 9H(c) 3F(W)
-new known tiles:
-  0: 9I
-  1: 11I
-  w: 9I
 history messages:
   1 PlayedTile 9I
   1 CouldNotAffordAnyShares
@@ -173,8 +169,6 @@ O··T·FF·O···
 tile racks:
   0: 2I(c) 7G(c) 5E(c) 1H(c) 3D(c) 4C(c)
   1: 10H(c) 10G(c) 11B(c) 11I(c) 9H(c) 12A(c)
-new known tiles:
-  1: 12A
 history messages:
   1 PlayedTile 3F
   1 CouldNotAffordAnyShares

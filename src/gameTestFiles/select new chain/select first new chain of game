@@ -16,10 +16,6 @@ action: 1 StartGame
 tile racks:
   0: 1D(l) 2E(l) 7E(l) 7B(l) 11I(l) 12C(l)
   1: 3D(l) 2D(n) 8H(h) 10H(l) 2G(l) 8G(h)
-new known tiles:
-  0: 2C, 2B, 1D, 2E, 7E, 7B, 11I, 12C
-  1: 2C, 2B, 3D, 2D, 8H, 10H, 2G, 8G
-  w: 2C, 2B
 history messages:
   1 DrewPositionTile 2C
   0 DrewPositionTile 2B
@@ -46,10 +42,6 @@ O···········  25 25 25 25 25 25 25
 tile racks:
   0: 11A(l) 2E(l) 7E(l) 7B(l) 11I(l) 12C(l)
   1: 3D(l) 2D(n) 8H(h) 10H(l) 2G(l) 8G(h)
-new known tiles:
-  0: 11A
-  1: 1D
-  w: 1D
 history messages:
   0 PlayedTile 1D
   0 DrewTile 11A
@@ -69,10 +61,6 @@ O·O·········  25 25 25 25 25 25 25
 tile racks:
   0: 11A(l) 2E(l) 7E(l) 7B(l) 11I(l) 12C(l)
   1: 4B(l) 2D(n) 8H(h) 10H(l) 2G(l) 8G(h)
-new known tiles:
-  0: 3D
-  1: 4B
-  w: 3D
 history messages:
   1 PlayedTile 3D
   0 TurnBegan
@@ -91,10 +79,6 @@ O·O·········  25 25 25 25 25 25 25
 tile racks:
   0: 11A(l) 1A(l) 7E(l) 7B(l) 11I(l) 12C(l)
   1: 4B(l) 2D(n) 8H(h) 10H(l) 2G(l) 8G(h)
-new known tiles:
-  0: 1A
-  1: 2E
-  w: 2E
 history messages:
   0 PlayedTile 2E
   0 DrewTile 1A
@@ -114,7 +98,6 @@ OOO·········  25 25 25 25 25 25 25
 tile racks:
   0: 11A(l) 1A(l) 7E(l) 7B(l) 11I(l) 12C(l)
   1: 4B(l) none 8H(h) 10H(l) 2G(l) 8G(h)
-new known tiles:
 history messages:
   1 PlayedTile 2D
 next action: 1 SelectNewChain L,T,A,F,W,C,I
@@ -132,7 +115,6 @@ LLL·········  24 25 25 25 25 25 25
 tile racks:
   0: 11A(l) 1A(l) 7E(l) 7B(l) 11I(l) 12C(l)
   1: 4B(l) none 8H(h) 10H(l) 2G(l) 8G(h)
-new known tiles:
 history messages:
   1 FormedChain L
 next action: 1 PurchaseShares

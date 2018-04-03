@@ -86,8 +86,6 @@ action: 0 PurchaseShares L,C,T 0
 tile racks:
   0: 6D(l) 10C(A) 2H(l) 1A(l) 7H(l) 6G(l)
   1: 10D(F) 1G(l) 4D(m) 9C(A) 12I(l) 10G(c)
-new known tiles:
-  0: 1A
 history messages:
   0 PurchasedShares 1L,1T,1C
   0 DrewTile 1A

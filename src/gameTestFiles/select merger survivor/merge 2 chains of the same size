@@ -35,7 +35,6 @@ tile racks:
   0: 6I(l) 6E(h) 7E(h) none 11I(l) 12C(l)
   1: 6B(l) 2D(C) 8H(l) 10H(l) 2G(l) 8G(n)
   2: 1B(C) 4G(l) 3C(m) 12F(n) 3A(n) 1D(l)
-new known tiles:
 history messages:
   0 PlayedTile 3B
   0 MergedChains A,C
@@ -55,7 +54,6 @@ tile racks:
   0: 6I(l) 6E(h) 7E(h) none 11I(l) 12C(l)
   1: 6B(l) 2D(C) 8H(l) 10H(l) 2G(l) 8G(n)
   2: 1B(C) 4G(l) 3C(C) 12F(n) 3A(C) 1D(l)
-new known tiles:
 history messages:
   0 SelectedMergerSurvivor C
   0 ReceivedBonus A 30

@@ -390,7 +390,6 @@ C█III█FFFFFF
 tile racks:
   0: none none none none none none
   1: none none none none none none
-new known tiles:
 history messages:
   0 PlayedTile 10A
 next action: 0 PurchaseShares
@@ -408,7 +407,6 @@ C█III█FFFFFF
 tile racks:
   0: none none none none none none
   1: none none none none none none
-new known tiles:
 history messages:
   0 PurchasedShares x
   AllTilesPlayed

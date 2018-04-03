@@ -18,12 +18,6 @@ tile racks:
   1: 11E(n) 7D(l) 12A(l) 12H(l) 3E(l) 7G(n)
   2: 2D(h) 2I(l) 1D(h) 3D(h) 2G(l) 11G(n)
   3: 10I(l) 1I(l) 6G(l) 11B(l) 5H(l) 7B(l)
-new known tiles:
-  0: 11F, 4I, 8G, 2B, 9H, 11A, 7F, 10A, 10B, 6F
-  1: 11F, 4I, 8G, 2B, 11E, 7D, 12A, 12H, 3E, 7G
-  2: 11F, 4I, 8G, 2B, 2D, 2I, 1D, 3D, 2G, 11G
-  3: 11F, 4I, 8G, 2B, 10I, 1I, 6G, 11B, 5H, 7B
-  w: 11F, 4I, 8G, 2B
 history messages:
   3 DrewPositionTile 11F
   1 DrewPositionTile 4I

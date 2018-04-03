@@ -35,7 +35,6 @@ tile racks:
   0: 6I(l) 6E(h) 7E(h) none 11I(l) 12C(l)
   1: 6B(l) 2D(C) 8H(h) 10H(l) 2G(l) 8G(h)
   2: 12F(n) 4G(l) 3C(C) 7G(l) 3A(C) 1D(l)
-new known tiles:
 history messages:
   0 PlayedTile 3B
   0 MergedChains A,C

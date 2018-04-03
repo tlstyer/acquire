@@ -56,7 +56,6 @@ tile racks:
   1: 12E(l) 10B(l) 1B(l) 5D(I) 3A(l) 9I(l)
   2: 6I(T) 11G(l) 7F(C) 4D(l) 1G(l) 2I(l)
   3: 12B(l) 12H(l) 10I(l) none 6E(I) 4B(l)
-new known tiles:
 history messages:
   3 PlayedTile 5G
   3 MergedChains L,T,C,I
@@ -77,7 +76,6 @@ tile racks:
   1: 12E(l) 10B(l) 1B(l) 5D(T) 3A(l) 9I(l)
   2: 6I(T) 11G(l) 7F(T) 4D(l) 1G(l) 2I(l)
   3: 12B(l) 12H(l) 10I(l) none 6E(T) 4B(l)
-new known tiles:
 history messages:
   3 SelectedMergerSurvivor T
   0 ReceivedBonus L 30
@@ -104,7 +102,6 @@ tile racks:
   1: 12E(l) 10B(l) 1B(l) 5D(T) 3A(l) 9I(l)
   2: 6I(T) 11G(l) 7F(T) 4D(l) 1G(l) 2I(l)
   3: 12B(l) 12H(l) 10I(l) none 6E(T) 4B(l)
-new known tiles:
 history messages:
   3 SelectedChainToDisposeOfNext C
 next action: 1 DisposeOfShares C
@@ -138,7 +135,6 @@ tile racks:
   1: 12E(l) 10B(l) 1B(l) 5D(T) 3A(l) 9I(l)
   2: 6I(T) 11G(l) 7F(T) 4D(l) 1G(l) 2I(l)
   3: 12B(l) 12H(l) 10I(l) none 6E(T) 4B(l)
-new known tiles:
 history messages:
   3 PurchasedShares 3T
   3 EndedGame

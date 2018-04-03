@@ -26,7 +26,6 @@ LLL·········  24 25 25 25 25 25 25
 tile racks:
   0: 11A(l) 1A(l) 7E(l) 7B(l) 11I(l) 12C(l)
   1: 4B(l) none 8H(h) 10H(l) 2G(l) 8G(h)
-new known tiles:
 history messages:
   1 FormedChain L
 next action: 1 PurchaseShares
