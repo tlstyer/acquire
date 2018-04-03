@@ -1543,10 +1543,12 @@ def make_acquire2_game_test_files(output_dir):
         print(filename)
 
         with util.open_possibly_gzipped_file(filename) as file:
+            os.makedirs(os.path.join(output_dir, str(log_timestamp)), exist_ok=True)
+
             log_processor = LogProcessor(log_timestamp, file)
 
             for game in log_processor.go():
-                filename = os.path.join(output_dir, '%d_%05d_%03d.txt' % (game.log_timestamp, game.internal_game_id, len(game.played_tiles_order)))
+                filename = os.path.join(output_dir, '%d/%05d_%03d.txt' % (game.log_timestamp, game.internal_game_id, len(game.played_tiles_order)))
                 print(filename)
 
                 lines = []
