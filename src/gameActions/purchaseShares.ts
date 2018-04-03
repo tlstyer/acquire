@@ -37,7 +37,7 @@ export class ActionPurchaseShares extends ActionBase {
                     hasChainSizeLessThan11 = true;
                 }
                 if (chainSize > 40) {
-                    hasChainSizeGreaterThan40;
+                    hasChainSizeGreaterThan40 = true;
                 }
 
                 const available = this.game.scoreBoardAvailable.get(type, 0);
