@@ -176,7 +176,11 @@ function fromParameterStrings(gameAction: GameAction, strings: string[]) {
             parameters.push(...strings.map(s => parseInt(s, 10)));
             break;
         case GameAction.PurchaseShares:
-            parameters.push(strings[0].split(',').map(s => abbreviationToGameBoardType[s]));
+            if (strings[0] === 'x') {
+                parameters.push([]);
+            } else {
+                parameters.push(strings[0].split(',').map(s => abbreviationToGameBoardType[s]));
+            }
             parameters.push(parseInt(strings[1]));
             break;
     }
@@ -200,7 +204,11 @@ function toParameterStrings(gameAction: GameAction, parameters: any[]) {
             strings.push(...parameters.map(p => p.toString()));
             break;
         case GameAction.PurchaseShares:
-            strings.push(parameters[0].map((p: number) => gameBoardTypeToCharacter[p]).join(','));
+            if (parameters[0].length === 0) {
+                strings.push('x');
+            } else {
+                strings.push(parameters[0].map((p: number) => gameBoardTypeToCharacter[p]).join(','));
+            }
             strings.push(parameters[1].toString());
             break;
     }
@@ -378,7 +386,7 @@ const ghmshPurchasedShares = (ghmd: GameHistoryMessageData) => {
     return [
         ghmd.playerID,
         GameHistoryMessage[ghmd.gameHistoryMessage],
-        ghmd.parameters.map(([type, count]) => `${GameBoardType[type][0]}x${count}`).join(','),
+        ghmd.parameters.length > 0 ? ghmd.parameters.map(([type, count]) => `${GameBoardType[type][0]}x${count}`).join(',') : 'x',
     ].join(' ');
 };
 
