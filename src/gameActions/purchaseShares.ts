@@ -146,7 +146,7 @@ export class ActionPurchaseShares extends ActionBase {
         } else {
             this.game.drawTiles(this.playerID);
             this.game.determineTileRackTypesForPlayer(this.playerID);
-            // TODO: replace dead tiles
+            this.game.replaceDeadTiles(this.playerID);
 
             allTilesPlayed = this.game.gameBoardTypeCounts[GameBoardType.Nothing] === 0;
             if (allTilesPlayed) {
