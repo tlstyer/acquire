@@ -518,9 +518,10 @@ class ScoreSheet:
             if price:
                 for player_id, player_datum in enumerate(self.player_data):
                     net_worths[player_id] += player_datum[game_board_type_id] * price
-                for player_ids, bonus in self.get_bonuses(game_board_type_id):
-                    for player_id in player_ids:
-                        net_worths[player_id] += bonus
+                if len(self.game.game_board.board_type_to_coordinates[game_board_type_id]) > 0:
+                    for player_ids, bonus in self.get_bonuses(game_board_type_id):
+                        for player_id in player_ids:
+                            net_worths[player_id] += bonus
 
         for player_id, net_worth in enumerate(net_worths):
             self.player_data[player_id][enums.ScoreSheetIndexes.Net.value] = net_worth
