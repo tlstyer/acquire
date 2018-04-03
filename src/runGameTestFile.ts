@@ -386,7 +386,7 @@ const ghmshPurchasedShares = (ghmd: GameHistoryMessageData) => {
     return [
         ghmd.playerID,
         GameHistoryMessage[ghmd.gameHistoryMessage],
-        ghmd.parameters.length > 0 ? ghmd.parameters.map(([type, count]) => `${GameBoardType[type][0]}x${count}`).join(',') : 'x',
+        ghmd.parameters.length > 0 ? ghmd.parameters.map(([type, count]) => `${count}${GameBoardType[type][0]}`).join(',') : 'x',
     ].join(' ');
 };
 

@@ -139,6 +139,6 @@ tile racks:
   3: 12B(l) 12H(l) 10I(l) none 6E(T) 4B(l)
 new known tiles:
 history messages:
-  3 PurchasedShares Tx3
+  3 PurchasedShares 3T
   3 EndedGame
 next action: 3 GameOver

@@ -145,6 +145,6 @@ tile racks:
 new known tiles:
   0: 1A
 history messages:
-  0 PurchasedShares Ix1
+  0 PurchasedShares 1I
   1 TurnBegan
 next action: 1 PlayTile
