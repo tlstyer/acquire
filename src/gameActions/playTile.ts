@@ -49,10 +49,10 @@ export class ActionPlayTile extends ActionBase {
         if (tileRackIndex === -1) {
             throw new UserInputError('player does not have given tile');
         }
-        const tileType = this.game.tileRackTypes.getIn([this.playerID, tileRackIndex], 0);
+        const tileType = this.game.tileRackTypes.get(this.playerID, defaultTileRackTypes).get(tileRackIndex, GameBoardType.Luxor);
 
         let response: ActionBase[] = [];
-        if (tileType <= GameBoardType.Imperial) {
+        if (tileType !== null && tileType <= GameBoardType.Imperial) {
             this.game.fillCells(tile, tileType);
             this.game.setChainSize(tileType, this.game.gameBoardTypeCounts[tileType]);
         } else if (tileType === GameBoardType.WillPutLonelyTileDown || tileType === GameBoardType.HaveNeighboringTileToo) {

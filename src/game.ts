@@ -85,7 +85,7 @@ export class Game {
         let addDrewTileMessage = this.myUserID === null || this.myUserID === this.userIDs[playerID];
 
         for (let i = 0; i < 6; i++) {
-            if (this.tileRacks.getIn([playerID, i], 0) !== null) {
+            if (this.tileRacks.get(playerID, defaultTileRack).get(i, 0) !== null) {
                 continue;
             }
 
@@ -157,7 +157,7 @@ export class Game {
         }
 
         for (let tileIndex = 0; tileIndex < 6; tileIndex++) {
-            let tile = this.tileRacks.getIn([playerID, tileIndex], 0);
+            let tile = this.tileRacks.get(playerID, defaultTileRack).get(tileIndex, 0);
             let tileType = null;
 
             if (tile !== null) {
@@ -225,7 +225,7 @@ export class Game {
 
                 let tileType = tileTypes[tileIndex];
                 if (tileType === GameBoardType.WillPutLonelyTileDown) {
-                    let tile = this.tileRacks.getIn([playerID, tileIndex], 0);
+                    let tile = this.tileRacks.get(playerID, defaultTileRack).get(tileIndex, 0);
                     if (tile !== null && lonelyTileBorderTiles[tile] === true) {
                         tileTypes[tileIndex] = GameBoardType.HaveNeighboringTileToo;
                     }
@@ -277,7 +277,7 @@ export class Game {
     getScoreBoardColumnArray(scoreBoardIndex: GameBoardType | ScoreBoardIndex) {
         const column: number[] = new Array(this.userIDs.length);
         for (let playerID = 0; playerID < this.userIDs.length; playerID++) {
-            column[playerID] = this.scoreBoard.getIn([playerID, scoreBoardIndex], 0);
+            column[playerID] = this.scoreBoard.get(playerID, defaultScoreBoardRow).get(scoreBoardIndex, 0);
         }
         return column;
     }
@@ -289,7 +289,7 @@ export class Game {
         for (let i = 0; i < adjustments.length; i++) {
             const [scoreBoardIndex, change] = adjustments[i];
 
-            let value = scoreBoard.getIn([playerID, scoreBoardIndex], 0);
+            let value = scoreBoard.get(playerID, defaultScoreBoardRow).get(scoreBoardIndex, 0);
             scoreBoard = scoreBoard.setIn([playerID, scoreBoardIndex], value + change);
 
             if (scoreBoardIndex <= ScoreBoardIndex.Imperial) {
@@ -308,7 +308,7 @@ export class Game {
         for (let playerID = 0; playerID < adjustments.length; playerID++) {
             let change = adjustments[playerID];
             if (change !== 0) {
-                let value = scoreBoard.getIn([playerID, scoreBoardIndex], 0);
+                let value = scoreBoard.get(playerID, defaultScoreBoardRow).get(scoreBoardIndex, 0);
                 scoreBoard = scoreBoard.setIn([playerID, scoreBoardIndex], value + change);
             }
         }

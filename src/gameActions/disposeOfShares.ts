@@ -1,3 +1,4 @@
+import { defaultScoreBoardRow } from '../defaults';
 import { GameAction, GameBoardType, GameHistoryMessage, ScoreBoardIndex } from '../enums';
 import { UserInputError } from '../error';
 import { Game, GameHistoryMessageData } from '../game';
@@ -10,7 +11,7 @@ export class ActionDisposeOfShares extends ActionBase {
     constructor(game: Game, playerID: number, public defunctChain: GameBoardType, public controllingChain: GameBoardType) {
         super(game, playerID, GameAction.DisposeOfShares);
 
-        this.sharesOwnedInDefunctChain = this.game.scoreBoard.getIn([playerID, defunctChain], 0);
+        this.sharesOwnedInDefunctChain = this.game.scoreBoard.get(playerID, defaultScoreBoardRow).get(defunctChain, 0);
     }
 
     prepare() {

@@ -1,3 +1,4 @@
+import { defaultScoreBoardRow } from '../defaults';
 import { GameAction, GameBoardType, GameHistoryMessage, ScoreBoardIndex } from '../enums';
 import { UserInputError } from '../error';
 import { Game, GameHistoryMessageData } from '../game';
@@ -28,7 +29,7 @@ export class ActionPurchaseShares extends ActionBase {
         let hasChainSizeGreaterThan40 = false;
         let sharesAvailable = false;
         let canPurchaseShares = false;
-        const cash = this.game.scoreBoard.getIn([this.playerID, ScoreBoardIndex.Cash], 0);
+        const cash = this.game.scoreBoard.get(this.playerID, defaultScoreBoardRow).get(ScoreBoardIndex.Cash, 0);
         for (let type = 0; type <= GameBoardType.Imperial; type++) {
             const chainSize = this.game.scoreBoardChainSize.get(type, 0);
             if (chainSize > 0) {
@@ -110,7 +111,7 @@ export class ActionPurchaseShares extends ActionBase {
                 throw new UserInputError('a requested chain does not have enough shares available');
             }
         }
-        if (cost > this.game.scoreBoard.getIn([this.playerID, ScoreBoardIndex.Cash], 0)) {
+        if (cost > this.game.scoreBoard.get(this.playerID, defaultScoreBoardRow).get(ScoreBoardIndex.Cash, 0)) {
             throw new UserInputError('player does not have enough cash to pay for requested shares');
         }
 
