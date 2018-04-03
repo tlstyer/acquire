@@ -10,6 +10,7 @@ import pickle
 import random
 import re
 import server
+import string
 import sys
 import traceback
 import ujson
@@ -1515,6 +1516,181 @@ def make_individual_game_log(log_timestamp, internal_game_id, output_dir):
                     return
 
 
+def make_acquire2_game_test_files(output_dir):
+    for log_timestamp, filename in util.get_log_file_filenames('py', begin=1408905413):
+        print(filename)
+
+        with util.open_possibly_gzipped_file(filename) as file:
+            log_processor = LogProcessor(log_timestamp, file)
+
+            for game in log_processor.go():
+                filename = os.path.join(output_dir, '%d_%05d_%03d.txt' % (game.log_timestamp, game.internal_game_id, len(game.played_tiles_order)))
+                print(filename)
+
+                lines = []
+
+                tile_bag = game._get_initial_tile_bag()
+                lines.append('tile bag: ' + ', '.join(get_tile_string(t) for t in tile_bag[::-1]))
+                lines.append('user IDs: ' + ', '.join(str(p[0]) for p in sorted(game.player_id_to_username.items(), key=lambda x: x[0])))
+                lines.append('starter user ID: ' + str(game.username_to_player_id[game.player_join_order[0]]))
+                lines.append('my user ID: null')
+
+                server_game = server.Game(game.game_id, game.internal_game_id, enums.GameModes[game.mode].value, game.max_players, Game._add_pending_messages, False, tile_bag)
+
+                server_game_player_id_to_client = [Client(player_id, username) for player_id, username in sorted(game.player_id_to_username.items())]
+
+                for username in game.player_join_order:
+                    client = server_game_player_id_to_client[game.username_to_player_id[username]]
+                    server_game.join_game(client)
+
+                for _, player_id_and_action in enumerate(game.actions):
+                    player_id, action = player_id_and_action
+
+                    game_action_id = action[0]
+                    game_action = enums.GameActions(game_action_id)
+                    data = action[1:]
+
+                    acquire2_parameter_strings = to_parameter_strings(server_game, player_id, game_action, data)
+
+                    num_history_messages = len(server_game.history_messages)
+
+                    try:
+                        server_game.do_game_action(server_game_player_id_to_client[player_id], game_action_id, data)
+                        server_game.score_sheet.update_net_worths()
+                    except:
+                        pass
+
+                    if len(server_game.history_messages) > num_history_messages:
+                        lines.append('')
+
+                        acquire2_parameters = ' ' + ' '.join(acquire2_parameter_strings) if len(acquire2_parameter_strings) > 0 else ''
+                        lines.append('action: ' + str(player_id) + ' ' + game_action.name + acquire2_parameters)
+
+                        game_board_lines = get_game_board_lines(server_game.game_board)
+                        score_board_lines = get_score_board_lines(server_game.score_sheet)
+                        lines.extend(get_game_board_lines_next_to_score_board_lines(game_board_lines, score_board_lines))
+
+                        lines.append('tile racks:')
+                        for player_id, tile_rack in enumerate(server_game.tile_racks.racks):
+                            lines.append('  ' + str(player_id) + ': ' + get_tile_rack_string(tile_rack))
+
+                lines.append('')
+
+                with open(filename, 'w') as f:
+                    f.write('\n'.join(lines))
+
+
+def to_parameter_strings(server_game, player_id, game_action, parameters):
+    strings = []
+
+    if game_action == enums.GameActions.PlayTile:
+        strings.append(get_tile_string(server_game.tile_racks.racks[player_id][parameters[0]][0]))
+    elif game_action == enums.GameActions.SelectNewChain or game_action == enums.GameActions.SelectMergerSurvivor or game_action == enums.GameActions.SelectChainToDisposeOfNext:
+        strings.append(enums.GameBoardTypes(parameters[0]).name[0])
+    elif game_action == enums.GameActions.DisposeOfShares:
+        strings.extend(str(x) for x in parameters)
+    elif game_action == enums.GameActions.PurchaseShares:
+        if len(parameters[0]) == 0:
+            strings.append('x')
+        else:
+            strings.append(','.join(enums.GameBoardTypes(x).name[0] for x in parameters[0]))
+        strings.append(str(parameters[1]))
+
+    return strings
+
+
+def get_tile_string(coordinates):
+    return str(coordinates[0] + 1) + string.ascii_uppercase[coordinates[1]]
+
+
+def get_tile_int(coordinates):
+    return coordinates[0] * 9 + coordinates[1]
+
+
+def get_game_board_lines(game_board):
+    lines = []
+
+    for y in range(9):
+        lines.append(''.join(game_board_type_to_character[game_board.x_to_y_to_board_type[x][y]] for x in range(12)))
+
+    return lines
+
+
+def get_score_board_lines(score_board):
+    lines = []
+
+    lines.append(format_score_board_line(['L', 'T', 'A', 'F', 'W', 'C', 'I', 'Cash', 'Net']))
+    for line in score_board.player_data:
+        lines.append(format_score_board_line(str(x) if i >= 7 or x > 0 else '' for i, x in enumerate(line[:9])))
+    lines.append(format_score_board_line(str(x) for x in score_board.available))
+    lines.append(format_score_board_line(str(x) if x > 0 else '-' for x in score_board.chain_size))
+    lines.append(format_score_board_line(str(x) if x > 0 else '-' for x in score_board.price))
+
+    return lines
+
+
+game_board_string_spacer = '            '
+
+
+def get_game_board_lines_next_to_score_board_lines(game_board_lines, score_board_lines):
+    lines = []
+
+    for i in range(max(len(game_board_lines), len(score_board_lines))):
+        line_parts = []
+        line_parts.append(game_board_lines[i] if i < len(game_board_lines) else game_board_string_spacer)
+        if i < len(score_board_lines):
+            line_parts.append('  ')
+            line_parts.append(score_board_lines[i])
+        lines.append(''.join(line_parts))
+
+    return lines
+
+
+score_board_column_widths = [2, 2, 2, 2, 2, 2, 2, 4, 4]
+
+
+def format_score_board_line(entries):
+    line_parts = []
+
+    for index, entry in enumerate(entries):
+        num_spaces_to_add = score_board_column_widths[index] - len(entry)
+
+        if (num_spaces_to_add == 1):
+            entry = ' ' + entry
+        elif (num_spaces_to_add == 2):
+            entry = '  ' + entry
+        elif (num_spaces_to_add == 3):
+            entry = '   ' + entry
+
+        line_parts.append(entry)
+
+    return ' '.join(line_parts)
+
+
+def get_tile_rack_string(tiles):
+    return ' '.join(get_tile_string(tile[0]) + '(' + game_board_type_to_character[tile[1]] + ')' if tile else 'none' for tile in tiles)
+
+
+game_board_type_to_character = {
+    enums.GameBoardTypes.Luxor.value: 'L',
+    enums.GameBoardTypes.Tower.value: 'T',
+    enums.GameBoardTypes.American.value: 'A',
+    enums.GameBoardTypes.Festival.value: 'F',
+    enums.GameBoardTypes.Worldwide.value: 'W',
+    enums.GameBoardTypes.Continental.value: 'C',
+    enums.GameBoardTypes.Imperial.value: 'I',
+    enums.GameBoardTypes.Nothing.value: '·',
+    enums.GameBoardTypes.NothingYet.value: 'O',
+    enums.GameBoardTypes.CantPlayEver.value: '█',
+    enums.GameBoardTypes.IHaveThis.value: 'i',
+    enums.GameBoardTypes.WillPutLonelyTileDown.value: 'l',
+    enums.GameBoardTypes.HaveNeighboringTileToo.value: 'h',
+    enums.GameBoardTypes.WillFormNewChain.value: 'n',
+    enums.GameBoardTypes.WillMergeChains.value: 'm',
+    enums.GameBoardTypes.CantPlayNow.value: 'c',
+}
+
+
 def main():
     output_dir = '/home/tim/tmp/acquire'
     output_logs_dir = output_dir + '/logs'
@@ -1531,6 +1707,7 @@ def main():
     # report_on_first_merge_bonuses_and_final_scores_of_all_completed_games(output_dir)
     # report_on_player_ranking_distribution(output_dir)
     # make_individual_game_log(1483363628, 893, output_dir)
+    # make_acquire2_game_test_files(output_dir)
 
 
 if __name__ == '__main__':
