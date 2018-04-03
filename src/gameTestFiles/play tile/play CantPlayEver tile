@@ -1,0 +1,206 @@
+tile bag: 8D, 7D, 7A, 6B, 4H, 2C, 2E, 10H, 12G, 3C, 4F, 8F, 1E, 1D, 7C, 5D, 1H, 2F, 2D, 10F, 11G, 4A, 6H, 12C, 2I, 12E, 9H, 10I, 5G, 9B, 2G, 5F, 10A, 8G, 8A, 9D, 9G, 8E, 5B, 11C, 6E, 11F, 11B, 7G, 9A, 1B, 5I, 2B, 5H, 3E, 6G, 5A, 8I, 4E, 6A, 10C, 3D, 12D, 9E
+user IDs: 9, 5
+starter user ID: 5
+my user ID: null
+
+action: 1 StartGame
+
+action: 0 PlayTile 4H
+
+action: 1 PlayTile 1D
+
+action: 0 PlayTile 7C
+
+action: 0 SelectNewChain C
+
+action: 0 PurchaseShares x 0
+
+action: 1 PlayTile 1E
+
+action: 1 SelectNewChain I
+
+action: 1 PurchaseShares C 0
+
+action: 0 PlayTile 10H
+
+action: 0 PurchaseShares x 0
+
+action: 1 PlayTile 12G
+
+action: 1 PurchaseShares x 0
+
+action: 0 PlayTile 2E
+
+action: 0 PurchaseShares x 0
+
+action: 1 PlayTile 2F
+
+action: 1 PurchaseShares x 0
+
+action: 0 PlayTile 2D
+
+action: 0 PurchaseShares x 0
+
+action: 1 PlayTile 10F
+
+action: 1 PurchaseShares x 0
+
+action: 0 PlayTile 11G
+
+action: 0 SelectNewChain L
+
+action: 0 PurchaseShares L,L,L 0
+
+action: 1 PlayTile 12C
+
+action: 1 PurchaseShares L 0
+
+action: 0 PlayTile 2C
+
+action: 0 PurchaseShares x 0
+
+action: 1 PlayTile 3C
+
+action: 1 PurchaseShares L,L,L 0
+
+action: 0 PlayTile 9H
+
+action: 0 SelectNewChain A
+
+action: 0 PurchaseShares A,A,A 0
+
+action: 1 PlayTile 10I
+
+action: 1 PurchaseShares L,L,L 0
+
+action: 0 PlayTile 6H
+
+action: 0 PurchaseShares L,L,L 0
+
+action: 1 PlayTile 12E
+
+action: 1 PurchaseShares L,L,L 0
+
+action: 0 PlayTile 2G
+
+action: 0 PurchaseShares L,L,L 0
+
+action: 1 PlayTile 4F
+
+action: 1 PurchaseShares L,L,L 0
+
+action: 0 PlayTile 10A
+
+action: 0 PurchaseShares x 0
+
+action: 1 PlayTile 5F
+
+action: 1 SelectNewChain W
+
+action: 1 PurchaseShares A,W 0
+
+action: 0 PlayTile 7A
+
+action: 0 PurchaseShares W,W,W 0
+
+action: 1 PlayTile 8G
+
+action: 1 PurchaseShares W,W 0
+
+action: 0 PlayTile 8A
+
+action: 0 SelectNewChain F
+
+action: 0 PurchaseShares W,W,F 0
+
+action: 1 PlayTile 8F
+
+action: 1 PurchaseShares F,W,T 0
+
+action: 0 PlayTile 5B
+
+action: 0 PurchaseShares T,T,W 0
+
+action: 1 PlayTile 9B
+
+action: 1 PurchaseShares T,T,T 0
+
+action: 0 PlayTile 1H
+
+action: 0 PurchaseShares T,T,T 0
+
+action: 1 PlayTile 9D
+
+action: 1 PurchaseShares T 0
+
+action: 0 PlayTile 11B
+
+action: 0 PurchaseShares T 0
+
+action: 1 PlayTile 4A
+
+action: 0 PlayTile 5G
+
+action: 1 PlayTile 1B
+
+action: 0 PlayTile 2I
+
+action: 1 PlayTile 5D
+
+action: 0 PlayTile 5I
+
+action: 1 PlayTile 2B
+
+action: 0 PlayTile 5H
+
+action: 1 PlayTile 3E
+
+action: 0 PlayTile 6E
+
+action: 1 PlayTile 7G
+
+action: 0 PlayTile 9G
+
+action: 0 SelectMergerSurvivor T
+
+action: 0 DisposeOfShares 2 0
+
+action: 1 DisposeOfShares 0 0
+
+action: 0 PurchaseShares W,W,C 0
+
+action: 1 PlayTile 11C
+
+action: 1 PurchaseShares C,C,L 0
+
+action: 0 PlayTile 6G
+
+action: 0 SelectMergerSurvivor W
+
+action: 0 DisposeOfShares 0 0
+
+action: 1 DisposeOfShares 4 1
+
+action: 0 PurchaseShares W,C,C 0
+···O··FF·O··   L  T  A  F  W  C  I Cash  Net
+II··O···O·A·  10  7  2  2  9  4      60  400
+·II···C···AA  14  1  2  1  7  3  1   42  434
+II··O·CCC···   1 17 21 22  9 18 24
+III··O·····O   2  -  3  2 15  4 11
+·I·WW··W·O··   2  -  4  3  8  6  9
+·I··WWWWW·LL
+O··WWW··WW··
+·O··W····W··
+tile racks:
+  0: 3D(I) 6B(n) 9A(F) 9E(C) 8I(l) 6A(F)
+  1: 10C(A) 11F(L) 8E(m) 12D(A) 5A(n) 4E(█)
+new known tiles:
+  0: 9E
+history messages:
+  0 PurchasedShares 1W,2C
+  0 DrewTile 9E
+  1 TurnBegan
+next action: 1 PlayTile
+
+action: 1 PlayTile 4E
+error: cannot play given tile

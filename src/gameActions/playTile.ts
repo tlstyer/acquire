@@ -70,7 +70,7 @@ export class ActionPlayTile extends ActionBase {
         } else if (tileType === GameBoardType.WillMergeChains) {
             response = [new ActionSelectMergerSurvivor(this.game, this.playerID, this.getMergedChains(tile), tile)];
         } else {
-            throw new UserInputError('unhandled tile type');
+            throw new UserInputError('cannot play given tile');
         }
 
         this.game.removeTile(this.playerID, tileRackIndex);
