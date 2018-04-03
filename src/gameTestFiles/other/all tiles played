@@ -1,0 +1,415 @@
+tile bag: 12C, 2B, 2D, 3A, 6F, 5D, 3D, 2E, 9I, 1G, 4I, 2F, 8H, 5A, 7F, 6G, 9E, 9C, 5H, 12G, 8A, 11F, 10C, 8C, 12I, 4G, 12F, 10F, 1H, 1I, 5I, 6D, 12D, 11D, 8E, 6E, 11B, 11I, 7D, 8D, 10D, 3B, 6H, 12E, 12A, 12B, 1F, 4C, 7A, 11H, 11C, 4H, 3H, 2G, 4A, 7I, 2A, 6C, 7E, 5C, 10E, 5E, 2C, 9B, 9H, 1B, 3E, 6B, 5G, 4B, 10I, 4E, 10B, 8I, 8B, 11A, 1C, 8F, 9G, 8G, 7G, 1E, 9F, 6I, 3C, 4D, 3I, 7C, 4F, 7B, 3F, 2I, 11G, 11E, 9A, 10A, 10H, 5F, 12H, 5B, 1D, 2H, 7H, 9D, 3G, 1A, 10G, 6A
+user IDs: 4, 8
+starter user ID: 8
+my user ID: null
+
+action: 1 StartGame
+
+action: 0 PlayTile 2D
+
+action: 1 PlayTile 1G
+
+action: 0 PlayTile 2E
+
+action: 0 SelectNewChain C
+
+action: 0 PurchaseShares C,C,C 0
+
+action: 1 PlayTile 9I
+
+action: 1 PurchaseShares C,C,C 0
+
+action: 0 PlayTile 3D
+
+action: 0 PurchaseShares C 0
+
+action: 1 PlayTile 4I
+
+action: 1 PurchaseShares x 0
+
+action: 0 PlayTile 7F
+
+action: 0 PurchaseShares x 0
+
+action: 1 PlayTile 5A
+
+action: 1 PurchaseShares x 0
+
+action: 0 PlayTile 6F
+
+action: 0 SelectNewChain I
+
+action: 0 PurchaseShares I 0
+
+action: 1 PlayTile 11F
+
+action: 1 PurchaseShares I,I 0
+
+action: 0 PlayTile 5D
+
+action: 0 PurchaseShares I 0
+
+action: 1 PlayTile 8C
+
+action: 1 PurchaseShares x 0
+
+action: 0 PlayTile 3A
+
+action: 0 PurchaseShares x 0
+
+action: 1 PlayTile 9C
+
+action: 1 SelectNewChain A
+
+action: 1 PurchaseShares A,A,A 0
+
+action: 0 PlayTile 12F
+
+action: 0 SelectNewChain L
+
+action: 0 PurchaseShares L,L,A 0
+
+action: 1 PlayTile 8H
+
+action: 1 PurchaseShares L,L,L 0
+
+action: 0 PlayTile 1H
+
+action: 0 SelectNewChain F
+
+action: 0 PurchaseShares L,F,F 0
+
+action: 1 PlayTile 4G
+
+action: 1 PurchaseShares F,F,F 0
+
+action: 0 PlayTile 5I
+
+action: 0 SelectNewChain W
+
+action: 0 PurchaseShares W,L,F 0
+
+action: 1 PlayTile 6D
+
+action: 1 PurchaseShares W,T,T 0
+
+action: 0 PlayTile 10C
+
+action: 0 PurchaseShares T,T,T 0
+
+action: 1 PlayTile 11D
+
+action: 1 PurchaseShares T,T,T 0
+
+action: 0 PlayTile 9E
+
+action: 0 PurchaseShares T,T,T 0
+
+action: 1 PlayTile 6E
+
+action: 1 SelectMergerSurvivor I
+
+action: 1 DisposeOfShares 0 0
+
+action: 0 DisposeOfShares 0 0
+
+action: 1 PurchaseShares F,F,F 0
+
+action: 0 PlayTile 8E
+
+action: 0 PurchaseShares T,T,T 0
+
+action: 1 PlayTile 2F
+
+action: 1 PurchaseShares F,F,W 0
+
+action: 0 PlayTile 5H
+
+action: 0 PurchaseShares F,F,F 0
+
+action: 1 PlayTile 1I
+
+action: 0 PlayTile 8A
+
+action: 1 PlayTile 11I
+
+action: 0 PlayTile 6H
+
+action: 1 PlayTile 6G
+
+action: 1 DisposeOfShares 0 0
+
+action: 0 DisposeOfShares 0 0
+
+action: 1 PurchaseShares F,F,F 0
+
+action: 0 PlayTile 12D
+
+action: 0 PurchaseShares W,W,W 0
+
+action: 1 PlayTile 12B
+
+action: 1 PurchaseShares L,L,L 0
+
+action: 0 PlayTile 12A
+
+action: 0 PurchaseShares A,A,A 0
+
+action: 1 PlayTile 4C
+
+action: 1 PurchaseShares T,T,T 0
+
+action: 0 PlayTile 10D
+
+action: 0 DisposeOfShares 0 0
+
+action: 1 DisposeOfShares 0 0
+
+action: 0 PurchaseShares F,F,F 0
+
+action: 1 PlayTile 3B
+
+action: 1 PurchaseShares F,F,L 0
+
+action: 0 PlayTile 7D
+
+action: 0 PurchaseShares T,T,T 0
+
+action: 1 PlayTile 12G
+
+action: 1 PurchaseShares T,T,T 0
+
+action: 0 PlayTile 1F
+
+action: 0 DisposeOfShares 10 0
+
+action: 1 DisposeOfShares 12 0
+
+action: 0 PurchaseShares L,L,A 0
+
+action: 1 PlayTile 2G
+
+action: 1 PurchaseShares L,L,L 0
+
+action: 0 PlayTile 12I
+
+action: 0 PurchaseShares A,A,A 0
+
+action: 1 PlayTile 7I
+
+action: 1 PurchaseShares A,A,A 0
+
+action: 0 PlayTile 3H
+
+action: 0 PurchaseShares A,A,A 0
+
+action: 1 PlayTile 11H
+
+action: 1 PurchaseShares A,A,A 1
+
+action: 0 PlayTile 4A
+
+action: 0 PurchaseShares A,A 0
+
+action: 1 PlayTile 4H
+
+action: 1 PurchaseShares W,W,W 0
+
+action: 0 PlayTile 7E
+
+action: 0 DisposeOfShares 12 0
+
+action: 1 DisposeOfShares 12 0
+
+action: 0 PurchaseShares L,L,L 0
+
+action: 1 PlayTile 12E
+
+action: 1 DisposeOfShares 10 0
+
+action: 0 DisposeOfShares 10 0
+
+action: 1 PurchaseShares W,W,W 0
+
+action: 0 PlayTile 2C
+
+action: 0 DisposeOfShares 12 0
+
+action: 1 DisposeOfShares 0 0
+
+action: 0 PurchaseShares I,I,I 0
+
+action: 1 PlayTile 9H
+
+action: 1 SelectNewChain A
+
+action: 1 PurchaseShares I,I,I 0
+
+action: 0 PlayTile 7A
+
+action: 0 SelectNewChain T
+
+action: 0 PurchaseShares T,T,F 0
+
+action: 1 PlayTile 9B
+
+action: 1 PurchaseShares T,F,F 0
+
+action: 0 PlayTile 5G
+
+action: 0 PurchaseShares I,F,F 0
+
+action: 1 PlayTile 5C
+
+action: 1 PurchaseShares F,F,F 0
+
+action: 0 PlayTile 3E
+
+action: 0 PurchaseShares F,F,F 0
+
+action: 1 PlayTile 5E
+
+action: 1 PurchaseShares F 0
+
+action: 0 PlayTile 2A
+
+action: 0 PurchaseShares F,F,F 0
+
+action: 1 PlayTile 11A
+
+action: 0 PlayTile 1C
+
+action: 0 PurchaseShares F,F,F 0
+
+action: 1 PlayTile 10B
+
+action: 0 PlayTile 10I
+
+action: 0 SelectMergerSurvivor F
+
+action: 0 DisposeOfShares 0 1
+
+action: 1 DisposeOfShares 10 0
+
+action: 0 PurchaseShares T,T,T 0
+
+action: 1 PlayTile 10F
+
+action: 1 PurchaseShares I,T,T 0
+
+action: 0 PlayTile 8I
+
+action: 0 PurchaseShares T,T,W 0
+
+action: 1 PlayTile 8G
+
+action: 1 PurchaseShares T,T,T 0
+
+action: 0 PlayTile 9G
+
+action: 0 PurchaseShares T,T,T 0
+
+action: 1 PlayTile 8B
+
+action: 1 DisposeOfShares 0 6
+
+action: 0 DisposeOfShares 0 12
+
+action: 1 PurchaseShares x 0
+
+action: 0 PlayTile 3F
+
+action: 0 PurchaseShares x 0
+
+action: 1 PlayTile 11E
+
+action: 1 PurchaseShares x 0
+
+action: 0 PlayTile 1B
+
+action: 0 PurchaseShares x 0
+
+action: 1 PlayTile 10H
+
+action: 1 PurchaseShares x 0
+
+action: 0 PlayTile 7B
+
+action: 0 PurchaseShares x 0
+
+action: 1 PlayTile 6B
+
+action: 1 PurchaseShares x 0
+
+action: 0 PlayTile 9A
+
+action: 0 PurchaseShares x 0
+
+action: 1 PlayTile 3I
+
+action: 1 PurchaseShares x 0
+
+action: 0 PlayTile 1A
+
+action: 0 PurchaseShares x 0
+
+action: 1 PlayTile 1D
+
+action: 1 PurchaseShares x 0
+
+action: 0 PlayTile 5F
+
+action: 0 PurchaseShares x 0
+
+action: 1 PlayTile 1E
+
+action: 1 PurchaseShares x 0
+
+action: 0 PlayTile 11C
+
+action: 0 PurchaseShares x 0
+
+action: 1 PurchaseShares x 0
+
+action: 0 PlayTile 11B
+
+action: 0 PurchaseShares x 0
+
+action: 1 PurchaseShares x 0
+
+action: 0 PlayTile 10A
+CCCCC█WWWWWW   L  T  A  F  W  C  I Cash  Net
+CCC██WWWWWWW           13 12 16 13   50  877
+CC█II██WWWWW         2 12 13  9 12   42  695
+CCC█III██WWW  25 25 23  0  0  0  0
+CCC█IIIII█WW   -  -  - 12 27 23 23
+CCC█III██WWW   -  -  -  8  9 10 10
+CC█III█FF██W
+C█IIII█FFFF█
+C█III█FFFFFF
+tile racks:
+  0: none none none none none none
+  1: none none none none none none
+new known tiles:
+history messages:
+  0 PlayedTile 10A
+next action: 0 PurchaseShares
+
+action: 0 PurchaseShares x 0
+CCCCC█WWWWWW   L  T  A  F  W  C  I Cash  Net
+CCC██WWWWWWW           13 12 16 13   50  877
+CC█II██WWWWW         2 12 13  9 12   42  695
+CCC█III██WWW  25 25 23  0  0  0  0
+CCC█IIIII█WW   -  -  - 12 27 23 23
+CCC█III██WWW   -  -  -  8  9 10 10
+CC█III█FF██W
+C█IIII█FFFF█
+C█III█FFFFFF
+tile racks:
+  0: none none none none none none
+  1: none none none none none none
+new known tiles:
+history messages:
+  0 PurchasedShares x
+  AllTilesPlayed
+next action: 0 GameOver
