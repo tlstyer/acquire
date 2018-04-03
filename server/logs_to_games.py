@@ -1543,6 +1543,8 @@ def make_acquire2_game_test_files(output_dir):
                     client = server_game_player_id_to_client[game.username_to_player_id[username]]
                     server_game.join_game(client)
 
+                last_history_message_index = 0
+
                 for _, player_id_and_action in enumerate(game.actions):
                     player_id, action = player_id_and_action
 
@@ -1574,7 +1576,13 @@ def make_acquire2_game_test_files(output_dir):
                         for player_id, tile_rack in enumerate(server_game.tile_racks.racks):
                             lines.append('  ' + str(player_id) + ': ' + get_tile_rack_string(tile_rack))
 
+                        lines.append('history messages:')
+                        for history_message in server_game.history_messages[last_history_message_index:]:
+                            lines.append('  ' + get_game_history_message_string(server_game.score_sheet.username_to_player_id, history_message[1]))
+
                         lines.append('next action: ' + get_next_action_string(server_game.actions[-1]))
+
+                        last_history_message_index = len(server_game.history_messages)
 
                 lines.append('')
 
@@ -1703,6 +1711,81 @@ def get_next_action_string(action):
         parts.append(enums.GameBoardTypes(action.additional_params[0]).name[0])
 
     return ' '.join(parts)
+
+
+def ghmsh(parameters):
+    return enums.GameHistoryMessages(parameters[0]).name
+
+
+def ghmsh_player_id(parameters):
+    return ' '.join([
+        str(parameters[1]),
+        enums.GameHistoryMessages(parameters[0]).name,
+    ])
+
+
+def ghmsh_player_id_tile(parameters):
+    return ' '.join([
+        str(parameters[1]),
+        enums.GameHistoryMessages(parameters[0]).name,
+        get_tile_string(parameters[2:4]),
+    ])
+
+
+def ghmsh_player_id_type(parameters):
+    return ' '.join([
+        str(parameters[1]),
+        enums.GameHistoryMessages(parameters[0]).name,
+        enums.GameBoardTypes(parameters[2]).name[0],
+        *[str(p) for p in parameters[3:]],
+    ])
+
+
+def ghmsh_merged_chains(parameters):
+    return ' '.join([
+        str(parameters[1]),
+        enums.GameHistoryMessages(parameters[0]).name,
+        ','.join([enums.GameBoardTypes(t).name[0] for t in parameters[2]]),
+    ])
+
+
+def ghmsh_purchased_shares(parameters):
+    return ' '.join([
+        str(parameters[1]),
+        enums.GameHistoryMessages(parameters[0]).name,
+        ','.join(str(p[1]) + enums.GameBoardTypes(p[0]).name[0] for p in parameters[2]) if len(parameters[2]) > 0 else 'x',
+    ])
+
+
+game_history_message_string_handlers = {
+    enums.GameHistoryMessages.TurnBegan.value: ghmsh_player_id,
+    enums.GameHistoryMessages.DrewPositionTile.value: ghmsh_player_id_tile,
+    enums.GameHistoryMessages.StartedGame.value: ghmsh_player_id,
+    enums.GameHistoryMessages.DrewTile.value: ghmsh_player_id_tile,
+    enums.GameHistoryMessages.HasNoPlayableTile.value: ghmsh_player_id,
+    enums.GameHistoryMessages.PlayedTile.value: ghmsh_player_id_tile,
+    enums.GameHistoryMessages.FormedChain.value: ghmsh_player_id_type,
+    enums.GameHistoryMessages.MergedChains.value: ghmsh_merged_chains,
+    enums.GameHistoryMessages.SelectedMergerSurvivor.value: ghmsh_player_id_type,
+    enums.GameHistoryMessages.SelectedChainToDisposeOfNext.value: ghmsh_player_id_type,
+    enums.GameHistoryMessages.ReceivedBonus.value: ghmsh_player_id_type,
+    enums.GameHistoryMessages.DisposedOfShares.value: ghmsh_player_id_type,
+    enums.GameHistoryMessages.CouldNotAffordAnyShares.value: ghmsh_player_id,
+    enums.GameHistoryMessages.PurchasedShares.value: ghmsh_purchased_shares,
+    enums.GameHistoryMessages.DrewLastTile.value: ghmsh_player_id,
+    enums.GameHistoryMessages.ReplacedDeadTile.value: ghmsh_player_id_tile,
+    enums.GameHistoryMessages.EndedGame.value: ghmsh_player_id,
+    enums.GameHistoryMessages.NoTilesPlayedForEntireRound.value: ghmsh,
+    enums.GameHistoryMessages.AllTilesPlayed.value: ghmsh,
+}
+
+
+def get_game_history_message_string(username_to_player_id, game_history_message):
+    if isinstance(game_history_message[1], str):
+        game_history_message = list(game_history_message)
+        game_history_message[1] = username_to_player_id[game_history_message[1]]
+
+    return game_history_message_string_handlers[game_history_message[0]](game_history_message)
 
 
 def main():
