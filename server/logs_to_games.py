@@ -1516,6 +1516,20 @@ def make_individual_game_log(log_timestamp, internal_game_id, output_dir):
                     return
 
 
+def output_server_game_file_for_game(log_timestamp, internal_game_id, output_dir):
+    for log_timestamp, filename in util.get_log_file_filenames('py', begin=log_timestamp, end=log_timestamp):
+        with util.open_possibly_gzipped_file(filename) as file:
+            log_processor = LogProcessor(log_timestamp, file)
+
+            for game in log_processor.go():
+                if game.internal_game_id == internal_game_id:
+                    game.make_server_game()
+                    num_tiles_played = len(game.played_tiles_order)
+                    filename = os.path.join(output_dir, '%d_%05d_%03d.bin' % (log_timestamp, internal_game_id, num_tiles_played))
+                    game.make_server_game_file(filename)
+                    break
+
+
 game_board_type_to_character = {
     enums.GameBoardTypes.Luxor.value: 'L',
     enums.GameBoardTypes.Tower.value: 'T',
@@ -1802,6 +1816,7 @@ def main():
     # report_on_first_merge_bonuses_and_final_scores_of_all_completed_games(output_dir)
     # report_on_player_ranking_distribution(output_dir)
     # make_individual_game_log(1483363628, 893, output_dir)
+    # output_server_game_file_for_game(1433241253, 510, output_dir)
     # make_acquire2_game_test_files(output_dir)
 
 
