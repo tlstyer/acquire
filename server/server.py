@@ -1000,7 +1000,7 @@ class ActionPurchaseShares(Action):
             elif no_tiles_played_for_entire_round:
                 self.game.add_history_message(enums.GameHistoryMessages.NoTilesPlayedForEntireRound.value, None)
 
-            return [ActionGameOver(self.game)]
+            return [ActionGameOver(self.game, self.player_id)]
         else:
             self.game.tile_racks.draw_tile(self.player_id)
             self.game.tile_racks.determine_tile_game_board_types([self.player_id])
@@ -1009,15 +1009,15 @@ class ActionPurchaseShares(Action):
             all_tiles_played = self.game.tile_racks.are_racks_empty()
             if all_tiles_played:
                 self.game.add_history_message(enums.GameHistoryMessages.AllTilesPlayed.value, None)
-                return [ActionGameOver(self.game)]
+                return [ActionGameOver(self.game, self.player_id)]
 
             next_player_id = (self.player_id + 1) % self.game.num_players
             return [ActionPlayTile(self.game, next_player_id), ActionPurchaseShares(self.game, next_player_id)]
 
 
 class ActionGameOver(Action):
-    def __init__(self, game):
-        super().__init__(game, None, enums.GameActions.GameOver.value)
+    def __init__(self, game, player_id):
+        super().__init__(game, player_id, enums.GameActions.GameOver.value)
         game.turn_player_id = None
         game.add_pending_messages([[enums.CommandsToClient.SetTurn.value, None]], game.client_ids)
         game.set_state(enums.GameStates.Completed.value)

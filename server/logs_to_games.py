@@ -1574,6 +1574,8 @@ def make_acquire2_game_test_files(output_dir):
                         for player_id, tile_rack in enumerate(server_game.tile_racks.racks):
                             lines.append('  ' + str(player_id) + ': ' + get_tile_rack_string(tile_rack))
 
+                        lines.append('next action: ' + get_next_action_string(server_game.actions[-1]))
+
                 lines.append('')
 
                 with open(filename, 'w') as f:
@@ -1689,6 +1691,18 @@ game_board_type_to_character = {
     enums.GameBoardTypes.WillMergeChains.value: 'm',
     enums.GameBoardTypes.CantPlayNow.value: 'c',
 }
+
+
+def get_next_action_string(action):
+    parts = [str(action.player_id), enums.GameActions(action.game_action_id).name]
+
+    action_type = type(action)
+    if action_type == server.ActionSelectNewChain or action_type == server.ActionSelectMergerSurvivor or action_type == server.ActionSelectChainToDisposeOfNext:
+        parts.append(','.join(map(lambda p: enums.GameBoardTypes(p).name[0], action.additional_params[0])))
+    elif action_type == server.ActionDisposeOfShares:
+        parts.append(enums.GameBoardTypes(action.additional_params[0]).name[0])
+
+    return ' '.join(parts)
 
 
 def main():
