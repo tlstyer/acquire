@@ -27,5 +27,23 @@ history messages:
   1 DrewPositionTile 5D
   2 DrewPositionTile 7E
   1 StartedGame
+  0 DrewTile 1A
+  0 DrewTile 2A
+  0 DrewTile 5A
+  0 DrewTile 6A
+  0 DrewTile 11A
+  0 DrewTile 12A
+  1 DrewTile 12B
+  1 DrewTile 12C
+  1 DrewTile 12E
+  1 DrewTile 12F
+  1 DrewTile 12H
+  1 DrewTile 12I
+  2 DrewTile 3B
+  2 DrewTile 3D
+  2 DrewTile 2C
+  2 DrewTile 4C
+  2 DrewTile 11F
+  2 DrewTile 7G
   0 TurnBegan
 next action: 0 PlayTile

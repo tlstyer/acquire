@@ -82,7 +82,7 @@ export class Game {
     }
 
     drawTiles(playerID: number) {
-        let isMe = this.userIDs[playerID] === this.myUserID;
+        let addDrewTileMessage = this.myUserID === null || this.myUserID === this.userIDs[playerID];
 
         for (let i = 0; i < 6; i++) {
             if (this.tileRacks.getIn([playerID, i], 0) !== null) {
@@ -99,7 +99,7 @@ export class Game {
 
             this.tileRacks = this.tileRacks.setIn([playerID, i], tile);
             this.getCurrentMoveData().addNewPlayerKnownTile(tile, playerID);
-            if (isMe) {
+            if (addDrewTileMessage) {
                 this.getCurrentMoveData().addGameHistoryMessage(new GameHistoryMessageData(GameHistoryMessage.DrewTile, playerID, [tile]));
             }
 
