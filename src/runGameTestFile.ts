@@ -419,16 +419,17 @@ function getNextActionString(action: ActionBase) {
     const nextPlayerID = action.playerID;
     const nextActionName = action.constructor.name.slice(6);
 
-    let parameters = '';
+    let parts: string[] = [nextPlayerID.toString(), nextActionName];
+
     if (action instanceof ActionSelectNewChain) {
-        parameters = action.availableChains.map((x: GameBoardType) => GameBoardType[x][0]).join(',');
+        parts.push(action.availableChains.map((x: GameBoardType) => GameBoardType[x][0]).join(','));
     } else if (action instanceof ActionSelectMergerSurvivor) {
-        parameters = action.chainsBySize[0].map((x: GameBoardType) => GameBoardType[x][0]).join(',');
+        parts.push(action.chainsBySize[0].map((x: GameBoardType) => GameBoardType[x][0]).join(','));
     } else if (action instanceof ActionSelectChainToDisposeOfNext) {
-        parameters = action.defunctChains.map((x: GameBoardType) => GameBoardType[x][0]).join(',');
+        parts.push(action.defunctChains.map((x: GameBoardType) => GameBoardType[x][0]).join(','));
     } else if (action instanceof ActionDisposeOfShares) {
-        parameters = GameBoardType[action.defunctChain][0];
+        parts.push(GameBoardType[action.defunctChain][0]);
     }
 
-    return `${nextPlayerID} ${nextActionName}${parameters !== '' ? ' ' : ''}${parameters}`;
+    return parts.join(' ');
 }
