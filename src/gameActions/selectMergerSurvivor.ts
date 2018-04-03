@@ -61,6 +61,10 @@ export class ActionSelectMergerSurvivor extends ActionBase {
             throw new UserInputError('cannot select chain provided as the controlling chain');
         }
 
+        this.game
+            .getCurrentMoveData()
+            .addGameHistoryMessage(new GameHistoryMessageData(GameHistoryMessage.SelectedMergerSurvivor, this.playerID, [controllingChain]));
+
         return this.completeAction(controllingChain);
     }
 

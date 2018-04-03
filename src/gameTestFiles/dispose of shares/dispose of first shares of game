@@ -43,6 +43,7 @@ tile racks:
   2: 8H(l) 1B(A) 6B(l) 3C(A) 7G(l) 3A(A)
 new known tiles:
 history messages:
+  1 SelectedMergerSurvivor A
   1 ReceivedBonus C 40
   0 ReceivedBonus C 20
 next action: 1 DisposeOfShares C

@@ -67,6 +67,7 @@ tile racks:
   3: 5D(I) 12H(h) 10I(l) 8H(l) 3F(I) 11H(h)
 new known tiles:
 history messages:
+  0 SelectedMergerSurvivor I
   0 ReceivedBonus L 20
   3 ReceivedBonus L 10
   1 ReceivedBonus T 20
