@@ -43,6 +43,9 @@ history messages:
   2 ReceivedBonus A 15
 next action: 0 DisposeOfShares A
 
+action: 1 DisposeOfShares -- []
+error: player cannot play right now
+
 action: 0 DisposeOfShares -- []
 error: did not get exactly 2 parameters
 

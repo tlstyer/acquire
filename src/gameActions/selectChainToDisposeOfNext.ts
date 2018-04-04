@@ -22,14 +22,11 @@ export class ActionSelectChainToDisposeOfNext extends ActionBase {
             throw new UserInputError('did not get exactly 1 parameter');
         }
         const nextChain: GameBoardType = parameters[0];
-        if (!Number.isInteger(nextChain)) {
-            throw new UserInputError('parameter is not an integer');
-        }
-        if (nextChain < GameBoardType.Luxor || nextChain > GameBoardType.Imperial) {
-            throw new UserInputError('parameter provided is not a valid chain');
+        if (!Number.isInteger(nextChain) || nextChain < GameBoardType.Luxor || nextChain > GameBoardType.Imperial) {
+            throw new UserInputError('parameter is not a valid chain');
         }
         if (this.defunctChains.indexOf(nextChain) === -1) {
-            throw new UserInputError('cannot select chain provided as the next chain');
+            throw new UserInputError('cannot select chain as the next chain');
         }
 
         this.game.getCurrentMoveData().addGameHistoryMessage(GameHistoryMessage.SelectedChainToDisposeOfNext, this.playerID, [nextChain]);

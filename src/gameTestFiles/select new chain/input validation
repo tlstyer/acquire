@@ -1,4 +1,4 @@
-tile bag: 4I, 2B, 7E, 1B, 12H, 7B, 11I, 12C, 8G, 8H, 10H, 2G, 1D, 11D
+tile bag: 4I, 2B, 7E, 1B, 12H, 7B, 11I, 12C, 8G, 8H, 10H, 2G, 4H, 11D, 12G
 user IDs: 5, 7
 starter user ID: 7
 my user ID: 5
@@ -6,40 +6,49 @@ my user ID: 5
 action: 1 StartGame
 
 action: 0 PlayTile 1B
+
+action: 0 SelectNewChain L
+
+action: 0 PurchaseShares L 0
+
+action: 1 PlayTile 4H
 ············   L  T  A  F  W  C  I Cash  Net
-OO··········                         60   60
+LL··········   2                     58   92
 ············                         60   60
-············  25 25 25 25 25 25 25
-············   -  -  -  -  -  -  -
-············   -  -  -  -  -  -  -
-············
+············  23 25 25 25 25 25 25
+············   2  -  -  -  -  -  -
+············   2  -  -  -  -  -  -
 ············
 ···O········
+···O········
 tile racks:
-  0: 7E(l) none 12H(l) 7B(l) 11I(l) 12C(l)
-  1: 8G(h) 8H(h) 10H(l) 2G(l) 1D(l) 11D(l)
-tile rack additions: 1B:0
+  0: 7E(l) 12G(h) 12H(h) 7B(l) 11I(l) 12C(l)
+  1: 8G(h) 8H(h) 10H(l) 2G(l) none 11D(l)
+tile rack additions: 4H:1
 history messages:
-  0 PlayedTile 1B
-next action: 0 SelectNewChain L,T,A,F,W,C,I
-
-action: 1 SelectNewChain -- []
-error: player cannot play right now
+  1 PlayedTile 4H
+next action: 1 SelectNewChain T,A,F,W,C,I
 
 action: 0 SelectNewChain -- []
+error: player cannot play right now
+
+action: 1 SelectNewChain -- []
 error: did not get exactly 1 parameter
 
-action: 0 SelectNewChain -- ["hello","world!"]
+action: 1 SelectNewChain -- ["hello","world!"]
 error: did not get exactly 1 parameter
 
-action: 0 SelectNewChain -- ["hello!"]
-error: parameter is not an integer
+action: 1 SelectNewChain -- ["hello!"]
+error: parameter is not a valid chain
 
-action: 0 SelectNewChain -- [true]
-error: parameter is not an integer
+action: 1 SelectNewChain -- [true]
+error: parameter is not a valid chain
 
-action: 0 SelectNewChain -- [-1]
-error: selected chain cannot be formed
+action: 1 SelectNewChain -- [-1]
+error: parameter is not a valid chain
 
-action: 0 SelectNewChain -- [7]
-error: selected chain cannot be formed
+action: 1 SelectNewChain -- [7]
+error: parameter is not a valid chain
+
+action: 1 SelectNewChain L
+error: cannot select chain as the new chain

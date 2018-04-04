@@ -51,14 +51,11 @@ export class ActionSelectMergerSurvivor extends ActionBase {
             throw new UserInputError('did not get exactly 1 parameter');
         }
         const controllingChain: GameBoardType = parameters[0];
-        if (!Number.isInteger(controllingChain)) {
-            throw new UserInputError('parameter is not an integer');
-        }
-        if (controllingChain < GameBoardType.Luxor || controllingChain > GameBoardType.Imperial) {
-            throw new UserInputError('parameter provided is not a valid chain');
+        if (!Number.isInteger(controllingChain) || controllingChain < GameBoardType.Luxor || controllingChain > GameBoardType.Imperial) {
+            throw new UserInputError('parameter is not a valid chain');
         }
         if (this.chainsBySize[0].indexOf(controllingChain) === -1) {
-            throw new UserInputError('cannot select chain provided as the controlling chain');
+            throw new UserInputError('cannot select chain as the controlling chain');
         }
 
         this.game.getCurrentMoveData().addGameHistoryMessage(GameHistoryMessage.SelectedMergerSurvivor, this.playerID, [controllingChain]);

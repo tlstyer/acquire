@@ -78,11 +78,8 @@ export class ActionPurchaseShares extends ActionBase {
         }
         for (let i = 0; i < chains.length; i++) {
             const chain = chains[i];
-            if (!Number.isInteger(chain)) {
-                throw new UserInputError('a chain parameter provided is not an integer');
-            }
-            if (chain < GameBoardType.Luxor || chain > GameBoardType.Imperial) {
-                throw new UserInputError('a chain parameter provided is not a valid chain');
+            if (!Number.isInteger(chain) || chain < GameBoardType.Luxor || chain > GameBoardType.Imperial) {
+                throw new UserInputError('a chain parameter is not a valid chain');
             }
         }
         const endGame: number = parameters[1];
@@ -105,14 +102,18 @@ export class ActionPurchaseShares extends ActionBase {
         let cost = 0;
         for (let i = 0; i < chainsAndCounts.length; i++) {
             const [chain, count] = chainsAndCounts[i];
-            if (this.game.scoreBoardChainSize.get(chain, 0) > 0 && this.game.scoreBoardAvailable.get(chain, 0) >= count) {
-                cost += this.game.scoreBoardPrice.get(chain, 0) * count;
-            } else {
-                throw new UserInputError('a requested chain does not have enough shares available');
+
+            if (this.game.scoreBoardChainSize.get(chain, 0) === 0) {
+                throw new UserInputError('a requested chain does not exist on the board');
             }
+            if (count > this.game.scoreBoardAvailable.get(chain, 0)) {
+                throw new UserInputError('more shares requested for a chain than are available');
+            }
+
+            cost += this.game.scoreBoardPrice.get(chain, 0) * count;
         }
         if (cost > this.game.scoreBoard.get(this.playerID, defaultScoreBoardRow).get(ScoreBoardIndex.Cash, 0)) {
-            throw new UserInputError('player does not have enough cash to pay for requested shares');
+            throw new UserInputError('not enough cash to pay for requested shares');
         }
 
         if (cost > 0) {

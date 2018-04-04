@@ -42,8 +42,8 @@ export class ActionPlayTile extends ActionBase {
             throw new UserInputError('did not get exactly 1 parameter');
         }
         const tile: number = parameters[0];
-        if (!Number.isInteger(tile)) {
-            throw new UserInputError('parameter is not an integer');
+        if (!Number.isInteger(tile) || tile < 0 || tile >= 108) {
+            throw new UserInputError('parameter is not a valid tile');
         }
         const tileRackIndex = this.game.tileRacks.get(this.playerID, defaultTileRack).indexOf(tile);
         if (tileRackIndex === -1) {

@@ -1,76 +1,190 @@
-tile bag: 2C, 2B, 1D, 2E, 7E, 7B, 11I, 12C, 3D, 2D, 8H, 10H, 2G, 8G, 11A, 4B, 1A, 3I
-user IDs: 5, 7
-starter user ID: 7
-my user ID: 5
+tile bag: 7B, 4D, 1B, 5E, 5D, 11I, 4E, 3G, 2B, 5F, 7H, 7A, 3D, 4H, 6C, 6I, 9C, 3F, 1G, 8F, 8B, 1A, 10E, 12D, 1H, 9F, 6E, 5G, 11H, 9H, 11D, 9A
+user IDs: 0, 1
+starter user ID: 1
+my user ID: null
 
 action: 1 StartGame
 
-action: 0 PlayTile 1D
+action: 0 PlayTile 5D
 
-action: 1 PlayTile 3D
-
-action: 0 PlayTile 2E
-
-action: 1 PlayTile 2D
-
-action: 1 SelectNewChain L
+action: 0 SelectNewChain L
 ············   L  T  A  F  W  C  I Cash  Net
-·L··········                         60   60
-·L··········   1                     60  156
-LLL·········  24 25 25 25 25 25 25
-·L··········   6  -  -  -  -  -  -
-············   6  -  -  -  -  -  -
+······O·····   1                     60   92
+············                         60   60
+···LL·······  24 25 25 25 25 25 25
+············   2  -  -  -  -  -  -
+············   2  -  -  -  -  -  -
 ············
 ············
 ············
 tile racks:
-  0: 11A(l) 1A(l) 7E(l) 7B(l) 11I(l) 12C(l)
-  1: 4B(l) none 8H(h) 10H(l) 2G(l) 8G(h)
+  0: 1B(l) 5E(L) none 11I(l) 4E(L) 3G(l)
+  1: 2B(l) 5F(l) 7H(l) 7A(n) 3D(L) 4H(l)
 history messages:
-  1 FormedChain L
-next action: 1 PurchaseShares
+  0 FormedChain L
+next action: 0 PurchaseShares
+
+action: 0 PurchaseShares T 0
+error: a requested chain does not exist on the board
+
+action: 0 PurchaseShares A 0
+error: a requested chain does not exist on the board
+
+action: 0 PurchaseShares F 0
+error: a requested chain does not exist on the board
+
+action: 0 PurchaseShares W 0
+error: a requested chain does not exist on the board
+
+action: 0 PurchaseShares C 0
+error: a requested chain does not exist on the board
+
+action: 0 PurchaseShares I 0
+error: a requested chain does not exist on the board
+
+action: 0 PurchaseShares L 0
+
+action: 1 PlayTile 7A
+
+action: 1 SelectNewChain I
+
+action: 1 PurchaseShares L 0
+
+action: 0 PlayTile 1B
+
+action: 0 PurchaseShares I 0
+
+action: 1 PlayTile 2B
+
+action: 1 SelectNewChain C
+
+action: 1 PurchaseShares L 0
+
+action: 0 PlayTile 6C
+
+action: 0 PurchaseShares L,C 0
+
+action: 1 PlayTile 6I
+
+action: 1 PurchaseShares L 0
+
+action: 0 PlayTile 3G
+
+action: 0 PurchaseShares L 0
+
+action: 1 PlayTile 3F
+
+action: 1 SelectNewChain W
+
+action: 1 PurchaseShares L,C 0
+
+action: 0 PlayTile 8B
+
+action: 0 PurchaseShares L,W 0
+
+action: 1 PlayTile 1A
+
+action: 1 PurchaseShares L,W 0
+
+action: 0 PlayTile 4E
+
+action: 0 PurchaseShares W,W,W 0
+
+action: 1 PlayTile 12D
+
+action: 1 PurchaseShares W,W,W 0
+
+action: 0 PlayTile 1G
+
+action: 0 PurchaseShares W,W,W 0
+
+action: 1 PlayTile 9F
+
+action: 1 PurchaseShares W,W,W 0
+
+action: 0 PlayTile 6E
+
+action: 0 PurchaseShares W,W,W 0
+
+action: 1 PlayTile 8F
+
+action: 1 SelectNewChain F
+
+action: 1 PurchaseShares W,W 0
+
+action: 0 PlayTile 1H
+
+action: 0 SelectNewChain A
+
+action: 0 PurchaseShares W,W,W 0
+
+action: 1 PlayTile 5F
+
+action: 1 PurchaseShares A,A 0
+
+action: 0 PlayTile 11D
+C·····I·····   L  T  A  F  W  C  I Cash  Net
+CC····II····   5  1  1    13  1  1    5  235
+·····O······   5     2  1 10  2  1   13  283
+···LL·····TT  15 24 22 24  2 22 23
+···L·O······   3  2  2  2  2  3  3
+··W·O··FF···   3  2  3  3  3  5  5
+A·W·········
+A···········
+·····O······
+tile racks:
+  0: 9C(l) 5E(L) 11H(l) 11I(l) none 10E(l)
+  1: 5G(c) 9A(l) 7H(l) 9H(l) 3D(L) 4H(l)
+tile rack additions: 11D:0
+history messages:
+  0 PlayedTile 11D
+  0 FormedChain T
+next action: 0 PurchaseShares
 
 action: 1 PurchaseShares -- []
+error: player cannot play right now
+
+action: 0 PurchaseShares -- []
 error: did not get exactly 2 parameters
 
-action: 1 PurchaseShares -- ["hello!"]
+action: 0 PurchaseShares -- ["hello!"]
 error: did not get exactly 2 parameters
 
-action: 1 PurchaseShares -- ["hello","acquire","world!"]
+action: 0 PurchaseShares -- ["hello","acquire","world!"]
 error: did not get exactly 2 parameters
 
-action: 1 PurchaseShares -- ["hello",0]
+action: 0 PurchaseShares -- ["hello",0]
 error: chains parameter is not an array
 
-action: 1 PurchaseShares -- [true,1]
+action: 0 PurchaseShares -- [true,1]
 error: chains parameter is not an array
 
-action: 1 PurchaseShares -- [{"hello":"world!"},0]
+action: 0 PurchaseShares -- [{"hello":"world!"},0]
 error: chains parameter is not an array
 
-action: 1 PurchaseShares -- [[1,2,3,4],1]
+action: 0 PurchaseShares -- [[1,2,3,4],1]
 error: length of chains parameter is larger than 3
 
-action: 1 PurchaseShares -- [["hi!"],1]
-error: a chain parameter provided is not an integer
+action: 0 PurchaseShares -- [["hi!"],1]
+error: a chain parameter is not a valid chain
 
-action: 1 PurchaseShares -- [[1,2,{}],1]
-error: a chain parameter provided is not an integer
+action: 0 PurchaseShares -- [[1,2,{}],1]
+error: a chain parameter is not a valid chain
 
-action: 1 PurchaseShares -- [[1,2,-1],1]
-error: a chain parameter provided is not a valid chain
+action: 0 PurchaseShares -- [[1,-1,2],1]
+error: a chain parameter is not a valid chain
 
-action: 1 PurchaseShares -- [[1,2,7],1]
-error: a chain parameter provided is not a valid chain
+action: 0 PurchaseShares -- [[7,1,2],1]
+error: a chain parameter is not a valid chain
 
-action: 1 PurchaseShares -- [[1,2,3],true]
+action: 0 PurchaseShares -- [[1,2,3],true]
 error: end game parameter is not 0 or 1
 
-action: 1 PurchaseShares -- [[],2]
+action: 0 PurchaseShares -- [[],2]
 error: end game parameter is not 0 or 1
 
-action: 1 PurchaseShares T 0
-error: a requested chain does not have enough shares available
+action: 0 PurchaseShares W,W,W 0
+error: more shares requested for a chain than are available
 
-action: 1 PurchaseShares L,T,I 1
-error: a requested chain does not have enough shares available
+action: 0 PurchaseShares L,I 1
+error: not enough cash to pay for requested shares

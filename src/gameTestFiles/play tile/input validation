@@ -40,10 +40,16 @@ action: 0 PlayTile -- ["hello","world!"]
 error: did not get exactly 1 parameter
 
 action: 0 PlayTile -- ["hello!"]
-error: parameter is not an integer
+error: parameter is not a valid tile
 
 action: 0 PlayTile -- [true]
-error: parameter is not an integer
+error: parameter is not a valid tile
+
+action: 0 PlayTile -- [-1]
+error: parameter is not a valid tile
+
+action: 0 PlayTile -- [108]
+error: parameter is not a valid tile
 
 action: 0 PlayTile 7F
 error: player does not have given tile

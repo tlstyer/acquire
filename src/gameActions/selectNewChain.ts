@@ -24,11 +24,11 @@ export class ActionSelectNewChain extends ActionBase {
             throw new UserInputError('did not get exactly 1 parameter');
         }
         const chain: number = parameters[0];
-        if (!Number.isInteger(chain)) {
-            throw new UserInputError('parameter is not an integer');
+        if (!Number.isInteger(chain) || chain < GameBoardType.Luxor || chain > GameBoardType.Imperial) {
+            throw new UserInputError('parameter is not a valid chain');
         }
         if (this.availableChains.indexOf(chain) === -1) {
-            throw new UserInputError('selected chain cannot be formed');
+            throw new UserInputError('cannot select chain as the new chain');
         }
 
         this.createNewChain(chain);
