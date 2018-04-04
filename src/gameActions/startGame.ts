@@ -1,5 +1,5 @@
 import { GameAction, GameBoardType, GameHistoryMessage } from '../enums';
-import { Game, GameHistoryMessageData } from '../game';
+import { Game } from '../game';
 import { ActionBase } from './base';
 import { ActionPlayTile } from './playTile';
 import { ActionPurchaseShares } from './purchaseShares';
@@ -29,13 +29,13 @@ export class ActionStartGame extends ActionBase {
         for (let i = 0; i < positionTiles.length; i++) {
             const positionTile = positionTiles[i];
             this.game.setGameBoardPosition(positionTile.tile, GameBoardType.NothingYet);
-            moveData.addGameHistoryMessage(new GameHistoryMessageData(GameHistoryMessage.DrewPositionTile, positionTile.playerID, [positionTile.tile]));
+            moveData.addGameHistoryMessage(GameHistoryMessage.DrewPositionTile, positionTile.playerID, [positionTile.tile]);
         }
 
         this.game.nextTileBagIndex = this.game.userIDs.length;
 
         // start game
-        moveData.addGameHistoryMessage(new GameHistoryMessageData(GameHistoryMessage.StartedGame, this.playerID, []));
+        moveData.addGameHistoryMessage(GameHistoryMessage.StartedGame, this.playerID, []);
         for (let playerID = 0; playerID < this.game.userIDs.length; playerID++) {
             this.game.drawTiles(playerID);
         }

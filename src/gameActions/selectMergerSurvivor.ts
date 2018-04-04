@@ -1,6 +1,6 @@
 import { GameAction, GameBoardType, GameHistoryMessage, ScoreBoardIndex } from '../enums';
 import { UserInputError } from '../error';
-import { Game, GameHistoryMessageData } from '../game';
+import { Game } from '../game';
 import { calculateBonuses } from '../helpers';
 import { ActionBase } from './base';
 import { ActionSelectChainToDisposeOfNext } from './selectChainToDisposeOfNext';
@@ -35,7 +35,7 @@ export class ActionSelectMergerSurvivor extends ActionBase {
     }
 
     prepare() {
-        this.game.getCurrentMoveData().addGameHistoryMessage(new GameHistoryMessageData(GameHistoryMessage.MergedChains, this.playerID, [this.chains]));
+        this.game.getCurrentMoveData().addGameHistoryMessage(GameHistoryMessage.MergedChains, this.playerID, [this.chains]);
 
         if (this.chainsBySize[0].length === 1) {
             return this.completeAction(this.chainsBySize[0][0]);
@@ -61,9 +61,7 @@ export class ActionSelectMergerSurvivor extends ActionBase {
             throw new UserInputError('cannot select chain provided as the controlling chain');
         }
 
-        this.game
-            .getCurrentMoveData()
-            .addGameHistoryMessage(new GameHistoryMessageData(GameHistoryMessage.SelectedMergerSurvivor, this.playerID, [controllingChain]));
+        this.game.getCurrentMoveData().addGameHistoryMessage(GameHistoryMessage.SelectedMergerSurvivor, this.playerID, [controllingChain]);
 
         return this.completeAction(controllingChain);
     }
@@ -88,9 +86,7 @@ export class ActionSelectMergerSurvivor extends ActionBase {
                 for (let j = 0; j < chainBonuses.length; j++) {
                     const chainBonus = chainBonuses[j];
                     bonuses[chainBonus.playerID] += chainBonus.amount;
-                    moveData.addGameHistoryMessage(
-                        new GameHistoryMessageData(GameHistoryMessage.ReceivedBonus, chainBonus.playerID, [chain, chainBonus.amount])
-                    );
+                    moveData.addGameHistoryMessage(GameHistoryMessage.ReceivedBonus, chainBonus.playerID, [chain, chainBonus.amount]);
                 }
             }
         }

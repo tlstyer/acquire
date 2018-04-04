@@ -1,7 +1,7 @@
 import { defaultTileRack, defaultTileRackTypes } from '../defaults';
 import { GameAction, GameBoardType, GameHistoryMessage } from '../enums';
 import { UserInputError } from '../error';
-import { Game, GameHistoryMessageData } from '../game';
+import { Game } from '../game';
 import { getNeighboringTiles } from '../helpers';
 import { ActionBase } from './base';
 import { ActionSelectMergerSurvivor } from './selectMergerSurvivor';
@@ -15,7 +15,7 @@ export class ActionPlayTile extends ActionBase {
     prepare() {
         const moveData = this.game.getCurrentMoveData();
 
-        moveData.addGameHistoryMessage(new GameHistoryMessageData(GameHistoryMessage.TurnBegan, this.playerID, []));
+        moveData.addGameHistoryMessage(GameHistoryMessage.TurnBegan, this.playerID, []);
 
         let hasAPlayableTile = false;
         let tileRackTypes = this.game.tileRackTypes.get(this.playerID, defaultTileRackTypes);
@@ -32,7 +32,7 @@ export class ActionPlayTile extends ActionBase {
             return null;
         } else {
             this.game.numTurnsWithoutPlayedTiles++;
-            moveData.addGameHistoryMessage(new GameHistoryMessageData(GameHistoryMessage.HasNoPlayableTile, this.playerID, []));
+            moveData.addGameHistoryMessage(GameHistoryMessage.HasNoPlayableTile, this.playerID, []);
             return [];
         }
     }
@@ -74,7 +74,7 @@ export class ActionPlayTile extends ActionBase {
 
         this.game.removeTile(this.playerID, tileRackIndex);
 
-        this.game.getCurrentMoveData().addGameHistoryMessage(new GameHistoryMessageData(GameHistoryMessage.PlayedTile, this.playerID, [tile]));
+        this.game.getCurrentMoveData().addGameHistoryMessage(GameHistoryMessage.PlayedTile, this.playerID, [tile]);
 
         return response;
     }

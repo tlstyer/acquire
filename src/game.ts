@@ -93,11 +93,11 @@ export class Game {
 
             this.tileRacks = this.tileRacks.setIn([playerID, i], tile);
             if (addDrewTileMessage) {
-                this.getCurrentMoveData().addGameHistoryMessage(new GameHistoryMessageData(GameHistoryMessage.DrewTile, playerID, [tile]));
+                this.getCurrentMoveData().addGameHistoryMessage(GameHistoryMessage.DrewTile, playerID, [tile]);
             }
 
             if (this.nextTileBagIndex === 108) {
-                this.getCurrentMoveData().addGameHistoryMessage(new GameHistoryMessageData(GameHistoryMessage.DrewLastTile, playerID, []));
+                this.getCurrentMoveData().addGameHistoryMessage(GameHistoryMessage.DrewLastTile, playerID, []);
             }
         }
     }
@@ -119,7 +119,7 @@ export class Game {
                 if (tile !== null && type === GameBoardType.CantPlayEver) {
                     this.removeTile(playerID, tileIndex);
                     this.setGameBoardPosition(tile, GameBoardType.CantPlayEver);
-                    this.getCurrentMoveData().addGameHistoryMessage(new GameHistoryMessageData(GameHistoryMessage.ReplacedDeadTile, playerID, [tile]));
+                    this.getCurrentMoveData().addGameHistoryMessage(GameHistoryMessage.ReplacedDeadTile, playerID, [tile]);
                     this.drawTiles(playerID);
                     this.determineTileRackTypesForPlayer(playerID);
                     replacedADeadTile = true;
@@ -408,8 +408,8 @@ export class MoveData {
         this.gameActionParameters = parameters;
     }
 
-    addGameHistoryMessage(gameHistoryMessageData: GameHistoryMessageData) {
-        this.gameHistoryMessages.push(gameHistoryMessageData);
+    addGameHistoryMessage(gameHistoryMessage: GameHistoryMessage, playerID: number | null, parameters: any[]) {
+        this.gameHistoryMessages.push(new GameHistoryMessageData(gameHistoryMessage, playerID, parameters));
     }
 
     endMove() {

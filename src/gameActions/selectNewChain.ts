@@ -1,6 +1,6 @@
 import { GameAction, GameBoardType, GameHistoryMessage } from '../enums';
 import { UserInputError } from '../error';
-import { Game, GameHistoryMessageData } from '../game';
+import { Game } from '../game';
 import { ActionBase } from './base';
 
 export class ActionSelectNewChain extends ActionBase {
@@ -42,6 +42,6 @@ export class ActionSelectNewChain extends ActionBase {
             this.game.adjustPlayerScoreBoardRow(this.playerID, [[chain, 1]]);
         }
 
-        this.game.getCurrentMoveData().addGameHistoryMessage(new GameHistoryMessageData(GameHistoryMessage.FormedChain, this.playerID, [chain]));
+        this.game.getCurrentMoveData().addGameHistoryMessage(GameHistoryMessage.FormedChain, this.playerID, [chain]);
     }
 }

@@ -1,6 +1,6 @@
 import { GameAction, GameBoardType, GameHistoryMessage } from '../enums';
 import { UserInputError } from '../error';
-import { Game, GameHistoryMessageData } from '../game';
+import { Game } from '../game';
 import { ActionBase } from './base';
 import { ActionDisposeOfShares } from './disposeOfShares';
 
@@ -32,9 +32,7 @@ export class ActionSelectChainToDisposeOfNext extends ActionBase {
             throw new UserInputError('cannot select chain provided as the next chain');
         }
 
-        this.game
-            .getCurrentMoveData()
-            .addGameHistoryMessage(new GameHistoryMessageData(GameHistoryMessage.SelectedChainToDisposeOfNext, this.playerID, [nextChain]));
+        this.game.getCurrentMoveData().addGameHistoryMessage(GameHistoryMessage.SelectedChainToDisposeOfNext, this.playerID, [nextChain]);
 
         return this.completeAction(nextChain);
     }

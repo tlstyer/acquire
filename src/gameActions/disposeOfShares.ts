@@ -1,7 +1,7 @@
 import { defaultScoreBoardRow } from '../defaults';
 import { GameAction, GameBoardType, GameHistoryMessage, ScoreBoardIndex } from '../enums';
 import { UserInputError } from '../error';
-import { Game, GameHistoryMessageData } from '../game';
+import { Game } from '../game';
 import { ActionBase } from './base';
 
 export class ActionDisposeOfShares extends ActionBase {
@@ -53,11 +53,7 @@ export class ActionDisposeOfShares extends ActionBase {
             this.game.adjustPlayerScoreBoardRow(this.playerID, adjustments);
         }
 
-        this.game
-            .getCurrentMoveData()
-            .addGameHistoryMessage(
-                new GameHistoryMessageData(GameHistoryMessage.DisposedOfShares, this.playerID, [this.defunctChain, tradeAmount, sellAmount])
-            );
+        this.game.getCurrentMoveData().addGameHistoryMessage(GameHistoryMessage.DisposedOfShares, this.playerID, [this.defunctChain, tradeAmount, sellAmount]);
 
         return [];
     }
