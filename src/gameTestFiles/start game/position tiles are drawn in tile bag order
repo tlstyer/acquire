@@ -18,6 +18,7 @@ tile racks:
   1: 11E(n) 7D(l) 12A(l) 12H(l) 3E(l) 7G(n)
   2: 2D(h) 2I(l) 1D(h) 3D(h) 2G(l) 11G(n)
   3: 10I(l) 1I(l) 6G(l) 11B(l) 5H(l) 7B(l)
+tile bag additions: 11F:all, 4I:all, 8G:all, 2B:all, 9H:0, 11A:0, 7F:0, 10A:0, 10B:0, 6F:0, 11E:1, 7D:1, 12A:1, 12H:1, 3E:1, 7G:1, 2D:2, 2I:2, 1D:2, 3D:2, 2G:2, 11G:2, 10I:3, 1I:3, 6G:3, 11B:3, 5H:3, 7B:3
 history messages:
   3 DrewPositionTile 11F
   1 DrewPositionTile 4I

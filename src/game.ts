@@ -89,9 +89,12 @@ export class Game {
                 }
                 return;
             }
-            let tile = this.tileBag[this.nextTileBagIndex++];
 
+            let tile = this.tileBag[this.nextTileBagIndex++];
             this.tileRacks = this.tileRacks.setIn([playerID, i], tile);
+
+            this.getCurrentMoveData().addTileBagTile(tile, playerID);
+
             if (addDrewTileMessage) {
                 this.getCurrentMoveData().addGameHistoryMessage(GameHistoryMessage.DrewTile, playerID, [tile]);
             }
@@ -234,7 +237,13 @@ export class Game {
     }
 
     setGameBoardPosition(tile: number, gameBoardType: GameBoardType) {
-        this.gameBoardTypeCounts[this.gameBoard.get(tile, 0)]--;
+        const previousGameBoardType = this.gameBoard.get(tile, 0);
+
+        if (previousGameBoardType === GameBoardType.Nothing) {
+            this.getCurrentMoveData().addPlayedTile(tile, this.gameActionStack[this.gameActionStack.length - 1].playerID);
+        }
+
+        this.gameBoardTypeCounts[previousGameBoardType]--;
         this.gameBoard = this.gameBoard.set(tile, gameBoardType);
         this.gameBoardTypeCounts[gameBoardType]++;
     }
@@ -386,6 +395,8 @@ export class MoveData {
     playerID: number = -1;
     gameAction: GameAction = GameAction.StartGame;
     gameActionParameters: any[] = [];
+    tileRackAdditions: MoveDataTileRackTile[] = [];
+    tileBagAdditions: MoveDataTileBagTile[] = [];
     gameHistoryMessages: GameHistoryMessageData[] = [];
     nextGameAction: ActionBase;
 
@@ -397,6 +408,8 @@ export class MoveData {
     scoreBoardChainSize = defaultScoreBoardChainSize;
     scoreBoardPrice = defaultScoreBoardPrice;
 
+    tileBagAdditionsLookup: { [key: number]: MoveDataTileBagTile } = {};
+
     constructor(public game: Game) {
         // assign something to this.nextGameAction so it gets set in the constructor
         this.nextGameAction = game.gameActionStack[game.gameActionStack.length - 1];
@@ -406,6 +419,23 @@ export class MoveData {
         this.playerID = playerID;
         this.gameAction = gameAction;
         this.gameActionParameters = parameters;
+    }
+
+    addTileBagTile(tile: number, playerID: number | null) {
+        const moveDataTileBagTile = new MoveDataTileBagTile(tile, playerID);
+        this.tileBagAdditions.push(moveDataTileBagTile);
+        this.tileBagAdditionsLookup[tile] = moveDataTileBagTile;
+    }
+
+    addPlayedTile(tile: number, playerID: number) {
+        // if already in the tile bag additions
+        if (this.tileBagAdditionsLookup[tile]) {
+            // change it to public
+            this.tileBagAdditionsLookup[tile].playerIDWithPermission = null;
+        } else {
+            // add it to the tile rack additions
+            this.tileRackAdditions.push(new MoveDataTileRackTile(tile, playerID));
+        }
     }
 
     addGameHistoryMessage(gameHistoryMessage: GameHistoryMessage, playerID: number | null, parameters: any[]) {
@@ -421,9 +451,22 @@ export class MoveData {
         this.scoreBoardChainSize = this.game.scoreBoardChainSize;
         this.scoreBoardPrice = this.game.scoreBoardPrice;
         this.nextGameAction = this.game.gameActionStack[this.game.gameActionStack.length - 1];
+
+        if (this.tileBagAdditions.length > 0) {
+            // save some memory
+            this.tileBagAdditionsLookup = {};
+        }
     }
 }
 
 export class GameHistoryMessageData {
     constructor(public gameHistoryMessage: GameHistoryMessage, public playerID: number | null, public parameters: any[]) {}
+}
+
+class MoveDataTileRackTile {
+    constructor(public tile: number, public playerIDBelongsTo: number) {}
+}
+
+class MoveDataTileBagTile {
+    constructor(public tile: number, public playerIDWithPermission: number | null) {}
 }

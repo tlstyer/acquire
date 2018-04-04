@@ -18,6 +18,7 @@ OO··········                         60   60
 tile racks:
   0: 7E(l) none 12H(l) 7B(l) 11I(l) 12C(l)
   1: 8G(h) 8H(h) 10H(l) 2G(l) 1D(l) 11D(l)
+tile rack additions: 1B:0
 history messages:
   0 PlayedTile 1B
 next action: 0 SelectNewChain L,T,A,F,W,C,I

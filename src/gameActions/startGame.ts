@@ -28,6 +28,7 @@ export class ActionStartGame extends ActionBase {
         positionTiles.sort((a, b) => (a.tileBagIndex < b.tileBagIndex ? -1 : 1));
         for (let i = 0; i < positionTiles.length; i++) {
             const positionTile = positionTiles[i];
+            moveData.addTileBagTile(positionTile.tile, null);
             this.game.setGameBoardPosition(positionTile.tile, GameBoardType.NothingYet);
             moveData.addGameHistoryMessage(GameHistoryMessage.DrewPositionTile, positionTile.playerID, [positionTile.tile]);
         }

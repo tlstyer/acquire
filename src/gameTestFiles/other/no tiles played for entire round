@@ -146,6 +146,8 @@ O··T·FF·O···
 tile racks:
   0: 2I(c) 7G(c) 5E(c) 1H(c) 3D(c) 4C(c)
   1: 10H(c) 10G(c) 11B(c) 11I(c) 9H(c) 3F(W)
+tile rack additions: 9I:1
+tile bag additions: 11I:1
 history messages:
   1 PlayedTile 9I
   1 CouldNotAffordAnyShares
@@ -169,6 +171,8 @@ O··T·FF·O···
 tile racks:
   0: 2I(c) 7G(c) 5E(c) 1H(c) 3D(c) 4C(c)
   1: 10H(c) 10G(c) 11B(c) 11I(c) 9H(c) 12A(c)
+tile rack additions: 3F:1
+tile bag additions: 12A:1
 history messages:
   1 PlayedTile 3F
   1 CouldNotAffordAnyShares
