@@ -114,12 +114,3 @@ export function calculateBonuses(sharesOwned: number[], sharePrice: number) {
 export class PlayerIDAndAmount {
     constructor(public playerID: number, public amount: number) {}
 }
-
-// based on https://stackoverflow.com/questions/13542667/create-directory-when-writing-to-file-in-node-js
-export function ensureDirectoryExists(filePath: string) {
-    let dirname = path.dirname(filePath);
-    if (!fs.existsSync(dirname)) {
-        ensureDirectoryExists(dirname);
-        fs.mkdirSync(dirname);
-    }
-}

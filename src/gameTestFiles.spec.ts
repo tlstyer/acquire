@@ -2,7 +2,6 @@ import * as assert from 'assert';
 import * as fs from 'fs';
 import * as path from 'path';
 
-import { ensureDirectoryExists } from './helpers';
 import { runGameTestFile } from './runGameTestFile';
 
 const inputBasePath: string = `${__dirname}/gameTestFiles/`;
@@ -13,10 +12,18 @@ function processDirectory(base: string, dir: string) {
         const dirPath = path.join(base, dir);
         const files = fs.readdirSync(dirPath);
 
+        if (outputBasePath !== '') {
+            const outputDirPath = path.join(outputBasePath, dirPath.slice(inputBasePath.length));
+            if (!fs.existsSync(outputDirPath)) {
+                fs.mkdirSync(outputDirPath);
+            }
+        }
+
         for (let i = 0; i < files.length; i++) {
             const file = files[i];
             const filePath = path.join(dirPath, file);
             const stats = fs.statSync(filePath);
+
             if (stats.isDirectory()) {
                 processDirectory(dirPath, file);
             } else if (stats.isFile()) {
@@ -29,7 +36,6 @@ function processDirectory(base: string, dir: string) {
 
                     if (outputBasePath !== '') {
                         const outputFilePath = path.join(outputBasePath, filePath.slice(inputBasePath.length));
-                        ensureDirectoryExists(outputFilePath);
                         fs.writeFileSync(outputFilePath, outputLines.join('\n'));
                     }
 
