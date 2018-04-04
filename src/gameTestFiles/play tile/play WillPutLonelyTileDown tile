@@ -4,49 +4,49 @@ starter user ID: 7
 my user ID: 5
 
 action: 1 StartGame
-············   L  T  A  F  W  C  I Cash  Net
-·O··········                         60   60
-············                         60   60
-············  25 25 25 25 25 25 25
-············   -  -  -  -  -  -  -
-············   -  -  -  -  -  -  -
-············
-············
-···O········
-tile racks:
-  0: 8G(l) 4B(l) 10H(l) 2G(l) 1D(l) 11D(l)
-  1: 7E(l) 1B(n) 12H(l) 7B(l) 11I(l) 12C(l)
-tile bag additions: 4I:all, 2B:all, 8G:0, 4B:0, 10H:0, 2G:0, 1D:0, 11D:0, 7E:1, 1B:1, 12H:1, 7B:1, 11I:1, 12C:1
-history messages:
-  1 DrewPositionTile 4I
-  0 DrewPositionTile 2B
-  1 StartedGame
-  0 DrewTile 8G
-  0 DrewTile 4B
-  0 DrewTile 10H
-  0 DrewTile 2G
-  0 DrewTile 1D
-  0 DrewTile 11D
-  0 TurnBegan
-next action: 0 PlayTile
+  ············   L  T  A  F  W  C  I Cash  Net
+  ·O··········                         60   60
+  ············                         60   60
+  ············  25 25 25 25 25 25 25
+  ············   -  -  -  -  -  -  -
+  ············   -  -  -  -  -  -  -
+  ············
+  ············
+  ···O········
+  tile racks:
+    0: 8G(l) 4B(l) 10H(l) 2G(l) 1D(l) 11D(l)
+    1: 7E(l) 1B(n) 12H(l) 7B(l) 11I(l) 12C(l)
+  tile bag additions: 4I:all, 2B:all, 8G:0, 4B:0, 10H:0, 2G:0, 1D:0, 11D:0, 7E:1, 1B:1, 12H:1, 7B:1, 11I:1, 12C:1
+  history messages:
+    1 DrewPositionTile 4I
+    0 DrewPositionTile 2B
+    1 StartedGame
+    0 DrewTile 8G
+    0 DrewTile 4B
+    0 DrewTile 10H
+    0 DrewTile 2G
+    0 DrewTile 1D
+    0 DrewTile 11D
+    0 TurnBegan
+  next action: 0 PlayTile
 
 action: 0 PlayTile 8G
-············   L  T  A  F  W  C  I Cash  Net
-·O··········                         60   60
-············                         60   60
-············  25 25 25 25 25 25 25
-············   -  -  -  -  -  -  -
-············   -  -  -  -  -  -  -
-·······O····
-············
-···O········
-tile racks:
-  0: 1A(l) 4B(l) 10H(l) 2G(l) 1D(l) 11D(l)
-  1: 7E(l) 1B(n) 12H(l) 7B(l) 11I(l) 12C(l)
-tile rack additions: 8G:0
-tile bag additions: 1A:0
-history messages:
-  0 PlayedTile 8G
-  0 DrewTile 1A
-  1 TurnBegan
-next action: 1 PlayTile
+  ············   L  T  A  F  W  C  I Cash  Net
+  ·O··········                         60   60
+  ············                         60   60
+  ············  25 25 25 25 25 25 25
+  ············   -  -  -  -  -  -  -
+  ············   -  -  -  -  -  -  -
+  ·······O····
+  ············
+  ···O········
+  tile racks:
+    0: 1A(l) 4B(l) 10H(l) 2G(l) 1D(l) 11D(l)
+    1: 7E(l) 1B(n) 12H(l) 7B(l) 11I(l) 12C(l)
+  tile rack additions: 8G:0
+  tile bag additions: 1A:0
+  history messages:
+    0 PlayedTile 8G
+    0 DrewTile 1A
+    1 TurnBegan
+  next action: 1 PlayTile

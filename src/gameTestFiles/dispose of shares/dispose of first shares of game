@@ -28,57 +28,57 @@ action: 0 PurchaseShares A,A,C 0
 action: 1 PlayTile 3B
 
 action: 1 SelectMergerSurvivor A
-············   L  T  A  F  W  C  I Cash  Net
-·AAA········         6        1      61  161
-·A·A········                  4      88  104
-············         3               51   99
-···········O  25 25 16 25 25 20 25
-············   -  -  5  -  -  2  -
-···O·······O   -  -  6  -  -  4  -
-············
-············
-tile racks:
-  0: 1D(l) 6E(h) 7E(h) 7A(l) 11I(l) 12C(l)
-  1: 6I(l) 2D(A) none 10H(l) 2G(l) 8G(l)
-  2: 8H(l) 1B(A) 6B(l) 3C(A) 7G(l) 3A(A)
-history messages:
-  1 SelectedMergerSurvivor A
-  1 ReceivedBonus C 40
-  0 ReceivedBonus C 20
-next action: 1 DisposeOfShares C
+  ············   L  T  A  F  W  C  I Cash  Net
+  ·AAA········         6        1      61  161
+  ·A·A········                  4      88  104
+  ············         3               51   99
+  ···········O  25 25 16 25 25 20 25
+  ············   -  -  5  -  -  2  -
+  ···O·······O   -  -  6  -  -  4  -
+  ············
+  ············
+  tile racks:
+    0: 1D(l) 6E(h) 7E(h) 7A(l) 11I(l) 12C(l)
+    1: 6I(l) 2D(A) none 10H(l) 2G(l) 8G(l)
+    2: 8H(l) 1B(A) 6B(l) 3C(A) 7G(l) 3A(A)
+  history messages:
+    1 SelectedMergerSurvivor A
+    1 ReceivedBonus C 40
+    0 ReceivedBonus C 20
+  next action: 1 DisposeOfShares C
 
 action: 1 DisposeOfShares 2 1
-············   L  T  A  F  W  C  I Cash  Net
-·AAA········         6        1      61  161
-·A·A········         1        1      92  102
-············         3               51   99
-···········O  25 25 15 25 25 23 25
-············   -  -  5  -  -  2  -
-···O·······O   -  -  6  -  -  4  -
-············
-············
-tile racks:
-  0: 1D(l) 6E(h) 7E(h) 7A(l) 11I(l) 12C(l)
-  1: 6I(l) 2D(A) none 10H(l) 2G(l) 8G(l)
-  2: 8H(l) 1B(A) 6B(l) 3C(A) 7G(l) 3A(A)
-history messages:
-  1 DisposedOfShares C 2 1
-next action: 0 DisposeOfShares C
+  ············   L  T  A  F  W  C  I Cash  Net
+  ·AAA········         6        1      61  161
+  ·A·A········         1        1      92  102
+  ············         3               51   99
+  ···········O  25 25 15 25 25 23 25
+  ············   -  -  5  -  -  2  -
+  ···O·······O   -  -  6  -  -  4  -
+  ············
+  ············
+  tile racks:
+    0: 1D(l) 6E(h) 7E(h) 7A(l) 11I(l) 12C(l)
+    1: 6I(l) 2D(A) none 10H(l) 2G(l) 8G(l)
+    2: 8H(l) 1B(A) 6B(l) 3C(A) 7G(l) 3A(A)
+  history messages:
+    1 DisposedOfShares C 2 1
+  next action: 0 DisposeOfShares C
 
 action: 0 DisposeOfShares 0 0
-············   L  T  A  F  W  C  I Cash  Net
-·AAA········         6        1      61  157
-·A·A········         1        1      92   98
-············         3               51   99
-···········O  25 25 15 25 25 23 25
-············   -  -  5  -  -  -  -
-···O·······O   -  -  6  -  -  -  -
-············
-············
-tile racks:
-  0: 1D(l) 6E(h) 7E(h) 7A(l) 11I(l) 12C(l)
-  1: 6I(l) 2D(A) none 10H(l) 2G(l) 8G(l)
-  2: 8H(l) 1B(A) 6B(l) 3C(A) 7G(l) 3A(A)
-history messages:
-  0 DisposedOfShares C 0 0
-next action: 1 PurchaseShares
+  ············   L  T  A  F  W  C  I Cash  Net
+  ·AAA········         6        1      61  157
+  ·A·A········         1        1      92   98
+  ············         3               51   99
+  ···········O  25 25 15 25 25 23 25
+  ············   -  -  5  -  -  -  -
+  ···O·······O   -  -  6  -  -  -  -
+  ············
+  ············
+  tile racks:
+    0: 1D(l) 6E(h) 7E(h) 7A(l) 11I(l) 12C(l)
+    1: 6I(l) 2D(A) none 10H(l) 2G(l) 8G(l)
+    2: 8H(l) 1B(A) 6B(l) 3C(A) 7G(l) 3A(A)
+  history messages:
+    0 DisposedOfShares C 0 0
+  next action: 1 PurchaseShares

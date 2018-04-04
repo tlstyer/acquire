@@ -22,57 +22,57 @@ action: 2 PlayTile 7G
 action: 2 PurchaseShares A,A,A 0
 
 action: 0 PlayTile 3B
-············   L  T  A  F  W  C  I Cash  Net
-·COA········         4               51   93
-·C·A········         1        3      49  124
-············         3               51   75
-············  25 25 17 25 25 22 25
-············   -  -  2  -  -  2  -
-······O····O   -  -  3  -  -  4  -
-············
-············
-tile racks:
-  0: 6I(l) 6E(h) 7E(h) none 11I(l) 12C(l)
-  1: 6B(l) 2D(C) 8H(l) 10H(l) 2G(l) 8G(n)
-  2: 1B(C) 4G(l) 3C(m) 12F(n) 3A(n) 1D(l)
-tile rack additions: 3B:0
-history messages:
-  0 PlayedTile 3B
-  0 MergedChains A,C
-next action: 0 SelectMergerSurvivor A,C
+  ············   L  T  A  F  W  C  I Cash  Net
+  ·COA········         4               51   93
+  ·C·A········         1        3      49  124
+  ············         3               51   75
+  ············  25 25 17 25 25 22 25
+  ············   -  -  2  -  -  2  -
+  ······O····O   -  -  3  -  -  4  -
+  ············
+  ············
+  tile racks:
+    0: 6I(l) 6E(h) 7E(h) none 11I(l) 12C(l)
+    1: 6B(l) 2D(C) 8H(l) 10H(l) 2G(l) 8G(n)
+    2: 1B(C) 4G(l) 3C(m) 12F(n) 3A(n) 1D(l)
+  tile rack additions: 3B:0
+  history messages:
+    0 PlayedTile 3B
+    0 MergedChains A,C
+  next action: 0 SelectMergerSurvivor A,C
 
 action: 1 SelectMergerSurvivor -- []
-error: player cannot play right now
+  error: player cannot play right now
 
 action: 0 SelectMergerSurvivor -- []
-error: did not get exactly 1 parameter
+  error: did not get exactly 1 parameter
 
 action: 0 SelectMergerSurvivor -- ["hello","world!"]
-error: did not get exactly 1 parameter
+  error: did not get exactly 1 parameter
 
 action: 0 SelectMergerSurvivor -- ["hello!"]
-error: parameter is not a valid chain
+  error: parameter is not a valid chain
 
 action: 0 SelectMergerSurvivor -- [true]
-error: parameter is not a valid chain
+  error: parameter is not a valid chain
 
 action: 0 SelectMergerSurvivor -- [-1]
-error: parameter is not a valid chain
+  error: parameter is not a valid chain
 
 action: 0 SelectMergerSurvivor -- [7]
-error: parameter is not a valid chain
+  error: parameter is not a valid chain
 
 action: 0 SelectMergerSurvivor L
-error: cannot select chain as the controlling chain
+  error: cannot select chain as the controlling chain
 
 action: 0 SelectMergerSurvivor T
-error: cannot select chain as the controlling chain
+  error: cannot select chain as the controlling chain
 
 action: 0 SelectMergerSurvivor F
-error: cannot select chain as the controlling chain
+  error: cannot select chain as the controlling chain
 
 action: 0 SelectMergerSurvivor W
-error: cannot select chain as the controlling chain
+  error: cannot select chain as the controlling chain
 
 action: 0 SelectMergerSurvivor I
-error: cannot select chain as the controlling chain
+  error: cannot select chain as the controlling chain

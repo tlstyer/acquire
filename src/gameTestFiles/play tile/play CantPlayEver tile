@@ -182,24 +182,24 @@ action: 0 DisposeOfShares 0 0
 action: 1 DisposeOfShares 4 1
 
 action: 0 PurchaseShares W,C,C 0
-···O··FF·O··   L  T  A  F  W  C  I Cash  Net
-II··O···O·A·  10  7  2  2  9  4      60  400
-·II···C···AA  14  1  2  1  7  3  1   42  434
-II··O·CCC···   1 17 21 22  9 18 24
-III··O·····O   2  -  3  2 15  4 11
-·I·WW··W·O··   2  -  4  3  8  6  9
-·I··WWWWW·LL
-O··WWW··WW··
-·O··W····W··
-tile racks:
-  0: 3D(I) 6B(n) 9A(F) 9E(C) 8I(l) 6A(F)
-  1: 10C(A) 11F(L) 8E(m) 12D(A) 5A(n) 4E(█)
-tile bag additions: 9E:0
-history messages:
-  0 PurchasedShares 1W,2C
-  0 DrewTile 9E
-  1 TurnBegan
-next action: 1 PlayTile
+  ···O··FF·O··   L  T  A  F  W  C  I Cash  Net
+  II··O···O·A·  10  7  2  2  9  4      60  400
+  ·II···C···AA  14  1  2  1  7  3  1   42  434
+  II··O·CCC···   1 17 21 22  9 18 24
+  III··O·····O   2  -  3  2 15  4 11
+  ·I·WW··W·O··   2  -  4  3  8  6  9
+  ·I··WWWWW·LL
+  O··WWW··WW··
+  ·O··W····W··
+  tile racks:
+    0: 3D(I) 6B(n) 9A(F) 9E(C) 8I(l) 6A(F)
+    1: 10C(A) 11F(L) 8E(m) 12D(A) 5A(n) 4E(█)
+  tile bag additions: 9E:0
+  history messages:
+    0 PurchasedShares 1W,2C
+    0 DrewTile 9E
+    1 TurnBegan
+  next action: 1 PlayTile
 
 action: 1 PlayTile 4E
-error: cannot play given tile
+  error: cannot play given tile

@@ -134,54 +134,54 @@ action: 1 PlayTile 8E
 action: 0 PlayTile 1C
 
 action: 1 PlayTile 9I
-CC········O·   L  T  A  F  W  C  I Cash  Net
-CC····II····   2  4  6  4  5  1  3    1  353
-CC······LL·A   1  1  6  4  5  1  3    2  306
-···O·····L·A  22 20 13 17 15 23 19
-·W·····O·L·A   4  3  3  2  4  6  2
-·W··O·O···O·   4  3  4  3  5  8  4
-·WW·····O··O
-···TT··O··O·
-O··T·FF·O···
-tile racks:
-  0: 2I(c) 7G(c) 5E(c) 1H(c) 3D(c) 4C(c)
-  1: 10H(c) 10G(c) 11B(c) 11I(c) 9H(c) 3F(W)
-tile rack additions: 9I:1
-tile bag additions: 11I:1
-history messages:
-  1 PlayedTile 9I
-  1 CouldNotAffordAnyShares
-  1 DrewTile 11I
-  0 TurnBegan
-  0 HasNoPlayableTile
-  0 CouldNotAffordAnyShares
-  1 TurnBegan
-next action: 1 PlayTile
+  CC········O·   L  T  A  F  W  C  I Cash  Net
+  CC····II····   2  4  6  4  5  1  3    1  353
+  CC······LL·A   1  1  6  4  5  1  3    2  306
+  ···O·····L·A  22 20 13 17 15 23 19
+  ·W·····O·L·A   4  3  3  2  4  6  2
+  ·W··O·O···O·   4  3  4  3  5  8  4
+  ·WW·····O··O
+  ···TT··O··O·
+  O··T·FF·O···
+  tile racks:
+    0: 2I(c) 7G(c) 5E(c) 1H(c) 3D(c) 4C(c)
+    1: 10H(c) 10G(c) 11B(c) 11I(c) 9H(c) 3F(W)
+  tile rack additions: 9I:1
+  tile bag additions: 11I:1
+  history messages:
+    1 PlayedTile 9I
+    1 CouldNotAffordAnyShares
+    1 DrewTile 11I
+    0 TurnBegan
+    0 HasNoPlayableTile
+    0 CouldNotAffordAnyShares
+    1 TurnBegan
+  next action: 1 PlayTile
 
 action: 1 PlayTile 3F
-CC········O·   L  T  A  F  W  C  I Cash  Net
-CC····II····   2  4  6  4  5  1  3    1  365
-CC······LL·A   1  1  6  4  5  1  3    2  318
-···O·····L·A  22 20 13 17 15 23 19
-·W·····O·L·A   4  3  3  2  5  6  2
-·WW·O·O···O·   4  3  4  3  6  8  4
-·WW·····O··O
-···TT··O··O·
-O··T·FF·O···
-tile racks:
-  0: 2I(c) 7G(c) 5E(c) 1H(c) 3D(c) 4C(c)
-  1: 10H(c) 10G(c) 11B(c) 11I(c) 9H(c) 12A(c)
-tile rack additions: 3F:1
-tile bag additions: 12A:1
-history messages:
-  1 PlayedTile 3F
-  1 CouldNotAffordAnyShares
-  1 DrewTile 12A
-  0 TurnBegan
-  0 HasNoPlayableTile
-  0 CouldNotAffordAnyShares
-  1 TurnBegan
-  1 HasNoPlayableTile
-  1 CouldNotAffordAnyShares
-  NoTilesPlayedForEntireRound
-next action: 1 GameOver
+  CC········O·   L  T  A  F  W  C  I Cash  Net
+  CC····II····   2  4  6  4  5  1  3    1  365
+  CC······LL·A   1  1  6  4  5  1  3    2  318
+  ···O·····L·A  22 20 13 17 15 23 19
+  ·W·····O·L·A   4  3  3  2  5  6  2
+  ·WW·O·O···O·   4  3  4  3  6  8  4
+  ·WW·····O··O
+  ···TT··O··O·
+  O··T·FF·O···
+  tile racks:
+    0: 2I(c) 7G(c) 5E(c) 1H(c) 3D(c) 4C(c)
+    1: 10H(c) 10G(c) 11B(c) 11I(c) 9H(c) 12A(c)
+  tile rack additions: 3F:1
+  tile bag additions: 12A:1
+  history messages:
+    1 PlayedTile 3F
+    1 CouldNotAffordAnyShares
+    1 DrewTile 12A
+    0 TurnBegan
+    0 HasNoPlayableTile
+    0 CouldNotAffordAnyShares
+    1 TurnBegan
+    1 HasNoPlayableTile
+    1 CouldNotAffordAnyShares
+    NoTilesPlayedForEntireRound
+  next action: 1 GameOver

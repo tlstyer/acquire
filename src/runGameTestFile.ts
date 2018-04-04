@@ -110,12 +110,12 @@ export function runGameTestFile(inputLines: string[]) {
                         }
 
                         outputLines.push(`action: ${playerID} ${actualGameActionName}${stringParameters}`);
-                        outputLines.push(`error: ${error.message}`);
+                        outputLines.push(`  error: ${error.message}`);
                     } else {
                         outputLines.push(`line with unknown error: ${line}`);
-                        outputLines.push(`unknown error: ${error.toString()}`);
+                        outputLines.push(`  unknown error: ${error.toString()}`);
                         if (error instanceof Error) {
-                            outputLines.push(`stack trace: ${error.stack}`);
+                            outputLines.push(`  stack trace: ${error.stack}`);
                         }
                     }
                 }
@@ -239,13 +239,13 @@ function getMoveDataLines(moveData: MoveData, detailed: boolean) {
                 lineParts.push('  ');
                 lineParts.push(scoreBoardLines[i]);
             }
-            lines.push(lineParts.join(''));
+            lines.push(`  ${lineParts.join('')}`);
         }
 
-        lines.push('tile racks:');
+        lines.push('  tile racks:');
         moveData.tileRacks.forEach((tileRack, playerID) => {
             let tileTypes = moveData.tileRackTypes.get(playerID, defaultTileRackTypes);
-            lines.push(`  ${playerID}: ${getTileRackString(tileRack, tileTypes)}`);
+            lines.push(`    ${playerID}: ${getTileRackString(tileRack, tileTypes)}`);
         });
 
         if (moveData.tileRackAdditions.length > 0) {
@@ -254,7 +254,7 @@ function getMoveDataLines(moveData: MoveData, detailed: boolean) {
                     return toTileString(tra.tile) + ':' + tra.playerIDBelongsTo.toString();
                 })
                 .join(', ');
-            lines.push(`tile rack additions: ${str}`);
+            lines.push(`  tile rack additions: ${str}`);
         }
 
         if (moveData.tileBagAdditions.length > 0) {
@@ -263,15 +263,15 @@ function getMoveDataLines(moveData: MoveData, detailed: boolean) {
                     return toTileString(tba.tile) + ':' + (tba.playerIDWithPermission === null ? 'all' : tba.playerIDWithPermission.toString());
                 })
                 .join(', ');
-            lines.push(`tile bag additions: ${str}`);
+            lines.push(`  tile bag additions: ${str}`);
         }
 
-        lines.push('history messages:');
+        lines.push('  history messages:');
         moveData.gameHistoryMessages.forEach(ghm => {
-            lines.push(`  ${getGameHistoryMessageString(ghm)}`);
+            lines.push(`    ${getGameHistoryMessageString(ghm)}`);
         });
 
-        lines.push(`next action: ${getNextActionString(moveData.nextGameAction)}`);
+        lines.push(`  next action: ${getNextActionString(moveData.nextGameAction)}`);
     }
 
     return lines;

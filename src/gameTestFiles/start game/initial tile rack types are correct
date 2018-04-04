@@ -4,42 +4,42 @@ starter user ID: 7
 my user ID: null
 
 action: 1 StartGame
-············   L  T  A  F  W  C  I Cash  Net
-············                         60   60
-··O·········                         60   60
-····O·······                         60   60
-······O·····  25 25 25 25 25 25 25
-············   -  -  -  -  -  -  -
-············   -  -  -  -  -  -  -
-············
-············
-tile racks:
-  0: 1A(h) 2A(h) 5A(h) 6A(h) 11A(h) 12A(h)
-  1: 12B(h) 12C(h) 12E(h) 12F(h) 12H(h) 12I(h)
-  2: 3B(n) 3D(n) 2C(n) 4C(n) 11F(l) 7G(l)
-tile bag additions: 3C:all, 5D:all, 7E:all, 1A:0, 2A:0, 5A:0, 6A:0, 11A:0, 12A:0, 12B:1, 12C:1, 12E:1, 12F:1, 12H:1, 12I:1, 3B:2, 3D:2, 2C:2, 4C:2, 11F:2, 7G:2
-history messages:
-  0 DrewPositionTile 3C
-  1 DrewPositionTile 5D
-  2 DrewPositionTile 7E
-  1 StartedGame
-  0 DrewTile 1A
-  0 DrewTile 2A
-  0 DrewTile 5A
-  0 DrewTile 6A
-  0 DrewTile 11A
-  0 DrewTile 12A
-  1 DrewTile 12B
-  1 DrewTile 12C
-  1 DrewTile 12E
-  1 DrewTile 12F
-  1 DrewTile 12H
-  1 DrewTile 12I
-  2 DrewTile 3B
-  2 DrewTile 3D
-  2 DrewTile 2C
-  2 DrewTile 4C
-  2 DrewTile 11F
-  2 DrewTile 7G
-  0 TurnBegan
-next action: 0 PlayTile
+  ············   L  T  A  F  W  C  I Cash  Net
+  ············                         60   60
+  ··O·········                         60   60
+  ····O·······                         60   60
+  ······O·····  25 25 25 25 25 25 25
+  ············   -  -  -  -  -  -  -
+  ············   -  -  -  -  -  -  -
+  ············
+  ············
+  tile racks:
+    0: 1A(h) 2A(h) 5A(h) 6A(h) 11A(h) 12A(h)
+    1: 12B(h) 12C(h) 12E(h) 12F(h) 12H(h) 12I(h)
+    2: 3B(n) 3D(n) 2C(n) 4C(n) 11F(l) 7G(l)
+  tile bag additions: 3C:all, 5D:all, 7E:all, 1A:0, 2A:0, 5A:0, 6A:0, 11A:0, 12A:0, 12B:1, 12C:1, 12E:1, 12F:1, 12H:1, 12I:1, 3B:2, 3D:2, 2C:2, 4C:2, 11F:2, 7G:2
+  history messages:
+    0 DrewPositionTile 3C
+    1 DrewPositionTile 5D
+    2 DrewPositionTile 7E
+    1 StartedGame
+    0 DrewTile 1A
+    0 DrewTile 2A
+    0 DrewTile 5A
+    0 DrewTile 6A
+    0 DrewTile 11A
+    0 DrewTile 12A
+    1 DrewTile 12B
+    1 DrewTile 12C
+    1 DrewTile 12E
+    1 DrewTile 12F
+    1 DrewTile 12H
+    1 DrewTile 12I
+    2 DrewTile 3B
+    2 DrewTile 3D
+    2 DrewTile 2C
+    2 DrewTile 4C
+    2 DrewTile 11F
+    2 DrewTile 7G
+    0 TurnBegan
+  next action: 0 PlayTile
