@@ -32,6 +32,9 @@ export class Game {
     scoreBoardChainSize = defaultScoreBoardChainSize;
     scoreBoardPrice = defaultScoreBoardPrice;
 
+    scoreBoardAtLastNetWorthsUpdate = defaultScoreBoard;
+    scoreBoardPriceAtLastNetWorthsUpdate = defaultScoreBoardPrice;
+
     constructor(public tileBag: number[], public userIDs: number[], starterUserID: number, public myUserID: number | null) {
         // initialize this.gameBoardTypeCounts
         this.gameBoardTypeCounts = new Array(GameBoardType.Max);
@@ -49,6 +52,9 @@ export class Game {
             this.tileRackTypes = this.tileRacks.push(defaultTileRackTypes);
             this.scoreBoard = this.scoreBoard.push(defaultScoreBoardRow);
         }
+
+        // initialize this.scoreBoardAtLastNetWorthsUpdate
+        this.scoreBoardAtLastNetWorthsUpdate = this.scoreBoard;
     }
 
     doGameAction(userID: number, moveIndex: number, parameters: any[]) {
@@ -350,6 +356,10 @@ export class Game {
     }
 
     updateNetWorths() {
+        if (this.scoreBoard === this.scoreBoardAtLastNetWorthsUpdate && this.scoreBoardPrice === this.scoreBoardPriceAtLastNetWorthsUpdate) {
+            return;
+        }
+
         const netWorths = this.getScoreBoardColumnArray(ScoreBoardIndex.Cash);
 
         const prices = this.scoreBoardPrice.toArray();
@@ -372,6 +382,9 @@ export class Game {
         }
 
         this.setScoreBoardColumn(ScoreBoardIndex.Net, netWorths);
+
+        this.scoreBoardAtLastNetWorthsUpdate = this.scoreBoard;
+        this.scoreBoardPriceAtLastNetWorthsUpdate = this.scoreBoardPrice;
     }
 
     getCurrentMoveData() {
