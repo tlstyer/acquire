@@ -1608,17 +1608,18 @@ def make_acquire2_game_test_files(output_dir):
 
                         game_board_lines = get_game_board_lines(server_game.game_board)
                         score_board_lines = get_score_board_lines(server_game.score_sheet)
-                        lines.extend(get_game_board_lines_next_to_score_board_lines(game_board_lines, score_board_lines))
+                        for line in get_game_board_lines_next_to_score_board_lines(game_board_lines, score_board_lines):
+                            lines.append('  ' + line)
 
-                        lines.append('tile racks:')
+                        lines.append('  tile racks:')
                         for player_id, tile_rack in enumerate(server_game.tile_racks.racks):
-                            lines.append('  ' + str(player_id) + ': ' + get_tile_rack_string(tile_rack))
+                            lines.append('    ' + str(player_id) + ': ' + get_tile_rack_string(tile_rack))
 
-                        lines.append('history messages:')
+                        lines.append('  history messages:')
                         for history_message in server_game.history_messages[last_history_message_index:]:
-                            lines.append('  ' + get_game_history_message_string(server_game.score_sheet.username_to_player_id, history_message[1]))
+                            lines.append('    ' + get_game_history_message_string(server_game.score_sheet.username_to_player_id, history_message[1]))
 
-                        lines.append('next action: ' + get_next_action_string(server_game.actions[-1]))
+                        lines.append('  next action: ' + get_next_action_string(server_game.actions[-1]))
 
                         last_history_message_index = len(server_game.history_messages)
 
