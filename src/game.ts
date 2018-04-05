@@ -408,8 +408,8 @@ export class MoveData {
     playerID: number = -1;
     gameAction: GameAction = GameAction.StartGame;
     gameActionParameters: any[] = [];
-    tileRackAdditions: MoveDataTileRackTile[] = [];
-    tileBagAdditions: MoveDataTileBagTile[] = [];
+    revealedTileRackTiles: MoveDataTileRackTile[] = [];
+    revealedTileBagTiles: MoveDataTileBagTile[] = [];
     gameHistoryMessages: GameHistoryMessageData[] = [];
     nextGameAction: ActionBase;
 
@@ -421,7 +421,7 @@ export class MoveData {
     scoreBoardChainSize = defaultScoreBoardChainSize;
     scoreBoardPrice = defaultScoreBoardPrice;
 
-    tileBagAdditionsLookup: { [key: number]: MoveDataTileBagTile } = {};
+    revealedTileBagTilesLookup: { [key: number]: MoveDataTileBagTile } = {};
 
     constructor(public game: Game) {
         // assign something to this.nextGameAction so it gets set in the constructor
@@ -436,18 +436,18 @@ export class MoveData {
 
     addTileBagTile(tile: number, playerID: number | null) {
         const moveDataTileBagTile = new MoveDataTileBagTile(tile, playerID);
-        this.tileBagAdditions.push(moveDataTileBagTile);
-        this.tileBagAdditionsLookup[tile] = moveDataTileBagTile;
+        this.revealedTileBagTiles.push(moveDataTileBagTile);
+        this.revealedTileBagTilesLookup[tile] = moveDataTileBagTile;
     }
 
     addPlayedTile(tile: number, playerID: number) {
         // if already in the tile bag additions
-        if (this.tileBagAdditionsLookup[tile]) {
+        if (this.revealedTileBagTilesLookup[tile]) {
             // change it to public
-            this.tileBagAdditionsLookup[tile].playerIDWithPermission = null;
+            this.revealedTileBagTilesLookup[tile].playerIDWithPermission = null;
         } else {
             // add it to the tile rack additions
-            this.tileRackAdditions.push(new MoveDataTileRackTile(tile, playerID));
+            this.revealedTileRackTiles.push(new MoveDataTileRackTile(tile, playerID));
         }
     }
 
@@ -465,9 +465,9 @@ export class MoveData {
         this.scoreBoardPrice = this.game.scoreBoardPrice;
         this.nextGameAction = this.game.gameActionStack[this.game.gameActionStack.length - 1];
 
-        if (this.tileBagAdditions.length > 0) {
+        if (this.revealedTileBagTiles.length > 0) {
             // save some memory
-            this.tileBagAdditionsLookup = {};
+            this.revealedTileBagTilesLookup = {};
         }
     }
 }

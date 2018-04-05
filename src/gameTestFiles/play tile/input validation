@@ -16,7 +16,7 @@ action: 1 StartGame
   tile racks:
     0: 8G(l) 4B(l) 10H(l) 2G(l) 1D(l) 11D(l)
     1: 7E(l) 1B(n) 12H(l) 7B(l) 11I(l) 12C(l)
-  tile bag additions: 4I:all, 2B:all, 8G:0, 4B:0, 10H:0, 2G:0, 1D:0, 11D:0, 7E:1, 1B:1, 12H:1, 7B:1, 11I:1, 12C:1
+  revealed tile bag tiles: 4I:all, 2B:all, 8G:0, 4B:0, 10H:0, 2G:0, 1D:0, 11D:0, 7E:1, 1B:1, 12H:1, 7B:1, 11I:1, 12C:1
   history messages:
     1 DrewPositionTile 4I
     0 DrewPositionTile 2B

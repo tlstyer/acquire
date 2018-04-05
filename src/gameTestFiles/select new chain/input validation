@@ -24,7 +24,7 @@ action: 1 PlayTile 4H
   tile racks:
     0: 7E(l) 12G(h) 12H(h) 7B(l) 11I(l) 12C(l)
     1: 8G(h) 8H(h) 10H(l) 2G(l) none 11D(l)
-  tile rack additions: 4H:1
+  revealed tile rack tiles: 4H:1
   history messages:
     1 PlayedTile 4H
   next action: 1 SelectNewChain T,A,F,W,C,I

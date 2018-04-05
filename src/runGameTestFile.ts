@@ -248,22 +248,22 @@ function getMoveDataLines(moveData: MoveData, detailed: boolean) {
             lines.push(`    ${playerID}: ${getTileRackString(tileRack, tileTypes)}`);
         });
 
-        if (moveData.tileRackAdditions.length > 0) {
-            const str = moveData.tileRackAdditions
-                .map(tra => {
-                    return toTileString(tra.tile) + ':' + tra.playerIDBelongsTo.toString();
+        if (moveData.revealedTileRackTiles.length > 0) {
+            const str = moveData.revealedTileRackTiles
+                .map(trt => {
+                    return toTileString(trt.tile) + ':' + trt.playerIDBelongsTo.toString();
                 })
                 .join(', ');
-            lines.push(`  tile rack additions: ${str}`);
+            lines.push(`  revealed tile rack tiles: ${str}`);
         }
 
-        if (moveData.tileBagAdditions.length > 0) {
-            const str = moveData.tileBagAdditions
-                .map(tba => {
-                    return toTileString(tba.tile) + ':' + (tba.playerIDWithPermission === null ? 'all' : tba.playerIDWithPermission.toString());
+        if (moveData.revealedTileBagTiles.length > 0) {
+            const str = moveData.revealedTileBagTiles
+                .map(tbt => {
+                    return toTileString(tbt.tile) + ':' + (tbt.playerIDWithPermission === null ? 'all' : tbt.playerIDWithPermission.toString());
                 })
                 .join(', ');
-            lines.push(`  tile bag additions: ${str}`);
+            lines.push(`  revealed tile bag tiles: ${str}`);
         }
 
         lines.push('  history messages:');

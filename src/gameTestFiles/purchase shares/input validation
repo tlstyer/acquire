@@ -135,7 +135,7 @@ action: 0 PlayTile 11D
   tile racks:
     0: 9C(l) 5E(L) 11H(l) 11I(l) none 10E(l)
     1: 5G(c) 9A(l) 7H(l) 9H(l) 3D(L) 4H(l)
-  tile rack additions: 11D:0
+  revealed tile rack tiles: 11D:0
   history messages:
     0 PlayedTile 11D
     0 FormedChain T

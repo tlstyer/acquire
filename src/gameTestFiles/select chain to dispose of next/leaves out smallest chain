@@ -56,7 +56,7 @@ action: 3 PlayTile 5G
     1: 12E(l) 10B(l) 1B(l) 5D(I) 3A(l) 9I(l)
     2: 6I(T) 11G(l) 7F(C) 4D(l) 1G(l) 2I(l)
     3: 12B(l) 12H(l) 10I(l) none 6E(I) 4B(l)
-  tile rack additions: 5G:3
+  revealed tile rack tiles: 5G:3
   history messages:
     3 PlayedTile 5G
     3 MergedChains L,T,C,I

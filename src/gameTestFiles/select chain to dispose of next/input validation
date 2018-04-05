@@ -44,7 +44,7 @@ action: 0 PlayTile 5G
     1: 4F(m) 10B(l) 1B(l) 11I(l) 3A(l) 9I(l)
     2: 9C(l) 11G(l) 10D(l) 4D(l) 1G(l) 2I(l)
     3: 5D(I) 12H(h) 10I(l) 8H(l) 3F(L) 11H(h)
-  tile rack additions: 5G:0
+  revealed tile rack tiles: 5G:0
   history messages:
     0 PlayedTile 5G
     0 MergedChains L,T,C,I
