@@ -21,7 +21,6 @@ export function runGameTestFile(inputLines: string[]) {
     let outputLines: string[] = [];
 
     let myPlayerID: number | null = null;
-    let userPerspectivePlayerID: number | null = null;
     let lastMoveData: MoveData | null = null;
 
     for (let lineNumber = 0; lineNumber < inputLines.length; lineNumber++) {
@@ -71,18 +70,15 @@ export function runGameTestFile(inputLines: string[]) {
             const lineParts = line.split(': ');
 
             if (lastMoveData !== null) {
-                outputLines.push(...getMoveDataLines(lastMoveData, userPerspectivePlayerID, line !== ''));
+                outputLines.push(...getMoveDataLines(lastMoveData, myPlayerID, line !== ''));
                 lastMoveData = null;
             }
 
             if (lineParts[0] === 'revealed tile rack tiles') {
-                userPerspectivePlayerID = myPlayerID;
                 game.processRevealedTileRackTiles(getArrayFromRevealedTileRackTilesString(lineParts[1]));
             } else if (lineParts[0] === 'revealed tile bag tiles') {
-                userPerspectivePlayerID = myPlayerID;
                 game.processRevealedTileBagTiles(fromTilesString(lineParts[1]));
             } else if (lineParts[0] === 'player ID with playable tile') {
-                userPerspectivePlayerID = myPlayerID;
                 game.processPlayerIDWithPlayableTile(parseInt(lineParts[1], 10));
             } else if (lineParts[0] === 'action') {
                 const actionParts = lineParts[1].split(' ');
