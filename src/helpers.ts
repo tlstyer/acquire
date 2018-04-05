@@ -1,6 +1,3 @@
-import * as fs from 'fs';
-import * as path from 'path';
-
 export function getNewTileBag() {
     let tileBag: number[] = new Array(108);
     for (let i = 0; i < 108; i++) {
