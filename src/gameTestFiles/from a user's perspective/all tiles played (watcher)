@@ -1,0 +1,663 @@
+user IDs: 4, 8
+starter user ID: 8
+my user ID: 9
+
+revealed tile bag tiles: 12C, 2B, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+player ID with playable tile: 0
+action: 1 StartGame
+
+revealed tile rack tiles: 2D:0
+revealed tile bag tiles: ?
+player ID with playable tile: 1
+action: 0 PlayTile 2D
+
+revealed tile rack tiles: 1G:1
+revealed tile bag tiles: ?
+player ID with playable tile: 0
+action: 1 PlayTile 1G
+
+revealed tile rack tiles: 2E:0
+action: 0 PlayTile 2E
+
+action: 0 SelectNewChain C
+
+revealed tile bag tiles: ?
+player ID with playable tile: 1
+action: 0 PurchaseShares C,C,C 0
+
+revealed tile rack tiles: 9I:1
+action: 1 PlayTile 9I
+
+revealed tile bag tiles: ?
+player ID with playable tile: 0
+action: 1 PurchaseShares C,C,C 0
+
+revealed tile rack tiles: 3D:0
+action: 0 PlayTile 3D
+
+revealed tile bag tiles: ?
+player ID with playable tile: 1
+action: 0 PurchaseShares C 0
+
+revealed tile rack tiles: 4I:1
+action: 1 PlayTile 4I
+
+revealed tile bag tiles: ?
+player ID with playable tile: 0
+action: 1 PurchaseShares x 0
+
+revealed tile rack tiles: 7F:0
+action: 0 PlayTile 7F
+
+revealed tile bag tiles: ?
+player ID with playable tile: 1
+action: 0 PurchaseShares x 0
+
+revealed tile rack tiles: 5A:1
+action: 1 PlayTile 5A
+
+revealed tile bag tiles: ?
+player ID with playable tile: 0
+action: 1 PurchaseShares x 0
+
+revealed tile rack tiles: 6F:0
+action: 0 PlayTile 6F
+
+action: 0 SelectNewChain I
+
+revealed tile bag tiles: ?
+player ID with playable tile: 1
+action: 0 PurchaseShares I 0
+
+revealed tile rack tiles: 11F:1
+action: 1 PlayTile 11F
+
+revealed tile bag tiles: ?
+player ID with playable tile: 0
+action: 1 PurchaseShares I,I 0
+
+revealed tile rack tiles: 5D:0
+action: 0 PlayTile 5D
+
+revealed tile bag tiles: ?
+player ID with playable tile: 1
+action: 0 PurchaseShares I 0
+
+revealed tile rack tiles: 8C:1
+action: 1 PlayTile 8C
+
+revealed tile bag tiles: ?
+player ID with playable tile: 0
+action: 1 PurchaseShares x 0
+
+revealed tile rack tiles: 3A:0
+action: 0 PlayTile 3A
+
+revealed tile bag tiles: ?
+player ID with playable tile: 1
+action: 0 PurchaseShares x 0
+
+revealed tile rack tiles: 9C:1
+action: 1 PlayTile 9C
+
+action: 1 SelectNewChain A
+
+revealed tile bag tiles: ?
+player ID with playable tile: 0
+action: 1 PurchaseShares A,A,A 0
+
+revealed tile rack tiles: 12F:0
+action: 0 PlayTile 12F
+
+action: 0 SelectNewChain L
+
+revealed tile bag tiles: ?
+player ID with playable tile: 1
+action: 0 PurchaseShares L,L,A 0
+
+revealed tile rack tiles: 8H:1
+action: 1 PlayTile 8H
+
+revealed tile bag tiles: ?
+player ID with playable tile: 0
+action: 1 PurchaseShares L,L,L 0
+
+revealed tile rack tiles: 1H:0
+action: 0 PlayTile 1H
+
+action: 0 SelectNewChain F
+
+revealed tile bag tiles: ?
+player ID with playable tile: 1
+action: 0 PurchaseShares L,F,F 0
+
+revealed tile rack tiles: 4G:1
+action: 1 PlayTile 4G
+
+revealed tile bag tiles: ?
+player ID with playable tile: 0
+action: 1 PurchaseShares F,F,F 0
+
+revealed tile rack tiles: 5I:0
+action: 0 PlayTile 5I
+
+action: 0 SelectNewChain W
+
+revealed tile bag tiles: ?
+player ID with playable tile: 1
+action: 0 PurchaseShares W,L,F 0
+
+revealed tile rack tiles: 6D:1
+action: 1 PlayTile 6D
+
+revealed tile bag tiles: ?
+player ID with playable tile: 0
+action: 1 PurchaseShares W,T,T 0
+
+revealed tile rack tiles: 10C:0
+action: 0 PlayTile 10C
+
+revealed tile bag tiles: ?
+player ID with playable tile: 1
+action: 0 PurchaseShares T,T,T 0
+
+revealed tile rack tiles: 11D:1
+action: 1 PlayTile 11D
+
+revealed tile bag tiles: ?
+player ID with playable tile: 0
+action: 1 PurchaseShares T,T,T 0
+
+revealed tile rack tiles: 9E:0
+action: 0 PlayTile 9E
+
+revealed tile bag tiles: ?
+player ID with playable tile: 1
+action: 0 PurchaseShares T,T,T 0
+
+revealed tile rack tiles: 6E:1
+action: 1 PlayTile 6E
+
+action: 1 SelectMergerSurvivor I
+
+action: 1 DisposeOfShares 0 0
+
+action: 0 DisposeOfShares 0 0
+
+revealed tile bag tiles: ?
+player ID with playable tile: 0
+action: 1 PurchaseShares F,F,F 0
+
+revealed tile rack tiles: 8E:0
+action: 0 PlayTile 8E
+
+revealed tile bag tiles: ?
+player ID with playable tile: 1
+action: 0 PurchaseShares T,T,T 0
+
+revealed tile rack tiles: 2F:1
+action: 1 PlayTile 2F
+
+revealed tile bag tiles: ?
+player ID with playable tile: 0
+action: 1 PurchaseShares F,F,W 0
+
+revealed tile rack tiles: 5H:0
+action: 0 PlayTile 5H
+
+revealed tile bag tiles: ?
+player ID with playable tile: 1
+action: 0 PurchaseShares F,F,F 0
+
+revealed tile rack tiles: 1I:1
+revealed tile bag tiles: ?
+player ID with playable tile: 0
+action: 1 PlayTile 1I
+
+revealed tile rack tiles: 8A:0
+revealed tile bag tiles: ?
+player ID with playable tile: 1
+action: 0 PlayTile 8A
+
+revealed tile rack tiles: 11I:1
+revealed tile bag tiles: ?
+player ID with playable tile: 0
+action: 1 PlayTile 11I
+
+revealed tile rack tiles: 6H:0
+revealed tile bag tiles: ?
+player ID with playable tile: 1
+action: 0 PlayTile 6H
+
+revealed tile rack tiles: 6G:1
+action: 1 PlayTile 6G
+
+action: 1 DisposeOfShares 0 0
+
+action: 0 DisposeOfShares 0 0
+
+revealed tile bag tiles: ?
+player ID with playable tile: 0
+action: 1 PurchaseShares F,F,F 0
+
+revealed tile rack tiles: 12D:0
+action: 0 PlayTile 12D
+
+revealed tile bag tiles: ?
+player ID with playable tile: 1
+action: 0 PurchaseShares W,W,W 0
+
+revealed tile rack tiles: 12B:1
+action: 1 PlayTile 12B
+
+revealed tile bag tiles: ?
+player ID with playable tile: 0
+action: 1 PurchaseShares L,L,L 0
+
+revealed tile rack tiles: 12A:0
+action: 0 PlayTile 12A
+
+revealed tile bag tiles: ?
+player ID with playable tile: 1
+action: 0 PurchaseShares A,A,A 0
+
+revealed tile rack tiles: 4C:1
+action: 1 PlayTile 4C
+
+revealed tile bag tiles: ?
+player ID with playable tile: 0
+action: 1 PurchaseShares T,T,T 0
+
+revealed tile rack tiles: 10D:0
+action: 0 PlayTile 10D
+
+action: 0 DisposeOfShares 0 0
+
+action: 1 DisposeOfShares 0 0
+
+revealed tile bag tiles: ?
+player ID with playable tile: 1
+action: 0 PurchaseShares F,F,F 0
+
+revealed tile rack tiles: 3B:1
+action: 1 PlayTile 3B
+
+revealed tile bag tiles: ?
+player ID with playable tile: 0
+action: 1 PurchaseShares F,F,L 0
+
+revealed tile rack tiles: 7D:0
+action: 0 PlayTile 7D
+
+revealed tile bag tiles: ?
+player ID with playable tile: 1
+action: 0 PurchaseShares T,T,T 0
+
+revealed tile rack tiles: 12G:1
+action: 1 PlayTile 12G
+
+revealed tile bag tiles: ?
+player ID with playable tile: 0
+action: 1 PurchaseShares T,T,T 0
+
+revealed tile rack tiles: 1F:0
+action: 0 PlayTile 1F
+
+action: 0 DisposeOfShares 10 0
+
+action: 1 DisposeOfShares 12 0
+
+revealed tile bag tiles: ?
+player ID with playable tile: 1
+action: 0 PurchaseShares L,L,A 0
+
+revealed tile rack tiles: 2G:1
+action: 1 PlayTile 2G
+
+revealed tile bag tiles: ?
+player ID with playable tile: 0
+action: 1 PurchaseShares L,L,L 0
+
+revealed tile rack tiles: 12I:0
+action: 0 PlayTile 12I
+
+revealed tile bag tiles: ?
+player ID with playable tile: 1
+action: 0 PurchaseShares A,A,A 0
+
+revealed tile rack tiles: 7I:1
+action: 1 PlayTile 7I
+
+revealed tile bag tiles: ?
+player ID with playable tile: 0
+action: 1 PurchaseShares A,A,A 0
+
+revealed tile rack tiles: 3H:0
+action: 0 PlayTile 3H
+
+revealed tile bag tiles: ?
+player ID with playable tile: 1
+action: 0 PurchaseShares A,A,A 0
+
+revealed tile rack tiles: 11H:1
+action: 1 PlayTile 11H
+
+revealed tile bag tiles: ?
+player ID with playable tile: 0
+action: 1 PurchaseShares A,A,A 1
+
+revealed tile rack tiles: 4A:0
+action: 0 PlayTile 4A
+
+revealed tile bag tiles: ?
+player ID with playable tile: 1
+action: 0 PurchaseShares A,A 0
+
+revealed tile rack tiles: 4H:1
+action: 1 PlayTile 4H
+
+revealed tile bag tiles: ?
+player ID with playable tile: 0
+action: 1 PurchaseShares W,W,W 0
+
+revealed tile rack tiles: 7E:0
+action: 0 PlayTile 7E
+
+action: 0 DisposeOfShares 12 0
+
+action: 1 DisposeOfShares 12 0
+
+revealed tile bag tiles: ?
+player ID with playable tile: 1
+action: 0 PurchaseShares L,L,L 0
+
+revealed tile rack tiles: 12E:1
+action: 1 PlayTile 12E
+
+action: 1 DisposeOfShares 10 0
+
+action: 0 DisposeOfShares 10 0
+
+revealed tile rack tiles: 8D:1
+revealed tile bag tiles: ?, ?
+player ID with playable tile: 0
+action: 1 PurchaseShares W,W,W 0
+
+revealed tile rack tiles: 2C:0
+action: 0 PlayTile 2C
+
+action: 0 DisposeOfShares 12 0
+
+action: 1 DisposeOfShares 0 0
+
+revealed tile rack tiles: 10E:0
+revealed tile bag tiles: ?, ?
+player ID with playable tile: 1
+action: 0 PurchaseShares I,I,I 0
+
+revealed tile rack tiles: 9H:1
+action: 1 PlayTile 9H
+
+action: 1 SelectNewChain A
+
+revealed tile bag tiles: ?
+player ID with playable tile: 0
+action: 1 PurchaseShares I,I,I 0
+
+revealed tile rack tiles: 7A:0
+action: 0 PlayTile 7A
+
+action: 0 SelectNewChain T
+
+revealed tile bag tiles: ?
+player ID with playable tile: 1
+action: 0 PurchaseShares T,T,F 0
+
+revealed tile rack tiles: 9B:1
+action: 1 PlayTile 9B
+
+revealed tile bag tiles: ?
+player ID with playable tile: 0
+action: 1 PurchaseShares T,F,F 0
+
+revealed tile rack tiles: 5G:0
+action: 0 PlayTile 5G
+
+revealed tile bag tiles: ?
+player ID with playable tile: 1
+action: 0 PurchaseShares I,F,F 0
+
+revealed tile rack tiles: 5C:1
+action: 1 PlayTile 5C
+
+revealed tile rack tiles: 4B:1
+revealed tile bag tiles: ?, ?
+player ID with playable tile: 0
+action: 1 PurchaseShares F,F,F 0
+
+revealed tile rack tiles: 3E:0
+action: 0 PlayTile 3E
+
+revealed tile bag tiles: ?
+player ID with playable tile: 1
+action: 0 PurchaseShares F,F,F 0
+
+revealed tile rack tiles: 5E:1
+action: 1 PlayTile 5E
+
+revealed tile rack tiles: 4E:1
+revealed tile bag tiles: ?, ?
+player ID with playable tile: 0
+action: 1 PurchaseShares F 0
+
+revealed tile rack tiles: 2A:0
+action: 0 PlayTile 2A
+
+revealed tile bag tiles: ?
+player ID with playable tile: 1
+action: 0 PurchaseShares F,F,F 0
+
+revealed tile rack tiles: 11A:1
+revealed tile bag tiles: ?
+player ID with playable tile: 0
+action: 1 PlayTile 11A
+
+revealed tile rack tiles: 1C:0
+action: 0 PlayTile 1C
+
+revealed tile bag tiles: ?
+player ID with playable tile: 1
+action: 0 PurchaseShares F,F,F 0
+
+revealed tile rack tiles: 10B:1
+revealed tile bag tiles: ?
+player ID with playable tile: 0
+action: 1 PlayTile 10B
+
+revealed tile rack tiles: 10I:0
+action: 0 PlayTile 10I
+
+action: 0 SelectMergerSurvivor F
+
+action: 0 DisposeOfShares 0 1
+
+action: 1 DisposeOfShares 10 0
+
+revealed tile bag tiles: ?
+player ID with playable tile: 1
+action: 0 PurchaseShares T,T,T 0
+
+revealed tile rack tiles: 10F:1
+action: 1 PlayTile 10F
+
+revealed tile bag tiles: ?
+player ID with playable tile: 0
+action: 1 PurchaseShares I,T,T 0
+
+revealed tile rack tiles: 8I:0
+action: 0 PlayTile 8I
+
+revealed tile bag tiles: 9F, ?
+player ID with playable tile: 1
+action: 0 PurchaseShares T,T,W 0
+
+revealed tile rack tiles: 8G:1
+action: 1 PlayTile 8G
+
+revealed tile bag tiles: 3C, 4D, ?
+player ID with playable tile: 0
+action: 1 PurchaseShares T,T,T 0
+
+revealed tile rack tiles: 9G:0
+action: 0 PlayTile 9G
+
+revealed tile rack tiles: 7G:0, 6I:0
+revealed tile bag tiles: 7C, ?, ?, ?
+player ID with playable tile: 1
+action: 0 PurchaseShares T,T,T 0
+
+revealed tile rack tiles: 8B:1
+action: 1 PlayTile 8B
+
+action: 1 DisposeOfShares 0 6
+
+action: 0 DisposeOfShares 0 12
+
+revealed tile rack tiles: 8F:1
+revealed tile bag tiles: ?, 11G, ?
+player ID with playable tile: 0
+action: 1 PurchaseShares x 0
+
+revealed tile rack tiles: 3F:0
+action: 0 PlayTile 3F
+
+revealed tile rack tiles: 4F:0
+revealed tile bag tiles: ?, ?
+player ID with playable tile: 1
+action: 0 PurchaseShares x 0
+
+revealed tile rack tiles: 11E:1
+action: 1 PlayTile 11E
+
+revealed tile bag tiles: ?
+player ID with playable tile: 0
+action: 1 PurchaseShares x 0
+
+revealed tile rack tiles: 1B:0
+action: 0 PlayTile 1B
+
+revealed tile bag tiles: ?
+player ID with playable tile: 1
+action: 0 PurchaseShares x 0
+
+revealed tile rack tiles: 10H:1
+action: 1 PlayTile 10H
+
+revealed tile bag tiles: 12H, 5B, ?
+player ID with playable tile: 0
+action: 1 PurchaseShares x 0
+
+revealed tile rack tiles: 7B:0
+action: 0 PlayTile 7B
+
+revealed tile bag tiles: 2H, 7H, 9D, 3G, ?
+player ID with playable tile: 1
+action: 0 PurchaseShares x 0
+
+revealed tile rack tiles: 6B:1
+action: 1 PlayTile 6B
+
+revealed tile rack tiles: 6C:1
+revealed tile bag tiles: 10G, 6A
+player ID with playable tile: 0
+action: 1 PurchaseShares x 0
+
+revealed tile rack tiles: 9A:0
+action: 0 PlayTile 9A
+
+player ID with playable tile: 1
+action: 0 PurchaseShares x 0
+
+revealed tile rack tiles: 3I:1
+action: 1 PlayTile 3I
+
+revealed tile rack tiles: 2I:1
+player ID with playable tile: 0
+action: 1 PurchaseShares x 0
+
+revealed tile rack tiles: 1A:0
+action: 0 PlayTile 1A
+
+player ID with playable tile: 1
+action: 0 PurchaseShares x 0
+
+revealed tile rack tiles: 1D:1
+action: 1 PlayTile 1D
+
+player ID with playable tile: 0
+action: 1 PurchaseShares x 0
+
+revealed tile rack tiles: 5F:0
+action: 0 PlayTile 5F
+
+player ID with playable tile: 1
+action: 0 PurchaseShares x 0
+
+revealed tile rack tiles: 1E:1
+action: 1 PlayTile 1E
+
+player ID with playable tile: 0
+action: 1 PurchaseShares x 0
+
+revealed tile rack tiles: 11C:0
+action: 0 PlayTile 11C
+
+action: 0 PurchaseShares x 0
+
+player ID with playable tile: 0
+action: 1 PurchaseShares x 0
+
+revealed tile rack tiles: 11B:0
+action: 0 PlayTile 11B
+
+action: 0 PurchaseShares x 0
+
+player ID with playable tile: 0
+action: 1 PurchaseShares x 0
+
+revealed tile rack tiles: 10A:0
+action: 0 PlayTile 10A
+  CCCCC█WWWWWW   L  T  A  F  W  C  I Cash  Net
+  CCC██WWWWWWW           13 12 16 13   50  877
+  CC█II██WWWWW         2 12 13  9 12   42  695
+  CCC█III██WWW  25 25 23  0  0  0  0
+  CCC█IIIII█WW   -  -  - 12 27 23 23
+  CCC█III██WWW   -  -  -  8  9 10 10
+  CC█III█FF██W
+  C█IIII█FFFF█
+  C█III█FFFFFF
+  tile racks:
+    0: none none none none none none
+    1: none none none none none none
+  revealed tile rack tiles: 10A:0
+  history messages:
+    0 PlayedTile 10A
+  next action: 0 PurchaseShares
+
+action: 0 PurchaseShares x 0
+  CCCCC█WWWWWW   L  T  A  F  W  C  I Cash  Net
+  CCC██WWWWWWW           13 12 16 13   50  877
+  CC█II██WWWWW         2 12 13  9 12   42  695
+  CCC█III██WWW  25 25 23  0  0  0  0
+  CCC█IIIII█WW   -  -  - 12 27 23 23
+  CCC█III██WWW   -  -  -  8  9 10 10
+  CC█III█FF██W
+  C█IIII█FFFF█
+  C█III█FFFFFF
+  tile racks:
+    0: none none none none none none
+    1: none none none none none none
+  history messages:
+    0 PurchasedShares x
+    AllTilesPlayed
+  next action: 0 GameOver
