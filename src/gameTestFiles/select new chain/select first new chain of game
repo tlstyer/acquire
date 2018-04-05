@@ -1,7 +1,6 @@
 tile bag: 2C, 2B, 1D, 2E, 7E, 7B, 11I, 12C, 3D, 2D, 8H, 10H, 2G, 8G, 11A, 4B, 1A, 3I
 user IDs: 5, 7
 starter user ID: 7
-my user ID: 5
 
 action: 1 StartGame
   ············   L  T  A  F  W  C  I Cash  Net
@@ -28,6 +27,12 @@ action: 1 StartGame
     0 DrewTile 7B
     0 DrewTile 11I
     0 DrewTile 12C
+    1 DrewTile 3D
+    1 DrewTile 2D
+    1 DrewTile 8H
+    1 DrewTile 10H
+    1 DrewTile 2G
+    1 DrewTile 8G
     0 TurnBegan
   next action: 0 PlayTile
 
@@ -71,6 +76,7 @@ action: 1 PlayTile 3D
   player ID with playable tile: 0
   history messages:
     1 PlayedTile 3D
+    1 DrewTile 4B
     0 TurnBegan
   next action: 0 PlayTile
 

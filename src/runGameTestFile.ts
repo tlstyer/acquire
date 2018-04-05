@@ -57,7 +57,9 @@ export function runGameTestFile(inputLines: string[]) {
                 }
                 outputLines.push(`user IDs: ${userIDs.join(', ')}`);
                 outputLines.push(`starter user ID: ${starterUserID}`);
-                outputLines.push(`my user ID: ${myUserID}`);
+                if (myUserID !== null) {
+                    outputLines.push(`my user ID: ${myUserID}`);
+                }
 
                 game = new Game(tileBag, userIDs, starterUserID, myUserID);
 

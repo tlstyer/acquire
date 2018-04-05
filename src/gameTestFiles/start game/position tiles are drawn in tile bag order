@@ -1,7 +1,6 @@
 tile bag: 11F, 4I, 8G, 2B, 9H, 11A, 7F, 10A, 10B, 6F, 11E, 7D, 12A, 12H, 3E, 7G, 2D, 2I, 1D, 3D, 2G, 11G, 10I, 1I, 6G, 11B, 5H, 7B
 user IDs: 5, 7, 9, 10
 starter user ID: 7
-my user ID: 10
 
 action: 1 StartGame
   ············   L  T  A  F  W  C  I Cash  Net
@@ -26,6 +25,24 @@ action: 1 StartGame
     2 DrewPositionTile 8G
     0 DrewPositionTile 2B
     1 StartedGame
+    0 DrewTile 9H
+    0 DrewTile 11A
+    0 DrewTile 7F
+    0 DrewTile 10A
+    0 DrewTile 10B
+    0 DrewTile 6F
+    1 DrewTile 11E
+    1 DrewTile 7D
+    1 DrewTile 12A
+    1 DrewTile 12H
+    1 DrewTile 3E
+    1 DrewTile 7G
+    2 DrewTile 2D
+    2 DrewTile 2I
+    2 DrewTile 1D
+    2 DrewTile 3D
+    2 DrewTile 2G
+    2 DrewTile 11G
     3 DrewTile 10I
     3 DrewTile 1I
     3 DrewTile 6G
