@@ -141,6 +141,7 @@ action: 0 PurchaseShares I 1
     2: 9C(l) 11G(l) 10D(l) 4D(l) 1G(l) 2I(l)
     3: 5D(I) 12H(h) 10I(l) 8H(l) 3F(I) 11H(h)
   revealed tile bag tiles: 1A:0
+  player ID with playable tile: 1
   history messages:
     0 PurchasedShares 1I
     1 TurnBegan

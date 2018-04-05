@@ -17,6 +17,7 @@ action: 1 StartGame
     0: 1D(l) 2E(l) 7E(l) 7B(l) 11I(l) 12C(l)
     1: 3D(l) 2D(n) 8H(h) 10H(l) 2G(l) 8G(h)
   revealed tile bag tiles: 2C:all, 2B:all, 1D:0, 2E:0, 7E:0, 7B:0, 11I:0, 12C:0, 3D:1, 2D:1, 8H:1, 10H:1, 2G:1, 8G:1
+  player ID with playable tile: 0
   history messages:
     1 DrewPositionTile 2C
     0 DrewPositionTile 2B
@@ -45,6 +46,7 @@ action: 0 PlayTile 1D
     1: 3D(l) 2D(n) 8H(h) 10H(l) 2G(l) 8G(h)
   revealed tile rack tiles: 1D:0
   revealed tile bag tiles: 11A:0
+  player ID with playable tile: 1
   history messages:
     0 PlayedTile 1D
     0 DrewTile 11A
@@ -66,6 +68,7 @@ action: 1 PlayTile 3D
     1: 4B(l) 2D(n) 8H(h) 10H(l) 2G(l) 8G(h)
   revealed tile rack tiles: 3D:1
   revealed tile bag tiles: 4B:1
+  player ID with playable tile: 0
   history messages:
     1 PlayedTile 3D
     0 TurnBegan
@@ -86,6 +89,7 @@ action: 0 PlayTile 2E
     1: 4B(l) 2D(n) 8H(h) 10H(l) 2G(l) 8G(h)
   revealed tile rack tiles: 2E:0
   revealed tile bag tiles: 1A:0
+  player ID with playable tile: 1
   history messages:
     0 PlayedTile 2E
     0 DrewTile 1A

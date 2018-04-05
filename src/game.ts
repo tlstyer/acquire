@@ -10,7 +10,7 @@ import {
     defaultTileRackTypes,
     defaultTileRackTypesList,
 } from './defaults';
-import { GameAction, GameBoardType, GameHistoryMessage, ScoreBoardIndex } from './enums';
+import { GameAction, GameBoardType, GameHistoryMessage, ScoreBoardIndex, Tile } from './enums';
 import { UserInputError } from './error';
 import { ActionBase } from './gameActions/base';
 import { ActionStartGame } from './gameActions/startGame';
@@ -35,6 +35,8 @@ export class Game {
     scoreBoardAtLastNetWorthsUpdate = defaultScoreBoard;
     scoreBoardPriceAtLastNetWorthsUpdate = defaultScoreBoardPrice;
 
+    playerIDWithPlayableTile: number | null = null;
+
     constructor(public tileBag: number[], public userIDs: number[], starterUserID: number, public myUserID: number | null) {
         // initialize this.gameBoardTypeCounts
         this.gameBoardTypeCounts = new Array(GameBoardType.Max);
@@ -57,6 +59,48 @@ export class Game {
         this.scoreBoardAtLastNetWorthsUpdate = this.scoreBoard;
     }
 
+    processRevealedTileRackTiles(entries: [number, number][]) {
+        let playerIDs: number[] = [];
+
+        this.tileRacks = this.tileRacks.asMutable();
+
+        for (let i = 0; i < entries.length; i++) {
+            const [tile, playerID] = entries[i];
+            let setTile = false;
+
+            if (playerIDs.indexOf(playerID) === -1) {
+                playerIDs.push(playerID);
+            }
+
+            for (let tileIndex = 0; tileIndex < 6; tileIndex++) {
+                if (this.tileRacks.get(playerID, defaultTileRack).get(tileIndex, 0) === Tile.Unknown) {
+                    this.tileRacks.setIn([playerID, tileIndex], tile);
+                    setTile = true;
+                    break;
+                }
+            }
+
+            if (!setTile) {
+                throw new Error('no unknown tile found in player tile rack');
+            }
+        }
+
+        this.tileRacks = this.tileRacks.asImmutable();
+
+        for (let i = 0; i < playerIDs.length; i++) {
+            const playerID = playerIDs[i];
+            this.determineTileRackTypesForPlayer(playerID);
+        }
+    }
+
+    processRevealedTileBagTiles(entries: number[]) {
+        this.tileBag.push(...entries);
+    }
+
+    processPlayerIDWithPlayableTile(playerIDWithPlayableTile: number) {
+        this.playerIDWithPlayableTile = playerIDWithPlayableTile;
+    }
+
     doGameAction(userID: number, moveIndex: number, parameters: any[]) {
         let playerID = this.userIDs.indexOf(userID);
         let currentAction = this.gameActionStack[this.gameActionStack.length - 1];
@@ -77,6 +121,8 @@ export class Game {
             currentAction = this.gameActionStack[this.gameActionStack.length - 1];
             newActions = currentAction.prepare();
         }
+
+        this.playerIDWithPlayableTile = null;
 
         this.endCurrentMove();
     }
@@ -162,7 +208,7 @@ export class Game {
             let tile = this.tileRacks.get(playerID, defaultTileRack).get(tileIndex, 0);
             let tileType = null;
 
-            if (tile !== null) {
+            if (tile !== null && tile !== Tile.Unknown) {
                 let borderTiles: number[] = [];
                 let borderTypes: GameBoardType[] = [];
                 const neighboringTiles = getNeighboringTiles(tile);
@@ -410,6 +456,7 @@ export class MoveData {
     gameActionParameters: any[] = [];
     revealedTileRackTiles: MoveDataTileRackTile[] = [];
     revealedTileBagTiles: MoveDataTileBagTile[] = [];
+    playerIDWithPlayableTile: number | null = null;
     gameHistoryMessages: GameHistoryMessageData[] = [];
     nextGameAction: ActionBase;
 
@@ -465,6 +512,10 @@ export class MoveData {
         this.scoreBoardPrice = this.game.scoreBoardPrice;
         this.nextGameAction = this.game.gameActionStack[this.game.gameActionStack.length - 1];
 
+        if (this.nextGameAction.gameAction === GameAction.PlayTile) {
+            this.playerIDWithPlayableTile = this.nextGameAction.playerID;
+        }
+
         if (this.revealedTileBagTiles.length > 0) {
             // save some memory
             this.revealedTileBagTilesLookup = {};
@@ -476,10 +527,10 @@ export class GameHistoryMessageData {
     constructor(public gameHistoryMessage: GameHistoryMessage, public playerID: number | null, public parameters: any[]) {}
 }
 
-class MoveDataTileRackTile {
+export class MoveDataTileRackTile {
     constructor(public tile: number, public playerIDBelongsTo: number) {}
 }
 
-class MoveDataTileBagTile {
+export class MoveDataTileBagTile {
     constructor(public tile: number, public playerIDWithPermission: number | null) {}
 }

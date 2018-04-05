@@ -63,3 +63,7 @@ export enum ScoreBoardIndex {
     Net,
     Max,
 }
+
+export enum Tile {
+    Unknown = -1,
+}

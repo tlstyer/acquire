@@ -23,6 +23,7 @@ action: 0 PurchaseShares I,I,I 0
     0: 7E(l) 7G(l) 12H(l) 7B(l) 11I(l) 12C(l)
     1: 2A(I) 8H(l) 10H(l) 2G(l) 1D(l) 11D(l)
   revealed tile bag tiles: 7G:0
+  player ID with playable tile: 1
   history messages:
     0 PurchasedShares 3I
     0 DrewTile 7G

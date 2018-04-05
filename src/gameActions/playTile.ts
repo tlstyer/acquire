@@ -18,12 +18,16 @@ export class ActionPlayTile extends ActionBase {
         moveData.addGameHistoryMessage(GameHistoryMessage.TurnBegan, this.playerID, []);
 
         let hasAPlayableTile = false;
-        let tileRackTypes = this.game.tileRackTypes.get(this.playerID, defaultTileRackTypes);
-        for (let i = 0; i < 6; i++) {
-            let tileType = tileRackTypes.get(i, 0);
-            if (tileType !== null && tileType !== GameBoardType.CantPlayNow && tileType !== GameBoardType.CantPlayEver) {
-                hasAPlayableTile = true;
-                break;
+        if (this.playerID === this.game.playerIDWithPlayableTile) {
+            hasAPlayableTile = true;
+        } else {
+            let tileRackTypes = this.game.tileRackTypes.get(this.playerID, defaultTileRackTypes);
+            for (let i = 0; i < 6; i++) {
+                let tileType = tileRackTypes.get(i, 0);
+                if (tileType !== null && tileType !== GameBoardType.CantPlayNow && tileType !== GameBoardType.CantPlayEver) {
+                    hasAPlayableTile = true;
+                    break;
+                }
             }
         }
 

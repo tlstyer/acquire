@@ -2,9 +2,9 @@ import { assert } from 'chai';
 import { List } from 'immutable';
 
 import { defaultTileRackTypes } from './defaults';
-import { GameAction, GameBoardType, GameHistoryMessage, ScoreBoardIndex } from './enums';
+import { GameAction, GameBoardType, GameHistoryMessage, ScoreBoardIndex, Tile } from './enums';
 import { UserInputError } from './error';
-import { Game, GameHistoryMessageData, MoveData } from './game';
+import { Game, GameHistoryMessageData, MoveData, MoveDataTileBagTile, MoveDataTileRackTile } from './game';
 import { ActionBase } from './gameActions/base';
 import { ActionDisposeOfShares } from './gameActions/disposeOfShares';
 import { ActionSelectChainToDisposeOfNext } from './gameActions/selectChainToDisposeOfNext';
@@ -20,6 +20,8 @@ export function runGameTestFile(inputLines: string[]) {
 
     let outputLines: string[] = [];
 
+    let myPlayerID: number | null = null;
+    let userPerspectivePlayerID: number | null = null;
     let lastMoveData: MoveData | null = null;
 
     for (let lineNumber = 0; lineNumber < inputLines.length; lineNumber++) {
@@ -50,21 +52,37 @@ export function runGameTestFile(inputLines: string[]) {
                         break;
                 }
             } else {
-                outputLines.push(`tile bag: ${toTilesString(tileBag)}`);
+                if (tileBag.length > 0) {
+                    outputLines.push(`tile bag: ${toTilesString(tileBag)}`);
+                }
                 outputLines.push(`user IDs: ${userIDs.join(', ')}`);
                 outputLines.push(`starter user ID: ${starterUserID}`);
                 outputLines.push(`my user ID: ${myUserID}`);
+
                 game = new Game(tileBag, userIDs, starterUserID, myUserID);
+
+                if (myUserID !== null) {
+                    myPlayerID = userIDs.indexOf(myUserID);
+                }
             }
         } else {
             const lineParts = line.split(': ');
 
             if (lastMoveData !== null) {
-                outputLines.push(...getMoveDataLines(lastMoveData, line !== ''));
+                outputLines.push(...getMoveDataLines(lastMoveData, userPerspectivePlayerID, line !== ''));
                 lastMoveData = null;
             }
 
-            if (lineParts.length === 2 && lineParts[0] === 'action') {
+            if (lineParts[0] === 'revealed tile rack tiles') {
+                userPerspectivePlayerID = myPlayerID;
+                game.processRevealedTileRackTiles(getArrayFromRevealedTileRackTilesString(lineParts[1]));
+            } else if (lineParts[0] === 'revealed tile bag tiles') {
+                userPerspectivePlayerID = myPlayerID;
+                game.processRevealedTileBagTiles(fromTilesString(lineParts[1]));
+            } else if (lineParts[0] === 'player ID with playable tile') {
+                userPerspectivePlayerID = myPlayerID;
+                game.processPlayerIDWithPlayableTile(parseInt(lineParts[1], 10));
+            } else if (lineParts[0] === 'action') {
                 const actionParts = lineParts[1].split(' ');
 
                 const playerID = parseInt(actionParts[0], 10);
@@ -218,8 +236,24 @@ function toParameterStrings(gameAction: GameAction, parameters: any[]) {
 
 const gameBoardStringSpacer = '            ';
 
-function getMoveDataLines(moveData: MoveData, detailed: boolean) {
+function getMoveDataLines(moveData: MoveData, revealedTilesPlayerID: number | null, detailed: boolean) {
     let lines: string[] = [];
+
+    if (revealedTilesPlayerID !== null) {
+        const rtrtStr = getRevealedTileRackTilesStringForPlayer(moveData.revealedTileRackTiles, revealedTilesPlayerID);
+        if (rtrtStr.length > 0) {
+            lines.push(`revealed tile rack tiles: ${rtrtStr}`);
+        }
+
+        const rtbtStr = getRevealedTileBagTilesStringForPlayer(moveData.revealedTileBagTiles, revealedTilesPlayerID);
+        if (rtbtStr.length > 0) {
+            lines.push(`revealed tile bag tiles: ${rtbtStr}`);
+        }
+
+        if (moveData.playerIDWithPlayableTile !== null) {
+            lines.push(`player ID with playable tile: ${moveData.playerIDWithPlayableTile}`);
+        }
+    }
 
     let arr = toParameterStrings(moveData.gameAction, moveData.gameActionParameters);
     let stringParameters = '';
@@ -266,6 +300,10 @@ function getMoveDataLines(moveData: MoveData, detailed: boolean) {
             lines.push(`  revealed tile bag tiles: ${str}`);
         }
 
+        if (moveData.playerIDWithPlayableTile !== null) {
+            lines.push(`  player ID with playable tile: ${moveData.playerIDWithPlayableTile}`);
+        }
+
         lines.push('  history messages:');
         moveData.gameHistoryMessages.forEach(ghm => {
             lines.push(`    ${getGameHistoryMessageString(ghm)}`);
@@ -275,6 +313,43 @@ function getMoveDataLines(moveData: MoveData, detailed: boolean) {
     }
 
     return lines;
+}
+
+function getRevealedTileRackTilesStringForPlayer(revealedTileRackTiles: MoveDataTileRackTile[], playerID: number) {
+    const parts: string[] = [];
+
+    for (let i = 0; i < revealedTileRackTiles.length; i++) {
+        const rtrt = revealedTileRackTiles[i];
+        if (rtrt.playerIDBelongsTo !== playerID) {
+            parts.push(`${toTileString(rtrt.tile)}:${rtrt.playerIDBelongsTo}`);
+        }
+    }
+
+    return parts.join(', ');
+}
+
+function getArrayFromRevealedTileRackTilesString(revealedTileRackTilesString: string) {
+    const strParts = revealedTileRackTilesString.split(', ');
+    let revealedTileRackTiles: [number, number][] = new Array(strParts.length);
+
+    for (let i = 0; i < strParts.length; i++) {
+        const [tileStr, playerIDStr] = strParts[i].split(':');
+        revealedTileRackTiles[i] = [fromTileString(tileStr), parseInt(playerIDStr, 10)];
+    }
+
+    return revealedTileRackTiles;
+}
+
+function getRevealedTileBagTilesStringForPlayer(revealedTileBagTiles: MoveDataTileBagTile[], playerID: number) {
+    const parts: string[] = [];
+
+    for (let i = 0; i < revealedTileBagTiles.length; i++) {
+        const rtbt = revealedTileBagTiles[i];
+        const tile = rtbt.playerIDWithPermission === null || rtbt.playerIDWithPermission === playerID ? rtbt.tile : Tile.Unknown;
+        parts.push(toTileString(tile));
+    }
+
+    return parts.join(', ');
 }
 
 const gameBoardTypeToCharacter: { [key: number]: string } = {
@@ -343,6 +418,10 @@ function formatScoreBoardLine(entries: string[]) {
 function getTileRackString(tiles: List<number | null>, tileTypes: List<GameBoardType | null>) {
     return tiles
         .map((tile, tileIndex) => {
+            if (tile === Tile.Unknown) {
+                return '?';
+            }
+
             let tileType = tileTypes.get(tileIndex, 0);
             if (tile !== null && tileType !== null) {
                 return `${toTileString(tile)}(${gameBoardTypeToCharacter[tileType]})`;
@@ -364,15 +443,23 @@ function fromTilesString(str: string) {
 const yTileNames = 'ABCDEFGHI';
 
 function toTileString(tile: number) {
-    let x = Math.floor(tile / 9) + 1;
-    let y = yTileNames[tile % 9];
-    return x + y;
+    if (tile === Tile.Unknown) {
+        return '?';
+    } else {
+        let x = Math.floor(tile / 9) + 1;
+        let y = yTileNames[tile % 9];
+        return x + y;
+    }
 }
 
 function fromTileString(str: string) {
-    let x = parseInt(str.slice(0, str.length - 1), 10) - 1;
-    let y = yTileNames.indexOf(str.slice(str.length - 1));
-    return x * 9 + y;
+    if (str === '?') {
+        return Tile.Unknown;
+    } else {
+        let x = parseInt(str.slice(0, str.length - 1), 10) - 1;
+        let y = yTileNames.indexOf(str.slice(str.length - 1));
+        return x * 9 + y;
+    }
 }
 
 const ghmsh = (ghmd: GameHistoryMessageData) => {
