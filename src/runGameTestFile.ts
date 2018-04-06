@@ -384,7 +384,7 @@ function getScoreBoardLines(
     scoreBoard: List<List<number>>,
     scoreBoardAvailable: List<number>,
     scoreBoardChainSize: List<number>,
-    scoreBoardPrice: List<number>
+    scoreBoardPrice: List<number>,
 ) {
     let lines: string[] = [];
     lines.push(formatScoreBoardLine(['L', 'T', 'A', 'F', 'W', 'C', 'I', 'Cash', 'Net']));
