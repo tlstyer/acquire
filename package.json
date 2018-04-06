@@ -17,6 +17,6 @@
         "typescript": "^2.8.1"
     },
     "scripts": {
-        "test": "mocha -r ts-node/register src/**/*.spec.ts"
+        "test": "mocha -r ts-node/register src/**/*.test.ts"
     }
 }
