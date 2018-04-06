@@ -1,24 +1,27 @@
 /* selected styles from normalize.css */
 
 html {
-	font-family: sans-serif;
-	-ms-text-size-adjust: 100%;
-	-webkit-text-size-adjust: 100%;
+    font-family: sans-serif;
+    -ms-text-size-adjust: 100%;
+    -webkit-text-size-adjust: 100%;
 }
 body {
-	margin: 0;
+    margin: 0;
 }
-button, input, select {
-	font-family: sans-serif;
-	font-size: 100%;
-	margin: 0;
+button,
+input,
+select {
+    font-family: sans-serif;
+    font-size: 100%;
+    margin: 0;
 }
-button, input {
-	overflow: visible;
+button,
+input {
+    overflow: visible;
 }
 table {
-	border-collapse: collapse;
-	border-spacing: 0;
+    border-collapse: collapse;
+    border-spacing: 0;
 }
 
 /* my styles */
@@ -27,98 +30,111 @@ $color-background-default: rgb(255, 255, 255);
 $color-table-border: rgb(246, 244, 242);
 
 body {
-	background-color: $color-background-default;
-	color: black;
-	font-size: 16px;
+    background-color: $color-background-default;
+    color: black;
+    font-size: 16px;
 }
 
 .page {
-	display: none;
-	padding-left: .5em;
-	padding-right: .5em;
+    display: none;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
 }
 #page-loading {
-	display: block;
+    display: block;
 }
 
 #form-error-message {
-	color: red;
-	font-weight: bold;
+    color: red;
+    font-weight: bold;
 }
 
-#users, #user {
-	display: none;
+#users,
+#user {
+    display: none;
 }
 
 #users {
-	tr {
-		:nth-child(1), :nth-child(3), :nth-child(5) {
-			text-align: right;
-		}
-		:nth-child(2), :nth-child(4), :nth-child(6) {
-			text-align: left;
-		}
-		:nth-child(2) {
-			cursor: pointer;
-		}
-	}
-	th, td {
-		border: 2px solid $color-table-border;
-		padding: 3px;
-	}
+    tr {
+        :nth-child(1),
+        :nth-child(3),
+        :nth-child(5) {
+            text-align: right;
+        }
+        :nth-child(2),
+        :nth-child(4),
+        :nth-child(6) {
+            text-align: left;
+        }
+        :nth-child(2) {
+            cursor: pointer;
+        }
+    }
+    th,
+    td {
+        border: 2px solid $color-table-border;
+        padding: 3px;
+    }
 }
 
 #user-summary {
-	tr {
-		:nth-child(1), :nth-child(3), :nth-child(5), :nth-child(6) {
-			text-align: left;
-		}
-		:nth-child(2), :nth-child(4) {
-			text-align: right;
-		}
-	}
-	th, td {
-		border: 2px solid $color-table-border;
-		padding: 3px;
-	}
+    tr {
+        :nth-child(1),
+        :nth-child(3),
+        :nth-child(5),
+        :nth-child(6) {
+            text-align: left;
+        }
+        :nth-child(2),
+        :nth-child(4) {
+            text-align: right;
+        }
+    }
+    th,
+    td {
+        border: 2px solid $color-table-border;
+        padding: 3px;
+    }
 }
 
 .rating {
-	display: inline-block;
-	margin: .5em;
+    display: inline-block;
+    margin: 0.5em;
 }
 
 .dygraph-legend {
-	left: 60px !important;
-	top: 25px !important;
-	width: 300px !important;
+    left: 60px !important;
+    top: 25px !important;
+    width: 300px !important;
 }
 
 #games {
-	div {
-		display: inline-block;
-		margin: .5em;
-	}
-	tr {
-		:nth-child(1), :nth-child(2)  {
-			text-align: left;
-		}
-		:nth-child(3), :nth-child(4)  {
-			text-align: right;
-		}
-		:nth-child(2) {
-			cursor: pointer;
-		}
-	}
-	td {
-		border: 2px solid $color-table-border;
-		padding: 3px;
-	}
-	tr.current_user :nth-child(1) {
-		font-weight: bold;
-	}
+    div {
+        display: inline-block;
+        margin: 0.5em;
+    }
+    tr {
+        :nth-child(1),
+        :nth-child(2) {
+            text-align: left;
+        }
+        :nth-child(3),
+        :nth-child(4) {
+            text-align: right;
+        }
+        :nth-child(2) {
+            cursor: pointer;
+        }
+    }
+    td {
+        border: 2px solid $color-table-border;
+        padding: 3px;
+    }
+    tr.current_user :nth-child(1) {
+        font-weight: bold;
+    }
 }
 
 #games-links {
-	text-align: right;
+    text-align: right;
 }

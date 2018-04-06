@@ -1,95 +1,101 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<meta charset="utf-8">
-		<title>Acquire Stats</title>
 
-		<link rel="stylesheet" href="css/stats.css">
+<head>
+    <meta charset="utf-8">
+    <title>Acquire Stats</title>
 
-		<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-		<script src="//cdnjs.cloudflare.com/ajax/libs/dygraph/1.1.1/dygraph-combined.js"></script>
-		<script src="//cdnjs.cloudflare.com/ajax/libs/history.js/1.8/native.history.min.js"></script>
+    <link rel="stylesheet" href="css/stats.css">
 
-		<!--
-		<script src="../../lib/jquery-1.12.4.js"></script>
-		<script src="../../lib/dygraph-combined-1.1.1.js"></script>
-		<script src="../../lib/native.history-1.8.js"></script>
-		-->
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/dygraph/1.1.1/dygraph-combined.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/history.js/1.8/native.history.min.js"></script>
 
-		<script src="js/stats.js"></script>
-	</head>
-	<body>
-		<div class="page" id="page-loading">
-			<h1>Acquire Stats</h1>
-			<p>
-				Loading...
-			</p>
-		</div>
-		<div class="page" id="page-loading-error">
-			<h1>Acquire Stats</h1>
-			<p>
-				Loading error. Please reload this page.
-			</p>
-		</div>
-		<div class="page" id="page-stats">
-			<h1>Acquire Stats</h1>
-			<form id="form">
-				Ratings:
-				<input type="button" value="Singles2">
-				<input type="button" value="Singles3">
-				<input type="button" value="Singles4">
-				<input type="button" value="Teams">
-				<br>
-				Lookup Username:
-				<input type="text" id="form-username">
-				<input type="submit" value="Lookup">
-				<span id="form-error-message"></span>
-				<span id="form-loading-message"></span>
-			</form>
-			<div id="users">
-				<h2>Acquire ratings for <span id="ratings-type"></span></h2>
-				<table>
-					<thead>
-						<tr>
-							<th>Rank</th>
-							<th>Username</th>
-							<th>Rating</th>
-							<th>Rating Range</th>
-							<th># Games</th>
-							<th>Last Game Date</th>
-						</tr>
-					</thead>
-					<tbody></tbody>
-				</table>
-			</div>
-			<div id="user">
-				<h2>Acquire stats for <span id="user-name"></span></h2>
-				<h3>Summary</h3>
-				<table id="user-summary">
-					<thead>
-						<tr>
-							<th>Type</th>
-							<th>Rating</th>
-							<th>Rating Range</th>
-							<th># Games</th>
-							<th>Record</th>
-							<th>Last Game Date</th>
-						</tr>
-					</thead>
-					<tbody></tbody>
-				</table>
-				<h3>Ratings</h3>
-				<div id="rating-Singles2" class="rating"></div>
-				<div id="rating-Singles3" class="rating"></div>
-				<div id="rating-Singles4" class="rating"></div>
-				<div id="rating-Teams" class="rating"></div>
-				<h3>Games</h3>
-				<div id="games"></div>
-				<div id="games-links">
-					<a id="games-show-next-100" href="#">Show next 100</a>
-					<a id="games-show-remaining" href="#">Show remaining</a>
-				</div>
-			</div>
-		</div>
-	</body>
+    <!--
+    <script src="../../lib/jquery-1.12.4.js"></script>
+    <script src="../../lib/dygraph-combined-1.1.1.js"></script>
+    <script src="../../lib/native.history-1.8.js"></script>
+    -->
+
+    <script src="js/stats.js"></script>
+</head>
+
+<body>
+    <div class="page" id="page-loading">
+        <h1>Acquire Stats</h1>
+        <p>
+            Loading...
+        </p>
+    </div>
+    <div class="page" id="page-loading-error">
+        <h1>Acquire Stats</h1>
+        <p>
+            Loading error. Please reload this page.
+        </p>
+    </div>
+    <div class="page" id="page-stats">
+        <h1>Acquire Stats</h1>
+        <form id="form">
+            Ratings:
+            <input type="button" value="Singles2">
+            <input type="button" value="Singles3">
+            <input type="button" value="Singles4">
+            <input type="button" value="Teams">
+            <br> Lookup Username:
+            <input type="text" id="form-username">
+            <input type="submit" value="Lookup">
+            <span id="form-error-message"></span>
+            <span id="form-loading-message"></span>
+        </form>
+        <div id="users">
+            <h2>Acquire ratings for
+                <span id="ratings-type"></span>
+            </h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Username</th>
+                        <th>Rating</th>
+                        <th>Rating Range</th>
+                        <th># Games</th>
+                        <th>Last Game Date</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+        <div id="user">
+            <h2>Acquire stats for
+                <span id="user-name"></span>
+            </h2>
+            <h3>Summary</h3>
+            <table id="user-summary">
+                <thead>
+                    <tr>
+                        <th>Type</th>
+                        <th>Rating</th>
+                        <th>Rating Range</th>
+                        <th># Games</th>
+                        <th>Record</th>
+                        <th>Last Game Date</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+            <h3>Ratings</h3>
+            <div id="rating-Singles2" class="rating"></div>
+            <div id="rating-Singles3" class="rating"></div>
+            <div id="rating-Singles4" class="rating"></div>
+            <div id="rating-Teams" class="rating"></div>
+            <h3>Games</h3>
+            <div id="games"></div>
+            <div id="games-links">
+                <a id="games-show-next-100" href="#">Show next 100</a>
+                <a id="games-show-remaining" href="#">Show remaining</a>
+            </div>
+        </div>
+    </div>
+</body>
+
 </html>

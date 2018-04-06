@@ -1,31 +1,35 @@
 /* selected styles from normalize.css */
 
 html {
-	font-family: sans-serif;
-	-ms-text-size-adjust: 100%;
-	-webkit-text-size-adjust: 100%;
+    font-family: sans-serif;
+    -ms-text-size-adjust: 100%;
+    -webkit-text-size-adjust: 100%;
 }
 body {
-	margin: 0;
+    margin: 0;
 }
-button, input, select {
-	font-family: sans-serif;
-	font-size: 100%;
-	margin: 0;
+button,
+input,
+select {
+    font-family: sans-serif;
+    font-size: 100%;
+    margin: 0;
 }
-button, input {
-	overflow: visible;
+button,
+input {
+    overflow: visible;
 }
 fieldset {
-	border: 1px solid #c0c0c0;
+    border: 1px solid #c0c0c0;
 }
-[type="checkbox"], [type="radio"] {
-	box-sizing: border-box;
-	padding: 0;
+[type='checkbox'],
+[type='radio'] {
+    box-sizing: border-box;
+    padding: 0;
 }
 table {
-	border-collapse: collapse;
-	border-spacing: 0;
+    border-collapse: collapse;
+    border-spacing: 0;
 }
 
 /* my styles */
@@ -60,347 +64,394 @@ $color-my-sub-turn: rgb(255, 224, 224);
 $color-safe-chain: rgb(255, 192, 128);
 
 .color-luxor {
-	background-color: $color-luxor;
+    background-color: $color-luxor;
 }
 .color-tower {
-	background-color: $color-tower;
+    background-color: $color-tower;
 }
 .color-american {
-	background-color: $color-american;
+    background-color: $color-american;
 }
 .color-festival {
-	background-color: $color-festival;
+    background-color: $color-festival;
 }
 .color-worldwide {
-	background-color: $color-worldwide;
+    background-color: $color-worldwide;
 }
 .color-continental {
-	background-color: $color-continental;
+    background-color: $color-continental;
 }
 .color-imperial {
-	background-color: $color-imperial;
+    background-color: $color-imperial;
 }
 .color-nothing {
-	background-color: $color-nothing;
+    background-color: $color-nothing;
 }
 .color-nothing-yet {
-	background-color: $color-nothing-yet;
-	color: white;
+    background-color: $color-nothing-yet;
+    color: white;
 }
 .color-cant-play-ever {
-	background-color: $color-cant-play-ever;
+    background-color: $color-cant-play-ever;
 }
 .color-i-have-this {
-	background-color: $color-i-have-this;
-	cursor: pointer;
+    background-color: $color-i-have-this;
+    cursor: pointer;
 }
 .color-will-put-lonely-tile-down {
-	background-color: $color-will-put-lonely-tile-down;
+    background-color: $color-will-put-lonely-tile-down;
 }
 .color-have-neighboring-tile-too {
-	background-color: $color-have-neighboring-tile-too;
+    background-color: $color-have-neighboring-tile-too;
 }
 .color-will-form-new-chain {
-	background-color: $color-will-form-new-chain;
+    background-color: $color-will-form-new-chain;
 }
 .color-will-merge-chains {
-	background: url(../static/merge1.png);
+    background: url(../static/merge1.png);
 }
 .color-cant-play-now {
-	background-color: $color-cant-play-now;
+    background-color: $color-cant-play-now;
 }
 .color-player {
-	background-color: $color-player;
+    background-color: $color-player;
 }
 .color-cash-net {
-	background-color: $color-cash-net;
+    background-color: $color-cash-net;
 }
 
 body.enable-high-contrast-colors {
-	.color-luxor, .color-american, .color-worldwide, .color-imperial, .color-cant-play-now, .color-cash-net {
-		color: white;
-	}
+    .color-luxor,
+    .color-american,
+    .color-worldwide,
+    .color-imperial,
+    .color-cant-play-now,
+    .color-cash-net {
+        color: white;
+    }
 }
 
 body.enable-text-background-colors {
-	span.username {
-		background-color: $color-table-border;
-	}
+    span.username {
+        background-color: $color-table-border;
+    }
 }
 body.disable-text-background-colors {
-	span.chain {
-		&.color-luxor, &.color-tower, &.color-american, &.color-festival, &.color-worldwide, &.color-continental, &.color-imperial {
-			background-color: transparent;
-			color: black;
-		}
-	}
+    span.chain {
+        &.color-luxor,
+        &.color-tower,
+        &.color-american,
+        &.color-festival,
+        &.color-worldwide,
+        &.color-continental,
+        &.color-imperial {
+            background-color: transparent;
+            color: black;
+        }
+    }
 }
 
 body.color-scheme-netacquire {
-	background-color: $color-background-netacquire;
-	#game-history, #lobby, .chat-history {
-		background-color: $color-scroll-div-background;
-	}
-	#score-sheet {
-		.team-empty, .team-border-bottom, .team-border-right {
-			background-color: $color-background-netacquire;
-		}
-	}
+    background-color: $color-background-netacquire;
+    #game-history,
+    #lobby,
+    .chat-history {
+        background-color: $color-scroll-div-background;
+    }
+    #score-sheet {
+        .team-empty,
+        .team-border-bottom,
+        .team-border-right {
+            background-color: $color-background-netacquire;
+        }
+    }
 }
 body.enable-text-background-colors.color-scheme-netacquire {
-	span.username {
-		background-color: lightgrey;
-	}
+    span.username {
+        background-color: lightgrey;
+    }
 }
 
 body {
-	background-color: $color-background-default;
-	color: black;
-	font-size: 16px;
+    background-color: $color-background-default;
+    color: black;
+    font-size: 16px;
 }
 
 body.hide-overflow {
-	overflow: hidden;
+    overflow: hidden;
 }
 
-input, select {
-	color: black;
+input,
+select {
+    color: black;
 }
 
 .page {
-	display: none;
-	padding-left: .5em;
-	padding-right: .5em;
+    display: none;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
 }
 #page-loading {
-	display: block;
+    display: block;
 }
 
-#login-error-message, #set-password-error-message {
-	color: red;
-	font-weight: bold;
+#login-error-message,
+#set-password-error-message {
+    color: red;
+    font-weight: bold;
 }
 
 #set-password-success-message {
-	color: green;
-	font-weight: bold;
+    color: green;
+    font-weight: bold;
 }
 
 .lobby-section {
-	margin-bottom: 1em;
-	white-space: nowrap;
-	.header {
-		font-weight: bold;
-	}
-	.player {
-		font-weight: bold;
-		&.missing {
-			color: grey;
-			font-style: italic;
-		}
-	}
+    margin-bottom: 1em;
+    white-space: nowrap;
+    .header {
+        font-weight: bold;
+    }
+    .player {
+        font-weight: bold;
+        &.missing {
+            color: grey;
+            font-style: italic;
+        }
+    }
 }
 
 #game-board {
-	position: absolute;
-	text-align: center;
-	font-weight: bold;
-	table-layout: fixed;
-	td {
-		border: 2px solid $color-table-border;
-		width: percentage(1 / 12);
-		height: percentage(1 / 9);
-		overflow: hidden;
-	}
+    position: absolute;
+    text-align: center;
+    font-weight: bold;
+    table-layout: fixed;
+    td {
+        border: 2px solid $color-table-border;
+        width: percentage(1 / 12);
+        height: percentage(1 / 9);
+        overflow: hidden;
+    }
 }
 
 #score-sheet {
-	position: absolute;
-	font-weight: bold;
-	table-layout: fixed;
-	td {
-		border: 2px solid $color-table-border;
-		overflow: hidden;
-		white-space: nowrap;
-	}
-	.name {
-		width: percentage(5 / 18);
-		text-align: left;
-		padding-left: 3px;
-		&.missing {
-			color: grey;
-			font-style: italic;
-		}
-	}
-	tr {
-		height: 0px;
-	}
-	tr.my-turn .name {
-		background-color: $color-my-turn;
-	}
-	tr.my-sub-turn .name {
-		background-color: $color-my-sub-turn;
-	}
-	.luxor, .tower, .american, .festival, .worldwide, .continental, .imperial {
-		width: percentage(1 / 18);
-		text-align: center;
-	}
-	.cash, .net, .teams {
-		width: percentage(3 / 18);
-		text-align: right;
-		padding-right: 3px;
-	}
-	.teams {
-		border: none;
-		background-color: $color-background-default;
-		display: none;
-	}
-	.team-border-bottom {
-		border-bottom: 2px solid $color-table-border;
-	}
-	.team-border-right {
-		border-right: 2px solid $color-table-border;
-	}
-	.team-net {
-		background-color: white;
-		border: 2px solid $color-table-border;
-	}
+    position: absolute;
+    font-weight: bold;
+    table-layout: fixed;
+    td {
+        border: 2px solid $color-table-border;
+        overflow: hidden;
+        white-space: nowrap;
+    }
+    .name {
+        width: percentage(5 / 18);
+        text-align: left;
+        padding-left: 3px;
+        &.missing {
+            color: grey;
+            font-style: italic;
+        }
+    }
+    tr {
+        height: 0px;
+    }
+    tr.my-turn .name {
+        background-color: $color-my-turn;
+    }
+    tr.my-sub-turn .name {
+        background-color: $color-my-sub-turn;
+    }
+    .luxor,
+    .tower,
+    .american,
+    .festival,
+    .worldwide,
+    .continental,
+    .imperial {
+        width: percentage(1 / 18);
+        text-align: center;
+    }
+    .cash,
+    .net,
+    .teams {
+        width: percentage(3 / 18);
+        text-align: right;
+        padding-right: 3px;
+    }
+    .teams {
+        border: none;
+        background-color: $color-background-default;
+        display: none;
+    }
+    .team-border-bottom {
+        border-bottom: 2px solid $color-table-border;
+    }
+    .team-border-right {
+        border-right: 2px solid $color-table-border;
+    }
+    .team-net {
+        background-color: white;
+        border: 2px solid $color-table-border;
+    }
 }
 
 .score-sheet-player {
-	background-color: white;
-	display: none;
-	.safe {
-		background-color: $color-safe-chain;
-	}
+    background-color: white;
+    display: none;
+    .safe {
+        background-color: $color-safe-chain;
+    }
 }
 
-#score-sheet-available, #score-sheet-chain-size, #score-sheet-price {
-	td {
-		background-color: $color-available-chain-size-price;
-	}
-	.safe {
-		background-color: $color-safe-chain;
-	}
+#score-sheet-available,
+#score-sheet-chain-size,
+#score-sheet-price {
+    td {
+        background-color: $color-available-chain-size-price;
+    }
+    .safe {
+        background-color: $color-safe-chain;
+    }
 }
 
-#lobby, #options, #global-chat, #game-chat, #templates {
-	display: none;
+#lobby,
+#options,
+#global-chat,
+#game-chat,
+#templates {
+    display: none;
 }
-#game-tile-rack, #game-action, #game-history, #game-history-new-messages, #game-status, #game-buttons, #lobby, #options, .chat-history, .chat-history-new-messages, .chat-message {
-	position: absolute;
-	box-sizing: border-box;
+#game-tile-rack,
+#game-action,
+#game-history,
+#game-history-new-messages,
+#game-status,
+#game-buttons,
+#lobby,
+#options,
+.chat-history,
+.chat-history-new-messages,
+.chat-message {
+    position: absolute;
+    box-sizing: border-box;
 }
 #game-tile-rack {
-	.button-hotel {
-		visibility: hidden;
-	}
+    .button-hotel {
+        visibility: hidden;
+    }
 }
 #game-action {
-	overflow: hidden;
-	> div {
-		display: none;
-	}
+    overflow: hidden;
+    > div {
+        display: none;
+    }
 }
-#lobby, #options, .chat-history, #game-history {
-	padding: 0 2px;
-	overflow-y: scroll;
+#lobby,
+#options,
+.chat-history,
+#game-history {
+    padding: 0 2px;
+    overflow-y: scroll;
 }
 #game-history .game-state {
-	font-weight: bold;
+    font-weight: bold;
 }
-#game-history-new-messages, .chat-history-new-messages {
-	display: none;
-	background-color: lightgreen;
-	overflow: hidden;
-	line-height: 22px;
+#game-history-new-messages,
+.chat-history-new-messages {
+    display: none;
+    background-color: lightgreen;
+    overflow: hidden;
+    line-height: 22px;
 }
 .game-history-turn-began {
-	border-top: 1px solid black;
-	border-bottom: none;
-	border-left: none;
-	border-right: none;
-	display: block;
-	text-align: center;
-	margin: 0;
-	padding: 0;
-	legend {
-		padding: 0 5px;
-	}
+    border-top: 1px solid black;
+    border-bottom: none;
+    border-left: none;
+    border-right: none;
+    display: block;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+    legend {
+        padding: 0 5px;
+    }
 }
 #game-status {
-	font-weight: bold;
-	overflow: hidden;
-	white-space: nowrap;
+    font-weight: bold;
+    overflow: hidden;
+    white-space: nowrap;
 }
 #options .header {
-	font-weight: bold;
+    font-weight: bold;
 }
 .disabled {
-	color: grey;
+    color: grey;
 }
-#global-chat, #game-chat {
-	.chat-message, .chat-message-contents {
-		color: blue;
-	}
+#global-chat,
+#game-chat {
+    .chat-message,
+    .chat-message-contents {
+        color: blue;
+    }
 }
 #game-buttons {
-	overflow: hidden;
+    overflow: hidden;
 }
 #option-volume {
-	text-align: right;
+    text-align: right;
 }
 
 #game-action {
-	fieldset {
-		display: inline-block;
-		margin: 0;
-		padding: 0 3px 3px;
-		legend {
-			padding: 0 5px;
-		}
-	}
+    fieldset {
+        display: inline-block;
+        margin: 0;
+        padding: 0 3px 3px;
+        legend {
+            padding: 0 5px;
+        }
+    }
 }
 #game-action-dispose-of-shares {
-	span {
-		display: inline-block;
-		text-align: right;
-		width: 1.5em;
-	}
-	input {
-		color: black;
-		&:disabled {
-			color: grey;
-		}
-	}
+    span {
+        display: inline-block;
+        text-align: right;
+        width: 1.5em;
+    }
+    input {
+        color: black;
+        &:disabled {
+            color: grey;
+        }
+    }
 }
 #game-action-purchase-shares {
-	input:disabled {
-		background-color: lightgrey;
-		color: #555;
-	}
+    input:disabled {
+        background-color: lightgrey;
+        color: #555;
+    }
 }
 #ps-row1 > * {
-	vertical-align: top;
+    vertical-align: top;
 }
 #ps-cost-table tr {
-	:nth-child(1) {
-		text-align: left;
-	}
-	:nth-child(2) {
-		text-align: right;
-		width: 4em;
-	}
+    :nth-child(1) {
+        text-align: left;
+    }
+    :nth-child(2) {
+        text-align: right;
+        width: 4em;
+    }
 }
 
 span.username {
-	white-space: nowrap;
+    white-space: nowrap;
 }
 
 .button-hotel {
-	font-weight: bold;
-	padding: 1px;
-	&:focus {
-		box-shadow: 0px 0px 2px 0px rgba(50, 50, 50, 1);
-	}
+    font-weight: bold;
+    padding: 1px;
+    &:focus {
+        box-shadow: 0px 0px 2px 0px rgba(50, 50, 50, 1);
+    }
 }
