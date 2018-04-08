@@ -3,6 +3,7 @@ import * as React from 'react';
 
 import { GameBoardType } from '../../enums';
 import { getCssStyleForGameBoardType } from '../helpers';
+import * as style from './GameBoard.css';
 
 const yTileNames = 'ABCDEFGHI';
 
@@ -22,7 +23,7 @@ export const GameBoard = ({ gameBoard }: { gameBoard: List<GameBoardType> }) => 
         rows[y] = <tr key={y}>{cells}</tr>;
     }
     return (
-        <table>
+        <table className={style.root}>
             <tbody>{rows}</tbody>
         </table>
     );

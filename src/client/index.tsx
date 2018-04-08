@@ -1,3 +1,5 @@
+import './global.css';
+
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
@@ -13,7 +15,7 @@ async function showMoveSequence(moveData: MoveData[]) {
         const gameBoard = entry.gameBoard;
 
         ReactDOM.render(
-            <div>
+            <div style={{ width: 2 + 50 * 12, height: 2 + 50 * 9, fontSize: 50 * 2 / 5 }}>
                 <GameBoard gameBoard={gameBoard} />
             </div>,
             document.getElementById('root'),
