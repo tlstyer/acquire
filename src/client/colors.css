@@ -1,0 +1,55 @@
+.luxor {
+    background-color: rgb(255, 0, 0);
+    color: white;
+}
+.tower {
+    background-color: rgb(255, 255, 0);
+}
+.american {
+    background-color: rgb(0, 0, 255);
+    color: white;
+}
+.festival {
+    background-color: rgb(0, 255, 0);
+}
+.worldwide {
+    background-color: rgb(128, 64, 0);
+    color: white;
+}
+.continental {
+    background-color: rgb(0, 255, 255);
+}
+.imperial {
+    background-color: rgb(255, 0, 255);
+    color: white;
+}
+.nothing {
+    background-color: rgb(255, 255, 192);
+}
+.nothingYet {
+    background-color: rgb(0, 0, 0);
+    color: white;
+}
+.cantPlayEver {
+    background-color: rgb(128, 128, 128);
+}
+.iHaveThis {
+    background-color: rgb(255, 224, 160);
+    cursor: pointer;
+}
+.willPutLonelyTileDown {
+    background-color: rgb(192, 192, 192);
+}
+.haveNeighboringTileToo {
+    background-color: rgb(192, 255, 192);
+}
+.willFormNewChain {
+    background-color: rgb(255, 255, 255);
+}
+.willMergeChains {
+    background: url(./merge.png);
+}
+.cantPlayNow {
+    background-color: rgb(96, 96, 96);
+    color: white;
+}

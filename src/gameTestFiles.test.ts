@@ -32,7 +32,7 @@ function processDirectory(base: string, dir: string) {
                         .readFileSync(filePath)
                         .toString()
                         .split('\n');
-                    const outputLines = runGameTestFile(inputLines);
+                    const outputLines = runGameTestFile(inputLines).outputLines;
 
                     if (outputBasePath !== '') {
                         const outputFilePath = path.join(outputBasePath, filePath.slice(inputBasePath.length));

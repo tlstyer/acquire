@@ -141,7 +141,7 @@ export function runGameTestFile(inputLines: string[]) {
 
     outputLines.push('');
 
-    return outputLines;
+    return { outputLines, game };
 }
 
 function getDuplicatedTiles(tileBag: number[]) {
