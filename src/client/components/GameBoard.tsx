@@ -2,12 +2,31 @@ import { List } from 'immutable';
 import * as React from 'react';
 
 import { GameBoardType } from '../../enums';
+import { GameBoardLabelMode } from '../enums';
 import { getCssStyleForGameBoardType } from '../helpers';
 import * as style from './GameBoard.css';
 
 const yTileNames = 'ABCDEFGHI';
 
-export function GameBoard({ gameBoard, tileRack }: { gameBoard: List<GameBoardType>; tileRack: List<number | null> }) {
+const hotelInitials: { [key: number]: string } = {
+    [GameBoardType.Luxor]: 'L',
+    [GameBoardType.Tower]: 'T',
+    [GameBoardType.American]: 'A',
+    [GameBoardType.Festival]: 'F',
+    [GameBoardType.Worldwide]: 'W',
+    [GameBoardType.Continental]: 'C',
+    [GameBoardType.Imperial]: 'I',
+};
+
+export function GameBoard({
+    gameBoard,
+    tileRack,
+    labelMode,
+}: {
+    gameBoard: List<GameBoardType>;
+    tileRack: List<number | null>;
+    labelMode: GameBoardLabelMode;
+}) {
     let myTiles: { [key: number]: boolean } = {};
     for (let tileIndex = 0; tileIndex < 6; tileIndex++) {
         const tile = tileRack.get(tileIndex, 0);
@@ -22,10 +41,23 @@ export function GameBoard({ gameBoard, tileRack }: { gameBoard: List<GameBoardTy
         for (let x = 0; x < 12; x++) {
             const tile = x * 9 + y;
             const gameBoardType = myTiles[tile] ? GameBoardType.IHaveThis : gameBoard.get(tile, 0);
-            const tileName = `${x + 1}${yTileNames[y]}`;
+
+            let label = `${x + 1}${yTileNames[y]}`;
+            if (labelMode === GameBoardLabelMode.HotelInitials) {
+                if (gameBoardType <= GameBoardType.Imperial) {
+                    label = hotelInitials[gameBoardType];
+                } else if (gameBoardType !== GameBoardType.Nothing && gameBoardType !== GameBoardType.IHaveThis) {
+                    label = '';
+                }
+            } else if (labelMode === GameBoardLabelMode.Nothing) {
+                if (gameBoardType !== GameBoardType.Nothing && gameBoardType !== GameBoardType.IHaveThis) {
+                    label = '';
+                }
+            }
+
             cells[x] = (
                 <td key={x} className={getCssStyleForGameBoardType(gameBoardType)}>
-                    {tileName}
+                    {label}
                 </td>
             );
         }

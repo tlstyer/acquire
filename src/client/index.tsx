@@ -1,31 +1,52 @@
 import './global.css';
 
+import { List } from 'immutable';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
-import { defaultTileRack } from '../defaults';
-import { MoveData } from '../game';
-import { runGameTestFile } from '../runGameTestFile';
+import { GameBoardType } from '../enums';
 import { GameBoard } from './components/GameBoard';
+import { GameBoardLabelMode } from './enums';
 
-const inputLines: string[] = require('raw-loader!../gameTestFiles/other/no tiles played for entire round').split('\n');
-
-async function showMoveSequence(moveData: MoveData[]) {
-    for (let i = 0; i < moveData.length; i++) {
-        const entry = moveData[i];
-
-        ReactDOM.render(
-            <div style={{ width: 2 + 50 * 12, height: 2 + 50 * 9, fontSize: 50 * 2 / 5 }}>
-                <GameBoard gameBoard={entry.gameBoard} tileRack={entry.tileRacks.get(0, defaultTileRack)} />
-            </div>,
-            document.getElementById('root'),
-        );
-
-        await new Promise(resolve => setTimeout(resolve, 50));
-    }
+function main() {
+    ReactDOM.render([getGameBoard()], document.getElementById('root'));
 }
 
-const game = runGameTestFile(inputLines).game;
-if (game !== null) {
-    showMoveSequence(game.moveDataHistory);
+function getGameBoard() {
+    const gameBoard = List<GameBoardType>([
+        ...[0, 7, 7, 7, 7, 7, 7, 7, 7],
+        ...[0, 7, 7, 7, 7, 7, 7, 7, 7],
+        ...[7, 8, 7, 7, 7, 7, 8, 7, 7],
+        ...[1, 7, 8, 7, 7, 7, 7, 7, 7],
+        ...[1, 7, 7, 7, 7, 7, 7, 7, 7],
+        ...[7, 7, 7, 7, 5, 7, 7, 8, 7],
+        ...[2, 7, 7, 7, 5, 5, 5, 7, 7],
+        ...[2, 7, 8, 7, 5, 5, 7, 7, 7],
+        ...[7, 7, 7, 7, 5, 9, 6, 6, 6],
+        ...[3, 7, 7, 7, 5, 7, 6, 6, 6],
+        ...[3, 7, 7, 7, 5, 9, 6, 6, 6],
+        ...[7, 4, 4, 7, 5, 5, 9, 6, 6],
+    ]);
+    const tileRack = List<number | null>([8, 86, null, 40, 99, 12]);
+    const gameBoardCellSize = 40;
+
+    return (
+        <div>
+            <h1>GameBoard</h1>
+            <h2>labelMode=Coordinates</h2>
+            <div style={{ width: 2 + gameBoardCellSize * 12, height: 2 + gameBoardCellSize * 9, fontSize: gameBoardCellSize * 2 / 5 }}>
+                <GameBoard gameBoard={gameBoard} tileRack={tileRack} labelMode={GameBoardLabelMode.Coordinates} />
+            </div>
+            <h2>labelMode=HotelInitials</h2>
+            <div style={{ width: 2 + gameBoardCellSize * 12, height: 2 + gameBoardCellSize * 9, fontSize: gameBoardCellSize * 2 / 5 }}>
+                <GameBoard gameBoard={gameBoard} tileRack={tileRack} labelMode={GameBoardLabelMode.HotelInitials} />
+            </div>
+            <h2>labelMode=Nothing</h2>
+            <div style={{ width: 2 + gameBoardCellSize * 12, height: 2 + gameBoardCellSize * 9, fontSize: gameBoardCellSize * 2 / 5 }}>
+                <GameBoard gameBoard={gameBoard} tileRack={tileRack} labelMode={GameBoardLabelMode.Nothing} />
+            </div>
+        </div>
+    );
 }
+
+main();
