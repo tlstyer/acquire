@@ -181,12 +181,12 @@ action: 0 DisposeOfShares 0 0
 action: 1 DisposeOfShares 4 1
 
 action: 0 PurchaseShares W,C,C 0
-  ···O··FF·O··   L  T  A  F  W  C  I Cash  Net
-  II··O···O·A·  10  7  2  2  9  4      60  400
-  ·II···C···AA  14  1  2  1  7  3  1   42  434
-  II··O·CCC···   1 17 21 22  9 18 24
-  III··O·····O   2  -  3  2 15  4 11
-  ·I·WW··W·O··   2  -  4  3  8  6  9
+  ···O··FF·O··  P  L  T  A  F  W  C  I Cash  Net
+  II··O···O·A·    10  7  2  2  9  4      60  400
+  ·II···C···AA  T 14  1  2  1  7  3  1   42  434
+  II··O·CCC···  A  1 17 21 22  9 18 24
+  III··O·····O  C  2  -  3  2 15  4 11
+  ·I·WW··W·O··  P  2  -  4  3  8  6  9
   ·I··WWWWW·LL
   O··WWW··WW··
   ·O··W····W··

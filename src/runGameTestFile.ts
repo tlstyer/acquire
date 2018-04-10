@@ -262,7 +262,14 @@ function getMoveDataLines(moveData: MoveData, revealedTilesPlayerID: number | nu
 
     if (detailed) {
         const gameBoardLines = getGameBoardLines(moveData.gameBoard);
-        const scoreBoardLines = getScoreBoardLines(moveData.scoreBoard, moveData.scoreBoardAvailable, moveData.scoreBoardChainSize, moveData.scoreBoardPrice);
+        const scoreBoardLines = getScoreBoardLines(
+            moveData.scoreBoard,
+            moveData.scoreBoardAvailable,
+            moveData.scoreBoardChainSize,
+            moveData.scoreBoardPrice,
+            moveData.turnPlayerID,
+            moveData.nextGameAction.playerID,
+        );
         const numLines = Math.max(gameBoardLines.length, scoreBoardLines.length);
         for (let i = 0; i < numLines; i++) {
             let lineParts = [];
@@ -385,28 +392,34 @@ function getScoreBoardLines(
     scoreBoardAvailable: List<number>,
     scoreBoardChainSize: List<number>,
     scoreBoardPrice: List<number>,
+    turnPlayerID: number,
+    movePlayerID: number,
 ) {
     let lines: string[] = [];
-    lines.push(formatScoreBoardLine(['L', 'T', 'A', 'F', 'W', 'C', 'I', 'Cash', 'Net']));
-    scoreBoard.forEach(row => {
-        lines.push(formatScoreBoardLine(row.toArray().map((val, index) => (index <= ScoreBoardIndex.Imperial && val === 0 ? '' : val.toString()))));
+    lines.push(formatScoreBoardLine(['P', 'L', 'T', 'A', 'F', 'W', 'C', 'I', 'Cash', 'Net']));
+    scoreBoard.forEach((row, playerID) => {
+        let name: string;
+        if (playerID === turnPlayerID) {
+            name = 'T';
+        } else if (playerID === movePlayerID) {
+            name = 'M';
+        } else {
+            name = '';
+        }
+        lines.push(formatScoreBoardLine([name, ...row.toArray().map((val, index) => (index <= ScoreBoardIndex.Imperial && val === 0 ? '' : val.toString()))]));
     });
-    lines.push(formatScoreBoardLine(scoreBoardAvailable.toArray().map(val => val.toString())));
-    lines.push(formatScoreBoardLine(scoreBoardChainSize.toArray().map(val => (val === 0 ? '-' : val.toString()))));
-    lines.push(formatScoreBoardLine(scoreBoardPrice.toArray().map(val => (val === 0 ? '-' : val.toString()))));
+    lines.push(formatScoreBoardLine(['A', ...scoreBoardAvailable.toArray().map(val => val.toString())]));
+    lines.push(formatScoreBoardLine(['C', ...scoreBoardChainSize.toArray().map(val => (val === 0 ? '-' : val.toString()))]));
+    lines.push(formatScoreBoardLine(['P', ...scoreBoardPrice.toArray().map(val => (val === 0 ? '-' : val.toString()))]));
     return lines;
 }
 
-const scoreBoardColumnWidths = [2, 2, 2, 2, 2, 2, 2, 4, 4];
+const scoreBoardColumnWidths = [1, 2, 2, 2, 2, 2, 2, 2, 4, 4];
 function formatScoreBoardLine(entries: string[]) {
     let lineParts = entries.map((entry, index) => {
         const numSpacesToAdd = scoreBoardColumnWidths[index] - entry.length;
-        if (numSpacesToAdd === 1) {
-            entry = ' ' + entry;
-        } else if (numSpacesToAdd === 2) {
-            entry = '  ' + entry;
-        } else if (numSpacesToAdd === 3) {
-            entry = '   ' + entry;
+        if (numSpacesToAdd > 0) {
+            entry = ' '.repeat(numSpacesToAdd) + entry;
         }
         return entry;
     });

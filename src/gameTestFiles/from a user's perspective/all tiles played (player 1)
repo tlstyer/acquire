@@ -581,12 +581,12 @@ action: 1 PurchaseShares x 0
 
 revealed tile rack tiles: 10A:0
 action: 0 PlayTile 10A
-  CCCCC█WWWWWW   L  T  A  F  W  C  I Cash  Net
-  CCC██WWWWWWW           13 12 16 13   50  877
-  CC█II██WWWWW         2 12 13  9 12   42  695
-  CCC█III██WWW  25 25 23  0  0  0  0
-  CCC█IIIII█WW   -  -  - 12 27 23 23
-  CCC█III██WWW   -  -  -  8  9 10 10
+  CCCCC█WWWWWW  P  L  T  A  F  W  C  I Cash  Net
+  CCC██WWWWWWW  T          13 12 16 13   50  877
+  CC█II██WWWWW           2 12 13  9 12   42  695
+  CCC█III██WWW  A 25 25 23  0  0  0  0
+  CCC█IIIII█WW  C  -  -  - 12 27 23 23
+  CCC█III██WWW  P  -  -  -  8  9 10 10
   CC█III█FF██W
   C█IIII█FFFF█
   C█III█FFFFFF
@@ -599,12 +599,12 @@ action: 0 PlayTile 10A
   next action: 0 PurchaseShares
 
 action: 0 PurchaseShares x 0
-  CCCCC█WWWWWW   L  T  A  F  W  C  I Cash  Net
-  CCC██WWWWWWW           13 12 16 13   50  877
-  CC█II██WWWWW         2 12 13  9 12   42  695
-  CCC█III██WWW  25 25 23  0  0  0  0
-  CCC█IIIII█WW   -  -  - 12 27 23 23
-  CCC█III██WWW   -  -  -  8  9 10 10
+  CCCCC█WWWWWW  P  L  T  A  F  W  C  I Cash  Net
+  CCC██WWWWWWW  T          13 12 16 13   50  877
+  CC█II██WWWWW           2 12 13  9 12   42  695
+  CCC█III██WWW  A 25 25 23  0  0  0  0
+  CCC█IIIII█WW  C  -  -  - 12 27 23 23
+  CCC█III██WWW  P  -  -  -  8  9 10 10
   CC█III█FF██W
   C█IIII█FFFF█
   C█III█FFFFFF

@@ -24,6 +24,7 @@ export class Game {
     gameActionStack: ActionBase[] = [];
     numTurnsWithoutPlayedTiles: number = 0;
 
+    turnPlayerID: number = 0;
     tileRacks = defaultTileRacks;
     tileRackTypes = defaultTileRackTypesList;
     gameBoard = defaultGameBoard;
@@ -119,6 +120,9 @@ export class Game {
             this.gameActionStack.pop();
             this.gameActionStack.push(...newActions.reverse());
             currentAction = this.gameActionStack[this.gameActionStack.length - 1];
+            if (currentAction.gameAction === GameAction.PlayTile) {
+                this.turnPlayerID = currentAction.playerID;
+            }
             newActions = currentAction.prepare();
         }
 
@@ -460,6 +464,7 @@ export class MoveData {
     gameHistoryMessages: GameHistoryMessageData[] = [];
     nextGameAction: ActionBase;
 
+    turnPlayerID: number = 0;
     tileRacks = defaultTileRacks;
     tileRackTypes = defaultTileRackTypesList;
     gameBoard = defaultGameBoard;
@@ -503,6 +508,7 @@ export class MoveData {
     }
 
     endMove() {
+        this.turnPlayerID = this.game.turnPlayerID;
         this.tileRacks = this.game.tileRacks;
         this.tileRackTypes = this.game.tileRackTypes;
         this.gameBoard = this.game.gameBoard;
