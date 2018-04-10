@@ -7,6 +7,7 @@ import * as ReactDOM from 'react-dom';
 import { GameBoardType } from '../enums';
 import { GameBoard } from './components/GameBoard';
 import { GameBoardLabelMode } from './enums';
+import { TileRack } from './components/TileRack';
 
 function main() {
     ReactDOM.render([getGameBoard()], document.getElementById('root'));
@@ -28,23 +29,17 @@ function getGameBoard() {
         ...[7, 4, 4, 7, 5, 5, 9, 6, 6],
     ]);
     const tileRack = List<number | null>([8, 86, null, 40, 99, 12]);
-    const gameBoardCellSize = 40;
+    const cellSize = 40;
 
     return (
         <div>
             <h1>GameBoard</h1>
             <h2>labelMode=Coordinates</h2>
-            <div style={{ width: 2 + gameBoardCellSize * 12, height: 2 + gameBoardCellSize * 9, fontSize: gameBoardCellSize * 2 / 5 }}>
-                <GameBoard gameBoard={gameBoard} tileRack={tileRack} labelMode={GameBoardLabelMode.Coordinates} />
-            </div>
+            <GameBoard gameBoard={gameBoard} tileRack={tileRack} labelMode={GameBoardLabelMode.Coordinates} cellSize={cellSize} />
             <h2>labelMode=HotelInitials</h2>
-            <div style={{ width: 2 + gameBoardCellSize * 12, height: 2 + gameBoardCellSize * 9, fontSize: gameBoardCellSize * 2 / 5 }}>
-                <GameBoard gameBoard={gameBoard} tileRack={tileRack} labelMode={GameBoardLabelMode.HotelInitials} />
-            </div>
+            <GameBoard gameBoard={gameBoard} tileRack={tileRack} labelMode={GameBoardLabelMode.HotelInitials} cellSize={cellSize} />
             <h2>labelMode=Nothing</h2>
-            <div style={{ width: 2 + gameBoardCellSize * 12, height: 2 + gameBoardCellSize * 9, fontSize: gameBoardCellSize * 2 / 5 }}>
-                <GameBoard gameBoard={gameBoard} tileRack={tileRack} labelMode={GameBoardLabelMode.Nothing} />
-            </div>
+            <GameBoard gameBoard={gameBoard} tileRack={tileRack} labelMode={GameBoardLabelMode.Nothing} cellSize={cellSize} />
         </div>
     );
 }

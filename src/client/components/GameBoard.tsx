@@ -22,10 +22,12 @@ export function GameBoard({
     gameBoard,
     tileRack,
     labelMode,
+    cellSize,
 }: {
     gameBoard: List<GameBoardType>;
     tileRack: List<number | null>;
     labelMode: GameBoardLabelMode;
+    cellSize: number;
 }) {
     let myTiles: { [key: number]: boolean } = {};
     for (let tileIndex = 0; tileIndex < 6; tileIndex++) {
@@ -65,7 +67,7 @@ export function GameBoard({
     }
 
     return (
-        <table className={style.root}>
+        <table className={style.root} style={{ width: cellSize * 12 + 2, height: cellSize * 9 + 2, fontSize: cellSize * 2 / 5 }}>
             <tbody>{rows}</tbody>
         </table>
     );
