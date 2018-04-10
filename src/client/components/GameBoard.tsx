@@ -3,20 +3,8 @@ import * as React from 'react';
 
 import { GameBoardType } from '../../enums';
 import { GameBoardLabelMode } from '../enums';
-import { getCssStyleForGameBoardType } from '../helpers';
+import { getCssStyleForGameBoardType, getHotelInitial, getTileString } from '../helpers';
 import * as style from './GameBoard.css';
-
-const yTileNames = 'ABCDEFGHI';
-
-const hotelInitials: { [key: number]: string } = {
-    [GameBoardType.Luxor]: 'L',
-    [GameBoardType.Tower]: 'T',
-    [GameBoardType.American]: 'A',
-    [GameBoardType.Festival]: 'F',
-    [GameBoardType.Worldwide]: 'W',
-    [GameBoardType.Continental]: 'C',
-    [GameBoardType.Imperial]: 'I',
-};
 
 export function GameBoard({
     gameBoard,
@@ -44,15 +32,21 @@ export function GameBoard({
             const tile = x * 9 + y;
             const gameBoardType = myTiles[tile] ? GameBoardType.IHaveThis : gameBoard.get(tile, 0);
 
-            let label = `${x + 1}${yTileNames[y]}`;
-            if (labelMode === GameBoardLabelMode.HotelInitials) {
-                if (gameBoardType <= GameBoardType.Imperial) {
-                    label = hotelInitials[gameBoardType];
-                } else if (gameBoardType !== GameBoardType.Nothing && gameBoardType !== GameBoardType.IHaveThis) {
+            let label;
+            if (labelMode === GameBoardLabelMode.Coordinates) {
+                label = getTileString(tile);
+            } else if (labelMode === GameBoardLabelMode.HotelInitials) {
+                if (gameBoardType === GameBoardType.Nothing || gameBoardType === GameBoardType.IHaveThis) {
+                    label = getTileString(tile);
+                } else if (gameBoardType <= GameBoardType.Imperial) {
+                    label = getHotelInitial(gameBoardType);
+                } else {
                     label = '';
                 }
             } else if (labelMode === GameBoardLabelMode.Nothing) {
-                if (gameBoardType !== GameBoardType.Nothing && gameBoardType !== GameBoardType.IHaveThis) {
+                if (gameBoardType === GameBoardType.Nothing || gameBoardType === GameBoardType.IHaveThis) {
+                    label = getTileString(tile);
+                } else {
                     label = '';
                 }
             }
