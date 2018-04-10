@@ -8,9 +8,14 @@ import { GameBoardType } from '../enums';
 import { GameBoard } from './components/GameBoard';
 import { GameBoardLabelMode } from './enums';
 import { TileRack } from './components/TileRack';
+import { getTileString } from './helpers';
 
 function main() {
     ReactDOM.render([getGameBoard(), getTileRack()], document.getElementById('root'));
+}
+
+function onTileClicked(tile: number) {
+    console.log('onTileClicked:', getTileString(tile));
 }
 
 function getGameBoard() {
@@ -35,11 +40,17 @@ function getGameBoard() {
         <div>
             <h1>GameBoard</h1>
             <h2>labelMode=Coordinates</h2>
-            <GameBoard gameBoard={gameBoard} tileRack={tileRack} labelMode={GameBoardLabelMode.Coordinates} cellSize={cellSize} />
+            <GameBoard gameBoard={gameBoard} tileRack={tileRack} labelMode={GameBoardLabelMode.Coordinates} cellSize={cellSize} onCellClicked={onTileClicked} />
             <h2>labelMode=HotelInitials</h2>
-            <GameBoard gameBoard={gameBoard} tileRack={tileRack} labelMode={GameBoardLabelMode.HotelInitials} cellSize={cellSize} />
+            <GameBoard
+                gameBoard={gameBoard}
+                tileRack={tileRack}
+                labelMode={GameBoardLabelMode.HotelInitials}
+                cellSize={cellSize}
+                onCellClicked={onTileClicked}
+            />
             <h2>labelMode=Nothing</h2>
-            <GameBoard gameBoard={gameBoard} tileRack={tileRack} labelMode={GameBoardLabelMode.Nothing} cellSize={cellSize} />
+            <GameBoard gameBoard={gameBoard} tileRack={tileRack} labelMode={GameBoardLabelMode.Nothing} cellSize={cellSize} onCellClicked={onTileClicked} />
         </div>
     );
 }
@@ -73,11 +84,11 @@ function getTileRack() {
     return (
         <div>
             <h1>TileRack</h1>
-            <TileRack tiles={tiles1} types={types1} buttonSize={buttonSize} />
+            <TileRack tiles={tiles1} types={types1} buttonSize={buttonSize} onTileClicked={onTileClicked} />
             <br />
-            <TileRack tiles={tiles2} types={types2} buttonSize={buttonSize} />
+            <TileRack tiles={tiles2} types={types2} buttonSize={buttonSize} onTileClicked={onTileClicked} />
             <br />
-            <TileRack tiles={tiles3} types={types3} buttonSize={buttonSize} />
+            <TileRack tiles={tiles3} types={types3} buttonSize={buttonSize} onTileClicked={onTileClicked} />
         </div>
     );
 }

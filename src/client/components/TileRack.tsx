@@ -5,7 +5,17 @@ import { GameBoardType } from '../../enums';
 import * as style from './TileRack.css';
 import { getTileString, getCssStyleForGameBoardType } from '../helpers';
 
-export function TileRack({ tiles, types, buttonSize }: { tiles: List<number | null>; types: List<GameBoardType | null>; buttonSize: number }) {
+export function TileRack({
+    tiles,
+    types,
+    buttonSize,
+    onTileClicked,
+}: {
+    tiles: List<number | null>;
+    types: List<GameBoardType | null>;
+    buttonSize: number;
+    onTileClicked: (tile: number) => void;
+}) {
     let buttons = new Array(6);
 
     const buttonStyle = {
@@ -27,6 +37,7 @@ export function TileRack({ tiles, types, buttonSize }: { tiles: List<number | nu
                     style={buttonStyle}
                     value={getTileString(tile)}
                     disabled={disabled}
+                    onClick={() => onTileClicked(tile)}
                 />
             );
         } else {

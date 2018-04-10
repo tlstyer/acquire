@@ -11,11 +11,13 @@ export function GameBoard({
     tileRack,
     labelMode,
     cellSize,
+    onCellClicked,
 }: {
     gameBoard: List<GameBoardType>;
     tileRack: List<number | null>;
     labelMode: GameBoardLabelMode;
     cellSize: number;
+    onCellClicked: (tile: number) => void;
 }) {
     let myTiles: { [key: number]: boolean } = {};
     for (let tileIndex = 0; tileIndex < 6; tileIndex++) {
@@ -52,7 +54,7 @@ export function GameBoard({
             }
 
             cells[x] = (
-                <td key={x} className={getCssStyleForGameBoardType(gameBoardType)}>
+                <td key={x} className={getCssStyleForGameBoardType(gameBoardType)} onClick={() => onCellClicked(tile)}>
                     {label}
                 </td>
             );
