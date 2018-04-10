@@ -10,7 +10,7 @@ import { GameBoardLabelMode } from './enums';
 import { TileRack } from './components/TileRack';
 
 function main() {
-    ReactDOM.render([getGameBoard()], document.getElementById('root'));
+    ReactDOM.render([getGameBoard(), getTileRack()], document.getElementById('root'));
 }
 
 function getGameBoard() {
@@ -40,6 +40,44 @@ function getGameBoard() {
             <GameBoard gameBoard={gameBoard} tileRack={tileRack} labelMode={GameBoardLabelMode.HotelInitials} cellSize={cellSize} />
             <h2>labelMode=Nothing</h2>
             <GameBoard gameBoard={gameBoard} tileRack={tileRack} labelMode={GameBoardLabelMode.Nothing} cellSize={cellSize} />
+        </div>
+    );
+}
+
+function getTileRack() {
+    const tiles1 = List<number | null>([1, 28, 55, 82, 92, 40]);
+    const types1 = List<GameBoardType | null>([
+        GameBoardType.Luxor,
+        GameBoardType.Tower,
+        GameBoardType.American,
+        GameBoardType.Festival,
+        GameBoardType.Worldwide,
+        GameBoardType.Continental,
+    ]);
+
+    const tiles2 = List<number | null>([71, null, 99, 12, 8, 17]);
+    const types2 = List<GameBoardType | null>([
+        GameBoardType.Imperial,
+        null,
+        GameBoardType.WillMergeChains,
+        GameBoardType.WillPutLonelyTileDown,
+        GameBoardType.HaveNeighboringTileToo,
+        GameBoardType.HaveNeighboringTileToo,
+    ]);
+
+    const tiles3 = List<number | null>([null, 86, null, 38, null, 74]);
+    const types3 = List<GameBoardType | null>([null, GameBoardType.CantPlayEver, null, GameBoardType.WillFormNewChain, null, GameBoardType.CantPlayNow]);
+
+    const buttonSize = 40;
+
+    return (
+        <div>
+            <h1>TileRack</h1>
+            <TileRack tiles={tiles1} types={types1} buttonSize={buttonSize} />
+            <br />
+            <TileRack tiles={tiles2} types={types2} buttonSize={buttonSize} />
+            <br />
+            <TileRack tiles={tiles3} types={types3} buttonSize={buttonSize} />
         </div>
     );
 }
