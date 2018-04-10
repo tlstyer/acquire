@@ -53,8 +53,13 @@ export function GameBoard({
                 }
             }
 
+            let optionalParams: { [key: string]: any } = {};
+            if (gameBoardType === GameBoardType.IHaveThis) {
+                optionalParams.onClick = () => onCellClicked(tile);
+            }
+
             cells[x] = (
-                <td key={x} className={getCssStyleForGameBoardType(gameBoardType)} onClick={() => onCellClicked(tile)}>
+                <td key={x} className={getCssStyleForGameBoardType(gameBoardType)} {...optionalParams}>
                     {label}
                 </td>
             );
