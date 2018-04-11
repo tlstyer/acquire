@@ -1,0 +1,55 @@
+.root {
+    background-color: white;
+    border-collapse: collapse;
+    font-weight: bold;
+    table-layout: fixed;
+    & td {
+        border: 2px solid rgb(246, 244, 242);
+        overflow: hidden;
+        white-space: nowrap;
+        &:nth-child(1) {
+            padding-left: 3px;
+            text-align: left;
+        }
+        &:nth-child(n + 2):nth-child(-n + 8) {
+            text-align: center;
+        }
+        &:nth-child(n + 9) {
+            padding-right: 3px;
+            text-align: right;
+        }
+    }
+}
+
+.playerHeader {
+    background-color: rgb(192, 192, 255);
+}
+.cashAndNetHeader {
+    background-color: rgb(0, 128, 0);
+    color: white;
+}
+
+.isPlayersTurn {
+    background-color: rgb(255, 192, 192);
+}
+.isPlayersMove {
+    background-color: rgb(255, 224, 224);
+}
+
+.player {
+    background-color: white;
+}
+.availableChainSizeAndPrice {
+    background-color: rgb(192, 255, 255);
+}
+
+.safeChain {
+    background-color: rgb(255, 192, 128);
+}
+
+.bottomRightCells {
+    background-color: rgb(246, 244, 242);
+}
+.teamTotal {
+    background-color: white;
+}

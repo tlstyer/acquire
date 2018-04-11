@@ -6,12 +6,13 @@ import * as ReactDOM from 'react-dom';
 
 import { GameBoardType } from '../enums';
 import { GameBoard } from './components/GameBoard';
-import { GameBoardLabelMode } from './enums';
+import { ScoreBoard, ScoreBoardProps } from './components/ScoreBoard';
 import { TileRack } from './components/TileRack';
+import { GameBoardLabelMode } from './enums';
 import { getTileString } from './helpers';
 
 function main() {
-    ReactDOM.render([getGameBoard(), getTileRack()], document.getElementById('root'));
+    ReactDOM.render([getGameBoard(), getScoreBoard(), getTileRack()], document.getElementById('root'));
 }
 
 function onTileClicked(tile: number) {
@@ -51,6 +52,65 @@ function getGameBoard() {
             />
             <h2>labelMode=Nothing</h2>
             <GameBoard gameBoard={gameBoard} tileRack={tileRack} labelMode={GameBoardLabelMode.Nothing} cellSize={cellSize} onCellClicked={onTileClicked} />
+        </div>
+    );
+}
+
+function getScoreBoard() {
+    const props1: ScoreBoardProps = {
+        usernames: ['winning player', 'losing player'],
+        scoreBoard: List<List<number>>([List([6, 1, 13, 10, 4, 4, 6, 207, 785]), List([1, 0, 11, 0, 3, 1, 1, 256, 533])]),
+        scoreBoardAvailable: List<number>([18, 24, 1, 15, 18, 20, 18]),
+        scoreBoardChainSize: List<number>([3, 0, 39, 5, 2, 4, 13]),
+        scoreBoardPrice: List<number>([3, 0, 10, 6, 3, 6, 9]),
+        turnPlayerID: 1,
+        movePlayerID: 0,
+        isTeamGame: false,
+        cellWidth: 30,
+    };
+
+    const props2: ScoreBoardProps = {
+        usernames: ['tlstyer', 'REALLY LONG NAME', 'Somebody Else', 'hi!'],
+        scoreBoard: List<List<number>>([
+            List([4, 0, 0, 0, 0, 0, 0, 74, 82]),
+            List([0, 4, 0, 0, 0, 0, 0, 74, 82]),
+            List([0, 0, 0, 0, 0, 4, 0, 88, 104]),
+            List([1, 1, 0, 0, 0, 1, 1, 92, 228]),
+        ]),
+        scoreBoardAvailable: List<number>([20, 20, 25, 25, 25, 20, 24]),
+        scoreBoardChainSize: List<number>([2, 2, 0, 0, 0, 2, 9]),
+        scoreBoardPrice: List<number>([2, 2, 0, 0, 0, 4, 8]),
+        turnPlayerID: 0,
+        movePlayerID: 0,
+        isTeamGame: false,
+        cellWidth: 30,
+    };
+
+    const props3: ScoreBoardProps = {
+        usernames: ['player 1', 'player 2', 'player 3', 'player 4'],
+        scoreBoard: List<List<number>>([
+            List([0, 0, 5, 9, 0, 13, 0, 0, 427]),
+            List([8, 1, 0, 13, 0, 12, 0, 63, 474]),
+            List([7, 1, 11, 0, 0, 0, 0, 107, 212]),
+            List([1, 3, 9, 3, 0, 0, 0, 213, 310]),
+        ]),
+        scoreBoardAvailable: List<number>([9, 20, 0, 0, 25, 0, 25]),
+        scoreBoardChainSize: List<number>([0, 0, 4, 27, 0, 42, 0]),
+        scoreBoardPrice: List<number>([0, 0, 5, 9, 0, 12, 0]),
+        turnPlayerID: -1,
+        movePlayerID: -1,
+        isTeamGame: true,
+        cellWidth: 30,
+    };
+
+    return (
+        <div>
+            <h1>ScoreBoard</h1>
+            <ScoreBoard {...props1} />
+            <br />
+            <ScoreBoard {...props2} />
+            <br />
+            <ScoreBoard {...props3} />
         </div>
     );
 }
