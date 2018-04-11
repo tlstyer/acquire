@@ -5,9 +5,9 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
 import { GameBoardType } from '../enums';
-import { GameBoard } from './components/GameBoard';
+import { GameBoard, GameBoardProps } from './components/GameBoard';
 import { ScoreBoard, ScoreBoardProps } from './components/ScoreBoard';
-import { TileRack } from './components/TileRack';
+import { TileRack, TileRackProps } from './components/TileRack';
 import { GameBoardLabelMode } from './enums';
 import { getTileString } from './helpers';
 
@@ -20,38 +20,40 @@ function onTileClicked(tile: number) {
 }
 
 function getGameBoard() {
-    const gameBoard = List<GameBoardType>([
-        ...[0, 7, 7, 7, 7, 7, 7, 7, 7],
-        ...[0, 7, 7, 7, 7, 7, 7, 7, 7],
-        ...[7, 8, 7, 7, 7, 7, 8, 7, 7],
-        ...[1, 7, 8, 7, 7, 7, 7, 7, 7],
-        ...[1, 7, 7, 7, 7, 7, 7, 7, 7],
-        ...[7, 7, 7, 7, 5, 7, 7, 8, 7],
-        ...[2, 7, 7, 7, 5, 5, 5, 7, 7],
-        ...[2, 7, 8, 7, 5, 5, 7, 7, 7],
-        ...[7, 7, 7, 7, 5, 9, 6, 6, 6],
-        ...[3, 7, 7, 7, 5, 7, 6, 6, 6],
-        ...[3, 7, 7, 7, 5, 9, 6, 6, 6],
-        ...[7, 4, 4, 7, 5, 5, 9, 6, 6],
-    ]);
-    const tileRack = List<number | null>([8, 86, null, 40, 99, 12]);
-    const cellSize = 40;
+    const props1: GameBoardProps = {
+        gameBoard: List([
+            ...[0, 7, 7, 7, 7, 7, 7, 7, 7],
+            ...[0, 7, 7, 7, 7, 7, 7, 7, 7],
+            ...[7, 8, 7, 7, 7, 7, 8, 7, 7],
+            ...[1, 7, 8, 7, 7, 7, 7, 7, 7],
+            ...[1, 7, 7, 7, 7, 7, 7, 7, 7],
+            ...[7, 7, 7, 7, 5, 7, 7, 8, 7],
+            ...[2, 7, 7, 7, 5, 5, 5, 7, 7],
+            ...[2, 7, 8, 7, 5, 5, 7, 7, 7],
+            ...[7, 7, 7, 7, 5, 9, 6, 6, 6],
+            ...[3, 7, 7, 7, 5, 7, 6, 6, 6],
+            ...[3, 7, 7, 7, 5, 9, 6, 6, 6],
+            ...[7, 4, 4, 7, 5, 5, 9, 6, 6],
+        ]),
+        tileRack: List([8, 86, null, 40, 99, 12]),
+        labelMode: GameBoardLabelMode.Coordinates,
+        cellSize: 40,
+        onCellClicked: onTileClicked,
+    };
+
+    const props2: GameBoardProps = { ...props1, labelMode: GameBoardLabelMode.HotelInitials };
+
+    const props3: GameBoardProps = { ...props1, labelMode: GameBoardLabelMode.Nothing };
 
     return (
         <div>
             <h1>GameBoard</h1>
             <h2>labelMode=Coordinates</h2>
-            <GameBoard gameBoard={gameBoard} tileRack={tileRack} labelMode={GameBoardLabelMode.Coordinates} cellSize={cellSize} onCellClicked={onTileClicked} />
+            <GameBoard {...props1} />
             <h2>labelMode=HotelInitials</h2>
-            <GameBoard
-                gameBoard={gameBoard}
-                tileRack={tileRack}
-                labelMode={GameBoardLabelMode.HotelInitials}
-                cellSize={cellSize}
-                onCellClicked={onTileClicked}
-            />
+            <GameBoard {...props2} />
             <h2>labelMode=Nothing</h2>
-            <GameBoard gameBoard={gameBoard} tileRack={tileRack} labelMode={GameBoardLabelMode.Nothing} cellSize={cellSize} onCellClicked={onTileClicked} />
+            <GameBoard {...props3} />
         </div>
     );
 }
@@ -116,39 +118,49 @@ function getScoreBoard() {
 }
 
 function getTileRack() {
-    const tiles1 = List<number | null>([1, 28, 55, 82, 92, 40]);
-    const types1 = List<GameBoardType | null>([
-        GameBoardType.Luxor,
-        GameBoardType.Tower,
-        GameBoardType.American,
-        GameBoardType.Festival,
-        GameBoardType.Worldwide,
-        GameBoardType.Continental,
-    ]);
+    const props1: TileRackProps = {
+        tiles: List([1, 28, 55, 82, 92, 40]),
+        types: List([
+            GameBoardType.Luxor,
+            GameBoardType.Tower,
+            GameBoardType.American,
+            GameBoardType.Festival,
+            GameBoardType.Worldwide,
+            GameBoardType.Continental,
+        ]),
+        buttonSize: 40,
+        onTileClicked: onTileClicked,
+    };
 
-    const tiles2 = List<number | null>([71, null, 99, 12, 8, 17]);
-    const types2 = List<GameBoardType | null>([
-        GameBoardType.Imperial,
-        null,
-        GameBoardType.WillMergeChains,
-        GameBoardType.WillPutLonelyTileDown,
-        GameBoardType.HaveNeighboringTileToo,
-        GameBoardType.HaveNeighboringTileToo,
-    ]);
+    const props2: TileRackProps = {
+        tiles: List([71, null, 99, 12, 8, 17]),
+        types: List([
+            GameBoardType.Imperial,
+            null,
+            GameBoardType.WillMergeChains,
+            GameBoardType.WillPutLonelyTileDown,
+            GameBoardType.HaveNeighboringTileToo,
+            GameBoardType.HaveNeighboringTileToo,
+        ]),
+        buttonSize: 40,
+        onTileClicked: onTileClicked,
+    };
 
-    const tiles3 = List<number | null>([null, 86, null, 38, null, 74]);
-    const types3 = List<GameBoardType | null>([null, GameBoardType.CantPlayEver, null, GameBoardType.WillFormNewChain, null, GameBoardType.CantPlayNow]);
-
-    const buttonSize = 40;
+    const props3: TileRackProps = {
+        tiles: List([null, 86, null, 38, null, 74]),
+        types: List([null, GameBoardType.CantPlayEver, null, GameBoardType.WillFormNewChain, null, GameBoardType.CantPlayNow]),
+        buttonSize: 40,
+        onTileClicked: onTileClicked,
+    };
 
     return (
         <div>
             <h1>TileRack</h1>
-            <TileRack tiles={tiles1} types={types1} buttonSize={buttonSize} onTileClicked={onTileClicked} />
+            <TileRack {...props1} />
             <br />
-            <TileRack tiles={tiles2} types={types2} buttonSize={buttonSize} onTileClicked={onTileClicked} />
+            <TileRack {...props2} />
             <br />
-            <TileRack tiles={tiles3} types={types3} buttonSize={buttonSize} onTileClicked={onTileClicked} />
+            <TileRack {...props3} />
         </div>
     );
 }

@@ -6,19 +6,15 @@ import { GameBoardLabelMode } from '../enums';
 import { getCssStyleForGameBoardType, getHotelInitial, getTileString } from '../helpers';
 import * as style from './GameBoard.css';
 
-export function GameBoard({
-    gameBoard,
-    tileRack,
-    labelMode,
-    cellSize,
-    onCellClicked,
-}: {
+export interface GameBoardProps {
     gameBoard: List<GameBoardType>;
     tileRack: List<number | null>;
     labelMode: GameBoardLabelMode;
     cellSize: number;
     onCellClicked: (tile: number) => void;
-}) {
+}
+
+export function GameBoard({ gameBoard, tileRack, labelMode, cellSize, onCellClicked }: GameBoardProps) {
     let myTiles: { [key: number]: boolean } = {};
     for (let tileIndex = 0; tileIndex < 6; tileIndex++) {
         const tile = tileRack.get(tileIndex, 0);
