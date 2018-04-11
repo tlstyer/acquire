@@ -4,15 +4,19 @@ import { List } from 'immutable';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
-import { GameBoardType } from '../enums';
+import { GameBoardType, GameHistoryMessage } from '../enums';
+import { Game } from '../game';
+import { getNewTileBag } from '../helpers';
+import { runGameTestFile } from '../runGameTestFile';
 import { GameBoard, GameBoardProps } from './components/GameBoard';
+import { GameHistory, GameHistoryProps } from './components/GameHistory';
 import { ScoreBoard, ScoreBoardProps } from './components/ScoreBoard';
 import { TileRack, TileRackProps } from './components/TileRack';
 import { GameBoardLabelMode } from './enums';
 import { getTileString } from './helpers';
 
 function main() {
-    ReactDOM.render([getGameBoard(), getScoreBoard(), getTileRack()], document.getElementById('root'));
+    ReactDOM.render([getGameBoard(), getScoreBoard(), getTileRack(), getGameHistory()], document.getElementById('root'));
 }
 
 function onTileClicked(tile: number) {
@@ -163,6 +167,135 @@ function getTileRack() {
             <TileRack {...props3} />
         </div>
     );
+}
+
+function getGameHistory() {
+    const game1 = getDummyGameForGetGameHistory();
+    const { game: game2 } = runGameTestFile(require('raw-loader!../gameTestFiles/other/all tiles played').split('\n'));
+    const { game: game3 } = runGameTestFile(require('raw-loader!../gameTestFiles/other/no tiles played for entire round').split('\n'));
+    if (game2 === null || game3 === null) {
+        return (
+            <div>
+                <h1>GameHistory</h1>
+                Couldn't load input files.
+            </div>
+        );
+    }
+
+    const props1: GameHistoryProps = {
+        usernames: ['Tim', 'Rita', 'Dad', 'Mom'],
+        moveDataHistory: game1.moveDataHistory,
+    };
+
+    const props2: GameHistoryProps = {
+        usernames: ['A User', 'Somebody Else'],
+        moveDataHistory: game2.moveDataHistory,
+    };
+
+    const props3: GameHistoryProps = {
+        usernames: ['player 1', 'player 2'],
+        moveDataHistory: game3.moveDataHistory,
+    };
+
+    return (
+        <div>
+            <h1>GameHistory</h1>
+            <GameHistory {...props1} />
+            <br />
+            <GameHistory {...props2} />
+            <br />
+            <GameHistory {...props3} />
+        </div>
+    );
+}
+
+function getDummyGameForGetGameHistory() {
+    const game = new Game(getNewTileBag(), [2, 3, 5, 8], 8, 3);
+    game.doGameAction(8, 0, []);
+    game.moveDataHistory.pop();
+
+    let moveData = game.getCurrentMoveData();
+    moveData.addGameHistoryMessage(GameHistoryMessage.TurnBegan, 0, []);
+    game.endCurrentMove();
+
+    moveData = game.getCurrentMoveData();
+    moveData.addGameHistoryMessage(GameHistoryMessage.DrewPositionTile, 1, [21]);
+    game.endCurrentMove();
+
+    moveData = game.getCurrentMoveData();
+    moveData.addGameHistoryMessage(GameHistoryMessage.StartedGame, 2, []);
+    game.endCurrentMove();
+
+    moveData = game.getCurrentMoveData();
+    moveData.addGameHistoryMessage(GameHistoryMessage.DrewTile, 3, [100]);
+    game.endCurrentMove();
+
+    moveData = game.getCurrentMoveData();
+    moveData.addGameHistoryMessage(GameHistoryMessage.HasNoPlayableTile, 0, []);
+    game.endCurrentMove();
+
+    moveData = game.getCurrentMoveData();
+    moveData.addGameHistoryMessage(GameHistoryMessage.PlayedTile, 1, [40]);
+    game.endCurrentMove();
+
+    moveData = game.getCurrentMoveData();
+    moveData.addGameHistoryMessage(GameHistoryMessage.FormedChain, 2, [0]);
+    game.endCurrentMove();
+
+    moveData = game.getCurrentMoveData();
+    moveData.addGameHistoryMessage(GameHistoryMessage.MergedChains, 3, [[1, 2]]);
+    moveData.addGameHistoryMessage(GameHistoryMessage.MergedChains, 0, [[3, 4, 5]]);
+    moveData.addGameHistoryMessage(GameHistoryMessage.MergedChains, 1, [[0, 1, 2, 6]]);
+    game.endCurrentMove();
+
+    moveData = game.getCurrentMoveData();
+    moveData.addGameHistoryMessage(GameHistoryMessage.SelectedMergerSurvivor, 2, [3]);
+    game.endCurrentMove();
+
+    moveData = game.getCurrentMoveData();
+    moveData.addGameHistoryMessage(GameHistoryMessage.SelectedChainToDisposeOfNext, 3, [4]);
+    game.endCurrentMove();
+
+    moveData = game.getCurrentMoveData();
+    moveData.addGameHistoryMessage(GameHistoryMessage.ReceivedBonus, 0, [5, 25]);
+    game.endCurrentMove();
+
+    moveData = game.getCurrentMoveData();
+    moveData.addGameHistoryMessage(GameHistoryMessage.DisposedOfShares, 1, [6, 2, 3]);
+    game.endCurrentMove();
+
+    moveData = game.getCurrentMoveData();
+    moveData.addGameHistoryMessage(GameHistoryMessage.CouldNotAffordAnyShares, 2, []);
+    game.endCurrentMove();
+
+    moveData = game.getCurrentMoveData();
+    moveData.addGameHistoryMessage(GameHistoryMessage.PurchasedShares, 3, [[]]);
+    moveData.addGameHistoryMessage(GameHistoryMessage.PurchasedShares, 0, [[[0, 3]]]);
+    moveData.addGameHistoryMessage(GameHistoryMessage.PurchasedShares, 1, [[[1, 2], [2, 1]]]);
+    moveData.addGameHistoryMessage(GameHistoryMessage.PurchasedShares, 2, [[[3, 1], [4, 1], [5, 1]]]);
+    game.endCurrentMove();
+
+    moveData = game.getCurrentMoveData();
+    moveData.addGameHistoryMessage(GameHistoryMessage.DrewLastTile, 3, []);
+    game.endCurrentMove();
+
+    moveData = game.getCurrentMoveData();
+    moveData.addGameHistoryMessage(GameHistoryMessage.ReplacedDeadTile, 0, [30]);
+    game.endCurrentMove();
+
+    moveData = game.getCurrentMoveData();
+    moveData.addGameHistoryMessage(GameHistoryMessage.EndedGame, 1, []);
+    game.endCurrentMove();
+
+    moveData = game.getCurrentMoveData();
+    moveData.addGameHistoryMessage(GameHistoryMessage.NoTilesPlayedForEntireRound, null, []);
+    game.endCurrentMove();
+
+    moveData = game.getCurrentMoveData();
+    moveData.addGameHistoryMessage(GameHistoryMessage.AllTilesPlayed, null, []);
+    game.endCurrentMove();
+
+    return game;
 }
 
 main();

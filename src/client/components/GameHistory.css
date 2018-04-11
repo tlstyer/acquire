@@ -1,0 +1,22 @@
+.root {
+    background-color: rgb(192, 192, 255);
+    overflow-y: scroll;
+    padding: 0 2px;
+}
+
+.username {
+    background-color: lightgrey;
+}
+
+.turnBegan {
+    border-bottom: none;
+    border-left: none;
+    border-right: none;
+    border-top: 1px solid black;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    & legend {
+        padding: 0 5px;
+    }
+}

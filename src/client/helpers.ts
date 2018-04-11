@@ -49,3 +49,17 @@ const hotelInitials: { [key: number]: string } = {
 export function getHotelInitial(chain: GameBoardType) {
     return hotelInitials[chain];
 }
+
+const hotelNames: { [key: number]: string } = {
+    [GameBoardType.Luxor]: 'Luxor',
+    [GameBoardType.Tower]: 'Tower',
+    [GameBoardType.American]: 'American',
+    [GameBoardType.Festival]: 'Festival',
+    [GameBoardType.Worldwide]: 'Worldwide',
+    [GameBoardType.Continental]: 'Continental',
+    [GameBoardType.Imperial]: 'Imperial',
+};
+
+export function getHotelName(chain: GameBoardType) {
+    return hotelNames[chain];
+}
