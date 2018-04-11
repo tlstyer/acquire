@@ -123,7 +123,7 @@ export class ActionPurchaseShares extends ActionBase {
         if (this.cannotAffordAnyShares) {
             this.game.getCurrentMoveData().addGameHistoryMessage(GameHistoryMessage.CouldNotAffordAnyShares, this.playerID, []);
         } else {
-            this.game.getCurrentMoveData().addGameHistoryMessage(GameHistoryMessage.PurchasedShares, this.playerID, chainsAndCounts);
+            this.game.getCurrentMoveData().addGameHistoryMessage(GameHistoryMessage.PurchasedShares, this.playerID, [chainsAndCounts]);
         }
 
         return this.completeAction(endGame === 1 && this.canEndGame);
