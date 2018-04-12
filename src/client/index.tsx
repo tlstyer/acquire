@@ -15,16 +15,17 @@ import { TileRack, TileRackProps } from './components/TileRack';
 import { GameBoardLabelMode } from './enums';
 import { getTileString } from './helpers';
 
-function main() {
-    ReactDOM.render([getGameBoard(), getScoreBoard(), getTileRack(), getGameHistory()], document.getElementById('root'));
+async function main() {
+    const props = new AllDemoProps();
+    render(props);
 }
 
 function onTileClicked(tile: number) {
     console.log('onTileClicked:', getTileString(tile));
 }
 
-function getGameBoard() {
-    const props1: GameBoardProps = {
+class AllDemoProps {
+    gameBoardProps1: GameBoardProps = {
         gameBoard: List([
             ...[0, 7, 7, 7, 7, 7, 7, 7, 7],
             ...[0, 7, 7, 7, 7, 7, 7, 7, 7],
@@ -45,25 +46,11 @@ function getGameBoard() {
         onCellClicked: onTileClicked,
     };
 
-    const props2: GameBoardProps = { ...props1, labelMode: GameBoardLabelMode.HotelInitials };
+    gameBoardProps2: GameBoardProps = { ...this.gameBoardProps1, labelMode: GameBoardLabelMode.HotelInitials };
 
-    const props3: GameBoardProps = { ...props1, labelMode: GameBoardLabelMode.Nothing };
+    gameBoardProps3: GameBoardProps = { ...this.gameBoardProps1, labelMode: GameBoardLabelMode.Nothing };
 
-    return (
-        <div>
-            <h1>GameBoard</h1>
-            <h2>labelMode=Coordinates</h2>
-            <GameBoard {...props1} />
-            <h2>labelMode=HotelInitials</h2>
-            <GameBoard {...props2} />
-            <h2>labelMode=Nothing</h2>
-            <GameBoard {...props3} />
-        </div>
-    );
-}
-
-function getScoreBoard() {
-    const props1: ScoreBoardProps = {
+    scoreBoardProps1: ScoreBoardProps = {
         usernames: ['winning player', 'losing player'],
         scoreBoard: List<List<number>>([List([6, 1, 13, 10, 4, 4, 6, 207, 785]), List([1, 0, 11, 0, 3, 1, 1, 256, 533])]),
         scoreBoardAvailable: List<number>([18, 24, 1, 15, 18, 20, 18]),
@@ -75,7 +62,7 @@ function getScoreBoard() {
         cellWidth: 30,
     };
 
-    const props2: ScoreBoardProps = {
+    scoreBoardProps2: ScoreBoardProps = {
         usernames: ['tlstyer', 'REALLY LONG NAME', 'Somebody Else', 'hi!'],
         scoreBoard: List<List<number>>([
             List([4, 0, 0, 0, 0, 0, 0, 74, 82]),
@@ -92,7 +79,7 @@ function getScoreBoard() {
         cellWidth: 30,
     };
 
-    const props3: ScoreBoardProps = {
+    scoreBoardProps3: ScoreBoardProps = {
         usernames: ['player 1', 'player 2', 'player 3', 'player 4'],
         scoreBoard: List<List<number>>([
             List([0, 0, 5, 9, 0, 13, 0, 0, 427]),
@@ -109,20 +96,7 @@ function getScoreBoard() {
         cellWidth: 30,
     };
 
-    return (
-        <div>
-            <h1>ScoreBoard</h1>
-            <ScoreBoard {...props1} />
-            <br />
-            <ScoreBoard {...props2} />
-            <br />
-            <ScoreBoard {...props3} />
-        </div>
-    );
-}
-
-function getTileRack() {
-    const props1: TileRackProps = {
+    tileRackProps1: TileRackProps = {
         tiles: List([1, 28, 55, 82, 92, 40]),
         types: List([
             GameBoardType.Luxor,
@@ -136,7 +110,7 @@ function getTileRack() {
         onTileClicked: onTileClicked,
     };
 
-    const props2: TileRackProps = {
+    tileRackProps2: TileRackProps = {
         tiles: List([71, null, 99, 12, 8, 17]),
         types: List([
             GameBoardType.Imperial,
@@ -150,152 +124,161 @@ function getTileRack() {
         onTileClicked: onTileClicked,
     };
 
-    const props3: TileRackProps = {
+    tileRackProps3: TileRackProps = {
         tiles: List([null, 86, null, 38, null, 74]),
         types: List([null, GameBoardType.CantPlayEver, null, GameBoardType.WillFormNewChain, null, GameBoardType.CantPlayNow]),
         buttonSize: 40,
         onTileClicked: onTileClicked,
     };
 
-    return (
-        <div>
-            <h1>TileRack</h1>
-            <TileRack {...props1} />
-            <br />
-            <TileRack {...props2} />
-            <br />
-            <TileRack {...props3} />
-        </div>
-    );
-}
+    gameHistoryProps1: GameHistoryProps;
+    gameHistoryProps2: GameHistoryProps;
+    gameHistoryProps3: GameHistoryProps;
 
-function getGameHistory() {
-    const game1 = getDummyGameForGetGameHistory();
-    const { game: game2 } = runGameTestFile(require('raw-loader!../gameTestFiles/other/all tiles played').split('\n'));
-    const { game: game3 } = runGameTestFile(require('raw-loader!../gameTestFiles/other/no tiles played for entire round').split('\n'));
-    if (game2 === null || game3 === null) {
-        return (
-            <div>
-                <h1>GameHistory</h1>
-                Couldn't load input files.
-            </div>
-        );
+    constructor() {
+        const game1 = AllDemoProps.getDummyGameForGetGameHistory();
+        this.gameHistoryProps1 = {
+            usernames: ['Tim', 'Rita', 'Dad', 'Mom'],
+            moveDataHistory: game1.moveDataHistory,
+        };
+
+        const { game: game2 } = runGameTestFile(require('raw-loader!../gameTestFiles/other/all tiles played').split('\n'));
+        this.gameHistoryProps2 = {
+            usernames: ['A User', 'Somebody Else'],
+            moveDataHistory: game2 !== null ? game2.moveDataHistory : [],
+        };
+
+        const { game: game3 } = runGameTestFile(require('raw-loader!../gameTestFiles/other/no tiles played for entire round').split('\n'));
+        this.gameHistoryProps3 = {
+            usernames: ['player 1', 'player 2'],
+            moveDataHistory: game3 !== null ? game3.moveDataHistory : [],
+        };
     }
 
-    const props1: GameHistoryProps = {
-        usernames: ['Tim', 'Rita', 'Dad', 'Mom'],
-        moveDataHistory: game1.moveDataHistory,
-    };
+    static getDummyGameForGetGameHistory() {
+        const game = new Game(getNewTileBag(), [2, 3, 5, 8], 8, 3);
+        game.doGameAction(8, 0, []);
+        game.moveDataHistory.pop();
 
-    const props2: GameHistoryProps = {
-        usernames: ['A User', 'Somebody Else'],
-        moveDataHistory: game2.moveDataHistory,
-    };
+        let moveData = game.getCurrentMoveData();
+        moveData.addGameHistoryMessage(GameHistoryMessage.TurnBegan, 0, []);
+        game.endCurrentMove();
 
-    const props3: GameHistoryProps = {
-        usernames: ['player 1', 'player 2'],
-        moveDataHistory: game3.moveDataHistory,
-    };
+        moveData = game.getCurrentMoveData();
+        moveData.addGameHistoryMessage(GameHistoryMessage.DrewPositionTile, 1, [21]);
+        game.endCurrentMove();
 
-    return (
-        <div>
-            <h1>GameHistory</h1>
-            <GameHistory {...props1} />
-            <br />
-            <GameHistory {...props2} />
-            <br />
-            <GameHistory {...props3} />
-        </div>
-    );
+        moveData = game.getCurrentMoveData();
+        moveData.addGameHistoryMessage(GameHistoryMessage.StartedGame, 2, []);
+        game.endCurrentMove();
+
+        moveData = game.getCurrentMoveData();
+        moveData.addGameHistoryMessage(GameHistoryMessage.DrewTile, 3, [100]);
+        game.endCurrentMove();
+
+        moveData = game.getCurrentMoveData();
+        moveData.addGameHistoryMessage(GameHistoryMessage.HasNoPlayableTile, 0, []);
+        game.endCurrentMove();
+
+        moveData = game.getCurrentMoveData();
+        moveData.addGameHistoryMessage(GameHistoryMessage.PlayedTile, 1, [40]);
+        game.endCurrentMove();
+
+        moveData = game.getCurrentMoveData();
+        moveData.addGameHistoryMessage(GameHistoryMessage.FormedChain, 2, [0]);
+        game.endCurrentMove();
+
+        moveData = game.getCurrentMoveData();
+        moveData.addGameHistoryMessage(GameHistoryMessage.MergedChains, 3, [[1, 2]]);
+        moveData.addGameHistoryMessage(GameHistoryMessage.MergedChains, 0, [[3, 4, 5]]);
+        moveData.addGameHistoryMessage(GameHistoryMessage.MergedChains, 1, [[0, 1, 2, 6]]);
+        game.endCurrentMove();
+
+        moveData = game.getCurrentMoveData();
+        moveData.addGameHistoryMessage(GameHistoryMessage.SelectedMergerSurvivor, 2, [3]);
+        game.endCurrentMove();
+
+        moveData = game.getCurrentMoveData();
+        moveData.addGameHistoryMessage(GameHistoryMessage.SelectedChainToDisposeOfNext, 3, [4]);
+        game.endCurrentMove();
+
+        moveData = game.getCurrentMoveData();
+        moveData.addGameHistoryMessage(GameHistoryMessage.ReceivedBonus, 0, [5, 25]);
+        game.endCurrentMove();
+
+        moveData = game.getCurrentMoveData();
+        moveData.addGameHistoryMessage(GameHistoryMessage.DisposedOfShares, 1, [6, 2, 3]);
+        game.endCurrentMove();
+
+        moveData = game.getCurrentMoveData();
+        moveData.addGameHistoryMessage(GameHistoryMessage.CouldNotAffordAnyShares, 2, []);
+        game.endCurrentMove();
+
+        moveData = game.getCurrentMoveData();
+        moveData.addGameHistoryMessage(GameHistoryMessage.PurchasedShares, 3, [[]]);
+        moveData.addGameHistoryMessage(GameHistoryMessage.PurchasedShares, 0, [[[0, 3]]]);
+        moveData.addGameHistoryMessage(GameHistoryMessage.PurchasedShares, 1, [[[1, 2], [2, 1]]]);
+        moveData.addGameHistoryMessage(GameHistoryMessage.PurchasedShares, 2, [[[3, 1], [4, 1], [5, 1]]]);
+        game.endCurrentMove();
+
+        moveData = game.getCurrentMoveData();
+        moveData.addGameHistoryMessage(GameHistoryMessage.DrewLastTile, 3, []);
+        game.endCurrentMove();
+
+        moveData = game.getCurrentMoveData();
+        moveData.addGameHistoryMessage(GameHistoryMessage.ReplacedDeadTile, 0, [30]);
+        game.endCurrentMove();
+
+        moveData = game.getCurrentMoveData();
+        moveData.addGameHistoryMessage(GameHistoryMessage.EndedGame, 1, []);
+        game.endCurrentMove();
+
+        moveData = game.getCurrentMoveData();
+        moveData.addGameHistoryMessage(GameHistoryMessage.NoTilesPlayedForEntireRound, null, []);
+        game.endCurrentMove();
+
+        moveData = game.getCurrentMoveData();
+        moveData.addGameHistoryMessage(GameHistoryMessage.AllTilesPlayed, null, []);
+        game.endCurrentMove();
+
+        return game;
+    }
 }
 
-function getDummyGameForGetGameHistory() {
-    const game = new Game(getNewTileBag(), [2, 3, 5, 8], 8, 3);
-    game.doGameAction(8, 0, []);
-    game.moveDataHistory.pop();
+function render(props: AllDemoProps) {
+    ReactDOM.render(
+        <div>
+            <h1>GameBoard</h1>
+            <h2>labelMode=Coordinates</h2>
+            <GameBoard {...props.gameBoardProps1} />
+            <h2>labelMode=HotelInitials</h2>
+            <GameBoard {...props.gameBoardProps2} />
+            <h2>labelMode=Nothing</h2>
+            <GameBoard {...props.gameBoardProps3} />
 
-    let moveData = game.getCurrentMoveData();
-    moveData.addGameHistoryMessage(GameHistoryMessage.TurnBegan, 0, []);
-    game.endCurrentMove();
+            <h1>ScoreBoard</h1>
+            <ScoreBoard {...props.scoreBoardProps1} />
+            <br />
+            <ScoreBoard {...props.scoreBoardProps2} />
+            <br />
+            <ScoreBoard {...props.scoreBoardProps3} />
 
-    moveData = game.getCurrentMoveData();
-    moveData.addGameHistoryMessage(GameHistoryMessage.DrewPositionTile, 1, [21]);
-    game.endCurrentMove();
+            <h1>TileRack</h1>
+            <TileRack {...props.tileRackProps1} />
+            <br />
+            <TileRack {...props.tileRackProps2} />
+            <br />
+            <TileRack {...props.tileRackProps3} />
 
-    moveData = game.getCurrentMoveData();
-    moveData.addGameHistoryMessage(GameHistoryMessage.StartedGame, 2, []);
-    game.endCurrentMove();
-
-    moveData = game.getCurrentMoveData();
-    moveData.addGameHistoryMessage(GameHistoryMessage.DrewTile, 3, [100]);
-    game.endCurrentMove();
-
-    moveData = game.getCurrentMoveData();
-    moveData.addGameHistoryMessage(GameHistoryMessage.HasNoPlayableTile, 0, []);
-    game.endCurrentMove();
-
-    moveData = game.getCurrentMoveData();
-    moveData.addGameHistoryMessage(GameHistoryMessage.PlayedTile, 1, [40]);
-    game.endCurrentMove();
-
-    moveData = game.getCurrentMoveData();
-    moveData.addGameHistoryMessage(GameHistoryMessage.FormedChain, 2, [0]);
-    game.endCurrentMove();
-
-    moveData = game.getCurrentMoveData();
-    moveData.addGameHistoryMessage(GameHistoryMessage.MergedChains, 3, [[1, 2]]);
-    moveData.addGameHistoryMessage(GameHistoryMessage.MergedChains, 0, [[3, 4, 5]]);
-    moveData.addGameHistoryMessage(GameHistoryMessage.MergedChains, 1, [[0, 1, 2, 6]]);
-    game.endCurrentMove();
-
-    moveData = game.getCurrentMoveData();
-    moveData.addGameHistoryMessage(GameHistoryMessage.SelectedMergerSurvivor, 2, [3]);
-    game.endCurrentMove();
-
-    moveData = game.getCurrentMoveData();
-    moveData.addGameHistoryMessage(GameHistoryMessage.SelectedChainToDisposeOfNext, 3, [4]);
-    game.endCurrentMove();
-
-    moveData = game.getCurrentMoveData();
-    moveData.addGameHistoryMessage(GameHistoryMessage.ReceivedBonus, 0, [5, 25]);
-    game.endCurrentMove();
-
-    moveData = game.getCurrentMoveData();
-    moveData.addGameHistoryMessage(GameHistoryMessage.DisposedOfShares, 1, [6, 2, 3]);
-    game.endCurrentMove();
-
-    moveData = game.getCurrentMoveData();
-    moveData.addGameHistoryMessage(GameHistoryMessage.CouldNotAffordAnyShares, 2, []);
-    game.endCurrentMove();
-
-    moveData = game.getCurrentMoveData();
-    moveData.addGameHistoryMessage(GameHistoryMessage.PurchasedShares, 3, [[]]);
-    moveData.addGameHistoryMessage(GameHistoryMessage.PurchasedShares, 0, [[[0, 3]]]);
-    moveData.addGameHistoryMessage(GameHistoryMessage.PurchasedShares, 1, [[[1, 2], [2, 1]]]);
-    moveData.addGameHistoryMessage(GameHistoryMessage.PurchasedShares, 2, [[[3, 1], [4, 1], [5, 1]]]);
-    game.endCurrentMove();
-
-    moveData = game.getCurrentMoveData();
-    moveData.addGameHistoryMessage(GameHistoryMessage.DrewLastTile, 3, []);
-    game.endCurrentMove();
-
-    moveData = game.getCurrentMoveData();
-    moveData.addGameHistoryMessage(GameHistoryMessage.ReplacedDeadTile, 0, [30]);
-    game.endCurrentMove();
-
-    moveData = game.getCurrentMoveData();
-    moveData.addGameHistoryMessage(GameHistoryMessage.EndedGame, 1, []);
-    game.endCurrentMove();
-
-    moveData = game.getCurrentMoveData();
-    moveData.addGameHistoryMessage(GameHistoryMessage.NoTilesPlayedForEntireRound, null, []);
-    game.endCurrentMove();
-
-    moveData = game.getCurrentMoveData();
-    moveData.addGameHistoryMessage(GameHistoryMessage.AllTilesPlayed, null, []);
-    game.endCurrentMove();
-
-    return game;
+            <h1>GameHistory</h1>
+            <GameHistory {...props.gameHistoryProps1} />
+            <br />
+            <GameHistory {...props.gameHistoryProps2} />
+            <br />
+            <GameHistory {...props.gameHistoryProps3} />
+        </div>,
+        document.getElementById('root'),
+    );
 }
 
 main();
