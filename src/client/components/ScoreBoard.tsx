@@ -18,87 +18,95 @@ export interface ScoreBoardProps {
     cellWidth: number;
 }
 
-export function ScoreBoard({
-    usernames,
-    scoreBoard,
-    scoreBoardAvailable,
-    scoreBoardChainSize,
-    scoreBoardPrice,
-    turnPlayerID,
-    movePlayerID,
-    isTeamGame,
-    cellWidth,
-}: ScoreBoardProps) {
-    const cellHeight = Math.ceil(cellWidth * 4 / 5);
+export class ScoreBoard extends React.PureComponent<ScoreBoardProps> {
+    constructor(props: ScoreBoardProps) {
+        super(props);
+    }
 
-    return (
-        <table className={style.root}>
-            <tbody>
-                <ScoreBoardHeader cellWidth={cellWidth} cellHeight={cellHeight} />
-                {usernames.map((username, playerID) => (
+    render() {
+        const {
+            usernames,
+            scoreBoard,
+            scoreBoardAvailable,
+            scoreBoardChainSize,
+            scoreBoardPrice,
+            turnPlayerID,
+            movePlayerID,
+            isTeamGame,
+            cellWidth,
+        } = this.props;
+
+        const cellHeight = Math.ceil(cellWidth * 4 / 5);
+
+        return (
+            <table className={style.root}>
+                <tbody>
+                    <ScoreBoardHeader cellWidth={cellWidth} cellHeight={cellHeight} />
+                    {usernames.map((username, playerID) => (
+                        <ScoreBoardRow
+                            key={playerID}
+                            title={username}
+                            isPlayersTurn={playerID === turnPlayerID}
+                            isPlayersMove={playerID === movePlayerID}
+                            scoreBoardRow={scoreBoard.get(playerID, defaultScoreBoardRow)}
+                            scoreBoardChainSize={scoreBoardChainSize}
+                            defaultClassName={style.player}
+                            zeroValueReplacement={''}
+                            cellWidth={cellWidth}
+                            cellHeight={cellHeight}
+                        />
+                    ))}
                     <ScoreBoardRow
-                        key={playerID}
-                        title={username}
-                        isPlayersTurn={playerID === turnPlayerID}
-                        isPlayersMove={playerID === movePlayerID}
-                        scoreBoardRow={scoreBoard.get(playerID, defaultScoreBoardRow)}
+                        title={'Available'}
+                        isPlayersTurn={false}
+                        isPlayersMove={false}
+                        scoreBoardRow={scoreBoardAvailable}
                         scoreBoardChainSize={scoreBoardChainSize}
-                        defaultClassName={style.player}
-                        zeroValueReplacement={''}
+                        defaultClassName={style.availableChainSizeAndPrice}
+                        zeroValueReplacement={'0'}
                         cellWidth={cellWidth}
                         cellHeight={cellHeight}
                     />
-                ))}
-                <ScoreBoardRow
-                    title={'Available'}
-                    isPlayersTurn={false}
-                    isPlayersMove={false}
-                    scoreBoardRow={scoreBoardAvailable}
-                    scoreBoardChainSize={scoreBoardChainSize}
-                    defaultClassName={style.availableChainSizeAndPrice}
-                    zeroValueReplacement={'0'}
-                    cellWidth={cellWidth}
-                    cellHeight={cellHeight}
-                />
-                <ScoreBoardRow
-                    title={'Chain Size'}
-                    isPlayersTurn={false}
-                    isPlayersMove={false}
-                    scoreBoardRow={scoreBoardChainSize}
-                    scoreBoardChainSize={scoreBoardChainSize}
-                    defaultClassName={style.availableChainSizeAndPrice}
-                    zeroValueReplacement={'-'}
-                    teamHeader={isTeamGame ? 'Team 1' : ''}
-                    teamTotal={
-                        isTeamGame
-                            ? scoreBoard.get(0, defaultScoreBoardRow).get(ScoreBoardIndex.Net, 0) +
-                              scoreBoard.get(2, defaultScoreBoardRow).get(ScoreBoardIndex.Net, 0)
-                            : undefined
-                    }
-                    cellWidth={cellWidth}
-                    cellHeight={cellHeight}
-                />
-                <ScoreBoardRow
-                    title={'Price ($00)'}
-                    isPlayersTurn={false}
-                    isPlayersMove={false}
-                    scoreBoardRow={scoreBoardPrice}
-                    scoreBoardChainSize={scoreBoardChainSize}
-                    defaultClassName={style.availableChainSizeAndPrice}
-                    zeroValueReplacement={'-'}
-                    teamHeader={isTeamGame ? 'Team 2' : ''}
-                    teamTotal={
-                        isTeamGame
-                            ? scoreBoard.get(1, defaultScoreBoardRow).get(ScoreBoardIndex.Net, 0) +
-                              scoreBoard.get(3, defaultScoreBoardRow).get(ScoreBoardIndex.Net, 0)
-                            : undefined
-                    }
-                    cellWidth={cellWidth}
-                    cellHeight={cellHeight}
-                />
-            </tbody>
-        </table>
-    );
+                    <ScoreBoardRow
+                        title={'Chain Size'}
+                        isPlayersTurn={false}
+                        isPlayersMove={false}
+                        scoreBoardRow={scoreBoardChainSize}
+                        scoreBoardChainSize={scoreBoardChainSize}
+                        defaultClassName={style.availableChainSizeAndPrice}
+                        zeroValueReplacement={'-'}
+                        teamHeader={isTeamGame ? 'Team 1' : ''}
+                        teamTotal={
+                            isTeamGame
+                                ? scoreBoard.get(0, defaultScoreBoardRow).get(ScoreBoardIndex.Net, 0) +
+                                  scoreBoard.get(2, defaultScoreBoardRow).get(ScoreBoardIndex.Net, 0)
+                                : undefined
+                        }
+                        cellWidth={cellWidth}
+                        cellHeight={cellHeight}
+                    />
+                    <ScoreBoardRow
+                        title={'Price ($00)'}
+                        isPlayersTurn={false}
+                        isPlayersMove={false}
+                        scoreBoardRow={scoreBoardPrice}
+                        scoreBoardChainSize={scoreBoardChainSize}
+                        defaultClassName={style.availableChainSizeAndPrice}
+                        zeroValueReplacement={'-'}
+                        teamHeader={isTeamGame ? 'Team 2' : ''}
+                        teamTotal={
+                            isTeamGame
+                                ? scoreBoard.get(1, defaultScoreBoardRow).get(ScoreBoardIndex.Net, 0) +
+                                  scoreBoard.get(3, defaultScoreBoardRow).get(ScoreBoardIndex.Net, 0)
+                                : undefined
+                        }
+                        cellWidth={cellWidth}
+                        cellHeight={cellHeight}
+                    />
+                </tbody>
+            </table>
+        );
+    }
 }
 
 interface ScoreBoardHeaderProps {
@@ -108,32 +116,40 @@ interface ScoreBoardHeaderProps {
 
 const chains = [0, 1, 2, 3, 4, 5, 6];
 
-function ScoreBoardHeader({ cellWidth, cellHeight }: ScoreBoardHeaderProps) {
-    const playerStyle = { width: cellWidth * 5, maxWidth: cellWidth * 5, height: cellHeight, maxHeight: cellHeight };
-    const chainStyle = { width: cellWidth, maxWidth: cellWidth, height: cellHeight, maxHeight: cellHeight };
-    const cashAndNetStyle = { width: cellWidth * 3, maxWidth: cellWidth * 3, height: cellHeight, maxHeight: cellHeight };
+class ScoreBoardHeader extends React.PureComponent<ScoreBoardHeaderProps> {
+    constructor(props: ScoreBoardHeaderProps) {
+        super(props);
+    }
 
-    return (
-        <tr>
-            <td className={style.playerHeader} style={playerStyle}>
-                Player
-            </td>
-            {chains.map(chain => (
-                <td key={chain} className={getCssStyleForGameBoardType(chain)} style={chainStyle}>
-                    {getHotelInitial(chain)}
+    render() {
+        const { cellWidth, cellHeight } = this.props;
+
+        const playerStyle = { width: cellWidth * 5, maxWidth: cellWidth * 5, height: cellHeight, maxHeight: cellHeight };
+        const chainStyle = { width: cellWidth, maxWidth: cellWidth, height: cellHeight, maxHeight: cellHeight };
+        const cashAndNetStyle = { width: cellWidth * 3, maxWidth: cellWidth * 3, height: cellHeight, maxHeight: cellHeight };
+
+        return (
+            <tr>
+                <td className={style.playerHeader} style={playerStyle}>
+                    Player
                 </td>
-            ))}
-            <td className={style.cashAndNetHeader} style={cashAndNetStyle}>
-                Cash
-            </td>
-            <td className={style.cashAndNetHeader} style={cashAndNetStyle}>
-                Net
-            </td>
-        </tr>
-    );
+                {chains.map(chain => (
+                    <td key={chain} className={getCssStyleForGameBoardType(chain)} style={chainStyle}>
+                        {getHotelInitial(chain)}
+                    </td>
+                ))}
+                <td className={style.cashAndNetHeader} style={cashAndNetStyle}>
+                    Cash
+                </td>
+                <td className={style.cashAndNetHeader} style={cashAndNetStyle}>
+                    Net
+                </td>
+            </tr>
+        );
+    }
 }
 
-interface ScoreBoardPlayerRow {
+interface ScoreBoardRowProps {
     title: string;
     isPlayersTurn: boolean;
     isPlayersMove: boolean;
@@ -147,63 +163,71 @@ interface ScoreBoardPlayerRow {
     cellHeight: number;
 }
 
-function ScoreBoardRow({
-    title,
-    isPlayersTurn,
-    isPlayersMove,
-    scoreBoardRow,
-    scoreBoardChainSize,
-    defaultClassName,
-    zeroValueReplacement,
-    teamHeader,
-    teamTotal,
-    cellWidth,
-    cellHeight,
-}: ScoreBoardPlayerRow) {
-    const playerStyle = { width: cellWidth * 5, maxWidth: cellWidth * 5, height: cellHeight, maxHeight: cellHeight };
-    const chainStyle = { width: cellWidth, maxWidth: cellWidth, height: cellHeight, maxHeight: cellHeight };
-    const cashAndNetStyle = { width: cellWidth * 3, maxWidth: cellWidth * 3, height: cellHeight, maxHeight: cellHeight };
-
-    let nameCellClassName: string | undefined;
-    if (isPlayersTurn) {
-        nameCellClassName = style.isPlayersTurn;
-    } else if (isPlayersMove) {
-        nameCellClassName = style.isPlayersMove;
-    } else {
-        nameCellClassName = defaultClassName;
+class ScoreBoardRow extends React.PureComponent<ScoreBoardRowProps> {
+    constructor(props: ScoreBoardRowProps) {
+        super(props);
     }
 
-    return (
-        <tr>
-            <td className={nameCellClassName} style={playerStyle}>
-                {title}
-            </td>
-            {scoreBoardChainSize.map((size, chain) => {
-                const value = scoreBoardRow.get(chain, 0);
-                return (
-                    <td key={chain} className={scoreBoardChainSize.get(chain, 0) >= 11 ? style.safeChain : defaultClassName} style={chainStyle}>
-                        {value === 0 ? zeroValueReplacement : value}
+    render() {
+        const {
+            title,
+            isPlayersTurn,
+            isPlayersMove,
+            scoreBoardRow,
+            scoreBoardChainSize,
+            defaultClassName,
+            zeroValueReplacement,
+            teamHeader,
+            teamTotal,
+            cellWidth,
+            cellHeight,
+        } = this.props;
+
+        const playerStyle = { width: cellWidth * 5, maxWidth: cellWidth * 5, height: cellHeight, maxHeight: cellHeight };
+        const chainStyle = { width: cellWidth, maxWidth: cellWidth, height: cellHeight, maxHeight: cellHeight };
+        const cashAndNetStyle = { width: cellWidth * 3, maxWidth: cellWidth * 3, height: cellHeight, maxHeight: cellHeight };
+
+        let nameCellClassName: string | undefined;
+        if (isPlayersTurn) {
+            nameCellClassName = style.isPlayersTurn;
+        } else if (isPlayersMove) {
+            nameCellClassName = style.isPlayersMove;
+        } else {
+            nameCellClassName = defaultClassName;
+        }
+
+        return (
+            <tr>
+                <td className={nameCellClassName} style={playerStyle}>
+                    {title}
+                </td>
+                {scoreBoardChainSize.map((size, chain) => {
+                    const value = scoreBoardRow.get(chain, 0);
+                    return (
+                        <td key={chain} className={scoreBoardChainSize.get(chain, 0) >= 11 ? style.safeChain : defaultClassName} style={chainStyle}>
+                            {value === 0 ? zeroValueReplacement : value}
+                        </td>
+                    );
+                })}
+                {scoreBoardRow.size === ScoreBoardIndex.Max ? (
+                    <td className={defaultClassName} style={cashAndNetStyle}>
+                        {scoreBoardRow.get(7, 0) * 100}
                     </td>
-                );
-            })}
-            {scoreBoardRow.size === ScoreBoardIndex.Max ? (
-                <td className={defaultClassName} style={cashAndNetStyle}>
-                    {scoreBoardRow.get(7, 0) * 100}
-                </td>
-            ) : (
-                <td className={style.bottomRightCells} style={cashAndNetStyle}>
-                    {teamHeader}
-                </td>
-            )}
-            {scoreBoardRow.size === ScoreBoardIndex.Max ? (
-                <td className={defaultClassName} style={cashAndNetStyle}>
-                    {scoreBoardRow.get(8, 0) * 100}
-                </td>
-            ) : (
-                <td className={teamTotal !== undefined ? style.teamTotal : style.bottomRightCells} style={cashAndNetStyle}>
-                    {teamTotal !== undefined ? teamTotal * 100 : ''}
-                </td>
-            )}
-        </tr>
-    );
+                ) : (
+                    <td className={style.bottomRightCells} style={cashAndNetStyle}>
+                        {teamHeader}
+                    </td>
+                )}
+                {scoreBoardRow.size === ScoreBoardIndex.Max ? (
+                    <td className={defaultClassName} style={cashAndNetStyle}>
+                        {scoreBoardRow.get(8, 0) * 100}
+                    </td>
+                ) : (
+                    <td className={teamTotal !== undefined ? style.teamTotal : style.bottomRightCells} style={cashAndNetStyle}>
+                        {teamTotal !== undefined ? teamTotal * 100 : ''}
+                    </td>
+                )}
+            </tr>
+        );
+    }
 }

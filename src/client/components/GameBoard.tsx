@@ -14,58 +14,66 @@ export interface GameBoardProps {
     onCellClicked: (tile: number) => void;
 }
 
-export function GameBoard({ gameBoard, tileRack, labelMode, cellSize, onCellClicked }: GameBoardProps) {
-    let myTiles: { [key: number]: boolean } = {};
-    for (let tileIndex = 0; tileIndex < 6; tileIndex++) {
-        const tile = tileRack.get(tileIndex, 0);
-        if (tile !== null) {
-            myTiles[tile] = true;
-        }
+export class GameBoard extends React.PureComponent<GameBoardProps> {
+    constructor(props: GameBoardProps) {
+        super(props);
     }
 
-    const rows = new Array(9);
-    for (let y = 0; y < 9; y++) {
-        const cells = new Array(12);
-        for (let x = 0; x < 12; x++) {
-            const tile = x * 9 + y;
-            const gameBoardType = myTiles[tile] ? GameBoardType.IHaveThis : gameBoard.get(tile, 0);
+    render() {
+        const { gameBoard, tileRack, labelMode, cellSize, onCellClicked } = this.props;
 
-            let label;
-            if (labelMode === GameBoardLabelMode.Coordinates) {
-                label = getTileString(tile);
-            } else if (labelMode === GameBoardLabelMode.HotelInitials) {
-                if (gameBoardType === GameBoardType.Nothing || gameBoardType === GameBoardType.IHaveThis) {
-                    label = getTileString(tile);
-                } else if (gameBoardType <= GameBoardType.Imperial) {
-                    label = getHotelInitial(gameBoardType);
-                } else {
-                    label = '';
-                }
-            } else if (labelMode === GameBoardLabelMode.Nothing) {
-                if (gameBoardType === GameBoardType.Nothing || gameBoardType === GameBoardType.IHaveThis) {
-                    label = getTileString(tile);
-                } else {
-                    label = '';
-                }
+        let myTiles: { [key: number]: boolean } = {};
+        for (let tileIndex = 0; tileIndex < 6; tileIndex++) {
+            const tile = tileRack.get(tileIndex, 0);
+            if (tile !== null) {
+                myTiles[tile] = true;
             }
-
-            let optionalParams: { [key: string]: any } = {};
-            if (gameBoardType === GameBoardType.IHaveThis) {
-                optionalParams.onClick = () => onCellClicked(tile);
-            }
-
-            cells[x] = (
-                <td key={x} className={getCssStyleForGameBoardType(gameBoardType)} {...optionalParams}>
-                    {label}
-                </td>
-            );
         }
-        rows[y] = <tr key={y}>{cells}</tr>;
-    }
 
-    return (
-        <table className={style.root} style={{ width: cellSize * 12 + 2, height: cellSize * 9 + 2, fontSize: cellSize * 2 / 5 }}>
-            <tbody>{rows}</tbody>
-        </table>
-    );
+        const rows = new Array(9);
+        for (let y = 0; y < 9; y++) {
+            const cells = new Array(12);
+            for (let x = 0; x < 12; x++) {
+                const tile = x * 9 + y;
+                const gameBoardType = myTiles[tile] ? GameBoardType.IHaveThis : gameBoard.get(tile, 0);
+
+                let label;
+                if (labelMode === GameBoardLabelMode.Coordinates) {
+                    label = getTileString(tile);
+                } else if (labelMode === GameBoardLabelMode.HotelInitials) {
+                    if (gameBoardType === GameBoardType.Nothing || gameBoardType === GameBoardType.IHaveThis) {
+                        label = getTileString(tile);
+                    } else if (gameBoardType <= GameBoardType.Imperial) {
+                        label = getHotelInitial(gameBoardType);
+                    } else {
+                        label = '';
+                    }
+                } else if (labelMode === GameBoardLabelMode.Nothing) {
+                    if (gameBoardType === GameBoardType.Nothing || gameBoardType === GameBoardType.IHaveThis) {
+                        label = getTileString(tile);
+                    } else {
+                        label = '';
+                    }
+                }
+
+                let optionalParams: { [key: string]: any } = {};
+                if (gameBoardType === GameBoardType.IHaveThis) {
+                    optionalParams.onClick = () => onCellClicked(tile);
+                }
+
+                cells[x] = (
+                    <td key={x} className={getCssStyleForGameBoardType(gameBoardType)} {...optionalParams}>
+                        {label}
+                    </td>
+                );
+            }
+            rows[y] = <tr key={y}>{cells}</tr>;
+        }
+
+        return (
+            <table className={style.root} style={{ width: cellSize * 12 + 2, height: cellSize * 9 + 2, fontSize: cellSize * 2 / 5 }}>
+                <tbody>{rows}</tbody>
+            </table>
+        );
+    }
 }

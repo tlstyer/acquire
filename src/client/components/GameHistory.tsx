@@ -10,12 +10,20 @@ export interface GameHistoryProps {
     moveDataHistory: MoveData[];
 }
 
-export function GameHistory({ usernames, moveDataHistory }: GameHistoryProps) {
-    return (
-        <div className={style.root} style={{ width: 600, height: 300 }}>
-            {moveDataHistory.map((moveData, i) => <MoveHistory key={i} usernames={usernames} moveData={moveData} />)}
-        </div>
-    );
+export class GameHistory extends React.PureComponent<GameHistoryProps> {
+    constructor(props: GameHistoryProps) {
+        super(props);
+    }
+
+    render() {
+        const { usernames, moveDataHistory } = this.props;
+
+        return (
+            <div className={style.root} style={{ width: 600, height: 300 }}>
+                {moveDataHistory.map((moveData, i) => <MoveHistory key={i} usernames={usernames} moveData={moveData} />)}
+            </div>
+        );
+    }
 }
 
 interface MoveHistoryProps {
@@ -23,15 +31,23 @@ interface MoveHistoryProps {
     moveData: MoveData;
 }
 
-function MoveHistory({ usernames, moveData }: MoveHistoryProps) {
-    return (
-        <div>
-            {moveData.gameHistoryMessages.map((ghmd, index) => {
-                const username: string = ghmd.playerID === null ? '' : usernames[ghmd.playerID];
-                return gameHistoryMessageHandlerLookup[ghmd.gameHistoryMessage](ghmd, username, index);
-            })}
-        </div>
-    );
+class MoveHistory extends React.PureComponent<MoveHistoryProps> {
+    constructor(props: MoveHistoryProps) {
+        super(props);
+    }
+
+    render() {
+        const { usernames, moveData } = this.props;
+
+        return (
+            <div>
+                {moveData.gameHistoryMessages.map((ghmd, index) => {
+                    const username: string = ghmd.playerID === null ? '' : usernames[ghmd.playerID];
+                    return gameHistoryMessageHandlerLookup[ghmd.gameHistoryMessage](ghmd, username, index);
+                })}
+            </div>
+        );
+    }
 }
 
 const gameHistoryMessageHandlerLookup: { [key: number]: (ghmd: GameHistoryMessageData, username: string, key: number) => JSX.Element } = {
