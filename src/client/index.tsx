@@ -9,6 +9,7 @@ import { GameBoardType, GameHistoryMessage } from '../enums';
 import { Game } from '../game';
 import { getNewTileBag } from '../helpers';
 import { runGameTestFile } from '../runGameTestFile';
+import { DisposeOfShares, DisposeOfSharesProps } from './components/DisposeOfShares';
 import { GameBoard, GameBoardProps } from './components/GameBoard';
 import { GameHistory, GameHistoryProps } from './components/GameHistory';
 import { ScoreBoard, ScoreBoardProps } from './components/ScoreBoard';
@@ -143,6 +144,38 @@ class AllDemoProps {
         availableChains: [2, 4],
         buttonSize: 40,
         onChainSelected,
+    };
+
+    disposeOfSharesProps1: DisposeOfSharesProps = {
+        defunctChain: GameBoardType.American,
+        controllingChain: GameBoardType.Festival,
+        sharesOwnedInDefunctChain: 10,
+        sharesAvailableInControllingChain: 22,
+        onSharesDisposed,
+    };
+
+    disposeOfSharesProps2: DisposeOfSharesProps = {
+        defunctChain: GameBoardType.Imperial,
+        controllingChain: GameBoardType.Tower,
+        sharesOwnedInDefunctChain: 5,
+        sharesAvailableInControllingChain: 3,
+        onSharesDisposed,
+    };
+
+    disposeOfSharesProps3: DisposeOfSharesProps = {
+        defunctChain: GameBoardType.Continental,
+        controllingChain: GameBoardType.Worldwide,
+        sharesOwnedInDefunctChain: 1,
+        sharesAvailableInControllingChain: 3,
+        onSharesDisposed,
+    };
+
+    disposeOfSharesProps4: DisposeOfSharesProps = {
+        defunctChain: GameBoardType.Luxor,
+        controllingChain: GameBoardType.Imperial,
+        sharesOwnedInDefunctChain: 25,
+        sharesAvailableInControllingChain: 10,
+        onSharesDisposed,
     };
 
     gameHistoryProps1: GameHistoryProps;
@@ -294,6 +327,28 @@ function render(props: AllDemoProps) {
             <br />
             <SelectChain {...props.selectChainProps3} />
 
+            <h1>DisposeOfShares</h1>
+            <h2>
+                defunct owned: {props.disposeOfSharesProps1.sharesOwnedInDefunctChain}, controlling available:{' '}
+                {props.disposeOfSharesProps1.sharesAvailableInControllingChain}
+            </h2>
+            <DisposeOfShares {...props.disposeOfSharesProps1} />
+            <h2>
+                defunct owned: {props.disposeOfSharesProps2.sharesOwnedInDefunctChain}, controlling available:{' '}
+                {props.disposeOfSharesProps2.sharesAvailableInControllingChain}
+            </h2>
+            <DisposeOfShares {...props.disposeOfSharesProps2} />
+            <h2>
+                defunct owned: {props.disposeOfSharesProps3.sharesOwnedInDefunctChain}, controlling available:{' '}
+                {props.disposeOfSharesProps3.sharesAvailableInControllingChain}
+            </h2>
+            <DisposeOfShares {...props.disposeOfSharesProps3} />
+            <h2>
+                defunct owned: {props.disposeOfSharesProps4.sharesOwnedInDefunctChain}, controlling available:{' '}
+                {props.disposeOfSharesProps4.sharesAvailableInControllingChain}
+            </h2>
+            <DisposeOfShares {...props.disposeOfSharesProps4} />
+
             <h1>GameHistory</h1>
             <GameHistory {...props.gameHistoryProps1} />
             <br />
@@ -319,6 +374,10 @@ function onMoveClicked(index: number) {
 
 function onChainSelected(chain: GameBoardType) {
     console.log('onChainSelected:', gameBoardTypeToHotelInitial[chain]);
+}
+
+function onSharesDisposed(traded: number, sold: number) {
+    console.log('onSharesDisposed', traded, sold);
 }
 
 const props = new AllDemoProps();
