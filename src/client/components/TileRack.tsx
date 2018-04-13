@@ -2,7 +2,7 @@ import { List } from 'immutable';
 import * as React from 'react';
 
 import { GameBoardType } from '../../enums';
-import { gameBoardTypeToColorsStyle, getTileString } from '../helpers';
+import { gameBoardTypeToCSSClassName, getTileString } from '../helpers';
 import * as style from './TileRack.css';
 
 export interface TileRackProps {
@@ -37,7 +37,7 @@ export class TileRack extends React.PureComponent<TileRackProps> {
                     <input
                         key={i}
                         type="button"
-                        className={gameBoardTypeToColorsStyle[type]}
+                        className={gameBoardTypeToCSSClassName[type]}
                         style={buttonStyle}
                         value={getTileString(tile)}
                         disabled={disabled}

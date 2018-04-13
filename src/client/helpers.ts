@@ -3,7 +3,7 @@ import * as colors from './colors.css';
 
 export const chains = [0, 1, 2, 3, 4, 5, 6];
 
-export const gameBoardTypeToColorsStyle: { [key: number]: string } = {
+export const gameBoardTypeToCSSClassName: { [key: number]: string } = {
     [GameBoardType.Luxor]: colors.luxor,
     [GameBoardType.Tower]: colors.tower,
     [GameBoardType.American]: colors.american,

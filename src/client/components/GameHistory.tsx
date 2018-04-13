@@ -3,7 +3,7 @@ import * as React from 'react';
 
 import { GameBoardType, GameHistoryMessage } from '../../enums';
 import { GameHistoryMessageData, MoveData } from '../../game';
-import { gameBoardTypeToColorsStyle, gameBoardTypeToHotelName, getTileString } from '../helpers';
+import { gameBoardTypeToCSSClassName, gameBoardTypeToHotelName, getTileString } from '../helpers';
 import * as style from './GameHistory.css';
 
 export interface GameHistoryProps {
@@ -181,5 +181,5 @@ function getUsernameSpan(username: string) {
 }
 
 function getChainSpan(chain: GameBoardType) {
-    return <span className={gameBoardTypeToColorsStyle[chain]}>{gameBoardTypeToHotelName[chain]}</span>;
+    return <span className={gameBoardTypeToCSSClassName[chain]}>{gameBoardTypeToHotelName[chain]}</span>;
 }

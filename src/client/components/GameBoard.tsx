@@ -3,7 +3,7 @@ import * as React from 'react';
 
 import { GameBoardType } from '../../enums';
 import { GameBoardLabelMode } from '../enums';
-import { gameBoardTypeToColorsStyle, gameBoardTypeToHotelInitial, getTileString } from '../helpers';
+import { gameBoardTypeToCSSClassName, gameBoardTypeToHotelInitial, getTileString } from '../helpers';
 import * as style from './GameBoard.css';
 
 export interface GameBoardProps {
@@ -62,7 +62,7 @@ export class GameBoard extends React.PureComponent<GameBoardProps> {
                 }
 
                 cells[x] = (
-                    <td key={x} className={gameBoardTypeToColorsStyle[gameBoardType]} {...optionalParams}>
+                    <td key={x} className={gameBoardTypeToCSSClassName[gameBoardType]} {...optionalParams}>
                         {label}
                     </td>
                 );
