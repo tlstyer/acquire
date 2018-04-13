@@ -1,25 +1,25 @@
 import { GameBoardType, Tile } from '../enums';
-import * as colors from './colors.css';
+import * as common from './common.css';
 
 export const chains = [0, 1, 2, 3, 4, 5, 6];
 
 export const gameBoardTypeToCSSClassName: { [key: number]: string } = {
-    [GameBoardType.Luxor]: colors.luxor,
-    [GameBoardType.Tower]: colors.tower,
-    [GameBoardType.American]: colors.american,
-    [GameBoardType.Festival]: colors.festival,
-    [GameBoardType.Worldwide]: colors.worldwide,
-    [GameBoardType.Continental]: colors.continental,
-    [GameBoardType.Imperial]: colors.imperial,
-    [GameBoardType.Nothing]: colors.nothing,
-    [GameBoardType.NothingYet]: colors.nothingYet,
-    [GameBoardType.CantPlayEver]: colors.cantPlayEver,
-    [GameBoardType.IHaveThis]: colors.iHaveThis,
-    [GameBoardType.WillPutLonelyTileDown]: colors.willPutLonelyTileDown,
-    [GameBoardType.HaveNeighboringTileToo]: colors.haveNeighboringTileToo,
-    [GameBoardType.WillFormNewChain]: colors.willFormNewChain,
-    [GameBoardType.WillMergeChains]: colors.willMergeChains,
-    [GameBoardType.CantPlayNow]: colors.cantPlayNow,
+    [GameBoardType.Luxor]: common.luxor,
+    [GameBoardType.Tower]: common.tower,
+    [GameBoardType.American]: common.american,
+    [GameBoardType.Festival]: common.festival,
+    [GameBoardType.Worldwide]: common.worldwide,
+    [GameBoardType.Continental]: common.continental,
+    [GameBoardType.Imperial]: common.imperial,
+    [GameBoardType.Nothing]: common.nothing,
+    [GameBoardType.NothingYet]: common.nothingYet,
+    [GameBoardType.CantPlayEver]: common.cantPlayEver,
+    [GameBoardType.IHaveThis]: common.iHaveThis,
+    [GameBoardType.WillPutLonelyTileDown]: common.willPutLonelyTileDown,
+    [GameBoardType.HaveNeighboringTileToo]: common.haveNeighboringTileToo,
+    [GameBoardType.WillFormNewChain]: common.willFormNewChain,
+    [GameBoardType.WillMergeChains]: common.willMergeChains,
+    [GameBoardType.CantPlayNow]: common.cantPlayNow,
 };
 
 export const gameBoardTypeToHotelInitial: { [key: number]: string } = {
