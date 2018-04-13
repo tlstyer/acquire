@@ -15,10 +15,6 @@ export interface GameBoardProps {
 }
 
 export class GameBoard extends React.PureComponent<GameBoardProps> {
-    constructor(props: GameBoardProps) {
-        super(props);
-    }
-
     render() {
         const { gameBoard, tileRack, labelMode, cellSize, onCellClicked } = this.props;
 

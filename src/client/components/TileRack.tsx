@@ -14,10 +14,6 @@ export interface TileRackProps {
 }
 
 export class TileRack extends React.PureComponent<TileRackProps> {
-    constructor(props: TileRackProps) {
-        super(props);
-    }
-
     render() {
         const { tiles, types, buttonSize, onTileClicked } = this.props;
 

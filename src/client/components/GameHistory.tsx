@@ -14,10 +14,6 @@ export interface GameHistoryProps {
 }
 
 export class GameHistory extends React.PureComponent<GameHistoryProps> {
-    constructor(props: GameHistoryProps) {
-        super(props);
-    }
-
     render() {
         const { usernames, moveDataHistory, selectedMove, onMoveClicked } = this.props;
 
@@ -47,10 +43,6 @@ interface MoveHistoryProps {
 }
 
 class MoveHistory extends React.PureComponent<MoveHistoryProps> {
-    constructor(props: MoveHistoryProps) {
-        super(props);
-    }
-
     render() {
         const { usernames, moveData, moveIndex, isSelected, onMoveClicked } = this.props;
 

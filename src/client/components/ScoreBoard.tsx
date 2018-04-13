@@ -19,10 +19,6 @@ export interface ScoreBoardProps {
 }
 
 export class ScoreBoard extends React.PureComponent<ScoreBoardProps> {
-    constructor(props: ScoreBoardProps) {
-        super(props);
-    }
-
     render() {
         const {
             usernames,
@@ -115,10 +111,6 @@ interface ScoreBoardHeaderProps {
 }
 
 class ScoreBoardHeader extends React.PureComponent<ScoreBoardHeaderProps> {
-    constructor(props: ScoreBoardHeaderProps) {
-        super(props);
-    }
-
     render() {
         const { cellWidth, cellHeight } = this.props;
 
@@ -162,10 +154,6 @@ interface ScoreBoardRowProps {
 }
 
 class ScoreBoardRow extends React.PureComponent<ScoreBoardRowProps> {
-    constructor(props: ScoreBoardRowProps) {
-        super(props);
-    }
-
     render() {
         const {
             title,

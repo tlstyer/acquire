@@ -25,10 +25,6 @@ const typeToInstructions = {
 };
 
 export class SelectChain extends React.PureComponent<SelectChainProps> {
-    constructor(props: SelectChainProps) {
-        super(props);
-    }
-
     render() {
         const { type, availableChains, buttonSize, onChainSelected } = this.props;
 
