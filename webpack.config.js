@@ -54,6 +54,7 @@ module.exports = {
                         loader: 'typings-for-css-modules-loader',
                         options: {
                             modules: true,
+                            localIdentName: '[name]-[local]',
                             sourceMap: true,
                             namedExport: true,
                         },
