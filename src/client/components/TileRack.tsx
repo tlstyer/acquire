@@ -4,6 +4,7 @@ import * as React from 'react';
 import { GameBoardType } from '../../enums';
 import { gameBoardTypeToCSSClassName, getTileString } from '../helpers';
 import * as style from './TileRack.css';
+import * as commonStyle from '../common.css';
 
 export interface TileRackProps {
     tiles: List<number | null>;
@@ -37,7 +38,7 @@ export class TileRack extends React.PureComponent<TileRackProps> {
                     <input
                         key={i}
                         type="button"
-                        className={gameBoardTypeToCSSClassName[type]}
+                        className={commonStyle.hotelButton + ' ' + gameBoardTypeToCSSClassName[type]}
                         style={buttonStyle}
                         value={getTileString(tile)}
                         disabled={disabled}
@@ -45,7 +46,7 @@ export class TileRack extends React.PureComponent<TileRackProps> {
                     />
                 );
             } else {
-                buttons[i] = <input key={i} type="button" className={style.hidden} style={buttonStyle} value={'?'} />;
+                buttons[i] = <input key={i} type="button" className={commonStyle.invisible} style={buttonStyle} value={'?'} />;
             }
         }
 
