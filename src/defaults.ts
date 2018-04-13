@@ -1,6 +1,9 @@
 import { List } from 'immutable';
 
 import { GameBoardType } from './enums';
+import { MoveData } from './game';
+
+export const defaultMoveDataHistory = List<MoveData>([]);
 
 export const defaultTileRacks = List<List<number | null>>([]);
 

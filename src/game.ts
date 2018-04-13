@@ -1,5 +1,6 @@
 import {
     defaultGameBoard,
+    defaultMoveDataHistory,
     defaultScoreBoard,
     defaultScoreBoardAvailable,
     defaultScoreBoardChainSize,
@@ -20,7 +21,7 @@ export class Game {
     nextTileBagIndex: number = 0;
     gameBoardTypeCounts: number[];
     protected currentMoveData: MoveData | null = null;
-    moveDataHistory: MoveData[] = [];
+    moveDataHistory = defaultMoveDataHistory;
     gameActionStack: ActionBase[] = [];
     numTurnsWithoutPlayedTiles: number = 0;
 
@@ -109,7 +110,7 @@ export class Game {
         if (playerID !== currentAction.playerID) {
             throw new UserInputError('player cannot play right now');
         }
-        if (moveIndex !== this.moveDataHistory.length) {
+        if (moveIndex !== this.moveDataHistory.size) {
             throw new UserInputError('incorrect move index');
         }
 
@@ -449,7 +450,7 @@ export class Game {
 
         this.currentMoveData = this.getCurrentMoveData();
         this.currentMoveData.endMove();
-        this.moveDataHistory.push(this.currentMoveData);
+        this.moveDataHistory = this.moveDataHistory.push(this.currentMoveData);
         this.currentMoveData = null;
     }
 }

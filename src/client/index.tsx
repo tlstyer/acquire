@@ -4,6 +4,7 @@ import { List } from 'immutable';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
+import { defaultMoveDataHistory } from '../defaults';
 import { GameBoardType, GameHistoryMessage } from '../enums';
 import { Game } from '../game';
 import { getNewTileBag } from '../helpers';
@@ -145,20 +146,20 @@ class AllDemoProps {
         const { game: game2 } = runGameTestFile(require('raw-loader!../gameTestFiles/other/all tiles played').split('\n'));
         this.gameHistoryProps2 = {
             usernames: ['A User', 'Somebody Else'],
-            moveDataHistory: game2 !== null ? game2.moveDataHistory : [],
+            moveDataHistory: game2 !== null ? game2.moveDataHistory : defaultMoveDataHistory,
         };
 
         const { game: game3 } = runGameTestFile(require('raw-loader!../gameTestFiles/other/no tiles played for entire round').split('\n'));
         this.gameHistoryProps3 = {
             usernames: ['player 1', 'player 2'],
-            moveDataHistory: game3 !== null ? game3.moveDataHistory : [],
+            moveDataHistory: game3 !== null ? game3.moveDataHistory : defaultMoveDataHistory,
         };
     }
 
     static getDummyGameForGetGameHistory() {
         const game = new Game(getNewTileBag(), [2, 3, 5, 8], 8, 3);
         game.doGameAction(8, 0, []);
-        game.moveDataHistory.pop();
+        game.moveDataHistory = defaultMoveDataHistory;
 
         let moveData = game.getCurrentMoveData();
         moveData.addGameHistoryMessage(GameHistoryMessage.TurnBegan, 0, []);

@@ -1,3 +1,4 @@
+import { List } from 'immutable';
 import * as React from 'react';
 
 import { GameBoardType, GameHistoryMessage } from '../../enums';
@@ -7,7 +8,7 @@ import * as style from './GameHistory.css';
 
 export interface GameHistoryProps {
     usernames: string[];
-    moveDataHistory: MoveData[];
+    moveDataHistory: List<MoveData>;
 }
 
 export class GameHistory extends React.PureComponent<GameHistoryProps> {

@@ -86,7 +86,7 @@ export function runGameTestFile(inputLines: string[]) {
                 const playerID = parseInt(actionParts[0], 10);
 
                 const userID: number = game.userIDs[playerID];
-                const moveIndex: number = game.moveDataHistory.length;
+                const moveIndex: number = game.moveDataHistory.size;
 
                 const actualGameActionName = game.gameActionStack[game.gameActionStack.length - 1].constructor.name.slice(6);
                 // @ts-ignore actualGameActionName is in GameAction
@@ -112,7 +112,7 @@ export function runGameTestFile(inputLines: string[]) {
 
                 try {
                     game.doGameAction(userID, moveIndex, parameters);
-                    lastMoveData = game.moveDataHistory[game.moveDataHistory.length - 1];
+                    lastMoveData = game.moveDataHistory.get(game.moveDataHistory.size - 1, null);
                 } catch (error) {
                     if (error instanceof UserInputError) {
                         let stringParameters = '';
