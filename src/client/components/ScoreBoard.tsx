@@ -3,7 +3,7 @@ import * as React from 'react';
 
 import { defaultScoreBoardRow } from '../../defaults';
 import { ScoreBoardIndex } from '../../enums';
-import { getCssStyleForGameBoardType, getHotelInitial } from '../helpers';
+import { chains, getCssStyleForGameBoardType, getHotelInitial } from '../helpers';
 import * as style from './ScoreBoard.css';
 
 export interface ScoreBoardProps {
@@ -113,8 +113,6 @@ interface ScoreBoardHeaderProps {
     cellWidth: number;
     cellHeight: number;
 }
-
-const chains = [0, 1, 2, 3, 4, 5, 6];
 
 class ScoreBoardHeader extends React.PureComponent<ScoreBoardHeaderProps> {
     constructor(props: ScoreBoardHeaderProps) {
