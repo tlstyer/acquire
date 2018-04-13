@@ -37,7 +37,7 @@ export class TileRack extends React.PureComponent<TileRackProps> {
                 buttons[i] = (
                     <input
                         key={i}
-                        type="button"
+                        type={'button'}
                         className={commonStyle.hotelButton + ' ' + gameBoardTypeToCSSClassName[type]}
                         style={buttonStyle}
                         value={getTileString(tile)}
@@ -46,7 +46,7 @@ export class TileRack extends React.PureComponent<TileRackProps> {
                     />
                 );
             } else {
-                buttons[i] = <input key={i} type="button" className={commonStyle.invisible} style={buttonStyle} value={'?'} />;
+                buttons[i] = <input key={i} type={'button'} className={commonStyle.invisible} style={buttonStyle} value={'?'} />;
             }
         }
 
