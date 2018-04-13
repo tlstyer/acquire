@@ -1,5 +1,3 @@
-.root {
-    & input {
-        margin-right: 4px;
-    }
+.root :not(:last-child) {
+    margin-right: 4px;
 }
