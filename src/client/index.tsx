@@ -12,9 +12,10 @@ import { runGameTestFile } from '../runGameTestFile';
 import { GameBoard, GameBoardProps } from './components/GameBoard';
 import { GameHistory, GameHistoryProps } from './components/GameHistory';
 import { ScoreBoard, ScoreBoardProps } from './components/ScoreBoard';
+import { SelectChain, SelectChainProps, SelectChainTitle } from './components/SelectChain';
 import { TileRack, TileRackProps } from './components/TileRack';
 import { GameBoardLabelMode } from './enums';
-import { getTileString } from './helpers';
+import { gameBoardTypeToHotelInitial, getTileString } from './helpers';
 
 class AllDemoProps {
     gameBoardProps1: GameBoardProps = {
@@ -121,6 +122,27 @@ class AllDemoProps {
         types: List([null, GameBoardType.CantPlayEver, null, GameBoardType.WillFormNewChain, null, GameBoardType.CantPlayNow]),
         buttonSize: 40,
         onTileClicked: onTileClicked,
+    };
+
+    selectChainProps1: SelectChainProps = {
+        type: SelectChainTitle.SelectNewChain,
+        availableChains: [0, 1, 2, 3, 4, 5, 6],
+        buttonSize: 40,
+        onChainSelected,
+    };
+
+    selectChainProps2: SelectChainProps = {
+        type: SelectChainTitle.SelectMergerSurvivor,
+        availableChains: [0, 3, 5],
+        buttonSize: 40,
+        onChainSelected,
+    };
+
+    selectChainProps3: SelectChainProps = {
+        type: SelectChainTitle.SelectChainToDisposeOfNext,
+        availableChains: [2, 4],
+        buttonSize: 40,
+        onChainSelected,
     };
 
     gameHistoryProps1: GameHistoryProps;
@@ -265,6 +287,13 @@ function render(props: AllDemoProps) {
             <br />
             <TileRack {...props.tileRackProps3} />
 
+            <h1>SelectChain</h1>
+            <SelectChain {...props.selectChainProps1} />
+            <br />
+            <SelectChain {...props.selectChainProps2} />
+            <br />
+            <SelectChain {...props.selectChainProps3} />
+
             <h1>GameHistory</h1>
             <GameHistory {...props.gameHistoryProps1} />
             <br />
@@ -286,6 +315,10 @@ function onMoveClicked(index: number) {
     props.gameHistoryProps2.selectedMove = index;
     props.gameHistoryProps3.selectedMove = index;
     render(props);
+}
+
+function onChainSelected(chain: GameBoardType) {
+    console.log('onChainSelected:', gameBoardTypeToHotelInitial[chain]);
 }
 
 const props = new AllDemoProps();
