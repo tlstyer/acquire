@@ -3,7 +3,7 @@ import * as React from 'react';
 
 import { GameBoardType } from '../../enums';
 import { GameBoardLabelMode } from '../enums';
-import { getCssStyleForGameBoardType, getHotelInitial, getTileString } from '../helpers';
+import { gameBoardTypeToColorsStyle, gameBoardTypeToHotelInitial, getTileString } from '../helpers';
 import * as style from './GameBoard.css';
 
 export interface GameBoardProps {
@@ -44,7 +44,7 @@ export class GameBoard extends React.PureComponent<GameBoardProps> {
                     if (gameBoardType === GameBoardType.Nothing || gameBoardType === GameBoardType.IHaveThis) {
                         label = getTileString(tile);
                     } else if (gameBoardType <= GameBoardType.Imperial) {
-                        label = getHotelInitial(gameBoardType);
+                        label = gameBoardTypeToHotelInitial[gameBoardType];
                     } else {
                         label = '';
                     }
@@ -62,7 +62,7 @@ export class GameBoard extends React.PureComponent<GameBoardProps> {
                 }
 
                 cells[x] = (
-                    <td key={x} className={getCssStyleForGameBoardType(gameBoardType)} {...optionalParams}>
+                    <td key={x} className={gameBoardTypeToColorsStyle[gameBoardType]} {...optionalParams}>
                         {label}
                     </td>
                 );

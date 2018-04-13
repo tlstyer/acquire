@@ -3,7 +3,7 @@ import * as React from 'react';
 
 import { defaultScoreBoardRow } from '../../defaults';
 import { ScoreBoardIndex } from '../../enums';
-import { chains, getCssStyleForGameBoardType, getHotelInitial } from '../helpers';
+import { chains, gameBoardTypeToColorsStyle, gameBoardTypeToHotelInitial } from '../helpers';
 import * as style from './ScoreBoard.css';
 
 export interface ScoreBoardProps {
@@ -132,8 +132,8 @@ class ScoreBoardHeader extends React.PureComponent<ScoreBoardHeaderProps> {
                     Player
                 </td>
                 {chains.map(chain => (
-                    <td key={chain} className={getCssStyleForGameBoardType(chain)} style={chainStyle}>
-                        {getHotelInitial(chain)}
+                    <td key={chain} className={gameBoardTypeToColorsStyle[chain]} style={chainStyle}>
+                        {gameBoardTypeToHotelInitial[chain]}
                     </td>
                 ))}
                 <td className={style.cashAndNetHeader} style={cashAndNetStyle}>

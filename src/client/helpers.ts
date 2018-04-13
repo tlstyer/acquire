@@ -3,7 +3,7 @@ import * as colors from './colors.css';
 
 export const chains = [0, 1, 2, 3, 4, 5, 6];
 
-const gameBoardTypeToColorsStyleLookup: { [key: number]: string } = {
+export const gameBoardTypeToColorsStyle: { [key: number]: string } = {
     [GameBoardType.Luxor]: colors.luxor,
     [GameBoardType.Tower]: colors.tower,
     [GameBoardType.American]: colors.american,
@@ -22,9 +22,25 @@ const gameBoardTypeToColorsStyleLookup: { [key: number]: string } = {
     [GameBoardType.CantPlayNow]: colors.cantPlayNow,
 };
 
-export function getCssStyleForGameBoardType(gameBoardType: GameBoardType) {
-    return gameBoardTypeToColorsStyleLookup[gameBoardType];
-}
+export const gameBoardTypeToHotelInitial: { [key: number]: string } = {
+    [GameBoardType.Luxor]: 'L',
+    [GameBoardType.Tower]: 'T',
+    [GameBoardType.American]: 'A',
+    [GameBoardType.Festival]: 'F',
+    [GameBoardType.Worldwide]: 'W',
+    [GameBoardType.Continental]: 'C',
+    [GameBoardType.Imperial]: 'I',
+};
+
+export const gameBoardTypeToHotelName: { [key: number]: string } = {
+    [GameBoardType.Luxor]: 'Luxor',
+    [GameBoardType.Tower]: 'Tower',
+    [GameBoardType.American]: 'American',
+    [GameBoardType.Festival]: 'Festival',
+    [GameBoardType.Worldwide]: 'Worldwide',
+    [GameBoardType.Continental]: 'Continental',
+    [GameBoardType.Imperial]: 'Imperial',
+};
 
 const yTileNames = 'ABCDEFGHI';
 
@@ -36,32 +52,4 @@ export function getTileString(tile: number) {
         let y = yTileNames[tile % 9];
         return x + y;
     }
-}
-
-const hotelInitials: { [key: number]: string } = {
-    [GameBoardType.Luxor]: 'L',
-    [GameBoardType.Tower]: 'T',
-    [GameBoardType.American]: 'A',
-    [GameBoardType.Festival]: 'F',
-    [GameBoardType.Worldwide]: 'W',
-    [GameBoardType.Continental]: 'C',
-    [GameBoardType.Imperial]: 'I',
-};
-
-export function getHotelInitial(chain: GameBoardType) {
-    return hotelInitials[chain];
-}
-
-const hotelNames: { [key: number]: string } = {
-    [GameBoardType.Luxor]: 'Luxor',
-    [GameBoardType.Tower]: 'Tower',
-    [GameBoardType.American]: 'American',
-    [GameBoardType.Festival]: 'Festival',
-    [GameBoardType.Worldwide]: 'Worldwide',
-    [GameBoardType.Continental]: 'Continental',
-    [GameBoardType.Imperial]: 'Imperial',
-};
-
-export function getHotelName(chain: GameBoardType) {
-    return hotelNames[chain];
 }
