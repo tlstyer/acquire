@@ -20,3 +20,15 @@
         padding: 0 5px;
     }
 }
+
+.move:hover {
+    cursor: pointer;
+}
+
+.move:not(.selected):hover {
+    background-color: rgb(255, 239, 192);
+}
+
+.move.selected {
+    background-color: rgb(255, 208, 192);
+}

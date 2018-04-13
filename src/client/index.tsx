@@ -16,15 +16,6 @@ import { TileRack, TileRackProps } from './components/TileRack';
 import { GameBoardLabelMode } from './enums';
 import { getTileString } from './helpers';
 
-async function main() {
-    const props = new AllDemoProps();
-    render(props);
-}
-
-function onTileClicked(tile: number) {
-    console.log('onTileClicked:', getTileString(tile));
-}
-
 class AllDemoProps {
     gameBoardProps1: GameBoardProps = {
         gameBoard: List([
@@ -141,18 +132,21 @@ class AllDemoProps {
         this.gameHistoryProps1 = {
             usernames: ['Tim', 'Rita', 'Dad', 'Mom'],
             moveDataHistory: game1.moveDataHistory,
+            onMoveClicked,
         };
 
         const { game: game2 } = runGameTestFile(require('raw-loader!../gameTestFiles/other/all tiles played').split('\n'));
         this.gameHistoryProps2 = {
             usernames: ['A User', 'Somebody Else'],
             moveDataHistory: game2 !== null ? game2.moveDataHistory : defaultMoveDataHistory,
+            onMoveClicked,
         };
 
         const { game: game3 } = runGameTestFile(require('raw-loader!../gameTestFiles/other/no tiles played for entire round').split('\n'));
         this.gameHistoryProps3 = {
             usernames: ['player 1', 'player 2'],
             moveDataHistory: game3 !== null ? game3.moveDataHistory : defaultMoveDataHistory,
+            onMoveClicked,
         };
     }
 
@@ -282,4 +276,17 @@ function render(props: AllDemoProps) {
     );
 }
 
-main();
+function onTileClicked(tile: number) {
+    console.log('onTileClicked:', getTileString(tile));
+}
+
+function onMoveClicked(index: number) {
+    console.log('onMoveClicked:', index);
+    props.gameHistoryProps1.selectedMove = index;
+    props.gameHistoryProps2.selectedMove = index;
+    props.gameHistoryProps3.selectedMove = index;
+    render(props);
+}
+
+const props = new AllDemoProps();
+render(props);

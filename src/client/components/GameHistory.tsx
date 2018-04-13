@@ -9,6 +9,8 @@ import * as style from './GameHistory.css';
 export interface GameHistoryProps {
     usernames: string[];
     moveDataHistory: List<MoveData>;
+    selectedMove?: number;
+    onMoveClicked: (index: number) => void;
 }
 
 export class GameHistory extends React.PureComponent<GameHistoryProps> {
@@ -17,11 +19,20 @@ export class GameHistory extends React.PureComponent<GameHistoryProps> {
     }
 
     render() {
-        const { usernames, moveDataHistory } = this.props;
+        const { usernames, moveDataHistory, selectedMove, onMoveClicked } = this.props;
 
         return (
             <div className={style.root} style={{ width: 600, height: 300 }}>
-                {moveDataHistory.map((moveData, i) => <MoveHistory key={i} usernames={usernames} moveData={moveData} />)}
+                {moveDataHistory.map((moveData, i) => (
+                    <MoveHistory
+                        key={i}
+                        usernames={usernames}
+                        moveData={moveData}
+                        moveIndex={i}
+                        isSelected={i === selectedMove}
+                        onMoveClicked={onMoveClicked}
+                    />
+                ))}
             </div>
         );
     }
@@ -30,6 +41,9 @@ export class GameHistory extends React.PureComponent<GameHistoryProps> {
 interface MoveHistoryProps {
     usernames: string[];
     moveData: MoveData;
+    moveIndex: number;
+    isSelected: boolean;
+    onMoveClicked: (index: number) => void;
 }
 
 class MoveHistory extends React.PureComponent<MoveHistoryProps> {
@@ -38,10 +52,10 @@ class MoveHistory extends React.PureComponent<MoveHistoryProps> {
     }
 
     render() {
-        const { usernames, moveData } = this.props;
+        const { usernames, moveData, moveIndex, isSelected, onMoveClicked } = this.props;
 
         return (
-            <div>
+            <div className={style.move + (isSelected ? ' ' + style.selected : '')} onClick={() => onMoveClicked(moveIndex)}>
                 {moveData.gameHistoryMessages.map((ghmd, index) => {
                     const username: string = ghmd.playerID === null ? '' : usernames[ghmd.playerID];
                     return gameHistoryMessageHandlerLookup[ghmd.gameHistoryMessage](ghmd, username, index);
