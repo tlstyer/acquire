@@ -1,10 +1,10 @@
 import { List } from 'immutable';
 import * as React from 'react';
 
-import { GameBoardType } from '../../enums';
+import { GameBoardType } from '../../common/enums';
+import * as commonStyle from '../common.css';
 import { gameBoardTypeToCSSClassName, getTileString } from '../helpers';
 import * as style from './TileRack.css';
-import * as commonStyle from '../common.css';
 
 export interface TileRackProps {
     tiles: List<number | null>;

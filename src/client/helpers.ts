@@ -1,4 +1,4 @@
-import { GameBoardType, Tile } from '../enums';
+import { GameBoardType, Tile } from '../common/enums';
 import * as common from './common.css';
 
 export const chains = [0, 1, 2, 3, 4, 5, 6];

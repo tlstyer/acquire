@@ -1,7 +1,7 @@
 import { List } from 'immutable';
 import * as React from 'react';
 
-import { GameBoardType } from '../../enums';
+import { GameBoardType } from '../../common/enums';
 import { GameBoardLabelMode } from '../enums';
 import { gameBoardTypeToCSSClassName, gameBoardTypeToHotelInitial, getTileString } from '../helpers';
 import * as style from './GameBoard.css';

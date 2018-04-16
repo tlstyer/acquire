@@ -1,8 +1,8 @@
 import { List } from 'immutable';
 import * as React from 'react';
 
-import { defaultScoreBoardRow } from '../../defaults';
-import { ScoreBoardIndex } from '../../enums';
+import { defaultScoreBoardRow } from '../../common/defaults';
+import { ScoreBoardIndex } from '../../common/enums';
 import { chains, gameBoardTypeToCSSClassName, gameBoardTypeToHotelInitial } from '../helpers';
 import * as style from './ScoreBoard.css';
 

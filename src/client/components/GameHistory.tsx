@@ -1,8 +1,8 @@
 import { List } from 'immutable';
 import * as React from 'react';
 
-import { GameBoardType, GameHistoryMessage } from '../../enums';
-import { GameHistoryMessageData, MoveData } from '../../game';
+import { GameBoardType, GameHistoryMessage } from '../../common/enums';
+import { GameHistoryMessageData, MoveData } from '../../common/game';
 import { gameBoardTypeToCSSClassName, gameBoardTypeToHotelName, getTileString } from '../helpers';
 import * as style from './GameHistory.css';
 

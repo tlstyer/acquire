@@ -4,11 +4,11 @@ import { List } from 'immutable';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
-import { defaultMoveDataHistory } from '../defaults';
-import { GameBoardType, GameHistoryMessage } from '../enums';
-import { Game } from '../game';
-import { getNewTileBag } from '../helpers';
-import { runGameTestFile } from '../runGameTestFile';
+import { defaultMoveDataHistory } from '../common/defaults';
+import { GameBoardType, GameHistoryMessage } from '../common/enums';
+import { Game } from '../common/game';
+import { getNewTileBag } from '../common/helpers';
+import { runGameTestFile } from '../common/runGameTestFile';
 import { DisposeOfShares, DisposeOfSharesProps } from './components/DisposeOfShares';
 import { GameBoard, GameBoardProps } from './components/GameBoard';
 import { GameHistory, GameHistoryProps } from './components/GameHistory';
@@ -215,14 +215,14 @@ class AllDemoProps {
             onMoveClicked,
         };
 
-        const { game: game2 } = runGameTestFile(require('raw-loader!../gameTestFiles/other/all tiles played').split('\n'));
+        const { game: game2 } = runGameTestFile(require('raw-loader!../common/gameTestFiles/other/all tiles played').split('\n'));
         this.gameHistoryProps2 = {
             usernames: ['A User', 'Somebody Else'],
             moveDataHistory: game2 !== null ? game2.moveDataHistory : defaultMoveDataHistory,
             onMoveClicked,
         };
 
-        const { game: game3 } = runGameTestFile(require('raw-loader!../gameTestFiles/other/no tiles played for entire round').split('\n'));
+        const { game: game3 } = runGameTestFile(require('raw-loader!../common/gameTestFiles/other/no tiles played for entire round').split('\n'));
         this.gameHistoryProps3 = {
             usernames: ['player 1', 'player 2'],
             moveDataHistory: game3 !== null ? game3.moveDataHistory : defaultMoveDataHistory,
