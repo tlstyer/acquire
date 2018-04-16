@@ -1,9 +1,11 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
+const { ENV } = process.env;
+
 module.exports = {
     entry: {
-        app: './src/client/index.tsx',
+        app: ENV === 'examples' ? './src/client/examples.tsx' : './src/client/index.tsx',
     },
     output: {
         filename: '[name].bundle.js',

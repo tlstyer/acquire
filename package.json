@@ -33,6 +33,8 @@
         "webpack-serve": "^0.3.1"
     },
     "scripts": {
+        "examples": "ENV=examples yarn webpack-serve",
+        "start": "ENV=dev yarn webpack-serve",
         "test": "mocha -r ts-node/register src/**/*.test.ts"
     }
 }
