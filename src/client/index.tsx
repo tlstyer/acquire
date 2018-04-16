@@ -12,6 +12,7 @@ import { runGameTestFile } from '../runGameTestFile';
 import { DisposeOfShares, DisposeOfSharesProps } from './components/DisposeOfShares';
 import { GameBoard, GameBoardProps } from './components/GameBoard';
 import { GameHistory, GameHistoryProps } from './components/GameHistory';
+import { PurchaseShares, PurchaseSharesProps } from './components/PurchaseShares';
 import { ScoreBoard, ScoreBoardProps } from './components/ScoreBoard';
 import { SelectChain, SelectChainProps, SelectChainTitle } from './components/SelectChain';
 import { TileRack, TileRackProps } from './components/TileRack';
@@ -176,6 +177,30 @@ class AllDemoProps {
         sharesOwnedInDefunctChain: 25,
         sharesAvailableInControllingChain: 10,
         onSharesDisposed,
+    };
+
+    purchaseSharesProps1: PurchaseSharesProps = {
+        scoreBoardAvailable: List<number>([3, 3, 3, 3, 3, 3, 3]),
+        scoreBoardPrice: List<number>([2, 3, 4, 5, 6, 7, 8]),
+        cash: 15,
+        buttonSize: 40,
+        onSharesPurchased,
+    };
+
+    purchaseSharesProps2: PurchaseSharesProps = {
+        scoreBoardAvailable: List<number>([0, 1, 2, 3, 0, 1, 2]),
+        scoreBoardPrice: List<number>([0, 3, 4, 5, 0, 6, 5]),
+        cash: 15,
+        buttonSize: 40,
+        onSharesPurchased,
+    };
+
+    purchaseSharesProps3: PurchaseSharesProps = {
+        scoreBoardAvailable: List<number>([1, 0, 0, 1, 1, 0, 0]),
+        scoreBoardPrice: List<number>([2, 0, 0, 5, 6, 0, 0]),
+        cash: 5,
+        buttonSize: 40,
+        onSharesPurchased,
     };
 
     gameHistoryProps1: GameHistoryProps;
@@ -349,6 +374,16 @@ function render(props: AllDemoProps) {
             </h2>
             <DisposeOfShares {...props.disposeOfSharesProps4} />
 
+            <h1>PurchaseShares</h1>
+            <h2>{getPurchaseSharesDescription(props.purchaseSharesProps1)}</h2>
+            <PurchaseShares {...props.purchaseSharesProps1} />
+            <br />
+            <h2>{getPurchaseSharesDescription(props.purchaseSharesProps2)}</h2>
+            <PurchaseShares {...props.purchaseSharesProps2} />
+            <br />
+            <h2>{getPurchaseSharesDescription(props.purchaseSharesProps3)}</h2>
+            <PurchaseShares {...props.purchaseSharesProps3} />
+
             <h1>GameHistory</h1>
             <GameHistory {...props.gameHistoryProps1} />
             <br />
@@ -358,6 +393,19 @@ function render(props: AllDemoProps) {
         </div>,
         document.getElementById('root'),
     );
+}
+
+function getPurchaseSharesDescription(props: PurchaseSharesProps) {
+    const parts: string[] = [];
+
+    for (let chain = 0; chain < 7; chain++) {
+        const numAvailable = props.scoreBoardAvailable.get(chain, 0);
+        if (numAvailable !== 0) {
+            parts.push(`${numAvailable}${gameBoardTypeToHotelInitial[chain]}@$${props.scoreBoardPrice.get(chain, 0) * 100}`);
+        }
+    }
+
+    return parts.join(', ');
 }
 
 function onTileClicked(tile: number) {
@@ -378,6 +426,10 @@ function onChainSelected(chain: GameBoardType) {
 
 function onSharesDisposed(traded: number, sold: number) {
     console.log('onSharesDisposed', traded, sold);
+}
+
+function onSharesPurchased(chains: GameBoardType[], endGame: boolean) {
+    console.log('onSharesPurchased', chains, endGame);
 }
 
 const props = new AllDemoProps();
