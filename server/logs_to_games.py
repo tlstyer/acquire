@@ -1683,14 +1683,8 @@ def format_score_board_line(entries):
 
     for index, entry in enumerate(entries):
         num_spaces_to_add = score_board_column_widths[index] - len(entry)
-
-        if (num_spaces_to_add == 1):
-            entry = ' ' + entry
-        elif (num_spaces_to_add == 2):
-            entry = '  ' + entry
-        elif (num_spaces_to_add == 3):
-            entry = '   ' + entry
-
+        if num_spaces_to_add:
+            entry = ' ' * num_spaces_to_add + entry
         line_parts.append(entry)
 
     return ' '.join(line_parts)
