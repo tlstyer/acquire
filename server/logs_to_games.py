@@ -1548,7 +1548,7 @@ game_board_type_to_character = {
     enums.GameBoardTypes.WillMergeChains.value: 'm',
     enums.GameBoardTypes.CantPlayNow.value: 'c',
 }
-score_board_column_widths = [2, 2, 2, 2, 2, 2, 2, 4, 4]
+score_board_column_widths = [1, 2, 2, 2, 2, 2, 2, 2, 4, 4]
 game_board_string_spacer = '            '
 
 
@@ -1571,7 +1571,6 @@ def make_acquire2_game_test_files(output_dir):
                 lines.append('tile bag: ' + ', '.join(to_tile_string(t) for t in tile_bag[::-1]))
                 lines.append('user IDs: ' + ', '.join(str(p[0]) for p in sorted(game.player_id_to_username.items(), key=lambda x: x[0])))
                 lines.append('starter user ID: ' + str(game.username_to_player_id[game.player_join_order[0]]))
-                lines.append('my user ID: null')
 
                 server_game = server.Game(game.game_id, game.internal_game_id, enums.GameModes[game.mode].value, game.max_players, Game._add_pending_messages, False, tile_bag)
 
@@ -1601,13 +1600,17 @@ def make_acquire2_game_test_files(output_dir):
                         pass
 
                     if len(server_game.history_messages) > num_history_messages:
+                        next_action = server_game.actions[-1]
+
                         lines.append('')
 
                         acquire2_parameters = ' ' + ' '.join(acquire2_parameter_strings) if len(acquire2_parameter_strings) > 0 else ''
                         lines.append('action: ' + str(player_id) + ' ' + game_action.name + acquire2_parameters)
 
                         game_board_lines = get_game_board_lines(server_game.game_board)
-                        score_board_lines = get_score_board_lines(server_game.score_sheet)
+                        turn_player_id = server_game.turn_player_id
+                        move_player_id = None if type(next_action) is server.ActionGameOver else next_action.player_id
+                        score_board_lines = get_score_board_lines(server_game.score_sheet, turn_player_id, move_player_id)
                         for line in get_game_board_lines_next_to_score_board_lines(game_board_lines, score_board_lines):
                             lines.append('  ' + line)
 
@@ -1619,7 +1622,7 @@ def make_acquire2_game_test_files(output_dir):
                         for history_message in server_game.history_messages[last_history_message_index:]:
                             lines.append('    ' + get_game_history_message_string(server_game.score_sheet.username_to_player_id, history_message[1]))
 
-                        lines.append('  next action: ' + get_next_action_string(server_game.actions[-1]))
+                        lines.append('  next action: ' + get_next_action_string(next_action))
 
                         last_history_message_index = len(server_game.history_messages)
 
@@ -1665,15 +1668,21 @@ def get_game_board_lines(game_board):
     return lines
 
 
-def get_score_board_lines(score_board):
+def get_score_board_lines(score_board, turn_player_id, move_player_id):
     lines = []
 
-    lines.append(format_score_board_line(['L', 'T', 'A', 'F', 'W', 'C', 'I', 'Cash', 'Net']))
-    for line in score_board.player_data:
-        lines.append(format_score_board_line(str(x) if i >= 7 or x > 0 else '' for i, x in enumerate(line[:9])))
-    lines.append(format_score_board_line(str(x) for x in score_board.available))
-    lines.append(format_score_board_line(str(x) if x > 0 else '-' for x in score_board.chain_size))
-    lines.append(format_score_board_line(str(x) if x > 0 else '-' for x in score_board.price))
+    lines.append(format_score_board_line(['P', 'L', 'T', 'A', 'F', 'W', 'C', 'I', 'Cash', 'Net']))
+    for player_id, line in enumerate(score_board.player_data):
+        if player_id == turn_player_id:
+            name = 'T'
+        elif player_id == move_player_id:
+            name = 'M'
+        else:
+            name = ''
+        lines.append(format_score_board_line([name, *[str(x) if i >= 7 or x > 0 else '' for i, x in enumerate(line[:9])]]))
+    lines.append(format_score_board_line(['A', *[str(x) for x in score_board.available]]))
+    lines.append(format_score_board_line(['C', *[str(x) if x > 0 else '-' for x in score_board.chain_size]]))
+    lines.append(format_score_board_line(['P', *[str(x) if x > 0 else '-' for x in score_board.price]]))
 
     return lines
 
