@@ -1801,6 +1801,88 @@ def get_game_history_message_string(username_to_player_id, game_history_message)
     return game_history_message_string_handlers[game_history_message[0]](game_history_message)
 
 
+class ChatMessageProcessor:
+    def __init__(self, log_timestamp, file):
+        self._client_id_to_username = {}
+        self._client_id_to_game_id = {}
+
+        self._log_parser = LogParser(log_timestamp, file)
+
+        self._line_type_to_handler = {
+            LineTypes.time: self._handle_time,
+            LineTypes.connect: self._handle_connect,
+            LineTypes.command_to_client: self._handle_command_to_client,
+        }
+
+        self._commands_to_client_handlers = {
+            enums.CommandsToClient.SetGamePlayerJoin.value: self._handle_command_to_client__set_game_player_join,
+            enums.CommandsToClient.SetGamePlayerRejoin.value: self._handle_command_to_client__set_game_player_rejoin,
+            enums.CommandsToClient.SetGameWatcherClientId.value: self._handle_command_to_client__set_game_watcher_client_id,
+            Enums.lookups['CommandsToClient'].index('SetGamePlayerClientId'): self._handle_command_to_client__set_game_player_client_id,
+            enums.CommandsToClient.AddGlobalChatMessage.value: self._handle_command_to_client__add_global_chat_message,
+            enums.CommandsToClient.AddGameChatMessage.value: self._handle_command_to_client__add_game_chat_message,
+        }
+
+        self._time = None
+
+    def go(self):
+        for line_type, _, _, parse_line_data in self._log_parser.go():
+            handler = self._line_type_to_handler.get(line_type)
+            if handler:
+                handler(*parse_line_data)
+
+    def _handle_time(self, time):
+        self._time = time
+
+    def _handle_connect(self, client_id, username):
+        self._client_id_to_username[client_id] = username
+
+    def _handle_command_to_client(self, client_ids, commands):
+        for command in commands:
+            try:
+                handler = self._commands_to_client_handlers.get(command[0])
+                if handler:
+                    handler(client_ids, command)
+            except:
+                traceback.print_exc()
+
+    def _handle_command_to_client__set_game_player_join(self, client_ids, command):
+        self._add_client_id_to_game(command[1], command[3])
+
+    def _handle_command_to_client__set_game_player_rejoin(self, client_ids, command):
+        self._add_client_id_to_game(command[1], command[3])
+
+    def _handle_command_to_client__set_game_watcher_client_id(self, client_ids, command):
+        self._add_client_id_to_game(command[1], command[2])
+
+    def _handle_command_to_client__set_game_player_client_id(self, client_ids, command):
+        if command[3] is not None:
+            self._add_client_id_to_game(command[1], command[3])
+
+    def _add_client_id_to_game(self, game_id, client_id):
+        self._client_id_to_game_id[client_id] = game_id
+
+    def _handle_command_to_client__add_global_chat_message(self, client_ids, command):
+        client_id = command[1]
+        username = self._client_id_to_username[client_id]
+        chat_message = command[2]
+        print(self._time, 'GLOBAL', username, '->', chat_message)
+
+    def _handle_command_to_client__add_game_chat_message(self, client_ids, command):
+        client_id = command[1]
+        username = self._client_id_to_username[client_id]
+        game_id = self._client_id_to_game_id[client_id]
+        chat_message = command[2]
+        print(self._time, 'GAME#' + str(game_id), username, '->', chat_message)
+
+
+def output_chat_messages(log_timestamp):
+    for log_timestamp, filename in util.get_log_file_filenames('py', begin=log_timestamp, end=log_timestamp):
+        with util.open_possibly_gzipped_file(filename) as file:
+            chat_message_processor = ChatMessageProcessor(log_timestamp, file)
+            chat_message_processor.go()
+
+
 def main():
     output_dir = '/home/tim/tmp/acquire'
     output_logs_dir = output_dir + '/logs'
@@ -1819,6 +1901,7 @@ def main():
     # make_individual_game_log(1483363628, 893, output_dir)
     # output_server_game_file_for_game(1433241253, 510, output_dir)
     # make_acquire2_game_test_files(output_dir)
+    # output_chat_messages(1520848828)
 
 
 if __name__ == '__main__':
