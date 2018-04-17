@@ -646,7 +646,7 @@ action: 0 PlayTile 10A
 
 action: 0 PurchaseShares x 0
   CCCCC█WWWWWW  P  L  T  A  F  W  C  I Cash  Net
-  CCC██WWWWWWW  T          13 12 16 13   50  877
+  CCC██WWWWWWW             13 12 16 13   50  877
   CC█II██WWWWW           2 12 13  9 12   42  695
   CCC█III██WWW  A 25 25 23  0  0  0  0
   CCC█IIIII█WW  C  -  -  - 12 27 23 23

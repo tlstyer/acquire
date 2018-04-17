@@ -7,6 +7,7 @@ import { UserInputError } from './error';
 import { Game, GameHistoryMessageData, MoveData, MoveDataTileBagTile, MoveDataTileRackTile } from './game';
 import { ActionBase } from './gameActions/base';
 import { ActionDisposeOfShares } from './gameActions/disposeOfShares';
+import { ActionGameOver } from './gameActions/gameOver';
 import { ActionSelectChainToDisposeOfNext } from './gameActions/selectChainToDisposeOfNext';
 import { ActionSelectMergerSurvivor } from './gameActions/selectMergerSurvivor';
 import { ActionSelectNewChain } from './gameActions/selectNewChain';
@@ -267,8 +268,8 @@ function getMoveDataLines(moveData: MoveData, revealedTilesPlayerID: number | nu
             moveData.scoreBoardAvailable,
             moveData.scoreBoardChainSize,
             moveData.scoreBoardPrice,
-            moveData.turnPlayerID,
-            moveData.nextGameAction.playerID,
+            moveData.nextGameAction instanceof ActionGameOver ? -1 : moveData.turnPlayerID,
+            moveData.nextGameAction instanceof ActionGameOver ? -1 : moveData.nextGameAction.playerID,
         );
         const numLines = Math.max(gameBoardLines.length, scoreBoardLines.length);
         for (let i = 0; i < numLines; i++) {
