@@ -6,10 +6,12 @@ import enums
 import itertools
 import os
 import os.path
+import orm
 import pickle
 import random
 import re
 import server
+import sqlalchemy
 import string
 import sys
 import traceback
@@ -1886,6 +1888,30 @@ def output_chat_messages(log_timestamp):
             chat_message_processor.go()
 
 
+def compare_log_usernames_with_database_usernames(log_timestamp):
+    query_for_game_players = sqlalchemy.sql.text('''
+        select game_player.player_index as player_id, user.name as username
+        from game
+        join game_player on game_player.game_id = game.game_id
+        join user on user.user_id = game_player.user_id
+        where game.log_time = :log_timestamp and game.number = :internal_game_id
+        order by game_player.player_index
+    ''')
+
+    with orm.session_scope() as session:
+        for _, filename in util.get_log_file_filenames('py', begin=log_timestamp, end=log_timestamp):
+            with util.open_possibly_gzipped_file(filename) as file:
+                log_processor = LogProcessor(log_timestamp, file)
+                for game in log_processor.go():
+                    print('--', log_timestamp, game.internal_game_id)
+                    for row in session.execute(query_for_game_players, {'log_timestamp': log_timestamp, 'internal_game_id': game.internal_game_id}):
+                        log_username = game.player_id_to_username[row.player_id]
+                        database_username = row.username.decode('utf-8')
+
+                        if log_username != database_username:
+                            print(ujson.encode([log_timestamp, game.internal_game_id, log_username, database_username]))
+
+
 def main():
     output_dir = '/home/tim/tmp/acquire'
     output_logs_dir = output_dir + '/logs'
@@ -1905,6 +1931,7 @@ def main():
     # output_server_game_file_for_game(1433241253, 510, output_dir)
     # make_acquire2_game_test_files(output_dir)
     # output_chat_messages(1520848828)
+    # compare_log_usernames_with_database_usernames(1408911415)
 
 
 if __name__ == '__main__':
