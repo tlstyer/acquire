@@ -32,7 +32,7 @@ export class ScoreBoard extends React.PureComponent<ScoreBoardProps> {
             cellWidth,
         } = this.props;
 
-        const cellHeight = Math.ceil(cellWidth * 4 / 5);
+        const cellHeight = Math.ceil(cellWidth * 0.75);
 
         return (
             <table className={style.root}>
