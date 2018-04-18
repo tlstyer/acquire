@@ -1,0 +1,9 @@
+.root {
+    table-layout: fixed;
+    border-collapse: collapse;
+    & td {
+        border: 1px solid rgb(246, 244, 242);
+        width: calc(100% / 12);
+        height: calc(100% / 9);
+    }
+}

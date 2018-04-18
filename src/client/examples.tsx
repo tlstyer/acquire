@@ -12,6 +12,7 @@ import { runGameTestFile } from '../common/runGameTestFile';
 import { DisposeOfShares, DisposeOfSharesProps } from './components/DisposeOfShares';
 import { GameBoard, GameBoardProps } from './components/GameBoard';
 import { GameHistory, GameHistoryProps } from './components/GameHistory';
+import { MiniGameBoard, MiniGameBoardProps } from './components/MiniGameBoard';
 import { PurchaseShares, PurchaseSharesProps } from './components/PurchaseShares';
 import { ScoreBoard, ScoreBoardProps } from './components/ScoreBoard';
 import { SelectChain, SelectChainProps, SelectChainTitle } from './components/SelectChain';
@@ -207,6 +208,21 @@ class AllDemoProps {
     gameHistoryProps2: GameHistoryProps;
     gameHistoryProps3: GameHistoryProps;
 
+    miniGameBoardProps1: MiniGameBoardProps = {
+        gameBoard: this.gameBoardProps1.gameBoard,
+        cellSize: 5,
+    };
+
+    miniGameBoardProps2: MiniGameBoardProps = {
+        gameBoard: this.gameBoardProps1.gameBoard,
+        cellSize: 10,
+    };
+
+    miniGameBoardProps3: MiniGameBoardProps = {
+        gameBoard: this.gameBoardProps1.gameBoard,
+        cellSize: 15,
+    };
+
     constructor() {
         const game1 = AllDemoProps.getDummyGameForGetGameHistory();
         this.gameHistoryProps1 = {
@@ -234,6 +250,14 @@ class AllDemoProps {
             height: 300,
             onMoveClicked,
         };
+
+        if (game2 !== null) {
+            this.miniGameBoardProps2.gameBoard = game2.gameBoard;
+        }
+
+        if (game3 !== null) {
+            this.miniGameBoardProps3.gameBoard = game3.gameBoard;
+        }
     }
 
     static getDummyGameForGetGameHistory() {
@@ -396,6 +420,13 @@ function render(props: AllDemoProps) {
             <GameHistory {...props.gameHistoryProps2} />
             <br />
             <GameHistory {...props.gameHistoryProps3} />
+
+            <h1>MiniGameBoard</h1>
+            <MiniGameBoard {...props.miniGameBoardProps1} />
+            <br />
+            <MiniGameBoard {...props.miniGameBoardProps2} />
+            <br />
+            <MiniGameBoard {...props.miniGameBoardProps3} />
         </div>,
         document.getElementById('root'),
     );
