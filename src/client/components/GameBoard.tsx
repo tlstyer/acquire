@@ -67,7 +67,7 @@ export class GameBoard extends React.PureComponent<GameBoardProps> {
         }
 
         return (
-            <table className={style.root} style={{ width: cellSize * 12 + 2, height: cellSize * 9 + 2, fontSize: cellSize * 2 / 5 }}>
+            <table className={style.root} style={{ width: cellSize * 12 + 2, height: cellSize * 9 + 2, fontSize: cellSize * 0.4 }}>
                 <tbody>{rows}</tbody>
             </table>
         );
