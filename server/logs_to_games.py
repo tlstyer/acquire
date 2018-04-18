@@ -1554,10 +1554,8 @@ score_board_column_widths = [1, 2, 2, 2, 2, 2, 2, 2, 4, 4]
 game_board_string_spacer = '            '
 
 
-def make_acquire2_game_test_files(output_dir):
-    for log_timestamp, filename in util.get_log_file_filenames('py', begin=1408905413):
-        print(filename)
-
+def make_acquire2_game_test_files(log_timestamp, output_dir):
+    for _, filename in util.get_log_file_filenames('py', begin=log_timestamp, end=log_timestamp):
         with util.open_possibly_gzipped_file(filename) as file:
             os.makedirs(os.path.join(output_dir, str(log_timestamp)), exist_ok=True)
 
@@ -1929,7 +1927,7 @@ def main():
     # report_on_player_ranking_distribution(output_dir)
     # make_individual_game_log(1483363628, 893, output_dir)
     # output_server_game_file_for_game(1433241253, 510, output_dir)
-    # make_acquire2_game_test_files(output_dir)
+    # make_acquire2_game_test_files(1408905413, output_dir)
     # output_chat_messages(1520848828)
     # compare_log_usernames_with_database_usernames(1408911415)
 
