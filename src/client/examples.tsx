@@ -212,6 +212,8 @@ class AllDemoProps {
         this.gameHistoryProps1 = {
             usernames: ['Tim', 'Rita', 'Dad', 'Mom'],
             moveDataHistory: game1.moveDataHistory,
+            width: 600,
+            height: 300,
             onMoveClicked,
         };
 
@@ -219,6 +221,8 @@ class AllDemoProps {
         this.gameHistoryProps2 = {
             usernames: ['A User', 'Somebody Else'],
             moveDataHistory: game2 !== null ? game2.moveDataHistory : defaultMoveDataHistory,
+            width: 600,
+            height: 300,
             onMoveClicked,
         };
 
@@ -226,6 +230,8 @@ class AllDemoProps {
         this.gameHistoryProps3 = {
             usernames: ['player 1', 'player 2'],
             moveDataHistory: game3 !== null ? game3.moveDataHistory : defaultMoveDataHistory,
+            width: 600,
+            height: 300,
             onMoveClicked,
         };
     }

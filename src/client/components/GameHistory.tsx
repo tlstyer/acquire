@@ -10,15 +10,17 @@ export interface GameHistoryProps {
     usernames: string[];
     moveDataHistory: List<MoveData>;
     selectedMove?: number;
+    width: number;
+    height: number;
     onMoveClicked: (index: number) => void;
 }
 
 export class GameHistory extends React.PureComponent<GameHistoryProps> {
     render() {
-        const { usernames, moveDataHistory, selectedMove, onMoveClicked } = this.props;
+        const { usernames, moveDataHistory, selectedMove, width, height, onMoveClicked } = this.props;
 
         return (
-            <div className={style.root} style={{ width: 600, height: 300 }}>
+            <div className={style.root} style={{ width, height }}>
                 {moveDataHistory.map((moveData, i) => (
                     <MoveHistory
                         key={i}

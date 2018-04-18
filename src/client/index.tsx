@@ -28,34 +28,69 @@ function render(moveIndex: number) {
         movePlayerID = -1;
     }
 
+    const windowWidth = window.innerWidth;
+    const windowHeight = window.innerHeight;
+
+    const gameBoardCellSizeBasedOnWindowWidth = windowWidth / 2 / 12;
+    const gameBoardCellSizeBasedOnWindowHeight = (windowHeight - 129) / 9;
+    const gameBoardCellSize = Math.floor(Math.min(gameBoardCellSizeBasedOnWindowWidth, gameBoardCellSizeBasedOnWindowHeight));
+    const gameBoardWidth = gameBoardCellSize * 12 + 2;
+
+    const scoreBoardLeft = gameBoardWidth + 2;
+    const scoreBoardCellWidth = (Math.min(gameBoardWidth, windowWidth - scoreBoardLeft) - 2) / 18;
+    const scoreBoardCellHeight = Math.ceil(scoreBoardCellWidth * 4 / 5);
+    const scoreBoardHeight = scoreBoardCellHeight * (4 + usernames.length) + 2;
+
+    const tileRackLeft = scoreBoardLeft + 2;
+    const tileRackTop = scoreBoardHeight + 4;
+
+    const gameHistoryTop = tileRackTop + gameBoardCellSize + 4;
+    const gameHistoryWidth = windowWidth - scoreBoardLeft;
+    const gameHistoryHeight = windowHeight - gameHistoryTop - 24;
+
     ReactDOM.render(
         <div>
-            <GameBoard
-                gameBoard={moveData.gameBoard}
-                tileRack={tileRack}
-                labelMode={GameBoardLabelMode.Nothing}
-                cellSize={40}
-                onCellClicked={onTileClicked}
-            />
-            <ScoreBoard
-                usernames={usernames}
-                scoreBoard={moveData.scoreBoard}
-                scoreBoardAvailable={moveData.scoreBoardAvailable}
-                scoreBoardChainSize={moveData.scoreBoardChainSize}
-                scoreBoardPrice={moveData.scoreBoardPrice}
-                turnPlayerID={turnPlayerID}
-                movePlayerID={movePlayerID}
-                isTeamGame={false}
-                cellWidth={30}
-            />
-            <TileRack tiles={tileRack} types={tileRackTypes} buttonSize={40} onTileClicked={onTileClicked} />
-            <GameHistory usernames={usernames} moveDataHistory={game.moveDataHistory} selectedMove={moveIndex} onMoveClicked={onMoveClicked} />
+            <div style={{ position: 'absolute', left: 0, top: 0 }}>
+                <GameBoard
+                    gameBoard={moveData.gameBoard}
+                    tileRack={tileRack}
+                    labelMode={GameBoardLabelMode.Nothing}
+                    cellSize={gameBoardCellSize}
+                    onCellClicked={onTileClicked}
+                />
+            </div>
+            <div style={{ position: 'absolute', left: scoreBoardLeft, top: 0 }}>
+                <ScoreBoard
+                    usernames={usernames}
+                    scoreBoard={moveData.scoreBoard}
+                    scoreBoardAvailable={moveData.scoreBoardAvailable}
+                    scoreBoardChainSize={moveData.scoreBoardChainSize}
+                    scoreBoardPrice={moveData.scoreBoardPrice}
+                    turnPlayerID={turnPlayerID}
+                    movePlayerID={movePlayerID}
+                    isTeamGame={false}
+                    cellWidth={scoreBoardCellWidth}
+                />
+            </div>
+            <div style={{ position: 'absolute', left: tileRackLeft, top: tileRackTop }}>
+                <TileRack tiles={tileRack} types={tileRackTypes} buttonSize={gameBoardCellSize} onTileClicked={onTileClicked} />
+            </div>
+            <div style={{ position: 'absolute', left: scoreBoardLeft, top: gameHistoryTop }}>
+                <GameHistory
+                    usernames={usernames}
+                    moveDataHistory={game.moveDataHistory}
+                    selectedMove={moveIndex}
+                    width={gameHistoryWidth}
+                    height={gameHistoryHeight}
+                    onMoveClicked={onMoveClicked}
+                />
+            </div>
         </div>,
         document.getElementById('root'),
     );
 }
 
-function onTileClicked(tile: number) { }
+function onTileClicked(tile: number) {}
 
 function onMoveClicked(index: number) {
     render(index);
