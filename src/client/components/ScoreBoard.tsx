@@ -35,7 +35,7 @@ export class ScoreBoard extends React.PureComponent<ScoreBoardProps> {
         const cellHeight = Math.ceil(cellWidth * 0.75);
 
         return (
-            <table className={style.root}>
+            <table className={style.root} style={{ fontSize: Math.floor(cellWidth * 0.6) }}>
                 <tbody>
                     <ScoreBoardHeader cellWidth={cellWidth} cellHeight={cellHeight} />
                     {usernames.map((username, playerID) => (
