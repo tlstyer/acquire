@@ -4,6 +4,7 @@ import collections
 import enum
 import enums
 import itertools
+import math
 import os
 import os.path
 import orm
@@ -266,6 +267,19 @@ class LogParser:
 class LogProcessor:
     _game_board_type__nothing = enums.GameBoardTypes.Nothing.value
 
+    _line_type_processing_priorities = {
+        LineTypes.time: 0,
+        LineTypes.log: 1,
+        LineTypes.connection_made: 2,
+        LineTypes.connect: 3,
+        LineTypes.game_expired: 4,
+        LineTypes.command_to_server: 5,
+        LineTypes.command_to_client: 6,
+        LineTypes.disconnect: 7,
+        LineTypes.error: 8,
+        LineTypes.blank_line: 9,
+    }
+
     def __init__(self, log_timestamp, file, verbose=False, verbose_output_path=''):
         self._log_timestamp = log_timestamp
         self._verbose = verbose
@@ -332,23 +346,31 @@ class LogProcessor:
             # SendGameChatMessage
         }
 
-        self._delayed_calls = []
-
         self._expired_games = []
 
         self._line_number = 0
 
-        self._time = None
+        self._timestamp = None
 
     def go(self):
+        line_group = []
+
         for line_type, line_number, line, parse_line_data in self._log_parser.go():
             if self._verbose:
                 self._line_number = line_number
                 print(line)
 
-            handler = self._line_type_to_handler.get(line_type)
-            if handler:
-                handler(*parse_line_data)
+            line_group.append((line_type, parse_line_data))
+
+            if line_type == LineTypes.blank_line:
+                line_group.sort(key=lambda line: LogProcessor._line_type_processing_priorities.get(line[0], -1))
+
+                for line_type, parse_line_data in line_group:
+                    handler = self._line_type_to_handler.get(line_type)
+                    if handler:
+                        handler(*parse_line_data)
+
+                line_group = []
 
             if self._expired_games:
                 for game in self._expired_games:
@@ -359,16 +381,13 @@ class LogProcessor:
             yield game
 
     def _handle_time(self, time):
-        self._time = time
+        self._timestamp = time
 
     def _handle_connect(self, client_id, username):
         self._client_id_to_username[client_id] = username
         self._username_to_client_id[username] = client_id
 
     def _handle_disconnect(self, client_id):
-        self._delayed_calls.append([self._handle_disconnect__delayed, [client_id]])
-
-    def _handle_disconnect__delayed(self, client_id):
         del self._client_id_to_username[client_id]
         self._username_to_client_id = {username: client_id for client_id, username in self._client_id_to_username.items()}
 
@@ -536,7 +555,7 @@ class LogProcessor:
             player_id = game.username_to_player_id.get(self._client_id_to_username[client_id])
 
             if player_id is not None:
-                game.actions.append([player_id, command[1:]])
+                game.actions.append([player_id, command[1:], self._timestamp])
 
     def _handle_game_expired(self, game_id):
         game = self._game_id_to_game[game_id]
@@ -579,19 +598,18 @@ class LogProcessor:
                 game.tile_bag = [tuple(x) for x in entry['tile-bag']]
             if 'begin' in entry:
                 game.begin = entry['begin']
+                if self._timestamp is None:
+                    self._timestamp = entry['begin']
             if 'end' in entry:
                 game.end = entry['end']
+                if self._timestamp is None:
+                    self._timestamp = entry['end']
             if 'score' in entry:
                 game.score = entry['score']
             if 'scores' in entry:
                 game.score = entry['scores']
 
     def _handle_blank_line(self):
-        if self._delayed_calls:
-            for func, args in self._delayed_calls:
-                func(*args)
-            del self._delayed_calls[:]
-
         if self._verbose:
             for game in self._game_id_to_game.values():
                 game.make_server_game()
@@ -610,6 +628,8 @@ class LogProcessor:
                 print(*messages)
                 print()
                 print()
+
+        self._timestamp = None
 
 
 class Game:
@@ -682,8 +702,8 @@ class Game:
             client = self._server_game_player_id_to_client[self.username_to_player_id[username]]
             self.server_game.join_game(client)
 
-        for _, player_id_and_action in enumerate(self.actions):
-            player_id, action = player_id_and_action
+        for _, player_id_and_action_and_timestamp in enumerate(self.actions):
+            player_id, action, _ = player_id_and_action_and_timestamp
 
             game_action_id = action[0]
             data = action[1:]
@@ -1582,8 +1602,8 @@ def make_acquire2_game_test_files(log_timestamp, output_dir):
 
                 last_history_message_index = 0
 
-                for _, player_id_and_action in enumerate(game.actions):
-                    player_id, action = player_id_and_action
+                for _, player_id_and_action_and_timestamp in enumerate(game.actions):
+                    player_id, action, timestamp = player_id_and_action_and_timestamp
 
                     game_action_id = action[0]
                     game_action = enums.GameActions(game_action_id)
@@ -1606,6 +1626,9 @@ def make_acquire2_game_test_files(log_timestamp, output_dir):
                         next_action = server_game.actions[-1]
 
                         lines.append('')
+
+                        if timestamp is not None:
+                            lines.append('timestamp: ' + str(math.floor(timestamp * 1000)))
 
                         acquire2_parameters = ' ' + ' '.join(acquire2_parameter_strings) if len(acquire2_parameter_strings) > 0 else ''
                         lines.append('action: ' + str(player_id) + ' ' + game_action.name + acquire2_parameters)
