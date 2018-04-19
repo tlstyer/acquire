@@ -267,6 +267,7 @@ class AllDemoProps {
 
         let moveData = game.getCurrentMoveData();
         moveData.addGameHistoryMessage(GameHistoryMessage.TurnBegan, 0, []);
+        moveData.timestamp = new Date().getTime();
         game.endCurrentMove();
 
         moveData = game.getCurrentMoveData();
