@@ -1910,6 +1910,20 @@ def compare_log_usernames_with_database_usernames(log_timestamp):
                             print(ujson.encode([log_timestamp, game.internal_game_id, log_username, database_username]))
 
 
+def output_command_to_run_this_script_in_parallel_on_all_logs():
+    log_file_data = []
+    for log_timestamp, filename in util.get_log_file_filenames('py', begin=1408905413):
+        file_size = os.stat(filename).st_size
+        if not filename.endswith('.gz'):
+            # approximate what the gzipped size would be based on recent log file compression ratios
+            file_size = file_size * 0.1765
+        log_file_data.append((file_size, log_timestamp))
+
+    log_file_data.sort(reverse=True)
+
+    print('echo ' + ' '.join([str(d[1]) for d in log_file_data]) + ' | xargs -n 1 -P 4 python3 -u -OO logs_to_games.py')
+
+
 def main():
     output_dir = '/home/tim/tmp/acquire'
     output_logs_dir = output_dir + '/logs'
@@ -1930,6 +1944,7 @@ def main():
     # make_acquire2_game_test_files(1408905413, output_dir)
     # output_chat_messages(1520848828)
     # compare_log_usernames_with_database_usernames(1408911415)
+    # output_command_to_run_this_script_in_parallel_on_all_logs()
 
 
 if __name__ == '__main__':
