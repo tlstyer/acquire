@@ -1589,7 +1589,10 @@ def make_acquire2_game_test_files(log_timestamp, output_dir):
                     game_action = enums.GameActions(game_action_id)
                     data = action[1:]
 
-                    acquire2_parameter_strings = to_parameter_strings(server_game, player_id, game_action, data)
+                    try:
+                        acquire2_parameter_strings = to_parameter_strings(server_game, player_id, game_action, data)
+                    except:
+                        continue
 
                     num_history_messages = len(server_game.history_messages)
 
