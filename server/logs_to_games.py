@@ -1583,7 +1583,6 @@ def make_acquire2_game_test_files(log_timestamp, output_dir):
 
             for game in log_processor.go():
                 filename = os.path.join(output_dir, '%d/%05d_%03d.txt' % (game.log_timestamp, game.internal_game_id, len(game.played_tiles_order)))
-                print(filename)
 
                 lines = []
 
