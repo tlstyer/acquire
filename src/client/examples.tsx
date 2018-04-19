@@ -262,7 +262,7 @@ class AllDemoProps {
 
     static getDummyGameForGetGameHistory() {
         const game = new Game(getNewTileBag(), [2, 3, 5, 8], 8, 3);
-        game.doGameAction(8, 0, []);
+        game.doGameAction(8, 0, [], null);
         game.moveDataHistory = defaultMoveDataHistory;
 
         let moveData = game.getCurrentMoveData();

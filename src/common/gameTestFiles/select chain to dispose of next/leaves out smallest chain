@@ -2,6 +2,7 @@ tile bag: 3G, 6G, 5F, 5H, 4G, 8H, 4C, 5C, 1F, 3F, 5I, 10B, 1B, 8G, 3A, 9I, 7G, 1
 user IDs: 6, 7, 8, 9
 starter user ID: 9
 
+timestamp: 1000000000000
 action: 3 StartGame
 
 action: 0 PlayTile 4G
@@ -120,6 +121,7 @@ action: 1 DisposeOfShares 0 1
 
 action: 2 DisposeOfShares 0 0
 
+timestamp: 1234567891011
 action: 3 PurchaseShares T,T,T 1
   ············  P  L  T  A  F  W  C  I Cash  Net
   ············        4                  80  108

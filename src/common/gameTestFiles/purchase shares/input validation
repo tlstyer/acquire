@@ -38,6 +38,7 @@ action: 0 PurchaseShares W 0
 action: 0 PurchaseShares C 0
   error: a requested chain does not exist on the board
 
+timestamp: 1000000000000
 action: 0 PurchaseShares I 0
   error: a requested chain does not exist on the board
 

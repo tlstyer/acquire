@@ -23,6 +23,7 @@ export function runGameTestFile(inputLines: string[]) {
 
     let myPlayerID: number | null = null;
     let lastMoveData: MoveData | null = null;
+    let timestamp: number | null = null;
 
     for (let lineNumber = 0; lineNumber < inputLines.length; lineNumber++) {
         let line = inputLines[lineNumber];
@@ -81,6 +82,8 @@ export function runGameTestFile(inputLines: string[]) {
                 game.processRevealedTileBagTiles(fromTilesString(lineParts[1]));
             } else if (lineParts[0] === 'player ID with playable tile') {
                 game.processPlayerIDWithPlayableTile(parseInt(lineParts[1], 10));
+            } else if (lineParts[0] === 'timestamp') {
+                timestamp = parseInt(lineParts[1], 10);
             } else if (lineParts[0] === 'action') {
                 const actionParts = lineParts[1].split(' ');
 
@@ -112,7 +115,7 @@ export function runGameTestFile(inputLines: string[]) {
                 outputLines.push('');
 
                 try {
-                    game.doGameAction(userID, moveIndex, parameters);
+                    game.doGameAction(userID, moveIndex, parameters, timestamp);
                     lastMoveData = game.moveDataHistory.get(game.moveDataHistory.size - 1, null);
                 } catch (error) {
                     if (error instanceof UserInputError) {
@@ -126,6 +129,9 @@ export function runGameTestFile(inputLines: string[]) {
                             }
                         }
 
+                        if (timestamp !== null) {
+                            outputLines.push(`timestamp: ${timestamp}`);
+                        }
                         outputLines.push(`action: ${playerID} ${actualGameActionName}${stringParameters}`);
                         outputLines.push(`  error: ${error.message}`);
                     } else {
@@ -136,6 +142,8 @@ export function runGameTestFile(inputLines: string[]) {
                         }
                     }
                 }
+
+                timestamp = null;
             }
         }
     }
@@ -252,6 +260,10 @@ function getMoveDataLines(moveData: MoveData, revealedTilesPlayerID: number | nu
         if (moveData.playerIDWithPlayableTile !== null) {
             lines.push(`player ID with playable tile: ${moveData.playerIDWithPlayableTile}`);
         }
+    }
+
+    if (moveData.timestamp !== null) {
+        lines.push(`timestamp: ${moveData.timestamp}`);
     }
 
     let arr = toParameterStrings(moveData.gameAction, moveData.gameActionParameters);

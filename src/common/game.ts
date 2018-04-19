@@ -103,7 +103,7 @@ export class Game {
         this.playerIDWithPlayableTile = playerIDWithPlayableTile;
     }
 
-    doGameAction(userID: number, moveIndex: number, parameters: any[]) {
+    doGameAction(userID: number, moveIndex: number, parameters: any[], timestamp: number | null) {
         let playerID = this.userIDs.indexOf(userID);
         let currentAction = this.gameActionStack[this.gameActionStack.length - 1];
 
@@ -115,7 +115,7 @@ export class Game {
         }
 
         let newActions: ActionBase[] | null = currentAction.execute(parameters);
-        this.getCurrentMoveData().setGameAction(playerID, currentAction.gameAction, parameters);
+        this.getCurrentMoveData().setGameAction(playerID, currentAction.gameAction, parameters, timestamp);
 
         while (newActions !== null) {
             this.gameActionStack.pop();
@@ -459,6 +459,7 @@ export class MoveData {
     playerID: number = -1;
     gameAction: GameAction = GameAction.StartGame;
     gameActionParameters: any[] = [];
+    timestamp: number | null = null;
     revealedTileRackTiles: MoveDataTileRackTile[] = [];
     revealedTileBagTiles: MoveDataTileBagTile[] = [];
     playerIDWithPlayableTile: number | null = null;
@@ -481,10 +482,11 @@ export class MoveData {
         this.nextGameAction = game.gameActionStack[game.gameActionStack.length - 1];
     }
 
-    setGameAction(playerID: number, gameAction: GameAction, parameters: any[]) {
+    setGameAction(playerID: number, gameAction: GameAction, parameters: any[], timestamp: number | null) {
         this.playerID = playerID;
         this.gameAction = gameAction;
         this.gameActionParameters = parameters;
+        this.timestamp = timestamp;
     }
 
     addTileBagTile(tile: number, playerID: number | null) {

@@ -2,388 +2,580 @@ tile bag: 6I, 11I, 7I, 1H, 12A, 6A, 12F, 6E, 10G, 9F, 8B, 12D, 8D, 11H, 11D, 10H
 user IDs: 0
 starter user ID: 0
 
+timestamp: 1443388807815
 action: 0 StartGame
 
+timestamp: 1443388810538
 action: 0 PlayTile 12A
 
+timestamp: 1443388812121
 action: 0 PlayTile 6A
 
+timestamp: 1443388814788
 action: 0 PlayTile 1H
 
+timestamp: 1443388816344
 action: 0 PlayTile 9F
 
+timestamp: 1443388818003
 action: 0 PlayTile 11I
 
+timestamp: 1443388819996
 action: 0 PlayTile 12F
 
+timestamp: 1443388821985
 action: 0 PlayTile 8B
 
+timestamp: 1443388823711
 action: 0 PlayTile 6E
 
+timestamp: 1443388825744
 action: 0 PlayTile 12D
 
+timestamp: 1443388827771
 action: 0 PlayTile 11H
 
+timestamp: 1443388828787
 action: 0 SelectNewChain L
 
+timestamp: 1443388830515
 action: 0 PurchaseShares L,L,L 0
 
+timestamp: 1443388834192
 action: 0 PlayTile 11F
 
+timestamp: 1443388835104
 action: 0 SelectNewChain C
 
+timestamp: 1443388836784
 action: 0 PurchaseShares L,L,L 0
 
+timestamp: 1443388840231
 action: 0 PlayTile 8D
 
+timestamp: 1443388842569
 action: 0 PurchaseShares L,L,L 0
 
+timestamp: 1443388848831
 action: 0 PlayTile 7I
 
+timestamp: 1443388849759
 action: 0 SelectNewChain A
 
+timestamp: 1443388851625
 action: 0 PurchaseShares L,L,L 0
 
+timestamp: 1443388852991
 action: 0 PlayTile 4I
 
+timestamp: 1443388854802
 action: 0 PurchaseShares L,L,L 0
 
+timestamp: 1443388857911
 action: 0 PlayTile 11D
 
+timestamp: 1443388859047
 action: 0 SelectNewChain I
 
+timestamp: 1443388861466
 action: 0 PurchaseShares L,L,L 0
 
+timestamp: 1443388868216
 action: 0 PlayTile 7D
 
+timestamp: 1443388869008
 action: 0 SelectNewChain F
 
+timestamp: 1443388871617
 action: 0 PurchaseShares L,L,L 0
 
+timestamp: 1443388873733
 action: 0 PlayTile 9H
 
+timestamp: 1443388876385
 action: 0 PurchaseShares L,L,L 0
 
+timestamp: 1443388883383
 action: 0 PlayTile 11G
 
+timestamp: 1443388885118
 action: 0 SelectMergerSurvivor L
 
+timestamp: 1443388886426
 action: 0 DisposeOfShares 0 0
 
+timestamp: 1443388889806
 action: 0 PurchaseShares F,F,F 0
 
+timestamp: 1443388891770
 action: 0 PlayTile 5C
 
+timestamp: 1443388894474
 action: 0 PurchaseShares F,F,F 0
 
+timestamp: 1443388896482
 action: 0 PlayTile 10B
 
+timestamp: 1443388898715
 action: 0 PurchaseShares F,F,F 0
 
+timestamp: 1443388902635
 action: 0 PlayTile 12G
 
+timestamp: 1443388905043
 action: 0 PurchaseShares I,I,I 0
 
+timestamp: 1443388906611
 action: 0 PlayTile 1C
 
+timestamp: 1443388908539
 action: 0 PurchaseShares I,I,I 0
 
+timestamp: 1443388913371
 action: 0 PlayTile 8F
 
+timestamp: 1443388916488
 action: 0 SelectNewChain W
 
+timestamp: 1443388918722
 action: 0 PurchaseShares F,F,F 0
 
+timestamp: 1443388920904
 action: 0 PlayTile 9I
 
+timestamp: 1443388922222
 action: 0 SelectNewChain C
 
+timestamp: 1443388924906
 action: 0 PurchaseShares F,F,F 0
 
+timestamp: 1443388931555
 action: 0 PlayTile 10H
 
+timestamp: 1443388932657
 action: 0 DisposeOfShares 0 0
 
+timestamp: 1443388934547
 action: 0 PurchaseShares I,I,I 0
 
+timestamp: 1443388946674
 action: 0 PlayTile 12B
 
+timestamp: 1443388947960
 action: 0 SelectNewChain C
 
+timestamp: 1443388949964
 action: 0 PurchaseShares I,I,I 0
 
+timestamp: 1443388952398
 action: 0 PlayTile 10G
 
+timestamp: 1443388954574
 action: 0 PurchaseShares I,I,I 0
 
+timestamp: 1443388956160
 action: 0 PlayTile 6G
 
+timestamp: 1443388958130
 action: 0 PurchaseShares I,I,I 0
 
+timestamp: 1443388964763
 action: 0 PlayTile 8H
 
+timestamp: 1443388966969
 action: 0 PurchaseShares I,I,I 0
 
+timestamp: 1443388972248
 action: 0 PlayTile 10F
 
+timestamp: 1443388974006
 action: 0 DisposeOfShares 0 0
 
+timestamp: 1443388977410
 action: 0 PurchaseShares I,I,I 0
 
+timestamp: 1443388983854
 action: 0 PlayTile 12C
 
+timestamp: 1443388985192
 action: 0 SelectMergerSurvivor I
 
+timestamp: 1443388986322
 action: 0 DisposeOfShares 0 0
 
+timestamp: 1443388988721
 action: 0 PurchaseShares F,F,F 0
 
+timestamp: 1443388990481
 action: 0 PlayTile 10C
 
+timestamp: 1443388991585
 action: 0 SelectNewChain C
 
+timestamp: 1443388994405
 action: 0 PurchaseShares F,F,F 0
 
+timestamp: 1443388998013
 action: 0 PlayTile 2C
 
+timestamp: 1443388999375
 action: 0 SelectNewChain T
 
+timestamp: 1443389002024
 action: 0 PurchaseShares F,F,F 0
 
+timestamp: 1443389006668
 action: 0 PlayTile 11C
 
+timestamp: 1443389008208
 action: 0 DisposeOfShares 0 0
 
+timestamp: 1443389010964
 action: 0 PurchaseShares A,A,A 0
 
+timestamp: 1443389012694
 action: 0 PlayTile 4B
 
+timestamp: 1443389015495
 action: 0 PurchaseShares A,A,A 0
 
+timestamp: 1443389017227
 action: 0 PlayTile 3H
 
+timestamp: 1443389019213
 action: 0 PurchaseShares A,A,A 0
 
+timestamp: 1443389022629
 action: 0 PlayTile 6C
 
+timestamp: 1443389023705
 action: 0 SelectNewChain C
 
+timestamp: 1443389026637
 action: 0 PurchaseShares A,A,A 0
 
+timestamp: 1443389028727
 action: 0 PlayTile 9A
 
+timestamp: 1443389031223
 action: 0 PurchaseShares A,A,A 0
 
+timestamp: 1443389035658
 action: 0 PlayTile 11B
 
+timestamp: 1443389038266
 action: 0 PurchaseShares A,A,A 0
 
+timestamp: 1443389040212
 action: 0 PlayTile 8G
 
+timestamp: 1443389042150
 action: 0 PurchaseShares A,A,A 0
 
+timestamp: 1443389043684
 action: 0 PlayTile 4D
 
+timestamp: 1443389045641
 action: 0 PurchaseShares A,A,A 0
 
+timestamp: 1443389059333
 action: 0 PlayTile 7C
 
+timestamp: 1443389060311
 action: 0 SelectMergerSurvivor F
 
+timestamp: 1443389061617
 action: 0 DisposeOfShares 0 0
 
+timestamp: 1443389064049
 action: 0 PurchaseShares T,T,T 0
 
+timestamp: 1443389068570
 action: 0 PlayTile 7A
 
+timestamp: 1443389070438
 action: 0 SelectNewChain C
 
+timestamp: 1443389072654
 action: 0 PurchaseShares C,C,C 0
 
+timestamp: 1443389075530
 action: 0 PlayTile 10D
 
+timestamp: 1443389077578
 action: 0 PurchaseShares C,C,C 0
 
+timestamp: 1443389084417
 action: 0 PlayTile 12E
 
+timestamp: 1443389086231
 action: 0 DisposeOfShares 0 25
 
+timestamp: 1443389088214
 action: 0 PurchaseShares C,C,C 0
 
+timestamp: 1443389090405
 action: 0 PlayTile 1F
 
+timestamp: 1443389092586
 action: 0 PurchaseShares C,C,C 0
 
+timestamp: 1443389096080
 action: 0 PlayTile 4H
 
+timestamp: 1443389097426
 action: 0 SelectNewChain I
 
+timestamp: 1443389101678
 action: 0 PurchaseShares C,C,C 0
 
+timestamp: 1443389104844
 action: 0 PlayTile 1B
 
+timestamp: 1443389107220
 action: 0 PurchaseShares C,C,C 0
 
+timestamp: 1443389115948
 action: 0 PlayTile 8A
 
+timestamp: 1443389120126
 action: 0 PurchaseShares I,I,I 0
 
+timestamp: 1443389128471
 action: 0 PlayTile 8C
 
+timestamp: 1443389131405
 action: 0 SelectMergerSurvivor F
 
+timestamp: 1443389133217
 action: 0 DisposeOfShares 0 24
 
+timestamp: 1443389136369
 action: 0 PurchaseShares I,I,I 0
 
+timestamp: 1443389139093
 action: 0 PlayTile 1I
 
+timestamp: 1443389140495
 action: 0 SelectNewChain C
 
+timestamp: 1443389142455
 action: 0 PurchaseShares I,I,I 0
 
+timestamp: 1443389150736
 action: 0 PlayTile 3I
 
+timestamp: 1443389152828
 action: 0 PurchaseShares I,I,I 0
 
+timestamp: 1443389154762
 action: 0 PlayTile 4F
 
+timestamp: 1443389157212
 action: 0 PurchaseShares I,I,I 0
 
+timestamp: 1443389160208
 action: 0 PlayTile 12H
 
+timestamp: 1443389162289
 action: 0 PurchaseShares I,I,I 0
 
+timestamp: 1443389166019
 action: 0 PlayTile 11E
 
+timestamp: 1443389168671
 action: 0 PurchaseShares I,I,I 0
 
+timestamp: 1443389170969
 action: 0 PlayTile 2E
 
+timestamp: 1443389173295
 action: 0 PurchaseShares I,I,I 0
 
+timestamp: 1443389177849
 action: 0 PlayTile 12I
 
+timestamp: 1443389180396
 action: 0 PurchaseShares C,C,C 0
 
+timestamp: 1443389186532
 action: 0 PlayTile 5E
 
+timestamp: 1443389189842
 action: 0 PurchaseShares C,C,C 0
 
+timestamp: 1443389191633
 action: 0 PlayTile 1A
 
+timestamp: 1443389193612
 action: 0 PurchaseShares C,C,C 0
 
+timestamp: 1443389200185
 action: 0 PlayTile 5I
 
+timestamp: 1443389204976
 action: 0 DisposeOfShares 0 0
 
+timestamp: 1443389207047
 action: 0 PurchaseShares C,C,C 0
 
+timestamp: 1443389211578
 action: 0 PlayTile 2F
 
+timestamp: 1443389214636
 action: 0 PurchaseShares T,T,T 0
 
+timestamp: 1443389222509
 action: 0 PlayTile 1G
 
+timestamp: 1443389226403
 action: 0 DisposeOfShares 0 0
 
+timestamp: 1443389229973
 action: 0 PurchaseShares T,T,T 0
 
+timestamp: 1443389234333
 action: 0 PlayTile 5G
 
+timestamp: 1443389237667
 action: 0 PurchaseShares C,C,C 0
 
+timestamp: 1443389246734
 action: 0 PlayTile 2I
 
+timestamp: 1443389250246
 action: 0 DisposeOfShares 0 25
 
+timestamp: 1443389254324
 action: 0 PurchaseShares C,C,C 0
 
+timestamp: 1443389262089
 action: 0 PlayTile 2A
 
+timestamp: 1443389263851
 action: 0 PurchaseShares C,C,C 0
 
+timestamp: 1443389267576
 action: 0 PlayTile 7B
 
+timestamp: 1443389271352
 action: 0 PurchaseShares C,C,T 0
 
+timestamp: 1443389276166
 action: 0 PlayTile 6F
 
+timestamp: 1443389277508
 action: 0 SelectMergerSurvivor C
 
+timestamp: 1443389280112
 action: 0 DisposeOfShares 0 2
 
+timestamp: 1443389283402
 action: 0 PurchaseShares T,T,T 0
 
+timestamp: 1443389294542
 action: 0 PlayTile 4E
 
+timestamp: 1443389297307
 action: 0 PurchaseShares T,T,T 0
 
+timestamp: 1443389301113
 action: 0 PlayTile 4G
 
+timestamp: 1443389303278
 action: 0 DisposeOfShares 0 25
 
+timestamp: 1443389306294
 action: 0 PurchaseShares T,T,T 0
 
+timestamp: 1443389308478
 action: 0 PlayTile 3B
 
+timestamp: 1443389310230
 action: 0 SelectNewChain C
 
+timestamp: 1443389313030
 action: 0 PurchaseShares T,T,T 0
 
+timestamp: 1443389318055
 action: 0 PlayTile 1E
 
+timestamp: 1443389321135
 action: 0 PurchaseShares T,T 0
 
+timestamp: 1443389324157
 action: 0 PlayTile 3F
 
+timestamp: 1443389326125
 action: 0 PurchaseShares C,C,C 0
 
+timestamp: 1443389328297
 action: 0 PlayTile 5F
 
+timestamp: 1443389330228
 action: 0 PurchaseShares C,C,C 0
 
+timestamp: 1443389334256
 action: 0 PlayTile 3E
 
+timestamp: 1443389336628
 action: 0 PurchaseShares C,C,C 0
 
+timestamp: 1443389338256
 action: 0 PlayTile 2G
 
+timestamp: 1443389341400
 action: 0 PurchaseShares C,C,C 0
 
+timestamp: 1443389342964
 action: 0 PlayTile 3G
 
+timestamp: 1443389345199
 action: 0 PurchaseShares C,C,C 0
 
+timestamp: 1443389353087
 action: 0 PlayTile 4A
 
+timestamp: 1443389355973
 action: 0 PurchaseShares x 0
 
+timestamp: 1443389362686
 action: 0 PlayTile 9E
 
+timestamp: 1443389364684
 action: 0 PurchaseShares x 0
 
+timestamp: 1443389367870
 action: 0 PlayTile 3A
 
+timestamp: 1443389370370
 action: 0 DisposeOfShares 0 16
 
+timestamp: 1443389383489
 action: 0 PlayTile 1D
 
+timestamp: 1443389385559
 action: 0 DisposeOfShares 0 25
 
+timestamp: 1443389387567
 action: 0 PurchaseShares x 0
 
+timestamp: 1443389389975
 action: 0 PlayTile 2B
 
+timestamp: 1443389392216
 action: 0 PurchaseShares x 0
 
+timestamp: 1443389396396
 action: 0 PlayTile 9G
 
+timestamp: 1443389399232
 action: 0 PurchaseShares x 0
 
+timestamp: 1443389402096
 action: 0 PlayTile 2D
 
+timestamp: 1443389413181
 action: 0 PurchaseShares x 1
   IIII█FFFF█·L  P  L  T  A  F  W  C  I Cash  Net
   IIII█·FF█LLL    25       25       25 1397 2557
