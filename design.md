@@ -1,4 +1,4 @@
-# Game history data
+# Game review data
 Array of:
 * Game mode
     * GameModes.Singles (0) or GameModes.Teams (1)
@@ -6,6 +6,7 @@ Array of:
 * Time control increment amount (in seconds)
 * User IDs
     * Array of user IDs in player order
+* User ID of starter
 * Tile bag
     * Array of tiles in the order they were drawn
         * 0 for 1A, 1 for 1B, 2 for 1C, ...
@@ -16,9 +17,10 @@ Array of:
     * Timestamp
         * First game action contains milliseconds since Unix epoch
         * Subsequent game actions contain an offset from the previous game action
+        * If timestamp is unknown, then exclude it
     * Whether game action was automatically played due to time expiry or forfeit
         * 1 for yes
-        * nothing for no
+        * Nothing for no
 * Game end timestamp
 * When forfeits occurred
 
