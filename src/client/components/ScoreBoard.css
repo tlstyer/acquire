@@ -39,6 +39,13 @@
 .player {
     background-color: white;
 }
+.team1 {
+    background-color: #fff7e7;
+}
+.team2 {
+    background-color: #eee7ff;
+}
+
 .availableChainSizeAndPrice {
     background-color: rgb(192, 255, 255);
 }
@@ -49,7 +56,4 @@
 
 .bottomRightCells {
     background-color: rgb(246, 244, 242);
-}
-.teamTotal {
-    background-color: white;
 }

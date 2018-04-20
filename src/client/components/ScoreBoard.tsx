@@ -46,7 +46,7 @@ export class ScoreBoard extends React.PureComponent<ScoreBoardProps> {
                             isPlayersMove={playerID === movePlayerID}
                             scoreBoardRow={scoreBoard.get(playerID, defaultScoreBoardRow)}
                             scoreBoardChainSize={scoreBoardChainSize}
-                            defaultClassName={style.player}
+                            defaultClassName={isTeamGame ? (playerID % 2 === 0 ? style.team1 : style.team2) : style.player}
                             zeroValueReplacement={''}
                             cellWidth={cellWidth}
                             cellHeight={cellHeight}
@@ -71,7 +71,7 @@ export class ScoreBoard extends React.PureComponent<ScoreBoardProps> {
                         scoreBoardChainSize={scoreBoardChainSize}
                         defaultClassName={style.availableChainSizeAndPrice}
                         zeroValueReplacement={'-'}
-                        teamHeader={isTeamGame ? 'Team 1' : ''}
+                        teamNumber={isTeamGame ? 1 : undefined}
                         teamTotal={
                             isTeamGame
                                 ? scoreBoard.get(0, defaultScoreBoardRow).get(ScoreBoardIndex.Net, 0) +
@@ -89,7 +89,7 @@ export class ScoreBoard extends React.PureComponent<ScoreBoardProps> {
                         scoreBoardChainSize={scoreBoardChainSize}
                         defaultClassName={style.availableChainSizeAndPrice}
                         zeroValueReplacement={'-'}
-                        teamHeader={isTeamGame ? 'Team 2' : ''}
+                        teamNumber={isTeamGame ? 2 : undefined}
                         teamTotal={
                             isTeamGame
                                 ? scoreBoard.get(1, defaultScoreBoardRow).get(ScoreBoardIndex.Net, 0) +
@@ -147,7 +147,7 @@ interface ScoreBoardRowProps {
     scoreBoardChainSize: List<number>;
     defaultClassName: string;
     zeroValueReplacement: string;
-    teamHeader?: string;
+    teamNumber?: number;
     teamTotal?: number;
     cellWidth: number;
     cellHeight: number;
@@ -163,7 +163,7 @@ class ScoreBoardRow extends React.PureComponent<ScoreBoardRowProps> {
             scoreBoardChainSize,
             defaultClassName,
             zeroValueReplacement,
-            teamHeader,
+            teamNumber,
             teamTotal,
             cellWidth,
             cellHeight,
@@ -201,7 +201,7 @@ class ScoreBoardRow extends React.PureComponent<ScoreBoardRowProps> {
                     </td>
                 ) : (
                     <td className={style.bottomRightCells} style={cashAndNetStyle}>
-                        {teamHeader}
+                        {teamNumber !== undefined ? 'Team ' + teamNumber : undefined}
                     </td>
                 )}
                 {scoreBoardRow.size === ScoreBoardIndex.Max ? (
@@ -209,8 +209,8 @@ class ScoreBoardRow extends React.PureComponent<ScoreBoardRowProps> {
                         {scoreBoardRow.get(8, 0) * 100}
                     </td>
                 ) : (
-                    <td className={teamTotal !== undefined ? style.teamTotal : style.bottomRightCells} style={cashAndNetStyle}>
-                        {teamTotal !== undefined ? teamTotal * 100 : ''}
+                    <td className={teamTotal !== undefined ? (teamNumber === 1 ? style.team1 : style.team2) : style.bottomRightCells} style={cashAndNetStyle}>
+                        {teamTotal !== undefined ? teamTotal * 100 : undefined}
                     </td>
                 )}
             </tr>
