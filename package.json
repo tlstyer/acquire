@@ -34,7 +34,7 @@
     },
     "scripts": {
         "examples": "ENV=examples yarn webpack-serve",
-        "start": "ENV=dev yarn webpack-serve",
+        "review": "ENV=review yarn webpack-serve",
         "test": "mocha -r ts-node/register src/**/*.test.ts"
     }
 }

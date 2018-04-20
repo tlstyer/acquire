@@ -3,9 +3,19 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const { ENV } = process.env;
 
+let entry;
+switch (ENV) {
+    case 'examples':
+        entry = './src/client/examples.tsx';
+        break;
+    case 'review':
+        entry = './src/client/review.tsx';
+        break;
+}
+
 module.exports = {
     entry: {
-        app: ENV === 'examples' ? './src/client/examples.tsx' : './src/client/index.tsx',
+        app: entry,
     },
     output: {
         filename: '[name].bundle.js',
