@@ -9,6 +9,7 @@ import { ActionGameOver } from '../common/gameActions/gameOver';
 import { runGameTestFile } from '../common/runGameTestFile';
 import { GameBoard } from './components/GameBoard';
 import { GameHistory } from './components/GameHistory';
+import { GameState } from './components/GameState';
 import { ScoreBoard } from './components/ScoreBoard';
 import { TileRack } from './components/TileRack';
 import { GameBoardLabelMode } from './enums';
@@ -44,9 +45,12 @@ function render(moveIndex: number) {
     const tileRackLeft = scoreBoardLeft + 2;
     const tileRackTop = scoreBoardHeight + 4;
 
+    const gameStateHeight = 22;
+    const gameStateTop = windowHeight - gameStateHeight;
+
     const gameHistoryTop = tileRackTop + gameBoardCellSize + 4;
     const gameHistoryWidth = windowWidth - scoreBoardLeft;
-    const gameHistoryHeight = windowHeight - gameHistoryTop - 24;
+    const gameHistoryHeight = windowHeight - gameHistoryTop - gameStateHeight - 2;
 
     ReactDOM.render(
         <div>
@@ -83,6 +87,14 @@ function render(moveIndex: number) {
                     width={gameHistoryWidth}
                     height={gameHistoryHeight}
                     onMoveClicked={onMoveClicked}
+                />
+            </div>
+            <div style={{ position: 'absolute', left: scoreBoardLeft, top: gameStateTop }}>
+                <GameState
+                    usernames={usernames}
+                    nextGameAction={game.moveDataHistory.get(game.moveDataHistory.size - 1, dummyMoveData).nextGameAction}
+                    width={gameHistoryWidth}
+                    height={gameStateHeight}
                 />
             </div>
         </div>,
