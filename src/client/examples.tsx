@@ -7,18 +7,28 @@ import * as ReactDOM from 'react-dom';
 import { defaultMoveDataHistory } from '../common/defaults';
 import { GameBoardType, GameHistoryMessage } from '../common/enums';
 import { Game } from '../common/game';
+import { ActionBase } from '../common/gameActions/base';
+import { ActionDisposeOfShares } from '../common/gameActions/disposeOfShares';
+import { ActionGameOver } from '../common/gameActions/gameOver';
+import { ActionPlayTile } from '../common/gameActions/playTile';
+import { ActionPurchaseShares } from '../common/gameActions/purchaseShares';
+import { ActionSelectChainToDisposeOfNext } from '../common/gameActions/selectChainToDisposeOfNext';
+import { ActionSelectMergerSurvivor } from '../common/gameActions/selectMergerSurvivor';
+import { ActionSelectNewChain } from '../common/gameActions/selectNewChain';
+import { ActionStartGame } from '../common/gameActions/startGame';
 import { getNewTileBag } from '../common/helpers';
 import { runGameTestFile } from '../common/runGameTestFile';
 import { DisposeOfShares, DisposeOfSharesProps } from './components/DisposeOfShares';
 import { GameBoard, GameBoardProps } from './components/GameBoard';
 import { GameHistory, GameHistoryProps } from './components/GameHistory';
+import { GameState } from './components/GameState';
 import { MiniGameBoard, MiniGameBoardProps } from './components/MiniGameBoard';
 import { PurchaseShares, PurchaseSharesProps } from './components/PurchaseShares';
 import { ScoreBoard, ScoreBoardProps } from './components/ScoreBoard';
 import { SelectChain, SelectChainProps, SelectChainTitle } from './components/SelectChain';
 import { TileRack, TileRackProps } from './components/TileRack';
 import { GameBoardLabelMode } from './enums';
-import { gameBoardTypeToHotelInitial, getTileString } from './helpers';
+import { chains, gameBoardTypeToHotelInitial, getTileString } from './helpers';
 
 class AllDemoProps {
     gameBoardProps1: GameBoardProps = {
@@ -208,6 +218,9 @@ class AllDemoProps {
     gameHistoryProps2: GameHistoryProps;
     gameHistoryProps3: GameHistoryProps;
 
+    gameStateUsernames: string[] = ['Tim', 'Rita', 'Dad', 'Mom', 'REALLY, REALLY, REALLY LONG NAME'];
+    nextGameActionsArray: ActionBase[];
+
     miniGameBoardProps1: MiniGameBoardProps = {
         gameBoard: this.gameBoardProps1.gameBoard,
         cellSize: 5,
@@ -258,6 +271,18 @@ class AllDemoProps {
         if (game3 !== null) {
             this.miniGameBoardProps3.gameBoard = game3.gameBoard;
         }
+
+        this.nextGameActionsArray = [
+            new ActionStartGame(game1, 4),
+            new ActionStartGame(game1, 0),
+            new ActionPlayTile(game1, 1),
+            new ActionSelectNewChain(game1, 2, chains, 107),
+            new ActionSelectMergerSurvivor(game1, 3, [GameBoardType.Luxor, GameBoardType.Festival, GameBoardType.Continental], 107),
+            new ActionSelectChainToDisposeOfNext(game1, 0, [GameBoardType.Tower, GameBoardType.American], GameBoardType.Continental),
+            new ActionDisposeOfShares(game1, 1, GameBoardType.Imperial, GameBoardType.Luxor),
+            new ActionPurchaseShares(game1, 2),
+            new ActionGameOver(game1, 3),
+        ];
     }
 
     static getDummyGameForGetGameHistory() {
@@ -421,6 +446,13 @@ function render(props: AllDemoProps) {
             <GameHistory {...props.gameHistoryProps2} />
             <br />
             <GameHistory {...props.gameHistoryProps3} />
+
+            <h1>GameState</h1>
+            {props.nextGameActionsArray.map((nextGameAction, i) => (
+                <div key={i}>
+                    <GameState usernames={props.gameStateUsernames} nextGameAction={nextGameAction} width={500} height={22} />
+                </div>
+            ))}
 
             <h1>MiniGameBoard</h1>
             <MiniGameBoard {...props.miniGameBoardProps1} />
