@@ -37,19 +37,19 @@ function render(moveIndex: number) {
     const gameBoardCellSize = Math.floor(Math.min(gameBoardCellSizeBasedOnWindowWidth, gameBoardCellSizeBasedOnWindowHeight));
     const gameBoardWidth = gameBoardCellSize * 12 + 2;
 
-    const scoreBoardLeft = gameBoardWidth + 2;
+    const scoreBoardLeft = gameBoardWidth;
     const scoreBoardCellWidth = (Math.min(gameBoardWidth, windowWidth - scoreBoardLeft) - 2) / 18;
     const scoreBoardCellHeight = Math.ceil(scoreBoardCellWidth * 0.75);
     const scoreBoardHeight = scoreBoardCellHeight * (4 + usernames.length) + 2;
 
     const tileRackLeft = scoreBoardLeft + 2;
-    const tileRackTop = scoreBoardHeight + 4;
+    const tileRackTop = scoreBoardHeight + 2;
 
     const gameStateHeight = 22;
     const gameStateTop = windowHeight - gameStateHeight;
 
     const gameHistoryTop = tileRackTop + gameBoardCellSize + 4;
-    const gameHistoryWidth = windowWidth - scoreBoardLeft;
+    const gameHistoryWidth = windowWidth - tileRackLeft;
     const gameHistoryHeight = windowHeight - gameHistoryTop - gameStateHeight - 2;
 
     ReactDOM.render(
@@ -79,7 +79,7 @@ function render(moveIndex: number) {
             <div style={{ position: 'absolute', left: tileRackLeft, top: tileRackTop }}>
                 <TileRack tiles={tileRack} types={tileRackTypes} buttonSize={gameBoardCellSize} onTileClicked={onTileClicked} />
             </div>
-            <div style={{ position: 'absolute', left: scoreBoardLeft, top: gameHistoryTop }}>
+            <div style={{ position: 'absolute', left: tileRackLeft, top: gameHistoryTop }}>
                 <GameHistory
                     usernames={usernames}
                     moveDataHistory={game.moveDataHistory}
@@ -89,7 +89,7 @@ function render(moveIndex: number) {
                     onMoveClicked={onMoveClicked}
                 />
             </div>
-            <div style={{ position: 'absolute', left: scoreBoardLeft, top: gameStateTop }}>
+            <div style={{ position: 'absolute', left: tileRackLeft, top: gameStateTop }}>
                 <GameState
                     usernames={usernames}
                     nextGameAction={game.moveDataHistory.get(game.moveDataHistory.size - 1, dummyMoveData).nextGameAction}
