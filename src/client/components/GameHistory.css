@@ -1,7 +1,6 @@
 .root {
     background-color: rgb(192, 192, 255);
     overflow-y: scroll;
-    padding: 0 2px;
 }
 
 .turnBegan {
@@ -15,6 +14,10 @@
     & legend {
         padding: 0 5px;
     }
+}
+
+.move {
+    padding: 0 2px;
 }
 
 .move:hover {
