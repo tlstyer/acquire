@@ -14,5 +14,6 @@ export const haveNeighboringTileToo: string;
 export const willFormNewChain: string;
 export const willMergeChains: string;
 export const cantPlayNow: string;
+export const username: string;
 export const hotelButton: string;
 export const invisible: string;

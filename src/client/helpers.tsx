@@ -1,3 +1,5 @@
+import * as React from 'react';
+
 import { GameBoardType, Tile } from '../common/enums';
 import * as common from './common.css';
 
@@ -32,7 +34,7 @@ export const gameBoardTypeToHotelInitial: { [key: number]: string } = {
     [GameBoardType.Imperial]: 'I',
 };
 
-export const gameBoardTypeToHotelName: { [key: number]: string } = {
+const gameBoardTypeToHotelName: { [key: number]: string } = {
     [GameBoardType.Luxor]: 'Luxor',
     [GameBoardType.Tower]: 'Tower',
     [GameBoardType.American]: 'American',
@@ -60,4 +62,12 @@ export function getUniqueHtmlID() {
     const id = '_' + nextIDPostfix.toString(36);
     nextIDPostfix++;
     return id;
+}
+
+export function getUsernameSpan(username: string) {
+    return <span className={common.username}>{username}</span>;
+}
+
+export function getHotelNameSpan(chain: GameBoardType) {
+    return <span className={gameBoardTypeToCSSClassName[chain]}>{gameBoardTypeToHotelName[chain]}</span>;
 }
