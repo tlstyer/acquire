@@ -1,7 +1,10 @@
 @import 'normalize.css';
 
 html {
+    background-color: rgb(246, 244, 242);
+    color: black;
     font-family: sans-serif;
+    font-size: 16px;
 }
 
 * {
