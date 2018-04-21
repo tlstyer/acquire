@@ -70,3 +70,8 @@
 .invisible {
     visibility: hidden;
 }
+
+.errorMessage {
+    color: red;
+    font-weight: bold;
+}

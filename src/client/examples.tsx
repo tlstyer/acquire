@@ -22,6 +22,7 @@ import { DisposeOfShares, DisposeOfSharesProps } from './components/DisposeOfSha
 import { GameBoard, GameBoardProps } from './components/GameBoard';
 import { GameHistory, GameHistoryProps } from './components/GameHistory';
 import { GameState } from './components/GameState';
+import { LoginForm, LoginFormProps } from './components/LoginForm';
 import { MiniGameBoard, MiniGameBoardProps } from './components/MiniGameBoard';
 import { PurchaseShares, PurchaseSharesProps } from './components/PurchaseShares';
 import { ScoreBoard, ScoreBoardProps } from './components/ScoreBoard';
@@ -31,6 +32,16 @@ import { GameBoardLabelMode } from './enums';
 import { chains, gameBoardTypeToHotelInitial, getTileString } from './helpers';
 
 class AllDemoProps {
+    loginFormProps1: LoginFormProps = {
+        onSubmit: onSubmitLoginForm,
+    };
+
+    loginFormProps2: LoginFormProps = {
+        error: 'error passed as a prop',
+        username: 'tlstyer',
+        onSubmit: onSubmitLoginForm,
+    };
+
     gameBoardProps1: GameBoardProps = {
         gameBoard: List([
             ...[0, 7, 7, 7, 7, 7, 7, 7, 7],
@@ -379,6 +390,11 @@ class AllDemoProps {
 function render(props: AllDemoProps) {
     ReactDOM.render(
         <div>
+            <h1>LoginForm</h1>
+            <LoginForm {...props.loginFormProps1} />
+            <br />
+            <LoginForm {...props.loginFormProps2} />
+
             <h1>GameBoard</h1>
             <h2>labelMode=Coordinates</h2>
             <GameBoard {...props.gameBoardProps1} />
@@ -476,6 +492,10 @@ function getPurchaseSharesDescription(props: PurchaseSharesProps) {
     }
 
     return parts.join(', ');
+}
+
+function onSubmitLoginForm(username: string, password: string) {
+    console.log('onSubmitLoginForm:', username, ',', password);
 }
 
 function onTileClicked(tile: number) {

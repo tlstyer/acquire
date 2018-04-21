@@ -17,3 +17,4 @@ export const cantPlayNow: string;
 export const username: string;
 export const hotelButton: string;
 export const invisible: string;
+export const errorMessage: string;

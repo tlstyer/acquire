@@ -111,3 +111,13 @@ export function calculateBonuses(sharesOwned: number[], sharePrice: number) {
 export class PlayerIDAndAmount {
     constructor(public playerID: number, public amount: number) {}
 }
+
+export function isASCII(string: string) {
+    for (let i = 0; i < string.length; i++) {
+        const char_code = string.charCodeAt(i);
+        if (char_code < 32 || char_code > 126) {
+            return false;
+        }
+    }
+    return true;
+}
