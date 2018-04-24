@@ -17,7 +17,6 @@ import { GameBoardLabelMode } from './enums';
 const dummyMoveData = new MoveData(new Game([], [], 0, null));
 
 function render(moveIndex: number) {
-    const usernames = ['squidward'];
     const moveData = game.moveDataHistory.get(moveIndex, dummyMoveData);
     const tileRack = moveData.tileRacks.get(0, defaultTileRack);
     const tileRackTypes = moveData.tileRackTypes.get(0, defaultTileRackTypes);
@@ -112,6 +111,7 @@ function onMoveClicked(index: number) {
 }
 
 let game: Game;
+let usernames: string[];
 
 function main() {
     const { game: g } = runGameTestFile(require('raw-loader!../common/gameTestFiles/other/one player game high score').split('\n'));
@@ -122,6 +122,7 @@ function main() {
     }
 
     game = g;
+    usernames = ['squidward'];
     render(game.moveDataHistory.size - 1);
 }
 
