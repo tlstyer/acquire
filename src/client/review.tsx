@@ -32,18 +32,21 @@ function render(moveIndex: number) {
     const windowWidth = window.innerWidth;
     const windowHeight = window.innerHeight;
 
+    const gameBoardLeft = -2;
+    const gameBoardTop = -2;
     const gameBoardCellSizeBasedOnWindowWidth = windowWidth / 2 / 12;
     const gameBoardCellSizeBasedOnWindowHeight = (windowHeight - 129) / 9;
     const gameBoardCellSize = Math.floor(Math.min(gameBoardCellSizeBasedOnWindowWidth, gameBoardCellSizeBasedOnWindowHeight));
     const gameBoardWidth = gameBoardCellSize * 12 + 2;
 
-    const scoreBoardLeft = gameBoardWidth;
-    const scoreBoardCellWidth = (Math.min(gameBoardWidth, windowWidth - scoreBoardLeft) - 2) / 18;
+    const scoreBoardLeft = gameBoardLeft + gameBoardWidth;
+    const scoreBoardTop = -2;
+    const scoreBoardCellWidth = Math.floor(gameBoardWidth / 18);
     const scoreBoardCellHeight = Math.ceil(scoreBoardCellWidth * 0.75);
     const scoreBoardHeight = scoreBoardCellHeight * (4 + usernames.length) + 2;
 
     const tileRackLeft = scoreBoardLeft + 2;
-    const tileRackTop = scoreBoardHeight + 2;
+    const tileRackTop = scoreBoardTop + scoreBoardHeight + 2;
 
     const gameStateHeight = 22;
     const gameStateTop = windowHeight - gameStateHeight;
@@ -54,7 +57,7 @@ function render(moveIndex: number) {
 
     ReactDOM.render(
         <div>
-            <div style={{ position: 'absolute', left: 0, top: 0 }}>
+            <div style={{ position: 'absolute', left: gameBoardLeft, top: gameBoardTop }}>
                 <GameBoard
                     gameBoard={moveData.gameBoard}
                     tileRack={tileRack}
@@ -63,7 +66,7 @@ function render(moveIndex: number) {
                     onCellClicked={onTileClicked}
                 />
             </div>
-            <div style={{ position: 'absolute', left: scoreBoardLeft, top: 0 }}>
+            <div style={{ position: 'absolute', left: scoreBoardLeft, top: scoreBoardTop }}>
                 <ScoreBoard
                     usernames={usernames}
                     scoreBoard={moveData.scoreBoard}
