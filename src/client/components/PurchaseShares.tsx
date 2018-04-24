@@ -83,7 +83,7 @@ export class PurchaseShares extends React.PureComponent<PurchaseSharesProps, Pur
         };
 
         return (
-            <div className={style.root} style={{ fontSize: buttonSize * 2 / 5 }}>
+            <div className={style.root} style={{ fontSize: Math.floor(buttonSize * 0.4) }}>
                 <div className={style.topRow}>
                     <fieldset>
                         <legend>Available</legend>

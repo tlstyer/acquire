@@ -34,7 +34,7 @@ export class SelectChain extends React.PureComponent<SelectChainProps> {
         };
 
         return (
-            <fieldset className={style.root} style={{ fontSize: buttonSize * 2 / 5 }}>
+            <fieldset className={style.root} style={{ fontSize: Math.floor(buttonSize * 0.4) }}>
                 <legend>{typeToInstructions[type]}</legend>
                 {chains.map(chain => {
                     if (availableChains.indexOf(chain) >= 0) {

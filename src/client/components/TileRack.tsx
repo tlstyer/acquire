@@ -47,7 +47,7 @@ export class TileRack extends React.PureComponent<TileRackProps> {
         }
 
         return (
-            <div className={style.root} style={{ fontSize: buttonSize * 0.4 }}>
+            <div className={style.root} style={{ fontSize: Math.floor(buttonSize * 0.4) }}>
                 {buttons}
             </div>
         );
