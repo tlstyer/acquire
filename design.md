@@ -1,17 +1,14 @@
 # Game review data
 Array of:
 * Game mode
-    * GameModes.Singles (0) or GameModes.Teams (1)
 * Time control starting amount (in seconds, null meaning infinite)
 * Time control increment amount (in seconds)
-* User IDs
-    * Array of user IDs in player order
+* User ID array in player order
+* User name array in player order
 * User ID of starter
-* Tile bag
-    * Array of tiles in the order they were drawn
-        * 0 for 1A, 1 for 1B, 2 for 1C, ...
-        * 9 for 2A, 10 for 2B, 11 for 2C, ...
-    * Tiles that weren't drawn are excluded
+* Tile bag array
+    * 0 for 1A, 1 for 1B, 2 for 1C, ...
+    * 9 for 2A, 10 for 2B, 11 for 2C, ...
 * Game actions
     * Only the parameters
     * Timestamp
@@ -20,8 +17,10 @@ Array of:
         * If timestamp is unknown, then exclude it
     * Whether game action was automatically played due to time expiry or forfeit
         * 1 for yes
-        * Nothing for no
+        * Excluded for no
 * Game end timestamp
+
+May add later:
 * When forfeits occurred
 
 # Game history message types and their parameters
