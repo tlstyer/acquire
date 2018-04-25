@@ -1,3 +1,34 @@
+# Game setup
+The host picks the initial game mode, which is one of:
+* Singles 1
+* Singles 2
+* Singles 3
+* Singles 4
+* Singles 5
+* Singles 6
+* Teams 2 vs 2
+* Teams 2 vs 2 vs 2
+* Teams 3 vs 3
+
+The host can later change the game mode to any mode which requires the same or more than the number of users who are already in the game.
+
+The host can choose the arrangement of the players, one of:
+* Random order
+    * Player order will be randomized
+* Exact order
+    * This exact player order will be used
+* Specify teams (team games only)
+    * Can arrange the users into teams
+    * Player order will be randomized, but the teams selected will be honored
+
+When the game has the required number of players and everybody has accepted the setup, then the game is automatically started.
+
+When the host changes the setup, everybody's acceptance is reset.
+
+The host can "kick" a user, which removes them from the game.
+
+Users can leave a game.
+
 # Game review data
 Array of:
 * Game mode
