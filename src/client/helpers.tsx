@@ -47,6 +47,7 @@ const gameBoardTypeToHotelName: { [key: number]: string } = {
 export const teamNumberToCSSClassName: { [key: number]: string } = {
     1: common.team1,
     2: common.team2,
+    3: common.team3,
 };
 
 const yTileNames = 'ABCDEFGHI';

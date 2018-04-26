@@ -2,6 +2,7 @@ import * as React from 'react';
 
 import { GameMode, PlayerArrangementMode } from '../../common/enums';
 import { gameModeToNumPlayers, gameModeToTeamSize } from '../../common/helpers';
+import { teamNumberToCSSClassName } from '../helpers';
 import * as style from './GameSetup.css';
 
 export interface GameSetupProps {
@@ -95,16 +96,19 @@ export class GameSetup extends React.PureComponent<GameSetupProps, GameSetupStat
     }
 
     renderExactOrder() {
-        const { usernames, onSwapPositions } = this.props;
+        const { gameMode, usernames, onSwapPositions } = this.props;
 
         const lastIndex = usernames.length - 1;
+
+        const isTeamGame = gameModeToTeamSize[gameMode] > 1;
+        const numTeams = gameModeToNumPlayers[gameMode] / gameModeToTeamSize[gameMode];
 
         return (
             <table className={style.table}>
                 <tbody>
                     {usernames.map((username, i) => (
                         <tr key={i}>
-                            <td className={style.user}>{username}</td>
+                            <td className={isTeamGame ? teamNumberToCSSClassName[i % numTeams + 1] : style.user}>{username}</td>
                             {onSwapPositions !== undefined ? (
                                 <td>{i > 0 ? <input type={'button'} value={'▲'} onClick={() => onSwapPositions(i, i - 1)} /> : undefined}</td>
                             ) : (
