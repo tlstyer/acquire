@@ -195,7 +195,7 @@ class ScoreBoardRow extends React.PureComponent<ScoreBoardRowProps> {
         const chainStyle = { width: cellWidth, maxWidth: cellWidth, height: cellHeight, maxHeight: cellHeight };
         const cashAndNetStyle = { width: cellWidth * 3, maxWidth: cellWidth * 3, height: cellHeight, maxHeight: cellHeight };
 
-        let nameCellClassName: string | undefined;
+        let nameCellClassName: string;
         if (isPlayersTurn) {
             nameCellClassName = style.isPlayersTurn;
         } else if (isPlayersMove) {
