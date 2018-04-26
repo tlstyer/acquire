@@ -28,7 +28,7 @@ export class GameSetup extends React.PureComponent<GameSetupProps, GameSetupStat
             }
         }
 
-        const teamSize = gameModeToTeamSize[gameMode];
+        const isTeamGame = gameModeToTeamSize[gameMode] > 1;
 
         return (
             <div>
@@ -56,7 +56,7 @@ export class GameSetup extends React.PureComponent<GameSetupProps, GameSetupStat
                     >
                         {allPlayerArrangementModes.map(
                             pam =>
-                                pam !== PlayerArrangementMode.SpecifyTeams || teamSize > 1 ? (
+                                pam !== PlayerArrangementMode.SpecifyTeams || isTeamGame ? (
                                     <option key={pam} value={pam}>
                                         {playerArrangementModeToString[pam]}
                                     </option>
