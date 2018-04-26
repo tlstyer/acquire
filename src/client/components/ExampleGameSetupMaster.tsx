@@ -53,8 +53,7 @@ export class ExampleGameSetupMaster extends React.PureComponent<ExampleGameSetup
                 <input type={'button'} value={'Add user'} disabled={numUsersInGame === maxUsers} onClick={this.handleAddUser} />
                 <br />
                 <input type={'button'} value={'Remove user'} disabled={numUsersInGame === 1} onClick={this.handleRemoveUser} />
-                <br />
-                <br />
+                <h2>Host view</h2>
                 <GameSetup
                     gameMode={gameMode}
                     playerArrangementMode={playerArrangementMode}
@@ -65,7 +64,7 @@ export class ExampleGameSetupMaster extends React.PureComponent<ExampleGameSetup
                     onSwapPositions={this.handleSwapPositions}
                     onKickUser={this.handleKickUser}
                 />
-                <br />
+                <h2>Non-host view</h2>
                 <GameSetup gameMode={gameMode} playerArrangementMode={playerArrangementMode} usernames={usernames} hostUsername={'Host'} />
             </div>
         );
