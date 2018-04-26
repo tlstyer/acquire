@@ -5,11 +5,13 @@
     & td {
         border: 2px solid rgb(246, 244, 242);
         height: 28px;
+        overflow: hidden;
         white-space: nowrap;
         &:nth-child(1) {
+            max-width: 300px;
             padding-left: 3px;
-            padding-right: 3px;
             text-align: left;
+            width: 300px;
         }
     }
 }
