@@ -9,7 +9,6 @@ export interface ExampleGameSetupMasterProps {}
 interface ExampleGameSetupMasterState {
     gameMode: GameMode;
     playerArrangementMode: PlayerArrangementMode;
-    userIDs: (number | null)[];
     usernames: (string | null)[];
 
     nextUserId: number;
@@ -23,7 +22,6 @@ export class ExampleGameSetupMaster extends React.PureComponent<ExampleGameSetup
         this.state = {
             gameMode: GameMode.Singles4,
             playerArrangementMode: PlayerArrangementMode.RandomOrder,
-            userIDs: [1, null, null, null],
             usernames: ['Host', null, null, null],
 
             nextUserId: 2,
@@ -36,17 +34,17 @@ export class ExampleGameSetupMaster extends React.PureComponent<ExampleGameSetup
     }
 
     render() {
-        const { gameMode, playerArrangementMode, userIDs, usernames, simulatedNetworkDelay } = this.state;
+        const { gameMode, playerArrangementMode, usernames, simulatedNetworkDelay } = this.state;
 
         let numUsersInGame = 0;
-        for (let i = 0; i < userIDs.length; i++) {
-            const userID = userIDs[i];
-            if (userID !== null) {
+        for (let i = 0; i < usernames.length; i++) {
+            const username = usernames[i];
+            if (username !== null) {
                 numUsersInGame++;
             }
         }
 
-        const maxUsers = userIDs.length;
+        const maxUsers = usernames.length;
 
         return (
             <div>
@@ -60,16 +58,15 @@ export class ExampleGameSetupMaster extends React.PureComponent<ExampleGameSetup
                 <GameSetup
                     gameMode={gameMode}
                     playerArrangementMode={playerArrangementMode}
-                    userIDs={userIDs}
                     usernames={usernames}
-                    hostUserID={1}
+                    hostUsername={'Host'}
                     onChangeGameMode={this.handleChangeGameMode}
                     onChangePlayerArrangementMode={this.handleChangePlayerArrangementMode}
                     onSwapPositions={this.handleSwapPositions}
                     onKickUser={this.handleKickUser}
                 />
                 <br />
-                <GameSetup gameMode={gameMode} playerArrangementMode={playerArrangementMode} userIDs={userIDs} usernames={usernames} hostUserID={1} />
+                <GameSetup gameMode={gameMode} playerArrangementMode={playerArrangementMode} usernames={usernames} hostUsername={'Host'} />
             </div>
         );
     }
@@ -83,20 +80,13 @@ export class ExampleGameSetupMaster extends React.PureComponent<ExampleGameSetup
     };
 
     handleAddUser = () => {
-        for (let i = 0; i < this.state.userIDs.length; i++) {
-            const userID = this.state.userIDs[i];
-            if (userID === null) {
-                const updatedUserIDs = [...this.state.userIDs];
-                updatedUserIDs[i] = this.state.nextUserId;
+        for (let i = 0; i < this.state.usernames.length; i++) {
+            const username = this.state.usernames[i];
+            if (username === null) {
+                const usernames = [...this.state.usernames];
+                usernames[i] = `User ${this.state.nextUserId}`;
 
-                const updatedUsernames = [...this.state.usernames];
-                updatedUsernames[i] = `User ${this.state.nextUserId}`;
-
-                this.setState({
-                    userIDs: updatedUserIDs,
-                    usernames: updatedUsernames,
-                    nextUserId: this.state.nextUserId + 1,
-                });
+                this.setState({ usernames, nextUserId: this.state.nextUserId + 1 });
                 break;
             }
         }
@@ -105,25 +95,19 @@ export class ExampleGameSetupMaster extends React.PureComponent<ExampleGameSetup
     handleRemoveUser = () => {
         let indexesThatCanBeRemoved: number[] = [];
 
-        for (let i = 0; i < this.state.userIDs.length; i++) {
-            const userID = this.state.userIDs[i];
-            if (userID !== null && userID !== 1) {
+        for (let i = 0; i < this.state.usernames.length; i++) {
+            const username = this.state.usernames[i];
+            if (username !== null && username !== 'Host') {
                 indexesThatCanBeRemoved.push(i);
             }
         }
 
         const randomIndex = indexesThatCanBeRemoved[Math.floor(Math.random() * indexesThatCanBeRemoved.length)];
 
-        const updatedUserIDs = [...this.state.userIDs];
-        updatedUserIDs[randomIndex] = null;
+        const usernames = [...this.state.usernames];
+        usernames[randomIndex] = null;
 
-        const updatedUsernames = [...this.state.usernames];
-        updatedUsernames[randomIndex] = null;
-
-        this.setState({
-            userIDs: updatedUserIDs,
-            usernames: updatedUsernames,
-        });
+        this.setState({ usernames });
     };
 
     handleChangeGameMode = (gameMode: GameMode) => {
@@ -136,33 +120,28 @@ export class ExampleGameSetupMaster extends React.PureComponent<ExampleGameSetup
             const newState: Partial<ExampleGameSetupMasterState> = { gameMode };
 
             if (newNumPlayers !== oldNumPlayers) {
-                const userIDs = [...this.state.userIDs];
                 const usernames = [...this.state.usernames];
 
                 if (newNumPlayers > oldNumPlayers) {
                     const numSpotsToAdd = newNumPlayers - oldNumPlayers;
                     for (let i = 0; i < numSpotsToAdd; i++) {
-                        userIDs.push(null);
                         usernames.push(null);
                     }
                 } else {
                     for (let oldIndex = oldNumPlayers - 1; oldIndex >= newNumPlayers; oldIndex--) {
-                        if (userIDs[oldIndex] !== null) {
+                        if (usernames[oldIndex] !== null) {
                             for (let newIndex = newNumPlayers - 1; newIndex >= 0; newIndex--) {
-                                if (userIDs[newIndex] === null) {
-                                    userIDs[newIndex] = userIDs[oldIndex];
+                                if (usernames[newIndex] === null) {
                                     usernames[newIndex] = usernames[oldIndex];
                                     break;
                                 }
                             }
                         }
 
-                        userIDs.pop();
                         usernames.pop();
                     }
                 }
 
-                newState.userIDs = userIDs;
                 newState.usernames = usernames;
             }
 
@@ -188,15 +167,11 @@ export class ExampleGameSetupMaster extends React.PureComponent<ExampleGameSetup
         setTimeout(() => {
             console.log('handleSwapPositions', position1, position2);
 
-            const userIDs = [...this.state.userIDs];
-            userIDs[position1] = this.state.userIDs[position2];
-            userIDs[position2] = this.state.userIDs[position1];
-
             const usernames = [...this.state.usernames];
             usernames[position1] = this.state.usernames[position2];
             usernames[position2] = this.state.usernames[position1];
 
-            this.setState({ userIDs, usernames });
+            this.setState({ usernames });
         }, this.state.simulatedNetworkDelay);
     };
 
@@ -204,13 +179,10 @@ export class ExampleGameSetupMaster extends React.PureComponent<ExampleGameSetup
         setTimeout(() => {
             console.log('handleKickUser', position);
 
-            const userIDs = [...this.state.userIDs];
-            userIDs[position] = null;
-
             const usernames = [...this.state.usernames];
             usernames[position] = null;
 
-            this.setState({ userIDs, usernames });
+            this.setState({ usernames });
         }, this.state.simulatedNetworkDelay);
     };
 }

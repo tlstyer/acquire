@@ -8,9 +8,8 @@ import * as style from './GameSetup.css';
 export interface GameSetupProps {
     gameMode: GameMode;
     playerArrangementMode: PlayerArrangementMode;
-    userIDs: (number | null)[];
     usernames: (string | null)[];
-    hostUserID: number;
+    hostUsername: string;
     onChangeGameMode?: (gameMode: GameMode) => void;
     onChangePlayerArrangementMode?: (playerArrangementMode: PlayerArrangementMode) => void;
     onSwapPositions?: (position1: number, position2: number) => void;
@@ -21,12 +20,12 @@ interface GameSetupState {}
 
 export class GameSetup extends React.PureComponent<GameSetupProps, GameSetupState> {
     render() {
-        const { gameMode, playerArrangementMode, userIDs, onChangeGameMode, onChangePlayerArrangementMode } = this.props;
+        const { gameMode, playerArrangementMode, usernames, onChangeGameMode, onChangePlayerArrangementMode } = this.props;
 
         let numUsersInGame = 0;
-        for (let i = 0; i < userIDs.length; i++) {
-            const userID = userIDs[i];
-            if (userID !== null) {
+        for (let i = 0; i < usernames.length; i++) {
+            const username = usernames[i];
+            if (username !== null) {
                 numUsersInGame++;
             }
         }
@@ -185,12 +184,16 @@ export class GameSetup extends React.PureComponent<GameSetupProps, GameSetupStat
     }
 
     renderKickUserCell(index: number) {
-        const { userIDs, hostUserID, onKickUser } = this.props;
+        const { usernames, hostUsername, onKickUser } = this.props;
 
         if (onKickUser !== undefined) {
-            const userID = userIDs[index];
+            const username = usernames[index];
 
-            return <td>{userID !== null && userID !== hostUserID ? <input type={'button'} value={'Kick'} onClick={() => onKickUser(index)} /> : undefined}</td>;
+            return (
+                <td>
+                    {username !== null && username !== hostUsername ? <input type={'button'} value={'Kick'} onClick={() => onKickUser(index)} /> : undefined}
+                </td>
+            );
         }
     }
 }
