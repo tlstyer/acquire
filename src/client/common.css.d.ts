@@ -18,3 +18,5 @@ export const username: string;
 export const hotelButton: string;
 export const invisible: string;
 export const errorMessage: string;
+export const team1: string;
+export const team2: string;

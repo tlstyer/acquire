@@ -3,7 +3,7 @@ import * as React from 'react';
 
 import { defaultScoreBoardRow } from '../../common/defaults';
 import { ScoreBoardIndex } from '../../common/enums';
-import { chains, gameBoardTypeToCSSClassName, gameBoardTypeToHotelInitial } from '../helpers';
+import { chains, gameBoardTypeToCSSClassName, gameBoardTypeToHotelInitial, teamNumberToCSSClassName } from '../helpers';
 import * as style from './ScoreBoard.css';
 
 export interface ScoreBoardProps {
@@ -46,7 +46,7 @@ export class ScoreBoard extends React.PureComponent<ScoreBoardProps> {
                             isPlayersMove={playerID === movePlayerID}
                             scoreBoardRow={scoreBoard.get(playerID, defaultScoreBoardRow)}
                             scoreBoardChainSize={scoreBoardChainSize}
-                            defaultClassName={isTeamGame ? (playerID % 2 === 0 ? style.team1 : style.team2) : style.player}
+                            defaultClassName={isTeamGame ? teamNumberToCSSClassName[playerID % 2 === 0 ? 1 : 2] : style.player}
                             zeroValueReplacement={''}
                             cellWidth={cellWidth}
                             cellHeight={cellHeight}
@@ -209,7 +209,7 @@ class ScoreBoardRow extends React.PureComponent<ScoreBoardRowProps> {
                         {scoreBoardRow.get(8, 0) * 100}
                     </td>
                 ) : (
-                    <td className={teamTotal !== undefined ? (teamNumber === 1 ? style.team1 : style.team2) : style.bottomRightCells} style={cashAndNetStyle}>
+                    <td className={teamNumber !== undefined ? teamNumberToCSSClassName[teamNumber] : style.bottomRightCells} style={cashAndNetStyle}>
                         {teamTotal !== undefined ? teamTotal * 100 : undefined}
                     </td>
                 )}

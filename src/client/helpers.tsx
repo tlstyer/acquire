@@ -44,6 +44,11 @@ const gameBoardTypeToHotelName: { [key: number]: string } = {
     [GameBoardType.Imperial]: 'Imperial',
 };
 
+export const teamNumberToCSSClassName: { [key: number]: string } = {
+    1: common.team1,
+    2: common.team2,
+};
+
 const yTileNames = 'ABCDEFGHI';
 
 export function getTileString(tile: number) {
