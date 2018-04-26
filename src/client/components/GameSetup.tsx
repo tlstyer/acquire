@@ -71,9 +71,9 @@ export class GameSetup extends React.PureComponent<GameSetupProps, GameSetupStat
                 <br />
                 {playerArrangementMode === PlayerArrangementMode.RandomOrder
                     ? this.renderRandomOrder()
-                    : playerArrangementMode === PlayerArrangementMode.SpecifyTeams
-                        ? this.renderSpecifyTeams()
-                        : this.renderSpecifyOrder()}
+                    : playerArrangementMode === PlayerArrangementMode.ExactOrder
+                        ? this.renderExactOrder()
+                        : this.renderSpecifyTeams()}
             </div>
         );
     }
@@ -94,11 +94,7 @@ export class GameSetup extends React.PureComponent<GameSetupProps, GameSetupStat
         );
     }
 
-    renderSpecifyTeams() {
-        return <div>Todo!</div>;
-    }
-
-    renderSpecifyOrder() {
+    renderExactOrder() {
         const { usernames, onSwapPositions } = this.props;
 
         const lastIndex = usernames.length - 1;
@@ -125,6 +121,10 @@ export class GameSetup extends React.PureComponent<GameSetupProps, GameSetupStat
             </table>
         );
     }
+
+    renderSpecifyTeams() {
+        return <div>Todo!</div>;
+    }
 }
 
 const gameModeToString: { [key: number]: string } = {
@@ -141,8 +141,8 @@ const gameModeToString: { [key: number]: string } = {
 
 const playerArrangementModeToString: { [key: number]: string } = {
     [PlayerArrangementMode.RandomOrder]: 'Random Order',
+    [PlayerArrangementMode.ExactOrder]: 'Exact Order',
     [PlayerArrangementMode.SpecifyTeams]: 'Specify Teams',
-    [PlayerArrangementMode.SpecifyOrder]: 'Specify Order',
 };
 
 const allGameModes: GameMode[] = [
@@ -159,6 +159,6 @@ const allGameModes: GameMode[] = [
 
 const allPlayerArrangementModes: PlayerArrangementMode[] = [
     PlayerArrangementMode.RandomOrder,
+    PlayerArrangementMode.ExactOrder,
     PlayerArrangementMode.SpecifyTeams,
-    PlayerArrangementMode.SpecifyOrder,
 ];

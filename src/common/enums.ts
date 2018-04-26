@@ -65,8 +65,8 @@ export enum GameMode {
 
 export enum PlayerArrangementMode {
     RandomOrder,
+    ExactOrder,
     SpecifyTeams,
-    SpecifyOrder,
 }
 
 export enum ScoreBoardIndex {
