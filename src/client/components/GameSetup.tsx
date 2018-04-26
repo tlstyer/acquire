@@ -127,7 +127,56 @@ export class GameSetup extends React.PureComponent<GameSetupProps, GameSetupStat
     }
 
     renderSpecifyTeams() {
-        return <div>Todo!</div>;
+        const { gameMode, usernames, onSwapPositions } = this.props;
+
+        const specifyTeamsEntries = teamGameModeToSpecifyTeamsEntries[gameMode];
+        const numTeams = gameModeToNumPlayers[gameMode] / gameModeToTeamSize[gameMode];
+
+        return (
+            <table className={style.table}>
+                <tbody>
+                    {specifyTeamsEntries.map((entry, i) => {
+                        if (entry !== null) {
+                            const { index, upIndex, downIndex } = entry;
+
+                            return (
+                                <tr key={i}>
+                                    <td className={style.user}>{usernames[index]}</td>
+                                    {onSwapPositions !== undefined ? (
+                                        <td>
+                                            {upIndex !== null ? (
+                                                <input type={'button'} value={'▲'} onClick={() => onSwapPositions(index, upIndex)} />
+                                            ) : (
+                                                undefined
+                                            )}
+                                        </td>
+                                    ) : (
+                                        undefined
+                                    )}
+                                    {onSwapPositions !== undefined ? (
+                                        <td>
+                                            {downIndex !== null ? (
+                                                <input type={'button'} value={'▼'} onClick={() => onSwapPositions(index, downIndex)} />
+                                            ) : (
+                                                undefined
+                                            )}
+                                        </td>
+                                    ) : (
+                                        undefined
+                                    )}
+                                </tr>
+                            );
+                        } else {
+                            return (
+                                <tr key={i} className={style.versus}>
+                                    <td>versus</td>
+                                </tr>
+                            );
+                        }
+                    })}
+                </tbody>
+            </table>
+        );
     }
 }
 
@@ -166,3 +215,36 @@ const allPlayerArrangementModes: PlayerArrangementMode[] = [
     PlayerArrangementMode.ExactOrder,
     PlayerArrangementMode.SpecifyTeams,
 ];
+
+class SpecifyTeamsEntry {
+    constructor(public index: number, public upIndex: number | null, public downIndex: number | null) {}
+}
+
+const teamGameModeToSpecifyTeamsEntries: { [key: number]: (SpecifyTeamsEntry | null)[] } = {
+    [GameMode.Teams2vs2]: [
+        new SpecifyTeamsEntry(0, null, 2),
+        new SpecifyTeamsEntry(2, 0, 1),
+        null,
+        new SpecifyTeamsEntry(1, 2, 3),
+        new SpecifyTeamsEntry(3, 1, null),
+    ],
+    [GameMode.Teams2vs2vs2]: [
+        new SpecifyTeamsEntry(0, null, 3),
+        new SpecifyTeamsEntry(3, 0, 1),
+        null,
+        new SpecifyTeamsEntry(1, 3, 4),
+        new SpecifyTeamsEntry(4, 1, 2),
+        null,
+        new SpecifyTeamsEntry(2, 4, 5),
+        new SpecifyTeamsEntry(5, 2, null),
+    ],
+    [GameMode.Teams3vs3]: [
+        new SpecifyTeamsEntry(0, null, 2),
+        new SpecifyTeamsEntry(2, 0, 4),
+        new SpecifyTeamsEntry(4, 2, 1),
+        null,
+        new SpecifyTeamsEntry(1, 4, 3),
+        new SpecifyTeamsEntry(3, 1, 5),
+        new SpecifyTeamsEntry(5, 3, null),
+    ],
+};
