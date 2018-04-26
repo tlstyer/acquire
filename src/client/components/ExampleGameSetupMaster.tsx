@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import { GameMode, PlayerArrangementMode } from '../../common/enums';
-import { gameModeToNumPlayers } from '../../common/helpers';
+import { gameModeToNumPlayers, gameModeToTeamSize } from '../../common/helpers';
 import { GameSetup } from './GameSetup';
 
 export interface ExampleGameSetupMasterProps {}
@@ -131,6 +131,8 @@ export class ExampleGameSetupMaster extends React.PureComponent<ExampleGameSetup
             const oldNumPlayers = gameModeToNumPlayers[this.state.gameMode];
             const newNumPlayers = gameModeToNumPlayers[gameMode];
 
+            const newState: Partial<ExampleGameSetupMasterState> = { gameMode };
+
             if (newNumPlayers !== oldNumPlayers) {
                 const userIDs = [...this.state.userIDs];
                 const usernames = [...this.state.usernames];
@@ -158,10 +160,17 @@ export class ExampleGameSetupMaster extends React.PureComponent<ExampleGameSetup
                     }
                 }
 
-                this.setState({ gameMode, userIDs, usernames });
-            } else {
-                this.setState({ gameMode });
+                newState.userIDs = userIDs;
+                newState.usernames = usernames;
             }
+
+            const isTeamGame = gameModeToTeamSize[gameMode] > 1;
+            if (!isTeamGame && this.state.playerArrangementMode === PlayerArrangementMode.SpecifyTeams) {
+                newState.playerArrangementMode = PlayerArrangementMode.RandomOrder;
+            }
+
+            // @ts-ignore
+            this.setState(newState);
         }, this.state.simulatedNetworkDelay);
     };
 
