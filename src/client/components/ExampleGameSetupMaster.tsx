@@ -11,8 +11,8 @@ interface ExampleGameSetupMasterState {
     playerArrangementMode: PlayerArrangementMode;
     usernames: (string | null)[];
 
-    nextUserId: number;
     simulatedNetworkDelay: number;
+    nextUserId: number;
 }
 
 export class ExampleGameSetupMaster extends React.PureComponent<ExampleGameSetupMasterProps, ExampleGameSetupMasterState> {
@@ -24,8 +24,8 @@ export class ExampleGameSetupMaster extends React.PureComponent<ExampleGameSetup
             playerArrangementMode: PlayerArrangementMode.RandomOrder,
             usernames: ['Host', null, null, null],
 
-            nextUserId: 2,
             simulatedNetworkDelay: 250,
+            nextUserId: 2,
         };
     }
 
@@ -48,11 +48,11 @@ export class ExampleGameSetupMaster extends React.PureComponent<ExampleGameSetup
 
         return (
             <div>
-                Simulated network delay (ms): <input type={'text'} value={simulatedNetworkDelay} size={5} onChange={this.handleChangeNetworkDelay} />
+                Simulated network delay (ms): <input type={'text'} value={simulatedNetworkDelay} size={4} onChange={this.handleChangeSimulatedNetworkDelay} />
                 <br />
-                <input type={'button'} value={'Add user'} disabled={numUsersInGame === maxUsers} onClick={this.handleAddUser} />
+                <input type={'button'} value={'Add a user'} disabled={numUsersInGame === maxUsers} onClick={this.handleAddAUser} />
                 <br />
-                <input type={'button'} value={'Remove user'} disabled={numUsersInGame === 1} onClick={this.handleRemoveUser} />
+                <input type={'button'} value={'Remove a user'} disabled={numUsersInGame === 1} onClick={this.handleRemoveAUser} />
                 <h2>Host view</h2>
                 <GameSetup
                     gameMode={gameMode}
@@ -70,7 +70,7 @@ export class ExampleGameSetupMaster extends React.PureComponent<ExampleGameSetup
         );
     }
 
-    handleChangeNetworkDelay = (event: React.FormEvent<HTMLInputElement>) => {
+    handleChangeSimulatedNetworkDelay = (event: React.FormEvent<HTMLInputElement>) => {
         let simulatedNetworkDelay = parseInt(event.currentTarget.value, 10);
         if (Number.isNaN(simulatedNetworkDelay)) {
             simulatedNetworkDelay = 0;
@@ -78,7 +78,7 @@ export class ExampleGameSetupMaster extends React.PureComponent<ExampleGameSetup
         this.setState({ simulatedNetworkDelay });
     };
 
-    handleAddUser = () => {
+    handleAddAUser = () => {
         for (let i = 0; i < this.state.usernames.length; i++) {
             const username = this.state.usernames[i];
             if (username === null) {
@@ -91,7 +91,7 @@ export class ExampleGameSetupMaster extends React.PureComponent<ExampleGameSetup
         }
     };
 
-    handleRemoveUser = () => {
+    handleRemoveAUser = () => {
         let indexesThatCanBeRemoved: number[] = [];
 
         for (let i = 0; i < this.state.usernames.length; i++) {
