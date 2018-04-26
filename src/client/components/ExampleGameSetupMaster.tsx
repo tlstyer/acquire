@@ -62,12 +62,14 @@ export class ExampleGameSetupMaster extends React.PureComponent<ExampleGameSetup
                     playerArrangementMode={playerArrangementMode}
                     userIDs={userIDs}
                     usernames={usernames}
+                    hostUserID={1}
                     onChangeGameMode={this.handleChangeGameMode}
                     onChangePlayerArrangementMode={this.handleChangePlayerArrangementMode}
                     onSwapPositions={this.handleSwapPositions}
+                    onKickUser={this.handleKickUser}
                 />
                 <br />
-                <GameSetup gameMode={gameMode} playerArrangementMode={playerArrangementMode} userIDs={userIDs} usernames={usernames} />
+                <GameSetup gameMode={gameMode} playerArrangementMode={playerArrangementMode} userIDs={userIDs} usernames={usernames} hostUserID={1} />
             </div>
         );
     }
@@ -193,6 +195,20 @@ export class ExampleGameSetupMaster extends React.PureComponent<ExampleGameSetup
             const usernames = [...this.state.usernames];
             usernames[position1] = this.state.usernames[position2];
             usernames[position2] = this.state.usernames[position1];
+
+            this.setState({ userIDs, usernames });
+        }, this.state.simulatedNetworkDelay);
+    };
+
+    handleKickUser = (position: number) => {
+        setTimeout(() => {
+            console.log('handleKickUser', position);
+
+            const userIDs = [...this.state.userIDs];
+            userIDs[position] = null;
+
+            const usernames = [...this.state.usernames];
+            usernames[position] = null;
 
             this.setState({ userIDs, usernames });
         }, this.state.simulatedNetworkDelay);

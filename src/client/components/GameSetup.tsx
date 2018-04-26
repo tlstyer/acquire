@@ -10,9 +10,11 @@ export interface GameSetupProps {
     playerArrangementMode: PlayerArrangementMode;
     userIDs: (number | null)[];
     usernames: (string | null)[];
+    hostUserID: number;
     onChangeGameMode?: (gameMode: GameMode) => void;
     onChangePlayerArrangementMode?: (playerArrangementMode: PlayerArrangementMode) => void;
     onSwapPositions?: (position1: number, position2: number) => void;
+    onKickUser?: (position: number) => void;
 }
 
 interface GameSetupState {}
@@ -88,6 +90,7 @@ export class GameSetup extends React.PureComponent<GameSetupProps, GameSetupStat
                     {usernames.map((username, i) => (
                         <tr key={i}>
                             <td className={style.user}>{username}</td>
+                            {this.renderKickUserCell(i)}
                         </tr>
                     ))}
                 </tbody>
@@ -119,6 +122,7 @@ export class GameSetup extends React.PureComponent<GameSetupProps, GameSetupStat
                             ) : (
                                 undefined
                             )}
+                            {this.renderKickUserCell(i)}
                         </tr>
                     ))}
                 </tbody>
@@ -164,6 +168,7 @@ export class GameSetup extends React.PureComponent<GameSetupProps, GameSetupStat
                                     ) : (
                                         undefined
                                     )}
+                                    {this.renderKickUserCell(index)}
                                 </tr>
                             );
                         } else {
@@ -177,6 +182,16 @@ export class GameSetup extends React.PureComponent<GameSetupProps, GameSetupStat
                 </tbody>
             </table>
         );
+    }
+
+    renderKickUserCell(index: number) {
+        const { userIDs, hostUserID, onKickUser } = this.props;
+
+        if (onKickUser !== undefined) {
+            const userID = userIDs[index];
+
+            return <td>{userID !== null && userID !== hostUserID ? <input type={'button'} value={'Kick'} onClick={() => onKickUser(index)} /> : undefined}</td>;
+        }
     }
 }
 
