@@ -465,9 +465,7 @@ function render(props: AllDemoProps) {
 
             <h1>GameState</h1>
             {props.nextGameActionsArray.map((nextGameAction, i) => (
-                <div key={i}>
-                    <GameState usernames={props.gameStateUsernames} nextGameAction={nextGameAction} width={500} height={22} />
-                </div>
+                <GameState key={i} usernames={props.gameStateUsernames} nextGameAction={nextGameAction} width={500} height={22} />
             ))}
 
             <h1>MiniGameBoard</h1>
