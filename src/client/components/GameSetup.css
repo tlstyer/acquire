@@ -1,0 +1,20 @@
+.table {
+    border-collapse: collapse;
+    font-weight: bold;
+    table-layout: fixed;
+    & td {
+        border: 2px solid rgb(246, 244, 242);
+        height: 28px;
+        white-space: nowrap;
+        &:nth-child(1) {
+            background-color: white;
+            padding-left: 3px;
+            padding-right: 3px;
+            text-align: left;
+        }
+    }
+}
+
+.user {
+    background-color: white;
+}

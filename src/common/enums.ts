@@ -51,6 +51,24 @@ export enum GameHistoryMessage {
     AllTilesPlayed,
 }
 
+export enum GameMode {
+    Singles1 = 1,
+    Singles2,
+    Singles3,
+    Singles4,
+    Singles5,
+    Singles6,
+    Teams2vs2,
+    Teams2vs2vs2,
+    Teams3vs3,
+}
+
+export enum PlayerArrangementMode {
+    RandomOrder,
+    SpecifyTeams,
+    SpecifyOrder,
+}
+
 export enum ScoreBoardIndex {
     Luxor,
     Tower,

@@ -19,6 +19,7 @@ import { ActionStartGame } from '../common/gameActions/startGame';
 import { getNewTileBag } from '../common/helpers';
 import { runGameTestFile } from '../common/runGameTestFile';
 import { DisposeOfShares, DisposeOfSharesProps } from './components/DisposeOfShares';
+import { ExampleGameSetupMaster } from './components/ExampleGameSetupMaster';
 import { GameBoard, GameBoardProps } from './components/GameBoard';
 import { GameHistory, GameHistoryProps } from './components/GameHistory';
 import { GameState } from './components/GameState';
@@ -394,6 +395,9 @@ function render(props: AllDemoProps) {
             <LoginForm {...props.loginFormProps1} />
             <br />
             <LoginForm {...props.loginFormProps2} />
+
+            <h1>GameSetup with simulated server</h1>
+            <ExampleGameSetupMaster />
 
             <h1>GameBoard</h1>
             <h2>labelMode=Coordinates</h2>
