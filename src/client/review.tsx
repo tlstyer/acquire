@@ -4,6 +4,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
 import { defaultTileRack, defaultTileRackTypes } from '../common/defaults';
+import { GameMode } from '../common/enums';
 import { Game, MoveData } from '../common/game';
 import { ActionGameOver } from '../common/gameActions/gameOver';
 import { runGameTestFile } from '../common/runGameTestFile';
@@ -74,7 +75,7 @@ function render(moveIndex: number) {
                     scoreBoardPrice={moveData.scoreBoardPrice}
                     turnPlayerID={turnPlayerID}
                     movePlayerID={movePlayerID}
-                    isTeamGame={false}
+                    gameMode={GameMode.Singles1}
                     cellWidth={scoreBoardCellWidth}
                 />
             </div>

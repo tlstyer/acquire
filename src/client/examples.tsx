@@ -5,7 +5,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
 import { defaultMoveDataHistory } from '../common/defaults';
-import { GameBoardType, GameHistoryMessage } from '../common/enums';
+import { GameBoardType, GameHistoryMessage, GameMode } from '../common/enums';
 import { Game } from '../common/game';
 import { ActionBase } from '../common/gameActions/base';
 import { ActionDisposeOfShares } from '../common/gameActions/disposeOfShares';
@@ -76,7 +76,7 @@ class AllDemoProps {
         scoreBoardPrice: List<number>([3, 0, 10, 6, 3, 6, 9]),
         turnPlayerID: 1,
         movePlayerID: 0,
-        isTeamGame: false,
+        gameMode: GameMode.Singles2,
         cellWidth: 30,
     };
 
@@ -93,7 +93,7 @@ class AllDemoProps {
         scoreBoardPrice: List<number>([2, 2, 0, 0, 0, 4, 8]),
         turnPlayerID: 0,
         movePlayerID: 0,
-        isTeamGame: false,
+        gameMode: GameMode.Singles4,
         cellWidth: 30,
     };
 
@@ -110,8 +110,32 @@ class AllDemoProps {
         scoreBoardPrice: List<number>([0, 0, 5, 9, 0, 12, 0]),
         turnPlayerID: -1,
         movePlayerID: -1,
-        isTeamGame: true,
+        gameMode: GameMode.Teams2vs2,
         cellWidth: 30,
+    };
+
+    scoreBoardProps4: ScoreBoardProps = {
+        usernames: ['player 1', 'player 2', 'player 3', 'player 4', 'player 5', 'player 6'],
+        scoreBoard: List<List<number>>([
+            List([1, 0, 0, 9, 2, 3, 0, 188, 386]),
+            List([0, 3, 7, 0, 0, 0, 0, 35, 121]),
+            List([0, 0, 7, 2, 0, 1, 0, 22, 135]),
+            List([0, 0, 0, 8, 0, 9, 0, 87, 375]),
+            List([0, 0, 8, 6, 0, 7, 0, 84, 408]),
+            List([0, 0, 3, 0, 0, 5, 0, 120, 192]),
+        ]),
+        scoreBoardAvailable: List<number>([24, 22, 0, 0, 23, 0, 25]),
+        scoreBoardChainSize: List<number>([0, 0, 22, 30, 0, 15, 0]),
+        scoreBoardPrice: List<number>([0, 0, 9, 9, 0, 9, 0]),
+        turnPlayerID: -1,
+        movePlayerID: -1,
+        gameMode: GameMode.Teams2vs2vs2,
+        cellWidth: 30,
+    };
+
+    scoreBoardProps5 = {
+        ...this.scoreBoardProps4,
+        gameMode: GameMode.Teams3vs3,
     };
 
     tileRackProps1: TileRackProps = {
@@ -413,6 +437,10 @@ function render(props: AllDemoProps) {
             <ScoreBoard {...props.scoreBoardProps2} />
             <br />
             <ScoreBoard {...props.scoreBoardProps3} />
+            <br />
+            <ScoreBoard {...props.scoreBoardProps4} />
+            <br />
+            <ScoreBoard {...props.scoreBoardProps5} />
 
             <h1>TileRack</h1>
             <TileRack {...props.tileRackProps1} />

@@ -2,7 +2,8 @@ import { List } from 'immutable';
 import * as React from 'react';
 
 import { defaultScoreBoardRow } from '../../common/defaults';
-import { ScoreBoardIndex } from '../../common/enums';
+import { GameMode, ScoreBoardIndex } from '../../common/enums';
+import { gameModeToNumPlayers, gameModeToTeamSize } from '../../common/helpers';
 import { chains, gameBoardTypeToCSSClassName, gameBoardTypeToHotelInitial, teamNumberToCSSClassName } from '../helpers';
 import * as style from './ScoreBoard.css';
 
@@ -14,7 +15,7 @@ export interface ScoreBoardProps {
     scoreBoardPrice: List<number>;
     turnPlayerID: number;
     movePlayerID: number;
-    isTeamGame: boolean;
+    gameMode: GameMode;
     cellWidth: number;
 }
 
@@ -28,11 +29,32 @@ export class ScoreBoard extends React.PureComponent<ScoreBoardProps> {
             scoreBoardPrice,
             turnPlayerID,
             movePlayerID,
-            isTeamGame,
+            gameMode,
             cellWidth,
         } = this.props;
 
         const cellHeight = Math.ceil(cellWidth * 0.75);
+
+        const isTeamGame = gameModeToTeamSize[gameMode] > 1;
+        const numTeams = gameModeToNumPlayers[gameMode] / gameModeToTeamSize[gameMode];
+
+        const teamNumbers: (number | undefined)[] = new Array(3);
+        const teamTotals: (number | undefined)[] = new Array(3);
+        if (isTeamGame) {
+            if (numTeams === 2) {
+                teamNumbers[1] = 1;
+                teamNumbers[2] = 2;
+                teamTotals[1] = getTeamTotal(scoreBoard, numTeams, 1);
+                teamTotals[2] = getTeamTotal(scoreBoard, numTeams, 2);
+            } else {
+                teamNumbers[0] = 1;
+                teamNumbers[1] = 2;
+                teamNumbers[2] = 3;
+                teamTotals[0] = getTeamTotal(scoreBoard, numTeams, 1);
+                teamTotals[1] = getTeamTotal(scoreBoard, numTeams, 2);
+                teamTotals[2] = getTeamTotal(scoreBoard, numTeams, 3);
+            }
+        }
 
         return (
             <table className={style.root} style={{ fontSize: Math.floor(cellWidth * 0.6) }}>
@@ -46,7 +68,7 @@ export class ScoreBoard extends React.PureComponent<ScoreBoardProps> {
                             isPlayersMove={playerID === movePlayerID}
                             scoreBoardRow={scoreBoard.get(playerID, defaultScoreBoardRow)}
                             scoreBoardChainSize={scoreBoardChainSize}
-                            defaultClassName={isTeamGame ? teamNumberToCSSClassName[playerID % 2 === 0 ? 1 : 2] : style.player}
+                            defaultClassName={isTeamGame ? teamNumberToCSSClassName[playerID % numTeams + 1] : style.player}
                             zeroValueReplacement={''}
                             cellWidth={cellWidth}
                             cellHeight={cellHeight}
@@ -60,6 +82,8 @@ export class ScoreBoard extends React.PureComponent<ScoreBoardProps> {
                         scoreBoardChainSize={scoreBoardChainSize}
                         defaultClassName={style.availableChainSizeAndPrice}
                         zeroValueReplacement={'0'}
+                        teamNumber={teamNumbers[0]}
+                        teamTotal={teamTotals[0]}
                         cellWidth={cellWidth}
                         cellHeight={cellHeight}
                     />
@@ -71,13 +95,8 @@ export class ScoreBoard extends React.PureComponent<ScoreBoardProps> {
                         scoreBoardChainSize={scoreBoardChainSize}
                         defaultClassName={style.availableChainSizeAndPrice}
                         zeroValueReplacement={'-'}
-                        teamNumber={isTeamGame ? 1 : undefined}
-                        teamTotal={
-                            isTeamGame
-                                ? scoreBoard.get(0, defaultScoreBoardRow).get(ScoreBoardIndex.Net, 0) +
-                                  scoreBoard.get(2, defaultScoreBoardRow).get(ScoreBoardIndex.Net, 0)
-                                : undefined
-                        }
+                        teamNumber={teamNumbers[1]}
+                        teamTotal={teamTotals[1]}
                         cellWidth={cellWidth}
                         cellHeight={cellHeight}
                     />
@@ -89,13 +108,8 @@ export class ScoreBoard extends React.PureComponent<ScoreBoardProps> {
                         scoreBoardChainSize={scoreBoardChainSize}
                         defaultClassName={style.availableChainSizeAndPrice}
                         zeroValueReplacement={'-'}
-                        teamNumber={isTeamGame ? 2 : undefined}
-                        teamTotal={
-                            isTeamGame
-                                ? scoreBoard.get(1, defaultScoreBoardRow).get(ScoreBoardIndex.Net, 0) +
-                                  scoreBoard.get(3, defaultScoreBoardRow).get(ScoreBoardIndex.Net, 0)
-                                : undefined
-                        }
+                        teamNumber={teamNumbers[2]}
+                        teamTotal={teamTotals[2]}
                         cellWidth={cellWidth}
                         cellHeight={cellHeight}
                     />
@@ -103,6 +117,14 @@ export class ScoreBoard extends React.PureComponent<ScoreBoardProps> {
             </table>
         );
     }
+}
+
+function getTeamTotal(scoreBoard: List<List<number>>, numTeams: number, teamNumber: number) {
+    let teamTotal = 0;
+    for (let playerID = teamNumber - 1; playerID < scoreBoard.size; playerID += numTeams) {
+        teamTotal += scoreBoard.get(playerID, defaultScoreBoardRow).get(ScoreBoardIndex.Net, 0);
+    }
+    return teamTotal;
 }
 
 interface ScoreBoardHeaderProps {
