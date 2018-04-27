@@ -205,8 +205,8 @@ class AllDemoProps {
     disposeOfSharesProps2: DisposeOfSharesProps = {
         defunctChain: GameBoardType.Imperial,
         controllingChain: GameBoardType.Tower,
-        sharesOwnedInDefunctChain: 5,
-        sharesAvailableInControllingChain: 3,
+        sharesOwnedInDefunctChain: 7,
+        sharesAvailableInControllingChain: 2,
         onSharesDisposed,
     };
 
