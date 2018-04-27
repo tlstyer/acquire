@@ -1,0 +1,193 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`TileRack renders correctly 1`] = `
+<div
+  className="root"
+  style={
+    Object {
+      "fontSize": 16,
+    }
+  }
+>
+  <input
+    className="hotelButton luxor"
+    disabled={false}
+    onClick={[Function]}
+    style={
+      Object {
+        "height": 40,
+        "width": 40,
+      }
+    }
+    type="button"
+    value="1B"
+  />
+  <input
+    className="hotelButton tower"
+    disabled={false}
+    onClick={[Function]}
+    style={
+      Object {
+        "height": 40,
+        "width": 40,
+      }
+    }
+    type="button"
+    value="4B"
+  />
+  <input
+    className="hotelButton american"
+    disabled={false}
+    onClick={[Function]}
+    style={
+      Object {
+        "height": 40,
+        "width": 40,
+      }
+    }
+    type="button"
+    value="7B"
+  />
+  <input
+    className="hotelButton festival"
+    disabled={false}
+    onClick={[Function]}
+    style={
+      Object {
+        "height": 40,
+        "width": 40,
+      }
+    }
+    type="button"
+    value="10B"
+  />
+  <input
+    className="hotelButton worldwide"
+    disabled={false}
+    onClick={[Function]}
+    style={
+      Object {
+        "height": 40,
+        "width": 40,
+      }
+    }
+    type="button"
+    value="11C"
+  />
+  <input
+    className="hotelButton continental"
+    disabled={false}
+    onClick={[Function]}
+    style={
+      Object {
+        "height": 40,
+        "width": 40,
+      }
+    }
+    type="button"
+    value="5E"
+  />
+  <input
+    className="hotelButton imperial"
+    disabled={false}
+    onClick={[Function]}
+    style={
+      Object {
+        "height": 40,
+        "width": 40,
+      }
+    }
+    type="button"
+    value="8I"
+  />
+  <input
+    className="invisible"
+    style={
+      Object {
+        "height": 40,
+        "width": 40,
+      }
+    }
+    type="button"
+    value="?"
+  />
+  <input
+    className="hotelButton willMergeChains"
+    disabled={false}
+    onClick={[Function]}
+    style={
+      Object {
+        "height": 40,
+        "width": 40,
+      }
+    }
+    type="button"
+    value="12A"
+  />
+  <input
+    className="hotelButton willPutLonelyTileDown"
+    disabled={false}
+    onClick={[Function]}
+    style={
+      Object {
+        "height": 40,
+        "width": 40,
+      }
+    }
+    type="button"
+    value="2D"
+  />
+  <input
+    className="hotelButton haveNeighboringTileToo"
+    disabled={false}
+    onClick={[Function]}
+    style={
+      Object {
+        "height": 40,
+        "width": 40,
+      }
+    }
+    type="button"
+    value="1I"
+  />
+  <input
+    className="hotelButton cantPlayEver"
+    disabled={true}
+    onClick={[Function]}
+    style={
+      Object {
+        "height": 40,
+        "width": 40,
+      }
+    }
+    type="button"
+    value="10F"
+  />
+  <input
+    className="hotelButton willFormNewChain"
+    disabled={false}
+    onClick={[Function]}
+    style={
+      Object {
+        "height": 40,
+        "width": 40,
+      }
+    }
+    type="button"
+    value="5C"
+  />
+  <input
+    className="hotelButton cantPlayNow"
+    disabled={true}
+    onClick={[Function]}
+    style={
+      Object {
+        "height": 40,
+        "width": 40,
+      }
+    }
+    type="button"
+    value="9C"
+  />
+</div>
+`;

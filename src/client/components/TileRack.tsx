@@ -17,14 +17,14 @@ export class TileRack extends React.PureComponent<TileRackProps> {
     render() {
         const { tiles, types, buttonSize, onTileClicked } = this.props;
 
-        let buttons = new Array(6);
+        let buttons = new Array(tiles.size);
 
         const buttonStyle = {
             width: buttonSize,
             height: buttonSize,
         };
 
-        for (let i = 0; i < 6; i++) {
+        for (let i = 0; i < tiles.size; i++) {
             const tile = tiles.get(i, 0);
             const type = types.get(i, 0);
 
