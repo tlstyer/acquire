@@ -1,4 +1,3 @@
-import { assert } from 'chai';
 import { List } from 'immutable';
 
 import { defaultTileRackTypes } from './defaults';
@@ -104,9 +103,9 @@ export function runGameTestFile(inputLines: string[]) {
                         try {
                             parameters = JSON.parse(actionParts.slice(3).join(' '));
                         } catch (error) {
-                            assert.isTrue(false, `line ${lineNumber} has invalid JSON`);
+                            expect(false).toBe(true);
                         }
-                        assert.isArray(parameters, `line ${lineNumber} has parameters that are not an array`);
+                        expect(Array.isArray(parameters)).toBe(true);
                     } else {
                         parameters = fromParameterStrings(actualGameAction, actionParts.slice(2));
                     }
