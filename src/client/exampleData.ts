@@ -1,7 +1,16 @@
 import { defaultMoveDataHistory } from '../common/defaults';
-import { GameHistoryMessage } from '../common/enums';
+import { GameBoardType, GameHistoryMessage } from '../common/enums';
 import { Game } from '../common/game';
+import { ActionDisposeOfShares } from '../common/gameActions/disposeOfShares';
+import { ActionGameOver } from '../common/gameActions/gameOver';
+import { ActionPlayTile } from '../common/gameActions/playTile';
+import { ActionPurchaseShares } from '../common/gameActions/purchaseShares';
+import { ActionSelectChainToDisposeOfNext } from '../common/gameActions/selectChainToDisposeOfNext';
+import { ActionSelectMergerSurvivor } from '../common/gameActions/selectMergerSurvivor';
+import { ActionSelectNewChain } from '../common/gameActions/selectNewChain';
+import { ActionStartGame } from '../common/gameActions/startGame';
 import { getNewTileBag } from '../common/helpers';
+import { chains } from './helpers';
 
 export function getDummyGameForGetGameHistory() {
     const game = new Game(getNewTileBag(), [2, 3, 5, 8], 8, 3);
@@ -91,4 +100,23 @@ export function getDummyGameForGetGameHistory() {
     game.endCurrentMove();
 
     return game;
+}
+
+export function getUsernamesForExampleNextGameActionsArray() {
+    return ['Tim', 'Rita', 'Dad', 'Mom', 'REALLY, REALLY, REALLY LONG NAME'];
+}
+
+export function getExampleNextGameActionsArray() {
+    const game = new Game([], [], 0, 0);
+    return [
+        new ActionStartGame(game, 4),
+        new ActionStartGame(game, 0),
+        new ActionPlayTile(game, 1),
+        new ActionSelectNewChain(game, 2, chains, 107),
+        new ActionSelectMergerSurvivor(game, 3, [GameBoardType.Luxor, GameBoardType.Festival, GameBoardType.Continental], 107),
+        new ActionSelectChainToDisposeOfNext(game, 0, [GameBoardType.Tower, GameBoardType.American], GameBoardType.Continental),
+        new ActionDisposeOfShares(game, 1, GameBoardType.Imperial, GameBoardType.Luxor),
+        new ActionPurchaseShares(game, 2),
+        new ActionGameOver(game, 3),
+    ];
 }

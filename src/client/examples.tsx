@@ -6,15 +6,6 @@ import * as ReactDOM from 'react-dom';
 
 import { defaultMoveDataHistory } from '../common/defaults';
 import { GameBoardType, GameMode } from '../common/enums';
-import { ActionBase } from '../common/gameActions/base';
-import { ActionDisposeOfShares } from '../common/gameActions/disposeOfShares';
-import { ActionGameOver } from '../common/gameActions/gameOver';
-import { ActionPlayTile } from '../common/gameActions/playTile';
-import { ActionPurchaseShares } from '../common/gameActions/purchaseShares';
-import { ActionSelectChainToDisposeOfNext } from '../common/gameActions/selectChainToDisposeOfNext';
-import { ActionSelectMergerSurvivor } from '../common/gameActions/selectMergerSurvivor';
-import { ActionSelectNewChain } from '../common/gameActions/selectNewChain';
-import { ActionStartGame } from '../common/gameActions/startGame';
 import { runGameTestFile } from '../common/runGameTestFile';
 import { DisposeOfShares, DisposeOfSharesProps } from './components/DisposeOfShares';
 import { ExampleGameSetupMaster } from './components/ExampleGameSetupMaster';
@@ -28,7 +19,7 @@ import { ScoreBoard, ScoreBoardProps } from './components/ScoreBoard';
 import { SelectChain, SelectChainProps, SelectChainTitle } from './components/SelectChain';
 import { TileRack, TileRackProps } from './components/TileRack';
 import { GameBoardLabelMode } from './enums';
-import { getDummyGameForGetGameHistory } from './exampleData';
+import { getDummyGameForGetGameHistory, getExampleNextGameActionsArray, getUsernamesForExampleNextGameActionsArray } from './exampleData';
 import { chains, gameBoardTypeToHotelInitial, getTileString } from './helpers';
 
 class AllDemoProps {
@@ -253,8 +244,8 @@ class AllDemoProps {
     gameHistoryProps2: GameHistoryProps;
     gameHistoryProps3: GameHistoryProps;
 
-    gameStateUsernames: string[] = ['Tim', 'Rita', 'Dad', 'Mom', 'REALLY, REALLY, REALLY LONG NAME'];
-    nextGameActionsArray: ActionBase[];
+    gameStateUsernames = getUsernamesForExampleNextGameActionsArray();
+    nextGameActionsArray = getExampleNextGameActionsArray();
 
     miniGameBoardProps1: MiniGameBoardProps = {
         gameBoard: this.gameBoardProps1.gameBoard,
@@ -306,18 +297,6 @@ class AllDemoProps {
         if (game3 !== null) {
             this.miniGameBoardProps3.gameBoard = game3.gameBoard;
         }
-
-        this.nextGameActionsArray = [
-            new ActionStartGame(game1, 4),
-            new ActionStartGame(game1, 0),
-            new ActionPlayTile(game1, 1),
-            new ActionSelectNewChain(game1, 2, chains, 107),
-            new ActionSelectMergerSurvivor(game1, 3, [GameBoardType.Luxor, GameBoardType.Festival, GameBoardType.Continental], 107),
-            new ActionSelectChainToDisposeOfNext(game1, 0, [GameBoardType.Tower, GameBoardType.American], GameBoardType.Continental),
-            new ActionDisposeOfShares(game1, 1, GameBoardType.Imperial, GameBoardType.Luxor),
-            new ActionPurchaseShares(game1, 2),
-            new ActionGameOver(game1, 3),
-        ];
     }
 }
 

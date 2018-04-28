@@ -1,0 +1,231 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`GameState renders correctly 1`] = `
+<div>
+  <div
+    className="root"
+    style={
+      Object {
+        "height": 22,
+        "width": 500,
+      }
+    }
+  >
+    Waiting for 
+    <span
+      className="username"
+    >
+      REALLY, REALLY, REALLY LONG NAME
+    </span>
+     to start the game.
+  </div>
+  <div
+    className="root"
+    style={
+      Object {
+        "height": 22,
+        "width": 500,
+      }
+    }
+  >
+    Waiting for 
+    <span
+      className="username"
+    >
+      Tim
+    </span>
+     to start the game.
+  </div>
+  <div
+    className="root"
+    style={
+      Object {
+        "height": 22,
+        "width": 500,
+      }
+    }
+  >
+    Waiting for 
+    <span
+      className="username"
+    >
+      Rita
+    </span>
+     to play a tile.
+  </div>
+  <div
+    className="root"
+    style={
+      Object {
+        "height": 22,
+        "width": 500,
+      }
+    }
+  >
+    Waiting for 
+    <span
+      className="username"
+    >
+      Dad
+    </span>
+     to select new chain (
+    <span
+      className="luxor"
+    >
+      L
+    </span>
+    , 
+    <span
+      className="tower"
+    >
+      T
+    </span>
+    , 
+    <span
+      className="american"
+    >
+      A
+    </span>
+    , 
+    <span
+      className="festival"
+    >
+      F
+    </span>
+    , 
+    <span
+      className="worldwide"
+    >
+      W
+    </span>
+    , 
+    <span
+      className="continental"
+    >
+      C
+    </span>
+    , or 
+    <span
+      className="imperial"
+    >
+      I
+    </span>
+    ).
+  </div>
+  <div
+    className="root"
+    style={
+      Object {
+        "height": 22,
+        "width": 500,
+      }
+    }
+  >
+    Waiting for 
+    <span
+      className="username"
+    >
+      Mom
+    </span>
+     to select merger survivor (
+    <span
+      className="luxor"
+    >
+      L
+    </span>
+    , 
+    <span
+      className="festival"
+    >
+      F
+    </span>
+    , or 
+    <span
+      className="continental"
+    >
+      C
+    </span>
+    ).
+  </div>
+  <div
+    className="root"
+    style={
+      Object {
+        "height": 22,
+        "width": 500,
+      }
+    }
+  >
+    Waiting for 
+    <span
+      className="username"
+    >
+      Tim
+    </span>
+     to select chain to dispose of next (
+    <span
+      className="tower"
+    >
+      T
+    </span>
+     or 
+    <span
+      className="american"
+    >
+      A
+    </span>
+    ).
+  </div>
+  <div
+    className="root"
+    style={
+      Object {
+        "height": 22,
+        "width": 500,
+      }
+    }
+  >
+    Waiting for 
+    <span
+      className="username"
+    >
+      Rita
+    </span>
+     to dispose of 
+    <span
+      className="imperial"
+    >
+      Imperial
+    </span>
+     shares.
+  </div>
+  <div
+    className="root"
+    style={
+      Object {
+        "height": 22,
+        "width": 500,
+      }
+    }
+  >
+    Waiting for 
+    <span
+      className="username"
+    >
+      Dad
+    </span>
+     to purchase shares.
+  </div>
+  <div
+    className="root"
+    style={
+      Object {
+        "height": 22,
+        "width": 500,
+      }
+    }
+  >
+    Game over.
+  </div>
+</div>
+`;
