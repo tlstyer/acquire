@@ -1,0 +1,87 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DisposeOfShares renders correctly 1`] = `
+<div
+  className="root"
+>
+  <fieldset
+    className="imperial"
+  >
+    <legend
+      className="imperial"
+    >
+      Keep
+    </legend>
+    <span>
+      7
+    </span>
+    <input
+      disabled={true}
+      onClick={undefined}
+      type="button"
+      value="All"
+    />
+  </fieldset>
+  <fieldset
+    className="tower"
+  >
+    <legend
+      className="tower"
+    >
+      Trade
+    </legend>
+    <span>
+      0
+    </span>
+    <input
+      disabled={false}
+      onClick={[Function]}
+      type="button"
+      value="▲"
+    />
+    <input
+      disabled={true}
+      onClick={undefined}
+      type="button"
+      value="▼"
+    />
+    <input
+      disabled={false}
+      onClick={[Function]}
+      type="button"
+      value="Max"
+    />
+  </fieldset>
+  <fieldset>
+    <legend>
+      Sell
+    </legend>
+    <span>
+      0
+    </span>
+    <input
+      disabled={false}
+      onClick={[Function]}
+      type="button"
+      value="▲"
+    />
+    <input
+      disabled={true}
+      onClick={undefined}
+      type="button"
+      value="▼"
+    />
+    <input
+      disabled={false}
+      onClick={[Function]}
+      type="button"
+      value="Max"
+    />
+  </fieldset>
+  <input
+    onClick={[Function]}
+    type="button"
+    value="OK"
+  />
+</div>
+`;

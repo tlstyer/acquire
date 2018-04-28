@@ -56,26 +56,62 @@ export class DisposeOfShares extends React.PureComponent<DisposeOfSharesProps, D
         const { defunctChain, controllingChain, sharesOwnedInDefunctChain } = this.props;
         const { keep, trade, tradeMax, sell, sellMax } = this.state;
 
+        const keepAllDisabled = keep == sharesOwnedInDefunctChain;
+        const tradeIncrementAndMaxDisabled = trade === tradeMax;
+        const tradeDecrementDisabled = trade === 0;
+        const sellIncrementAndMaxDisabled = sell === sellMax;
+        const sellDecrementDisabled = sell === 0;
+
         return (
             <div className={style.root}>
                 <fieldset className={gameBoardTypeToCSSClassName[defunctChain]}>
                     <legend className={gameBoardTypeToCSSClassName[defunctChain]}>Keep</legend>
                     <span>{keep}</span>
-                    <input type={'button'} value={'All'} disabled={keep == sharesOwnedInDefunctChain} onClick={this.handleKeepAll} />
+                    <input type={'button'} value={'All'} disabled={keepAllDisabled} onClick={keepAllDisabled ? undefined : this.handleKeepAll} />
                 </fieldset>
                 <fieldset className={gameBoardTypeToCSSClassName[controllingChain]}>
                     <legend className={gameBoardTypeToCSSClassName[controllingChain]}>Trade</legend>
                     <span>{trade}</span>
-                    <input type={'button'} value={'▲'} disabled={trade === tradeMax} onClick={this.handleTradeIncrement} />
-                    <input type={'button'} value={'▼'} disabled={trade === 0} onClick={this.handleTradeDecrement} />
-                    <input type={'button'} value={'Max'} disabled={trade === tradeMax} onClick={this.handleTradeMax} />
+                    <input
+                        type={'button'}
+                        value={'▲'}
+                        disabled={tradeIncrementAndMaxDisabled}
+                        onClick={tradeIncrementAndMaxDisabled ? undefined : this.handleTradeIncrement}
+                    />
+                    <input
+                        type={'button'}
+                        value={'▼'}
+                        disabled={tradeDecrementDisabled}
+                        onClick={tradeDecrementDisabled ? undefined : this.handleTradeDecrement}
+                    />
+                    <input
+                        type={'button'}
+                        value={'Max'}
+                        disabled={tradeIncrementAndMaxDisabled}
+                        onClick={tradeIncrementAndMaxDisabled ? undefined : this.handleTradeMax}
+                    />
                 </fieldset>
                 <fieldset>
                     <legend>Sell</legend>
                     <span>{sell}</span>
-                    <input type={'button'} value={'▲'} disabled={sell === sellMax} onClick={this.handleSellIncrement} />
-                    <input type={'button'} value={'▼'} disabled={sell === 0} onClick={this.handleSellDecrement} />
-                    <input type={'button'} value={'Max'} disabled={sell === sellMax} onClick={this.handleSellMax} />
+                    <input
+                        type={'button'}
+                        value={'▲'}
+                        disabled={sellIncrementAndMaxDisabled}
+                        onClick={sellIncrementAndMaxDisabled ? undefined : this.handleSellIncrement}
+                    />
+                    <input
+                        type={'button'}
+                        value={'▼'}
+                        disabled={sellDecrementDisabled}
+                        onClick={sellDecrementDisabled ? undefined : this.handleSellDecrement}
+                    />
+                    <input
+                        type={'button'}
+                        value={'Max'}
+                        disabled={sellIncrementAndMaxDisabled}
+                        onClick={sellIncrementAndMaxDisabled ? undefined : this.handleSellMax}
+                    />
                 </fieldset>
                 <input type={'button'} value={'OK'} onClick={this.handleOK} />
             </div>
