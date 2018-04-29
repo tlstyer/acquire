@@ -63,6 +63,16 @@ export enum GameMode {
     Teams3vs3,
 }
 
+export enum GameSetupChange {
+    Created,
+    UserAdded,
+    UserRemoved,
+    GameModeChanged,
+    PlayerArrangementModeChanged,
+    PositionsSwapped,
+    UserKicked,
+}
+
 export enum PlayerArrangementMode {
     RandomOrder,
     ExactOrder,
