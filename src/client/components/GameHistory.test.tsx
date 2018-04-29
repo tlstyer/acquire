@@ -2,8 +2,11 @@ import { mount } from 'enzyme';
 import * as React from 'react';
 import * as renderer from 'react-test-renderer';
 
+import { configureEnzyme } from '../configureEnzyme';
 import { getDummyGameForGetGameHistory } from '../exampleData';
 import { GameHistory } from './GameHistory';
+
+configureEnzyme();
 
 describe('GameHistory', () => {
     const onMoveClicked = jest.fn();

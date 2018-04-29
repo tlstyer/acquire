@@ -3,7 +3,10 @@ import * as React from 'react';
 import * as renderer from 'react-test-renderer';
 
 import { GameBoardType } from '../../common/enums';
+import { configureEnzyme } from '../configureEnzyme';
 import { DisposeOfShares } from './DisposeOfShares';
+
+configureEnzyme();
 
 enum inputIndex {
     keepAll,
