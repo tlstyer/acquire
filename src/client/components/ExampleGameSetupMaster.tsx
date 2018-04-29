@@ -1,29 +1,23 @@
 import * as React from 'react';
 
 import { GameMode, PlayerArrangementMode } from '../../common/enums';
-import { gameModeToNumPlayers, gameModeToTeamSize } from '../../common/helpers';
+import { GameSetup } from '../../common/gameSetup';
 import { GameSetupUI } from './GameSetupUI';
 
 export interface ExampleGameSetupMasterProps {}
 
 interface ExampleGameSetupMasterState {
-    gameMode: GameMode;
-    playerArrangementMode: PlayerArrangementMode;
-    usernames: (string | null)[];
-
+    gameSetup: GameSetup;
     simulatedNetworkDelay: number;
     nextUserId: number;
 }
 
-export class ExampleGameSetupMaster extends React.PureComponent<ExampleGameSetupMasterProps, ExampleGameSetupMasterState> {
+export class ExampleGameSetupMaster extends React.Component<ExampleGameSetupMasterProps, ExampleGameSetupMasterState> {
     constructor(props: ExampleGameSetupMasterProps) {
         super(props);
 
         this.state = {
-            gameMode: GameMode.Singles4,
-            playerArrangementMode: PlayerArrangementMode.RandomOrder,
-            usernames: ['Host', null, null, null],
-
+            gameSetup: new GameSetup(GameMode.Singles4, PlayerArrangementMode.RandomOrder, 1, 'Host'),
             simulatedNetworkDelay: 250,
             nextUserId: 2,
         };
@@ -34,17 +28,10 @@ export class ExampleGameSetupMaster extends React.PureComponent<ExampleGameSetup
     }
 
     render() {
-        const { gameMode, playerArrangementMode, usernames, simulatedNetworkDelay } = this.state;
+        const { gameSetup, simulatedNetworkDelay } = this.state;
 
-        let numUsersInGame = 0;
-        for (let i = 0; i < usernames.length; i++) {
-            const username = usernames[i];
-            if (username !== null) {
-                numUsersInGame++;
-            }
-        }
-
-        const maxUsers = usernames.length;
+        const numUsersInGame = gameSetup.usernameToUserID.size;
+        const maxUsers = gameSetup.usernames.size;
 
         return (
             <div>
@@ -55,17 +42,22 @@ export class ExampleGameSetupMaster extends React.PureComponent<ExampleGameSetup
                 <input type={'button'} value={'Remove a user'} disabled={numUsersInGame === 1} onClick={this.handleRemoveAUser} />
                 <h2>Host view</h2>
                 <GameSetupUI
-                    gameMode={gameMode}
-                    playerArrangementMode={playerArrangementMode}
-                    usernames={usernames}
-                    hostUsername={'Host'}
+                    gameMode={gameSetup.gameMode}
+                    playerArrangementMode={gameSetup.playerArrangementMode}
+                    usernames={gameSetup.usernames}
+                    hostUsername={gameSetup.hostUsername}
                     onChangeGameMode={this.handleChangeGameMode}
                     onChangePlayerArrangementMode={this.handleChangePlayerArrangementMode}
                     onSwapPositions={this.handleSwapPositions}
                     onKickUser={this.handleKickUser}
                 />
                 <h2>Non-host view</h2>
-                <GameSetupUI gameMode={gameMode} playerArrangementMode={playerArrangementMode} usernames={usernames} hostUsername={'Host'} />
+                <GameSetupUI
+                    gameMode={gameSetup.gameMode}
+                    playerArrangementMode={gameSetup.playerArrangementMode}
+                    usernames={gameSetup.usernames}
+                    hostUsername={gameSetup.hostUsername}
+                />
             </div>
         );
     }
@@ -79,78 +71,39 @@ export class ExampleGameSetupMaster extends React.PureComponent<ExampleGameSetup
     };
 
     handleAddAUser = () => {
-        for (let i = 0; i < this.state.usernames.length; i++) {
-            const username = this.state.usernames[i];
-            if (username === null) {
-                const usernames = [...this.state.usernames];
-                usernames[i] = `User ${this.state.nextUserId}`;
-
-                this.setState({ usernames, nextUserId: this.state.nextUserId + 1 });
-                break;
-            }
-        }
+        const { gameSetup } = this.state;
+        gameSetup.addUser(this.state.nextUserId, `User ${this.state.nextUserId}`);
+        this.setState({ gameSetup, nextUserId: this.state.nextUserId + 1 });
     };
 
     handleRemoveAUser = () => {
+        const { gameSetup } = this.state;
+
         let indexesThatCanBeRemoved: number[] = [];
 
-        for (let i = 0; i < this.state.usernames.length; i++) {
-            const username = this.state.usernames[i];
-            if (username !== null && username !== 'Host') {
+        for (let i = 0; i < gameSetup.usernames.size; i++) {
+            const username = gameSetup.usernames.get(i, null);
+            if (username !== null && username !== gameSetup.hostUsername) {
                 indexesThatCanBeRemoved.push(i);
             }
         }
 
         const randomIndex = indexesThatCanBeRemoved[Math.floor(Math.random() * indexesThatCanBeRemoved.length)];
-
-        const usernames = [...this.state.usernames];
-        usernames[randomIndex] = null;
-
-        this.setState({ usernames });
+        const username = gameSetup.usernames.get(randomIndex, null);
+        if (username !== null) {
+            const userID = gameSetup.usernameToUserID.get(username, 0);
+            gameSetup.removeUser(userID, username);
+            this.setState({ gameSetup });
+        }
     };
 
     handleChangeGameMode = (gameMode: GameMode) => {
         setTimeout(() => {
             console.log('handleChangeGameMode', gameMode);
 
-            const oldNumPlayers = gameModeToNumPlayers[this.state.gameMode];
-            const newNumPlayers = gameModeToNumPlayers[gameMode];
-
-            const newState: Partial<ExampleGameSetupMasterState> = { gameMode };
-
-            if (newNumPlayers !== oldNumPlayers) {
-                const usernames = [...this.state.usernames];
-
-                if (newNumPlayers > oldNumPlayers) {
-                    const numSpotsToAdd = newNumPlayers - oldNumPlayers;
-                    for (let i = 0; i < numSpotsToAdd; i++) {
-                        usernames.push(null);
-                    }
-                } else {
-                    for (let oldIndex = oldNumPlayers - 1; oldIndex >= newNumPlayers; oldIndex--) {
-                        if (usernames[oldIndex] !== null) {
-                            for (let newIndex = newNumPlayers - 1; newIndex >= 0; newIndex--) {
-                                if (usernames[newIndex] === null) {
-                                    usernames[newIndex] = usernames[oldIndex];
-                                    break;
-                                }
-                            }
-                        }
-
-                        usernames.pop();
-                    }
-                }
-
-                newState.usernames = usernames;
-            }
-
-            const isTeamGame = gameModeToTeamSize[gameMode] > 1;
-            if (!isTeamGame && this.state.playerArrangementMode === PlayerArrangementMode.SpecifyTeams) {
-                newState.playerArrangementMode = PlayerArrangementMode.RandomOrder;
-            }
-
-            // @ts-ignore
-            this.setState(newState);
+            const { gameSetup } = this.state;
+            gameSetup.changeGameMode(gameMode);
+            this.setState({ gameSetup });
         }, this.state.simulatedNetworkDelay);
     };
 
@@ -158,7 +111,9 @@ export class ExampleGameSetupMaster extends React.PureComponent<ExampleGameSetup
         setTimeout(() => {
             console.log('handleChangePlayerArrangementMode', playerArrangementMode);
 
-            this.setState({ playerArrangementMode });
+            const { gameSetup } = this.state;
+            gameSetup.changePlayerArrangementMode(playerArrangementMode);
+            this.setState({ gameSetup });
         }, this.state.simulatedNetworkDelay);
     };
 
@@ -166,11 +121,9 @@ export class ExampleGameSetupMaster extends React.PureComponent<ExampleGameSetup
         setTimeout(() => {
             console.log('handleSwapPositions', position1, position2);
 
-            const usernames = [...this.state.usernames];
-            usernames[position1] = this.state.usernames[position2];
-            usernames[position2] = this.state.usernames[position1];
-
-            this.setState({ usernames });
+            const { gameSetup } = this.state;
+            gameSetup.swapPositions(position1, position2);
+            this.setState({ gameSetup });
         }, this.state.simulatedNetworkDelay);
     };
 
@@ -178,10 +131,9 @@ export class ExampleGameSetupMaster extends React.PureComponent<ExampleGameSetup
         setTimeout(() => {
             console.log('handleKickUser', position);
 
-            const usernames = [...this.state.usernames];
-            usernames[position] = null;
-
-            this.setState({ usernames });
+            const { gameSetup } = this.state;
+            gameSetup.kickUser(position);
+            this.setState({ gameSetup });
         }, this.state.simulatedNetworkDelay);
     };
 }

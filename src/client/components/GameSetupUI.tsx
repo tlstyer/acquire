@@ -1,3 +1,4 @@
+import { List } from 'immutable';
 import * as React from 'react';
 
 import { GameMode, PlayerArrangementMode } from '../../common/enums';
@@ -8,7 +9,7 @@ import * as style from './GameSetupUI.css';
 export interface GameSetupUIProps {
     gameMode: GameMode;
     playerArrangementMode: PlayerArrangementMode;
-    usernames: (string | null)[];
+    usernames: List<string | null>;
     hostUsername: string;
     onChangeGameMode?: (gameMode: GameMode) => void;
     onChangePlayerArrangementMode?: (playerArrangementMode: PlayerArrangementMode) => void;
@@ -23,8 +24,8 @@ export class GameSetupUI extends React.PureComponent<GameSetupUIProps, GameSetup
         const { gameMode, playerArrangementMode, usernames, onChangeGameMode, onChangePlayerArrangementMode } = this.props;
 
         let numUsersInGame = 0;
-        for (let i = 0; i < usernames.length; i++) {
-            const username = usernames[i];
+        for (let i = 0; i < usernames.size; i++) {
+            const username = usernames.get(i, null);
             if (username !== null) {
                 numUsersInGame++;
             }
@@ -100,7 +101,7 @@ export class GameSetupUI extends React.PureComponent<GameSetupUIProps, GameSetup
     renderExactOrder() {
         const { gameMode, usernames, onSwapPositions } = this.props;
 
-        const lastIndex = usernames.length - 1;
+        const lastIndex = usernames.size - 1;
 
         const isTeamGame = gameModeToTeamSize[gameMode] > 1;
         const numTeams = gameModeToNumPlayers[gameMode] / gameModeToTeamSize[gameMode];
@@ -144,7 +145,7 @@ export class GameSetupUI extends React.PureComponent<GameSetupUIProps, GameSetup
 
                             return (
                                 <tr key={i}>
-                                    <td className={style.user}>{usernames[index]}</td>
+                                    <td className={style.user}>{usernames.get(index, null)}</td>
                                     {onSwapPositions !== undefined ? (
                                         <td>
                                             {upIndex !== null ? (
@@ -187,7 +188,7 @@ export class GameSetupUI extends React.PureComponent<GameSetupUIProps, GameSetup
         const { usernames, hostUsername, onKickUser } = this.props;
 
         if (onKickUser !== undefined) {
-            const username = usernames[index];
+            const username = usernames.get(index, null);
 
             return (
                 <td>

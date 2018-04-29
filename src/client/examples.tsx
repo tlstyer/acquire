@@ -308,7 +308,7 @@ function render(props: AllDemoProps) {
             <br />
             <LoginForm {...props.loginFormProps2} />
 
-            <h1>GameSetupUI with simulated server</h1>
+            <h1>GameSetupUI</h1>
             <ExampleGameSetupMaster />
 
             <h1>GameBoard</h1>
