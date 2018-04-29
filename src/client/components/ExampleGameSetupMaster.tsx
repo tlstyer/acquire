@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import { GameMode, PlayerArrangementMode } from '../../common/enums';
 import { gameModeToNumPlayers, gameModeToTeamSize } from '../../common/helpers';
-import { GameSetup } from './GameSetup';
+import { GameSetupUI } from './GameSetupUI';
 
 export interface ExampleGameSetupMasterProps {}
 
@@ -54,7 +54,7 @@ export class ExampleGameSetupMaster extends React.PureComponent<ExampleGameSetup
                 <br />
                 <input type={'button'} value={'Remove a user'} disabled={numUsersInGame === 1} onClick={this.handleRemoveAUser} />
                 <h2>Host view</h2>
-                <GameSetup
+                <GameSetupUI
                     gameMode={gameMode}
                     playerArrangementMode={playerArrangementMode}
                     usernames={usernames}
@@ -65,7 +65,7 @@ export class ExampleGameSetupMaster extends React.PureComponent<ExampleGameSetup
                     onKickUser={this.handleKickUser}
                 />
                 <h2>Non-host view</h2>
-                <GameSetup gameMode={gameMode} playerArrangementMode={playerArrangementMode} usernames={usernames} hostUsername={'Host'} />
+                <GameSetupUI gameMode={gameMode} playerArrangementMode={playerArrangementMode} usernames={usernames} hostUsername={'Host'} />
             </div>
         );
     }

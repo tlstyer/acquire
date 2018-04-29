@@ -3,9 +3,9 @@ import * as React from 'react';
 import { GameMode, PlayerArrangementMode } from '../../common/enums';
 import { gameModeToNumPlayers, gameModeToTeamSize } from '../../common/helpers';
 import { teamNumberToCSSClassName } from '../helpers';
-import * as style from './GameSetup.css';
+import * as style from './GameSetupUI.css';
 
-export interface GameSetupProps {
+export interface GameSetupUIProps {
     gameMode: GameMode;
     playerArrangementMode: PlayerArrangementMode;
     usernames: (string | null)[];
@@ -16,9 +16,9 @@ export interface GameSetupProps {
     onKickUser?: (position: number) => void;
 }
 
-interface GameSetupState {}
+interface GameSetupUIState {}
 
-export class GameSetup extends React.PureComponent<GameSetupProps, GameSetupState> {
+export class GameSetupUI extends React.PureComponent<GameSetupUIProps, GameSetupUIState> {
     render() {
         const { gameMode, playerArrangementMode, usernames, onChangeGameMode, onChangePlayerArrangementMode } = this.props;
 
