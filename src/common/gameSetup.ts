@@ -49,10 +49,12 @@ export class GameSetup {
         }
     }
 
-    removeUser(userID: number, username: string) {
-        if (!this.usernameToUserID.has(username)) {
+    removeUser(userID: number) {
+        if (!this.userIDToUsername.has(userID)) {
             return;
         }
+
+        const username = this.userIDToUsername.get(userID, '');
 
         if (username === this.hostUsername) {
             return;

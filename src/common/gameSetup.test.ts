@@ -55,14 +55,14 @@ describe('gameSetup', () => {
             gameSetup.addUser(2, 'user 2');
             gameSetup.clearHistory();
 
-            gameSetup.removeUser(7, 'user 1');
+            gameSetup.removeUser(7);
 
             expect(gameSetup.usernames.toJS()).toEqual(['Host', null, 'user 2']);
             expect(gameSetup.usernameToUserID.size).toEqual(2);
             expect(gameSetup.userIDToUsername.size).toEqual(2);
             expect(gameSetup.history).toEqual([[GameSetupChange.UserRemoved, 7]]);
 
-            gameSetup.removeUser(2, 'user 2');
+            gameSetup.removeUser(2);
 
             expect(gameSetup.usernames.toJS()).toEqual(['Host', null, null]);
             expect(gameSetup.usernameToUserID.size).toEqual(1);
@@ -75,7 +75,7 @@ describe('gameSetup', () => {
             gameSetup.addUser(2, 'user');
             gameSetup.clearHistory();
 
-            gameSetup.removeUser(1, 'Host');
+            gameSetup.removeUser(1);
 
             expect(gameSetup.usernames.toJS()).toEqual(['Host', 'user', null]);
             expect(gameSetup.usernameToUserID.size).toEqual(2);
@@ -124,7 +124,7 @@ describe('gameSetup', () => {
             gameSetup.addUser(2, 'user 2');
             gameSetup.addUser(3, 'user 3');
             gameSetup.addUser(4, 'user 4');
-            gameSetup.removeUser(3, 'user 3');
+            gameSetup.removeUser(3);
             gameSetup.clearHistory();
 
             expect(gameSetup.gameMode).toBe(GameMode.Singles4);
@@ -189,8 +189,8 @@ describe('gameSetup', () => {
             gameSetup.addUser(4, 'user 4');
             gameSetup.addUser(5, 'user 5');
             gameSetup.addUser(6, 'user 6');
-            gameSetup.removeUser(2, 'user 2');
-            gameSetup.removeUser(4, 'user 4');
+            gameSetup.removeUser(2);
+            gameSetup.removeUser(4);
             gameSetup.clearHistory();
 
             expect(gameSetup.gameMode).toBe(GameMode.Teams3vs3);

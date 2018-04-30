@@ -92,7 +92,7 @@ export class ExampleGameSetupMaster extends React.Component<ExampleGameSetupMast
         const username = gameSetup.usernames.get(randomIndex, null);
         if (username !== null) {
             const userID = gameSetup.usernameToUserID.get(username, 0);
-            gameSetup.removeUser(userID, username);
+            gameSetup.removeUser(userID);
             this.setState({ gameSetup });
         }
     };
