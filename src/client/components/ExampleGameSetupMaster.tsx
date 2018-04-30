@@ -12,6 +12,8 @@ interface ExampleGameSetupMasterState {
     nextUserId: number;
 }
 
+const watcherUsername = '';
+
 export class ExampleGameSetupMaster extends React.Component<ExampleGameSetupMasterProps, ExampleGameSetupMasterState> {
     constructor(props: ExampleGameSetupMasterProps) {
         super(props);
@@ -33,6 +35,8 @@ export class ExampleGameSetupMaster extends React.Component<ExampleGameSetupMast
         const numUsersInGame = gameSetup.usernameToUserID.size;
         const maxUsers = gameSetup.usernames.size;
 
+        const userIDs = [...gameSetup.userIDToUsername.sort().keys()];
+
         return (
             <div>
                 Simulated network delay (ms): <input type={'text'} value={simulatedNetworkDelay} size={4} onChange={this.handleChangeSimulatedNetworkDelay} />
@@ -40,23 +44,61 @@ export class ExampleGameSetupMaster extends React.Component<ExampleGameSetupMast
                 <input type={'button'} value={'Add a user'} disabled={numUsersInGame === maxUsers} onClick={this.handleAddAUser} />
                 <br />
                 <input type={'button'} value={'Remove a user'} disabled={numUsersInGame === 1} onClick={this.handleRemoveAUser} />
-                <h2>Host view</h2>
+                <h2>Host's view</h2>
                 <GameSetupUI
                     gameMode={gameSetup.gameMode}
                     playerArrangementMode={gameSetup.playerArrangementMode}
                     usernames={gameSetup.usernames}
+                    approvals={gameSetup.approvals}
                     hostUsername={gameSetup.hostUsername}
+                    myUsername={gameSetup.hostUsername}
                     onChangeGameMode={this.handleChangeGameMode}
                     onChangePlayerArrangementMode={this.handleChangePlayerArrangementMode}
                     onSwapPositions={this.handleSwapPositions}
                     onKickUser={this.handleKickUser}
+                    onApprove={() => {
+                        setTimeout(() => {
+                            console.log('gameSetup.approve', 1);
+
+                            gameSetup.approve(1);
+                            this.setState({ gameSetup });
+                        }, this.state.simulatedNetworkDelay);
+                    }}
                 />
-                <h2>Non-host view</h2>
+                {userIDs.map(userID => {
+                    const username = gameSetup.userIDToUsername.get(userID, '');
+                    return username !== gameSetup.hostUsername ? (
+                        <div key={username}>
+                            <h2>{username}'s view</h2>
+                            <GameSetupUI
+                                gameMode={gameSetup.gameMode}
+                                playerArrangementMode={gameSetup.playerArrangementMode}
+                                usernames={gameSetup.usernames}
+                                approvals={gameSetup.approvals}
+                                hostUsername={gameSetup.hostUsername}
+                                myUsername={username}
+                                onApprove={() => {
+                                    setTimeout(() => {
+                                        console.log('gameSetup.approve', userID);
+
+                                        gameSetup.approve(userID);
+                                        this.setState({ gameSetup });
+                                    }, this.state.simulatedNetworkDelay);
+                                }}
+                            />
+                        </div>
+                    ) : (
+                        undefined
+                    );
+                })}
+                <h2>Watcher view</h2>
                 <GameSetupUI
                     gameMode={gameSetup.gameMode}
                     playerArrangementMode={gameSetup.playerArrangementMode}
                     usernames={gameSetup.usernames}
+                    approvals={gameSetup.approvals}
                     hostUsername={gameSetup.hostUsername}
+                    myUsername={watcherUsername}
                 />
             </div>
         );

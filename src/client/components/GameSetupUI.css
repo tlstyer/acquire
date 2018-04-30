@@ -23,3 +23,12 @@
 .versus {
     font-weight: normal;
 }
+
+.ready {
+    color: green;
+    font-weight: normal;
+}
+
+.waiting {
+    font-weight: normal;
+}

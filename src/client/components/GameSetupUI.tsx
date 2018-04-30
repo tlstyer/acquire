@@ -10,11 +10,14 @@ export interface GameSetupUIProps {
     gameMode: GameMode;
     playerArrangementMode: PlayerArrangementMode;
     usernames: List<string | null>;
+    approvals: List<boolean>;
     hostUsername: string;
+    myUsername: string;
     onChangeGameMode?: (gameMode: GameMode) => void;
     onChangePlayerArrangementMode?: (playerArrangementMode: PlayerArrangementMode) => void;
     onSwapPositions?: (position1: number, position2: number) => void;
     onKickUser?: (position: number) => void;
+    onApprove?: () => void;
 }
 
 interface GameSetupUIState {}
@@ -30,6 +33,8 @@ export class GameSetupUI extends React.PureComponent<GameSetupUIProps, GameSetup
                 numUsersInGame++;
             }
         }
+
+        const gameIsFull = numUsersInGame === usernames.size;
 
         const isTeamGame = gameModeToTeamSize[gameMode] > 1;
 
@@ -73,15 +78,15 @@ export class GameSetupUI extends React.PureComponent<GameSetupUIProps, GameSetup
                 )}
                 <br />
                 {playerArrangementMode === PlayerArrangementMode.RandomOrder
-                    ? this.renderRandomOrder()
+                    ? this.renderRandomOrder(gameIsFull)
                     : playerArrangementMode === PlayerArrangementMode.ExactOrder
-                        ? this.renderExactOrder()
-                        : this.renderSpecifyTeams()}
+                        ? this.renderExactOrder(gameIsFull)
+                        : this.renderSpecifyTeams(gameIsFull)}
             </div>
         );
     }
 
-    renderRandomOrder() {
+    renderRandomOrder(showApprovals: boolean) {
         const { usernames } = this.props;
 
         return (
@@ -91,6 +96,7 @@ export class GameSetupUI extends React.PureComponent<GameSetupUIProps, GameSetup
                         <tr key={i}>
                             <td className={style.user}>{username}</td>
                             {this.renderKickUserCell(i)}
+                            {showApprovals ? this.renderApproveCell(i) : undefined}
                         </tr>
                     ))}
                 </tbody>
@@ -98,7 +104,7 @@ export class GameSetupUI extends React.PureComponent<GameSetupUIProps, GameSetup
         );
     }
 
-    renderExactOrder() {
+    renderExactOrder(showApprovals: boolean) {
         const { gameMode, usernames, onSwapPositions } = this.props;
 
         const lastIndex = usernames.size - 1;
@@ -123,6 +129,7 @@ export class GameSetupUI extends React.PureComponent<GameSetupUIProps, GameSetup
                                 undefined
                             )}
                             {this.renderKickUserCell(i)}
+                            {showApprovals ? this.renderApproveCell(i) : undefined}
                         </tr>
                     ))}
                 </tbody>
@@ -130,7 +137,7 @@ export class GameSetupUI extends React.PureComponent<GameSetupUIProps, GameSetup
         );
     }
 
-    renderSpecifyTeams() {
+    renderSpecifyTeams(showApprovals: boolean) {
         const { gameMode, usernames, onSwapPositions } = this.props;
 
         const specifyTeamsEntries = teamGameModeToSpecifyTeamsEntries[gameMode];
@@ -169,6 +176,7 @@ export class GameSetupUI extends React.PureComponent<GameSetupUIProps, GameSetup
                                         undefined
                                     )}
                                     {this.renderKickUserCell(index)}
+                                    {showApprovals ? this.renderApproveCell(index) : undefined}
                                 </tr>
                             );
                         } else {
@@ -195,6 +203,27 @@ export class GameSetupUI extends React.PureComponent<GameSetupUIProps, GameSetup
                     {username !== null && username !== hostUsername ? <input type={'button'} value={'Kick'} onClick={() => onKickUser(index)} /> : undefined}
                 </td>
             );
+        }
+    }
+
+    renderApproveCell(index: number) {
+        const { usernames, approvals, myUsername, onApprove } = this.props;
+
+        const approved = approvals.get(index, false);
+
+        if (approved) {
+            return <td className={style.ready}>Ready</td>;
+        } else {
+            const username = usernames.get(index, null);
+            if (username === myUsername) {
+                return (
+                    <td>
+                        <input type={'button'} value={'Ready'} onClick={onApprove} />
+                    </td>
+                );
+            } else {
+                return <td className={style.waiting}>Waiting</td>;
+            }
         }
     }
 }
