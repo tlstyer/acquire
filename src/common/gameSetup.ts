@@ -10,14 +10,14 @@ export class GameSetup {
     history: any[] = [];
 
     constructor(public gameMode: GameMode, public playerArrangementMode: PlayerArrangementMode, public hostUserID: number, public hostUsername: string) {
-        this.usernameToUserID = Map([[hostUsername, hostUserID]]);
-
         const usernames: (string | null)[] = new Array(gameModeToNumPlayers[gameMode]);
         for (let i = 0; i < usernames.length; i++) {
             usernames[i] = null;
         }
         usernames[0] = hostUsername;
         this.usernames = List(usernames);
+
+        this.usernameToUserID = Map([[hostUsername, hostUserID]]);
 
         this.history.push([GameSetupChange.Created, gameMode, playerArrangementMode, hostUserID]);
     }
