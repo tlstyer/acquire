@@ -7,6 +7,7 @@ import { gameModeToNumPlayers, gameModeToTeamSize } from './helpers';
 export class GameSetup {
     usernames: List<string | null>;
     usernameToUserID: Map<string, number>;
+    userIDToUsername: Map<number, string>;
     history: any[] = [];
 
     constructor(public gameMode: GameMode, public playerArrangementMode: PlayerArrangementMode, public hostUserID: number, public hostUsername: string) {
@@ -18,6 +19,8 @@ export class GameSetup {
         this.usernames = List(usernames);
 
         this.usernameToUserID = Map([[hostUsername, hostUserID]]);
+
+        this.userIDToUsername = Map([[hostUserID, hostUsername]]);
 
         this.history.push([GameSetupChange.Created, gameMode, playerArrangementMode, hostUserID]);
     }
@@ -39,6 +42,7 @@ export class GameSetup {
             if (this.usernames.get(i, null) === null) {
                 this.usernames = this.usernames.set(i, username);
                 this.usernameToUserID = this.usernameToUserID.set(username, userID);
+                this.userIDToUsername = this.userIDToUsername.set(userID, username);
                 this.history.push([GameSetupChange.UserAdded, userID]);
                 break;
             }
@@ -58,6 +62,7 @@ export class GameSetup {
             if (this.usernames.get(i, null) === username) {
                 this.usernames = this.usernames.set(i, null);
                 this.usernameToUserID = this.usernameToUserID.delete(username);
+                this.userIDToUsername = this.userIDToUsername.delete(userID);
                 this.history.push([GameSetupChange.UserRemoved, userID]);
                 break;
             }
@@ -164,8 +169,11 @@ export class GameSetup {
             return;
         }
 
+        const userID = this.usernameToUserID.get(username, 0);
+
         this.usernames = this.usernames.set(position, null);
         this.usernameToUserID = this.usernameToUserID.delete(username);
+        this.userIDToUsername = this.userIDToUsername.delete(userID);
         this.history.push([GameSetupChange.UserKicked, position]);
     }
 }
