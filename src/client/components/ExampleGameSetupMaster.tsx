@@ -56,7 +56,7 @@ export class ExampleGameSetupMaster extends React.Component<ExampleGameSetupMast
                     onKickUser={this.handleKickUser}
                     onApprove={() => {
                         setTimeout(() => {
-                            console.log('gameSetup.approve', 1);
+                            console.log('approve', 1);
 
                             gameSetup.approve(1);
                             this.setState({ gameSetup });
@@ -73,7 +73,7 @@ export class ExampleGameSetupMaster extends React.Component<ExampleGameSetupMast
                                 value={'Leave game'}
                                 onClick={() => {
                                     setTimeout(() => {
-                                        console.log('gameSetup.removeUser', userID);
+                                        console.log('removeUser', userID);
 
                                         gameSetup.removeUser(userID);
                                         this.setState({ gameSetup });
@@ -91,7 +91,7 @@ export class ExampleGameSetupMaster extends React.Component<ExampleGameSetupMast
                                 myUsername={username}
                                 onApprove={() => {
                                     setTimeout(() => {
-                                        console.log('gameSetup.approve', userID);
+                                        console.log('approve', userID);
 
                                         gameSetup.approve(userID);
                                         this.setState({ gameSetup });
@@ -126,15 +126,22 @@ export class ExampleGameSetupMaster extends React.Component<ExampleGameSetupMast
 
     handleAddAUser = () => {
         const { gameSetup } = this.state;
-        gameSetup.addUser(this.state.nextUserId, `User ${this.state.nextUserId}`);
-        this.setState({ gameSetup, nextUserId: this.state.nextUserId + 1 });
+
+        const userID = this.state.nextUserId;
+        const username = `User ${this.state.nextUserId}`;
+
+        console.log('addUser', userID, username);
+
+        gameSetup.addUser(userID, username);
+        this.setState({ gameSetup, nextUserId: userID + 1 });
     };
 
     handleChangeGameMode = (gameMode: GameMode) => {
         setTimeout(() => {
-            console.log('handleChangeGameMode', gameMode);
-
             const { gameSetup } = this.state;
+
+            console.log('changeGameMode', gameMode);
+
             gameSetup.changeGameMode(gameMode);
             this.setState({ gameSetup });
         }, this.state.simulatedNetworkDelay);
@@ -142,9 +149,10 @@ export class ExampleGameSetupMaster extends React.Component<ExampleGameSetupMast
 
     handleChangePlayerArrangementMode = (playerArrangementMode: PlayerArrangementMode) => {
         setTimeout(() => {
-            console.log('handleChangePlayerArrangementMode', playerArrangementMode);
-
             const { gameSetup } = this.state;
+
+            console.log('changePlayerArrangementMode', playerArrangementMode);
+
             gameSetup.changePlayerArrangementMode(playerArrangementMode);
             this.setState({ gameSetup });
         }, this.state.simulatedNetworkDelay);
@@ -152,9 +160,10 @@ export class ExampleGameSetupMaster extends React.Component<ExampleGameSetupMast
 
     handleSwapPositions = (position1: number, position2: number) => {
         setTimeout(() => {
-            console.log('handleSwapPositions', position1, position2);
-
             const { gameSetup } = this.state;
+
+            console.log('swapPositions', position1, position2);
+
             gameSetup.swapPositions(position1, position2);
             this.setState({ gameSetup });
         }, this.state.simulatedNetworkDelay);
@@ -162,9 +171,10 @@ export class ExampleGameSetupMaster extends React.Component<ExampleGameSetupMast
 
     handleKickUser = (position: number) => {
         setTimeout(() => {
-            console.log('handleKickUser', position);
-
             const { gameSetup } = this.state;
+
+            console.log('kickUser', position);
+
             gameSetup.kickUser(position);
             this.setState({ gameSetup });
         }, this.state.simulatedNetworkDelay);
