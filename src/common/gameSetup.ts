@@ -4,19 +4,33 @@ import { username } from '../client/common.css';
 import { GameMode, GameSetupChange, PlayerArrangementMode } from './enums';
 import { gameModeToNumPlayers, gameModeToTeamSize } from './helpers';
 
+const defaultApprovals: { [key: number]: List<boolean> } = {
+    1: List<boolean>([false]),
+    2: List<boolean>([false, false]),
+    3: List<boolean>([false, false, false]),
+    4: List<boolean>([false, false, false, false]),
+    5: List<boolean>([false, false, false, false, false]),
+    6: List<boolean>([false, false, false, false, false, false]),
+};
+
 export class GameSetup {
     usernames: List<string | null>;
+    approvals: List<boolean>;
     usernameToUserID: Map<string, number>;
     userIDToUsername: Map<number, string>;
     history: any[] = [];
 
     constructor(public gameMode: GameMode, public playerArrangementMode: PlayerArrangementMode, public hostUserID: number, public hostUsername: string) {
-        const usernames: (string | null)[] = new Array(gameModeToNumPlayers[gameMode]);
-        for (let i = 0; i < usernames.length; i++) {
+        const numPlayers = gameModeToNumPlayers[gameMode];
+
+        const usernames: (string | null)[] = new Array(numPlayers);
+        for (let i = 0; i < numPlayers; i++) {
             usernames[i] = null;
         }
         usernames[0] = hostUsername;
         this.usernames = List(usernames);
+
+        this.approvals = defaultApprovals[numPlayers];
 
         this.usernameToUserID = Map([[hostUsername, hostUserID]]);
 
@@ -41,6 +55,7 @@ export class GameSetup {
         for (let i = 0; i < this.usernames.size; i++) {
             if (this.usernames.get(i, null) === null) {
                 this.usernames = this.usernames.set(i, username);
+                this.approvals = defaultApprovals[gameModeToNumPlayers[this.gameMode]];
                 this.usernameToUserID = this.usernameToUserID.set(username, userID);
                 this.userIDToUsername = this.userIDToUsername.set(userID, username);
                 this.history.push([GameSetupChange.UserAdded, userID]);
@@ -63,9 +78,32 @@ export class GameSetup {
         for (let i = 0; i < this.usernames.size; i++) {
             if (this.usernames.get(i, null) === username) {
                 this.usernames = this.usernames.set(i, null);
+                this.approvals = defaultApprovals[gameModeToNumPlayers[this.gameMode]];
                 this.usernameToUserID = this.usernameToUserID.delete(username);
                 this.userIDToUsername = this.userIDToUsername.delete(userID);
                 this.history.push([GameSetupChange.UserRemoved, userID]);
+                break;
+            }
+        }
+    }
+
+    approve(userID: number) {
+        if (!this.userIDToUsername.has(userID)) {
+            return;
+        }
+
+        if (this.usernameToUserID.size !== this.usernames.size) {
+            return;
+        }
+
+        const username = this.userIDToUsername.get(userID, '');
+
+        for (let i = 0; i < this.usernames.size; i++) {
+            if (this.usernames.get(i, null) === username) {
+                if (this.approvals.get(i, false) === false) {
+                    this.approvals = this.approvals.set(i, true);
+                    this.history.push([GameSetupChange.UserApprovedOfGameSetup, userID]);
+                }
                 break;
             }
         }
@@ -109,6 +147,8 @@ export class GameSetup {
             this.usernames = List(usernames);
         }
 
+        this.approvals = defaultApprovals[newNumPlayers];
+
         const isTeamGame = gameModeToTeamSize[gameMode] > 1;
         if (!isTeamGame && this.playerArrangementMode === PlayerArrangementMode.SpecifyTeams) {
             this.playerArrangementMode = PlayerArrangementMode.RandomOrder;
@@ -137,6 +177,7 @@ export class GameSetup {
         }
 
         this.playerArrangementMode = playerArrangementMode;
+        this.approvals = defaultApprovals[gameModeToNumPlayers[this.gameMode]];
         this.history.push([GameSetupChange.PlayerArrangementModeChanged, playerArrangementMode]);
     }
 
@@ -153,6 +194,8 @@ export class GameSetup {
         usernames.set(position1, this.usernames.get(position2, null));
         usernames.set(position2, this.usernames.get(position1, null));
         this.usernames = usernames.asImmutable();
+
+        this.approvals = defaultApprovals[gameModeToNumPlayers[this.gameMode]];
 
         this.history.push([GameSetupChange.PositionsSwapped, position1, position2]);
     }
@@ -174,6 +217,7 @@ export class GameSetup {
         const userID = this.usernameToUserID.get(username, 0);
 
         this.usernames = this.usernames.set(position, null);
+        this.approvals = defaultApprovals[gameModeToNumPlayers[this.gameMode]];
         this.usernameToUserID = this.usernameToUserID.delete(username);
         this.userIDToUsername = this.userIDToUsername.delete(userID);
         this.history.push([GameSetupChange.UserKicked, position]);

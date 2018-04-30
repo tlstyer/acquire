@@ -67,6 +67,7 @@ export enum GameSetupChange {
     Created,
     UserAdded,
     UserRemoved,
+    UserApprovedOfGameSetup,
     GameModeChanged,
     PlayerArrangementModeChanged,
     PositionsSwapped,
