@@ -42,8 +42,6 @@ export class ExampleGameSetupMaster extends React.Component<ExampleGameSetupMast
                 Simulated network delay (ms): <input type={'text'} value={simulatedNetworkDelay} size={4} onChange={this.handleChangeSimulatedNetworkDelay} />
                 <br />
                 <input type={'button'} value={'Add a user'} disabled={numUsersInGame === maxUsers} onClick={this.handleAddAUser} />
-                <br />
-                <input type={'button'} value={'Remove a user'} disabled={numUsersInGame === 1} onClick={this.handleRemoveAUser} />
                 <h2>Host's view</h2>
                 <GameSetupUI
                     gameMode={gameSetup.gameMode}
@@ -70,6 +68,20 @@ export class ExampleGameSetupMaster extends React.Component<ExampleGameSetupMast
                     return username !== gameSetup.hostUsername ? (
                         <div key={username}>
                             <h2>{username}'s view</h2>
+                            <input
+                                type={'button'}
+                                value={'Leave game'}
+                                onClick={() => {
+                                    setTimeout(() => {
+                                        console.log('gameSetup.removeUser', userID);
+
+                                        gameSetup.removeUser(userID);
+                                        this.setState({ gameSetup });
+                                    }, this.state.simulatedNetworkDelay);
+                                }}
+                            />
+                            <br />
+                            <br />
                             <GameSetupUI
                                 gameMode={gameSetup.gameMode}
                                 playerArrangementMode={gameSetup.playerArrangementMode}
@@ -116,27 +128,6 @@ export class ExampleGameSetupMaster extends React.Component<ExampleGameSetupMast
         const { gameSetup } = this.state;
         gameSetup.addUser(this.state.nextUserId, `User ${this.state.nextUserId}`);
         this.setState({ gameSetup, nextUserId: this.state.nextUserId + 1 });
-    };
-
-    handleRemoveAUser = () => {
-        const { gameSetup } = this.state;
-
-        let indexesThatCanBeRemoved: number[] = [];
-
-        for (let i = 0; i < gameSetup.usernames.size; i++) {
-            const username = gameSetup.usernames.get(i, null);
-            if (username !== null && username !== gameSetup.hostUsername) {
-                indexesThatCanBeRemoved.push(i);
-            }
-        }
-
-        const randomIndex = indexesThatCanBeRemoved[Math.floor(Math.random() * indexesThatCanBeRemoved.length)];
-        const username = gameSetup.usernames.get(randomIndex, null);
-        if (username !== null) {
-            const userID = gameSetup.usernameToUserID.get(username, 0);
-            gameSetup.removeUser(userID);
-            this.setState({ gameSetup });
-        }
     };
 
     handleChangeGameMode = (gameMode: GameMode) => {
