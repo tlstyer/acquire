@@ -30,49 +30,43 @@ export class GameState extends React.PureComponent<GameStateProps> {
 }
 
 // @ts-ignore
-const gameGameStateHandlerLookup: { [key: number]: (usernames: List<string>, nextGameAction: ActionBase, width: number, height: number) => JSX.Element } = {
-    [GameAction.StartGame]: (usernames: List<string>, nextGameAction: ActionStartGame, width: number, height: number) => (
+const gameGameStateHandlerLookup: { [key: number]: (usernames: List<string>, action: ActionBase, width: number, height: number) => JSX.Element } = {
+    [GameAction.StartGame]: (usernames: List<string>, action: ActionStartGame, width: number, height: number) => (
         <div className={style.root} style={{ width, height }}>
-            Waiting for {getUsernameSpan(usernames.get(nextGameAction.playerID, ''))} to start the game.
+            Waiting for {getUsernameSpan(usernames.get(action.playerID, ''))} to start the game.
         </div>
     ),
-    [GameAction.PlayTile]: (usernames: List<string>, nextGameAction: ActionPlayTile, width: number, height: number) => (
+    [GameAction.PlayTile]: (usernames: List<string>, action: ActionPlayTile, width: number, height: number) => (
         <div className={style.root} style={{ width, height }}>
-            Waiting for {getUsernameSpan(usernames.get(nextGameAction.playerID, ''))} to play a tile.
+            Waiting for {getUsernameSpan(usernames.get(action.playerID, ''))} to play a tile.
         </div>
     ),
-    [GameAction.SelectNewChain]: (usernames: List<string>, nextGameAction: ActionSelectNewChain, width: number, height: number) => (
+    [GameAction.SelectNewChain]: (usernames: List<string>, action: ActionSelectNewChain, width: number, height: number) => (
         <div className={style.root} style={{ width, height }}>
-            Waiting for {getUsernameSpan(usernames.get(nextGameAction.playerID, ''))} to select new chain ({getHotelInitialsList(
-                nextGameAction.availableChains,
-            )}).
+            Waiting for {getUsernameSpan(usernames.get(action.playerID, ''))} to select new chain ({getHotelInitialsList(action.availableChains)}).
         </div>
     ),
-    [GameAction.SelectMergerSurvivor]: (usernames: List<string>, nextGameAction: ActionSelectMergerSurvivor, width: number, height: number) => (
+    [GameAction.SelectMergerSurvivor]: (usernames: List<string>, action: ActionSelectMergerSurvivor, width: number, height: number) => (
         <div className={style.root} style={{ width, height }}>
-            Waiting for {getUsernameSpan(usernames.get(nextGameAction.playerID, ''))} to select merger survivor ({getHotelInitialsList(
-                nextGameAction.chainsBySize[0],
-            )}).
+            Waiting for {getUsernameSpan(usernames.get(action.playerID, ''))} to select merger survivor ({getHotelInitialsList(action.chainsBySize[0])}).
         </div>
     ),
-    [GameAction.SelectChainToDisposeOfNext]: (usernames: List<string>, nextGameAction: ActionSelectChainToDisposeOfNext, width: number, height: number) => (
+    [GameAction.SelectChainToDisposeOfNext]: (usernames: List<string>, action: ActionSelectChainToDisposeOfNext, width: number, height: number) => (
         <div className={style.root} style={{ width, height }}>
-            Waiting for {getUsernameSpan(usernames.get(nextGameAction.playerID, ''))} to select chain to dispose of next ({getHotelInitialsList(
-                nextGameAction.defunctChains,
-            )}).
+            Waiting for {getUsernameSpan(usernames.get(action.playerID, ''))} to select chain to dispose of next ({getHotelInitialsList(action.defunctChains)}).
         </div>
     ),
-    [GameAction.DisposeOfShares]: (usernames: List<string>, nextGameAction: ActionDisposeOfShares, width: number, height: number) => (
+    [GameAction.DisposeOfShares]: (usernames: List<string>, action: ActionDisposeOfShares, width: number, height: number) => (
         <div className={style.root} style={{ width, height }}>
-            Waiting for {getUsernameSpan(usernames.get(nextGameAction.playerID, ''))} to dispose of {getHotelNameSpan(nextGameAction.defunctChain)} shares.
+            Waiting for {getUsernameSpan(usernames.get(action.playerID, ''))} to dispose of {getHotelNameSpan(action.defunctChain)} shares.
         </div>
     ),
-    [GameAction.PurchaseShares]: (usernames: List<string>, nextGameAction: ActionPurchaseShares, width: number, height: number) => (
+    [GameAction.PurchaseShares]: (usernames: List<string>, action: ActionPurchaseShares, width: number, height: number) => (
         <div className={style.root} style={{ width, height }}>
-            Waiting for {getUsernameSpan(usernames.get(nextGameAction.playerID, ''))} to purchase shares.
+            Waiting for {getUsernameSpan(usernames.get(action.playerID, ''))} to purchase shares.
         </div>
     ),
-    [GameAction.GameOver]: (usernames: List<string>, nextGameAction: ActionGameOver, width: number, height: number) => (
+    [GameAction.GameOver]: (usernames: List<string>, action: ActionGameOver, width: number, height: number) => (
         <div className={style.root} style={{ width, height }}>
             Game over.
         </div>
