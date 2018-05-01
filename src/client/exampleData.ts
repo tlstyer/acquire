@@ -102,12 +102,8 @@ export function getDummyGameForGetGameHistory() {
     return game;
 }
 
-export function getUsernamesForExampleNextGameActionsArray() {
-    return ['Tim', 'Rita', 'Dad', 'Mom', 'REALLY, REALLY, REALLY LONG NAME'];
-}
-
 export function getExampleNextGameActionsArray() {
-    const game = new Game([], [], [], 0, 0);
+    const game = new Game([], [1, 2, 3, 4, 5], ['Tim', 'Rita', 'Dad', 'Mom', 'REALLY, REALLY, REALLY LONG NAME'], 1, 6);
     return [
         new ActionStartGame(game, 4),
         new ActionStartGame(game, 0),

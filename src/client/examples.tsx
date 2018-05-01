@@ -19,7 +19,7 @@ import { ScoreBoard, ScoreBoardProps } from './components/ScoreBoard';
 import { SelectChain, SelectChainProps, SelectChainTitle } from './components/SelectChain';
 import { TileRack, TileRackProps } from './components/TileRack';
 import { GameBoardLabelMode } from './enums';
-import { getDummyGameForGetGameHistory, getExampleNextGameActionsArray, getUsernamesForExampleNextGameActionsArray } from './exampleData';
+import { getDummyGameForGetGameHistory, getExampleNextGameActionsArray } from './exampleData';
 import { chains, gameBoardTypeToHotelInitial, getTileString } from './helpers';
 
 class AllDemoProps {
@@ -244,7 +244,6 @@ class AllDemoProps {
     gameHistoryProps2: GameHistoryProps;
     gameHistoryProps3: GameHistoryProps;
 
-    gameStateUsernames = getUsernamesForExampleNextGameActionsArray();
     nextGameActionsArray = getExampleNextGameActionsArray();
 
     miniGameBoardProps1: MiniGameBoardProps = {
@@ -385,7 +384,7 @@ function render(props: AllDemoProps) {
 
             <h1>GameState</h1>
             {props.nextGameActionsArray.map((nextGameAction, i) => (
-                <GameState key={i} usernames={props.gameStateUsernames} nextGameAction={nextGameAction} width={500} height={22} />
+                <GameState key={i} usernames={nextGameAction.game.usernames} nextGameAction={nextGameAction} width={500} height={22} />
             ))}
 
             <h1>MiniGameBoard</h1>
