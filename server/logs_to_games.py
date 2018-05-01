@@ -1986,6 +1986,20 @@ log_timestamp_and_username_to_correct_username = {
 }
 
 
+def output_non_ascii_usernames_in_the_database():
+    query_for_user_names = sqlalchemy.sql.text('''
+        select user_id, name
+        from user
+    ''')
+
+    with orm.session_scope() as session:
+        for row in session.execute(query_for_user_names):
+            user_id = row.user_id
+            username = row.name.decode()
+            if not is_ascii(username):
+                print(user_id, repr(username))
+
+
 def main():
     output_dir = '/home/tim/tmp/acquire'
     output_logs_dir = output_dir + '/logs'
@@ -2008,6 +2022,7 @@ def main():
     # compare_log_usernames_with_database_usernames(1408911415)
     # output_command_to_run_this_script_in_parallel_on_all_logs()
     # output_username_to_user_id()
+    # output_non_ascii_usernames_in_the_database()
 
 
 if __name__ == '__main__':
