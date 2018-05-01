@@ -17,6 +17,7 @@ import string
 import sys
 import traceback
 import ujson
+from username_to_user_id import username_to_user_id
 import util
 
 
@@ -1588,8 +1589,15 @@ def make_acquire2_game_test_files(log_timestamp, output_dir):
 
                 tile_bag = game._get_initial_tile_bag()
                 lines.append('tile bag: ' + ', '.join(to_tile_string(t) for t in tile_bag[::-1]))
-                lines.append('user IDs: ' + ', '.join(str(p[0]) for p in sorted(game.player_id_to_username.items(), key=lambda x: x[0])))
-                lines.append('starter user ID: ' + str(game.username_to_player_id[game.player_join_order[0]]))
+                starter_username = game.player_join_order[0]
+                starter_user_id = 0
+                for username in game.player_id_to_username.values():
+                    username = get_actual_username(log_timestamp, username)
+                    user_id = username_to_user_id[username]
+                    lines.append('user: ' + str(user_id) + ' ' + username)
+                    if username == starter_username:
+                        starter_user_id = user_id
+                lines.append('starter: ' + str(starter_user_id))
 
                 server_game = server.Game(game.game_id, game.internal_game_id, enums.GameModes[game.mode].value, game.max_players, Game._add_pending_messages, False, tile_bag)
 
@@ -1984,6 +1992,13 @@ log_timestamp_and_username_to_correct_username = {
     (1511554298, 'ranger'): 'Ranger',
     (1514744670, 'Alias18'): 'Alias2018',
 }
+
+
+def get_actual_username(log_timestamp, username):
+    username = log_timestamp_and_username_to_correct_username.get((log_timestamp, username), username)
+    if not is_ascii(username):
+        username = username.encode('punycode').decode().strip()
+    return username
 
 
 def output_non_ascii_usernames_in_the_database():
