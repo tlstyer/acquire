@@ -4,7 +4,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
 import { defaultTileRack, defaultTileRackTypes } from '../common/defaults';
-import { GameMode } from '../common/enums';
+import { GameMode, PlayerArrangementMode } from '../common/enums';
 import { Game, MoveData } from '../common/game';
 import { ActionGameOver } from '../common/gameActions/gameOver';
 import { runGameTestFile } from '../common/runGameTestFile';
@@ -15,7 +15,7 @@ import { ScoreBoard } from './components/ScoreBoard';
 import { TileRack } from './components/TileRack';
 import { GameBoardLabelMode } from './enums';
 
-const dummyMoveData = new MoveData(new Game([], [], [], 0, null));
+const dummyMoveData = new MoveData(new Game(GameMode.Singles1, PlayerArrangementMode.RandomOrder, [], [], [], 0, null));
 
 function render(moveIndex: number) {
     const moveData = game.moveDataHistory.get(moveIndex, dummyMoveData);

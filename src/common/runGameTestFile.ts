@@ -1,7 +1,7 @@
 import { List } from 'immutable';
 
 import { defaultTileRackTypes } from './defaults';
-import { GameAction, GameBoardType, GameHistoryMessage, ScoreBoardIndex, Tile } from './enums';
+import { GameAction, GameBoardType, GameHistoryMessage, GameMode, PlayerArrangementMode, ScoreBoardIndex, Tile } from './enums';
 import { UserInputError } from './error';
 import { Game, GameHistoryMessageData, MoveData, MoveDataTileBagTile, MoveDataTileRackTile } from './game';
 import { ActionBase } from './gameActions/base';
@@ -13,6 +13,8 @@ import { ActionSelectNewChain } from './gameActions/selectNewChain';
 
 export function runGameTestFile(inputLines: string[]) {
     let game: Game | null = null;
+    let gameMode: GameMode = GameMode.Singles1;
+    let playerArrangementMode: PlayerArrangementMode = PlayerArrangementMode.Version1;
     let tileBag: number[] = [];
     let userIDs: number[] = [];
     let usernames: string[] = [];
@@ -31,6 +33,14 @@ export function runGameTestFile(inputLines: string[]) {
             if (line.length > 0) {
                 const [key, value] = line.split(': ');
                 switch (key) {
+                    case 'game mode':
+                        // @ts-ignore
+                        gameMode = GameMode[value];
+                        break;
+                    case 'player arrangement mode':
+                        // @ts-ignore
+                        playerArrangementMode = PlayerArrangementMode[value];
+                        break;
                     case 'tile bag':
                         tileBag = fromTilesString(value);
 
@@ -55,6 +65,8 @@ export function runGameTestFile(inputLines: string[]) {
                         break;
                 }
             } else {
+                outputLines.push(`game mode: ${GameMode[gameMode]}`);
+                outputLines.push(`player arrangement mode: ${PlayerArrangementMode[playerArrangementMode]}`);
                 if (tileBag.length > 0) {
                     outputLines.push(`tile bag: ${toTilesString(tileBag)}`);
                 }
@@ -68,7 +80,7 @@ export function runGameTestFile(inputLines: string[]) {
                     outputLines.push(`me: ${myUserID}`);
                 }
 
-                game = new Game(tileBag, userIDs, usernames, hostUserID, myUserID);
+                game = new Game(gameMode, playerArrangementMode, tileBag, userIDs, usernames, hostUserID, myUserID);
 
                 if (myUserID !== null) {
                     myPlayerID = userIDs.indexOf(myUserID);

@@ -75,6 +75,7 @@ export enum GameSetupChange {
 }
 
 export enum PlayerArrangementMode {
+    Version1,
     RandomOrder,
     ExactOrder,
     SpecifyTeams,

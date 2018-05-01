@@ -11,7 +11,7 @@ import {
     defaultTileRackTypes,
     defaultTileRackTypesList,
 } from './defaults';
-import { GameAction, GameBoardType, GameHistoryMessage, ScoreBoardIndex, Tile } from './enums';
+import { GameAction, GameBoardType, GameHistoryMessage, GameMode, PlayerArrangementMode, ScoreBoardIndex, Tile } from './enums';
 import { UserInputError } from './error';
 import { ActionBase } from './gameActions/base';
 import { ActionStartGame } from './gameActions/startGame';
@@ -39,7 +39,15 @@ export class Game {
 
     playerIDWithPlayableTile: number | null = null;
 
-    constructor(public tileBag: number[], public userIDs: number[], public usernames: string[], hostUserID: number, public myUserID: number | null) {
+    constructor(
+        public gameMode: GameMode,
+        public playerArrangementMode: PlayerArrangementMode,
+        public tileBag: number[],
+        public userIDs: number[],
+        public usernames: string[],
+        hostUserID: number,
+        public myUserID: number | null,
+    ) {
         // initialize this.gameBoardTypeCounts
         this.gameBoardTypeCounts = new Array(GameBoardType.Max);
         for (let i = 0; i < GameBoardType.Max; i++) {

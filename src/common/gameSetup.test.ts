@@ -325,7 +325,8 @@ describe('gameSetup', () => {
             // @ts-ignore
             gameSetup.changePlayerArrangementMode({});
             gameSetup.changePlayerArrangementMode(-1);
-            gameSetup.changePlayerArrangementMode(3);
+            gameSetup.changePlayerArrangementMode(PlayerArrangementMode.Version1);
+            gameSetup.changePlayerArrangementMode(4);
 
             expect(gameSetup.playerArrangementMode).toBe(PlayerArrangementMode.RandomOrder);
             expect(gameSetup.history).toEqual([]);
