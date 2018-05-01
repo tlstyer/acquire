@@ -1,6 +1,7 @@
 tile bag: 3A, 2B, 7E, 1B, 12H, 7B, 11I, 12C, 2A, 8H, 10H, 2G, 1D, 11D, 7G
-user IDs: 5, 7
-host user ID: 7
+user: 5 Alice
+user: 7 Bob
+host: 7
 
 action: 1 StartGame
 

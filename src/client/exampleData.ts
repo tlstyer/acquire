@@ -13,7 +13,7 @@ import { getNewTileBag } from '../common/helpers';
 import { chains } from './helpers';
 
 export function getDummyGameForGetGameHistory() {
-    const game = new Game(getNewTileBag(), [2, 3, 5, 8], 8, 3);
+    const game = new Game(getNewTileBag(), [2, 3, 5, 8], ['a', 'b', 'c', 'd'], 8, 3);
     game.doGameAction(8, 0, [], null);
     game.moveDataHistory = defaultMoveDataHistory;
 
@@ -107,7 +107,7 @@ export function getUsernamesForExampleNextGameActionsArray() {
 }
 
 export function getExampleNextGameActionsArray() {
-    const game = new Game([], [], 0, 0);
+    const game = new Game([], [], [], 0, 0);
     return [
         new ActionStartGame(game, 4),
         new ActionStartGame(game, 0),

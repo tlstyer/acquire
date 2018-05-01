@@ -15,6 +15,7 @@ export function runGameTestFile(inputLines: string[]) {
     let game: Game | null = null;
     let tileBag: number[] = [];
     let userIDs: number[] = [];
+    let usernames: string[] = [];
     let hostUserID: number = 0;
     let myUserID: number | null = null;
 
@@ -38,13 +39,15 @@ export function runGameTestFile(inputLines: string[]) {
                             outputLines.push(`duplicated tiles in tile bag: ${toTilesString(duplicatedTiles)}`);
                         }
                         break;
-                    case 'user IDs':
-                        userIDs = value.split(', ').map(x => parseInt(x, 10));
+                    case 'user':
+                        const parts = value.split(' ');
+                        userIDs.push(parseInt(parts[0], 10));
+                        usernames.push(parts.slice(1).join(' '));
                         break;
-                    case 'host user ID':
+                    case 'host':
                         hostUserID = parseInt(value, 10);
                         break;
-                    case 'my user ID':
+                    case 'me':
                         myUserID = value === 'null' ? null : parseInt(value, 10);
                         break;
                     default:
@@ -55,13 +58,17 @@ export function runGameTestFile(inputLines: string[]) {
                 if (tileBag.length > 0) {
                     outputLines.push(`tile bag: ${toTilesString(tileBag)}`);
                 }
-                outputLines.push(`user IDs: ${userIDs.join(', ')}`);
-                outputLines.push(`host user ID: ${hostUserID}`);
+                for (let i = 0; i < userIDs.length; i++) {
+                    const userID = userIDs[i];
+                    const username = usernames[i];
+                    outputLines.push(`user: ${userID} ${username}`);
+                }
+                outputLines.push(`host: ${hostUserID}`);
                 if (myUserID !== null) {
-                    outputLines.push(`my user ID: ${myUserID}`);
+                    outputLines.push(`me: ${myUserID}`);
                 }
 
-                game = new Game(tileBag, userIDs, hostUserID, myUserID);
+                game = new Game(tileBag, userIDs, usernames, hostUserID, myUserID);
 
                 if (myUserID !== null) {
                     myPlayerID = userIDs.indexOf(myUserID);

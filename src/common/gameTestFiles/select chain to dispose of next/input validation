@@ -1,6 +1,9 @@
 tile bag: 3G, 6G, 5F, 5H, 4G, 5G, 4C, 5C, 1F, 8G, 5I, 10B, 1B, 11I, 3A, 9I, 7G, 11G, 10D, 4D, 1G, 2I, 5E, 12H, 10I, 8H, 3F, 11H, 2D, 4F, 9C, 5D
-user IDs: 6, 7, 8, 9
-host user ID: 9
+user: 6 Greg
+user: 7 Bob
+user: 8 Dave
+user: 9 Charlie
+host: 9
 
 action: 3 StartGame
 

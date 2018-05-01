@@ -39,7 +39,7 @@ export class Game {
 
     playerIDWithPlayableTile: number | null = null;
 
-    constructor(public tileBag: number[], public userIDs: number[], hostUserID: number, public myUserID: number | null) {
+    constructor(public tileBag: number[], public userIDs: number[], public usernames: string[], hostUserID: number, public myUserID: number | null) {
         // initialize this.gameBoardTypeCounts
         this.gameBoardTypeCounts = new Array(GameBoardType.Max);
         for (let i = 0; i < GameBoardType.Max; i++) {

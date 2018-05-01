@@ -1,6 +1,7 @@
 tile bag: 2C, 2B, 1D, 2E, 7E, 7B, 11I, 12C, 3D, 2D, 8H, 10H, 2G, 8G, 11A, 4B, 1A, 3I
-user IDs: 5, 7
-host user ID: 7
+user: 5 Alice
+user: 7 Bob
+host: 7
 
 action: 1 StartGame
   ············  P  L  T  A  F  W  C  I Cash  Net

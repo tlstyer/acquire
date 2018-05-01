@@ -1,6 +1,7 @@
-user IDs: 4, 8
-host user ID: 8
-my user ID: 4
+user: 4 Frank
+user: 8 Dave
+host: 8
+me: 4
 
 revealed tile bag tiles: 12C, 2B, 2D, 3A, 6F, 5D, 3D, 2E, ?, ?, ?, ?, ?, ?
 player ID with playable tile: 0
