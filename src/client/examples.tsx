@@ -11,7 +11,7 @@ import { DisposeOfShares, DisposeOfSharesProps } from './components/DisposeOfSha
 import { ExampleGameSetupMaster } from './components/ExampleGameSetupMaster';
 import { GameBoard, GameBoardProps } from './components/GameBoard';
 import { GameHistory, GameHistoryProps } from './components/GameHistory';
-import { GameState } from './components/GameState';
+import { GameState, GameStateProps } from './components/GameState';
 import { LoginForm, LoginFormProps } from './components/LoginForm';
 import { MiniGameBoard, MiniGameBoardProps } from './components/MiniGameBoard';
 import { PurchaseShares, PurchaseSharesProps } from './components/PurchaseShares';
@@ -23,279 +23,262 @@ import { getDummyGameForGetGameHistory, getExampleNextGameActionsArray } from '.
 import { chains, gameBoardTypeToHotelInitial, getTileString } from './helpers';
 
 class AllDemoProps {
-    loginFormProps1: LoginFormProps = {
-        onSubmit: onSubmitLoginForm,
-    };
-
-    loginFormProps2: LoginFormProps = {
-        error: 'error passed as a prop',
-        username: 'tlstyer',
-        onSubmit: onSubmitLoginForm,
-    };
-
-    gameBoardProps1: GameBoardProps = {
-        gameBoard: List([
-            ...[0, 7, 7, 7, 7, 7, 7, 7, 7],
-            ...[0, 7, 7, 7, 7, 7, 7, 7, 7],
-            ...[7, 8, 7, 7, 7, 7, 8, 7, 7],
-            ...[1, 7, 8, 7, 7, 7, 7, 7, 7],
-            ...[1, 7, 7, 7, 7, 7, 7, 7, 7],
-            ...[7, 7, 7, 7, 5, 7, 7, 8, 7],
-            ...[2, 7, 7, 7, 5, 5, 5, 7, 7],
-            ...[2, 7, 8, 7, 5, 5, 7, 7, 7],
-            ...[7, 7, 7, 7, 5, 9, 6, 6, 6],
-            ...[3, 7, 7, 7, 5, 7, 6, 6, 6],
-            ...[3, 7, 7, 7, 5, 9, 6, 6, 6],
-            ...[7, 4, 4, 7, 5, 5, 9, 6, 6],
-        ]),
-        tileRack: List([8, 86, null, 40, 99, 12]),
-        labelMode: GameBoardLabelMode.Coordinates,
-        cellSize: 40,
-        onCellClicked: onTileClicked,
-    };
-
-    gameBoardProps2: GameBoardProps = { ...this.gameBoardProps1, labelMode: GameBoardLabelMode.HotelInitials };
-
-    gameBoardProps3: GameBoardProps = { ...this.gameBoardProps1, labelMode: GameBoardLabelMode.Nothing };
-
-    scoreBoardProps1: ScoreBoardProps = {
-        usernames: ['winning player', 'losing player'],
-        scoreBoard: List<List<number>>([List([6, 1, 13, 10, 4, 4, 6, 207, 785]), List([1, 0, 11, 0, 3, 1, 1, 256, 533])]),
-        scoreBoardAvailable: List<number>([18, 24, 1, 15, 18, 20, 18]),
-        scoreBoardChainSize: List<number>([3, 0, 39, 5, 2, 4, 13]),
-        scoreBoardPrice: List<number>([3, 0, 10, 6, 3, 6, 9]),
-        turnPlayerID: 1,
-        movePlayerID: 0,
-        gameMode: GameMode.Singles2,
-        cellWidth: 30,
-    };
-
-    scoreBoardProps2: ScoreBoardProps = {
-        usernames: ['tlstyer', 'REALLY LONG NAME', 'Somebody Else', 'hi!'],
-        scoreBoard: List<List<number>>([
-            List([4, 0, 0, 0, 0, 0, 0, 74, 82]),
-            List([0, 4, 0, 0, 0, 0, 0, 74, 82]),
-            List([0, 0, 0, 0, 0, 4, 0, 88, 104]),
-            List([1, 1, 0, 0, 0, 1, 1, 92, 228]),
-        ]),
-        scoreBoardAvailable: List<number>([20, 20, 25, 25, 25, 20, 24]),
-        scoreBoardChainSize: List<number>([2, 2, 0, 0, 0, 2, 9]),
-        scoreBoardPrice: List<number>([2, 2, 0, 0, 0, 4, 8]),
-        turnPlayerID: 0,
-        movePlayerID: 0,
-        gameMode: GameMode.Singles4,
-        cellWidth: 30,
-    };
-
-    scoreBoardProps3: ScoreBoardProps = {
-        usernames: ['player 1', 'player 2', 'player 3', 'player 4'],
-        scoreBoard: List<List<number>>([
-            List([0, 0, 5, 9, 0, 13, 0, 0, 427]),
-            List([8, 1, 0, 13, 0, 12, 0, 63, 474]),
-            List([7, 1, 11, 0, 0, 0, 0, 107, 212]),
-            List([1, 3, 9, 3, 0, 0, 0, 213, 310]),
-        ]),
-        scoreBoardAvailable: List<number>([9, 20, 0, 0, 25, 0, 25]),
-        scoreBoardChainSize: List<number>([0, 0, 4, 27, 0, 42, 0]),
-        scoreBoardPrice: List<number>([0, 0, 5, 9, 0, 12, 0]),
-        turnPlayerID: -1,
-        movePlayerID: -1,
-        gameMode: GameMode.Teams2vs2,
-        cellWidth: 30,
-    };
-
-    scoreBoardProps4: ScoreBoardProps = {
-        usernames: ['player 1', 'player 2', 'player 3', 'player 4', 'player 5', 'player 6'],
-        scoreBoard: List<List<number>>([
-            List([1, 0, 0, 9, 2, 3, 0, 188, 386]),
-            List([0, 3, 7, 0, 0, 0, 0, 35, 121]),
-            List([0, 0, 7, 2, 0, 1, 0, 22, 135]),
-            List([0, 0, 0, 8, 0, 9, 0, 87, 375]),
-            List([0, 0, 8, 6, 0, 7, 0, 84, 408]),
-            List([0, 0, 3, 0, 0, 5, 0, 120, 192]),
-        ]),
-        scoreBoardAvailable: List<number>([24, 22, 0, 0, 23, 0, 25]),
-        scoreBoardChainSize: List<number>([0, 0, 22, 30, 0, 15, 0]),
-        scoreBoardPrice: List<number>([0, 0, 9, 9, 0, 9, 0]),
-        turnPlayerID: -1,
-        movePlayerID: -1,
-        gameMode: GameMode.Teams2vs2vs2,
-        cellWidth: 30,
-    };
-
-    scoreBoardProps5 = {
-        ...this.scoreBoardProps4,
-        gameMode: GameMode.Teams3vs3,
-    };
-
-    tileRackProps1: TileRackProps = {
-        tiles: List([1, 28, 55, 82, 92, 40]),
-        types: List([
-            GameBoardType.Luxor,
-            GameBoardType.Tower,
-            GameBoardType.American,
-            GameBoardType.Festival,
-            GameBoardType.Worldwide,
-            GameBoardType.Continental,
-        ]),
-        buttonSize: 40,
-        onTileClicked: onTileClicked,
-    };
-
-    tileRackProps2: TileRackProps = {
-        tiles: List([71, null, 99, 12, 8, 17]),
-        types: List([
-            GameBoardType.Imperial,
-            null,
-            GameBoardType.WillMergeChains,
-            GameBoardType.WillPutLonelyTileDown,
-            GameBoardType.HaveNeighboringTileToo,
-            GameBoardType.HaveNeighboringTileToo,
-        ]),
-        buttonSize: 40,
-        onTileClicked: onTileClicked,
-    };
-
-    tileRackProps3: TileRackProps = {
-        tiles: List([null, 86, null, 38, null, 74]),
-        types: List([null, GameBoardType.CantPlayEver, null, GameBoardType.WillFormNewChain, null, GameBoardType.CantPlayNow]),
-        buttonSize: 40,
-        onTileClicked: onTileClicked,
-    };
-
-    selectChainProps1: SelectChainProps = {
-        type: SelectChainTitle.SelectNewChain,
-        availableChains: [0, 1, 2, 3, 4, 5, 6],
-        buttonSize: 40,
-        onChainSelected,
-    };
-
-    selectChainProps2: SelectChainProps = {
-        type: SelectChainTitle.SelectMergerSurvivor,
-        availableChains: [0, 3, 5],
-        buttonSize: 40,
-        onChainSelected,
-    };
-
-    selectChainProps3: SelectChainProps = {
-        type: SelectChainTitle.SelectChainToDisposeOfNext,
-        availableChains: [2, 4],
-        buttonSize: 40,
-        onChainSelected,
-    };
-
-    disposeOfSharesProps1: DisposeOfSharesProps = {
-        defunctChain: GameBoardType.American,
-        controllingChain: GameBoardType.Festival,
-        sharesOwnedInDefunctChain: 10,
-        sharesAvailableInControllingChain: 22,
-        onSharesDisposed,
-    };
-
-    disposeOfSharesProps2: DisposeOfSharesProps = {
-        defunctChain: GameBoardType.Imperial,
-        controllingChain: GameBoardType.Tower,
-        sharesOwnedInDefunctChain: 7,
-        sharesAvailableInControllingChain: 2,
-        onSharesDisposed,
-    };
-
-    disposeOfSharesProps3: DisposeOfSharesProps = {
-        defunctChain: GameBoardType.Continental,
-        controllingChain: GameBoardType.Worldwide,
-        sharesOwnedInDefunctChain: 1,
-        sharesAvailableInControllingChain: 3,
-        onSharesDisposed,
-    };
-
-    disposeOfSharesProps4: DisposeOfSharesProps = {
-        defunctChain: GameBoardType.Luxor,
-        controllingChain: GameBoardType.Imperial,
-        sharesOwnedInDefunctChain: 25,
-        sharesAvailableInControllingChain: 10,
-        onSharesDisposed,
-    };
-
-    purchaseSharesProps1: PurchaseSharesProps = {
-        scoreBoardAvailable: List<number>([3, 3, 3, 3, 3, 3, 3]),
-        scoreBoardPrice: List<number>([2, 3, 4, 5, 6, 7, 8]),
-        cash: 15,
-        buttonSize: 40,
-        onSharesPurchased,
-    };
-
-    purchaseSharesProps2: PurchaseSharesProps = {
-        scoreBoardAvailable: List<number>([0, 1, 2, 3, 0, 1, 2]),
-        scoreBoardPrice: List<number>([0, 3, 4, 5, 0, 6, 5]),
-        cash: 15,
-        buttonSize: 40,
-        onSharesPurchased,
-    };
-
-    purchaseSharesProps3: PurchaseSharesProps = {
-        scoreBoardAvailable: List<number>([1, 0, 0, 1, 1, 0, 0]),
-        scoreBoardPrice: List<number>([2, 0, 0, 5, 6, 0, 0]),
-        cash: 5,
-        buttonSize: 40,
-        onSharesPurchased,
-    };
-
-    gameHistoryProps1: GameHistoryProps;
-    gameHistoryProps2: GameHistoryProps;
-    gameHistoryProps3: GameHistoryProps;
-
-    nextGameActionsArray = getExampleNextGameActionsArray();
-
-    miniGameBoardProps1: MiniGameBoardProps = {
-        gameBoard: this.gameBoardProps1.gameBoard,
-        cellSize: 5,
-    };
-
-    miniGameBoardProps2: MiniGameBoardProps = {
-        gameBoard: this.gameBoardProps1.gameBoard,
-        cellSize: 10,
-    };
-
-    miniGameBoardProps3: MiniGameBoardProps = {
-        gameBoard: this.gameBoardProps1.gameBoard,
-        cellSize: 15,
-    };
+    loginFormProps: LoginFormProps[];
+    gameBoardProps: GameBoardProps[];
+    scoreBoardProps: ScoreBoardProps[];
+    tileRackProps: TileRackProps[];
+    selectChainProps: SelectChainProps[];
+    disposeOfSharesProps: DisposeOfSharesProps[];
+    purchaseSharesProps: PurchaseSharesProps[];
+    gameHistoryProps: GameHistoryProps[];
+    gameStateProps: GameStateProps[];
+    miniGameBoardProps: MiniGameBoardProps[];
 
     constructor() {
+        this.loginFormProps = [{ onSubmit: onSubmitLoginForm }, { error: 'error passed as a prop', username: 'tlstyer', onSubmit: onSubmitLoginForm }];
+
+        const gbp: GameBoardProps = {
+            gameBoard: List([
+                ...[0, 7, 7, 7, 7, 7, 7, 7, 7],
+                ...[0, 7, 7, 7, 7, 7, 7, 7, 7],
+                ...[7, 8, 7, 7, 7, 7, 8, 7, 7],
+                ...[1, 7, 8, 7, 7, 7, 7, 7, 7],
+                ...[1, 7, 7, 7, 7, 7, 7, 7, 7],
+                ...[7, 7, 7, 7, 5, 7, 7, 8, 7],
+                ...[2, 7, 7, 7, 5, 5, 5, 7, 7],
+                ...[2, 7, 8, 7, 5, 5, 7, 7, 7],
+                ...[7, 7, 7, 7, 5, 9, 6, 6, 6],
+                ...[3, 7, 7, 7, 5, 7, 6, 6, 6],
+                ...[3, 7, 7, 7, 5, 9, 6, 6, 6],
+                ...[7, 4, 4, 7, 5, 5, 9, 6, 6],
+            ]),
+            tileRack: List([8, 86, null, 40, 99, 12]),
+            labelMode: GameBoardLabelMode.Coordinates,
+            cellSize: 40,
+            onCellClicked: onTileClicked,
+        };
+        this.gameBoardProps = [gbp, { ...gbp, labelMode: GameBoardLabelMode.HotelInitials }, { ...gbp, labelMode: GameBoardLabelMode.Nothing }];
+
+        this.scoreBoardProps = [
+            {
+                usernames: ['winning player', 'losing player'],
+                scoreBoard: List<List<number>>([List([6, 1, 13, 10, 4, 4, 6, 207, 785]), List([1, 0, 11, 0, 3, 1, 1, 256, 533])]),
+                scoreBoardAvailable: List<number>([18, 24, 1, 15, 18, 20, 18]),
+                scoreBoardChainSize: List<number>([3, 0, 39, 5, 2, 4, 13]),
+                scoreBoardPrice: List<number>([3, 0, 10, 6, 3, 6, 9]),
+                turnPlayerID: 1,
+                movePlayerID: 0,
+                gameMode: GameMode.Singles2,
+                cellWidth: 30,
+            },
+            {
+                usernames: ['tlstyer', 'REALLY LONG NAME', 'Somebody Else', 'hi!'],
+                scoreBoard: List<List<number>>([
+                    List([4, 0, 0, 0, 0, 0, 0, 74, 82]),
+                    List([0, 4, 0, 0, 0, 0, 0, 74, 82]),
+                    List([0, 0, 0, 0, 0, 4, 0, 88, 104]),
+                    List([1, 1, 0, 0, 0, 1, 1, 92, 228]),
+                ]),
+                scoreBoardAvailable: List<number>([20, 20, 25, 25, 25, 20, 24]),
+                scoreBoardChainSize: List<number>([2, 2, 0, 0, 0, 2, 9]),
+                scoreBoardPrice: List<number>([2, 2, 0, 0, 0, 4, 8]),
+                turnPlayerID: 0,
+                movePlayerID: 0,
+                gameMode: GameMode.Singles4,
+                cellWidth: 30,
+            },
+            {
+                usernames: ['player 1', 'player 2', 'player 3', 'player 4'],
+                scoreBoard: List<List<number>>([
+                    List([0, 0, 5, 9, 0, 13, 0, 0, 427]),
+                    List([8, 1, 0, 13, 0, 12, 0, 63, 474]),
+                    List([7, 1, 11, 0, 0, 0, 0, 107, 212]),
+                    List([1, 3, 9, 3, 0, 0, 0, 213, 310]),
+                ]),
+                scoreBoardAvailable: List<number>([9, 20, 0, 0, 25, 0, 25]),
+                scoreBoardChainSize: List<number>([0, 0, 4, 27, 0, 42, 0]),
+                scoreBoardPrice: List<number>([0, 0, 5, 9, 0, 12, 0]),
+                turnPlayerID: -1,
+                movePlayerID: -1,
+                gameMode: GameMode.Teams2vs2,
+                cellWidth: 30,
+            },
+            {
+                usernames: ['player 1', 'player 2', 'player 3', 'player 4', 'player 5', 'player 6'],
+                scoreBoard: List<List<number>>([
+                    List([1, 0, 0, 9, 2, 3, 0, 188, 386]),
+                    List([0, 3, 7, 0, 0, 0, 0, 35, 121]),
+                    List([0, 0, 7, 2, 0, 1, 0, 22, 135]),
+                    List([0, 0, 0, 8, 0, 9, 0, 87, 375]),
+                    List([0, 0, 8, 6, 0, 7, 0, 84, 408]),
+                    List([0, 0, 3, 0, 0, 5, 0, 120, 192]),
+                ]),
+                scoreBoardAvailable: List<number>([24, 22, 0, 0, 23, 0, 25]),
+                scoreBoardChainSize: List<number>([0, 0, 22, 30, 0, 15, 0]),
+                scoreBoardPrice: List<number>([0, 0, 9, 9, 0, 9, 0]),
+                turnPlayerID: -1,
+                movePlayerID: -1,
+                gameMode: GameMode.Teams2vs2vs2,
+                cellWidth: 30,
+            },
+        ];
+        this.scoreBoardProps.push({
+            ...this.scoreBoardProps[3],
+            gameMode: GameMode.Teams3vs3,
+        });
+
+        this.tileRackProps = [
+            {
+                tiles: List([1, 28, 55, 82, 92, 40]),
+                types: List([
+                    GameBoardType.Luxor,
+                    GameBoardType.Tower,
+                    GameBoardType.American,
+                    GameBoardType.Festival,
+                    GameBoardType.Worldwide,
+                    GameBoardType.Continental,
+                ]),
+                buttonSize: 40,
+                onTileClicked: onTileClicked,
+            },
+            {
+                tiles: List([71, null, 99, 12, 8, 17]),
+                types: List([
+                    GameBoardType.Imperial,
+                    null,
+                    GameBoardType.WillMergeChains,
+                    GameBoardType.WillPutLonelyTileDown,
+                    GameBoardType.HaveNeighboringTileToo,
+                    GameBoardType.HaveNeighboringTileToo,
+                ]),
+                buttonSize: 40,
+                onTileClicked: onTileClicked,
+            },
+            {
+                tiles: List([null, 86, null, 38, null, 74]),
+                types: List([null, GameBoardType.CantPlayEver, null, GameBoardType.WillFormNewChain, null, GameBoardType.CantPlayNow]),
+                buttonSize: 40,
+                onTileClicked: onTileClicked,
+            },
+        ];
+
+        this.selectChainProps = [
+            {
+                type: SelectChainTitle.SelectNewChain,
+                availableChains: [0, 1, 2, 3, 4, 5, 6],
+                buttonSize: 40,
+                onChainSelected,
+            },
+            {
+                type: SelectChainTitle.SelectMergerSurvivor,
+                availableChains: [0, 3, 5],
+                buttonSize: 40,
+                onChainSelected,
+            },
+            {
+                type: SelectChainTitle.SelectChainToDisposeOfNext,
+                availableChains: [2, 4],
+                buttonSize: 40,
+                onChainSelected,
+            },
+        ];
+
+        this.disposeOfSharesProps = [
+            {
+                defunctChain: GameBoardType.American,
+                controllingChain: GameBoardType.Festival,
+                sharesOwnedInDefunctChain: 10,
+                sharesAvailableInControllingChain: 22,
+                onSharesDisposed,
+            },
+            {
+                defunctChain: GameBoardType.Imperial,
+                controllingChain: GameBoardType.Tower,
+                sharesOwnedInDefunctChain: 7,
+                sharesAvailableInControllingChain: 2,
+                onSharesDisposed,
+            },
+            {
+                defunctChain: GameBoardType.Continental,
+                controllingChain: GameBoardType.Worldwide,
+                sharesOwnedInDefunctChain: 1,
+                sharesAvailableInControllingChain: 3,
+                onSharesDisposed,
+            },
+            {
+                defunctChain: GameBoardType.Luxor,
+                controllingChain: GameBoardType.Imperial,
+                sharesOwnedInDefunctChain: 25,
+                sharesAvailableInControllingChain: 10,
+                onSharesDisposed,
+            },
+        ];
+
+        this.purchaseSharesProps = [
+            {
+                scoreBoardAvailable: List<number>([3, 3, 3, 3, 3, 3, 3]),
+                scoreBoardPrice: List<number>([2, 3, 4, 5, 6, 7, 8]),
+                cash: 15,
+                buttonSize: 40,
+                onSharesPurchased,
+            },
+            {
+                scoreBoardAvailable: List<number>([0, 1, 2, 3, 0, 1, 2]),
+                scoreBoardPrice: List<number>([0, 3, 4, 5, 0, 6, 5]),
+                cash: 15,
+                buttonSize: 40,
+                onSharesPurchased,
+            },
+            {
+                scoreBoardAvailable: List<number>([1, 0, 0, 1, 1, 0, 0]),
+                scoreBoardPrice: List<number>([2, 0, 0, 5, 6, 0, 0]),
+                cash: 5,
+                buttonSize: 40,
+                onSharesPurchased,
+            },
+        ];
+
         const game1 = getDummyGameForGetGameHistory();
-        this.gameHistoryProps1 = {
-            usernames: game1.usernames,
-            moveDataHistory: game1.moveDataHistory,
-            width: 600,
-            height: 300,
-            onMoveClicked,
-        };
-
         const { game: game2 } = runGameTestFile(require('raw-loader!../common/gameTestFiles/other/all tiles played').split('\n'));
-        this.gameHistoryProps2 = {
-            usernames: game2 !== null ? game2.usernames : [],
-            moveDataHistory: game2 !== null ? game2.moveDataHistory : defaultMoveDataHistory,
-            width: 600,
-            height: 300,
-            onMoveClicked,
-        };
-
         const { game: game3 } = runGameTestFile(require('raw-loader!../common/gameTestFiles/other/no tiles played for entire round').split('\n'));
-        this.gameHistoryProps3 = {
-            usernames: game3 !== null ? game3.usernames : [],
-            moveDataHistory: game3 !== null ? game3.moveDataHistory : defaultMoveDataHistory,
-            width: 600,
-            height: 300,
-            onMoveClicked,
-        };
 
-        if (game2 !== null) {
-            this.miniGameBoardProps2.gameBoard = game2.gameBoard;
-        }
+        this.gameHistoryProps = [
+            {
+                usernames: game1.usernames,
+                moveDataHistory: game1.moveDataHistory,
+                width: 600,
+                height: 300,
+                onMoveClicked,
+            },
+            {
+                usernames: game2 !== null ? game2.usernames : [],
+                moveDataHistory: game2 !== null ? game2.moveDataHistory : defaultMoveDataHistory,
+                width: 600,
+                height: 300,
+                onMoveClicked,
+            },
+            {
+                usernames: game3 !== null ? game3.usernames : [],
+                moveDataHistory: game3 !== null ? game3.moveDataHistory : defaultMoveDataHistory,
+                width: 600,
+                height: 300,
+                onMoveClicked,
+            },
+        ];
 
-        if (game3 !== null) {
-            this.miniGameBoardProps3.gameBoard = game3.gameBoard;
-        }
+        const nextGameActionsArray = getExampleNextGameActionsArray();
+        this.gameStateProps = nextGameActionsArray.map(nextGameAction => ({
+            usernames: nextGameAction.game.usernames,
+            nextGameAction: nextGameAction,
+            width: 500,
+            height: 22,
+        }));
+
+        this.miniGameBoardProps = [
+            { gameBoard: gbp.gameBoard, cellSize: 5 },
+            { gameBoard: game2 !== null ? game2.gameBoard : gbp.gameBoard, cellSize: 10 },
+            { gameBoard: game3 !== null ? game3.gameBoard : gbp.gameBoard, cellSize: 15 },
+        ];
     }
 }
 
@@ -303,98 +286,73 @@ function render(props: AllDemoProps) {
     ReactDOM.render(
         <div>
             <h1>LoginForm</h1>
-            <LoginForm {...props.loginFormProps1} />
-            <br />
-            <LoginForm {...props.loginFormProps2} />
+            {renderWithBreaks(LoginForm, props.loginFormProps)}
 
             <h1>GameSetupUI</h1>
             <ExampleGameSetupMaster />
 
             <h1>GameBoard</h1>
-            <h2>labelMode=Coordinates</h2>
-            <GameBoard {...props.gameBoardProps1} />
-            <h2>labelMode=HotelInitials</h2>
-            <GameBoard {...props.gameBoardProps2} />
-            <h2>labelMode=Nothing</h2>
-            <GameBoard {...props.gameBoardProps3} />
+            {renderWithBreaks(GameBoard, props.gameBoardProps)}
 
             <h1>ScoreBoard</h1>
-            <ScoreBoard {...props.scoreBoardProps1} />
-            <br />
-            <ScoreBoard {...props.scoreBoardProps2} />
-            <br />
-            <ScoreBoard {...props.scoreBoardProps3} />
-            <br />
-            <ScoreBoard {...props.scoreBoardProps4} />
-            <br />
-            <ScoreBoard {...props.scoreBoardProps5} />
+            {renderWithBreaks(ScoreBoard, props.scoreBoardProps)}
 
             <h1>TileRack</h1>
-            <TileRack {...props.tileRackProps1} />
-            <br />
-            <TileRack {...props.tileRackProps2} />
-            <br />
-            <TileRack {...props.tileRackProps3} />
+            {renderWithBreaks(TileRack, props.tileRackProps)}
 
             <h1>SelectChain</h1>
-            <SelectChain {...props.selectChainProps1} />
-            <br />
-            <SelectChain {...props.selectChainProps2} />
-            <br />
-            <SelectChain {...props.selectChainProps3} />
+            {renderWithBreaks(SelectChain, props.selectChainProps)}
 
             <h1>DisposeOfShares</h1>
-            <h2>
-                defunct owned: {props.disposeOfSharesProps1.sharesOwnedInDefunctChain}, controlling available:{' '}
-                {props.disposeOfSharesProps1.sharesAvailableInControllingChain}
-            </h2>
-            <DisposeOfShares {...props.disposeOfSharesProps1} />
-            <h2>
-                defunct owned: {props.disposeOfSharesProps2.sharesOwnedInDefunctChain}, controlling available:{' '}
-                {props.disposeOfSharesProps2.sharesAvailableInControllingChain}
-            </h2>
-            <DisposeOfShares {...props.disposeOfSharesProps2} />
-            <h2>
-                defunct owned: {props.disposeOfSharesProps3.sharesOwnedInDefunctChain}, controlling available:{' '}
-                {props.disposeOfSharesProps3.sharesAvailableInControllingChain}
-            </h2>
-            <DisposeOfShares {...props.disposeOfSharesProps3} />
-            <h2>
-                defunct owned: {props.disposeOfSharesProps4.sharesOwnedInDefunctChain}, controlling available:{' '}
-                {props.disposeOfSharesProps4.sharesAvailableInControllingChain}
-            </h2>
-            <DisposeOfShares {...props.disposeOfSharesProps4} />
+            {renderWithDescriptions(DisposeOfShares, props.disposeOfSharesProps, getDisposeOfSharesDescription)}
 
             <h1>PurchaseShares</h1>
-            <h2>{getPurchaseSharesDescription(props.purchaseSharesProps1)}</h2>
-            <PurchaseShares {...props.purchaseSharesProps1} />
-            <br />
-            <h2>{getPurchaseSharesDescription(props.purchaseSharesProps2)}</h2>
-            <PurchaseShares {...props.purchaseSharesProps2} />
-            <br />
-            <h2>{getPurchaseSharesDescription(props.purchaseSharesProps3)}</h2>
-            <PurchaseShares {...props.purchaseSharesProps3} />
+            {renderWithDescriptions(PurchaseShares, props.purchaseSharesProps, getPurchaseSharesDescription)}
 
             <h1>GameHistory</h1>
-            <GameHistory {...props.gameHistoryProps1} />
-            <br />
-            <GameHistory {...props.gameHistoryProps2} />
-            <br />
-            <GameHistory {...props.gameHistoryProps3} />
+            {renderWithBreaks(GameHistory, props.gameHistoryProps)}
 
             <h1>GameState</h1>
-            {props.nextGameActionsArray.map((nextGameAction, i) => (
-                <GameState key={i} usernames={nextGameAction.game.usernames} nextGameAction={nextGameAction} width={500} height={22} />
-            ))}
+            {renderWithoutBreaks(GameState, props.gameStateProps)}
 
             <h1>MiniGameBoard</h1>
-            <MiniGameBoard {...props.miniGameBoardProps1} />
-            <br />
-            <MiniGameBoard {...props.miniGameBoardProps2} />
-            <br />
-            <MiniGameBoard {...props.miniGameBoardProps3} />
+            {renderWithBreaks(MiniGameBoard, props.miniGameBoardProps)}
         </div>,
         document.getElementById('root'),
+    );
+}
+
+function renderWithBreaks(Component: any, propsArray: any[]) {
+    const lastIndex = propsArray.length - 1;
+    return propsArray.map((props, i) => (
+        <div key={i}>
+            <Component {...props} />
+            {i !== lastIndex ? <br /> : undefined}
+        </div>
+    ));
+}
+function renderWithoutBreaks(Component: any, propsArray: any[]) {
+    return propsArray.map((props, i) => (
+        <div key={i}>
+            <Component {...props} />
+        </div>
+    ));
+}
+
+function renderWithDescriptions(Component: any, propsArray: any[], descriptionFunc: any) {
+    return propsArray.map((props, i) => (
+        <div key={i}>
+            <h2>{descriptionFunc(props)}</h2>
+            <Component {...props} />
+        </div>
+    ));
+}
+
+function getDisposeOfSharesDescription(props: DisposeOfSharesProps) {
+    return (
+        <span>
+            defunct owned: {props.sharesOwnedInDefunctChain}, controlling available: {props.sharesAvailableInControllingChain}
+        </span>
     );
 }
 
@@ -421,9 +379,9 @@ function onTileClicked(tile: number) {
 
 function onMoveClicked(index: number) {
     console.log('onMoveClicked:', index);
-    props.gameHistoryProps1.selectedMove = index;
-    props.gameHistoryProps2.selectedMove = index;
-    props.gameHistoryProps3.selectedMove = index;
+    props.gameHistoryProps[0].selectedMove = index;
+    props.gameHistoryProps[1].selectedMove = index;
+    props.gameHistoryProps[2].selectedMove = index;
     render(props);
 }
 
