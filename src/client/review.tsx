@@ -43,7 +43,7 @@ function render(moveIndex: number) {
     const scoreBoardTop = -2;
     const scoreBoardCellWidth = Math.floor(gameBoardWidth / 18);
     const scoreBoardCellHeight = Math.ceil(scoreBoardCellWidth * 0.75);
-    const scoreBoardHeight = scoreBoardCellHeight * (4 + usernames.length) + 2;
+    const scoreBoardHeight = scoreBoardCellHeight * (4 + game.usernames.length) + 2;
 
     const tileRackLeft = scoreBoardLeft + 2;
     const tileRackTop = scoreBoardTop + scoreBoardHeight + 2;
@@ -68,7 +68,7 @@ function render(moveIndex: number) {
             </div>
             <div style={{ position: 'absolute', left: scoreBoardLeft, top: scoreBoardTop }}>
                 <ScoreBoard
-                    usernames={usernames}
+                    usernames={game.usernames}
                     scoreBoard={moveData.scoreBoard}
                     scoreBoardAvailable={moveData.scoreBoardAvailable}
                     scoreBoardChainSize={moveData.scoreBoardChainSize}
@@ -84,7 +84,7 @@ function render(moveIndex: number) {
             </div>
             <div style={{ position: 'absolute', left: tileRackLeft, top: gameHistoryTop }}>
                 <GameHistory
-                    usernames={usernames}
+                    usernames={game.usernames}
                     moveDataHistory={game.moveDataHistory}
                     selectedMove={moveIndex}
                     width={gameHistoryWidth}
@@ -94,7 +94,7 @@ function render(moveIndex: number) {
             </div>
             <div style={{ position: 'absolute', left: tileRackLeft, top: gameStateTop }}>
                 <GameState
-                    usernames={usernames}
+                    usernames={game.usernames}
                     nextGameAction={game.moveDataHistory.get(game.moveDataHistory.size - 1, dummyMoveData).nextGameAction}
                     width={gameHistoryWidth}
                     height={gameStateHeight}
@@ -112,7 +112,6 @@ function onMoveClicked(index: number) {
 }
 
 let game: Game;
-let usernames: string[];
 
 function main() {
     const { game: g } = runGameTestFile(require('raw-loader!../common/gameTestFiles/other/one player game high score').split('\n'));
@@ -123,7 +122,6 @@ function main() {
     }
 
     game = g;
-    usernames = ['squidward'];
     render(game.moveDataHistory.size - 1);
 }
 
