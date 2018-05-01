@@ -4,16 +4,16 @@ import { List } from 'immutable';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
-import { defaultMoveDataHistory } from '../common/defaults';
+import { defaultGameBoard, defaultMoveDataHistory } from '../common/defaults';
 import { GameBoardType, GameMode } from '../common/enums';
 import { runGameTestFile } from '../common/runGameTestFile';
 import { DisposeOfShares, DisposeOfSharesProps } from './components/DisposeOfShares';
 import { ExampleGameSetupMaster } from './components/ExampleGameSetupMaster';
 import { GameBoard, GameBoardProps } from './components/GameBoard';
 import { GameHistory, GameHistoryProps } from './components/GameHistory';
+import { GameListing, GameListingProps } from './components/GameListing';
 import { GameState, GameStateProps } from './components/GameState';
 import { LoginForm, LoginFormProps } from './components/LoginForm';
-import { MiniGameBoard, MiniGameBoardProps } from './components/MiniGameBoard';
 import { PurchaseShares, PurchaseSharesProps } from './components/PurchaseShares';
 import { ScoreBoard, ScoreBoardProps } from './components/ScoreBoard';
 import { SelectChain, SelectChainProps, SelectChainTitle } from './components/SelectChain';
@@ -24,6 +24,7 @@ import { chains, gameBoardTypeToHotelInitial, getTileString } from './helpers';
 
 class AllDemoProps {
     loginFormProps: LoginFormProps[];
+    gameListingProps: GameListingProps[];
     gameBoardProps: GameBoardProps[];
     scoreBoardProps: ScoreBoardProps[];
     tileRackProps: TileRackProps[];
@@ -32,10 +33,30 @@ class AllDemoProps {
     purchaseSharesProps: PurchaseSharesProps[];
     gameHistoryProps: GameHistoryProps[];
     gameStateProps: GameStateProps[];
-    miniGameBoardProps: MiniGameBoardProps[];
 
     constructor() {
+        const { game: game1 } = runGameTestFile(require('raw-loader!../common/gameTestFiles/other/no tiles played for entire round').split('\n'));
+        const { game: game2 } = runGameTestFile(require('raw-loader!../common/gameTestFiles/other/all tiles played').split('\n'));
+
         this.loginFormProps = [{ onSubmit: onSubmitLoginForm }, { error: 'error passed as a prop', username: 'tlstyer', onSubmit: onSubmitLoginForm }];
+
+        this.gameListingProps = [
+            {
+                gameBoard: defaultGameBoard,
+                gameMode: GameMode.Singles4,
+                usernames: ['Host', null, 'User 2', null],
+            },
+            {
+                gameBoard: game1 !== null ? game1.gameBoard : defaultGameBoard,
+                gameMode: GameMode.Teams2vs2vs2,
+                usernames: ['Tim', 'Rita', 'Dad', 'Mom', 'REALLY, REALLY LONG NAME', 'pgyqj,;'],
+            },
+            {
+                gameBoard: game2 !== null ? game2.gameBoard : defaultGameBoard,
+                gameMode: GameMode.Teams2vs2,
+                usernames: ['player 1', 'player 2', 'player 3', 'player 4'],
+            },
+        ];
 
         const gbp: GameBoardProps = {
             gameBoard: List([
@@ -238,14 +259,18 @@ class AllDemoProps {
             },
         ];
 
-        const game1 = getDummyGameForGetGameHistory();
-        const { game: game2 } = runGameTestFile(require('raw-loader!../common/gameTestFiles/other/all tiles played').split('\n'));
-        const { game: game3 } = runGameTestFile(require('raw-loader!../common/gameTestFiles/other/no tiles played for entire round').split('\n'));
-
+        const dummyGameForGetGameHistory = getDummyGameForGetGameHistory();
         this.gameHistoryProps = [
             {
-                usernames: game1.usernames,
-                moveDataHistory: game1.moveDataHistory,
+                usernames: dummyGameForGetGameHistory.usernames,
+                moveDataHistory: dummyGameForGetGameHistory.moveDataHistory,
+                width: 600,
+                height: 300,
+                onMoveClicked,
+            },
+            {
+                usernames: game1 !== null ? game1.usernames : [],
+                moveDataHistory: game1 !== null ? game1.moveDataHistory : defaultMoveDataHistory,
                 width: 600,
                 height: 300,
                 onMoveClicked,
@@ -253,13 +278,6 @@ class AllDemoProps {
             {
                 usernames: game2 !== null ? game2.usernames : [],
                 moveDataHistory: game2 !== null ? game2.moveDataHistory : defaultMoveDataHistory,
-                width: 600,
-                height: 300,
-                onMoveClicked,
-            },
-            {
-                usernames: game3 !== null ? game3.usernames : [],
-                moveDataHistory: game3 !== null ? game3.moveDataHistory : defaultMoveDataHistory,
                 width: 600,
                 height: 300,
                 onMoveClicked,
@@ -273,12 +291,6 @@ class AllDemoProps {
             width: 500,
             height: 22,
         }));
-
-        this.miniGameBoardProps = [
-            { gameBoard: gbp.gameBoard, cellSize: 5 },
-            { gameBoard: game2 !== null ? game2.gameBoard : gbp.gameBoard, cellSize: 10 },
-            { gameBoard: game3 !== null ? game3.gameBoard : gbp.gameBoard, cellSize: 15 },
-        ];
     }
 }
 
@@ -287,6 +299,9 @@ function render(props: AllDemoProps) {
         <div>
             <h1>LoginForm</h1>
             {renderWithBreaks(LoginForm, props.loginFormProps)}
+
+            <h1>GameListing</h1>
+            {renderWithBreaks(GameListing, props.gameListingProps)}
 
             <h1>GameSetupUI</h1>
             <ExampleGameSetupMaster />
@@ -314,9 +329,6 @@ function render(props: AllDemoProps) {
 
             <h1>GameState</h1>
             {renderWithoutBreaks(GameState, props.gameStateProps)}
-
-            <h1>MiniGameBoard</h1>
-            {renderWithBreaks(MiniGameBoard, props.miniGameBoardProps)}
         </div>,
         document.getElementById('root'),
     );

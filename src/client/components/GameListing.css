@@ -1,0 +1,25 @@
+.miniGameBoardWrapper {
+    display: inline-block;
+}
+
+.players {
+    border-collapse: collapse;
+    display: inline-block;
+    font-weight: bold;
+    table-layout: fixed;
+    vertical-align: top;
+    & td {
+        border: 2px solid rgb(246, 244, 242);
+        height: 22px;
+        max-width: 200px;
+        overflow: hidden;
+        padding-left: 3px;
+        text-align: left;
+        white-space: nowrap;
+        width: 200px;
+    }
+}
+
+.player {
+    background-color: white;
+}
