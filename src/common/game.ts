@@ -39,7 +39,7 @@ export class Game {
 
     playerIDWithPlayableTile: number | null = null;
 
-    constructor(public tileBag: number[], public userIDs: number[], starterUserID: number, public myUserID: number | null) {
+    constructor(public tileBag: number[], public userIDs: number[], hostUserID: number, public myUserID: number | null) {
         // initialize this.gameBoardTypeCounts
         this.gameBoardTypeCounts = new Array(GameBoardType.Max);
         for (let i = 0; i < GameBoardType.Max; i++) {
@@ -48,7 +48,7 @@ export class Game {
         this.gameBoardTypeCounts[GameBoardType.Nothing] = 108;
 
         // initialize this.gameActionStack
-        this.gameActionStack.push(new ActionStartGame(this, userIDs.indexOf(starterUserID)));
+        this.gameActionStack.push(new ActionStartGame(this, userIDs.indexOf(hostUserID)));
 
         // initialize this.tileRacks, this.tileRackTypes, this.scoreBoard
         for (let playerID = 0; playerID < userIDs.length; playerID++) {

@@ -36,7 +36,7 @@ Array of:
 * Time control increment amount (in seconds)
 * User ID array in player order
 * User name array in player order
-* User ID of starter
+* User ID of host
 * Tile bag array
     * 0 for 1A, 1 for 1B, 2 for 1C, ...
     * 9 for 2A, 10 for 2B, 11 for 2C, ...

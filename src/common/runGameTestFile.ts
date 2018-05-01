@@ -15,7 +15,7 @@ export function runGameTestFile(inputLines: string[]) {
     let game: Game | null = null;
     let tileBag: number[] = [];
     let userIDs: number[] = [];
-    let starterUserID: number = 0;
+    let hostUserID: number = 0;
     let myUserID: number | null = null;
 
     let outputLines: string[] = [];
@@ -41,8 +41,8 @@ export function runGameTestFile(inputLines: string[]) {
                     case 'user IDs':
                         userIDs = value.split(', ').map(x => parseInt(x, 10));
                         break;
-                    case 'starter user ID':
-                        starterUserID = parseInt(value, 10);
+                    case 'host user ID':
+                        hostUserID = parseInt(value, 10);
                         break;
                     case 'my user ID':
                         myUserID = value === 'null' ? null : parseInt(value, 10);
@@ -56,12 +56,12 @@ export function runGameTestFile(inputLines: string[]) {
                     outputLines.push(`tile bag: ${toTilesString(tileBag)}`);
                 }
                 outputLines.push(`user IDs: ${userIDs.join(', ')}`);
-                outputLines.push(`starter user ID: ${starterUserID}`);
+                outputLines.push(`host user ID: ${hostUserID}`);
                 if (myUserID !== null) {
                     outputLines.push(`my user ID: ${myUserID}`);
                 }
 
-                game = new Game(tileBag, userIDs, starterUserID, myUserID);
+                game = new Game(tileBag, userIDs, hostUserID, myUserID);
 
                 if (myUserID !== null) {
                     myPlayerID = userIDs.indexOf(myUserID);
