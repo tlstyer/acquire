@@ -1,5 +1,6 @@
 import './global.css';
 
+import { List } from 'immutable';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
@@ -15,7 +16,7 @@ import { ScoreBoard } from './components/ScoreBoard';
 import { TileRack } from './components/TileRack';
 import { GameBoardLabelMode } from './enums';
 
-const dummyMoveData = new MoveData(new Game(GameMode.Singles1, PlayerArrangementMode.RandomOrder, [], [], [], 0, null));
+const dummyMoveData = new MoveData(new Game(GameMode.Singles1, PlayerArrangementMode.RandomOrder, [], List(), List(), 0, null));
 
 function render(moveIndex: number) {
     const moveData = game.moveDataHistory.get(moveIndex, dummyMoveData);
@@ -43,7 +44,7 @@ function render(moveIndex: number) {
     const scoreBoardTop = -2;
     const scoreBoardCellWidth = Math.floor(gameBoardWidth / 18);
     const scoreBoardCellHeight = Math.ceil(scoreBoardCellWidth * 0.75);
-    const scoreBoardHeight = scoreBoardCellHeight * (4 + game.usernames.length) + 2;
+    const scoreBoardHeight = scoreBoardCellHeight * (4 + game.usernames.size) + 2;
 
     const tileRackLeft = scoreBoardLeft + 2;
     const tileRackTop = scoreBoardTop + scoreBoardHeight + 2;

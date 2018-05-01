@@ -1,4 +1,5 @@
 import { mount } from 'enzyme';
+import { List } from 'immutable';
 import * as React from 'react';
 import * as renderer from 'react-test-renderer';
 
@@ -13,7 +14,7 @@ describe('GameHistory', () => {
     const game = getDummyGameForGetGameHistory();
     const jsx = (
         <GameHistory
-            usernames={['Tim', 'Rita', 'Dad', 'Mom']}
+            usernames={List(['Tim', 'Rita', 'Dad', 'Mom'])}
             moveDataHistory={game.moveDataHistory}
             selectedMove={1}
             width={600}

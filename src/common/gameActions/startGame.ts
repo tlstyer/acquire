@@ -17,7 +17,7 @@ export class ActionStartGame extends ActionBase {
         const moveData = this.game.getCurrentMoveData();
 
         // draw position tiles
-        const positionTiles: PositionTileData[] = new Array(this.game.userIDs.length);
+        const positionTiles: PositionTileData[] = new Array(this.game.userIDs.size);
         for (let tileBagIndex = 0; tileBagIndex < positionTiles.length; tileBagIndex++) {
             positionTiles[tileBagIndex] = new PositionTileData(this.game.tileBag[tileBagIndex], tileBagIndex);
         }
@@ -33,11 +33,11 @@ export class ActionStartGame extends ActionBase {
             moveData.addGameHistoryMessage(GameHistoryMessage.DrewPositionTile, positionTile.playerID, [positionTile.tile]);
         }
 
-        this.game.nextTileBagIndex = this.game.userIDs.length;
+        this.game.nextTileBagIndex = this.game.userIDs.size;
 
         // start game
         moveData.addGameHistoryMessage(GameHistoryMessage.StartedGame, this.playerID, []);
-        for (let playerID = 0; playerID < this.game.userIDs.length; playerID++) {
+        for (let playerID = 0; playerID < this.game.userIDs.size; playerID++) {
             this.game.drawTiles(playerID);
         }
 

@@ -131,7 +131,7 @@ export class ActionPurchaseShares extends ActionBase {
 
     protected completeAction(endGame: boolean): ActionBase[] {
         let allTilesPlayed = this.game.gameBoardTypeCounts[GameBoardType.Nothing] === 0;
-        const noTilesPlayedForEntireRound = this.game.numTurnsWithoutPlayedTiles === this.game.userIDs.length;
+        const noTilesPlayedForEntireRound = this.game.numTurnsWithoutPlayedTiles === this.game.userIDs.size;
 
         if (endGame || allTilesPlayed || noTilesPlayedForEntireRound) {
             if (endGame) {
@@ -154,7 +154,7 @@ export class ActionPurchaseShares extends ActionBase {
                 return [new ActionGameOver(this.game, this.playerID)];
             }
 
-            const nextPlayerID = (this.playerID + 1) % this.game.userIDs.length;
+            const nextPlayerID = (this.playerID + 1) % this.game.userIDs.size;
             return [new ActionPlayTile(this.game, nextPlayerID), new ActionPurchaseShares(this.game, nextPlayerID)];
         }
     }

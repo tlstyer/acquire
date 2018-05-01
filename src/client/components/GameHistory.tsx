@@ -7,7 +7,7 @@ import { getHotelNameSpan, getTileString, getUsernameSpan } from '../helpers';
 import * as style from './GameHistory.css';
 
 export interface GameHistoryProps {
-    usernames: string[];
+    usernames: List<string>;
     moveDataHistory: List<MoveData>;
     selectedMove?: number;
     width: number;
@@ -37,7 +37,7 @@ export class GameHistory extends React.PureComponent<GameHistoryProps> {
 }
 
 interface MoveHistoryProps {
-    usernames: string[];
+    usernames: List<string>;
     moveData: MoveData;
     moveIndex: number;
     isSelected: boolean;
@@ -57,7 +57,7 @@ class MoveHistory extends React.PureComponent<MoveHistoryProps> {
         return (
             <div className={style.move + (isSelected ? ' ' + style.selected : '')} {...optionalParams} onClick={() => onMoveClicked(moveIndex)}>
                 {moveData.gameHistoryMessages.map((ghmd, index) => {
-                    const username: string = ghmd.playerID === null ? '' : usernames[ghmd.playerID];
+                    const username: string = ghmd.playerID === null ? '' : usernames.get(ghmd.playerID, '');
                     return gameHistoryMessageHandlerLookup[ghmd.gameHistoryMessage](ghmd, username, index);
                 })}
             </div>

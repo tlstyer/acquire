@@ -71,7 +71,7 @@ export class ActionSelectMergerSurvivor extends ActionBase {
         this.game.determineTileRackTypesForEverybody();
 
         // pay bonuses
-        let bonuses: number[] = new Array(this.game.userIDs.length);
+        let bonuses: number[] = new Array(this.game.userIDs.size);
         for (let playerID = 0; playerID < bonuses.length; playerID++) {
             bonuses[playerID] = 0;
         }

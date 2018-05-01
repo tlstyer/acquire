@@ -80,7 +80,7 @@ export function runGameTestFile(inputLines: string[]) {
                     outputLines.push(`me: ${myUserID}`);
                 }
 
-                game = new Game(gameMode, playerArrangementMode, tileBag, userIDs, usernames, hostUserID, myUserID);
+                game = new Game(gameMode, playerArrangementMode, tileBag, List(userIDs), List(usernames), hostUserID, myUserID);
 
                 if (myUserID !== null) {
                     myPlayerID = userIDs.indexOf(myUserID);
@@ -107,7 +107,7 @@ export function runGameTestFile(inputLines: string[]) {
 
                 const playerID = parseInt(actionParts[0], 10);
 
-                const userID: number = game.userIDs[playerID];
+                const userID: number = game.userIDs.get(playerID, 0);
                 const moveIndex: number = game.moveDataHistory.size;
 
                 const actualGameActionName = game.gameActionStack[game.gameActionStack.length - 1].constructor.name.slice(6);

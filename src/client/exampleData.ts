@@ -1,3 +1,5 @@
+import { List } from 'immutable';
+
 import { defaultMoveDataHistory } from '../common/defaults';
 import { GameBoardType, GameHistoryMessage, GameMode, PlayerArrangementMode } from '../common/enums';
 import { Game } from '../common/game';
@@ -13,7 +15,7 @@ import { getNewTileBag } from '../common/helpers';
 import { chains } from './helpers';
 
 export function getDummyGameForGetGameHistory() {
-    const game = new Game(GameMode.Singles4, PlayerArrangementMode.ExactOrder, getNewTileBag(), [2, 3, 5, 8], ['Tim', 'Rita', 'Dad', 'Mom'], 8, 3);
+    const game = new Game(GameMode.Singles4, PlayerArrangementMode.ExactOrder, getNewTileBag(), List([2, 3, 5, 8]), List(['Tim', 'Rita', 'Dad', 'Mom']), 8, 3);
     game.doGameAction(8, 0, [], null);
     game.moveDataHistory = defaultMoveDataHistory;
 
@@ -107,8 +109,8 @@ export function getExampleNextGameActionsArray() {
         GameMode.Singles5,
         PlayerArrangementMode.RandomOrder,
         [],
-        [1, 2, 3, 4, 5],
-        ['Tim', 'Rita', 'Dad', 'Mom', 'REALLY, REALLY, REALLY LONG NAME'],
+        List([1, 2, 3, 4, 5]),
+        List(['Tim', 'Rita', 'Dad', 'Mom', 'REALLY, REALLY, REALLY LONG NAME']),
         1,
         6,
     );

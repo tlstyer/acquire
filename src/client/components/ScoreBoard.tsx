@@ -8,7 +8,7 @@ import { chains, gameBoardTypeToCSSClassName, gameBoardTypeToHotelInitial, teamN
 import * as style from './ScoreBoard.css';
 
 export interface ScoreBoardProps {
-    usernames: string[];
+    usernames: List<string>;
     scoreBoard: List<List<number>>;
     scoreBoardAvailable: List<number>;
     scoreBoardChainSize: List<number>;

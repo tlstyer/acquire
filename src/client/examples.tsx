@@ -82,7 +82,7 @@ class AllDemoProps {
 
         this.scoreBoardProps = [
             {
-                usernames: ['winning player', 'losing player'],
+                usernames: List(['winning player', 'losing player']),
                 scoreBoard: List<List<number>>([List([6, 1, 13, 10, 4, 4, 6, 207, 785]), List([1, 0, 11, 0, 3, 1, 1, 256, 533])]),
                 scoreBoardAvailable: List<number>([18, 24, 1, 15, 18, 20, 18]),
                 scoreBoardChainSize: List<number>([3, 0, 39, 5, 2, 4, 13]),
@@ -93,7 +93,7 @@ class AllDemoProps {
                 cellWidth: 30,
             },
             {
-                usernames: ['tlstyer', 'REALLY LONG NAME', 'Somebody Else', 'hi!'],
+                usernames: List(['tlstyer', 'REALLY LONG NAME', 'Somebody Else', 'hi!']),
                 scoreBoard: List<List<number>>([
                     List([4, 0, 0, 0, 0, 0, 0, 74, 82]),
                     List([0, 4, 0, 0, 0, 0, 0, 74, 82]),
@@ -109,7 +109,7 @@ class AllDemoProps {
                 cellWidth: 30,
             },
             {
-                usernames: ['player 1', 'player 2', 'player 3', 'player 4'],
+                usernames: List(['player 1', 'player 2', 'player 3', 'player 4']),
                 scoreBoard: List<List<number>>([
                     List([0, 0, 5, 9, 0, 13, 0, 0, 427]),
                     List([8, 1, 0, 13, 0, 12, 0, 63, 474]),
@@ -125,7 +125,7 @@ class AllDemoProps {
                 cellWidth: 30,
             },
             {
-                usernames: ['player 1', 'player 2', 'player 3', 'player 4', 'player 5', 'player 6'],
+                usernames: List(['player 1', 'player 2', 'player 3', 'player 4', 'player 5', 'player 6']),
                 scoreBoard: List<List<number>>([
                     List([1, 0, 0, 9, 2, 3, 0, 188, 386]),
                     List([0, 3, 7, 0, 0, 0, 0, 35, 121]),
@@ -269,14 +269,14 @@ class AllDemoProps {
                 onMoveClicked,
             },
             {
-                usernames: game1 !== null ? game1.usernames : [],
+                usernames: game1 !== null ? game1.usernames : List(),
                 moveDataHistory: game1 !== null ? game1.moveDataHistory : defaultMoveDataHistory,
                 width: 600,
                 height: 300,
                 onMoveClicked,
             },
             {
-                usernames: game2 !== null ? game2.usernames : [],
+                usernames: game2 !== null ? game2.usernames : List(),
                 moveDataHistory: game2 !== null ? game2.moveDataHistory : defaultMoveDataHistory,
                 width: 600,
                 height: 300,

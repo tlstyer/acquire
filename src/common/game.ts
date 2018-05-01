@@ -1,3 +1,5 @@
+import { List } from 'immutable';
+
 import {
     defaultGameBoard,
     defaultMoveDataHistory,
@@ -43,8 +45,8 @@ export class Game {
         public gameMode: GameMode,
         public playerArrangementMode: PlayerArrangementMode,
         public tileBag: number[],
-        public userIDs: number[],
-        public usernames: string[],
+        public userIDs: List<number>,
+        public usernames: List<string>,
         public hostUserID: number,
         public myUserID: number | null,
     ) {
@@ -59,7 +61,7 @@ export class Game {
         this.gameActionStack.push(new ActionStartGame(this, userIDs.indexOf(hostUserID)));
 
         // initialize this.tileRacks, this.tileRackTypes, this.scoreBoard
-        for (let playerID = 0; playerID < userIDs.length; playerID++) {
+        for (let playerID = 0; playerID < userIDs.size; playerID++) {
             this.tileRacks = this.tileRacks.push(defaultTileRack);
             this.tileRackTypes = this.tileRacks.push(defaultTileRackTypes);
             this.scoreBoard = this.scoreBoard.push(defaultScoreBoardRow);
@@ -141,7 +143,7 @@ export class Game {
     }
 
     drawTiles(playerID: number) {
-        let addDrewTileMessage = this.myUserID === null || this.myUserID === this.userIDs[playerID];
+        let addDrewTileMessage = this.myUserID === null || this.myUserID === this.userIDs.get(playerID, 0);
 
         for (let i = 0; i < 6; i++) {
             if (this.tileRacks.get(playerID, defaultTileRack).get(i, 0) !== null) {
@@ -199,7 +201,7 @@ export class Game {
     }
 
     determineTileRackTypesForEverybody() {
-        for (let playerID = 0; playerID < this.userIDs.length; playerID++) {
+        for (let playerID = 0; playerID < this.userIDs.size; playerID++) {
             this.determineTileRackTypesForPlayer(playerID);
         }
     }
@@ -342,8 +344,8 @@ export class Game {
     }
 
     getScoreBoardColumnArray(scoreBoardIndex: GameBoardType | ScoreBoardIndex) {
-        const column: number[] = new Array(this.userIDs.length);
-        for (let playerID = 0; playerID < this.userIDs.length; playerID++) {
+        const column: number[] = new Array(this.userIDs.size);
+        for (let playerID = 0; playerID < this.userIDs.size; playerID++) {
             column[playerID] = this.scoreBoard.get(playerID, defaultScoreBoardRow).get(scoreBoardIndex, 0);
         }
         return column;
