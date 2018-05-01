@@ -1949,6 +1949,43 @@ def output_command_to_run_this_script_in_parallel_on_all_logs():
     print('echo ' + ' '.join([str(d[1]) for d in log_file_data]) + ' | xargs -n 1 -P 4 python3 -u -OO logs_to_games.py')
 
 
+def output_username_to_user_id():
+    usernames_set = set()
+    next_user_id = 1
+
+    print('username_to_user_id = {')
+
+    for log_timestamp, filename in util.get_log_file_filenames('py', begin=1408905413):
+        print('    # log_timestamp:', log_timestamp)
+        with util.open_possibly_gzipped_file(filename) as file:
+            log_parser = LogParser(log_timestamp, file)
+            for line_type, _, _, parse_line_data in log_parser.go():
+                if line_type == LineTypes.connect:
+                    _, username = parse_line_data
+                    username = log_timestamp_and_username_to_correct_username.get((log_timestamp, username), username)
+                    original_username = username
+                    if not is_ascii(username):
+                        username = username.encode('punycode').decode().strip()
+                    if username not in usernames_set:
+                        usernames_set.add(username)
+                        print('    ' + repr(username) + ': ' + str(next_user_id) + ',' + (' # original non-ascii: ' + original_username if username != original_username else ''))
+                        next_user_id += 1
+
+    print('}')
+
+
+def is_ascii(string):
+    return all(32 <= ord(c) <= 126 for c in string)
+
+
+log_timestamp_and_username_to_correct_username = {
+    # requested name changes
+    (1418805302, 'Temp'): 'Mr Brain',
+    (1511554298, 'ranger'): 'Ranger',
+    (1514744670, 'Alias18'): 'Alias2018',
+}
+
+
 def main():
     output_dir = '/home/tim/tmp/acquire'
     output_logs_dir = output_dir + '/logs'
@@ -1970,6 +2007,7 @@ def main():
     # output_chat_messages(1520848828)
     # compare_log_usernames_with_database_usernames(1408911415)
     # output_command_to_run_this_script_in_parallel_on_all_logs()
+    # output_username_to_user_id()
 
 
 if __name__ == '__main__':
