@@ -13,11 +13,14 @@ export interface GameListingProps {
     gameMode: GameMode;
     usernames: List<string | null>;
     gameStatus: GameStatus;
+    onJoinClicked?: () => void;
+    onRejoinClicked?: () => void;
+    onWatchClicked?: () => void;
 }
 
 export class GameListing extends React.PureComponent<GameListingProps> {
     render() {
-        const { gameBoard, gameMode, usernames, gameStatus } = this.props;
+        const { gameBoard, gameMode, usernames, gameStatus, onJoinClicked, onRejoinClicked, onWatchClicked } = this.props;
 
         const isTeamGame = gameModeToTeamSize[gameMode] > 1;
         const numTeams = gameModeToNumPlayers[gameMode] / gameModeToTeamSize[gameMode];
@@ -37,9 +40,29 @@ export class GameListing extends React.PureComponent<GameListingProps> {
                     </tbody>
                 </table>
                 <div className={style.other}>
-                    {gameModeToString[gameMode]}
-                    <br />
-                    {gameStatusToString[gameStatus]}
+                    <div>{gameModeToString[gameMode]}</div>
+                    <div>{gameStatusToString[gameStatus]}</div>
+                    {onJoinClicked ? (
+                        <div>
+                            <input type={'button'} value={'Join'} onClick={onJoinClicked} />
+                        </div>
+                    ) : (
+                        undefined
+                    )}
+                    {onRejoinClicked ? (
+                        <div>
+                            <input type={'button'} value={'Rejoin'} onClick={onRejoinClicked} />
+                        </div>
+                    ) : (
+                        undefined
+                    )}
+                    {onWatchClicked ? (
+                        <div>
+                            <input type={'button'} value={'Watch'} onClick={onWatchClicked} />
+                        </div>
+                    ) : (
+                        undefined
+                    )}
                 </div>
             </div>
         );

@@ -46,18 +46,31 @@ class AllDemoProps {
                 gameMode: GameMode.Singles4,
                 usernames: List(['Host', null, 'User 2', null]),
                 gameStatus: GameStatus.SettingUp,
+                onJoinClicked,
+                onWatchClicked,
             },
             {
                 gameBoard: game1 !== null ? game1.gameBoard : defaultGameBoard,
                 gameMode: GameMode.Teams2vs2vs2,
                 usernames: List(['Tim', 'Rita', 'Dad', 'Mom', 'REALLY, REALLY LONG NAME', 'pgyqj,;']),
                 gameStatus: GameStatus.InProgress,
+                onRejoinClicked,
             },
             {
                 gameBoard: game2 !== null ? game2.gameBoard : defaultGameBoard,
                 gameMode: GameMode.Teams2vs2,
                 usernames: List(['player 1', 'player 2', 'player 3', 'player 4']),
                 gameStatus: GameStatus.Completed,
+                onWatchClicked,
+            },
+            {
+                gameBoard: defaultGameBoard,
+                gameMode: GameMode.Singles4,
+                usernames: List(['Show', 'All', 'Buttons', 'Example']),
+                gameStatus: GameStatus.SettingUp,
+                onJoinClicked,
+                onRejoinClicked,
+                onWatchClicked,
             },
         ];
 
@@ -386,6 +399,18 @@ function getPurchaseSharesDescription(props: PurchaseSharesProps) {
 
 function onSubmitLoginForm(username: string, password: string) {
     console.log('onSubmitLoginForm:', username, ',', password);
+}
+
+function onJoinClicked() {
+    console.log('onJoinClicked');
+}
+
+function onRejoinClicked() {
+    console.log('onRejoinClicked');
+}
+
+function onWatchClicked() {
+    console.log('onWatchClicked');
 }
 
 function onTileClicked(tile: number) {
