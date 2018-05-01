@@ -25,12 +25,12 @@ export class GameState extends React.PureComponent<GameStateProps> {
     render() {
         const { usernames, nextGameAction, width, height } = this.props;
 
-        return gameGameStateHandlerLookup[nextGameAction.gameAction](usernames, nextGameAction, width, height);
+        return gameStateHandlerLookup[nextGameAction.gameAction](usernames, nextGameAction, width, height);
     }
 }
 
 // @ts-ignore
-const gameGameStateHandlerLookup: { [key: number]: (usernames: List<string>, action: ActionBase, width: number, height: number) => JSX.Element } = {
+const gameStateHandlerLookup: { [key: number]: (usernames: List<string>, action: ActionBase, width: number, height: number) => JSX.Element } = {
     [GameAction.StartGame]: (usernames: List<string>, action: ActionStartGame, width: number, height: number) => (
         <div className={style.root} style={{ width, height }}>
             Waiting for {getUsernameSpan(usernames.get(action.playerID, ''))} to start the game.
