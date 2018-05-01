@@ -45,7 +45,7 @@ export class Game {
         public tileBag: number[],
         public userIDs: number[],
         public usernames: string[],
-        hostUserID: number,
+        public hostUserID: number,
         public myUserID: number | null,
     ) {
         // initialize this.gameBoardTypeCounts
