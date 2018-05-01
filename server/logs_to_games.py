@@ -1589,15 +1589,15 @@ def make_acquire2_game_test_files(log_timestamp, output_dir):
 
                 tile_bag = game._get_initial_tile_bag()
                 lines.append('tile bag: ' + ', '.join(to_tile_string(t) for t in tile_bag[::-1]))
-                starter_username = game.player_join_order[0]
-                starter_user_id = 0
+                host_username = game.player_join_order[0]
+                host_user_id = 0
                 for username in game.player_id_to_username.values():
                     username = get_actual_username(log_timestamp, username)
                     user_id = username_to_user_id[username]
                     lines.append('user: ' + str(user_id) + ' ' + username)
-                    if username == starter_username:
-                        starter_user_id = user_id
-                lines.append('starter: ' + str(starter_user_id))
+                    if username == host_username:
+                        host_user_id = user_id
+                lines.append('host: ' + str(host_user_id))
 
                 server_game = server.Game(game.game_id, game.internal_game_id, enums.GameModes[game.mode].value, game.max_players, Game._add_pending_messages, False, tile_bag)
 
