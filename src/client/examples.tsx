@@ -44,17 +44,17 @@ class AllDemoProps {
             {
                 gameBoard: defaultGameBoard,
                 gameMode: GameMode.Singles4,
-                usernames: ['Host', null, 'User 2', null],
+                usernames: List(['Host', null, 'User 2', null]),
             },
             {
                 gameBoard: game1 !== null ? game1.gameBoard : defaultGameBoard,
                 gameMode: GameMode.Teams2vs2vs2,
-                usernames: ['Tim', 'Rita', 'Dad', 'Mom', 'REALLY, REALLY LONG NAME', 'pgyqj,;'],
+                usernames: List(['Tim', 'Rita', 'Dad', 'Mom', 'REALLY, REALLY LONG NAME', 'pgyqj,;']),
             },
             {
                 gameBoard: game2 !== null ? game2.gameBoard : defaultGameBoard,
                 gameMode: GameMode.Teams2vs2,
-                usernames: ['player 1', 'player 2', 'player 3', 'player 4'],
+                usernames: List(['player 1', 'player 2', 'player 3', 'player 4']),
             },
         ];
 

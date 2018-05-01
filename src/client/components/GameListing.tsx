@@ -10,7 +10,7 @@ import { MiniGameBoard } from './MiniGameBoard';
 export interface GameListingProps {
     gameBoard: List<GameBoardType>;
     gameMode: GameMode;
-    usernames: (string | null)[];
+    usernames: List<string | null>;
 }
 
 export class GameListing extends React.PureComponent<GameListingProps> {
