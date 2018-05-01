@@ -3,7 +3,7 @@ import * as React from 'react';
 
 import { GameMode, PlayerArrangementMode } from '../../common/enums';
 import { gameModeToNumPlayers, gameModeToTeamSize } from '../../common/helpers';
-import { teamNumberToCSSClassName } from '../helpers';
+import { gameModeToString, teamNumberToCSSClassName } from '../helpers';
 import * as style from './GameSetupUI.css';
 
 export interface GameSetupUIProps {
@@ -227,18 +227,6 @@ export class GameSetupUI extends React.PureComponent<GameSetupUIProps, GameSetup
         }
     }
 }
-
-const gameModeToString: { [key: number]: string } = {
-    [GameMode.Singles1]: 'Singles 1',
-    [GameMode.Singles2]: 'Singles 2',
-    [GameMode.Singles3]: 'Singles 3',
-    [GameMode.Singles4]: 'Singles 4',
-    [GameMode.Singles5]: 'Singles 5',
-    [GameMode.Singles6]: 'Singles 6',
-    [GameMode.Teams2vs2]: 'Teams 2 vs 2',
-    [GameMode.Teams2vs2vs2]: 'Teams 2 vs 2 vs 2',
-    [GameMode.Teams3vs3]: 'Teams 3 vs 3',
-};
 
 const playerArrangementModeToString: { [key: number]: string } = {
     [PlayerArrangementMode.RandomOrder]: 'Random Order',

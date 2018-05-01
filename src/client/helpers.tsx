@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { GameBoardType, Tile } from '../common/enums';
+import { GameBoardType, GameMode, Tile } from '../common/enums';
 import * as common from './common.css';
 
 export const chains = [0, 1, 2, 3, 4, 5, 6];
@@ -77,3 +77,15 @@ export function getUsernameSpan(username: string) {
 export function getHotelNameSpan(chain: GameBoardType) {
     return <span className={gameBoardTypeToCSSClassName[chain]}>{gameBoardTypeToHotelName[chain]}</span>;
 }
+
+export const gameModeToString: { [key: number]: string } = {
+    [GameMode.Singles1]: 'Singles 1',
+    [GameMode.Singles2]: 'Singles 2',
+    [GameMode.Singles3]: 'Singles 3',
+    [GameMode.Singles4]: 'Singles 4',
+    [GameMode.Singles5]: 'Singles 5',
+    [GameMode.Singles6]: 'Singles 6',
+    [GameMode.Teams2vs2]: 'Teams 2 vs 2',
+    [GameMode.Teams2vs2vs2]: 'Teams 2 vs 2 vs 2',
+    [GameMode.Teams3vs3]: 'Teams 3 vs 3',
+};
