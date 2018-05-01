@@ -13,7 +13,7 @@ import { getNewTileBag } from '../common/helpers';
 import { chains } from './helpers';
 
 export function getDummyGameForGetGameHistory() {
-    const game = new Game(getNewTileBag(), [2, 3, 5, 8], ['a', 'b', 'c', 'd'], 8, 3);
+    const game = new Game(getNewTileBag(), [2, 3, 5, 8], ['Tim', 'Rita', 'Dad', 'Mom'], 8, 3);
     game.doGameAction(8, 0, [], null);
     game.moveDataHistory = defaultMoveDataHistory;
 

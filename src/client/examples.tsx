@@ -264,7 +264,7 @@ class AllDemoProps {
     constructor() {
         const game1 = getDummyGameForGetGameHistory();
         this.gameHistoryProps1 = {
-            usernames: ['Tim', 'Rita', 'Dad', 'Mom'],
+            usernames: game1.usernames,
             moveDataHistory: game1.moveDataHistory,
             width: 600,
             height: 300,
@@ -273,7 +273,7 @@ class AllDemoProps {
 
         const { game: game2 } = runGameTestFile(require('raw-loader!../common/gameTestFiles/other/all tiles played').split('\n'));
         this.gameHistoryProps2 = {
-            usernames: ['A User', 'Somebody Else'],
+            usernames: game2 !== null ? game2.usernames : [],
             moveDataHistory: game2 !== null ? game2.moveDataHistory : defaultMoveDataHistory,
             width: 600,
             height: 300,
@@ -282,7 +282,7 @@ class AllDemoProps {
 
         const { game: game3 } = runGameTestFile(require('raw-loader!../common/gameTestFiles/other/no tiles played for entire round').split('\n'));
         this.gameHistoryProps3 = {
-            usernames: ['player 1', 'player 2'],
+            usernames: game3 !== null ? game3.usernames : [],
             moveDataHistory: game3 !== null ? game3.moveDataHistory : defaultMoveDataHistory,
             width: 600,
             height: 300,
