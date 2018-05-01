@@ -2,6 +2,7 @@ import * as React from 'react';
 
 import { GameBoardType, GameMode, Tile } from '../common/enums';
 import * as common from './common.css';
+import { GameStatus } from './enums';
 
 export const chains = [0, 1, 2, 3, 4, 5, 6];
 
@@ -88,4 +89,10 @@ export const gameModeToString: { [key: number]: string } = {
     [GameMode.Teams2vs2]: 'Teams 2 vs 2',
     [GameMode.Teams2vs2vs2]: 'Teams 2 vs 2 vs 2',
     [GameMode.Teams3vs3]: 'Teams 3 vs 3',
+};
+
+export const gameStatusToString: { [key: number]: string } = {
+    [GameStatus.SettingUp]: 'Setting up',
+    [GameStatus.InProgress]: 'In Progress',
+    [GameStatus.Completed]: 'Completed',
 };

@@ -3,7 +3,8 @@ import * as React from 'react';
 
 import { GameBoardType, GameMode } from '../../common/enums';
 import { gameModeToNumPlayers, gameModeToTeamSize } from '../../common/helpers';
-import { teamNumberToCSSClassName } from '../helpers';
+import { GameStatus } from '../enums';
+import { gameModeToString, gameStatusToString, teamNumberToCSSClassName } from '../helpers';
 import * as style from './GameListing.css';
 import { MiniGameBoard } from './MiniGameBoard';
 
@@ -11,11 +12,12 @@ export interface GameListingProps {
     gameBoard: List<GameBoardType>;
     gameMode: GameMode;
     usernames: List<string | null>;
+    gameStatus: GameStatus;
 }
 
 export class GameListing extends React.PureComponent<GameListingProps> {
     render() {
-        const { gameBoard, gameMode, usernames } = this.props;
+        const { gameBoard, gameMode, usernames, gameStatus } = this.props;
 
         const isTeamGame = gameModeToTeamSize[gameMode] > 1;
         const numTeams = gameModeToNumPlayers[gameMode] / gameModeToTeamSize[gameMode];
@@ -34,6 +36,11 @@ export class GameListing extends React.PureComponent<GameListingProps> {
                         ))}
                     </tbody>
                 </table>
+                <div className={style.other}>
+                    {gameModeToString[gameMode]}
+                    <br />
+                    {gameStatusToString[gameStatus]}
+                </div>
             </div>
         );
     }

@@ -20,6 +20,12 @@
     }
 }
 
+.other {
+    display: inline-block;
+    font-weight: bold;
+    vertical-align: top;
+}
+
 .player {
     background-color: white;
 }

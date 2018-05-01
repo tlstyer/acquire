@@ -18,7 +18,7 @@ import { PurchaseShares, PurchaseSharesProps } from './components/PurchaseShares
 import { ScoreBoard, ScoreBoardProps } from './components/ScoreBoard';
 import { SelectChain, SelectChainProps, SelectChainTitle } from './components/SelectChain';
 import { TileRack, TileRackProps } from './components/TileRack';
-import { GameBoardLabelMode } from './enums';
+import { GameBoardLabelMode, GameStatus } from './enums';
 import { getDummyGameForGetGameHistory, getExampleNextGameActionsArray } from './exampleData';
 import { chains, gameBoardTypeToHotelInitial, getTileString } from './helpers';
 
@@ -45,16 +45,19 @@ class AllDemoProps {
                 gameBoard: defaultGameBoard,
                 gameMode: GameMode.Singles4,
                 usernames: List(['Host', null, 'User 2', null]),
+                gameStatus: GameStatus.SettingUp,
             },
             {
                 gameBoard: game1 !== null ? game1.gameBoard : defaultGameBoard,
                 gameMode: GameMode.Teams2vs2vs2,
                 usernames: List(['Tim', 'Rita', 'Dad', 'Mom', 'REALLY, REALLY LONG NAME', 'pgyqj,;']),
+                gameStatus: GameStatus.InProgress,
             },
             {
                 gameBoard: game2 !== null ? game2.gameBoard : defaultGameBoard,
                 gameMode: GameMode.Teams2vs2,
                 usernames: List(['player 1', 'player 2', 'player 3', 'player 4']),
+                gameStatus: GameStatus.Completed,
             },
         ];
 
