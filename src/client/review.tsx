@@ -75,7 +75,7 @@ function render(moveIndex: number) {
                     scoreBoardPrice={moveData.scoreBoardPrice}
                     turnPlayerID={turnPlayerID}
                     movePlayerID={movePlayerID}
-                    gameMode={GameMode.Singles1}
+                    gameMode={game.gameMode}
                     cellWidth={scoreBoardCellWidth}
                 />
             </div>
