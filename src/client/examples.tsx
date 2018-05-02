@@ -178,7 +178,7 @@ class AllDemoProps {
                     GameBoardType.Continental,
                 ]),
                 buttonSize: 40,
-                isPrimaryComponent: true,
+                isPrimaryComponent: false,
                 onTileClicked: onTileClicked,
             },
             {
