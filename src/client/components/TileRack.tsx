@@ -4,7 +4,6 @@ import * as React from 'react';
 import { GameBoardType } from '../../common/enums';
 import * as commonStyle from '../common.css';
 import { gameBoardTypeToCSSClassName, getTileString } from '../helpers';
-import { registerKeyboardShortcuts } from '../keyboardShortcuts';
 import * as style from './TileRack.css';
 
 export interface TileRackProps {
@@ -15,11 +14,17 @@ export interface TileRackProps {
     onTileClicked: (tile: number) => void;
 }
 
-function dummyUnregisterKeyboardShortcuts() {}
+const keyboardShortcutToTileIndex: { [key: string]: number } = {
+    1: 0,
+    2: 1,
+    3: 2,
+    4: 3,
+    5: 4,
+    6: 5,
+};
 
 export class TileRack extends React.Component<TileRackProps> {
     buttonRefs: React.RefObject<HTMLInputElement>[];
-    unregisterKeyboardShortcuts = dummyUnregisterKeyboardShortcuts;
 
     constructor(props: TileRackProps) {
         super(props);
@@ -41,28 +46,24 @@ export class TileRack extends React.Component<TileRackProps> {
     }
 
     componentDidMount() {
-        this.unregisterKeyboardShortcuts = registerKeyboardShortcuts({
-            1: this.focusOnButton.bind(this, 0),
-            2: this.focusOnButton.bind(this, 1),
-            3: this.focusOnButton.bind(this, 2),
-            4: this.focusOnButton.bind(this, 3),
-            5: this.focusOnButton.bind(this, 4),
-            6: this.focusOnButton.bind(this, 5),
-        });
+        document.addEventListener('keydown', this.onDocumentKeydown);
     }
 
     componentWillUnmount() {
-        this.unregisterKeyboardShortcuts();
+        document.removeEventListener('keydown', this.onDocumentKeydown);
     }
 
-    focusOnButton(index: number) {
-        if (this.props.isPrimaryComponent) {
-            const button = this.buttonRefs[index].current;
+    onDocumentKeydown = (event: KeyboardEvent) => {
+        const keyName = event.key;
+
+        if (this.props.isPrimaryComponent && keyboardShortcutToTileIndex.hasOwnProperty(keyName)) {
+            const tileIndex = keyboardShortcutToTileIndex[keyName];
+            const button = this.buttonRefs[tileIndex].current;
             if (button !== null) {
                 button.focus();
             }
         }
-    }
+    };
 
     render() {
         const { tiles, types, buttonSize, onTileClicked } = this.props;
