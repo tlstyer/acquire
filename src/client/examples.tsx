@@ -314,64 +314,49 @@ function render(props: AllDemoProps) {
     ReactDOM.render(
         <>
             <h1>LoginForm</h1>
-            {renderWithBreaks(LoginForm, props.loginFormProps)}
+            {renderComponentForEachProps(LoginForm, props.loginFormProps)}
 
             <h1>GameListing</h1>
-            {renderWithBreaks(GameListing, props.gameListingProps)}
+            {renderComponentForEachProps(GameListing, props.gameListingProps)}
 
             <h1>GameSetupUI</h1>
             <ExampleGameSetupMaster />
 
             <h1>GameBoard</h1>
-            {renderWithBreaks(GameBoard, props.gameBoardProps)}
+            {renderComponentForEachProps(GameBoard, props.gameBoardProps)}
 
             <h1>ScoreBoard</h1>
-            {renderWithBreaks(ScoreBoard, props.scoreBoardProps)}
+            {renderComponentForEachProps(ScoreBoard, props.scoreBoardProps)}
 
             <h1>TileRack</h1>
-            {renderWithBreaks(TileRack, props.tileRackProps)}
+            {renderComponentForEachProps(TileRack, props.tileRackProps)}
 
             <h1>SelectChain</h1>
-            {renderWithBreaks(SelectChain, props.selectChainProps)}
+            {renderComponentForEachProps(SelectChain, props.selectChainProps)}
 
             <h1>DisposeOfShares</h1>
-            {renderWithDescriptions(DisposeOfShares, props.disposeOfSharesProps, getDisposeOfSharesDescription)}
+            {renderComponentForEachProps(DisposeOfShares, props.disposeOfSharesProps, getDisposeOfSharesDescription)}
 
             <h1>PurchaseShares</h1>
-            {renderWithDescriptions(PurchaseShares, props.purchaseSharesProps, getPurchaseSharesDescription)}
+            {renderComponentForEachProps(PurchaseShares, props.purchaseSharesProps, getPurchaseSharesDescription)}
 
             <h1>GameHistory</h1>
-            {renderWithBreaks(GameHistory, props.gameHistoryProps)}
+            {renderComponentForEachProps(GameHistory, props.gameHistoryProps)}
 
             <h1>GameState</h1>
-            {renderWithoutBreaks(GameState, props.gameStateProps)}
+            {renderComponentForEachProps(GameState, props.gameStateProps)}
         </>,
         document.getElementById('root'),
     );
 }
 
-function renderWithBreaks(Component: any, propsArray: any[]) {
+function renderComponentForEachProps(Component: any, propsArray: any[], descriptionFunc?: any) {
     const lastIndex = propsArray.length - 1;
     return propsArray.map((props, i) => (
         <React.Fragment key={i}>
+            {descriptionFunc ? <h2>{descriptionFunc(props)}</h2> : undefined}
             <Component {...props} />
-            {i !== lastIndex ? <br /> : undefined}
-        </React.Fragment>
-    ));
-}
-function renderWithoutBreaks(Component: any, propsArray: any[]) {
-    return propsArray.map((props, i) => (
-        <React.Fragment key={i}>
-            <Component {...props} />
-        </React.Fragment>
-    ));
-}
-
-function renderWithDescriptions(Component: any, propsArray: any[], descriptionFunc: any) {
-    return propsArray.map((props, i) => (
-        <React.Fragment key={i}>
-            <h2>{descriptionFunc(props)}</h2>
-            <Component {...props} />
+            {!descriptionFunc && i !== lastIndex ? <br /> : undefined}
         </React.Fragment>
     ));
 }
