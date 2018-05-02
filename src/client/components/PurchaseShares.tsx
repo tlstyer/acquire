@@ -157,7 +157,7 @@ export class PurchaseShares extends React.Component<PurchaseSharesProps, Purchas
                 checkbox.focus();
                 checkbox.checked = !checkbox.checked;
             }
-        } else if (keyName === 'o') {
+        } else if (keyName === '0' || keyName === '8' || keyName === 'o') {
             const button = this.okButtonRef.current;
             if (button !== null) {
                 button.focus();

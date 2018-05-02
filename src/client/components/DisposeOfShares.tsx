@@ -35,6 +35,7 @@ const keyboardShortcutToButtonIndex: { [key: string]: number } = {
     6: 5,
     S: 5,
     7: 6,
+    0: 7,
     8: 7,
     o: 7,
 };

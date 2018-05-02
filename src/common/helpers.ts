@@ -153,10 +153,10 @@ export const selectChainKeyboardShortcutsDescription = 'Press 1-7 or L,T,A,F,W,C
 export const disposeOfSharesKeyboardShortcutsDescription =
     'Press 1-7 for the corresponding button (left-to-right), ' +
     'K for Keep All, T for Trade ▲, Shift-T for Trade ▼, S for Sell ▲, Shift-S for Sell ▼, ' +
-    '8 or O to move to the OK button, ENTER to press it.';
+    '0 or 8 or O to move to the OK button, ENTER to press it.';
 export const purchaseSharesKeyboardShortcutsDescription =
     'Press 1-7 or L,T,A,F,W,C,I to add a chain to the cart, ' +
     'Shift-1-7 or Shift-L,T,A,F,W,C,I to remove a chain from the cart, ' +
     'BACKSPACE or MINUS to remove the right-most chain from the cart, ' +
     'E or ASTERISK to toggle the End Game checkbox, ' +
-    'O to move to the OK button, ENTER to press it.';
+    '0 or 8 or O to move to the OK button, ENTER to press it.';
