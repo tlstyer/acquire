@@ -269,6 +269,7 @@ class AllDemoProps {
                 scoreBoardPrice: List<number>([2, 3, 4, 5, 6, 7, 8]),
                 cash: 15,
                 buttonSize: 40,
+                keyboardShortcutsEnabled: false,
                 onSharesPurchased,
             },
             {
@@ -276,6 +277,7 @@ class AllDemoProps {
                 scoreBoardPrice: List<number>([0, 3, 4, 5, 0, 6, 5]),
                 cash: 15,
                 buttonSize: 40,
+                keyboardShortcutsEnabled: false,
                 onSharesPurchased,
             },
             {
@@ -283,6 +285,7 @@ class AllDemoProps {
                 scoreBoardPrice: List<number>([2, 0, 0, 5, 6, 0, 0]),
                 cash: 5,
                 buttonSize: 40,
+                keyboardShortcutsEnabled: false,
                 onSharesPurchased,
             },
         ];
@@ -320,7 +323,12 @@ class AllDemoProps {
             height: 22,
         }));
 
-        this.possibleKeyboardShortcutsEnabledProps = [...this.tileRackProps, ...this.selectChainProps, ...this.disposeOfSharesProps];
+        this.possibleKeyboardShortcutsEnabledProps = [
+            ...this.tileRackProps,
+            ...this.selectChainProps,
+            ...this.disposeOfSharesProps,
+            ...this.purchaseSharesProps,
+        ];
     }
 }
 
