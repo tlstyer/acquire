@@ -34,6 +34,8 @@ class AllDemoProps {
     gameHistoryProps: GameHistoryProps[];
     gameStateProps: GameStateProps[];
 
+    possiblePrimaryComponentsProps: { isPrimaryComponent: boolean }[];
+
     constructor() {
         const { game: game1 } = runGameTestFile(require('raw-loader!../common/gameTestFiles/other/no tiles played for entire round').split('\n'));
         const { game: game2 } = runGameTestFile(require('raw-loader!../common/gameTestFiles/other/all tiles played').split('\n'));
@@ -176,6 +178,7 @@ class AllDemoProps {
                     GameBoardType.Continental,
                 ]),
                 buttonSize: 40,
+                isPrimaryComponent: true,
                 onTileClicked: onTileClicked,
             },
             {
@@ -189,12 +192,14 @@ class AllDemoProps {
                     GameBoardType.HaveNeighboringTileToo,
                 ]),
                 buttonSize: 40,
+                isPrimaryComponent: false,
                 onTileClicked: onTileClicked,
             },
             {
                 tiles: List([null, 86, null, 38, null, 74]),
                 types: List([null, GameBoardType.CantPlayEver, null, GameBoardType.WillFormNewChain, null, GameBoardType.CantPlayNow]),
                 buttonSize: 40,
+                isPrimaryComponent: false,
                 onTileClicked: onTileClicked,
             },
         ];
@@ -307,6 +312,8 @@ class AllDemoProps {
             width: 500,
             height: 22,
         }));
+
+        this.possiblePrimaryComponentsProps = [...this.tileRackProps];
     }
 }
 
@@ -352,13 +359,39 @@ function render(props: AllDemoProps) {
 
 function renderComponentForEachProps(Component: any, propsArray: any[], descriptionFunc?: any) {
     const lastIndex = propsArray.length - 1;
+
     return propsArray.map((props, i) => (
         <React.Fragment key={i}>
             {descriptionFunc ? <h2>{descriptionFunc(props)}</h2> : undefined}
+            {props.isPrimaryComponent === true ? (
+                <>
+                    <input type={'button'} value={'Keyboard Shortcuts Enabled'} disabled={true} />
+                    <br />
+                    <br />
+                </>
+            ) : props.isPrimaryComponent === false ? (
+                <>
+                    <input type={'button'} value={'Enable Keyboard Shortcuts'} onClick={() => setPrimaryComponent(props)} />
+                    <br />
+                    <br />
+                </>
+            ) : (
+                undefined
+            )}
             <Component {...props} />
             {!descriptionFunc && i !== lastIndex ? <br /> : undefined}
         </React.Fragment>
     ));
+}
+
+function setPrimaryComponent(props: { isPrimaryComponent: boolean }) {
+    for (let i = 0; i < allDemoProps.possiblePrimaryComponentsProps.length; i++) {
+        allDemoProps.possiblePrimaryComponentsProps[i].isPrimaryComponent = false;
+    }
+
+    props.isPrimaryComponent = true;
+
+    render(allDemoProps);
 }
 
 function getDisposeOfSharesDescription(props: DisposeOfSharesProps) {
@@ -400,10 +433,12 @@ function onTileClicked(tile: number) {
 
 function onMoveClicked(index: number) {
     console.log('onMoveClicked:', index);
-    props.gameHistoryProps[0].selectedMove = index;
-    props.gameHistoryProps[1].selectedMove = index;
-    props.gameHistoryProps[2].selectedMove = index;
-    render(props);
+
+    allDemoProps.gameHistoryProps[0].selectedMove = index;
+    allDemoProps.gameHistoryProps[1].selectedMove = index;
+    allDemoProps.gameHistoryProps[2].selectedMove = index;
+
+    render(allDemoProps);
 }
 
 function onChainSelected(chain: GameBoardType) {
@@ -418,5 +453,6 @@ function onSharesPurchased(chains: GameBoardType[], endGame: boolean) {
     console.log('onSharesPurchased', chains, endGame);
 }
 
-const props = new AllDemoProps();
-render(props);
+const allDemoProps = new AllDemoProps();
+
+render(allDemoProps);
