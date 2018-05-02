@@ -34,25 +34,27 @@ export class SelectChain extends React.PureComponent<SelectChainProps> {
         };
 
         return (
-            <fieldset className={style.root} style={{ fontSize: Math.floor(buttonSize * 0.4) }}>
-                <legend>{typeToInstructions[type]}</legend>
-                {chains.map(chain => {
-                    if (availableChains.indexOf(chain) >= 0) {
-                        return (
-                            <input
-                                key={chain}
-                                type={'button'}
-                                className={commonStyle.hotelButton + ' ' + gameBoardTypeToCSSClassName[chain]}
-                                style={buttonStyle}
-                                value={gameBoardTypeToHotelInitial[chain]}
-                                onClick={() => onChainSelected(chain)}
-                            />
-                        );
-                    } else {
-                        return <input key={chain} type={'button'} className={commonStyle.invisible} style={buttonStyle} value={'?'} />;
-                    }
-                })}
-            </fieldset>
+            <div>
+                <fieldset className={style.root} style={{ fontSize: Math.floor(buttonSize * 0.4) }}>
+                    <legend>{typeToInstructions[type]}</legend>
+                    {chains.map(chain => {
+                        if (availableChains.indexOf(chain) >= 0) {
+                            return (
+                                <input
+                                    key={chain}
+                                    type={'button'}
+                                    className={commonStyle.hotelButton + ' ' + gameBoardTypeToCSSClassName[chain]}
+                                    style={buttonStyle}
+                                    value={gameBoardTypeToHotelInitial[chain]}
+                                    onClick={() => onChainSelected(chain)}
+                                />
+                            );
+                        } else {
+                            return <input key={chain} type={'button'} className={commonStyle.invisible} style={buttonStyle} value={'?'} />;
+                        }
+                    })}
+                </fieldset>
+            </div>
         );
     }
 }
