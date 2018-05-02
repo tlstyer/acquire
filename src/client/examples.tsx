@@ -234,6 +234,7 @@ class AllDemoProps {
                 controllingChain: GameBoardType.Festival,
                 sharesOwnedInDefunctChain: 10,
                 sharesAvailableInControllingChain: 22,
+                keyboardShortcutsEnabled: false,
                 onSharesDisposed,
             },
             {
@@ -241,6 +242,7 @@ class AllDemoProps {
                 controllingChain: GameBoardType.Tower,
                 sharesOwnedInDefunctChain: 7,
                 sharesAvailableInControllingChain: 2,
+                keyboardShortcutsEnabled: false,
                 onSharesDisposed,
             },
             {
@@ -248,6 +250,7 @@ class AllDemoProps {
                 controllingChain: GameBoardType.Worldwide,
                 sharesOwnedInDefunctChain: 1,
                 sharesAvailableInControllingChain: 3,
+                keyboardShortcutsEnabled: false,
                 onSharesDisposed,
             },
             {
@@ -255,6 +258,7 @@ class AllDemoProps {
                 controllingChain: GameBoardType.Imperial,
                 sharesOwnedInDefunctChain: 25,
                 sharesAvailableInControllingChain: 10,
+                keyboardShortcutsEnabled: false,
                 onSharesDisposed,
             },
         ];
@@ -316,7 +320,7 @@ class AllDemoProps {
             height: 22,
         }));
 
-        this.possibleKeyboardShortcutsEnabledProps = [...this.tileRackProps, ...this.selectChainProps];
+        this.possibleKeyboardShortcutsEnabledProps = [...this.tileRackProps, ...this.selectChainProps, ...this.disposeOfSharesProps];
     }
 }
 

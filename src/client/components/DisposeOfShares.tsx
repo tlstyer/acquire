@@ -9,6 +9,7 @@ export interface DisposeOfSharesProps {
     controllingChain: GameBoardType;
     sharesOwnedInDefunctChain: number;
     sharesAvailableInControllingChain: number;
+    keyboardShortcutsEnabled: boolean;
     onSharesDisposed: (traded: number, sold: number) => void;
 }
 
@@ -21,9 +22,33 @@ interface DisposeOfSharesState {
     sellMax: number;
 }
 
-export class DisposeOfShares extends React.PureComponent<DisposeOfSharesProps, DisposeOfSharesState> {
+const keyboardShortcutToButtonIndex: { [key: string]: number } = {
+    1: 0,
+    k: 0,
+    2: 1,
+    t: 1,
+    3: 2,
+    T: 2,
+    4: 3,
+    5: 4,
+    s: 4,
+    6: 5,
+    S: 5,
+    7: 6,
+    8: 7,
+    o: 7,
+};
+
+export class DisposeOfShares extends React.Component<DisposeOfSharesProps, DisposeOfSharesState> {
+    buttonRefs: React.RefObject<HTMLInputElement>[];
+
     constructor(props: DisposeOfSharesProps) {
         super(props);
+
+        this.buttonRefs = new Array(8);
+        for (let i = 0; i < 8; i++) {
+            this.buttonRefs[i] = React.createRef();
+        }
 
         this.state = DisposeOfShares._getDerivedStateFromProps(props);
     }
@@ -52,6 +77,45 @@ export class DisposeOfShares extends React.PureComponent<DisposeOfSharesProps, D
         }
     }
 
+    shouldComponentUpdate(nextProps: DisposeOfSharesProps, nextState: DisposeOfSharesState) {
+        // everything except props.keyboardShortcutsEnabled and state.props
+        return (
+            nextProps.defunctChain !== this.props.defunctChain ||
+            nextProps.controllingChain !== this.props.controllingChain ||
+            nextProps.sharesOwnedInDefunctChain !== this.props.sharesOwnedInDefunctChain ||
+            nextProps.sharesAvailableInControllingChain !== this.props.sharesAvailableInControllingChain ||
+            nextProps.onSharesDisposed !== this.props.onSharesDisposed ||
+            nextState.keep !== this.state.keep ||
+            nextState.trade !== this.state.trade ||
+            nextState.tradeMax !== this.state.tradeMax ||
+            nextState.sell !== this.state.sell ||
+            nextState.sellMax !== this.state.sellMax
+        );
+    }
+
+    componentDidMount() {
+        document.addEventListener('keydown', this.onDocumentKeydown);
+    }
+
+    componentWillUnmount() {
+        document.removeEventListener('keydown', this.onDocumentKeydown);
+    }
+
+    onDocumentKeydown = (event: KeyboardEvent) => {
+        const keyName = event.key;
+
+        if (this.props.keyboardShortcutsEnabled && keyboardShortcutToButtonIndex.hasOwnProperty(keyName)) {
+            const buttonIndex = keyboardShortcutToButtonIndex[keyName];
+            const button = this.buttonRefs[buttonIndex].current;
+            if (button !== null) {
+                button.focus();
+                if (buttonIndex < 7) {
+                    button.click();
+                }
+            }
+        }
+    };
+
     render() {
         const { defunctChain, controllingChain, sharesOwnedInDefunctChain } = this.props;
         const { keep, trade, tradeMax, sell, sellMax } = this.state;
@@ -67,7 +131,13 @@ export class DisposeOfShares extends React.PureComponent<DisposeOfSharesProps, D
                 <fieldset className={gameBoardTypeToCSSClassName[defunctChain]}>
                     <legend className={gameBoardTypeToCSSClassName[defunctChain]}>Keep</legend>
                     <span>{keep}</span>
-                    <input type={'button'} value={'All'} disabled={keepAllDisabled} onClick={keepAllDisabled ? undefined : this.handleKeepAll} />
+                    <input
+                        type={'button'}
+                        value={'All'}
+                        disabled={keepAllDisabled}
+                        ref={this.buttonRefs[0]}
+                        onClick={keepAllDisabled ? undefined : this.handleKeepAll}
+                    />
                 </fieldset>
                 <fieldset className={gameBoardTypeToCSSClassName[controllingChain]}>
                     <legend className={gameBoardTypeToCSSClassName[controllingChain]}>Trade</legend>
@@ -76,18 +146,21 @@ export class DisposeOfShares extends React.PureComponent<DisposeOfSharesProps, D
                         type={'button'}
                         value={'▲'}
                         disabled={tradeIncrementAndMaxDisabled}
+                        ref={this.buttonRefs[1]}
                         onClick={tradeIncrementAndMaxDisabled ? undefined : this.handleTradeIncrement}
                     />
                     <input
                         type={'button'}
                         value={'▼'}
                         disabled={tradeDecrementDisabled}
+                        ref={this.buttonRefs[2]}
                         onClick={tradeDecrementDisabled ? undefined : this.handleTradeDecrement}
                     />
                     <input
                         type={'button'}
                         value={'Max'}
                         disabled={tradeIncrementAndMaxDisabled}
+                        ref={this.buttonRefs[3]}
                         onClick={tradeIncrementAndMaxDisabled ? undefined : this.handleTradeMax}
                     />
                 </fieldset>
@@ -98,22 +171,25 @@ export class DisposeOfShares extends React.PureComponent<DisposeOfSharesProps, D
                         type={'button'}
                         value={'▲'}
                         disabled={sellIncrementAndMaxDisabled}
+                        ref={this.buttonRefs[4]}
                         onClick={sellIncrementAndMaxDisabled ? undefined : this.handleSellIncrement}
                     />
                     <input
                         type={'button'}
                         value={'▼'}
                         disabled={sellDecrementDisabled}
+                        ref={this.buttonRefs[5]}
                         onClick={sellDecrementDisabled ? undefined : this.handleSellDecrement}
                     />
                     <input
                         type={'button'}
                         value={'Max'}
                         disabled={sellIncrementAndMaxDisabled}
+                        ref={this.buttonRefs[6]}
                         onClick={sellIncrementAndMaxDisabled ? undefined : this.handleSellMax}
                     />
                 </fieldset>
-                <input type={'button'} value={'OK'} onClick={this.handleOK} />
+                <input type={'button'} value={'OK'} ref={this.buttonRefs[7]} onClick={this.handleOK} />
             </div>
         );
     }
