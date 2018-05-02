@@ -95,14 +95,14 @@ export class DisposeOfShares extends React.Component<DisposeOfSharesProps, Dispo
     }
 
     componentDidMount() {
-        document.addEventListener('keydown', this.onDocumentKeydown);
+        window.addEventListener('keydown', this.onWindowKeydown);
     }
 
     componentWillUnmount() {
-        document.removeEventListener('keydown', this.onDocumentKeydown);
+        document.removeEventListener('keydown', this.onWindowKeydown);
     }
 
-    onDocumentKeydown = (event: KeyboardEvent) => {
+    onWindowKeydown = (event: KeyboardEvent) => {
         const keyName = event.key;
 
         if (this.props.keyboardShortcutsEnabled && keyboardShortcutToButtonIndex.hasOwnProperty(keyName)) {

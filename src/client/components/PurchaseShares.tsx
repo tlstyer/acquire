@@ -111,14 +111,14 @@ export class PurchaseShares extends React.Component<PurchaseSharesProps, Purchas
     }
 
     componentDidMount() {
-        document.addEventListener('keydown', this.onDocumentKeydown);
+        window.addEventListener('keydown', this.onWindowKeydown);
     }
 
     componentWillUnmount() {
-        document.removeEventListener('keydown', this.onDocumentKeydown);
+        document.removeEventListener('keydown', this.onWindowKeydown);
     }
 
-    onDocumentKeydown = (event: KeyboardEvent) => {
+    onWindowKeydown = (event: KeyboardEvent) => {
         if (!this.props.keyboardShortcutsEnabled) {
             return;
         }

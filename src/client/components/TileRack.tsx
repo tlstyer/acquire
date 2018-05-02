@@ -46,14 +46,14 @@ export class TileRack extends React.Component<TileRackProps> {
     }
 
     componentDidMount() {
-        document.addEventListener('keydown', this.onDocumentKeydown);
+        window.addEventListener('keydown', this.onWindowKeydown);
     }
 
     componentWillUnmount() {
-        document.removeEventListener('keydown', this.onDocumentKeydown);
+        document.removeEventListener('keydown', this.onWindowKeydown);
     }
 
-    onDocumentKeydown = (event: KeyboardEvent) => {
+    onWindowKeydown = (event: KeyboardEvent) => {
         const keyName = event.key;
 
         if (this.props.keyboardShortcutsEnabled && keyboardShortcutToTileIndex.hasOwnProperty(keyName)) {

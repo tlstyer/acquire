@@ -96,3 +96,7 @@ export const gameStatusToString: { [key: number]: string } = {
     [GameStatus.InProgress]: 'In Progress',
     [GameStatus.Completed]: 'Completed',
 };
+
+export function hackDoNotInterfereWithKeyboardShortcuts(event: React.KeyboardEvent<HTMLElement>) {
+    event.stopPropagation();
+}

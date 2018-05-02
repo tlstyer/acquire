@@ -2,6 +2,7 @@ import * as React from 'react';
 
 import { isASCII } from '../../common/helpers';
 import * as commonStyle from '../common.css';
+import { hackDoNotInterfereWithKeyboardShortcuts } from '../helpers';
 
 export interface LoginFormProps {
     error?: string;
@@ -46,7 +47,7 @@ export class LoginForm extends React.PureComponent<LoginFormProps, LoginFormStat
         const { error, username, password } = this.state;
 
         return (
-            <form onSubmit={this.handleSubmit}>
+            <form onKeyDown={hackDoNotInterfereWithKeyboardShortcuts} onSubmit={this.handleSubmit}>
                 {error !== undefined ? <div className={commonStyle.errorMessage}>{error}</div> : undefined}
                 Username: <input type="text" value={username} onChange={this.handleChangeUsername} /> Password:{' '}
                 <input type="password" value={password} onChange={this.handleChangePassword} /> <input type="submit" value={'Login'} />
