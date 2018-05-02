@@ -34,7 +34,7 @@ class AllDemoProps {
     gameHistoryProps: GameHistoryProps[];
     gameStateProps: GameStateProps[];
 
-    possiblePrimaryComponentsProps: { isPrimaryComponent: boolean }[];
+    possibleKeyboardShortcutsEnabledProps: { keyboardShortcutsEnabled: boolean }[];
 
     constructor() {
         const { game: game1 } = runGameTestFile(require('raw-loader!../common/gameTestFiles/other/no tiles played for entire round').split('\n'));
@@ -178,7 +178,7 @@ class AllDemoProps {
                     GameBoardType.Continental,
                 ]),
                 buttonSize: 40,
-                isPrimaryComponent: false,
+                keyboardShortcutsEnabled: false,
                 onTileClicked: onTileClicked,
             },
             {
@@ -192,14 +192,14 @@ class AllDemoProps {
                     GameBoardType.HaveNeighboringTileToo,
                 ]),
                 buttonSize: 40,
-                isPrimaryComponent: false,
+                keyboardShortcutsEnabled: false,
                 onTileClicked: onTileClicked,
             },
             {
                 tiles: List([null, 86, null, 38, null, 74]),
                 types: List([null, GameBoardType.CantPlayEver, null, GameBoardType.WillFormNewChain, null, GameBoardType.CantPlayNow]),
                 buttonSize: 40,
-                isPrimaryComponent: false,
+                keyboardShortcutsEnabled: false,
                 onTileClicked: onTileClicked,
             },
         ];
@@ -209,21 +209,21 @@ class AllDemoProps {
                 type: SelectChainTitle.SelectNewChain,
                 availableChains: [0, 1, 2, 3, 4, 5, 6],
                 buttonSize: 40,
-                isPrimaryComponent: false,
+                keyboardShortcutsEnabled: false,
                 onChainSelected,
             },
             {
                 type: SelectChainTitle.SelectMergerSurvivor,
                 availableChains: [0, 3, 5],
                 buttonSize: 40,
-                isPrimaryComponent: false,
+                keyboardShortcutsEnabled: false,
                 onChainSelected,
             },
             {
                 type: SelectChainTitle.SelectChainToDisposeOfNext,
                 availableChains: [2, 4],
                 buttonSize: 40,
-                isPrimaryComponent: false,
+                keyboardShortcutsEnabled: false,
                 onChainSelected,
             },
         ];
@@ -316,7 +316,7 @@ class AllDemoProps {
             height: 22,
         }));
 
-        this.possiblePrimaryComponentsProps = [...this.tileRackProps, ...this.selectChainProps];
+        this.possibleKeyboardShortcutsEnabledProps = [...this.tileRackProps, ...this.selectChainProps];
     }
 }
 
@@ -366,15 +366,15 @@ function renderComponentForEachProps(Component: any, propsArray: any[], descript
     return propsArray.map((props, i) => (
         <React.Fragment key={i}>
             {descriptionFunc ? <h2>{descriptionFunc(props)}</h2> : undefined}
-            {props.isPrimaryComponent === true ? (
+            {props.keyboardShortcutsEnabled === true ? (
                 <>
                     <input type={'button'} value={'Keyboard Shortcuts Enabled'} disabled={true} />
                     <br />
                     <br />
                 </>
-            ) : props.isPrimaryComponent === false ? (
+            ) : props.keyboardShortcutsEnabled === false ? (
                 <>
-                    <input type={'button'} value={'Enable Keyboard Shortcuts'} onClick={() => setPrimaryComponent(props)} />
+                    <input type={'button'} value={'Enable Keyboard Shortcuts'} onClick={() => enableKeyboardShortcuts(props)} />
                     <br />
                     <br />
                 </>
@@ -387,12 +387,12 @@ function renderComponentForEachProps(Component: any, propsArray: any[], descript
     ));
 }
 
-function setPrimaryComponent(props: { isPrimaryComponent: boolean }) {
-    for (let i = 0; i < allDemoProps.possiblePrimaryComponentsProps.length; i++) {
-        allDemoProps.possiblePrimaryComponentsProps[i].isPrimaryComponent = false;
+function enableKeyboardShortcuts(props: { keyboardShortcutsEnabled: boolean }) {
+    for (let i = 0; i < allDemoProps.possibleKeyboardShortcutsEnabledProps.length; i++) {
+        allDemoProps.possibleKeyboardShortcutsEnabledProps[i].keyboardShortcutsEnabled = false;
     }
 
-    props.isPrimaryComponent = true;
+    props.keyboardShortcutsEnabled = true;
 
     render(allDemoProps);
 }

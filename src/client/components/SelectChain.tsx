@@ -15,7 +15,7 @@ export interface SelectChainProps {
     type: SelectChainTitle;
     availableChains: GameBoardType[];
     buttonSize: number;
-    isPrimaryComponent: boolean;
+    keyboardShortcutsEnabled: boolean;
     onChainSelected: (chain: GameBoardType) => void;
 }
 
@@ -55,7 +55,7 @@ export class SelectChain extends React.Component<SelectChainProps> {
     }
 
     shouldComponentUpdate(nextProps: SelectChainProps) {
-        // everything except isPrimaryComponent
+        // everything except keyboardShortcutsEnabled
         return (
             nextProps.type !== this.props.type ||
             nextProps.availableChains !== this.props.availableChains ||
@@ -75,7 +75,7 @@ export class SelectChain extends React.Component<SelectChainProps> {
     onDocumentKeydown = (event: KeyboardEvent) => {
         const keyName = event.key;
 
-        if (this.props.isPrimaryComponent && keyboardShortcutToChain.hasOwnProperty(keyName)) {
+        if (this.props.keyboardShortcutsEnabled && keyboardShortcutToChain.hasOwnProperty(keyName)) {
             const tileIndex = keyboardShortcutToChain[keyName];
             const button = this.buttonRefs[tileIndex].current;
             if (button !== null) {

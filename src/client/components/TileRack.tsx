@@ -10,7 +10,7 @@ export interface TileRackProps {
     tiles: List<number | null>;
     types: List<GameBoardType | null>;
     buttonSize: number;
-    isPrimaryComponent: boolean;
+    keyboardShortcutsEnabled: boolean;
     onTileClicked: (tile: number) => void;
 }
 
@@ -36,7 +36,7 @@ export class TileRack extends React.Component<TileRackProps> {
     }
 
     shouldComponentUpdate(nextProps: TileRackProps) {
-        // everything except isPrimaryComponent
+        // everything except keyboardShortcutsEnabled
         return (
             nextProps.tiles != this.props.tiles ||
             nextProps.types != this.props.types ||
@@ -56,7 +56,7 @@ export class TileRack extends React.Component<TileRackProps> {
     onDocumentKeydown = (event: KeyboardEvent) => {
         const keyName = event.key;
 
-        if (this.props.isPrimaryComponent && keyboardShortcutToTileIndex.hasOwnProperty(keyName)) {
+        if (this.props.keyboardShortcutsEnabled && keyboardShortcutToTileIndex.hasOwnProperty(keyName)) {
             const tileIndex = keyboardShortcutToTileIndex[keyName];
             const button = this.buttonRefs[tileIndex].current;
             if (button !== null) {
