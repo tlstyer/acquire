@@ -6,6 +6,12 @@ import * as ReactDOM from 'react-dom';
 
 import { defaultGameBoard, defaultMoveDataHistory } from '../common/defaults';
 import { GameBoardType, GameMode } from '../common/enums';
+import {
+    disposeOfSharesKeyboardShortcutsDescription,
+    purchaseSharesKeyboardShortcutsDescription,
+    selectChainKeyboardShortcutsDescription,
+    tileRackKeyboardShortcutsDescription,
+} from '../common/helpers';
 import { runGameTestFile } from '../common/runGameTestFile';
 import { DisposeOfShares, DisposeOfSharesProps } from './components/DisposeOfShares';
 import { ExampleGameSetupMaster } from './components/ExampleGameSetupMaster';
@@ -351,15 +357,19 @@ function render(props: AllDemoProps) {
             {renderComponentForEachProps(ScoreBoard, props.scoreBoardProps)}
 
             <h1>TileRack</h1>
+            <p>Keyboard shortcuts: {tileRackKeyboardShortcutsDescription}</p>
             {renderComponentForEachProps(TileRack, props.tileRackProps)}
 
             <h1>SelectChain</h1>
+            <p>Keyboard shortcuts: {selectChainKeyboardShortcutsDescription}</p>
             {renderComponentForEachProps(SelectChain, props.selectChainProps)}
 
             <h1>DisposeOfShares</h1>
+            <p>Keyboard shortcuts: {disposeOfSharesKeyboardShortcutsDescription}</p>
             {renderComponentForEachProps(DisposeOfShares, props.disposeOfSharesProps, getDisposeOfSharesDescription)}
 
             <h1>PurchaseShares</h1>
+            <p>Keyboard shortcuts: {purchaseSharesKeyboardShortcutsDescription}</p>
             {renderComponentForEachProps(PurchaseShares, props.purchaseSharesProps, getPurchaseSharesDescription)}
 
             <h1>GameHistory</h1>
