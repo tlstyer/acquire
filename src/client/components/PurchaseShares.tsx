@@ -155,7 +155,7 @@ export class PurchaseShares extends React.Component<PurchaseSharesProps, Purchas
             const checkbox = this.endGameCheckboxRef.current;
             if (checkbox !== null) {
                 checkbox.focus();
-                checkbox.checked = !checkbox.checked;
+                this.setState({ endGame: !this.state.endGame });
             }
         } else if (keyName === '0' || keyName === '8' || keyName === 'o') {
             const button = this.okButtonRef.current;
