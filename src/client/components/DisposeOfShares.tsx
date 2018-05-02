@@ -103,9 +103,13 @@ export class DisposeOfShares extends React.Component<DisposeOfSharesProps, Dispo
     }
 
     onWindowKeydown = (event: KeyboardEvent) => {
+        if (!this.props.keyboardShortcutsEnabled) {
+            return;
+        }
+
         const keyName = event.key;
 
-        if (this.props.keyboardShortcutsEnabled && keyboardShortcutToButtonIndex.hasOwnProperty(keyName)) {
+        if (keyboardShortcutToButtonIndex.hasOwnProperty(keyName)) {
             const buttonIndex = keyboardShortcutToButtonIndex[keyName];
             const button = this.buttonRefs[buttonIndex].current;
             if (button !== null) {

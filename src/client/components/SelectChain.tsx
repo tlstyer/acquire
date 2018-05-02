@@ -73,9 +73,13 @@ export class SelectChain extends React.Component<SelectChainProps> {
     }
 
     onWindowKeydown = (event: KeyboardEvent) => {
+        if (!this.props.keyboardShortcutsEnabled) {
+            return;
+        }
+
         const keyName = event.key;
 
-        if (this.props.keyboardShortcutsEnabled && keyboardShortcutToChain.hasOwnProperty(keyName)) {
+        if (keyboardShortcutToChain.hasOwnProperty(keyName)) {
             const tileIndex = keyboardShortcutToChain[keyName];
             const button = this.buttonRefs[tileIndex].current;
             if (button !== null) {
