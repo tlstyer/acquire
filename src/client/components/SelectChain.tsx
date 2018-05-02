@@ -15,6 +15,7 @@ export interface SelectChainProps {
     type: SelectChainTitle;
     availableChains: GameBoardType[];
     buttonSize: number;
+    isPrimaryComponent: boolean;
     onChainSelected: (chain: GameBoardType) => void;
 }
 
@@ -24,7 +25,65 @@ const typeToInstructions = {
     [SelectChainTitle.SelectChainToDisposeOfNext]: 'Chain to dispose of next',
 };
 
-export class SelectChain extends React.PureComponent<SelectChainProps> {
+const keyboardShortcutToChain: { [key: string]: number } = {
+    1: 0,
+    l: 0,
+    2: 1,
+    t: 1,
+    3: 2,
+    a: 2,
+    4: 3,
+    f: 3,
+    5: 4,
+    w: 4,
+    6: 5,
+    c: 5,
+    7: 6,
+    i: 6,
+};
+
+export class SelectChain extends React.Component<SelectChainProps> {
+    buttonRefs: React.RefObject<HTMLInputElement>[];
+
+    constructor(props: SelectChainProps) {
+        super(props);
+
+        this.buttonRefs = new Array(chains.length);
+        for (let i = 0; i < chains.length; i++) {
+            this.buttonRefs[i] = React.createRef();
+        }
+    }
+
+    shouldComponentUpdate(nextProps: SelectChainProps) {
+        // everything except isPrimaryComponent
+        return (
+            nextProps.type !== this.props.type ||
+            nextProps.availableChains !== this.props.availableChains ||
+            nextProps.buttonSize !== this.props.buttonSize ||
+            nextProps.onChainSelected !== this.props.onChainSelected
+        );
+    }
+
+    componentDidMount() {
+        document.addEventListener('keydown', this.onDocumentKeydown);
+    }
+
+    componentWillUnmount() {
+        document.removeEventListener('keydown', this.onDocumentKeydown);
+    }
+
+    onDocumentKeydown = (event: KeyboardEvent) => {
+        const keyName = event.key;
+
+        if (this.props.isPrimaryComponent && keyboardShortcutToChain.hasOwnProperty(keyName)) {
+            const tileIndex = keyboardShortcutToChain[keyName];
+            const button = this.buttonRefs[tileIndex].current;
+            if (button !== null) {
+                button.focus();
+            }
+        }
+    };
+
     render() {
         const { type, availableChains, buttonSize, onChainSelected } = this.props;
 
@@ -46,11 +105,21 @@ export class SelectChain extends React.PureComponent<SelectChainProps> {
                                     className={commonStyle.hotelButton + ' ' + gameBoardTypeToCSSClassName[chain]}
                                     style={buttonStyle}
                                     value={gameBoardTypeToHotelInitial[chain]}
+                                    ref={this.buttonRefs[chain]}
                                     onClick={() => onChainSelected(chain)}
                                 />
                             );
                         } else {
-                            return <input key={chain} type={'button'} className={commonStyle.invisible} style={buttonStyle} value={'?'} />;
+                            return (
+                                <input
+                                    key={chain}
+                                    type={'button'}
+                                    className={commonStyle.invisible}
+                                    style={buttonStyle}
+                                    value={'?'}
+                                    ref={this.buttonRefs[chain]}
+                                />
+                            );
                         }
                     })}
                 </fieldset>

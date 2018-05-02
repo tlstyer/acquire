@@ -209,18 +209,21 @@ class AllDemoProps {
                 type: SelectChainTitle.SelectNewChain,
                 availableChains: [0, 1, 2, 3, 4, 5, 6],
                 buttonSize: 40,
+                isPrimaryComponent: false,
                 onChainSelected,
             },
             {
                 type: SelectChainTitle.SelectMergerSurvivor,
                 availableChains: [0, 3, 5],
                 buttonSize: 40,
+                isPrimaryComponent: false,
                 onChainSelected,
             },
             {
                 type: SelectChainTitle.SelectChainToDisposeOfNext,
                 availableChains: [2, 4],
                 buttonSize: 40,
+                isPrimaryComponent: false,
                 onChainSelected,
             },
         ];
@@ -313,7 +316,7 @@ class AllDemoProps {
             height: 22,
         }));
 
-        this.possiblePrimaryComponentsProps = [...this.tileRackProps];
+        this.possiblePrimaryComponentsProps = [...this.tileRackProps, ...this.selectChainProps];
     }
 }
 
