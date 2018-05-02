@@ -312,7 +312,7 @@ class AllDemoProps {
 
 function render(props: AllDemoProps) {
     ReactDOM.render(
-        <div>
+        <>
             <h1>LoginForm</h1>
             {renderWithBreaks(LoginForm, props.loginFormProps)}
 
@@ -345,7 +345,7 @@ function render(props: AllDemoProps) {
 
             <h1>GameState</h1>
             {renderWithoutBreaks(GameState, props.gameStateProps)}
-        </div>,
+        </>,
         document.getElementById('root'),
     );
 }
@@ -353,35 +353,31 @@ function render(props: AllDemoProps) {
 function renderWithBreaks(Component: any, propsArray: any[]) {
     const lastIndex = propsArray.length - 1;
     return propsArray.map((props, i) => (
-        <div key={i}>
+        <React.Fragment key={i}>
             <Component {...props} />
             {i !== lastIndex ? <br /> : undefined}
-        </div>
+        </React.Fragment>
     ));
 }
 function renderWithoutBreaks(Component: any, propsArray: any[]) {
     return propsArray.map((props, i) => (
-        <div key={i}>
+        <React.Fragment key={i}>
             <Component {...props} />
-        </div>
+        </React.Fragment>
     ));
 }
 
 function renderWithDescriptions(Component: any, propsArray: any[], descriptionFunc: any) {
     return propsArray.map((props, i) => (
-        <div key={i}>
+        <React.Fragment key={i}>
             <h2>{descriptionFunc(props)}</h2>
             <Component {...props} />
-        </div>
+        </React.Fragment>
     ));
 }
 
 function getDisposeOfSharesDescription(props: DisposeOfSharesProps) {
-    return (
-        <span>
-            defunct owned: {props.sharesOwnedInDefunctChain}, controlling available: {props.sharesAvailableInControllingChain}
-        </span>
-    );
+    return `defunct owned: ${props.sharesOwnedInDefunctChain}, controlling available: ${props.sharesAvailableInControllingChain}`;
 }
 
 function getPurchaseSharesDescription(props: PurchaseSharesProps) {
