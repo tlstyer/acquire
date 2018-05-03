@@ -33,7 +33,7 @@ export class ScoreBoard extends React.PureComponent<ScoreBoardProps> {
             cellWidth,
         } = this.props;
 
-        const cellHeight = Math.ceil(cellWidth * 0.75);
+        const cellHeight = Math.ceil(cellWidth * 0.8);
 
         const isTeamGame = gameModeToTeamSize[gameMode] > 1;
         const numTeams = gameModeToNumPlayers[gameMode] / gameModeToTeamSize[gameMode];

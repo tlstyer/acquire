@@ -43,7 +43,7 @@ function render(moveIndex: number) {
     const scoreBoardLeft = gameBoardLeft + gameBoardWidth;
     const scoreBoardTop = -2;
     const scoreBoardCellWidth = Math.floor(gameBoardWidth / 18);
-    const scoreBoardCellHeight = Math.ceil(scoreBoardCellWidth * 0.75);
+    const scoreBoardCellHeight = Math.ceil(scoreBoardCellWidth * 0.8);
     const scoreBoardHeight = scoreBoardCellHeight * (4 + game.usernames.size) + 2;
 
     const tileRackLeft = scoreBoardLeft + 2;
