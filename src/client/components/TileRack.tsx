@@ -72,39 +72,34 @@ export class TileRack extends React.Component<TileRackProps> {
     render() {
         const { tiles, types, buttonSize, onTileClicked } = this.props;
 
-        let buttons = new Array(tiles.size);
-
         const buttonStyle = {
             width: buttonSize,
             height: buttonSize,
         };
 
-        for (let i = 0; i < tiles.size; i++) {
-            const tile = tiles.get(i, 0);
-            const type = types.get(i, 0);
-
-            if (tile !== null && type !== null) {
-                const disabled = type === GameBoardType.CantPlayEver || type === GameBoardType.CantPlayNow;
-                buttons[i] = (
-                    <input
-                        key={i}
-                        type={'button'}
-                        className={commonStyle.hotelButton + ' ' + gameBoardTypeToCSSClassName[type]}
-                        style={buttonStyle}
-                        value={getTileString(tile)}
-                        disabled={disabled}
-                        ref={this.buttonRefs[i]}
-                        onClick={() => onTileClicked(tile)}
-                    />
-                );
-            } else {
-                buttons[i] = <input key={i} type={'button'} className={commonStyle.invisible} style={buttonStyle} value={'?'} ref={this.buttonRefs[i]} />;
-            }
-        }
-
         return (
             <div className={style.root} style={{ fontSize: Math.floor(buttonSize * 0.4) }}>
-                {buttons}
+                {tiles.map((tile, i) => {
+                    const type = types.get(i, 0);
+
+                    if (tile !== null && type !== null) {
+                        const disabled = type === GameBoardType.CantPlayEver || type === GameBoardType.CantPlayNow;
+                        return (
+                            <input
+                                key={i}
+                                type={'button'}
+                                className={commonStyle.hotelButton + ' ' + gameBoardTypeToCSSClassName[type]}
+                                style={buttonStyle}
+                                value={getTileString(tile)}
+                                disabled={disabled}
+                                ref={this.buttonRefs[i]}
+                                onClick={() => onTileClicked(tile)}
+                            />
+                        );
+                    } else {
+                        return <input key={i} type={'button'} className={commonStyle.invisible} style={buttonStyle} value={'?'} ref={this.buttonRefs[i]} />;
+                    }
+                })}
             </div>
         );
     }
