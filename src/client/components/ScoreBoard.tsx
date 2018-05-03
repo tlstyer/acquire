@@ -136,12 +136,13 @@ class ScoreBoardHeader extends React.PureComponent<ScoreBoardHeaderProps> {
     render() {
         const { cellWidth, cellHeight } = this.props;
 
-        const playerStyle = { width: cellWidth * 5, maxWidth: cellWidth * 5, height: cellHeight, maxHeight: cellHeight };
-        const chainStyle = { width: cellWidth, maxWidth: cellWidth, height: cellHeight, maxHeight: cellHeight };
-        const cashAndNetStyle = { width: cellWidth * 3, maxWidth: cellWidth * 3, height: cellHeight, maxHeight: cellHeight };
+        const rowStyle = { height: cellHeight, maxHeight: cellHeight };
+        const playerStyle = { width: cellWidth * 5, maxWidth: cellWidth * 5 };
+        const chainStyle = { width: cellWidth, maxWidth: cellWidth };
+        const cashAndNetStyle = { width: cellWidth * 3, maxWidth: cellWidth * 3 };
 
         return (
-            <tr>
+            <tr style={rowStyle}>
                 <td className={style.playerHeader} style={playerStyle}>
                     Player
                 </td>
@@ -191,9 +192,10 @@ class ScoreBoardRow extends React.PureComponent<ScoreBoardRowProps> {
             cellHeight,
         } = this.props;
 
-        const playerStyle = { width: cellWidth * 5, maxWidth: cellWidth * 5, height: cellHeight, maxHeight: cellHeight };
-        const chainStyle = { width: cellWidth, maxWidth: cellWidth, height: cellHeight, maxHeight: cellHeight };
-        const cashAndNetStyle = { width: cellWidth * 3, maxWidth: cellWidth * 3, height: cellHeight, maxHeight: cellHeight };
+        const rowStyle = { height: cellHeight, maxHeight: cellHeight };
+        const playerStyle = { width: cellWidth * 5, maxWidth: cellWidth * 5 };
+        const chainStyle = { width: cellWidth, maxWidth: cellWidth };
+        const cashAndNetStyle = { width: cellWidth * 3, maxWidth: cellWidth * 3 };
 
         let nameCellClassName: string;
         if (isPlayersTurn) {
@@ -205,7 +207,7 @@ class ScoreBoardRow extends React.PureComponent<ScoreBoardRowProps> {
         }
 
         return (
-            <tr>
+            <tr style={rowStyle}>
                 <td className={nameCellClassName} style={playerStyle}>
                     {title}
                 </td>
