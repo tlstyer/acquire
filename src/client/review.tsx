@@ -59,13 +59,7 @@ function render(moveIndex: number) {
     ReactDOM.render(
         <div>
             <div style={{ position: 'absolute', left: gameBoardLeft, top: gameBoardTop }}>
-                <GameBoard
-                    gameBoard={moveData.gameBoard}
-                    tileRack={tileRack}
-                    labelMode={GameBoardLabelMode.Nothing}
-                    cellSize={gameBoardCellSize}
-                    onCellClicked={onTileClicked}
-                />
+                <GameBoard gameBoard={moveData.gameBoard} labelMode={GameBoardLabelMode.Nothing} cellSize={gameBoardCellSize} />
             </div>
             <div style={{ position: 'absolute', left: scoreBoardLeft, top: scoreBoardTop }}>
                 <ScoreBoard

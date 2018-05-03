@@ -8,10 +8,10 @@ import * as style from './GameBoard.css';
 
 export interface GameBoardProps {
     gameBoard: List<GameBoardType>;
-    tileRack: List<number | null>;
+    tileRack?: List<number | null>;
     labelMode: GameBoardLabelMode;
     cellSize: number;
-    onCellClicked: (tile: number) => void;
+    onCellClicked?: (tile: number) => void;
 }
 
 export class GameBoard extends React.PureComponent<GameBoardProps> {
@@ -19,10 +19,12 @@ export class GameBoard extends React.PureComponent<GameBoardProps> {
         const { gameBoard, tileRack, labelMode, cellSize, onCellClicked } = this.props;
 
         let myTiles: { [key: number]: boolean } = {};
-        for (let tileIndex = 0; tileIndex < 6; tileIndex++) {
-            const tile = tileRack.get(tileIndex, 0);
-            if (tile !== null) {
-                myTiles[tile] = true;
+        if (tileRack) {
+            for (let tileIndex = 0; tileIndex < 6; tileIndex++) {
+                const tile = tileRack.get(tileIndex, 0);
+                if (tile !== null) {
+                    myTiles[tile] = true;
+                }
             }
         }
 
@@ -52,13 +54,16 @@ export class GameBoard extends React.PureComponent<GameBoardProps> {
                     }
                 }
 
-                let optionalParams: { [key: string]: any } = {};
-                if (gameBoardType === GameBoardType.IHaveThis) {
-                    optionalParams.onClick = () => onCellClicked(tile);
+                let className = gameBoardTypeToCSSClassName[gameBoardType];
+
+                let optionalProps: { [key: string]: any } = {};
+                if (gameBoardType === GameBoardType.IHaveThis && onCellClicked) {
+                    optionalProps.onClick = () => onCellClicked(tile);
+                    className = `${className} ${style.clickable}`;
                 }
 
                 cells[x] = (
-                    <td key={x} className={gameBoardTypeToCSSClassName[gameBoardType]} {...optionalParams}>
+                    <td key={x} className={className} {...optionalProps}>
                         {label}
                     </td>
                 );

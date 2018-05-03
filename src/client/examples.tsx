@@ -104,7 +104,11 @@ class AllDemoProps {
             cellSize: 40,
             onCellClicked: onTileClicked,
         };
-        this.gameBoardProps = [gbp, { ...gbp, labelMode: GameBoardLabelMode.HotelInitials }, { ...gbp, labelMode: GameBoardLabelMode.Nothing }];
+        this.gameBoardProps = [
+            gbp,
+            { gameBoard: gbp.gameBoard, labelMode: GameBoardLabelMode.HotelInitials, cellSize: gbp.cellSize },
+            { gameBoard: gbp.gameBoard, tileRack: gbp.tileRack, labelMode: GameBoardLabelMode.Nothing, cellSize: gbp.cellSize },
+        ];
 
         this.scoreBoardProps = [
             {
