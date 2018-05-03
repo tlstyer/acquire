@@ -81,7 +81,13 @@ function render(moveIndex: number) {
                 />
             </div>
             <div style={{ position: 'absolute', left: tileRackLeft, top: tileRackTop }}>
-                <TileRack tiles={tileRack} types={tileRackTypes} buttonSize={gameBoardCellSize} onTileClicked={onTileClicked} />
+                <TileRack
+                    tiles={tileRack}
+                    types={tileRackTypes}
+                    buttonSize={gameBoardCellSize}
+                    keyboardShortcutsEnabled={false}
+                    onTileClicked={onTileClicked}
+                />
             </div>
             <div style={{ position: 'absolute', left: tileRackLeft, top: gameHistoryTop }}>
                 <GameHistory
