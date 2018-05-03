@@ -48,14 +48,14 @@ class MoveHistory extends React.PureComponent<MoveHistoryProps> {
     render() {
         const { usernames, moveData, moveIndex, isSelected, onMoveClicked } = this.props;
 
-        let optionalParams: { [key: string]: any } = {};
+        let optionalProps: { [key: string]: any } = {};
         if (moveData.timestamp !== null) {
             const date = new Date(moveData.timestamp);
-            optionalParams.title = date.toString();
+            optionalProps.title = date.toString();
         }
 
         return (
-            <div className={style.move + (isSelected ? ' ' + style.selected : '')} {...optionalParams} onClick={() => onMoveClicked(moveIndex)}>
+            <div className={style.move + (isSelected ? ' ' + style.selected : '')} {...optionalProps} onClick={() => onMoveClicked(moveIndex)}>
                 {moveData.gameHistoryMessages.map((ghmd, index) => {
                     const username: string = ghmd.playerID === null ? '' : usernames.get(ghmd.playerID, '');
                     return gameHistoryMessageHandlerLookup[ghmd.gameHistoryMessage](ghmd, username, index);
