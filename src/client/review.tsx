@@ -115,14 +115,18 @@ function render(moveIndex: number) {
 function onTileClicked(tile: number) {}
 
 function onMoveClicked(index: number) {
-    selectedMove = index;
-    render(selectedMove);
+    if (index !== selectedMove) {
+        selectedMove = index;
+        render(selectedMove);
+    }
 }
 
 window.addEventListener('keydown', event => {
     const keyName = event.key;
 
     if (keyName === 'ArrowLeft' || keyName === 'ArrowRight') {
+        const previouslySelectedMove = selectedMove;
+
         if (keyName === 'ArrowLeft') {
             selectedMove--;
             if (selectedMove < 0) {
@@ -136,7 +140,9 @@ window.addEventListener('keydown', event => {
             }
         }
 
-        onMoveClicked(selectedMove);
+        if (selectedMove !== previouslySelectedMove) {
+            render(selectedMove);
+        }
     }
 });
 
