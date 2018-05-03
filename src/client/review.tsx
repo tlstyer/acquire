@@ -140,6 +140,18 @@ window.addEventListener('keydown', event => {
     }
 });
 
+let lastPeriodicResizeCheckWidth = -1;
+let lastPeriodicResizeCheckHeight = -1;
+function periodicResizeCheck() {
+    if (window.innerWidth !== lastPeriodicResizeCheckWidth || window.innerHeight !== lastPeriodicResizeCheckHeight) {
+        lastPeriodicResizeCheckWidth = window.innerWidth;
+        lastPeriodicResizeCheckHeight = window.innerHeight;
+        render(selectedMove);
+    }
+
+    setTimeout(periodicResizeCheck, 500);
+}
+
 let game: Game;
 let selectedMove: number;
 
@@ -153,7 +165,7 @@ function main() {
 
     game = g;
     selectedMove = game.moveDataHistory.size - 1;
-    render(selectedMove);
+    periodicResizeCheck();
 }
 
 main();
