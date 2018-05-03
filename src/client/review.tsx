@@ -13,7 +13,7 @@ import { GameBoard } from './components/GameBoard';
 import { GameHistory } from './components/GameHistory';
 import { GameState } from './components/GameState';
 import { ScoreBoard } from './components/ScoreBoard';
-import { TileRack } from './components/TileRack';
+import { TileRackReadOnly } from './components/TileRackReadOnly';
 import { GameBoardLabelMode } from './enums';
 
 const dummyMoveData = new MoveData(new Game(GameMode.Singles1, PlayerArrangementMode.RandomOrder, [], List(), List(), 0, null));
@@ -81,13 +81,7 @@ function render(moveIndex: number) {
                 />
             </div>
             <div style={{ position: 'absolute', left: tileRackLeft, top: tileRackTop }}>
-                <TileRack
-                    tiles={tileRack}
-                    types={tileRackTypes}
-                    buttonSize={gameBoardCellSize}
-                    keyboardShortcutsEnabled={false}
-                    onTileClicked={onTileClicked}
-                />
+                <TileRackReadOnly tiles={tileRack} types={tileRackTypes} buttonSize={gameBoardCellSize} />
             </div>
             <div style={{ position: 'absolute', left: tileRackLeft, top: gameHistoryTop }}>
                 <GameHistory

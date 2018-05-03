@@ -24,6 +24,7 @@ import { PurchaseShares, PurchaseSharesProps } from './components/PurchaseShares
 import { ScoreBoard, ScoreBoardProps } from './components/ScoreBoard';
 import { SelectChain, SelectChainProps, SelectChainTitle } from './components/SelectChain';
 import { TileRack, TileRackProps } from './components/TileRack';
+import { TileRackReadOnly, TileRackReadOnlyProps } from './components/TileRackReadOnly';
 import { GameBoardLabelMode, GameStatus } from './enums';
 import { getDummyGameForGetGameHistory, getExampleNextGameActionsArray } from './exampleData';
 import { chains, gameBoardTypeToHotelInitial, getTileString } from './helpers';
@@ -34,6 +35,7 @@ class AllDemoProps {
     gameBoardProps: GameBoardProps[];
     scoreBoardProps: ScoreBoardProps[];
     tileRackProps: TileRackProps[];
+    tileRackReadOnlyProps: TileRackReadOnlyProps[];
     selectChainProps: SelectChainProps[];
     disposeOfSharesProps: DisposeOfSharesProps[];
     purchaseSharesProps: PurchaseSharesProps[];
@@ -210,6 +212,8 @@ class AllDemoProps {
             },
         ];
 
+        this.tileRackReadOnlyProps = this.tileRackProps.map(({ tiles, types, buttonSize }) => ({ tiles, types, buttonSize }));
+
         this.selectChainProps = [
             {
                 type: SelectChainTitle.SelectNewChain,
@@ -359,6 +363,9 @@ function render(props: AllDemoProps) {
             <h1>TileRack</h1>
             <p>Keyboard shortcuts: {tileRackKeyboardShortcutsDescription}</p>
             {renderComponentForEachProps(TileRack, props.tileRackProps)}
+
+            <h1>TileRackReadOnly</h1>
+            {renderComponentForEachProps(TileRackReadOnly, props.tileRackReadOnlyProps)}
 
             <h1>SelectChain</h1>
             <p>Keyboard shortcuts: {selectChainKeyboardShortcutsDescription}</p>
