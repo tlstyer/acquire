@@ -16,21 +16,66 @@ export interface GameHistoryProps {
 }
 
 export class GameHistory extends React.PureComponent<GameHistoryProps> {
+    parentRef: React.RefObject<HTMLDivElement>;
+    selectedMoveRef: React.RefObject<HTMLDivElement>;
+
+    constructor(props: GameHistoryProps) {
+        super(props);
+
+        this.parentRef = React.createRef();
+        this.selectedMoveRef = React.createRef();
+    }
+
+    componentDidMount() {
+        setTimeout(this.autoScroll, 0);
+    }
+
+    componentDidUpdate() {
+        setTimeout(this.autoScroll, 0);
+    }
+
+    autoScroll = () => {
+        const parent = this.parentRef.current;
+        const selectedMove = this.selectedMoveRef.current;
+
+        if (parent !== null && selectedMove !== null) {
+            const parentScrollTop = parent.scrollTop;
+            const parentScrollBottom = parentScrollTop + parent.clientHeight;
+
+            const selectedMoveRelativeOffsetTop = selectedMove.offsetTop - parent.offsetTop;
+            const selectedMoveRelativeOffsetBottom = selectedMoveRelativeOffsetTop + selectedMove.clientHeight;
+
+            if (selectedMoveRelativeOffsetTop < parentScrollTop || selectedMove.clientHeight > parent.clientHeight) {
+                parent.scrollTop = selectedMoveRelativeOffsetTop;
+            } else if (selectedMoveRelativeOffsetBottom > parentScrollBottom) {
+                parent.scrollTop = selectedMoveRelativeOffsetBottom - parent.clientHeight;
+            }
+        }
+    };
+
     render() {
         const { usernames, moveDataHistory, selectedMove, width, height, onMoveClicked } = this.props;
 
         return (
-            <div className={style.root} style={{ width, height }}>
-                {moveDataHistory.map((moveData, i) => (
-                    <MoveHistory
-                        key={i}
-                        usernames={usernames}
-                        moveData={moveData}
-                        moveIndex={i}
-                        isSelected={i === selectedMove}
-                        onMoveClicked={onMoveClicked}
-                    />
-                ))}
+            <div className={style.root} style={{ width, height }} ref={this.parentRef}>
+                {moveDataHistory.map((moveData, i) => {
+                    let optionalProps: { [key: string]: any } = {};
+                    if (i === selectedMove) {
+                        optionalProps.ref = this.selectedMoveRef;
+                    }
+
+                    return (
+                        <div key={i} {...optionalProps}>
+                            <MoveHistory
+                                usernames={usernames}
+                                moveData={moveData}
+                                moveIndex={i}
+                                isSelected={i === selectedMove}
+                                onMoveClicked={onMoveClicked}
+                            />
+                        </div>
+                    );
+                })}
             </div>
         );
     }

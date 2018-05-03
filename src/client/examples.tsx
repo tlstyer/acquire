@@ -478,6 +478,38 @@ function onSharesPurchased(chains: GameBoardType[], endGame: boolean) {
     console.log('onSharesPurchased', chains, endGame);
 }
 
+window.addEventListener('keydown', event => {
+    const keyName = event.key;
+
+    if (keyName === 'ArrowLeft' || keyName === 'ArrowRight') {
+        const previouslySelectedMove = allDemoProps.gameHistoryProps[2].selectedMove;
+
+        let selectedMove = previouslySelectedMove || 0;
+        if (keyName === 'ArrowLeft') {
+            selectedMove--;
+        } else {
+            selectedMove++;
+        }
+
+        if (selectedMove < 0) {
+            selectedMove = 0;
+        }
+
+        const lastMove = allDemoProps.gameHistoryProps[2].moveDataHistory.size - 1;
+        if (selectedMove > lastMove) {
+            selectedMove = lastMove;
+        }
+
+        if (selectedMove !== previouslySelectedMove) {
+            allDemoProps.gameHistoryProps[0].selectedMove = selectedMove;
+            allDemoProps.gameHistoryProps[1].selectedMove = selectedMove;
+            allDemoProps.gameHistoryProps[2].selectedMove = selectedMove;
+
+            render(allDemoProps);
+        }
+    }
+});
+
 const allDemoProps = new AllDemoProps();
 
 render(allDemoProps);

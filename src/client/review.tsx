@@ -115,10 +115,33 @@ function render(moveIndex: number) {
 function onTileClicked(tile: number) {}
 
 function onMoveClicked(index: number) {
-    render(index);
+    selectedMove = index;
+    render(selectedMove);
 }
 
+window.addEventListener('keydown', event => {
+    const keyName = event.key;
+
+    if (keyName === 'ArrowLeft' || keyName === 'ArrowRight') {
+        if (keyName === 'ArrowLeft') {
+            selectedMove--;
+            if (selectedMove < 0) {
+                selectedMove = 0;
+            }
+        } else {
+            selectedMove++;
+            const lastMove = game.moveDataHistory.size - 1;
+            if (selectedMove > lastMove) {
+                selectedMove = lastMove;
+            }
+        }
+
+        onMoveClicked(selectedMove);
+    }
+});
+
 let game: Game;
+let selectedMove: number;
 
 function main() {
     const { game: g } = runGameTestFile(require('raw-loader!../common/gameTestFiles/other/one player game high score').split('\n'));
@@ -129,7 +152,8 @@ function main() {
     }
 
     game = g;
-    render(game.moveDataHistory.size - 1);
+    selectedMove = game.moveDataHistory.size - 1;
+    render(selectedMove);
 }
 
 main();
