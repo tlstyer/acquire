@@ -20,8 +20,6 @@ const dummyMoveData = new MoveData(new Game(GameMode.Singles1, PlayerArrangement
 
 function render(moveIndex: number) {
     const moveData = game.moveDataHistory.get(moveIndex, dummyMoveData);
-    const tileRack = moveData.tileRacks.get(0, defaultTileRack);
-    const tileRackTypes = moveData.tileRackTypes.get(0, defaultTileRackTypes);
 
     let turnPlayerID = moveData.turnPlayerID;
     let movePlayerID = moveData.nextGameAction.playerID;
@@ -48,11 +46,12 @@ function render(moveIndex: number) {
 
     const tileRackLeft = scoreBoardLeft + 2;
     const tileRackTop = scoreBoardTop + scoreBoardHeight + 2;
+    const tileRackHeight = gameBoardCellSize + (game.userIDs.size - 1) * (gameBoardCellSize + 4);
 
     const gameStateHeight = 22;
     const gameStateTop = windowHeight - gameStateHeight;
 
-    const gameHistoryTop = tileRackTop + gameBoardCellSize + 4;
+    const gameHistoryTop = tileRackTop + tileRackHeight + 4;
     const gameHistoryWidth = windowWidth - tileRackLeft;
     const gameHistoryHeight = windowHeight - gameHistoryTop - gameStateHeight - 2;
 
@@ -74,9 +73,15 @@ function render(moveIndex: number) {
                     cellWidth={scoreBoardCellWidth}
                 />
             </div>
-            <div style={{ position: 'absolute', left: tileRackLeft, top: tileRackTop }}>
-                <TileRackReadOnly tiles={tileRack} types={tileRackTypes} buttonSize={gameBoardCellSize} />
-            </div>
+            {game.userIDs.map((_, i) => {
+                const tileRack = moveData.tileRacks.get(i, defaultTileRack);
+                const tileRackTypes = moveData.tileRackTypes.get(i, defaultTileRackTypes);
+                return (
+                    <div key={i} style={{ position: 'absolute', left: tileRackLeft, top: tileRackTop + i * (gameBoardCellSize + 4) }}>
+                        <TileRackReadOnly tiles={tileRack} types={tileRackTypes} buttonSize={gameBoardCellSize} />
+                    </div>
+                );
+            })}
             <div style={{ position: 'absolute', left: tileRackLeft, top: gameHistoryTop }}>
                 <GameHistory
                     usernames={game.usernames}
@@ -150,7 +155,7 @@ let game: Game;
 let selectedMove: number;
 
 function main() {
-    const { game: g } = runGameTestFile(require('raw-loader!../common/gameTestFiles/other/one player game high score').split('\n'));
+    const { game: g } = runGameTestFile(require('raw-loader!../common/gameTestFiles/other/no tiles played for entire round').split('\n'));
     if (g === null) {
         ReactDOM.render(<div>Couldn't load game.</div>, document.getElementById('root'));
 
