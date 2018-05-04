@@ -15,6 +15,7 @@ import { GameState } from './components/GameState';
 import { ScoreBoard } from './components/ScoreBoard';
 import { TileRackReadOnly } from './components/TileRackReadOnly';
 import { GameBoardLabelMode } from './enums';
+import * as style from './review.css';
 
 const dummyMoveData = new MoveData(new Game(GameMode.Singles1, PlayerArrangementMode.RandomOrder, [], List(), List(), 0, null));
 
@@ -26,6 +27,13 @@ function render() {
     if (moveData.nextGameAction instanceof ActionGameOver) {
         turnPlayerID = -1;
         movePlayerID = -1;
+    }
+
+    let tileRack: List<number | null> | undefined;
+    if (followedPlayerID !== null) {
+        tileRack = moveData.tileRacks.get(followedPlayerID, defaultTileRack);
+    } else if (movePlayerID !== -1) {
+        tileRack = moveData.tileRacks.get(movePlayerID, defaultTileRack);
     }
 
     const windowWidth = window.innerWidth;
@@ -58,7 +66,7 @@ function render() {
     ReactDOM.render(
         <>
             <div style={{ position: 'absolute', left: gameBoardLeft, top: gameBoardTop }}>
-                <GameBoard gameBoard={moveData.gameBoard} labelMode={GameBoardLabelMode.Nothing} cellSize={gameBoardCellSize} />
+                <GameBoard gameBoard={moveData.gameBoard} tileRack={tileRack} labelMode={GameBoardLabelMode.Nothing} cellSize={gameBoardCellSize} />
             </div>
             <div style={{ position: 'absolute', left: scoreBoardLeft, top: scoreBoardTop }}>
                 <ScoreBoard
@@ -74,12 +82,23 @@ function render() {
                     cellWidth={scoreBoardCellWidth}
                 />
             </div>
-            {game.userIDs.map((_, i) => {
-                const tileRack = moveData.tileRacks.get(i, defaultTileRack);
-                const tileRackTypes = moveData.tileRackTypes.get(i, defaultTileRackTypes);
+            {game.userIDs.map((_, playerID) => {
+                const tileRack = moveData.tileRacks.get(playerID, defaultTileRack);
+                const tileRackTypes = moveData.tileRackTypes.get(playerID, defaultTileRackTypes);
                 return (
-                    <div key={i} style={{ position: 'absolute', left: tileRackLeft, top: tileRackTop + i * (gameBoardCellSize + 4) }}>
-                        <TileRackReadOnly tiles={tileRack} types={tileRackTypes} buttonSize={gameBoardCellSize} />
+                    <div
+                        key={playerID}
+                        className={style.tileRack}
+                        style={{ position: 'absolute', left: tileRackLeft, top: tileRackTop + playerID * (gameBoardCellSize + 4) }}
+                    >
+                        <div>
+                            <TileRackReadOnly tiles={tileRack} types={tileRackTypes} buttonSize={gameBoardCellSize} />
+                        </div>
+                        {playerID === followedPlayerID ? (
+                            <input type={'button'} value={'Unlock'} onClick={unfollowPlayer} />
+                        ) : (
+                            <input type={'button'} value={'Lock'} onClick={followPlayer.bind(null, playerID)} />
+                        )}
                     </div>
                 );
             })}
@@ -106,6 +125,16 @@ function onMoveClicked(index: number) {
         selectedMove = index;
         render();
     }
+}
+
+function followPlayer(playerID: number) {
+    followedPlayerID = playerID;
+    render();
+}
+
+function unfollowPlayer() {
+    followedPlayerID = null;
+    render();
 }
 
 window.addEventListener('keydown', event => {
@@ -147,6 +176,7 @@ function periodicResizeCheck() {
 
 let game: Game;
 let selectedMove: number;
+let followedPlayerID: number | null = null;
 
 function main() {
     const { game: g } = runGameTestFile(require('raw-loader!../common/gameTestFiles/other/no tiles played for entire round').split('\n'));

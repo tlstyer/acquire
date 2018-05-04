@@ -1,0 +1,9 @@
+.tileRack {
+    & > div {
+        display: inline-block;
+    }
+    & > input {
+        margin-left: 4px;
+        vertical-align: -100%;
+    }
+}
