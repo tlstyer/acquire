@@ -93,12 +93,7 @@ function render(moveIndex: number) {
                 />
             </div>
             <div style={{ position: 'absolute', left: tileRackLeft, top: gameStateTop }}>
-                <GameState
-                    usernames={game.usernames}
-                    nextGameAction={game.moveDataHistory.get(game.moveDataHistory.size - 1, dummyMoveData).nextGameAction}
-                    width={gameHistoryWidth}
-                    height={gameStateHeight}
-                />
+                <GameState usernames={game.usernames} nextGameAction={moveData.nextGameAction} width={gameHistoryWidth} height={gameStateHeight} />
             </div>
         </>,
         document.getElementById('root'),
