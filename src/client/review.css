@@ -1,9 +1,15 @@
-.tileRack {
-    & > div {
-        display: inline-block;
-    }
+.tileRackWrapper {
+    display: inline-block;
+    vertical-align: top;
+}
+
+.buttonWrapper {
+    display: inline-block;
+    margin-left: 4px;
+    vertical-align: top;
     & > input {
-        margin-left: 4px;
-        vertical-align: -100%;
+        position: relative;
+        top: 50%;
+        transform: translateY(-50%);
     }
 }

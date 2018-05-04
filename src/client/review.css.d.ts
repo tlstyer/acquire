@@ -1,1 +1,2 @@
-export const tileRack: string;
+export const tileRackWrapper: string;
+export const buttonWrapper: string;

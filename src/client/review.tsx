@@ -86,19 +86,17 @@ function render() {
                 const tileRack = moveData.tileRacks.get(playerID, defaultTileRack);
                 const tileRackTypes = moveData.tileRackTypes.get(playerID, defaultTileRackTypes);
                 return (
-                    <div
-                        key={playerID}
-                        className={style.tileRack}
-                        style={{ position: 'absolute', left: tileRackLeft, top: tileRackTop + playerID * (gameBoardCellSize + 4) }}
-                    >
-                        <div>
+                    <div key={playerID} style={{ position: 'absolute', left: tileRackLeft, top: tileRackTop + playerID * (gameBoardCellSize + 4) }}>
+                        <div className={style.tileRackWrapper}>
                             <TileRackReadOnly tiles={tileRack} types={tileRackTypes} buttonSize={gameBoardCellSize} />
                         </div>
-                        {playerID === followedPlayerID ? (
-                            <input type={'button'} value={'Unlock'} onClick={unfollowPlayer} />
-                        ) : (
-                            <input type={'button'} value={'Lock'} onClick={followPlayer.bind(null, playerID)} />
-                        )}
+                        <div className={style.buttonWrapper} style={{ height: gameBoardCellSize }}>
+                            {playerID === followedPlayerID ? (
+                                <input type={'button'} value={'Unlock'} onClick={unfollowPlayer} />
+                            ) : (
+                                <input type={'button'} value={'Lock'} onClick={followPlayer.bind(null, playerID)} />
+                            )}
+                        </div>
                     </div>
                 );
             })}
