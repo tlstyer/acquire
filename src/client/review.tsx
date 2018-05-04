@@ -18,8 +18,8 @@ import { GameBoardLabelMode } from './enums';
 
 const dummyMoveData = new MoveData(new Game(GameMode.Singles1, PlayerArrangementMode.RandomOrder, [], List(), List(), 0, null));
 
-function render(moveIndex: number) {
-    const moveData = game.moveDataHistory.get(moveIndex, dummyMoveData);
+function render() {
+    const moveData = game.moveDataHistory.get(selectedMove, dummyMoveData);
 
     let turnPlayerID = moveData.turnPlayerID;
     let movePlayerID = moveData.nextGameAction.playerID;
@@ -87,7 +87,7 @@ function render(moveIndex: number) {
                 <GameHistory
                     usernames={game.usernames}
                     moveDataHistory={game.moveDataHistory}
-                    selectedMove={moveIndex}
+                    selectedMove={selectedMove}
                     width={gameHistoryWidth}
                     height={gameHistoryHeight}
                     onMoveClicked={onMoveClicked}
@@ -101,12 +101,10 @@ function render(moveIndex: number) {
     );
 }
 
-function onTileClicked(tile: number) {}
-
 function onMoveClicked(index: number) {
     if (index !== selectedMove) {
         selectedMove = index;
-        render(selectedMove);
+        render();
     }
 }
 
@@ -130,7 +128,7 @@ window.addEventListener('keydown', event => {
         }
 
         if (selectedMove !== previouslySelectedMove) {
-            render(selectedMove);
+            render();
         }
     }
 });
@@ -141,7 +139,7 @@ function periodicResizeCheck() {
     if (window.innerWidth !== lastPeriodicResizeCheckWidth || window.innerHeight !== lastPeriodicResizeCheckHeight) {
         lastPeriodicResizeCheckWidth = window.innerWidth;
         lastPeriodicResizeCheckHeight = window.innerHeight;
-        render(selectedMove);
+        render();
     }
 
     setTimeout(periodicResizeCheck, 500);
