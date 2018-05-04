@@ -3,6 +3,7 @@ import { List } from 'immutable';
 import {
     defaultGameBoard,
     defaultMoveDataHistory,
+    defaultSafeChains,
     defaultScoreBoard,
     defaultScoreBoardAvailable,
     defaultScoreBoardChainSize,
@@ -35,6 +36,7 @@ export class Game {
     scoreBoardAvailable = defaultScoreBoardAvailable;
     scoreBoardChainSize = defaultScoreBoardChainSize;
     scoreBoardPrice = defaultScoreBoardPrice;
+    safeChains = defaultSafeChains;
 
     scoreBoardAtLastNetWorthsUpdate = defaultScoreBoard;
     scoreBoardPriceAtLastNetWorthsUpdate = defaultScoreBoardPrice;
@@ -398,6 +400,10 @@ export class Game {
     setChainSize(scoreBoardIndex: GameBoardType | ScoreBoardIndex, size: number) {
         this.scoreBoardChainSize = this.scoreBoardChainSize.set(scoreBoardIndex, size);
 
+        if (size >= 11) {
+            this.safeChains = this.safeChains.set(scoreBoardIndex, true);
+        }
+
         let price = 0;
         if (size > 0) {
             if (size < 11) {
@@ -484,6 +490,7 @@ export class MoveData {
     scoreBoardAvailable = defaultScoreBoardAvailable;
     scoreBoardChainSize = defaultScoreBoardChainSize;
     scoreBoardPrice = defaultScoreBoardPrice;
+    safeChains = defaultSafeChains;
 
     revealedTileBagTilesLookup: { [key: number]: MoveDataTileBagTile } = {};
 
@@ -529,6 +536,7 @@ export class MoveData {
         this.scoreBoardAvailable = this.game.scoreBoardAvailable;
         this.scoreBoardChainSize = this.game.scoreBoardChainSize;
         this.scoreBoardPrice = this.game.scoreBoardPrice;
+        this.safeChains = this.game.safeChains;
         this.nextGameAction = this.game.gameActionStack[this.game.gameActionStack.length - 1];
 
         if (this.nextGameAction.gameAction === GameAction.PlayTile) {

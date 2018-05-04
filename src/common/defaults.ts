@@ -28,3 +28,5 @@ export const defaultScoreBoardAvailable = List<number>([25, 25, 25, 25, 25, 25, 
 export const defaultScoreBoardChainSize = List<number>([0, 0, 0, 0, 0, 0, 0]);
 
 export const defaultScoreBoardPrice = defaultScoreBoardChainSize;
+
+export const defaultSafeChains = List<boolean>([false, false, false, false, false, false, false]);

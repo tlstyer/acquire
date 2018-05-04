@@ -13,6 +13,7 @@ export interface ScoreBoardProps {
     scoreBoardAvailable: List<number>;
     scoreBoardChainSize: List<number>;
     scoreBoardPrice: List<number>;
+    safeChains: List<boolean>;
     turnPlayerID: number;
     movePlayerID: number;
     gameMode: GameMode;
@@ -27,6 +28,7 @@ export class ScoreBoard extends React.PureComponent<ScoreBoardProps> {
             scoreBoardAvailable,
             scoreBoardChainSize,
             scoreBoardPrice,
+            safeChains,
             turnPlayerID,
             movePlayerID,
             gameMode,
@@ -67,7 +69,7 @@ export class ScoreBoard extends React.PureComponent<ScoreBoardProps> {
                             isPlayersTurn={playerID === turnPlayerID}
                             isPlayersMove={playerID === movePlayerID}
                             scoreBoardRow={scoreBoard.get(playerID, defaultScoreBoardRow)}
-                            scoreBoardChainSize={scoreBoardChainSize}
+                            safeChains={safeChains}
                             defaultClassName={isTeamGame ? teamNumberToCSSClassName[playerID % numTeams + 1] : style.player}
                             zeroValueReplacement={''}
                             cellWidth={cellWidth}
@@ -79,7 +81,7 @@ export class ScoreBoard extends React.PureComponent<ScoreBoardProps> {
                         isPlayersTurn={false}
                         isPlayersMove={false}
                         scoreBoardRow={scoreBoardAvailable}
-                        scoreBoardChainSize={scoreBoardChainSize}
+                        safeChains={safeChains}
                         defaultClassName={style.availableChainSizeAndPrice}
                         zeroValueReplacement={'0'}
                         teamNumber={teamNumbers[0]}
@@ -92,7 +94,7 @@ export class ScoreBoard extends React.PureComponent<ScoreBoardProps> {
                         isPlayersTurn={false}
                         isPlayersMove={false}
                         scoreBoardRow={scoreBoardChainSize}
-                        scoreBoardChainSize={scoreBoardChainSize}
+                        safeChains={safeChains}
                         defaultClassName={style.availableChainSizeAndPrice}
                         zeroValueReplacement={'-'}
                         teamNumber={teamNumbers[1]}
@@ -105,7 +107,7 @@ export class ScoreBoard extends React.PureComponent<ScoreBoardProps> {
                         isPlayersTurn={false}
                         isPlayersMove={false}
                         scoreBoardRow={scoreBoardPrice}
-                        scoreBoardChainSize={scoreBoardChainSize}
+                        safeChains={safeChains}
                         defaultClassName={style.availableChainSizeAndPrice}
                         zeroValueReplacement={'-'}
                         teamNumber={teamNumbers[2]}
@@ -167,7 +169,7 @@ interface ScoreBoardRowProps {
     isPlayersTurn: boolean;
     isPlayersMove: boolean;
     scoreBoardRow: List<number>;
-    scoreBoardChainSize: List<number>;
+    safeChains: List<boolean>;
     defaultClassName: string;
     zeroValueReplacement: string;
     teamNumber?: number;
@@ -183,7 +185,7 @@ class ScoreBoardRow extends React.PureComponent<ScoreBoardRowProps> {
             isPlayersTurn,
             isPlayersMove,
             scoreBoardRow,
-            scoreBoardChainSize,
+            safeChains,
             defaultClassName,
             zeroValueReplacement,
             teamNumber,
@@ -211,10 +213,10 @@ class ScoreBoardRow extends React.PureComponent<ScoreBoardRowProps> {
                 <td className={nameCellClassName} style={playerStyle}>
                     {title}
                 </td>
-                {scoreBoardChainSize.map((size, chain) => {
+                {safeChains.map((isSafe, chain) => {
                     const value = scoreBoardRow.get(chain, 0);
                     return (
-                        <td key={chain} className={scoreBoardChainSize.get(chain, 0) >= 11 ? style.safeChain : defaultClassName} style={chainStyle}>
+                        <td key={chain} className={isSafe ? style.safeChain : defaultClassName} style={chainStyle}>
                             {value === 0 ? zeroValueReplacement : value}
                         </td>
                     );

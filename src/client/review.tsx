@@ -67,6 +67,7 @@ function render(moveIndex: number) {
                     scoreBoardAvailable={moveData.scoreBoardAvailable}
                     scoreBoardChainSize={moveData.scoreBoardChainSize}
                     scoreBoardPrice={moveData.scoreBoardPrice}
+                    safeChains={moveData.safeChains}
                     turnPlayerID={turnPlayerID}
                     movePlayerID={movePlayerID}
                     gameMode={game.gameMode}
