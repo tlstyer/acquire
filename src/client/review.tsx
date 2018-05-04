@@ -30,10 +30,14 @@ function render() {
     }
 
     let tileRack: List<number | null> | undefined;
-    if (followedPlayerID !== null) {
-        tileRack = moveData.tileRacks.get(followedPlayerID, defaultTileRack);
-    } else if (movePlayerID !== -1) {
-        tileRack = moveData.tileRacks.get(movePlayerID, defaultTileRack);
+    if (game.userIDs.size > 1) {
+        if (followedPlayerID !== null) {
+            tileRack = moveData.tileRacks.get(followedPlayerID, defaultTileRack);
+        } else if (movePlayerID !== -1) {
+            tileRack = moveData.tileRacks.get(movePlayerID, defaultTileRack);
+        }
+    } else {
+        tileRack = moveData.tileRacks.get(0, defaultTileRack);
     }
 
     const windowWidth = window.innerWidth;
@@ -90,13 +94,17 @@ function render() {
                         <div className={style.tileRackWrapper}>
                             <TileRackReadOnly tiles={tileRack} types={tileRackTypes} buttonSize={gameBoardCellSize} />
                         </div>
-                        <div className={style.buttonWrapper} style={{ height: gameBoardCellSize }}>
-                            {playerID === followedPlayerID ? (
-                                <input type={'button'} value={'Unlock'} onClick={unfollowPlayer} />
-                            ) : (
-                                <input type={'button'} value={'Lock'} onClick={followPlayer.bind(null, playerID)} />
-                            )}
-                        </div>
+                        {game.userIDs.size > 1 ? (
+                            <div className={style.buttonWrapper} style={{ height: gameBoardCellSize }}>
+                                {playerID === followedPlayerID ? (
+                                    <input type={'button'} value={'Unlock'} onClick={unfollowPlayer} />
+                                ) : (
+                                    <input type={'button'} value={'Lock'} onClick={followPlayer.bind(null, playerID)} />
+                                )}
+                            </div>
+                        ) : (
+                            undefined
+                        )}
                     </div>
                 );
             })}
