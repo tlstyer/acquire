@@ -56,7 +56,7 @@ function render(moveIndex: number) {
     const gameHistoryHeight = windowHeight - gameHistoryTop - gameStateHeight - 2;
 
     ReactDOM.render(
-        <div>
+        <>
             <div style={{ position: 'absolute', left: gameBoardLeft, top: gameBoardTop }}>
                 <GameBoard gameBoard={moveData.gameBoard} labelMode={GameBoardLabelMode.Nothing} cellSize={gameBoardCellSize} />
             </div>
@@ -100,7 +100,7 @@ function render(moveIndex: number) {
                     height={gameStateHeight}
                 />
             </div>
-        </div>,
+        </>,
         document.getElementById('root'),
     );
 }
