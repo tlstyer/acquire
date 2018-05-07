@@ -446,6 +446,20 @@ describe('gameSetup', () => {
             expect(gameSetup.history).toEqual([]);
         });
 
+        it('cannot swap position with itself', () => {
+            const gameSetup = new GameSetup(GameMode.Singles3, PlayerArrangementMode.ExactOrder, 1, 'Host');
+            gameSetup.addUser(2, 'user 2');
+            gameSetup.addUser(3, 'user 3');
+            gameSetup.clearHistory();
+
+            expect(gameSetup.usernames.toJS()).toEqual(['Host', 'user 2', 'user 3']);
+
+            gameSetup.swapPositions(1, 1);
+
+            expect(gameSetup.usernames.toJS()).toEqual(['Host', 'user 2', 'user 3']);
+            expect(gameSetup.history).toEqual([]);
+        });
+
         it('can swap positions', () => {
             const gameSetup = new GameSetup(GameMode.Teams2vs2, PlayerArrangementMode.SpecifyTeams, 1, 'Host');
             gameSetup.addUser(2, 'user 2');

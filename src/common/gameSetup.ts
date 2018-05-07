@@ -199,6 +199,10 @@ export class GameSetup {
             return;
         }
 
+        if (position1 === position2) {
+            return;
+        }
+
         const usernames = this.usernames.asMutable();
         usernames.set(position1, this.usernames.get(position2, null));
         usernames.set(position2, this.usernames.get(position1, null));
