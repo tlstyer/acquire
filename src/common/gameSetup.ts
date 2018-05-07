@@ -16,6 +16,7 @@ const defaultApprovals: { [key: number]: List<boolean> } = {
 export class GameSetup {
     usernames: List<string | null>;
     approvals: List<boolean>;
+    approvedByEverybody: boolean;
     usernameToUserID: Map<string, number>;
     userIDToUsername: Map<number, string>;
     history: any[] = [];
@@ -31,6 +32,8 @@ export class GameSetup {
         this.usernames = List(usernames);
 
         this.approvals = defaultApprovals[numPlayers];
+
+        this.approvedByEverybody = false;
 
         this.usernameToUserID = Map([[hostUsername, hostUserID]]);
 
@@ -56,6 +59,7 @@ export class GameSetup {
             if (this.usernames.get(i, null) === null) {
                 this.usernames = this.usernames.set(i, username);
                 this.approvals = defaultApprovals[gameModeToNumPlayers[this.gameMode]];
+                this.approvedByEverybody = false;
                 this.usernameToUserID = this.usernameToUserID.set(username, userID);
                 this.userIDToUsername = this.userIDToUsername.set(userID, username);
                 this.history.push([GameSetupChange.UserAdded, userID]);
@@ -79,6 +83,7 @@ export class GameSetup {
             if (this.usernames.get(i, null) === username) {
                 this.usernames = this.usernames.set(i, null);
                 this.approvals = defaultApprovals[gameModeToNumPlayers[this.gameMode]];
+                this.approvedByEverybody = false;
                 this.usernameToUserID = this.usernameToUserID.delete(username);
                 this.userIDToUsername = this.userIDToUsername.delete(userID);
                 this.history.push([GameSetupChange.UserRemoved, userID]);
@@ -107,6 +112,8 @@ export class GameSetup {
                 break;
             }
         }
+
+        this.approvedByEverybody = this.approvals.indexOf(false) === -1;
     }
 
     changeGameMode(gameMode: GameMode) {
@@ -148,6 +155,7 @@ export class GameSetup {
         }
 
         this.approvals = defaultApprovals[newNumPlayers];
+        this.approvedByEverybody = false;
 
         const isTeamGame = gameModeToTeamSize[gameMode] > 1;
         if (!isTeamGame && this.playerArrangementMode === PlayerArrangementMode.SpecifyTeams) {
@@ -178,6 +186,7 @@ export class GameSetup {
 
         this.playerArrangementMode = playerArrangementMode;
         this.approvals = defaultApprovals[gameModeToNumPlayers[this.gameMode]];
+        this.approvedByEverybody = false;
         this.history.push([GameSetupChange.PlayerArrangementModeChanged, playerArrangementMode]);
     }
 
@@ -196,6 +205,7 @@ export class GameSetup {
         this.usernames = usernames.asImmutable();
 
         this.approvals = defaultApprovals[gameModeToNumPlayers[this.gameMode]];
+        this.approvedByEverybody = false;
 
         this.history.push([GameSetupChange.PositionsSwapped, position1, position2]);
     }
@@ -218,6 +228,7 @@ export class GameSetup {
 
         this.usernames = this.usernames.set(position, null);
         this.approvals = defaultApprovals[gameModeToNumPlayers[this.gameMode]];
+        this.approvedByEverybody = false;
         this.usernameToUserID = this.usernameToUserID.delete(username);
         this.userIDToUsername = this.userIDToUsername.delete(userID);
         this.history.push([GameSetupChange.UserKicked, position]);

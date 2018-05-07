@@ -15,6 +15,7 @@ describe('gameSetup', () => {
         expect(gameSetup.hostUsername).toBe('Host');
         expect(gameSetup.usernames.toJS()).toEqual(['Host', null, null, null]);
         expect(gameSetup.approvals.toJS()).toEqual([false, false, false, false]);
+        expect(gameSetup.approvedByEverybody).toBe(false);
         expect(gameSetup.usernameToUserID.size).toEqual(1);
         expect(gameSetup.userIDToUsername.size).toEqual(1);
         expect(gameSetup.history).toEqual([[GameSetupChange.Created, GameMode.Singles4, PlayerArrangementMode.RandomOrder, 1]]);
@@ -56,10 +57,12 @@ describe('gameSetup', () => {
             const gameSetup = new GameSetup(GameMode.Singles3, PlayerArrangementMode.RandomOrder, 1, 'Host');
             gameSetup.clearHistory();
             gameSetup.approvals = dummyApprovals;
+            gameSetup.approvedByEverybody = true;
 
             gameSetup.addUser(3, 'user');
 
             expect(gameSetup.approvals.toJS()).toEqual([false, false, false]);
+            expect(gameSetup.approvedByEverybody).toBe(false);
         });
     });
 
@@ -103,10 +106,12 @@ describe('gameSetup', () => {
             gameSetup.addUser(7, 'user 1');
             gameSetup.clearHistory();
             gameSetup.approvals = dummyApprovals;
+            gameSetup.approvedByEverybody = true;
 
             gameSetup.removeUser(7);
 
             expect(gameSetup.approvals.toJS()).toEqual([false, false, false]);
+            expect(gameSetup.approvedByEverybody).toBe(false);
         });
     });
 
@@ -117,10 +122,12 @@ describe('gameSetup', () => {
             gameSetup.clearHistory();
 
             expect(gameSetup.approvals.toJS()).toEqual([false, false]);
+            expect(gameSetup.approvedByEverybody).toBe(false);
 
             gameSetup.approve(3);
 
             expect(gameSetup.approvals.toJS()).toEqual([false, false]);
+            expect(gameSetup.approvedByEverybody).toBe(false);
             expect(gameSetup.history).toEqual([]);
         });
 
@@ -130,10 +137,12 @@ describe('gameSetup', () => {
             gameSetup.clearHistory();
 
             expect(gameSetup.approvals.toJS()).toEqual([false, false, false]);
+            expect(gameSetup.approvedByEverybody).toBe(false);
 
             gameSetup.approve(2);
 
             expect(gameSetup.approvals.toJS()).toEqual([false, false, false]);
+            expect(gameSetup.approvedByEverybody).toBe(false);
             expect(gameSetup.history).toEqual([]);
         });
 
@@ -144,10 +153,12 @@ describe('gameSetup', () => {
             gameSetup.clearHistory();
 
             expect(gameSetup.approvals.toJS()).toEqual([false, true]);
+            expect(gameSetup.approvedByEverybody).toBe(false);
 
             gameSetup.approve(2);
 
             expect(gameSetup.approvals.toJS()).toEqual([false, true]);
+            expect(gameSetup.approvedByEverybody).toBe(false);
             expect(gameSetup.history).toEqual([]);
         });
 
@@ -157,10 +168,30 @@ describe('gameSetup', () => {
             gameSetup.clearHistory();
 
             expect(gameSetup.approvals.toJS()).toEqual([false, false]);
+            expect(gameSetup.approvedByEverybody).toBe(false);
 
             gameSetup.approve(2);
 
             expect(gameSetup.approvals.toJS()).toEqual([false, true]);
+            expect(gameSetup.approvedByEverybody).toBe(false);
+            expect(gameSetup.history).toEqual([[GameSetupChange.UserApprovedOfGameSetup, 2]]);
+        });
+
+        it('approvedByEverybody set to true when last approval received', () => {
+            const gameSetup = new GameSetup(GameMode.Singles3, PlayerArrangementMode.RandomOrder, 1, 'Host');
+            gameSetup.addUser(2, 'user2');
+            gameSetup.addUser(3, 'user3');
+            gameSetup.approve(1);
+            gameSetup.approve(3);
+            gameSetup.clearHistory();
+
+            expect(gameSetup.approvals.toJS()).toEqual([true, false, true]);
+            expect(gameSetup.approvedByEverybody).toBe(false);
+
+            gameSetup.approve(2);
+
+            expect(gameSetup.approvals.toJS()).toEqual([true, true, true]);
+            expect(gameSetup.approvedByEverybody).toBe(true);
             expect(gameSetup.history).toEqual([[GameSetupChange.UserApprovedOfGameSetup, 2]]);
         });
     });
@@ -304,10 +335,12 @@ describe('gameSetup', () => {
             const gameSetup = new GameSetup(GameMode.Teams2vs2, PlayerArrangementMode.SpecifyTeams, 1, 'Host');
             gameSetup.clearHistory();
             gameSetup.approvals = dummyApprovals;
+            gameSetup.approvedByEverybody = true;
 
             gameSetup.changeGameMode(GameMode.Singles4);
 
             expect(gameSetup.approvals.toJS()).toEqual([false, false, false, false]);
+            expect(gameSetup.approvedByEverybody).toBe(false);
         });
     });
 
@@ -372,10 +405,12 @@ describe('gameSetup', () => {
             const gameSetup = new GameSetup(GameMode.Teams2vs2, PlayerArrangementMode.SpecifyTeams, 1, 'Host');
             gameSetup.clearHistory();
             gameSetup.approvals = dummyApprovals;
+            gameSetup.approvedByEverybody = true;
 
             gameSetup.changePlayerArrangementMode(PlayerArrangementMode.ExactOrder);
 
             expect(gameSetup.approvals.toJS()).toEqual([false, false, false, false]);
+            expect(gameSetup.approvedByEverybody).toBe(false);
         });
     });
 
@@ -442,10 +477,12 @@ describe('gameSetup', () => {
             gameSetup.addUser(4, 'user 4');
             gameSetup.clearHistory();
             gameSetup.approvals = dummyApprovals;
+            gameSetup.approvedByEverybody = true;
 
             gameSetup.swapPositions(0, 1);
 
             expect(gameSetup.approvals.toJS()).toEqual([false, false, false, false]);
+            expect(gameSetup.approvedByEverybody).toBe(false);
         });
     });
 
@@ -524,10 +561,12 @@ describe('gameSetup', () => {
             gameSetup.addUser(3, 'user 3');
             gameSetup.clearHistory();
             gameSetup.approvals = dummyApprovals;
+            gameSetup.approvedByEverybody = true;
 
             gameSetup.kickUser(1);
 
             expect(gameSetup.approvals.toJS()).toEqual([false, false, false, false]);
+            expect(gameSetup.approvedByEverybody).toBe(false);
         });
     });
 });
