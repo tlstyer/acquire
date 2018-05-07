@@ -1,4 +1,7 @@
-import { GameMode } from './enums';
+import { List } from 'immutable';
+
+import { GameMode, PlayerArrangementMode } from './enums';
+import { Game, MoveData } from './game';
 
 export function getNewTileBag() {
     let tileBag: number[] = new Array(108);
@@ -160,3 +163,5 @@ export const purchaseSharesKeyboardShortcutsDescription =
     'BACKSPACE or MINUS to remove the right-most chain from the cart, ' +
     'E or ASTERISK to toggle the End Game checkbox, ' +
     '0 or 8 or O to move to the OK button, ENTER to press it.';
+
+export const dummyMoveData = new MoveData(new Game(GameMode.Singles1, PlayerArrangementMode.RandomOrder, [], List(), List(), 0, null));
