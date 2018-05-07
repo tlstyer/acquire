@@ -29,6 +29,7 @@ describe('DisposeOfShares', () => {
                 controllingChain={GameBoardType.Tower}
                 sharesOwnedInDefunctChain={7}
                 sharesAvailableInControllingChain={2}
+                keyboardShortcutsEnabled={false}
                 onSharesDisposed={onSharesDisposed}
             />,
         );
@@ -110,6 +111,7 @@ function getNewComponent(
             controllingChain={GameBoardType.Tower}
             sharesOwnedInDefunctChain={sharesOwnedInDefunctChain}
             sharesAvailableInControllingChain={sharesAvailableInControllingChain}
+            keyboardShortcutsEnabled={false}
             onSharesDisposed={onSharesDisposed}
         />,
     );

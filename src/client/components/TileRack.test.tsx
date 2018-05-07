@@ -33,6 +33,7 @@ describe('TileRack', () => {
                     GameBoardType.CantPlayNow,
                 ])}
                 buttonSize={40}
+                keyboardShortcutsEnabled={false}
                 onTileClicked={onTileClicked}
             />,
         );
@@ -42,7 +43,9 @@ describe('TileRack', () => {
 
     it('calls onTileClicked with tile', () => {
         const onTileClicked = jest.fn();
-        const tileRack = shallow(<TileRack tiles={List([74])} types={List([GameBoardType.Luxor])} buttonSize={40} onTileClicked={onTileClicked} />);
+        const tileRack = shallow(
+            <TileRack tiles={List([74])} types={List([GameBoardType.Luxor])} buttonSize={40} keyboardShortcutsEnabled={false} onTileClicked={onTileClicked} />,
+        );
 
         tileRack.find('input').simulate('click');
 
