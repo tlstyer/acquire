@@ -5,12 +5,12 @@ export function getNewTileBag() {
     for (let i = 0; i < 108; i++) {
         tileBag[i] = i;
     }
-    shuffle(tileBag);
+    shuffleArray(tileBag);
     return tileBag;
 }
 
 // from https://stackoverflow.com/questions/6274339/how-can-i-shuffle-an-array
-function shuffle(a: number[]) {
+export function shuffleArray(a: any[]) {
     let j, x, i;
     for (i = a.length - 1; i > 0; i--) {
         j = Math.floor(Math.random() * (i + 1));

@@ -1,3 +1,5 @@
+import 'seedrandom';
+
 import { List } from 'immutable';
 
 import { GameMode, GameSetupChange, PlayerArrangementMode } from './enums';
@@ -581,6 +583,105 @@ describe('gameSetup', () => {
 
             expect(gameSetup.approvals.toJS()).toEqual([false, false, false, false]);
             expect(gameSetup.approvedByEverybody).toBe(false);
+        });
+    });
+
+    describe('getFinalUserIDsAndUsernames', () => {
+        describe('player arrangement mode is RandomOrder', () => {
+            it('returns user IDs and usernames in a random order', () => {
+                const gameSetup = new GameSetup(GameMode.Singles4, PlayerArrangementMode.RandomOrder, 1, 'Host');
+                gameSetup.addUser(2, 'user 2');
+                gameSetup.addUser(3, 'user 3');
+                gameSetup.addUser(4, 'user 4');
+                gameSetup.clearHistory();
+
+                expect(gameSetup.usernames.toJS()).toEqual(['Host', 'user 2', 'user 3', 'user 4']);
+
+                // @ts-ignore
+                Math.seedrandom('random');
+
+                const [userIDs, usernames] = gameSetup.getFinalUserIDsAndUsernames();
+
+                expect(userIDs.toJS()).toEqual([3, 1, 4, 2]);
+                expect(usernames.toJS()).toEqual(['user 3', 'Host', 'user 4', 'user 2']);
+            });
+        });
+
+        describe('player arrangement mode is ExactOrder', () => {
+            it('returns user IDs and usernames in the order specified', () => {
+                const gameSetup = new GameSetup(GameMode.Teams2vs2, PlayerArrangementMode.ExactOrder, 1, 'Host');
+                gameSetup.addUser(2, 'user 2');
+                gameSetup.addUser(3, 'user 3');
+                gameSetup.addUser(4, 'user 4');
+                gameSetup.clearHistory();
+
+                expect(gameSetup.usernames.toJS()).toEqual(['Host', 'user 2', 'user 3', 'user 4']);
+
+                const [userIDs, usernames] = gameSetup.getFinalUserIDsAndUsernames();
+
+                expect(userIDs.toJS()).toEqual([1, 2, 3, 4]);
+                expect(usernames.toJS()).toEqual(['Host', 'user 2', 'user 3', 'user 4']);
+            });
+        });
+
+        describe('player arrangement mode is SpecifyTeams', () => {
+            it('teams and players within teams are randomized when gameMode is Teams2vs2', () => {
+                const gameSetup = new GameSetup(GameMode.Teams2vs2, PlayerArrangementMode.SpecifyTeams, 1, 'Host');
+                gameSetup.addUser(2, 'user 2');
+                gameSetup.addUser(3, 'user 3');
+                gameSetup.addUser(4, 'user 4');
+                gameSetup.clearHistory();
+
+                expect(gameSetup.usernames.toJS()).toEqual(['Host', 'user 2', 'user 3', 'user 4']);
+
+                // @ts-ignore
+                Math.seedrandom('random');
+
+                const [userIDs, usernames] = gameSetup.getFinalUserIDsAndUsernames();
+
+                expect(userIDs.toJS()).toEqual([2, 3, 4, 1]);
+                expect(usernames.toJS()).toEqual(['user 2', 'user 3', 'user 4', 'Host']);
+            });
+
+            it('teams and players within teams are randomized when gameMode is Teams2vs2vs2', () => {
+                const gameSetup = new GameSetup(GameMode.Teams2vs2vs2, PlayerArrangementMode.SpecifyTeams, 1, 'Host');
+                gameSetup.addUser(2, 'user 2');
+                gameSetup.addUser(3, 'user 3');
+                gameSetup.addUser(4, 'user 4');
+                gameSetup.addUser(5, 'user 5');
+                gameSetup.addUser(6, 'user 6');
+                gameSetup.clearHistory();
+
+                expect(gameSetup.usernames.toJS()).toEqual(['Host', 'user 2', 'user 3', 'user 4', 'user 5', 'user 6']);
+
+                // @ts-ignore
+                Math.seedrandom('random');
+
+                const [userIDs, usernames] = gameSetup.getFinalUserIDsAndUsernames();
+
+                expect(userIDs.toJS()).toEqual([4, 3, 2, 1, 6, 5]);
+                expect(usernames.toJS()).toEqual(['user 4', 'user 3', 'user 2', 'Host', 'user 6', 'user 5']);
+            });
+
+            it('teams and players within teams are randomized when gameMode is Teams3vs3', () => {
+                const gameSetup = new GameSetup(GameMode.Teams3vs3, PlayerArrangementMode.SpecifyTeams, 1, 'Host');
+                gameSetup.addUser(2, 'user 2');
+                gameSetup.addUser(3, 'user 3');
+                gameSetup.addUser(4, 'user 4');
+                gameSetup.addUser(5, 'user 5');
+                gameSetup.addUser(6, 'user 6');
+                gameSetup.clearHistory();
+
+                expect(gameSetup.usernames.toJS()).toEqual(['Host', 'user 2', 'user 3', 'user 4', 'user 5', 'user 6']);
+
+                // @ts-ignore
+                Math.seedrandom('random!!!!');
+
+                const [userIDs, usernames] = gameSetup.getFinalUserIDsAndUsernames();
+
+                expect(userIDs.toJS()).toEqual([5, 4, 1, 6, 3, 2]);
+                expect(usernames.toJS()).toEqual(['user 5', 'user 4', 'Host', 'user 6', 'user 3', 'user 2']);
+            });
         });
     });
 });

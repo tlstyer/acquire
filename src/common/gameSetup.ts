@@ -2,7 +2,7 @@ import { List, Map } from 'immutable';
 
 import { username } from '../client/common.css';
 import { GameMode, GameSetupChange, PlayerArrangementMode } from './enums';
-import { gameModeToNumPlayers, gameModeToTeamSize } from './helpers';
+import { gameModeToNumPlayers, gameModeToTeamSize, shuffleArray } from './helpers';
 
 const defaultApprovals: { [key: number]: List<boolean> } = {
     1: List<boolean>([false]),
@@ -236,5 +236,45 @@ export class GameSetup {
         this.usernameToUserID = this.usernameToUserID.delete(username);
         this.userIDToUsername = this.userIDToUsername.delete(userID);
         this.history.push([GameSetupChange.UserKicked, position]);
+    }
+
+    getFinalUserIDsAndUsernames(): [List<number>, List<string>] {
+        const usernames: string[] = this.usernames.toJS();
+
+        if (this.playerArrangementMode === PlayerArrangementMode.RandomOrder) {
+            shuffleArray(usernames);
+        } else if (this.playerArrangementMode === PlayerArrangementMode.SpecifyTeams) {
+            let teams: string[][];
+            if (this.gameMode === GameMode.Teams2vs2) {
+                teams = [[usernames[0], usernames[2]], [usernames[1], usernames[3]]];
+            } else if (this.gameMode === GameMode.Teams2vs2vs2) {
+                teams = [[usernames[0], usernames[3]], [usernames[1], usernames[4]], [usernames[2], usernames[5]]];
+            } else {
+                teams = [[usernames[0], usernames[2], usernames[4]], [usernames[1], usernames[3], usernames[5]]];
+            }
+
+            shuffleArray(teams);
+            for (let i = 0; i < teams.length; i++) {
+                shuffleArray(teams[i]);
+            }
+
+            const numPlayersPerTeam = teams[0].length;
+            const numTeams = teams.length;
+            let nextPlayerID = 0;
+
+            for (let playerIndexInTeam = 0; playerIndexInTeam < numPlayersPerTeam; playerIndexInTeam++) {
+                for (let teamIndex = 0; teamIndex < numTeams; teamIndex++) {
+                    usernames[nextPlayerID++] = teams[teamIndex][playerIndexInTeam];
+                }
+            }
+        }
+
+        const userIDs: number[] = new Array(usernames.length);
+        for (let i = 0; i < usernames.length; i++) {
+            const username = usernames[i];
+            userIDs[i] = this.usernameToUserID.get(username, 0);
+        }
+
+        return [List(userIDs), List(usernames)];
     }
 }
