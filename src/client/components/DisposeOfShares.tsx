@@ -125,7 +125,7 @@ export class DisposeOfShares extends React.Component<DisposeOfSharesProps, Dispo
         const { defunctChain, controllingChain, sharesOwnedInDefunctChain } = this.props;
         const { keep, trade, tradeMax, sell, sellMax } = this.state;
 
-        const keepAllDisabled = keep == sharesOwnedInDefunctChain;
+        const keepAllDisabled = keep === sharesOwnedInDefunctChain;
         const tradeIncrementAndMaxDisabled = trade === tradeMax;
         const tradeDecrementDisabled = trade === 0;
         const sellIncrementAndMaxDisabled = sell === sellMax;

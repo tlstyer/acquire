@@ -38,10 +38,10 @@ export class TileRack extends React.Component<TileRackProps> {
     shouldComponentUpdate(nextProps: TileRackProps) {
         // everything except keyboardShortcutsEnabled
         return (
-            nextProps.tiles != this.props.tiles ||
-            nextProps.types != this.props.types ||
-            nextProps.buttonSize != this.props.buttonSize ||
-            nextProps.onTileClicked != this.props.onTileClicked
+            nextProps.tiles !== this.props.tiles ||
+            nextProps.types !== this.props.types ||
+            nextProps.buttonSize !== this.props.buttonSize ||
+            nextProps.onTileClicked !== this.props.onTileClicked
         );
     }
 
