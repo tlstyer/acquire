@@ -40,8 +40,8 @@
         "webpack-serve": "*"
     },
     "scripts": {
-        "examples": "ENV=examples yarn webpack-serve",
-        "review": "ENV=review yarn webpack-serve",
+        "examples": "APP=examples yarn webpack-serve",
+        "review": "APP=review yarn webpack-serve",
         "test": "jest"
     },
     "jest": {

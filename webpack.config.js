@@ -1,10 +1,10 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
-const { ENV } = process.env;
+const { APP } = process.env;
 
 let entry;
-switch (ENV) {
+switch (APP) {
     case 'examples':
         entry = './src/client/examples.tsx';
         break;
