@@ -1594,9 +1594,9 @@ def make_acquire2_game_test_files(log_timestamp, output_dir):
                 host_username = game.player_join_order[0]
                 host_user_id = 0
                 for username in game.player_id_to_username.values():
-                    username = get_actual_username(log_timestamp, username)
-                    user_id = username_to_user_id[username]
-                    lines.append('user: ' + str(user_id) + ' ' + username)
+                    actual_username = get_actual_username(log_timestamp, username)
+                    user_id = username_to_user_id[actual_username]
+                    lines.append('user: ' + str(user_id) + ' ' + actual_username)
                     if username == host_username:
                         host_user_id = user_id
                 lines.append('host: ' + str(host_user_id))
