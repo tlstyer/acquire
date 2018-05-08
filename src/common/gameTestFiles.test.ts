@@ -1,4 +1,3 @@
-import * as assert from 'assert';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -40,7 +39,7 @@ function processDirectory(base: string, dir: string) {
                         fs.writeFileSync(outputFilePath, outputLines.join('\n'));
                     }
 
-                    assert.deepEqual(outputLines, inputLines, 'output lines do not match input lines');
+                    expect(outputLines).toEqual(inputLines);
 
                     if (game !== null && dir !== "from a user's perspective") {
                         const json = game.toJSON();
