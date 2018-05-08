@@ -31,7 +31,9 @@ export function runGameTestFile(inputLines: string[]) {
         let line = inputLines[lineNumber];
         if (game === null) {
             if (line.length > 0) {
-                const [key, value] = line.split(': ');
+                const parts = line.split(': ');
+                const key = parts[0];
+                const value = parts.slice(1).join(': ');
                 switch (key) {
                     case 'game mode':
                         // @ts-ignore
