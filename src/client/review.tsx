@@ -8,7 +8,6 @@ import { defaultTileRack, defaultTileRackTypes } from '../common/defaults';
 import { Game } from '../common/game';
 import { ActionGameOver } from '../common/gameActions/gameOver';
 import { dummyMoveData } from '../common/helpers';
-import { runGameTestFile } from '../common/runGameTestFile';
 import { GameBoard } from './components/GameBoard';
 import { GameHistory } from './components/GameHistory';
 import { GameState } from './components/GameState';
@@ -183,7 +182,9 @@ let selectedMove: number;
 let followedPlayerID: number | null = null;
 
 function main() {
-    const { game: g } = runGameTestFile(require('raw-loader!../common/gameTestFiles/other/no tiles played for entire round').split('\n'));
+    const gameJson = require('raw-loader!../common/gameTestFiles/other/no tiles played for entire round').split('\nGame JSON:\n')[1];
+    const g = Game.fromJSON(JSON.parse(gameJson));
+
     if (g === null) {
         ReactDOM.render(<div>Couldn't load game.</div>, document.getElementById('root'));
 

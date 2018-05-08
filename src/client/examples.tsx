@@ -6,13 +6,13 @@ import * as ReactDOM from 'react-dom';
 
 import { defaultGameBoard, defaultMoveDataHistory } from '../common/defaults';
 import { GameBoardType, GameMode } from '../common/enums';
+import { Game } from '../common/game';
 import {
     disposeOfSharesKeyboardShortcutsDescription,
     purchaseSharesKeyboardShortcutsDescription,
     selectChainKeyboardShortcutsDescription,
     tileRackKeyboardShortcutsDescription,
 } from '../common/helpers';
-import { runGameTestFile } from '../common/runGameTestFile';
 import { DisposeOfShares, DisposeOfSharesProps } from './components/DisposeOfShares';
 import { ExampleGameSetupMaster } from './components/ExampleGameSetupMaster';
 import { GameBoard, GameBoardProps } from './components/GameBoard';
@@ -45,8 +45,11 @@ class AllDemoProps {
     possibleKeyboardShortcutsEnabledProps: { keyboardShortcutsEnabled: boolean }[];
 
     constructor() {
-        const { game: game1 } = runGameTestFile(require('raw-loader!../common/gameTestFiles/other/no tiles played for entire round').split('\n'));
-        const { game: game2 } = runGameTestFile(require('raw-loader!../common/gameTestFiles/other/all tiles played').split('\n'));
+        const gameJson1 = require('raw-loader!../common/gameTestFiles/other/no tiles played for entire round').split('\nGame JSON:\n')[1];
+        const game1 = Game.fromJSON(JSON.parse(gameJson1));
+
+        const gameJson2 = require('raw-loader!../common/gameTestFiles/other/all tiles played').split('\nGame JSON:\n')[1];
+        const game2 = Game.fromJSON(JSON.parse(gameJson2));
 
         this.loginFormProps = [{ onSubmit: onSubmitLoginForm }, { error: 'error passed as a prop', username: 'tlstyer', onSubmit: onSubmitLoginForm }];
 
