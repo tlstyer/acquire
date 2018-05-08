@@ -62,3 +62,18 @@ action: 0 PlayTile -- [108]
 
 action: 0 PlayTile 7F
   error: player does not have given tile
+
+Game JSON:
+[
+  2,
+  1,
+  null,
+  0,
+  [5,7],
+  ["Alice","Bob"],
+  7,
+  [35,10,69,28,88,15,3,93,58,1,106,55,98,101],
+  [
+    [[]]
+  ]
+]

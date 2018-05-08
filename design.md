@@ -32,6 +32,7 @@ Users can leave a game.
 # Game review data
 Array of:
 * Game mode
+* Player arrangement mode
 * Time control starting amount (in seconds, null meaning infinite)
 * Time control increment amount (in seconds)
 * User ID array in player order
@@ -43,13 +44,12 @@ Array of:
 * Game actions
     * Only the parameters
     * Timestamp
-        * First game action contains milliseconds since Unix epoch
-        * Subsequent game actions contain an offset from the previous game action
+        * If previous game action had a timestamp, then milliseconds since previous game action
+        * Otherwise, milliseconds since Unix epoch
         * If timestamp is unknown, then exclude it
     * Whether game action was automatically played due to time expiry or forfeit
         * 1 for yes
         * Excluded for no
-* Game end timestamp
 
 May add later:
 * When forfeits occurred

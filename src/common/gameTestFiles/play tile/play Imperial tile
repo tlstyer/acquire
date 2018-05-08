@@ -49,3 +49,22 @@ action: 1 PlayTile 2A
   history messages:
     1 PlayedTile 2A
   next action: 1 PurchaseShares
+
+Game JSON:
+[
+  2,
+  0,
+  null,
+  0,
+  [5,7],
+  ["Alice","Bob"],
+  7,
+  [18,10,58,1,106,55,98,101,9,70,88,15,3,93,60],
+  [
+    [[]],
+    [[1]],
+    [[6]],
+    [[[6,6,6],0]],
+    [[9]]
+  ]
+]

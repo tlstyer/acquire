@@ -162,8 +162,16 @@ export function runGameTestFile(inputLines: string[]) {
                 }
 
                 timestamp = null;
+            } else if (line === 'Game JSON:') {
+                break;
             }
         }
+    }
+
+    if (game !== null) {
+        outputLines.push('');
+        outputLines.push('Game JSON:');
+        outputLines.push(...getFormattedGameJSONLines(game));
     }
 
     outputLines.push('');
@@ -571,4 +579,48 @@ function getNextActionString(action: ActionBase) {
     }
 
     return parts.join(' ');
+}
+
+function getFormattedGameJSONLines(game: Game) {
+    const [
+        gameMode,
+        playerArrangementMode,
+        timeControlStartingAmount,
+        timeControlIncrementAmount,
+        userIDs,
+        usernames,
+        hostUserID,
+        tileBag,
+        gameActions,
+    ] = game.toJSON();
+
+    const lines: string[] = [];
+
+    lines.push('[');
+
+    lines.push(`  ${JSON.stringify(gameMode)},`);
+    lines.push(`  ${JSON.stringify(playerArrangementMode)},`);
+    lines.push(`  ${JSON.stringify(timeControlStartingAmount)},`);
+    lines.push(`  ${JSON.stringify(timeControlIncrementAmount)},`);
+    lines.push(`  ${JSON.stringify(userIDs)},`);
+    lines.push(`  ${JSON.stringify(usernames)},`);
+    lines.push(`  ${JSON.stringify(hostUserID)},`);
+    lines.push(`  ${JSON.stringify(tileBag)},`);
+
+    lines.push('  [');
+
+    const lastGameActionIndex = gameActions.length - 1;
+    for (let i = 0; i < gameActions.length; i++) {
+        const gameAction = gameActions[i];
+
+        const json = JSON.stringify(gameAction).replace(/,(\d+)\]$/g, ', $1]');
+        const possibleTrailingComma = i !== lastGameActionIndex ? ',' : '';
+        lines.push(`    ${json}${possibleTrailingComma}`);
+    }
+
+    lines.push('  ]');
+
+    lines.push(']');
+
+    return lines;
 }

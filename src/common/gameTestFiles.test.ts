@@ -2,6 +2,7 @@ import * as assert from 'assert';
 import * as fs from 'fs';
 import * as path from 'path';
 
+import { Game } from './game';
 import { runGameTestFile } from './runGameTestFile';
 
 const inputBasePath: string = `${__dirname}/gameTestFiles/`;
@@ -32,7 +33,7 @@ function processDirectory(base: string, dir: string) {
                         .readFileSync(filePath)
                         .toString()
                         .split('\n');
-                    const outputLines = runGameTestFile(inputLines).outputLines;
+                    const { outputLines, game } = runGameTestFile(inputLines);
 
                     if (outputBasePath !== '') {
                         const outputFilePath = path.join(outputBasePath, filePath.slice(inputBasePath.length));
@@ -40,6 +41,13 @@ function processDirectory(base: string, dir: string) {
                     }
 
                     assert.deepEqual(outputLines, inputLines, 'output lines do not match input lines');
+
+                    if (game !== null && dir !== "from a user's perspective") {
+                        const json = game.toJSON();
+                        const game2 = Game.fromJSON(json);
+                        const json2 = game2.toJSON();
+                        expect(json2).toEqual(json);
+                    }
                 });
             }
         }

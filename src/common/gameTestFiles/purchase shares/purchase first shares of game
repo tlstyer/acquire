@@ -52,3 +52,24 @@ action: 1 PurchaseShares L,L 1
     1 DrewTile 3I
     0 TurnBegan
   next action: 0 PlayTile
+
+Game JSON:
+[
+  2,
+  1,
+  null,
+  0,
+  [5,7],
+  ["Alice","Bob"],
+  7,
+  [11,10,3,13,58,55,98,101,21,12,70,88,15,69,90,28,0,26],
+  [
+    [[]],
+    [[3]],
+    [[21]],
+    [[13]],
+    [[12]],
+    [[0]],
+    [[[0,0],1]]
+  ]
+]

@@ -18,7 +18,9 @@ import { GameAction, GameBoardType, GameHistoryMessage, GameMode, PlayerArrangem
 import { UserInputError } from './error';
 import { ActionBase } from './gameActions/base';
 import { ActionStartGame } from './gameActions/startGame';
-import { calculateBonuses, getNeighboringTiles } from './helpers';
+import { calculateBonuses, dummyMoveData, getNeighboringTiles } from './helpers';
+
+type GameJSON = [GameMode, PlayerArrangementMode, number | null, number, number[], string[], number, number[], ([any] | [any, number])[]];
 
 export class Game {
     nextTileBagIndex: number = 0;
@@ -468,6 +470,78 @@ export class Game {
         this.currentMoveData.endMove();
         this.moveDataHistory = this.moveDataHistory.push(this.currentMoveData);
         this.currentMoveData = null;
+    }
+
+    toJSON(): GameJSON {
+        const gameActions = new Array(this.moveDataHistory.size);
+        let lastTimestamp: number | null = null;
+        for (let i = 0; i < this.moveDataHistory.size; i++) {
+            const moveData = this.moveDataHistory.get(i, dummyMoveData);
+
+            const gameActionData: any[] = [moveData.gameActionParameters];
+
+            const currentTimestamp = moveData.timestamp;
+            if (currentTimestamp !== null) {
+                if (lastTimestamp === null) {
+                    gameActionData.push(currentTimestamp);
+                } else {
+                    gameActionData.push(currentTimestamp - lastTimestamp);
+                }
+            }
+
+            gameActions[i] = gameActionData;
+            lastTimestamp = currentTimestamp;
+        }
+
+        return [
+            this.gameMode,
+            this.playerArrangementMode,
+            // Time control starting amount (in seconds, null meaning infinite)
+            null,
+            // Time control increment amount (in seconds)
+            0,
+            this.userIDs.toJS(),
+            this.usernames.toJS(),
+            this.hostUserID,
+            this.tileBag,
+            gameActions,
+        ];
+    }
+
+    static fromJSON(json: GameJSON) {
+        const [
+            gameMode,
+            playerArrangementMode,
+            _timeControlStartingAmount,
+            _timeControlIncrementAmount,
+            userIDs,
+            usernames,
+            hostUserID,
+            tileBag,
+            gameActions,
+        ] = json;
+
+        const game = new Game(gameMode, playerArrangementMode, tileBag, List(userIDs), List(usernames), hostUserID, null);
+
+        let lastTimestamp: number | null = null;
+        for (let i = 0; i < gameActions.length; i++) {
+            const gameAction = gameActions[i];
+            const gameActionParameters = gameAction[0];
+
+            let currentTimestamp: number | null = gameAction.length >= 2 ? gameAction[1] : null;
+            if (currentTimestamp !== null && lastTimestamp !== null) {
+                currentTimestamp += lastTimestamp;
+            }
+
+            const currentPlayerID = game.gameActionStack[game.gameActionStack.length - 1].playerID;
+            const currentUserID = game.userIDs.get(currentPlayerID, 0);
+
+            game.doGameAction(currentUserID, i, gameActionParameters, currentTimestamp);
+
+            lastTimestamp = currentTimestamp;
+        }
+
+        return game;
     }
 }
 

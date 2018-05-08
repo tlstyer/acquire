@@ -60,3 +60,19 @@ action: 0 PlayTile 8G
     0 DrewTile 1A
     1 TurnBegan
   next action: 1 PlayTile
+
+Game JSON:
+[
+  2,
+  2,
+  null,
+  0,
+  [5,7],
+  ["Alice","Bob"],
+  7,
+  [35,10,69,70,88,15,3,93,58,1,106,55,98,101,0],
+  [
+    [[]],
+    [[69]]
+  ]
+]
