@@ -2,10 +2,9 @@
     "compilerOptions": {
         "jsx": "react",
         "module": "commonjs",
-        "outDir": "dist",
-        "sourceMap": true,
+        "outDir": "dist/server",
         "strict": true,
         "target": "es6"
     },
-    "include": ["*", "src/**/*"]
+    "include": ["src/**/*"]
 }
