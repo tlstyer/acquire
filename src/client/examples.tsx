@@ -7,12 +7,6 @@ import * as ReactDOM from 'react-dom';
 import { defaultGameBoard, defaultMoveDataHistory } from '../common/defaults';
 import { GameBoardType, GameMode } from '../common/enums';
 import { Game } from '../common/game';
-import {
-    disposeOfSharesKeyboardShortcutsDescription,
-    purchaseSharesKeyboardShortcutsDescription,
-    selectChainKeyboardShortcutsDescription,
-    tileRackKeyboardShortcutsDescription,
-} from '../common/helpers';
 import { DisposeOfShares, DisposeOfSharesProps } from './components/DisposeOfShares';
 import { ExampleGameSetupMaster } from './components/ExampleGameSetupMaster';
 import { GameBoard, GameBoardProps } from './components/GameBoard';
@@ -27,8 +21,16 @@ import { TileRack, TileRackProps } from './components/TileRack';
 import { TileRackReadOnly, TileRackReadOnlyProps } from './components/TileRackReadOnly';
 import { GameBoardLabelMode, GameStatus } from './enums';
 import { getDummyGameForGetGameHistory, getExampleNextGameActionsArray } from './exampleData';
-import { chains, gameBoardTypeToHotelInitial, getTileString } from './helpers';
 import * as style from './examples.css';
+import {
+    chains,
+    disposeOfSharesKeyboardShortcutsDescription,
+    gameBoardTypeToHotelInitial,
+    getTileString,
+    purchaseSharesKeyboardShortcutsDescription,
+    selectChainKeyboardShortcutsDescription,
+    tileRackKeyboardShortcutsDescription,
+} from './helpers';
 
 class AllDemoProps {
     loginFormProps: LoginFormProps[];

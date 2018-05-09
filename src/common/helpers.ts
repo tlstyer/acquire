@@ -149,17 +149,4 @@ export const gameModeToTeamSize: { [key: number]: number } = {
     [GameMode.Teams3vs3]: 3,
 };
 
-export const tileRackKeyboardShortcutsDescription = 'Press 1-6 to move to a tile, ENTER to play it.';
-export const selectChainKeyboardShortcutsDescription = 'Press 1-7 or L,T,A,F,W,C,I to move to a chain, ENTER to select it.';
-export const disposeOfSharesKeyboardShortcutsDescription =
-    'Press 1-7 for the corresponding button (left-to-right), ' +
-    'K for Keep All, T for Trade ▲, Shift-T for Trade ▼, S for Sell ▲, Shift-S for Sell ▼, ' +
-    '0 or 8 or O to move to the OK button, ENTER to press it.';
-export const purchaseSharesKeyboardShortcutsDescription =
-    'Press 1-7 or L,T,A,F,W,C,I to add a chain to the cart, ' +
-    'Shift-1-7 or Shift-L,T,A,F,W,C,I to remove a chain from the cart, ' +
-    'BACKSPACE or MINUS to remove the right-most chain from the cart, ' +
-    'E or ASTERISK to toggle the End Game checkbox, ' +
-    '0 or 8 or O to move to the OK button, ENTER to press it.';
-
 export let dummyMoveData: MoveData;
