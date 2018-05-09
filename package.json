@@ -52,10 +52,10 @@
         "transform": {
             "^.+\\.tsx?$": "ts-jest"
         },
-        "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
+        "testRegex": "^.+\\.test\\.tsx?$",
         "moduleFileExtensions": ["ts", "tsx", "js", "jsx", "json", "node"],
         "moduleNameMapper": {
-            "\\.(css)$": "identity-obj-proxy"
+            "\\.css$": "identity-obj-proxy"
         }
     }
 }
