@@ -4,12 +4,6 @@ exports[`GameState renders correctly 1`] = `
 <div>
   <div
     className="root"
-    style={
-      Object {
-        "height": 22,
-        "width": 500,
-      }
-    }
   >
     Waiting for 
     <span
@@ -21,12 +15,6 @@ exports[`GameState renders correctly 1`] = `
   </div>
   <div
     className="root"
-    style={
-      Object {
-        "height": 22,
-        "width": 500,
-      }
-    }
   >
     Waiting for 
     <span
@@ -38,12 +26,6 @@ exports[`GameState renders correctly 1`] = `
   </div>
   <div
     className="root"
-    style={
-      Object {
-        "height": 22,
-        "width": 500,
-      }
-    }
   >
     Waiting for 
     <span
@@ -55,12 +37,6 @@ exports[`GameState renders correctly 1`] = `
   </div>
   <div
     className="root"
-    style={
-      Object {
-        "height": 22,
-        "width": 500,
-      }
-    }
   >
     Waiting for 
     <span
@@ -114,12 +90,6 @@ exports[`GameState renders correctly 1`] = `
   </div>
   <div
     className="root"
-    style={
-      Object {
-        "height": 22,
-        "width": 500,
-      }
-    }
   >
     Waiting for 
     <span
@@ -149,12 +119,6 @@ exports[`GameState renders correctly 1`] = `
   </div>
   <div
     className="root"
-    style={
-      Object {
-        "height": 22,
-        "width": 500,
-      }
-    }
   >
     Waiting for 
     <span
@@ -178,12 +142,6 @@ exports[`GameState renders correctly 1`] = `
   </div>
   <div
     className="root"
-    style={
-      Object {
-        "height": 22,
-        "width": 500,
-      }
-    }
   >
     Waiting for 
     <span
@@ -201,12 +159,6 @@ exports[`GameState renders correctly 1`] = `
   </div>
   <div
     className="root"
-    style={
-      Object {
-        "height": 22,
-        "width": 500,
-      }
-    }
   >
     Waiting for 
     <span
@@ -218,12 +170,6 @@ exports[`GameState renders correctly 1`] = `
   </div>
   <div
     className="root"
-    style={
-      Object {
-        "height": 22,
-        "width": 500,
-      }
-    }
   >
     Game over.
   </div>

@@ -47,29 +47,22 @@ function render() {
     const gameBoardCellSize = Math.floor(Math.min(gameBoardCellSizeBasedOnWindowWidth, gameBoardCellSizeBasedOnWindowHeight));
     const gameBoardWidth = gameBoardCellSize * 12 + 2;
 
-    const scoreBoardLeft = gameBoardLeft + gameBoardWidth;
-    const scoreBoardTop = -2;
+    const rightSideLeft = gameBoardLeft + gameBoardWidth;
+    const rightSideTop = -2;
+    const rightSideWidth = windowWidth - (gameBoardLeft + gameBoardWidth);
+    const rightSideHeight = windowHeight + 2;
+
     const scoreBoardCellWidth = Math.floor(gameBoardWidth / 18);
-    const scoreBoardCellHeight = Math.ceil(scoreBoardCellWidth * 0.8);
-    const scoreBoardHeight = scoreBoardCellHeight * (4 + game.usernames.size) + 2;
-
-    const tileRackLeft = scoreBoardLeft + 2;
-    const tileRackTop = scoreBoardTop + scoreBoardHeight + 2;
-    const tileRackHeight = gameBoardCellSize + (game.userIDs.size - 1) * (gameBoardCellSize + 4);
-
-    const gameStateHeight = 22;
-    const gameStateTop = windowHeight - gameStateHeight;
-
-    const gameHistoryTop = tileRackTop + tileRackHeight + 4;
-    const gameHistoryWidth = windowWidth - tileRackLeft;
-    const gameHistoryHeight = windowHeight - gameHistoryTop - gameStateHeight - 2;
 
     ReactDOM.render(
         <>
             <div style={{ position: 'absolute', left: gameBoardLeft, top: gameBoardTop }}>
                 <GameBoard gameBoard={moveData.gameBoard} tileRack={tileRack} labelMode={GameBoardLabelMode.Nothing} cellSize={gameBoardCellSize} />
             </div>
-            <div style={{ position: 'absolute', left: scoreBoardLeft, top: scoreBoardTop }}>
+            <div
+                className={style.rightSide}
+                style={{ position: 'absolute', left: rightSideLeft, top: rightSideTop, width: rightSideWidth, height: rightSideHeight }}
+            >
                 <ScoreBoard
                     usernames={game.usernames}
                     scoreBoard={moveData.scoreBoard}
@@ -82,41 +75,30 @@ function render() {
                     gameMode={game.gameMode}
                     cellWidth={scoreBoardCellWidth}
                 />
-            </div>
-            {game.userIDs.map((_, playerID) => {
-                const tileRack = moveData.tileRacks.get(playerID, defaultTileRack);
-                const tileRackTypes = moveData.tileRackTypes.get(playerID, defaultTileRackTypes);
-                return (
-                    <div key={playerID} style={{ position: 'absolute', left: tileRackLeft, top: tileRackTop + playerID * (gameBoardCellSize + 4) }}>
-                        <div className={style.tileRackWrapper}>
-                            <TileRackReadOnly tiles={tileRack} types={tileRackTypes} buttonSize={gameBoardCellSize} />
-                        </div>
-                        {game.userIDs.size > 1 ? (
-                            <div className={style.buttonWrapper} style={{ height: gameBoardCellSize }}>
-                                {playerID === followedPlayerID ? (
-                                    <input type={'button'} value={'Unlock'} onClick={unfollowPlayer} />
-                                ) : (
-                                    <input type={'button'} value={'Lock'} onClick={followPlayer.bind(null, playerID)} />
-                                )}
+                {game.userIDs.map((_, playerID) => {
+                    const tileRack = moveData.tileRacks.get(playerID, defaultTileRack);
+                    const tileRackTypes = moveData.tileRackTypes.get(playerID, defaultTileRackTypes);
+                    return (
+                        <div key={playerID}>
+                            <div className={style.tileRackWrapper}>
+                                <TileRackReadOnly tiles={tileRack} types={tileRackTypes} buttonSize={gameBoardCellSize} />
                             </div>
-                        ) : (
-                            undefined
-                        )}
-                    </div>
-                );
-            })}
-            <div style={{ position: 'absolute', left: tileRackLeft, top: gameHistoryTop }}>
-                <GameHistory
-                    usernames={game.usernames}
-                    moveDataHistory={game.moveDataHistory}
-                    selectedMove={selectedMove}
-                    width={gameHistoryWidth}
-                    height={gameHistoryHeight}
-                    onMoveClicked={onMoveClicked}
-                />
-            </div>
-            <div style={{ position: 'absolute', left: tileRackLeft, top: gameStateTop }}>
-                <GameState usernames={game.usernames} nextGameAction={moveData.nextGameAction} width={gameHistoryWidth} height={gameStateHeight} />
+                            {game.userIDs.size > 1 ? (
+                                <div className={style.buttonWrapper} style={{ height: gameBoardCellSize }}>
+                                    {playerID === followedPlayerID ? (
+                                        <input type={'button'} value={'Unlock'} onClick={unfollowPlayer} />
+                                    ) : (
+                                        <input type={'button'} value={'Lock'} onClick={followPlayer.bind(null, playerID)} />
+                                    )}
+                                </div>
+                            ) : (
+                                undefined
+                            )}
+                        </div>
+                    );
+                })}
+                <GameHistory usernames={game.usernames} moveDataHistory={game.moveDataHistory} selectedMove={selectedMove} onMoveClicked={onMoveClicked} />
+                <GameState usernames={game.usernames} nextGameAction={moveData.nextGameAction} />
             </div>
         </>,
         document.getElementById('root'),

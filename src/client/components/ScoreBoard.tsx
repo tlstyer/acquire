@@ -35,8 +35,6 @@ export class ScoreBoard extends React.PureComponent<ScoreBoardProps> {
             cellWidth,
         } = this.props;
 
-        const cellHeight = Math.ceil(cellWidth * 0.8);
-
         const isTeamGame = gameModeToTeamSize[gameMode] > 1;
         const numTeams = gameModeToNumPlayers[gameMode] / gameModeToTeamSize[gameMode];
 
@@ -61,7 +59,7 @@ export class ScoreBoard extends React.PureComponent<ScoreBoardProps> {
         return (
             <table className={style.root} style={{ fontSize: Math.floor(cellWidth * 0.6) }}>
                 <tbody>
-                    <ScoreBoardHeader cellWidth={cellWidth} cellHeight={cellHeight} />
+                    <ScoreBoardHeader cellWidth={cellWidth} />
                     {usernames.map((username, playerID) => (
                         <ScoreBoardRow
                             key={playerID}
@@ -73,7 +71,6 @@ export class ScoreBoard extends React.PureComponent<ScoreBoardProps> {
                             defaultClassName={isTeamGame ? teamNumberToCSSClassName[playerID % numTeams + 1] : style.player}
                             zeroValueReplacement={''}
                             cellWidth={cellWidth}
-                            cellHeight={cellHeight}
                         />
                     ))}
                     <ScoreBoardRow
@@ -87,7 +84,6 @@ export class ScoreBoard extends React.PureComponent<ScoreBoardProps> {
                         teamNumber={teamNumbers[0]}
                         teamTotal={teamTotals[0]}
                         cellWidth={cellWidth}
-                        cellHeight={cellHeight}
                     />
                     <ScoreBoardRow
                         title={'Chain Size'}
@@ -100,7 +96,6 @@ export class ScoreBoard extends React.PureComponent<ScoreBoardProps> {
                         teamNumber={teamNumbers[1]}
                         teamTotal={teamTotals[1]}
                         cellWidth={cellWidth}
-                        cellHeight={cellHeight}
                     />
                     <ScoreBoardRow
                         title={'Price ($00)'}
@@ -113,7 +108,6 @@ export class ScoreBoard extends React.PureComponent<ScoreBoardProps> {
                         teamNumber={teamNumbers[2]}
                         teamTotal={teamTotals[2]}
                         cellWidth={cellWidth}
-                        cellHeight={cellHeight}
                     />
                 </tbody>
             </table>
@@ -131,20 +125,18 @@ function getTeamTotal(scoreBoard: List<List<number>>, numTeams: number, teamNumb
 
 interface ScoreBoardHeaderProps {
     cellWidth: number;
-    cellHeight: number;
 }
 
 class ScoreBoardHeader extends React.PureComponent<ScoreBoardHeaderProps> {
     render() {
-        const { cellWidth, cellHeight } = this.props;
+        const { cellWidth } = this.props;
 
-        const rowStyle = { height: cellHeight, maxHeight: cellHeight };
         const playerStyle = { width: cellWidth * 5, maxWidth: cellWidth * 5 };
         const chainStyle = { width: cellWidth, maxWidth: cellWidth };
         const cashAndNetStyle = { width: cellWidth * 3, maxWidth: cellWidth * 3 };
 
         return (
-            <tr style={rowStyle}>
+            <tr>
                 <td className={style.playerHeader} style={playerStyle}>
                     Player
                 </td>
@@ -175,7 +167,6 @@ interface ScoreBoardRowProps {
     teamNumber?: number;
     teamTotal?: number;
     cellWidth: number;
-    cellHeight: number;
 }
 
 class ScoreBoardRow extends React.PureComponent<ScoreBoardRowProps> {
@@ -191,10 +182,8 @@ class ScoreBoardRow extends React.PureComponent<ScoreBoardRowProps> {
             teamNumber,
             teamTotal,
             cellWidth,
-            cellHeight,
         } = this.props;
 
-        const rowStyle = { height: cellHeight, maxHeight: cellHeight };
         const playerStyle = { width: cellWidth * 5, maxWidth: cellWidth * 5 };
         const chainStyle = { width: cellWidth, maxWidth: cellWidth };
         const cashAndNetStyle = { width: cellWidth * 3, maxWidth: cellWidth * 3 };
@@ -209,7 +198,7 @@ class ScoreBoardRow extends React.PureComponent<ScoreBoardRowProps> {
         }
 
         return (
-            <tr style={rowStyle}>
+            <tr>
                 <td className={nameCellClassName} style={playerStyle}>
                     {title}
                 </td>

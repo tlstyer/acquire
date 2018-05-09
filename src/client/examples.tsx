@@ -316,22 +316,16 @@ class AllDemoProps {
             {
                 usernames: dummyGameForGetGameHistory.usernames,
                 moveDataHistory: dummyGameForGetGameHistory.moveDataHistory,
-                width: 600,
-                height: 300,
                 onMoveClicked,
             },
             {
                 usernames: game1 !== null ? game1.usernames : List(),
                 moveDataHistory: game1 !== null ? game1.moveDataHistory : defaultMoveDataHistory,
-                width: 600,
-                height: 300,
                 onMoveClicked,
             },
             {
                 usernames: game2 !== null ? game2.usernames : List(),
                 moveDataHistory: game2 !== null ? game2.moveDataHistory : defaultMoveDataHistory,
-                width: 600,
-                height: 300,
                 onMoveClicked,
             },
         ];

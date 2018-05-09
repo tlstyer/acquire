@@ -3,12 +3,6 @@
 exports[`GameHistory renders correctly 1`] = `
 <div
   className="root"
-  style={
-    Object {
-      "height": 300,
-      "width": 600,
-    }
-  }
 >
   <div>
     <div
