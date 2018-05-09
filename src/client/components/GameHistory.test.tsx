@@ -13,14 +13,7 @@ describe('GameHistory', () => {
     const onMoveClicked = jest.fn();
     const game = getDummyGameForGetGameHistory();
     const jsx = (
-        <GameHistory
-            usernames={List(['Tim', 'Rita', 'Dad', 'Mom'])}
-            moveDataHistory={game.moveDataHistory}
-            selectedMove={1}
-            width={600}
-            height={300}
-            onMoveClicked={onMoveClicked}
-        />
+        <GameHistory usernames={List(['Tim', 'Rita', 'Dad', 'Mom'])} moveDataHistory={game.moveDataHistory} selectedMove={1} onMoveClicked={onMoveClicked} />
     );
 
     it('renders correctly', () => {

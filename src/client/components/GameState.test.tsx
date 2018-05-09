@@ -11,7 +11,7 @@ describe('GameState', () => {
         const component = renderer.create(
             <div>
                 {nextGameActionsArray.map((nextGameAction, i) => (
-                    <GameState key={i} usernames={nextGameAction.game.usernames} nextGameAction={nextGameAction} width={500} height={22} />
+                    <GameState key={i} usernames={nextGameAction.game.usernames} nextGameAction={nextGameAction} />
                 ))}
             </div>,
         );

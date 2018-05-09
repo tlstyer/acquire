@@ -9,7 +9,7 @@ exports[`GameState renders correctly 1`] = `
     <span
       className="username"
     >
-      REALLY, REALLY, REALLY, REALLY, REALLY, REALLY LONG NAME
+      REALLY, REALLY, REALLY, REALLY, REALLY LONG NAME
     </span>
      to start the game.
   </div>
