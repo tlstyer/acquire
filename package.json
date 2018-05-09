@@ -41,8 +41,8 @@
     },
     "scripts": {
         "build": "yarn build-examples ; yarn build-review ; yarn build-server",
-        "build-examples": "APP=examples MODE=production ./node_modules/.bin/webpack",
-        "build-review": "APP=review MODE=production ./node_modules/.bin/webpack",
+        "build-examples": "APP=examples MODE=production webpack",
+        "build-review": "APP=review MODE=production webpack",
         "build-server": "tsc --project tsconfig.server.json",
         "examples": "APP=examples yarn webpack-serve",
         "review": "APP=review yarn webpack-serve",
