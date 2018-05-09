@@ -28,6 +28,7 @@ import { TileRackReadOnly, TileRackReadOnlyProps } from './components/TileRackRe
 import { GameBoardLabelMode, GameStatus } from './enums';
 import { getDummyGameForGetGameHistory, getExampleNextGameActionsArray } from './exampleData';
 import { chains, gameBoardTypeToHotelInitial, getTileString } from './helpers';
+import * as style from './examples.css';
 
 class AllDemoProps {
     loginFormProps: LoginFormProps[];
@@ -349,7 +350,7 @@ class AllDemoProps {
 
 function render(props: AllDemoProps) {
     ReactDOM.render(
-        <>
+        <div className={style.root}>
             <h1>LoginForm</h1>
             {renderComponentForEachProps(LoginForm, props.loginFormProps)}
 
@@ -389,7 +390,7 @@ function render(props: AllDemoProps) {
 
             <h1>GameState</h1>
             {renderComponentForEachProps(GameState, props.gameStateProps)}
-        </>,
+        </div>,
         document.getElementById('root'),
     );
 }

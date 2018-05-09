@@ -110,7 +110,7 @@ export function getExampleNextGameActionsArray() {
         PlayerArrangementMode.RandomOrder,
         [],
         List([1, 2, 3, 4, 5]),
-        List(['Tim', 'Rita', 'Dad', 'Mom', 'REALLY, REALLY, REALLY LONG NAME']),
+        List(['Tim', 'Rita', 'Dad', 'Mom', 'REALLY, REALLY, REALLY, REALLY, REALLY LONG NAME']),
         1,
         6,
     );
