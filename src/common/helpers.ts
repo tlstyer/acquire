@@ -1,5 +1,4 @@
 import { GameMode } from './enums';
-import { MoveData } from './game';
 
 export function getNewTileBag() {
     let tileBag: number[] = new Array(108);
@@ -148,5 +147,3 @@ export const gameModeToTeamSize: { [key: number]: number } = {
     [GameMode.Teams2vs2vs2]: 2,
     [GameMode.Teams3vs3]: 3,
 };
-
-export let dummyMoveData: MoveData;

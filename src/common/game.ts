@@ -18,7 +18,7 @@ import { GameAction, GameBoardType, GameHistoryMessage, GameMode, PlayerArrangem
 import { UserInputError } from './error';
 import { ActionBase } from './gameActions/base';
 import { ActionStartGame } from './gameActions/startGame';
-import { calculateBonuses, dummyMoveData, getNeighboringTiles } from './helpers';
+import { calculateBonuses, getNeighboringTiles } from './helpers';
 
 type GameJSON = [GameMode, PlayerArrangementMode, number | null, number, number[], string[], number, number[], ([any] | [any, number])[]];
 
@@ -475,9 +475,7 @@ export class Game {
     toJSON(): GameJSON {
         const gameActions = new Array(this.moveDataHistory.size);
         let lastTimestamp: number | null = null;
-        for (let i = 0; i < this.moveDataHistory.size; i++) {
-            const moveData = this.moveDataHistory.get(i, dummyMoveData);
-
+        this.moveDataHistory.forEach((moveData, i) => {
             const gameActionData: any[] = [moveData.gameActionParameters];
 
             const currentTimestamp = moveData.timestamp;
@@ -491,7 +489,7 @@ export class Game {
 
             gameActions[i] = gameActionData;
             lastTimestamp = currentTimestamp;
-        }
+        });
 
         return [
             this.gameMode,

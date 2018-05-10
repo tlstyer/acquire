@@ -5,9 +5,9 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
 import { defaultTileRack, defaultTileRackTypes } from '../common/defaults';
-import { Game } from '../common/game';
+import { GameMode, PlayerArrangementMode } from '../common/enums';
+import { Game, MoveData } from '../common/game';
 import { ActionGameOver } from '../common/gameActions/gameOver';
-import { dummyMoveData } from '../common/helpers';
 import { GameBoard } from './components/GameBoard';
 import { GameHistory } from './components/GameHistory';
 import { GameState } from './components/GameState';
@@ -15,6 +15,8 @@ import { ScoreBoard } from './components/ScoreBoard';
 import { TileRackReadOnly } from './components/TileRackReadOnly';
 import { GameBoardLabelMode } from './enums';
 import * as style from './review.css';
+
+const dummyMoveData = new MoveData(new Game(GameMode.Singles1, PlayerArrangementMode.RandomOrder, [], List(), List(), 0, null));
 
 function render() {
     const moveData = game.moveDataHistory.get(selectedMove, dummyMoveData);
