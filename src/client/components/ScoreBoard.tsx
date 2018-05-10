@@ -57,9 +57,9 @@ export class ScoreBoard extends React.PureComponent<ScoreBoardProps> {
         }
 
         return (
-            <table className={style.root} style={{ fontSize: Math.floor(cellWidth * 0.6) }}>
+            <table className={style.root} style={{ fontSize: Math.floor(cellWidth * 0.6), width: cellWidth * 18 + 2 }}>
                 <tbody>
-                    <ScoreBoardHeader cellWidth={cellWidth} />
+                    <ScoreBoardHeader />
                     {usernames.map((username, playerID) => (
                         <ScoreBoardRow
                             key={playerID}
@@ -70,7 +70,6 @@ export class ScoreBoard extends React.PureComponent<ScoreBoardProps> {
                             safeChains={safeChains}
                             defaultClassName={isTeamGame ? teamNumberToCSSClassName[playerID % numTeams + 1] : style.player}
                             zeroValueReplacement={''}
-                            cellWidth={cellWidth}
                         />
                     ))}
                     <ScoreBoardRow
@@ -83,7 +82,6 @@ export class ScoreBoard extends React.PureComponent<ScoreBoardProps> {
                         zeroValueReplacement={'0'}
                         teamNumber={teamNumbers[0]}
                         teamTotal={teamTotals[0]}
-                        cellWidth={cellWidth}
                     />
                     <ScoreBoardRow
                         title={'Chain Size'}
@@ -95,7 +93,6 @@ export class ScoreBoard extends React.PureComponent<ScoreBoardProps> {
                         zeroValueReplacement={'-'}
                         teamNumber={teamNumbers[1]}
                         teamTotal={teamTotals[1]}
-                        cellWidth={cellWidth}
                     />
                     <ScoreBoardRow
                         title={'Price ($00)'}
@@ -107,7 +104,6 @@ export class ScoreBoard extends React.PureComponent<ScoreBoardProps> {
                         zeroValueReplacement={'-'}
                         teamNumber={teamNumbers[2]}
                         teamTotal={teamTotals[2]}
-                        cellWidth={cellWidth}
                     />
                 </tbody>
             </table>
@@ -123,34 +119,18 @@ function getTeamTotal(scoreBoard: List<List<number>>, numTeams: number, teamNumb
     return teamTotal;
 }
 
-interface ScoreBoardHeaderProps {
-    cellWidth: number;
-}
-
-class ScoreBoardHeader extends React.PureComponent<ScoreBoardHeaderProps> {
+class ScoreBoardHeader extends React.PureComponent {
     render() {
-        const { cellWidth } = this.props;
-
-        const playerStyle = { width: cellWidth * 5, maxWidth: cellWidth * 5 };
-        const chainStyle = { width: cellWidth, maxWidth: cellWidth };
-        const cashAndNetStyle = { width: cellWidth * 3, maxWidth: cellWidth * 3 };
-
         return (
             <tr>
-                <td className={style.playerHeader} style={playerStyle}>
-                    Player
-                </td>
+                <td className={style.playerHeader}>Player</td>
                 {chains.map(chain => (
-                    <td key={chain} className={gameBoardTypeToCSSClassName[chain]} style={chainStyle}>
+                    <td key={chain} className={gameBoardTypeToCSSClassName[chain]}>
                         {gameBoardTypeToHotelInitial[chain]}
                     </td>
                 ))}
-                <td className={style.cashAndNetHeader} style={cashAndNetStyle}>
-                    Cash
-                </td>
-                <td className={style.cashAndNetHeader} style={cashAndNetStyle}>
-                    Net
-                </td>
+                <td className={style.cashAndNetHeader}>Cash</td>
+                <td className={style.cashAndNetHeader}>Net</td>
             </tr>
         );
     }
@@ -166,27 +146,11 @@ interface ScoreBoardRowProps {
     zeroValueReplacement: string;
     teamNumber?: number;
     teamTotal?: number;
-    cellWidth: number;
 }
 
 class ScoreBoardRow extends React.PureComponent<ScoreBoardRowProps> {
     render() {
-        const {
-            title,
-            isPlayersTurn,
-            isPlayersMove,
-            scoreBoardRow,
-            safeChains,
-            defaultClassName,
-            zeroValueReplacement,
-            teamNumber,
-            teamTotal,
-            cellWidth,
-        } = this.props;
-
-        const playerStyle = { width: cellWidth * 5, maxWidth: cellWidth * 5 };
-        const chainStyle = { width: cellWidth, maxWidth: cellWidth };
-        const cashAndNetStyle = { width: cellWidth * 3, maxWidth: cellWidth * 3 };
+        const { title, isPlayersTurn, isPlayersMove, scoreBoardRow, safeChains, defaultClassName, zeroValueReplacement, teamNumber, teamTotal } = this.props;
 
         let nameCellClassName: string;
         if (isPlayersTurn) {
@@ -199,32 +163,24 @@ class ScoreBoardRow extends React.PureComponent<ScoreBoardRowProps> {
 
         return (
             <tr>
-                <td className={nameCellClassName} style={playerStyle}>
-                    {title}
-                </td>
+                <td className={nameCellClassName}>{title}</td>
                 {safeChains.map((isSafe, chain) => {
                     const value = scoreBoardRow.get(chain, 0);
                     return (
-                        <td key={chain} className={isSafe ? style.safeChain : defaultClassName} style={chainStyle}>
+                        <td key={chain} className={isSafe ? style.safeChain : defaultClassName}>
                             {value === 0 ? zeroValueReplacement : value}
                         </td>
                     );
                 })}
                 {scoreBoardRow.size === ScoreBoardIndex.Max ? (
-                    <td className={defaultClassName} style={cashAndNetStyle}>
-                        {scoreBoardRow.get(7, 0) * 100}
-                    </td>
+                    <td className={defaultClassName}>{scoreBoardRow.get(7, 0) * 100}</td>
                 ) : (
-                    <td className={style.bottomRightCells} style={cashAndNetStyle}>
-                        {teamNumber !== undefined ? 'Team ' + teamNumber : undefined}
-                    </td>
+                    <td className={style.bottomRightCells}>{teamNumber !== undefined ? 'Team ' + teamNumber : undefined}</td>
                 )}
                 {scoreBoardRow.size === ScoreBoardIndex.Max ? (
-                    <td className={defaultClassName} style={cashAndNetStyle}>
-                        {scoreBoardRow.get(8, 0) * 100}
-                    </td>
+                    <td className={defaultClassName}>{scoreBoardRow.get(8, 0) * 100}</td>
                 ) : (
-                    <td className={teamNumber !== undefined ? teamNumberToCSSClassName[teamNumber] : style.bottomRightCells} style={cashAndNetStyle}>
+                    <td className={teamNumber !== undefined ? teamNumberToCSSClassName[teamNumber] : style.bottomRightCells}>
                         {teamTotal !== undefined ? teamTotal * 100 : undefined}
                     </td>
                 )}
