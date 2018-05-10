@@ -2,3 +2,9 @@
     margin-left: 25px;
     width: 600px;
 }
+
+.gameHistoryWrapper {
+    & > div {
+        height: 300px;
+    }
+}

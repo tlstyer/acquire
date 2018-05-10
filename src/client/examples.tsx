@@ -388,7 +388,7 @@ function render(props: AllDemoProps) {
             {renderComponentForEachProps(PurchaseShares, props.purchaseSharesProps, getPurchaseSharesDescription)}
 
             <h1>GameHistory</h1>
-            {renderComponentForEachProps(GameHistory, props.gameHistoryProps)}
+            <div className={style.gameHistoryWrapper}>{renderComponentForEachProps(GameHistory, props.gameHistoryProps)}</div>
 
             <h1>GameState</h1>
             {renderComponentForEachProps(GameState, props.gameStateProps)}
