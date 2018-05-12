@@ -90,6 +90,10 @@ action: 0 PurchaseShares L,C,T 0
     1: 10D(F) 1G(l) 4D(m) 9C(A) 12I(l) 10G(c)
   revealed tile bag tiles: 1A:0
   player ID with playable tile: 1
+  messages:
+    0: [[[0,5,1],0],[],[0],1]
+    1: [[[0,5,1],0],[],[-1],1]
+    w: [[[0,5,1],0],[],[-1],1]
   history messages:
     0 PurchasedShares 1L,1T,1C
     0 DrewTile 1A

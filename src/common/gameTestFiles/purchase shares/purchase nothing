@@ -28,6 +28,10 @@ action: 1 SelectNewChain L
   tile racks:
     0: 11A(l) 1A(l) 7E(l) 7B(l) 11I(l) 12C(l)
     1: 4B(l) none 8H(h) 10H(l) 2G(l) 8G(h)
+  messages:
+    0: [[0]]
+    1: [[0]]
+    w: [[0]]
   history messages:
     1 FormedChain L
   next action: 1 PurchaseShares
@@ -47,6 +51,10 @@ action: 1 PurchaseShares x 0
     1: 4B(l) 3I(l) 8H(h) 10H(l) 2G(l) 8G(h)
   revealed tile bag tiles: 3I:1
   player ID with playable tile: 0
+  messages:
+    0: [[[],0],[],[-1],0]
+    1: [[[],0],[],[26],0]
+    w: [[[],0],[],[-1],0]
   history messages:
     1 PurchasedShares x
     1 DrewTile 3I

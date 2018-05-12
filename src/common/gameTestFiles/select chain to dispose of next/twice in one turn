@@ -49,6 +49,12 @@ action: 0 PlayTile 5G
     2: 9C(l) 11G(l) 10D(l) 4D(l) 1G(l) 2I(l)
     3: 5D(I) 12H(h) 10I(l) 8H(l) 3F(L) 11H(h)
   revealed tile rack tiles: 5G:0
+  messages:
+    0: [[42]]
+    1: [[42],[[42,0]]]
+    2: [[42],[[42,0]]]
+    3: [[42],[[42,0]]]
+    w: [[42],[[42,0]]]
   history messages:
     0 PlayedTile 5G
     0 MergedChains L,T,C,I
@@ -69,6 +75,12 @@ action: 0 SelectMergerSurvivor I
     1: 4F(I) 10B(l) 1B(l) 11I(l) 3A(l) 9I(l)
     2: 9C(l) 11G(l) 10D(l) 4D(l) 1G(l) 2I(l)
     3: 5D(I) 12H(h) 10I(l) 8H(l) 3F(I) 11H(h)
+  messages:
+    0: [[6]]
+    1: [[6]]
+    2: [[6]]
+    3: [[6]]
+    w: [[6]]
   history messages:
     0 SelectedMergerSurvivor I
     0 ReceivedBonus L 20
@@ -94,6 +106,12 @@ action: 0 SelectChainToDisposeOfNext T
     1: 4F(I) 10B(l) 1B(l) 11I(l) 3A(l) 9I(l)
     2: 9C(l) 11G(l) 10D(l) 4D(l) 1G(l) 2I(l)
     3: 5D(I) 12H(h) 10I(l) 8H(l) 3F(I) 11H(h)
+  messages:
+    0: [[1]]
+    1: [[1]]
+    2: [[1]]
+    3: [[1]]
+    w: [[1]]
   history messages:
     0 SelectedChainToDisposeOfNext T
   next action: 1 DisposeOfShares T
@@ -117,6 +135,12 @@ action: 0 SelectChainToDisposeOfNext C
     1: 4F(I) 10B(l) 1B(l) 11I(l) 3A(l) 9I(l)
     2: 9C(l) 11G(l) 10D(l) 4D(l) 1G(l) 2I(l)
     3: 5D(I) 12H(h) 10I(l) 8H(l) 3F(I) 11H(h)
+  messages:
+    0: [[5]]
+    1: [[5]]
+    2: [[5]]
+    3: [[5]]
+    w: [[5]]
   history messages:
     0 SelectedChainToDisposeOfNext C
   next action: 2 DisposeOfShares C
@@ -146,6 +170,12 @@ action: 0 PurchaseShares I 1
     3: 5D(I) 12H(h) 10I(l) 8H(l) 3F(I) 11H(h)
   revealed tile bag tiles: 1A:0
   player ID with playable tile: 1
+  messages:
+    0: [[[6],1],[],[0],1]
+    1: [[[6],1],[],[-1],1]
+    2: [[[6],1],[],[-1],1]
+    3: [[[6],1],[],[-1],1]
+    w: [[[6],1],[],[-1],1]
   history messages:
     0 PurchasedShares 1I
     0 DrewTile 1A

@@ -44,6 +44,11 @@ action: 1 SelectMergerSurvivor A
     0: 1D(l) 6E(h) 7E(h) 7A(l) 11I(l) 12C(l)
     1: 6I(l) 2D(A) none 10H(l) 2G(l) 8G(l)
     2: 8H(l) 1B(A) 6B(l) 3C(A) 7G(l) 3A(A)
+  messages:
+    0: [[2]]
+    1: [[2]]
+    2: [[2]]
+    w: [[2]]
   history messages:
     1 SelectedMergerSurvivor A
     1 ReceivedBonus C 40
@@ -64,6 +69,11 @@ action: 1 DisposeOfShares 2 1
     0: 1D(l) 6E(h) 7E(h) 7A(l) 11I(l) 12C(l)
     1: 6I(l) 2D(A) none 10H(l) 2G(l) 8G(l)
     2: 8H(l) 1B(A) 6B(l) 3C(A) 7G(l) 3A(A)
+  messages:
+    0: [[2,1]]
+    1: [[2,1]]
+    2: [[2,1]]
+    w: [[2,1]]
   history messages:
     1 DisposedOfShares C 2 1
   next action: 0 DisposeOfShares C
@@ -82,6 +92,11 @@ action: 0 DisposeOfShares 0 0
     0: 1D(l) 6E(h) 7E(h) 7A(l) 11I(l) 12C(l)
     1: 6I(l) 2D(A) none 10H(l) 2G(l) 8G(l)
     2: 8H(l) 1B(A) 6B(l) 3C(A) 7G(l) 3A(A)
+  messages:
+    0: [[0,0]]
+    1: [[0,0]]
+    2: [[0,0]]
+    w: [[0,0]]
   history messages:
     0 DisposedOfShares C 0 0
   next action: 1 PurchaseShares

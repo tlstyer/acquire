@@ -26,6 +26,10 @@ action: 0 PurchaseShares I,I,I 0
     1: 2A(I) 8H(l) 10H(l) 2G(l) 1D(l) 11D(l)
   revealed tile bag tiles: 7G:0
   player ID with playable tile: 1
+  messages:
+    0: [[[6,6,6],0],[],[60],1]
+    1: [[[6,6,6],0],[],[-1],1]
+    w: [[[6,6,6],0],[],[-1],1]
   history messages:
     0 PurchasedShares 3I
     0 DrewTile 7G
@@ -46,6 +50,10 @@ action: 1 PlayTile 2A
     0: 7E(l) 7G(l) 12H(l) 7B(l) 11I(l) 12C(l)
     1: none 8H(l) 10H(l) 2G(l) 1D(l) 11D(l)
   revealed tile rack tiles: 2A:1
+  messages:
+    0: [[9],[[9,1]]]
+    1: [[9]]
+    w: [[9],[[9,1]]]
   history messages:
     1 PlayedTile 2A
   next action: 1 PurchaseShares

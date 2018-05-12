@@ -350,6 +350,13 @@ function getMoveDataLines(moveData: MoveData, revealedTilesPlayerID: number | nu
             lines.push(`  player ID with playable tile: ${moveData.playerIDWithPlayableTile}`);
         }
 
+        lines.push('  messages:');
+        moveData.createPlayerAndWatcherMessages();
+        for (let playerID = 0; playerID < moveData.playerMessages.length; playerID++) {
+            lines.push(`    ${playerID}: ${JSON.stringify(moveData.playerMessages[playerID])}`);
+        }
+        lines.push(`    w: ${JSON.stringify(moveData.watcherMessage)}`);
+
         lines.push('  history messages:');
         moveData.gameHistoryMessages.forEach(ghm => {
             lines.push(`    ${getGameHistoryMessageString(ghm)}`);

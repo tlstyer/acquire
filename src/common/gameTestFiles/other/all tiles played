@@ -232,6 +232,32 @@ action: 1 DisposeOfShares 10 0
 action: 0 DisposeOfShares 10 0
 
 action: 1 PurchaseShares W,W,W 0
+  ··AAA··O···W  P  L  T  A  F  W  C  I Cash  Net
+  ·AA········W  T     1 13  1 11 10  9   34  665
+  ···O···WWW·W          11  1 13  9  8   23  566
+  ·CC·III█·WWW  A 25 24  1 23  1  6  8
+  ·C···IIII··W  C  -  -  5  3 13  9 17
+  CC···II···WW  P  -  -  6  4  8  8  9
+  CC·I·I·····W
+  C·IIII·O··F·
+  C··II·O·O·FF
+  tile racks:
+    0: 7A(n) 10E(█) 2C(m) 2A(A) 11C(W) 11B(W)
+    1: 10F(W) 5C(I) 6C(I) 9H(n) 5E(I) 9B(W)
+  revealed tile rack tiles: 8D:1
+  revealed tile bag tiles: 9B:1, 9H:1
+  player ID with playable tile: 0
+  messages:
+    0: [[[4,4,4],0],[[66,1]],[-1,-1],0]
+    1: [[[4,4,4],0],[],[73,79],0]
+    w: [[[4,4,4],0],[[66,1]],[-1,-1],0]
+  history messages:
+    1 PurchasedShares 3W
+    1 DrewTile 9B
+    1 ReplacedDeadTile 8D
+    1 DrewTile 9H
+    0 TurnBegan
+  next action: 0 PlayTile
 
 action: 0 PlayTile 2C
 
@@ -240,6 +266,32 @@ action: 0 DisposeOfShares 12 0
 action: 1 DisposeOfShares 0 0
 
 action: 0 PurchaseShares I,I,I 0
+  ··CCC··O···W  P  L  T  A  F  W  C  I Cash  Net
+  ·CC········W        1  1  1 11 16 12   67  661
+  ·C·O···WWW·W  T       11  1 13  9  8   53  514
+  ·CC·III█·WWW  A 25 24 13 23  1  0  5
+  ·C···IIII█·W  C  -  -  -  3 13 15 17
+  CC···II···WW  P  -  -  -  4  8  9  9
+  CC·I·I·····W
+  C·IIII·O··F·
+  C··II·O·O·FF
+  tile racks:
+    0: 7A(n) 3E(C) 1B(C) 2A(C) 11C(W) 11B(W)
+    1: 10F(W) 5C(I) 6C(I) 9H(n) 5E(I) 9B(W)
+  revealed tile rack tiles: 10E:0
+  revealed tile bag tiles: 1B:0, 3E:0
+  player ID with playable tile: 1
+  messages:
+    0: [[[6,6,6],0],[],[1,22],1]
+    1: [[[6,6,6],0],[[85,0]],[-1,-1],1]
+    w: [[[6,6,6],0],[[85,0]],[-1,-1],1]
+  history messages:
+    0 PurchasedShares 3I
+    0 DrewTile 1B
+    0 ReplacedDeadTile 10E
+    0 DrewTile 3E
+    1 TurnBegan
+  next action: 1 PlayTile
 
 action: 1 PlayTile 9H
 
@@ -264,6 +316,32 @@ action: 0 PurchaseShares I,F,F 0
 action: 1 PlayTile 5C
 
 action: 1 PurchaseShares F,F,F 0
+  ··CCC·TT···W  P  L  T  A  F  W  C  I Cash  Net
+  ·CC█····W··W  T     4  1  4 11 16 13   42  699
+  ·C·II··WWW·W        1 12  6 13  9 11    4  622
+  ·CC·III█·WWW  A 25 20 12 15  1  0  1
+  ·C···IIII█·W  C  -  2  3  3 14 15 20
+  CC···II···WW  P  -  2  4  4  8  9  9
+  CC·III·····W
+  C·IIII·AA·F·
+  C··II·O·A·FF
+  tile racks:
+    0: 10I(m) 3E(C) 1B(C) 2A(C) 11C(W) 11B(W)
+    1: 10F(W) 4E(l) 6C(I) 6B(l) 5E(I) 10B(W)
+  revealed tile rack tiles: 4B:1
+  revealed tile bag tiles: 4E:1, 10B:1
+  player ID with playable tile: 0
+  messages:
+    0: [[[3,3,3],0],[[28,1]],[-1,-1],0]
+    1: [[[3,3,3],0],[],[31,82],0]
+    w: [[[3,3,3],0],[[28,1]],[-1,-1],0]
+  history messages:
+    1 PurchasedShares 3F
+    1 DrewTile 4E
+    1 ReplacedDeadTile 4B
+    1 DrewTile 10B
+    0 TurnBegan
+  next action: 0 PlayTile
 
 action: 0 PlayTile 3E
 
@@ -272,6 +350,32 @@ action: 0 PurchaseShares F,F,F 0
 action: 1 PlayTile 5E
 
 action: 1 PurchaseShares F 0
+  ··CCC·TT···W  P  L  T  A  F  W  C  I Cash  Net
+  ·CC█····W··W  T     4  1  7 11 16 13   30  732
+  ·C·II··WWW·W        1 12  7 13  9 11    0  628
+  ·CC·III█·WWW  A 25 20 12 11  1  0  1
+  ·CC█IIIII█·W  C  -  2  3  3 14 16 21
+  CC···II···WW  P  -  2  4  4  8  9 10
+  CC·III·····W
+  C·IIII·AA·F·
+  C··II·O·A·FF
+  tile racks:
+    0: 10I(m) 8I(A) 1B(C) 2A(C) 11C(W) 11B(W)
+    1: 10F(W) 11A(W) 6C(I) 6B(l) 8B(m) 10B(W)
+  revealed tile rack tiles: 4E:1
+  revealed tile bag tiles: 8B:1, 11A:1
+  player ID with playable tile: 0
+  messages:
+    0: [[[3],0],[[31,1]],[-1,-1],0]
+    1: [[[3],0],[],[64,90],0]
+    w: [[[3],0],[[31,1]],[-1,-1],0]
+  history messages:
+    1 PurchasedShares 1F
+    1 DrewTile 8B
+    1 ReplacedDeadTile 4E
+    1 DrewTile 11A
+    0 TurnBegan
+  next action: 0 PlayTile
 
 action: 0 PlayTile 2A
 
@@ -302,14 +406,96 @@ action: 1 PurchaseShares I,T,T 0
 action: 0 PlayTile 8I
 
 action: 0 PurchaseShares T,T,W 0
+  ·CCCC·TT··WW  P  L  T  A  F  W  C  I Cash  Net
+  ·CC█····WW·W        9    13 12 16 13   12  811
+  CC·II··WWW·W  T     3  2 12 13  9 12   26  641
+  ·CC·III█·WWW  A 25 13 23  0  0  0  0
+  ·CC█IIIII█·W  C  -  2  -  9 17 18 21
+  CC···II·█WWW  P  -  2  -  7  8  9 10
+  CC·III·····W
+  C·IIII·FF·F·
+  C··II·FFFFFF
+  tile racks:
+    0: 7G(I) 6I(m) 1B(C) 9G(F) 11C(W) 11B(W)
+    1: 1E(C) 8F(I) 6C(I) 6B(l) 8B(m) 8G(F)
+  revealed tile bag tiles: 9F:all, 6I:0
+  player ID with playable tile: 1
+  messages:
+    0: [[[1,1,4],0],[],[77,53],1]
+    1: [[[1,1,4],0],[],[77,-1],1]
+    w: [[[1,1,4],0],[],[77,-1],1]
+  history messages:
+    0 PurchasedShares 2T,1W
+    0 DrewTile 9F
+    0 ReplacedDeadTile 9F
+    0 DrewTile 6I
+    1 TurnBegan
+  next action: 1 PlayTile
 
 action: 1 PlayTile 8G
 
 action: 1 PurchaseShares T,T,T 0
+  ·CCCC·TT··WW  P  L  T  A  F  W  C  I Cash  Net
+  ·CC█····WW·W  T     9    13 12 16 13   12  811
+  CC█II··WWW·W        6  2 12 13  9 12   20  641
+  ·CC█III█·WWW  A 25 10 23  0  0  0  0
+  ·CC█IIIII█·W  C  -  2  - 10 17 18 21
+  CC···II·█WWW  P  -  2  -  7  8  9 10
+  CC·III·F···W
+  C·IIII·FF·F·
+  C··II·FFFFFF
+  tile racks:
+    0: 7G(m) 6I(m) 1B(C) 9G(F) 11C(W) 11B(W)
+    1: 1E(C) 8F(m) 6C(I) 6B(l) 8B(m) 3I(I)
+  revealed tile bag tiles: 3C:all, 4D:all, 3I:1
+  player ID with playable tile: 0
+  messages:
+    0: [[[1,1,1],0],[],[20,30,-1],0]
+    1: [[[1,1,1],0],[],[20,30,26],0]
+    w: [[[1,1,1],0],[],[20,30,-1],0]
+  history messages:
+    1 PurchasedShares 3T
+    1 DrewTile 3C
+    1 ReplacedDeadTile 3C
+    1 DrewTile 4D
+    1 ReplacedDeadTile 4D
+    1 DrewTile 3I
+    0 TurnBegan
+  next action: 0 PlayTile
 
 action: 0 PlayTile 9G
 
 action: 0 PurchaseShares T,T,T 0
+  ·CCCC·TT··WW  P  L  T  A  F  W  C  I Cash  Net
+  ·CC█····WW·W       12    13 12 16 13    6  834
+  CC█II·█WWW·W  T     6  2 12 13  9 12   20  658
+  ·CC█III█·WWW  A 25  7 23  0  0  0  0
+  ·CC█IIIII█·W  C  -  2  - 11 17 18 21
+  CC···II·█WWW  P  -  2  -  8  8  9 10
+  CC·III█FF··W
+  C·IIII·FF·F·
+  C··II█FFFFFF
+  tile racks:
+    0: 4F(I) 7B(T) 1B(C) 3F(C) 11C(W) 11B(W)
+    1: 1E(C) 8F(█) 6C(I) 6B(l) 8B(m) 3I(I)
+  revealed tile rack tiles: 7G:0, 6I:0
+  revealed tile bag tiles: 7C:all, 4F:0, 7B:0, 3F:0
+  player ID with playable tile: 1
+  messages:
+    0: [[[1,1,1],0],[],[56,32,55,23],1]
+    1: [[[1,1,1],0],[[60,0],[53,0]],[56,-1,-1,-1],1]
+    w: [[[1,1,1],0],[[60,0],[53,0]],[56,-1,-1,-1],1]
+  history messages:
+    0 PurchasedShares 3T
+    0 DrewTile 7C
+    0 ReplacedDeadTile 7G
+    0 DrewTile 4F
+    0 ReplacedDeadTile 6I
+    0 DrewTile 7B
+    0 ReplacedDeadTile 7C
+    0 DrewTile 3F
+    1 TurnBegan
+  next action: 1 PlayTile
 
 action: 1 PlayTile 8B
 
@@ -318,10 +504,64 @@ action: 1 DisposeOfShares 0 6
 action: 0 DisposeOfShares 0 12
 
 action: 1 PurchaseShares x 0
+  ·CCCC·WW··WW  P  L  T  A  F  W  C  I Cash  Net
+  ·CC█···WWW·W  T          13 12 16 13   50  834
+  CC█II·█WWW·W           2 12 13  9 12   42  658
+  ·CC█III█·WWW  A 25 25 23  0  0  0  0
+  ·CC█IIIII█·W  C  -  -  - 11 20 18 21
+  CC···II██WWW  P  -  -  -  8  8  9 10
+  CC·III█FF·█W
+  C·IIII·FF·F·
+  C··II█FFFFFF
+  tile racks:
+    0: 4F(I) 7B(W) 1B(C) 3F(C) 11C(W) 11B(W)
+    1: 1E(C) 11E(W) 6C(I) 6B(l) 2I(C) 3I(I)
+  revealed tile rack tiles: 8F:1
+  revealed tile bag tiles: 2I:1, 11G:all, 11E:1
+  player ID with playable tile: 0
+  messages:
+    0: [[[],0],[[68,1]],[-1,96,-1],0]
+    1: [[[],0],[],[17,96,94],0]
+    w: [[[],0],[[68,1]],[-1,96,-1],0]
+  history messages:
+    1 PurchasedShares x
+    1 DrewTile 2I
+    1 ReplacedDeadTile 8F
+    1 DrewTile 11G
+    1 ReplacedDeadTile 11G
+    1 DrewTile 11E
+    0 TurnBegan
+  next action: 0 PlayTile
 
 action: 0 PlayTile 3F
 
 action: 0 PurchaseShares x 0
+  ·CCCC·WW··WW  P  L  T  A  F  W  C  I Cash  Net
+  ·CC█···WWW·W             13 12 16 13   50  834
+  CC█II·█WWW·W  T        2 12 13  9 12   42  658
+  ·CC█III█·WWW  A 25 25 23  0  0  0  0
+  ·CC█IIIII█·W  C  -  -  - 11 20 19 21
+  CCC█·II██WWW  P  -  -  -  8  8  9 10
+  CC·III█FF·█W
+  C·IIII·FF·F·
+  C··II█FFFFFF
+  tile racks:
+    0: 10A(W) 7B(W) 1B(C) 9A(W) 11C(W) 11B(W)
+    1: 1E(C) 11E(W) 6C(I) 6B(l) 2I(C) 3I(I)
+  revealed tile rack tiles: 4F:0
+  revealed tile bag tiles: 9A:0, 10A:0
+  player ID with playable tile: 1
+  messages:
+    0: [[[],0],[],[72,81],1]
+    1: [[[],0],[[32,0]],[-1,-1],1]
+    w: [[[],0],[[32,0]],[-1,-1],1]
+  history messages:
+    0 PurchasedShares x
+    0 DrewTile 9A
+    0 ReplacedDeadTile 4F
+    0 DrewTile 10A
+    1 TurnBegan
+  next action: 1 PlayTile
 
 action: 1 PlayTile 11E
 
@@ -334,14 +574,101 @@ action: 0 PurchaseShares x 0
 action: 1 PlayTile 10H
 
 action: 1 PurchaseShares x 0
+  ·CCCC·WW··WW  P  L  T  A  F  W  C  I Cash  Net
+  CCC██··WWW·W  T          13 12 16 13   50  851
+  CC█II·█WWW·W           2 12 13  9 12   42  681
+  ·CC█III█·WWW  A 25 25 23  0  0  0  0
+  ·CC█IIIII█WW  C  -  -  - 12 21 20 21
+  CCC█·II██WWW  P  -  -  -  8  9  9 10
+  CC·III█FF·█W
+  C·IIII·FFFF█
+  C··II█FFFFFF
+  tile racks:
+    0: 10A(W) 7B(W) 5F(I) 9A(W) 11C(W) 11B(W)
+    1: 1E(C) 1D(C) 6C(I) 6B(l) 2I(C) 3I(I)
+  revealed tile bag tiles: 12H:all, 5B:all, 1D:1
+  player ID with playable tile: 0
+  messages:
+    0: [[[],0],[],[106,37,-1],0]
+    1: [[[],0],[],[106,37,3],0]
+    w: [[[],0],[],[106,37,-1],0]
+  history messages:
+    1 PurchasedShares x
+    1 DrewTile 12H
+    1 ReplacedDeadTile 12H
+    1 DrewTile 5B
+    1 ReplacedDeadTile 5B
+    1 DrewTile 1D
+    0 TurnBegan
+  next action: 0 PlayTile
 
 action: 0 PlayTile 7B
 
 action: 0 PurchaseShares x 0
+  ·CCCC·WW··WW  P  L  T  A  F  W  C  I Cash  Net
+  CCC██·WWWW·W             13 12 16 13   50  851
+  CC█II·█WWW·W  T        2 12 13  9 12   42  681
+  ·CC█III██WWW  A 25 25 23  0  0  0  0
+  ·CC█IIIII█WW  C  -  -  - 12 22 20 21
+  CCC█·II██WWW  P  -  -  -  8  9  9 10
+  CC█III█FF·█W
+  C█IIII█FFFF█
+  C··II█FFFFFF
+  tile racks:
+    0: 10A(W) 1A(C) 5F(I) 9A(W) 11C(W) 11B(W)
+    1: 1E(C) 1D(C) 6C(I) 6B(W) 2I(C) 3I(I)
+  revealed tile bag tiles: 2H:all, 7H:all, 9D:all, 3G:all, 1A:0
+  player ID with playable tile: 1
+  messages:
+    0: [[[],0],[],[16,61,75,24,0],1]
+    1: [[[],0],[],[16,61,75,24,-1],1]
+    w: [[[],0],[],[16,61,75,24,-1],1]
+  history messages:
+    0 PurchasedShares x
+    0 DrewTile 2H
+    0 ReplacedDeadTile 2H
+    0 DrewTile 7H
+    0 ReplacedDeadTile 7H
+    0 DrewTile 9D
+    0 ReplacedDeadTile 9D
+    0 DrewTile 3G
+    0 ReplacedDeadTile 3G
+    0 DrewTile 1A
+    1 TurnBegan
+  next action: 1 PlayTile
 
 action: 1 PlayTile 6B
 
 action: 1 PurchaseShares x 0
+  ·CCCC█WW··WW  P  L  T  A  F  W  C  I Cash  Net
+  CCC██WWWWW·W  T          13 12 16 13   50  851
+  CC█II██WWW·W           2 12 13  9 12   42  681
+  ·CC█III██WWW  A 25 25 23  0  0  0  0
+  ·CC█IIIII█WW  C  -  -  - 12 23 20 21
+  CCC█·II██WWW  P  -  -  -  8  9  9 10
+  CC█III█FF██W
+  C█IIII█FFFF█
+  C··II█FFFFFF
+  tile racks:
+    0: 10A(W) 1A(C) 5F(I) 9A(W) 11C(W) 11B(W)
+    1: 1E(C) 1D(C) none none 2I(C) 3I(I)
+  revealed tile rack tiles: 6C:1
+  revealed tile bag tiles: 10G:all, 6A:all
+  player ID with playable tile: 0
+  messages:
+    0: [[[],0],[[47,1]],[87,45],0]
+    1: [[[],0],[],[87,45],0]
+    w: [[[],0],[[47,1]],[87,45],0]
+  history messages:
+    1 PurchasedShares x
+    1 DrewTile 10G
+    1 ReplacedDeadTile 6C
+    1 DrewTile 6A
+    1 DrewLastTile
+    1 ReplacedDeadTile 6A
+    1 ReplacedDeadTile 10G
+    0 TurnBegan
+  next action: 0 PlayTile
 
 action: 0 PlayTile 9A
 
@@ -350,6 +677,29 @@ action: 0 PurchaseShares x 0
 action: 1 PlayTile 3I
 
 action: 1 PurchaseShares x 0
+  ·CCCC█WWW·WW  P  L  T  A  F  W  C  I Cash  Net
+  CCC██WWWWW·W  T          13 12 16 13   50  851
+  CC█II██WWW·W           2 12 13  9 12   42  681
+  ·CC█III██WWW  A 25 25 23  0  0  0  0
+  ·CC█IIIII█WW  C  -  -  - 12 24 20 22
+  CCC█·II██WWW  P  -  -  -  8  9  9 10
+  CC█III█FF██W
+  C█IIII█FFFF█
+  C█III█FFFFFF
+  tile racks:
+    0: 10A(W) 1A(C) 5F(I) none 11C(W) 11B(W)
+    1: 1E(C) 1D(C) none none none none
+  revealed tile rack tiles: 2I:1
+  player ID with playable tile: 0
+  messages:
+    0: [[[],0],[[17,1]],[],0]
+    1: [[[],0],[],[],0]
+    w: [[[],0],[[17,1]],[],0]
+  history messages:
+    1 PurchasedShares x
+    1 ReplacedDeadTile 2I
+    0 TurnBegan
+  next action: 0 PlayTile
 
 action: 0 PlayTile 1A
 
@@ -393,6 +743,10 @@ action: 0 PlayTile 10A
     0: none none none none none none
     1: none none none none none none
   revealed tile rack tiles: 10A:0
+  messages:
+    0: [[81]]
+    1: [[81],[[81,0]]]
+    w: [[81],[[81,0]]]
   history messages:
     0 PlayedTile 10A
   next action: 0 PurchaseShares
@@ -410,6 +764,10 @@ action: 0 PurchaseShares x 0
   tile racks:
     0: none none none none none none
     1: none none none none none none
+  messages:
+    0: [[[],0]]
+    1: [[[],0]]
+    w: [[[],0]]
   history messages:
     0 PurchasedShares x
     AllTilesPlayed

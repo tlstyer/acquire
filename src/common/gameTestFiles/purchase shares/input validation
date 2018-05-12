@@ -22,6 +22,10 @@ action: 0 SelectNewChain L
   tile racks:
     0: 1B(l) 5E(L) none 11I(l) 4E(L) 3G(l)
     1: 2B(l) 5F(l) 7H(l) 7A(n) 3D(L) 4H(l)
+  messages:
+    0: [[0]]
+    1: [[0]]
+    w: [[0]]
   history messages:
     0 FormedChain L
   next action: 0 PurchaseShares
@@ -139,6 +143,10 @@ action: 0 PlayTile 11D
     0: 9C(l) 5E(L) 11H(l) 11I(l) none 10E(l)
     1: 5G(c) 9A(l) 7H(l) 9H(l) 3D(L) 4H(l)
   revealed tile rack tiles: 11D:0
+  messages:
+    0: [[93]]
+    1: [[93],[[93,0]]]
+    w: [[93],[[93,0]]]
   history messages:
     0 PlayedTile 11D
     0 FormedChain T

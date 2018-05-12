@@ -543,6 +543,9 @@ export class Game {
     }
 }
 
+const dummyPlayerMessages: any[][] = [];
+const dummyWatcherMessage: any[] = [];
+
 export class MoveData {
     playerID: number = -1;
     gameAction: GameAction = GameAction.StartGame;
@@ -565,6 +568,9 @@ export class MoveData {
     safeChains = defaultSafeChains;
 
     revealedTileBagTilesLookup: { [key: number]: MoveDataTileBagTile } = {};
+
+    playerMessages: any[][] = dummyPlayerMessages;
+    watcherMessage: any[] = dummyWatcherMessage;
 
     constructor(public game: Game) {
         // assign something to this.nextGameAction so it gets set in the constructor
@@ -618,6 +624,45 @@ export class MoveData {
         if (this.revealedTileBagTiles.length > 0) {
             // save some memory
             this.revealedTileBagTilesLookup = {};
+        }
+    }
+
+    createPlayerAndWatcherMessages() {
+        this.playerMessages = new Array(this.game.userIDs.size);
+        for (let playerID = 0; playerID < this.playerMessages.length; playerID++) {
+            this.playerMessages[playerID] = this.createMessage(playerID);
+        }
+
+        this.watcherMessage = this.createMessage(-1);
+    }
+
+    createMessage(playerID: number) {
+        const revealedTileRackTiles: [number, number][] = [];
+        for (let i = 0; i < this.revealedTileRackTiles.length; i++) {
+            const moveDataTileRackTile = this.revealedTileRackTiles[i];
+            if (moveDataTileRackTile.playerIDBelongsTo !== playerID) {
+                revealedTileRackTiles.push([moveDataTileRackTile.tile, moveDataTileRackTile.playerIDBelongsTo]);
+            }
+        }
+
+        const revealedTileBagTiles: number[] = [];
+        for (let i = 0; i < this.revealedTileBagTiles.length; i++) {
+            const moveDataTileBagTile = this.revealedTileBagTiles[i];
+            revealedTileBagTiles.push(
+                moveDataTileBagTile.playerIDWithPermission === null || moveDataTileBagTile.playerIDWithPermission === playerID
+                    ? moveDataTileBagTile.tile
+                    : Tile.Unknown,
+            );
+        }
+
+        if (this.playerIDWithPlayableTile !== null) {
+            return [this.gameActionParameters, revealedTileRackTiles, revealedTileBagTiles, this.playerIDWithPlayableTile];
+        } else if (revealedTileBagTiles.length > 0) {
+            return [this.gameActionParameters, revealedTileRackTiles, revealedTileBagTiles];
+        } else if (revealedTileRackTiles.length > 0) {
+            return [this.gameActionParameters, revealedTileRackTiles];
+        } else {
+            return [this.gameActionParameters];
         }
     }
 }

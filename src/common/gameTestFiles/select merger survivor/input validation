@@ -39,6 +39,11 @@ action: 0 PlayTile 3B
     1: 6B(l) 2D(C) 8H(l) 10H(l) 2G(l) 8G(n)
     2: 1B(C) 4G(l) 3C(m) 12F(n) 3A(n) 1D(l)
   revealed tile rack tiles: 3B:0
+  messages:
+    0: [[19]]
+    1: [[19],[[19,0]]]
+    2: [[19],[[19,0]]]
+    w: [[19],[[19,0]]]
   history messages:
     0 PlayedTile 3B
     0 MergedChains A,C

@@ -643,6 +643,10 @@ action: 0 PlayTile 10A
     0: none none none none none none
     1: none none none none none none
   revealed tile rack tiles: 10A:0
+  messages:
+    0: [[81]]
+    1: [[81],[[81,0]]]
+    w: [[81],[[81,0]]]
   history messages:
     0 PlayedTile 10A
   next action: 0 PurchaseShares
@@ -660,6 +664,10 @@ action: 0 PurchaseShares x 0
   tile racks:
     0: none none none none none none
     1: none none none none none none
+  messages:
+    0: [[[],0]]
+    1: [[[],0]]
+    w: [[[],0]]
   history messages:
     0 PurchasedShares x
     AllTilesPlayed

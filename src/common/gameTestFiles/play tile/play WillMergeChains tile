@@ -38,6 +38,11 @@ action: 2 PurchaseShares A,A,A 0
     2: 12F(n) 4G(l) 3C(m) 7G(l) 3A(l) 1D(l)
   revealed tile bag tiles: 12F:2
   player ID with playable tile: 0
+  messages:
+    0: [[[2,2,2],0],[],[-1],0]
+    1: [[[2,2,2],0],[],[-1],0]
+    2: [[[2,2,2],0],[],[104],0]
+    w: [[[2,2,2],0],[],[-1],0]
   history messages:
     2 PurchasedShares 3A
     2 DrewTile 12F
@@ -59,6 +64,11 @@ action: 0 PlayTile 3B
     1: 6B(l) 2D(C) 8H(h) 10H(l) 2G(l) 8G(h)
     2: 12F(n) 4G(l) 3C(C) 7G(l) 3A(C) 1D(l)
   revealed tile rack tiles: 3B:0
+  messages:
+    0: [[19]]
+    1: [[19],[[19,0]]]
+    2: [[19],[[19,0]]]
+    w: [[19],[[19,0]]]
   history messages:
     0 PlayedTile 3B
     0 MergedChains A,C
