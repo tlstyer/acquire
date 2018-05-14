@@ -2,8 +2,7 @@ import { List } from 'immutable';
 import * as React from 'react';
 
 import { GameBoardType } from '../../common/enums';
-import { GameBoardLabelMode } from '../enums';
-import { gameBoardTypeToCSSClassName, gameBoardTypeToHotelInitial, getTileString } from '../helpers';
+import { gameBoardTypeToCSSClassName } from '../helpers';
 import * as style from './MiniGameBoard.css';
 
 export interface MiniGameBoardProps {
