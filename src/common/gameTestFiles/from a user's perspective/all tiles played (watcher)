@@ -17,9 +17,11 @@ action: 0 PlayTile 2D
 revealed tile rack tiles: 1G:1
 revealed tile bag tiles: ?
 player ID with playable tile: 0
+timestamp: 1234567891011
 action: 1 PlayTile 1G
 
 revealed tile rack tiles: 2E:0
+timestamp: 1515151515151
 action: 0 PlayTile 2E
 
 action: 0 SelectNewChain C
@@ -686,8 +688,8 @@ Game JSON:
   [
     [[]],
     [[12]],
-    [[6]],
-    [[13]],
+    [[6], 1234567891011],
+    [[13], 280583624140],
     [[5]],
     [[[5,5,5],0]],
     [[80]],

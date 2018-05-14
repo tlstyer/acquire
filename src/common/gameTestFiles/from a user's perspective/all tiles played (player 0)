@@ -7,6 +7,7 @@ me: 4
 
 revealed tile bag tiles: 12C, 2B, 2D, 3A, 6F, 5D, 3D, 2E, ?, ?, ?, ?, ?, ?
 player ID with playable tile: 0
+timestamp: 1234567891011
 action: 1 StartGame
 
 revealed tile bag tiles: 7F
@@ -605,6 +606,7 @@ action: 0 PlayTile 10A
     0 PlayedTile 10A
   next action: 0 PurchaseShares
 
+timestamp: 1515151515151
 action: 0 PurchaseShares x 0
   CCCCC█WWWWWW  P  L  T  A  F  W  C  I Cash  Net
   CCC██WWWWWWW             13 12 16 13   50  877
@@ -619,9 +621,9 @@ action: 0 PurchaseShares x 0
     0: none none none none none none
     1: none none none none none none
   messages:
-    0: [[[],0]]
-    1: [[[],0]]
-    w: [[[],0]]
+    0: [[[],0],1515151515151]
+    1: [[[],0],1515151515151]
+    w: [[[],0],1515151515151]
   history messages:
     0 PurchasedShares x
     AllTilesPlayed
@@ -638,7 +640,7 @@ Game JSON:
   8,
   [101,10,12,18,50,39,21,13,-1,-1,-1,-1,-1,-1,59,-1,76,-1,43,-1,63,-1,83,-1,107,-1,104,-1,7,-1,44,-1,102,-1,67,-1,91,-1,57,-1,84,-1,52,-1,99,-1,5,-1,54,-1,92,-1,25,-1,27,-1,9,-1,58,-1,85,-1,11,-1,-1,1,22,-1,42,-1,89,-1,-1,71,-1,-1,2,-1,78,-1,60,-1,77,53,20,30,-1,56,32,55,23,-1,96,-1,72,81,-1,41,106,37,-1,16,61,75,24,0,87,45],
   [
-    [[]],
+    [[], 1234567891011],
     [[12]],
     [[6]],
     [[13]],
@@ -826,6 +828,6 @@ Game JSON:
     [[[],0]],
     [[[],0]],
     [[81]],
-    [[[],0]]
+    [[[],0], 1515151515151]
   ]
 ]

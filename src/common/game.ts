@@ -75,6 +75,38 @@ export class Game {
         this.scoreBoardAtLastNetWorthsUpdate = this.scoreBoard;
     }
 
+    processMoveDataMessage(message: any[]) {
+        let gameActionParameters: any[] = message[0];
+
+        let timestamp: number | null = null;
+        if (message.length >= 2) {
+            timestamp = message[1];
+            if (timestamp !== null) {
+                const previousMoveData = this.moveDataHistory.get(this.moveDataHistory.size - 1, null);
+                if (previousMoveData !== null && previousMoveData.timestamp !== null) {
+                    timestamp += previousMoveData.timestamp;
+                }
+            }
+        }
+
+        if (message.length >= 3) {
+            this.processRevealedTileRackTiles(message[2]);
+        }
+
+        if (message.length >= 4) {
+            this.processRevealedTileBagTiles(message[3]);
+        }
+
+        if (message.length >= 5) {
+            this.processPlayerIDWithPlayableTile(message[4]);
+        }
+
+        const currentPlayerID = this.gameActionStack[this.gameActionStack.length - 1].playerID;
+        const currentUserID = this.userIDs.get(currentPlayerID, 0);
+
+        this.doGameAction(currentUserID, this.moveDataHistory.size, gameActionParameters, timestamp);
+    }
+
     processRevealedTileRackTiles(entries: [number, number][]) {
         let playerIDs: number[] = [];
 
