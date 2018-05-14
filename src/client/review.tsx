@@ -167,15 +167,8 @@ let followedPlayerID: number | null = null;
 
 function main() {
     const gameJson = require('raw-loader!../common/gameTestFiles/other/no tiles played for entire round').split('\nGame JSON:\n')[1];
-    const g = Game.fromJSON(JSON.parse(gameJson));
 
-    if (g === null) {
-        ReactDOM.render(<div>Couldn't load game.</div>, document.getElementById('root'));
-
-        return;
-    }
-
-    game = g;
+    game = Game.fromJSON(JSON.parse(gameJson));
     selectedMove = game.moveDataHistory.size - 1;
     periodicResizeCheck();
 }
