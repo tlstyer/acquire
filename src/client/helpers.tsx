@@ -92,7 +92,7 @@ export const gameModeToString: { [key: number]: string } = {
 };
 
 export const gameStatusToString: { [key: number]: string } = {
-    [GameStatus.SettingUp]: 'Setting up',
+    [GameStatus.SettingUp]: 'Setting Up',
     [GameStatus.InProgress]: 'In Progress',
     [GameStatus.Completed]: 'Completed',
 };
