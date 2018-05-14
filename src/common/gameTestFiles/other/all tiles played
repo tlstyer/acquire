@@ -248,9 +248,9 @@ action: 1 PurchaseShares W,W,W 0
   revealed tile bag tiles: 9B:1, 9H:1
   player ID with playable tile: 0
   messages:
-    0: [[[4,4,4],0],[[66,1]],[-1,-1],0]
-    1: [[[4,4,4],0],[],[73,79],0]
-    w: [[[4,4,4],0],[[66,1]],[-1,-1],0]
+    0: [[[4,4,4],0],null,[[66,1]],[-1,-1],0]
+    1: [[[4,4,4],0],null,[],[73,79],0]
+    w: [[[4,4,4],0],null,[[66,1]],[-1,-1],0]
   history messages:
     1 PurchasedShares 3W
     1 DrewTile 9B
@@ -282,9 +282,9 @@ action: 0 PurchaseShares I,I,I 0
   revealed tile bag tiles: 1B:0, 3E:0
   player ID with playable tile: 1
   messages:
-    0: [[[6,6,6],0],[],[1,22],1]
-    1: [[[6,6,6],0],[[85,0]],[-1,-1],1]
-    w: [[[6,6,6],0],[[85,0]],[-1,-1],1]
+    0: [[[6,6,6],0],null,[],[1,22],1]
+    1: [[[6,6,6],0],null,[[85,0]],[-1,-1],1]
+    w: [[[6,6,6],0],null,[[85,0]],[-1,-1],1]
   history messages:
     0 PurchasedShares 3I
     0 DrewTile 1B
@@ -332,9 +332,9 @@ action: 1 PurchaseShares F,F,F 0
   revealed tile bag tiles: 4E:1, 10B:1
   player ID with playable tile: 0
   messages:
-    0: [[[3,3,3],0],[[28,1]],[-1,-1],0]
-    1: [[[3,3,3],0],[],[31,82],0]
-    w: [[[3,3,3],0],[[28,1]],[-1,-1],0]
+    0: [[[3,3,3],0],null,[[28,1]],[-1,-1],0]
+    1: [[[3,3,3],0],null,[],[31,82],0]
+    w: [[[3,3,3],0],null,[[28,1]],[-1,-1],0]
   history messages:
     1 PurchasedShares 3F
     1 DrewTile 4E
@@ -366,9 +366,9 @@ action: 1 PurchaseShares F 0
   revealed tile bag tiles: 8B:1, 11A:1
   player ID with playable tile: 0
   messages:
-    0: [[[3],0],[[31,1]],[-1,-1],0]
-    1: [[[3],0],[],[64,90],0]
-    w: [[[3],0],[[31,1]],[-1,-1],0]
+    0: [[[3],0],null,[[31,1]],[-1,-1],0]
+    1: [[[3],0],null,[],[64,90],0]
+    w: [[[3],0],null,[[31,1]],[-1,-1],0]
   history messages:
     1 PurchasedShares 1F
     1 DrewTile 8B
@@ -421,9 +421,9 @@ action: 0 PurchaseShares T,T,W 0
   revealed tile bag tiles: 9F:all, 6I:0
   player ID with playable tile: 1
   messages:
-    0: [[[1,1,4],0],[],[77,53],1]
-    1: [[[1,1,4],0],[],[77,-1],1]
-    w: [[[1,1,4],0],[],[77,-1],1]
+    0: [[[1,1,4],0],null,[],[77,53],1]
+    1: [[[1,1,4],0],null,[],[77,-1],1]
+    w: [[[1,1,4],0],null,[],[77,-1],1]
   history messages:
     0 PurchasedShares 2T,1W
     0 DrewTile 9F
@@ -450,9 +450,9 @@ action: 1 PurchaseShares T,T,T 0
   revealed tile bag tiles: 3C:all, 4D:all, 3I:1
   player ID with playable tile: 0
   messages:
-    0: [[[1,1,1],0],[],[20,30,-1],0]
-    1: [[[1,1,1],0],[],[20,30,26],0]
-    w: [[[1,1,1],0],[],[20,30,-1],0]
+    0: [[[1,1,1],0],null,[],[20,30,-1],0]
+    1: [[[1,1,1],0],null,[],[20,30,26],0]
+    w: [[[1,1,1],0],null,[],[20,30,-1],0]
   history messages:
     1 PurchasedShares 3T
     1 DrewTile 3C
@@ -482,9 +482,9 @@ action: 0 PurchaseShares T,T,T 0
   revealed tile bag tiles: 7C:all, 4F:0, 7B:0, 3F:0
   player ID with playable tile: 1
   messages:
-    0: [[[1,1,1],0],[],[56,32,55,23],1]
-    1: [[[1,1,1],0],[[60,0],[53,0]],[56,-1,-1,-1],1]
-    w: [[[1,1,1],0],[[60,0],[53,0]],[56,-1,-1,-1],1]
+    0: [[[1,1,1],0],null,[],[56,32,55,23],1]
+    1: [[[1,1,1],0],null,[[60,0],[53,0]],[56,-1,-1,-1],1]
+    w: [[[1,1,1],0],null,[[60,0],[53,0]],[56,-1,-1,-1],1]
   history messages:
     0 PurchasedShares 3T
     0 DrewTile 7C
@@ -520,9 +520,9 @@ action: 1 PurchaseShares x 0
   revealed tile bag tiles: 2I:1, 11G:all, 11E:1
   player ID with playable tile: 0
   messages:
-    0: [[[],0],[[68,1]],[-1,96,-1],0]
-    1: [[[],0],[],[17,96,94],0]
-    w: [[[],0],[[68,1]],[-1,96,-1],0]
+    0: [[[],0],null,[[68,1]],[-1,96,-1],0]
+    1: [[[],0],null,[],[17,96,94],0]
+    w: [[[],0],null,[[68,1]],[-1,96,-1],0]
   history messages:
     1 PurchasedShares x
     1 DrewTile 2I
@@ -552,9 +552,9 @@ action: 0 PurchaseShares x 0
   revealed tile bag tiles: 9A:0, 10A:0
   player ID with playable tile: 1
   messages:
-    0: [[[],0],[],[72,81],1]
-    1: [[[],0],[[32,0]],[-1,-1],1]
-    w: [[[],0],[[32,0]],[-1,-1],1]
+    0: [[[],0],null,[],[72,81],1]
+    1: [[[],0],null,[[32,0]],[-1,-1],1]
+    w: [[[],0],null,[[32,0]],[-1,-1],1]
   history messages:
     0 PurchasedShares x
     0 DrewTile 9A
@@ -589,9 +589,9 @@ action: 1 PurchaseShares x 0
   revealed tile bag tiles: 12H:all, 5B:all, 1D:1
   player ID with playable tile: 0
   messages:
-    0: [[[],0],[],[106,37,-1],0]
-    1: [[[],0],[],[106,37,3],0]
-    w: [[[],0],[],[106,37,-1],0]
+    0: [[[],0],null,[],[106,37,-1],0]
+    1: [[[],0],null,[],[106,37,3],0]
+    w: [[[],0],null,[],[106,37,-1],0]
   history messages:
     1 PurchasedShares x
     1 DrewTile 12H
@@ -620,9 +620,9 @@ action: 0 PurchaseShares x 0
   revealed tile bag tiles: 2H:all, 7H:all, 9D:all, 3G:all, 1A:0
   player ID with playable tile: 1
   messages:
-    0: [[[],0],[],[16,61,75,24,0],1]
-    1: [[[],0],[],[16,61,75,24,-1],1]
-    w: [[[],0],[],[16,61,75,24,-1],1]
+    0: [[[],0],null,[],[16,61,75,24,0],1]
+    1: [[[],0],null,[],[16,61,75,24,-1],1]
+    w: [[[],0],null,[],[16,61,75,24,-1],1]
   history messages:
     0 PurchasedShares x
     0 DrewTile 2H
@@ -656,9 +656,9 @@ action: 1 PurchaseShares x 0
   revealed tile bag tiles: 10G:all, 6A:all
   player ID with playable tile: 0
   messages:
-    0: [[[],0],[[47,1]],[87,45],0]
-    1: [[[],0],[],[87,45],0]
-    w: [[[],0],[[47,1]],[87,45],0]
+    0: [[[],0],null,[[47,1]],[87,45],0]
+    1: [[[],0],null,[],[87,45],0]
+    w: [[[],0],null,[[47,1]],[87,45],0]
   history messages:
     1 PurchasedShares x
     1 DrewTile 10G
@@ -692,9 +692,9 @@ action: 1 PurchaseShares x 0
   revealed tile rack tiles: 2I:1
   player ID with playable tile: 0
   messages:
-    0: [[[],0],[[17,1]],[],0]
-    1: [[[],0],[],[],0]
-    w: [[[],0],[[17,1]],[],0]
+    0: [[[],0],null,[[17,1]],[],0]
+    1: [[[],0],null,[],[],0]
+    w: [[[],0],null,[[17,1]],[],0]
   history messages:
     1 PurchasedShares x
     1 ReplacedDeadTile 2I
@@ -745,8 +745,8 @@ action: 0 PlayTile 10A
   revealed tile rack tiles: 10A:0
   messages:
     0: [[81]]
-    1: [[81],[[81,0]]]
-    w: [[81],[[81,0]]]
+    1: [[81],null,[[81,0]]]
+    w: [[81],null,[[81,0]]]
   history messages:
     0 PlayedTile 10A
   next action: 0 PurchaseShares

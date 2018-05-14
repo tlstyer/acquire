@@ -199,9 +199,9 @@ action: 0 PurchaseShares W,C,C 0
   revealed tile bag tiles: 9E:0
   player ID with playable tile: 1
   messages:
-    0: [[[4,5,5],0],[],[76],1]
-    1: [[[4,5,5],0],[],[-1],1]
-    w: [[[4,5,5],0],[],[-1],1]
+    0: [[[4,5,5],0],null,[],[76],1]
+    1: [[[4,5,5],0],null,[],[-1],1]
+    w: [[[4,5,5],0],null,[],[-1],1]
   history messages:
     0 PurchasedShares 1W,2C
     0 DrewTile 9E

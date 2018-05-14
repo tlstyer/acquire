@@ -28,9 +28,9 @@ action: 1 PlayTile 4H
     1: 8G(h) 8H(h) 10H(l) 2G(l) none 11D(l)
   revealed tile rack tiles: 4H:1
   messages:
-    0: [[34],[[34,1]]]
+    0: [[34],null,[[34,1]]]
     1: [[34]]
-    w: [[34],[[34,1]]]
+    w: [[34],null,[[34,1]]]
   history messages:
     1 PlayedTile 4H
   next action: 1 SelectNewChain T,A,F,W,C,I

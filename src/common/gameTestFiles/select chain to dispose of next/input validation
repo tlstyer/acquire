@@ -51,10 +51,10 @@ action: 0 PlayTile 5G
   revealed tile rack tiles: 5G:0
   messages:
     0: [[42]]
-    1: [[42],[[42,0]]]
-    2: [[42],[[42,0]]]
-    3: [[42],[[42,0]]]
-    w: [[42],[[42,0]]]
+    1: [[42],null,[[42,0]]]
+    2: [[42],null,[[42,0]]]
+    3: [[42],null,[[42,0]]]
+    w: [[42],null,[[42,0]]]
   history messages:
     0 PlayedTile 5G
     0 MergedChains L,T,C,I

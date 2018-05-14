@@ -41,9 +41,9 @@ action: 0 PlayTile 3B
   revealed tile rack tiles: 3B:0
   messages:
     0: [[19]]
-    1: [[19],[[19,0]]]
-    2: [[19],[[19,0]]]
-    w: [[19],[[19,0]]]
+    1: [[19],null,[[19,0]]]
+    2: [[19],null,[[19,0]]]
+    w: [[19],null,[[19,0]]]
   history messages:
     0 PlayedTile 3B
     0 MergedChains A,C

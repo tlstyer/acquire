@@ -152,9 +152,9 @@ action: 1 PlayTile 9I
   revealed tile bag tiles: 11I:1
   player ID with playable tile: 1
   messages:
-    0: [[80],[[80,1]],[-1],1]
-    1: [[80],[],[98],1]
-    w: [[80],[[80,1]],[-1],1]
+    0: [[80],null,[[80,1]],[-1],1]
+    1: [[80],null,[],[98],1]
+    w: [[80],null,[[80,1]],[-1],1]
   history messages:
     1 PlayedTile 9I
     1 CouldNotAffordAnyShares
@@ -181,9 +181,9 @@ action: 1 PlayTile 3F
   revealed tile rack tiles: 3F:1
   revealed tile bag tiles: 12A:1
   messages:
-    0: [[23],[[23,1]],[-1]]
-    1: [[23],[],[99]]
-    w: [[23],[[23,1]],[-1]]
+    0: [[23],null,[[23,1]],[-1]]
+    1: [[23],null,[],[99]]
+    w: [[23],null,[[23,1]],[-1]]
   history messages:
     1 PlayedTile 3F
     1 CouldNotAffordAnyShares

@@ -599,8 +599,8 @@ action: 0 PlayTile 10A
   revealed tile rack tiles: 10A:0
   messages:
     0: [[81]]
-    1: [[81],[[81,0]]]
-    w: [[81],[[81,0]]]
+    1: [[81],null,[[81,0]]]
+    w: [[81],null,[[81,0]]]
   history messages:
     0 PlayedTile 10A
   next action: 0 PurchaseShares

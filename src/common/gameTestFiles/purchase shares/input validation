@@ -145,8 +145,8 @@ action: 0 PlayTile 11D
   revealed tile rack tiles: 11D:0
   messages:
     0: [[93]]
-    1: [[93],[[93,0]]]
-    w: [[93],[[93,0]]]
+    1: [[93],null,[[93,0]]]
+    w: [[93],null,[[93,0]]]
   history messages:
     0 PlayedTile 11D
     0 FormedChain T

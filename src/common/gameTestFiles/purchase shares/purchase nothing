@@ -52,9 +52,9 @@ action: 1 PurchaseShares x 0
   revealed tile bag tiles: 3I:1
   player ID with playable tile: 0
   messages:
-    0: [[[],0],[],[-1],0]
-    1: [[[],0],[],[26],0]
-    w: [[[],0],[],[-1],0]
+    0: [[[],0],null,[],[-1],0]
+    1: [[[],0],null,[],[26],0]
+    w: [[[],0],null,[],[-1],0]
   history messages:
     1 PurchasedShares x
     1 DrewTile 3I

@@ -16,7 +16,7 @@ import { TileRackReadOnly } from './components/TileRackReadOnly';
 import { GameBoardLabelMode } from './enums';
 import * as style from './review.css';
 
-const dummyMoveData = new MoveData(new Game(GameMode.Singles1, PlayerArrangementMode.RandomOrder, [], List(), List(), 0, null));
+const dummyMoveData = new MoveData(new Game(GameMode.Singles1, PlayerArrangementMode.RandomOrder, [], List(), List(), 0, null), null);
 
 function render() {
     const moveData = game.moveDataHistory.get(selectedMove, dummyMoveData);

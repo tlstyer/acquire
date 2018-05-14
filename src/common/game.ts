@@ -458,7 +458,7 @@ export class Game {
 
     getCurrentMoveData() {
         if (this.currentMoveData === null) {
-            this.currentMoveData = new MoveData(this);
+            this.currentMoveData = new MoveData(this, this.moveDataHistory.get(this.moveDataHistory.size - 1, null));
         }
         return this.currentMoveData;
     }
@@ -572,7 +572,7 @@ export class MoveData {
     playerMessages: any[][] = dummyPlayerMessages;
     watcherMessage: any[] = dummyWatcherMessage;
 
-    constructor(public game: Game) {
+    constructor(public game: Game, public previousMoveData: MoveData | null) {
         // assign something to this.nextGameAction so it gets set in the constructor
         this.nextGameAction = game.gameActionStack[game.gameActionStack.length - 1];
     }
@@ -637,6 +637,11 @@ export class MoveData {
     }
 
     createMessage(playerID: number) {
+        let timestamp = this.timestamp;
+        if (timestamp !== null && this.previousMoveData !== null && this.previousMoveData.timestamp !== null) {
+            timestamp -= this.previousMoveData.timestamp;
+        }
+
         const revealedTileRackTiles: [number, number][] = [];
         for (let i = 0; i < this.revealedTileRackTiles.length; i++) {
             const moveDataTileRackTile = this.revealedTileRackTiles[i];
@@ -656,11 +661,13 @@ export class MoveData {
         }
 
         if (this.playerIDWithPlayableTile !== null) {
-            return [this.gameActionParameters, revealedTileRackTiles, revealedTileBagTiles, this.playerIDWithPlayableTile];
+            return [this.gameActionParameters, timestamp, revealedTileRackTiles, revealedTileBagTiles, this.playerIDWithPlayableTile];
         } else if (revealedTileBagTiles.length > 0) {
-            return [this.gameActionParameters, revealedTileRackTiles, revealedTileBagTiles];
+            return [this.gameActionParameters, timestamp, revealedTileRackTiles, revealedTileBagTiles];
         } else if (revealedTileRackTiles.length > 0) {
-            return [this.gameActionParameters, revealedTileRackTiles];
+            return [this.gameActionParameters, timestamp, revealedTileRackTiles];
+        } else if (timestamp !== null) {
+            return [this.gameActionParameters, timestamp];
         } else {
             return [this.gameActionParameters];
         }
