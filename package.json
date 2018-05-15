@@ -40,7 +40,8 @@
         "webpack-serve": "^0.3.2"
     },
     "scripts": {
-        "build": "yarn build-examples ; yarn build-review ; yarn build-server",
+        "build": "yarn build-client ; yarn build-server",
+        "build-client": "yarn build-examples ; yarn build-review",
         "build-examples": "APP=examples MODE=production webpack",
         "build-review": "APP=review MODE=production webpack",
         "build-server": "tsc --project tsconfig.server.json",

@@ -89,7 +89,7 @@ function getProductionConfig(APP) {
             app: `./src/client/${APP}.tsx`,
         },
         output: {
-            filename: '[hash].js',
+            filename: `${APP}.[chunkhash].js`,
             path: path.resolve(__dirname, 'dist', 'client'),
         },
         resolve: {
