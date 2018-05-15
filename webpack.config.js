@@ -1,6 +1,7 @@
 const path = require('path');
 const HtmlWebpackExternalsPlugin = require('html-webpack-externals-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 function getDevelopmentConfig(APP) {
     return {
@@ -127,6 +128,9 @@ function getProductionConfig(APP) {
                     },
                 ],
             }),
+            new MiniCssExtractPlugin({
+                filename: `${APP}.[chunkhash].css`,
+            }),
         ],
         module: {
             rules: [
@@ -145,9 +149,7 @@ function getProductionConfig(APP) {
                 {
                     test: /\.css$/,
                     use: [
-                        {
-                            loader: 'style-loader',
-                        },
+                        MiniCssExtractPlugin.loader,
                         {
                             loader: 'typings-for-css-modules-loader',
                             options: {
@@ -178,6 +180,17 @@ function getProductionConfig(APP) {
                     ],
                 },
             ],
+        },
+        optimization: {
+            splitChunks: {
+                cacheGroups: {
+                    styles: {
+                        name: 'styles',
+                        test: /\.css$/,
+                        enforce: true,
+                    },
+                },
+            },
         },
         mode: 'production',
     };
