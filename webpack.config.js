@@ -1,3 +1,4 @@
+const fs = require('fs');
 const path = require('path');
 const HtmlWebpackExternalsPlugin = require('html-webpack-externals-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
@@ -83,8 +84,7 @@ function getDevelopmentConfig(APP) {
 }
 
 function getProductionConfig(APP) {
-    const classNameMap = {};
-    let nextID = 0;
+    const shortCSSNameLookup = getShortCSSNameLookup();
 
     return {
         entry: {
@@ -156,11 +156,11 @@ function getProductionConfig(APP) {
                                 modules: true,
                                 getLocalIdent: (context, localIdentName, localName, options) => {
                                     const key = context.resourcePath + '-' + localName;
-                                    if (!classNameMap[key]) {
-                                        classNameMap[key] = '_' + nextID.toString(36);
-                                        nextID++;
+                                    const shortCSSName = shortCSSNameLookup[key];
+                                    if (shortCSSName === undefined) {
+                                        throw new Error(`short CSS name not specified for "${key}"`);
                                     }
-                                    return classNameMap[key];
+                                    return shortCSSName;
                                 },
                                 namedExport: true,
                             },
@@ -194,6 +194,52 @@ function getProductionConfig(APP) {
         },
         mode: 'production',
     };
+}
+
+function getShortCSSNameLookup() {
+    const keys = [];
+
+    function processDirectory(dir) {
+        const files = fs.readdirSync(dir);
+
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            const filePath = path.join(dir, file);
+            const stats = fs.statSync(filePath);
+
+            if (stats.isDirectory()) {
+                processDirectory(filePath);
+            } else if (stats.isFile()) {
+                if (file.endsWith('.css.d.ts')) {
+                    const cssFilePath = filePath.slice(0, filePath.length - 5);
+                    const lines = fs
+                        .readFileSync(filePath)
+                        .toString()
+                        .split('\n');
+
+                    for (let j = 0; j < lines.length; j++) {
+                        const line = lines[j];
+                        const match = line.match(/^export const (.*?): string;$/);
+
+                        if (match) {
+                            keys.push(`${cssFilePath}-${match[1]}`);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    processDirectory(path.join(__dirname, 'src'));
+
+    keys.sort();
+
+    const lookup = {};
+    for (let i = 0; i < keys.length; i++) {
+        lookup[keys[i]] = `_${i.toString(36)}`;
+    }
+
+    return lookup;
 }
 
 const { APP, MODE } = process.env;
