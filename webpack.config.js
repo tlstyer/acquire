@@ -91,7 +91,7 @@ function getProductionConfig(APP) {
             app: `./src/client/${APP}.tsx`,
         },
         output: {
-            filename: `${APP}.[chunkhash].js`,
+            filename: `${APP}.[contenthash].js`,
             path: path.resolve(__dirname, 'dist', 'client'),
         },
         resolve: {
@@ -129,7 +129,7 @@ function getProductionConfig(APP) {
                 ],
             }),
             new MiniCssExtractPlugin({
-                filename: `${APP}.[chunkhash].css`,
+                filename: `${APP}.[contenthash].css`,
             }),
         ],
         module: {
