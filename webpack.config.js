@@ -101,6 +101,12 @@ function getProductionConfig(APP) {
                 title: 'Acquire',
                 template: './src/client/index.html',
                 filename: `${APP}.html`,
+                minify: {
+                    collapseWhitespace: true,
+                    removeAttributeQuotes: true,
+                    removeOptionalTags: true,
+                    removeScriptTypeAttributes: true,
+                },
             }),
             new HtmlWebpackExternalsPlugin({
                 externals: [
