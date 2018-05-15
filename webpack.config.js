@@ -145,6 +145,7 @@ function getProductionConfig(APP) {
                                     require('postcss-import')({ root: loader.resourcePath }),
                                     require('postcss-url')({ url: 'inline' }),
                                     require('postcss-cssnext')(),
+                                    require('cssnano')(),
                                 ],
                             },
                         },
