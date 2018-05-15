@@ -1,4 +1,5 @@
 const path = require('path');
+const HtmlWebpackExternalsPlugin = require('html-webpack-externals-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 function getDevelopmentConfig(APP) {
@@ -100,6 +101,25 @@ function getProductionConfig(APP) {
                 title: 'Acquire',
                 template: './src/client/index.html',
                 filename: `${APP}.html`,
+            }),
+            new HtmlWebpackExternalsPlugin({
+                externals: [
+                    {
+                        module: 'immutable',
+                        global: 'Immutable',
+                        entry: 'https://cdnjs.cloudflare.com/ajax/libs/immutable/4.0.0-rc.9/immutable.min.js',
+                    },
+                    {
+                        module: 'react',
+                        global: 'React',
+                        entry: 'https://cdnjs.cloudflare.com/ajax/libs/react/16.3.2/umd/react.production.min.js',
+                    },
+                    {
+                        module: 'react-dom',
+                        global: 'ReactDOM',
+                        entry: 'https://cdnjs.cloudflare.com/ajax/libs/react-dom/16.3.2/umd/react-dom.production.min.js',
+                    },
+                ],
             }),
         ],
         module: {
