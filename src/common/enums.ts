@@ -1,3 +1,16 @@
+export enum MessageToClient {
+    FatalError,
+}
+
+export enum ErrorCode {
+    NotUsingLatestVersion,
+    InvalidMessageFormat,
+    InvalidUsername,
+    MissingPassword,
+    ProvidedPassword,
+    IncorrectPassword,
+}
+
 export enum GameAction {
     StartGame,
     PlayTile,
