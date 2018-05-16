@@ -2,8 +2,8 @@ import { Connection, Server } from 'sockjs';
 
 export class Manager {
     nextClientID: number = 1;
-    clientIDToConnection: Map<number, Connection> = new Map();
     connectionIDToClientID: Map<string, number> = new Map();
+    clientIDToConnection: Map<number, Connection> = new Map();
 
     constructor(public server: Server) {}
 
@@ -24,8 +24,8 @@ export class Manager {
     private addConnection(connection: Connection) {
         const clientID = this.nextClientID++;
 
-        this.clientIDToConnection.set(clientID, connection);
         this.connectionIDToClientID.set(connection.id, clientID);
+        this.clientIDToConnection.set(clientID, connection);
     }
 
     private removeConnection(connection: Connection) {
@@ -34,7 +34,7 @@ export class Manager {
             return;
         }
 
-        this.clientIDToConnection.delete(clientID);
         this.connectionIDToClientID.delete(connection.id);
+        this.clientIDToConnection.delete(clientID);
     }
 }
