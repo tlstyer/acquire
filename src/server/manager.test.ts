@@ -1,72 +1,62 @@
-import { Manager } from './manager';
+import { Manager, ConnectionState } from './manager';
 
 describe('Manager', () => {
-    it('can construct', () => {
-        const [server, manager] = getServerAndManager();
+    describe('when not sending first message', () => {
+        it('can open connections and then close them', () => {
+            const [server, manager] = getServerAndManager();
 
-        expect(manager.nextClientID).toBe(1);
-        expect(manager.connectionIDToClientID).toEqual(new Map());
-        expect(manager.clientIDToConnection).toEqual(new Map());
-    });
+            const connection1 = new DummyConnection('connection ID 1');
+            server.openConnection(connection1);
 
-    it('can open connections and then close them', () => {
-        const [server, manager] = getServerAndManager();
+            expect(manager.connectionIDToConnectionState).toEqual(new Map([[connection1.id, ConnectionState.WaitingForFirstMessage]]));
+            expect(manager.connectionIDToPreLoggedInConnection).toEqual(new Map([[connection1.id, connection1]]));
 
-        const connection1 = new DummyConnection('connection ID 1');
-        server.openConnection(connection1);
+            const connection2 = new DummyConnection('connection ID 2');
+            server.openConnection(connection2);
 
-        expect(manager.nextClientID).toBe(2);
-        expect(manager.connectionIDToClientID).toEqual(new Map([[connection1.id, 1]]));
-        expect(manager.clientIDToConnection).toEqual(new Map([[1, connection1]]));
+            expect(manager.connectionIDToConnectionState).toEqual(
+                new Map([[connection1.id, ConnectionState.WaitingForFirstMessage], [connection2.id, ConnectionState.WaitingForFirstMessage]]),
+            );
+            expect(manager.connectionIDToPreLoggedInConnection).toEqual(new Map([[connection1.id, connection1], [connection2.id, connection2]]));
 
-        const connection2 = new DummyConnection('connection ID 2');
-        server.openConnection(connection2);
+            connection1.close();
 
-        expect(manager.nextClientID).toBe(3);
-        expect(manager.connectionIDToClientID).toEqual(new Map([[connection1.id, 1], [connection2.id, 2]]));
-        expect(manager.clientIDToConnection).toEqual(new Map([[1, connection1], [2, connection2]]));
+            expect(manager.connectionIDToConnectionState).toEqual(new Map([[connection2.id, ConnectionState.WaitingForFirstMessage]]));
+            expect(manager.connectionIDToPreLoggedInConnection).toEqual(new Map([[connection2.id, connection2]]));
 
-        connection1.close();
+            connection2.close();
 
-        expect(manager.nextClientID).toBe(3);
-        expect(manager.connectionIDToClientID).toEqual(new Map([[connection2.id, 2]]));
-        expect(manager.clientIDToConnection).toEqual(new Map([[2, connection2]]));
+            expect(manager.connectionIDToConnectionState).toEqual(new Map());
+            expect(manager.connectionIDToPreLoggedInConnection).toEqual(new Map());
+        });
 
-        connection2.close();
+        it('closing already closed connection does nothing', () => {
+            const [server, manager] = getServerAndManager();
 
-        expect(manager.nextClientID).toBe(3);
-        expect(manager.connectionIDToClientID).toEqual(new Map());
-        expect(manager.clientIDToConnection).toEqual(new Map());
-    });
+            const connection1 = new DummyConnection('connection ID 1');
+            server.openConnection(connection1);
 
-    it('closing already closed connection does nothing', () => {
-        const [server, manager] = getServerAndManager();
+            expect(manager.connectionIDToConnectionState).toEqual(new Map([[connection1.id, ConnectionState.WaitingForFirstMessage]]));
+            expect(manager.connectionIDToPreLoggedInConnection).toEqual(new Map([[connection1.id, connection1]]));
 
-        const connection1 = new DummyConnection('connection ID 1');
-        server.openConnection(connection1);
+            const connection2 = new DummyConnection('connection ID 2');
+            server.openConnection(connection2);
 
-        expect(manager.nextClientID).toBe(2);
-        expect(manager.connectionIDToClientID).toEqual(new Map([[connection1.id, 1]]));
-        expect(manager.clientIDToConnection).toEqual(new Map([[1, connection1]]));
+            expect(manager.connectionIDToConnectionState).toEqual(
+                new Map([[connection1.id, ConnectionState.WaitingForFirstMessage], [connection2.id, ConnectionState.WaitingForFirstMessage]]),
+            );
+            expect(manager.connectionIDToPreLoggedInConnection).toEqual(new Map([[connection1.id, connection1], [connection2.id, connection2]]));
 
-        const connection2 = new DummyConnection('connection ID 2');
-        server.openConnection(connection2);
+            connection1.close();
 
-        expect(manager.nextClientID).toBe(3);
-        expect(manager.connectionIDToClientID).toEqual(new Map([[connection1.id, 1], [connection2.id, 2]]));
-        expect(manager.clientIDToConnection).toEqual(new Map([[1, connection1], [2, connection2]]));
+            expect(manager.connectionIDToConnectionState).toEqual(new Map([[connection2.id, ConnectionState.WaitingForFirstMessage]]));
+            expect(manager.connectionIDToPreLoggedInConnection).toEqual(new Map([[connection2.id, connection2]]));
 
-        connection1.close();
+            connection1.close();
 
-        expect(manager.nextClientID).toBe(3);
-        expect(manager.connectionIDToClientID).toEqual(new Map([[connection2.id, 2]]));
-        expect(manager.clientIDToConnection).toEqual(new Map([[2, connection2]]));
-
-        connection1.close();
-
-        expect(manager.nextClientID).toBe(3);
-        expect(manager.connectionIDToClientID).toEqual(new Map([[connection2.id, 2]]));
-        expect(manager.clientIDToConnection).toEqual(new Map([[2, connection2]]));
+            expect(manager.connectionIDToConnectionState).toEqual(new Map([[connection2.id, ConnectionState.WaitingForFirstMessage]]));
+            expect(manager.connectionIDToPreLoggedInConnection).toEqual(new Map([[connection2.id, connection2]]));
+        });
     });
 });
 
