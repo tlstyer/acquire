@@ -1,7 +1,8 @@
 {
     "private": true,
     "dependencies": {
-        "immutable": "4.0.0-rc.9"
+        "immutable": "4.0.0-rc.9",
+        "sockjs": "^0.3.19"
     },
     "devDependencies": {
         "@types/enzyme": "^3.1.10",
@@ -11,6 +12,8 @@
         "@types/react": "^16.3.14",
         "@types/react-dom": "^16.0.5",
         "@types/react-test-renderer": "^16.0.1",
+        "@types/sockjs": "^0.3.31",
+        "@types/sockjs-client": "^1.1.0",
         "awesome-typescript-loader": "^5.0.0",
         "caniuse-lite": "^1.0.30000839",
         "css-loader": "^0.28.11",
@@ -21,6 +24,7 @@
         "identity-obj-proxy": "^3.0.0",
         "jest": "^22.4.3",
         "mini-css-extract-plugin": "^0.4.0",
+        "nodemon": "^1.17.4",
         "normalize.css": "^8.0.0",
         "postcss-cssnext": "^3.1.0",
         "postcss-import": "^11.1.0",
@@ -31,6 +35,7 @@
         "react-dom": "^16.3.2",
         "react-test-renderer": "^16.3.2",
         "seedrandom": "^2.4.3",
+        "sockjs-client": "^1.1.4",
         "source-map-loader": "^0.2.3",
         "style-loader": "^0.21.0",
         "ts-jest": "^22.4.6",
@@ -42,13 +47,15 @@
         "webpack-serve": "^0.3.2"
     },
     "scripts": {
-        "build": "yarn build-client ; yarn build-server",
-        "build-client": "yarn build-examples ; yarn build-review",
+        "build": "yarn build-client ; yarn build-examples ; yarn build-review ; yarn build-server",
+        "build-client": "APP=index MODE=production webpack",
         "build-examples": "APP=examples MODE=production webpack",
         "build-review": "APP=review MODE=production webpack",
         "build-server": "tsc --project tsconfig.server.json",
+        "client": "APP=index yarn webpack-serve",
         "examples": "APP=examples yarn webpack-serve",
         "review": "APP=review yarn webpack-serve",
+        "server": "nodemon -r ts-node/register src/server/main.ts",
         "test": "jest"
     },
     "jest": {

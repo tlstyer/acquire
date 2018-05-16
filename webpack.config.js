@@ -86,6 +86,31 @@ function getDevelopmentConfig(APP) {
 function getProductionConfig(APP) {
     const shortCSSNameLookup = getShortCSSNameLookup();
 
+    const externals = [
+        {
+            module: 'immutable',
+            global: 'Immutable',
+            entry: 'https://cdnjs.cloudflare.com/ajax/libs/immutable/4.0.0-rc.9/immutable.min.js',
+        },
+        {
+            module: 'react',
+            global: 'React',
+            entry: 'https://cdnjs.cloudflare.com/ajax/libs/react/16.3.2/umd/react.production.min.js',
+        },
+        {
+            module: 'react-dom',
+            global: 'ReactDOM',
+            entry: 'https://cdnjs.cloudflare.com/ajax/libs/react-dom/16.3.2/umd/react-dom.production.min.js',
+        },
+    ];
+    if (APP === 'index') {
+        externals.push({
+            module: 'sockjs-client',
+            global: 'SockJS',
+            entry: 'https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js',
+        });
+    }
+
     return {
         entry: {
             app: `./src/client/${APP}.tsx`,
@@ -110,23 +135,7 @@ function getProductionConfig(APP) {
                 },
             }),
             new HtmlWebpackExternalsPlugin({
-                externals: [
-                    {
-                        module: 'immutable',
-                        global: 'Immutable',
-                        entry: 'https://cdnjs.cloudflare.com/ajax/libs/immutable/4.0.0-rc.9/immutable.min.js',
-                    },
-                    {
-                        module: 'react',
-                        global: 'React',
-                        entry: 'https://cdnjs.cloudflare.com/ajax/libs/react/16.3.2/umd/react.production.min.js',
-                    },
-                    {
-                        module: 'react-dom',
-                        global: 'ReactDOM',
-                        entry: 'https://cdnjs.cloudflare.com/ajax/libs/react-dom/16.3.2/umd/react-dom.production.min.js',
-                    },
-                ],
+                externals,
             }),
             new MiniCssExtractPlugin({
                 filename: `${APP}.[contenthash].css`,
