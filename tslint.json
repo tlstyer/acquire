@@ -6,7 +6,7 @@
         "arrow-parens": [true, "ban-single-arg-parens"],
         "interface-name": [true, "never-prefix"],
         "max-classes-per-file": false,
-        "max-line-length": { "options": [160] },
+        "max-line-length": [true, 160],
         "member-access": [true, "no-public"],
         "member-ordering": false,
         "no-empty-interface": false,
