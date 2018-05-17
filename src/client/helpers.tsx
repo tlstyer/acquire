@@ -4,7 +4,7 @@ import { GameBoardType, GameMode, Tile } from '../common/enums';
 import * as common from './common.css';
 import { GameStatus } from './enums';
 
-export const chains = [0, 1, 2, 3, 4, 5, 6];
+export const allChains = [0, 1, 2, 3, 4, 5, 6];
 
 export const gameBoardTypeToCSSClassName: { [key: number]: string } = {
     [GameBoardType.Luxor]: common.luxor,

@@ -4,7 +4,7 @@ import * as React from 'react';
 import { defaultScoreBoardRow } from '../../common/defaults';
 import { GameMode, ScoreBoardIndex } from '../../common/enums';
 import { gameModeToNumPlayers, gameModeToTeamSize } from '../../common/helpers';
-import { chains, gameBoardTypeToCSSClassName, gameBoardTypeToHotelInitial, teamNumberToCSSClassName } from '../helpers';
+import { allChains, gameBoardTypeToCSSClassName, gameBoardTypeToHotelInitial, teamNumberToCSSClassName } from '../helpers';
 import * as style from './ScoreBoard.css';
 
 export interface ScoreBoardProps {
@@ -124,7 +124,7 @@ class ScoreBoardHeader extends React.PureComponent {
         return (
             <tr>
                 <td className={style.playerHeader}>Player</td>
-                {chains.map(chain => (
+                {allChains.map(chain => (
                     <td key={chain} className={gameBoardTypeToCSSClassName[chain]}>
                         {gameBoardTypeToHotelInitial[chain]}
                     </td>

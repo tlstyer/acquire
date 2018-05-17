@@ -3,7 +3,7 @@ import * as React from 'react';
 
 import { GameBoardType } from '../../common/enums';
 import * as commonStyle from '../common.css';
-import { chains, gameBoardTypeToCSSClassName, gameBoardTypeToHotelInitial, getUniqueHtmlID } from '../helpers';
+import { allChains, gameBoardTypeToCSSClassName, gameBoardTypeToHotelInitial, getUniqueHtmlID } from '../helpers';
 import * as style from './PurchaseShares.css';
 
 export interface PurchaseSharesProps {
@@ -63,8 +63,8 @@ export class PurchaseShares extends React.Component<PurchaseSharesProps, Purchas
     constructor(props: PurchaseSharesProps) {
         super(props);
 
-        this.availableButtonRefs = new Array(chains.length);
-        for (let i = 0; i < chains.length; i++) {
+        this.availableButtonRefs = new Array(allChains.length);
+        for (let i = 0; i < allChains.length; i++) {
             this.availableButtonRefs[i] = React.createRef();
         }
 
@@ -203,7 +203,7 @@ export class PurchaseShares extends React.Component<PurchaseSharesProps, Purchas
                 <div className={style.topRow}>
                     <fieldset>
                         <legend>Available</legend>
-                        {chains.map(chain => {
+                        {allChains.map(chain => {
                             const numAvailable = scoreBoardAvailable.get(chain, 0);
 
                             if (numAvailable > 0) {

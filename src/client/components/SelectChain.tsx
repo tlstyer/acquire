@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import { GameBoardType } from '../../common/enums';
 import * as commonStyle from '../common.css';
-import { chains, gameBoardTypeToCSSClassName, gameBoardTypeToHotelInitial } from '../helpers';
+import { allChains, gameBoardTypeToCSSClassName, gameBoardTypeToHotelInitial } from '../helpers';
 import * as style from './SelectChain.css';
 
 export enum SelectChainTitle {
@@ -48,8 +48,8 @@ export class SelectChain extends React.Component<SelectChainProps> {
     constructor(props: SelectChainProps) {
         super(props);
 
-        this.buttonRefs = new Array(chains.length);
-        for (let i = 0; i < chains.length; i++) {
+        this.buttonRefs = new Array(allChains.length);
+        for (let i = 0; i < allChains.length; i++) {
             this.buttonRefs[i] = React.createRef();
         }
     }
@@ -100,7 +100,7 @@ export class SelectChain extends React.Component<SelectChainProps> {
             <div>
                 <fieldset className={style.root} style={{ fontSize: Math.floor(buttonSize * 0.4) }}>
                     <legend>{typeToInstructions[type]}</legend>
-                    {chains.map(chain => {
+                    {allChains.map(chain => {
                         if (availableChains.indexOf(chain) >= 0) {
                             return (
                                 <input

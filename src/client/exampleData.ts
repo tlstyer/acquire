@@ -12,7 +12,7 @@ import { ActionSelectMergerSurvivor } from '../common/gameActions/selectMergerSu
 import { ActionSelectNewChain } from '../common/gameActions/selectNewChain';
 import { ActionStartGame } from '../common/gameActions/startGame';
 import { getNewTileBag } from '../common/helpers';
-import { chains } from './helpers';
+import { allChains } from './helpers';
 
 export function getDummyGameForGetGameHistory() {
     const game = new Game(GameMode.Singles4, PlayerArrangementMode.ExactOrder, getNewTileBag(), List([2, 3, 5, 8]), List(['Tim', 'Rita', 'Dad', 'Mom']), 8, 3);
@@ -118,7 +118,7 @@ export function getExampleNextGameActionsArray() {
         new ActionStartGame(game, 4),
         new ActionStartGame(game, 0),
         new ActionPlayTile(game, 1),
-        new ActionSelectNewChain(game, 2, chains, 107),
+        new ActionSelectNewChain(game, 2, allChains, 107),
         new ActionSelectMergerSurvivor(game, 3, [GameBoardType.Luxor, GameBoardType.Festival, GameBoardType.Continental], 107),
         new ActionSelectChainToDisposeOfNext(game, 0, [GameBoardType.Tower, GameBoardType.American], GameBoardType.Continental),
         new ActionDisposeOfShares(game, 1, GameBoardType.Imperial, GameBoardType.Luxor),

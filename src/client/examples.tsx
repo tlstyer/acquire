@@ -23,7 +23,7 @@ import { GameBoardLabelMode, GameStatus } from './enums';
 import { getDummyGameForGetGameHistory, getExampleNextGameActionsArray } from './exampleData';
 import * as style from './examples.css';
 import {
-    chains,
+    allChains,
     disposeOfSharesKeyboardShortcutsDescription,
     gameBoardTypeToHotelInitial,
     getTileString,
