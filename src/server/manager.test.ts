@@ -5,7 +5,7 @@ import { TestUserDataProvider } from './userDataProvider';
 describe('Manager', () => {
     describe('when not sending first message', () => {
         it('can open connections and then close them', () => {
-            const [manager, server, userDataProvider] = getManagerAndStuff();
+            const { manager, server } = getManagerAndStuff();
 
             const connection1 = new DummyConnection('connection ID 1');
             server.openConnection(connection1);
@@ -33,7 +33,7 @@ describe('Manager', () => {
         });
 
         it('closing already closed connection does nothing', () => {
-            const [manager, server, userDataProvider] = getManagerAndStuff();
+            const { manager, server } = getManagerAndStuff();
 
             const connection1 = new DummyConnection('connection ID 1');
             server.openConnection(connection1);
@@ -64,7 +64,7 @@ describe('Manager', () => {
     describe('when sending first message', () => {
         describe('gets kicked', () => {
             async function getsKickedWithMessage(inputMessage: any, outputErrorCode: ErrorCode) {
-                const [manager, server, userDataProvider] = getManagerAndStuff();
+                const { server, userDataProvider } = getManagerAndStuff();
 
                 userDataProvider.createUser('has password', 'password');
                 userDataProvider.createUser('does not have password', null);
@@ -142,7 +142,7 @@ describe('Manager', () => {
 
         describe('gets logged in', () => {
             async function getsLoggedInWithMessage(inputMessage: any, expectedUserID: number) {
-                const [manager, server, userDataProvider] = getManagerAndStuff();
+                const { manager, server, userDataProvider } = getManagerAndStuff();
 
                 userDataProvider.createUser('has password', 'password');
                 userDataProvider.createUser('does not have password', null);
@@ -241,12 +241,12 @@ class DummyConnection {
     }
 }
 
-function getManagerAndStuff(): [Manager, DummyServer, TestUserDataProvider] {
+function getManagerAndStuff() {
     const server = new DummyServer();
     const userDataProvider = new TestUserDataProvider();
     // @ts-ignore
     const manager = new Manager(server, userDataProvider);
     manager.manage();
 
-    return [manager, server, userDataProvider];
+    return { manager, server, userDataProvider };
 }

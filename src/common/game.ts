@@ -541,17 +541,15 @@ export class Game {
     }
 
     static fromJSON(json: GameJSON) {
-        const [
-            gameMode,
-            playerArrangementMode,
-            timeControlStartingAmount,
-            timeControlIncrementAmount,
-            userIDs,
-            usernames,
-            hostUserID,
-            tileBag,
-            gameActions,
-        ] = json;
+        const gameMode = json[0];
+        const playerArrangementMode = json[1];
+        // const timeControlStartingAmount = json[2];
+        // const timeControlIncrementAmount = json[3];
+        const userIDs = json[4];
+        const usernames = json[5];
+        const hostUserID = json[6];
+        const tileBag = json[7];
+        const gameActions = json[8];
 
         const game = new Game(gameMode, playerArrangementMode, tileBag, List(userIDs), List(usernames), hostUserID, null);
 

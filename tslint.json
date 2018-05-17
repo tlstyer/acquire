@@ -1,4 +1,5 @@
 {
+    "defaultSeverity": "error",
     "extends": ["tslint:recommended"],
     "rules": {
         "array-type": [true, "array"],
@@ -9,6 +10,7 @@
         "member-access": [true, "no-public"],
         "member-ordering": false,
         "no-empty-interface": false,
+        "no-unused-variable": true,
         "object-literal-key-quotes": [true, "as-needed"],
         "object-literal-sort-keys": false,
         "ordered-imports": true,

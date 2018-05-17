@@ -141,7 +141,6 @@ export class GameSetupUI extends React.PureComponent<GameSetupUIProps, GameSetup
         const { gameMode, usernames, onSwapPositions } = this.props;
 
         const specifyTeamsEntries = teamGameModeToSpecifyTeamsEntries[gameMode];
-        const numTeams = gameModeToNumPlayers[gameMode] / gameModeToTeamSize[gameMode];
 
         return (
             <table className={style.table}>
