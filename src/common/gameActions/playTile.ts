@@ -21,9 +21,9 @@ export class ActionPlayTile extends ActionBase {
         if (this.playerID === this.game.playerIDWithPlayableTile) {
             hasAPlayableTile = true;
         } else {
-            let tileRackTypes = this.game.tileRackTypes.get(this.playerID, defaultTileRackTypes);
+            const tileRackTypes = this.game.tileRackTypes.get(this.playerID, defaultTileRackTypes);
             for (let i = 0; i < 6; i++) {
-                let tileType = tileRackTypes.get(i, 0);
+                const tileType = tileRackTypes.get(i, 0);
                 if (tileType !== null && tileType !== GameBoardType.CantPlayNow && tileType !== GameBoardType.CantPlayEver) {
                     hasAPlayableTile = true;
                     break;
@@ -62,8 +62,8 @@ export class ActionPlayTile extends ActionBase {
         } else if (tileType === GameBoardType.WillPutLonelyTileDown || tileType === GameBoardType.HaveNeighboringTileToo) {
             this.game.setGameBoardPosition(tile, GameBoardType.NothingYet);
         } else if (tileType === GameBoardType.WillFormNewChain) {
-            let availableChains: GameBoardType[] = [];
-            let scoreBoardChainSize = this.game.scoreBoardChainSize;
+            const availableChains: GameBoardType[] = [];
+            const scoreBoardChainSize = this.game.scoreBoardChainSize;
             for (let type = 0; type < scoreBoardChainSize.size; type++) {
                 if (scoreBoardChainSize.get(type, 0) === 0) {
                     availableChains.push(type);
@@ -84,7 +84,7 @@ export class ActionPlayTile extends ActionBase {
     }
 
     protected getMergedChains(tile: number) {
-        let chains: GameBoardType[] = [];
+        const chains: GameBoardType[] = [];
         const neighboringTiles = getNeighboringTiles(tile);
         for (let i = 0; i < neighboringTiles.length; i++) {
             const type = this.game.gameBoard.get(neighboringTiles[i], 0);

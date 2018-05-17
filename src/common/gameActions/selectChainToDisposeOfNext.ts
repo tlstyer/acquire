@@ -35,7 +35,7 @@ export class ActionSelectChainToDisposeOfNext extends ActionBase {
     }
 
     protected completeAction(nextChain: GameBoardType) {
-        let actions: ActionBase[] = [];
+        const actions: ActionBase[] = [];
 
         const sharesOwned = this.game.getScoreBoardColumnArray(nextChain);
         let playerID = this.playerID;

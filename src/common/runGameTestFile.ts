@@ -16,19 +16,19 @@ export function runGameTestFile(inputLines: string[]) {
     let gameMode: GameMode = GameMode.Singles1;
     let playerArrangementMode: PlayerArrangementMode = PlayerArrangementMode.Version1;
     let tileBag: number[] = [];
-    let userIDs: number[] = [];
-    let usernames: string[] = [];
+    const userIDs: number[] = [];
+    const usernames: string[] = [];
     let hostUserID: number = 0;
     let myUserID: number | null = null;
 
-    let outputLines: string[] = [];
+    const outputLines: string[] = [];
 
     let myPlayerID: number | null = null;
     let lastMoveData: MoveData | null = null;
     let timestamp: number | null = null;
 
     for (let lineNumber = 0; lineNumber < inputLines.length; lineNumber++) {
-        let line = inputLines[lineNumber];
+        const line = inputLines[lineNumber];
         if (game === null) {
             if (line.length > 0) {
                 const parts = line.split(': ');
@@ -143,7 +143,7 @@ export function runGameTestFile(inputLines: string[]) {
                         if (usingJSONParameters) {
                             stringParameters = ` -- ${JSON.stringify(parameters)}`;
                         } else {
-                            let arr = toParameterStrings(actualGameAction, parameters);
+                            const arr = toParameterStrings(actualGameAction, parameters);
                             if (arr.length > 0) {
                                 stringParameters = ` ${arr.join(' ')}`;
                             }
@@ -182,17 +182,17 @@ export function runGameTestFile(inputLines: string[]) {
 }
 
 function getDuplicatedTiles(tileBag: number[]) {
-    let tileCounts: { [key: number]: number } = {};
+    const tileCounts: { [key: number]: number } = {};
     for (let i = 0; i < tileBag.length; i++) {
-        let tile = tileBag[i];
+        const tile = tileBag[i];
         if (typeof tileCounts[tile] === 'undefined') {
             tileCounts[tile] = 0;
         }
         tileCounts[tile]++;
     }
 
-    let duplicatedTiles: number[] = [];
-    for (let tile in tileCounts) {
+    const duplicatedTiles: number[] = [];
+    for (const tile in tileCounts) {
         if (tileCounts.hasOwnProperty(tile)) {
             if (tileCounts[tile] > 1) {
                 duplicatedTiles.push(parseInt(tile, 10));
@@ -214,7 +214,7 @@ const abbreviationToGameBoardType: { [key: string]: GameBoardType } = {
 };
 
 function fromParameterStrings(gameAction: GameAction, strings: string[]) {
-    let parameters: any[] = [];
+    const parameters: any[] = [];
 
     switch (gameAction) {
         case GameAction.PlayTile:
@@ -242,7 +242,7 @@ function fromParameterStrings(gameAction: GameAction, strings: string[]) {
 }
 
 function toParameterStrings(gameAction: GameAction, parameters: any[]) {
-    let strings: any[] = [];
+    const strings: any[] = [];
 
     switch (gameAction) {
         case GameAction.PlayTile:
@@ -272,7 +272,7 @@ function toParameterStrings(gameAction: GameAction, parameters: any[]) {
 const gameBoardStringSpacer = '            ';
 
 function getMoveDataLines(moveData: MoveData, revealedTilesPlayerID: number | null, detailed: boolean) {
-    let lines: string[] = [];
+    const lines: string[] = [];
 
     if (revealedTilesPlayerID !== null) {
         const rtrtStr = getRevealedTileRackTilesStringForPlayer(moveData.revealedTileRackTiles, revealedTilesPlayerID);
@@ -294,7 +294,7 @@ function getMoveDataLines(moveData: MoveData, revealedTilesPlayerID: number | nu
         lines.push(`timestamp: ${moveData.timestamp}`);
     }
 
-    let arr = toParameterStrings(moveData.gameAction, moveData.gameActionParameters);
+    const arr = toParameterStrings(moveData.gameAction, moveData.gameActionParameters);
     let stringParameters = '';
     if (arr.length > 0) {
         stringParameters = ` ${arr.join(' ')}`;
@@ -313,7 +313,7 @@ function getMoveDataLines(moveData: MoveData, revealedTilesPlayerID: number | nu
         );
         const numLines = Math.max(gameBoardLines.length, scoreBoardLines.length);
         for (let i = 0; i < numLines; i++) {
-            let lineParts = [];
+            const lineParts = [];
             lineParts.push(i < gameBoardLines.length ? gameBoardLines[i] : gameBoardStringSpacer);
             if (i < scoreBoardLines.length) {
                 lineParts.push('  ');
@@ -324,7 +324,7 @@ function getMoveDataLines(moveData: MoveData, revealedTilesPlayerID: number | nu
 
         lines.push('  tile racks:');
         moveData.tileRacks.forEach((tileRack, playerID) => {
-            let tileTypes = moveData.tileRackTypes.get(playerID, defaultTileRackTypes);
+            const tileTypes = moveData.tileRackTypes.get(playerID, defaultTileRackTypes);
             lines.push(`    ${playerID}: ${getTileRackString(tileRack, tileTypes)}`);
         });
 
@@ -383,7 +383,7 @@ function getRevealedTileRackTilesStringForPlayer(revealedTileRackTiles: MoveData
 
 function getArrayFromRevealedTileRackTilesString(revealedTileRackTilesString: string) {
     const strParts = revealedTileRackTilesString.split(', ');
-    let revealedTileRackTiles: [number, number][] = new Array(strParts.length);
+    const revealedTileRackTiles: [number, number][] = new Array(strParts.length);
 
     for (let i = 0; i < strParts.length; i++) {
         const [tileStr, playerIDStr] = strParts[i].split(':');
@@ -424,8 +424,8 @@ const gameBoardTypeToCharacter: { [key: number]: string } = {
     [GameBoardType.CantPlayNow]: 'c',
 };
 function getGameBoardLines(gameBoard: List<GameBoardType>) {
-    let lines: string[] = new Array(9);
-    let chars: string[] = new Array(12);
+    const lines: string[] = new Array(9);
+    const chars: string[] = new Array(12);
     for (let y = 0; y < 9; y++) {
         for (let x = 0; x < 12; x++) {
             chars[x] = gameBoardTypeToCharacter[gameBoard.get(x * 9 + y, 0)];
@@ -443,7 +443,7 @@ function getScoreBoardLines(
     turnPlayerID: number,
     movePlayerID: number,
 ) {
-    let lines: string[] = [];
+    const lines: string[] = [];
     lines.push(formatScoreBoardLine(['P', 'L', 'T', 'A', 'F', 'W', 'C', 'I', 'Cash', 'Net']));
     scoreBoard.forEach((row, playerID) => {
         let name: string;
@@ -464,7 +464,7 @@ function getScoreBoardLines(
 
 const scoreBoardColumnWidths = [1, 2, 2, 2, 2, 2, 2, 2, 4, 4];
 function formatScoreBoardLine(entries: string[]) {
-    let lineParts = entries.map((entry, index) => {
+    const lineParts = entries.map((entry, index) => {
         const numSpacesToAdd = scoreBoardColumnWidths[index] - entry.length;
         if (numSpacesToAdd > 0) {
             entry = ' '.repeat(numSpacesToAdd) + entry;
@@ -481,7 +481,7 @@ function getTileRackString(tiles: List<number | null>, tileTypes: List<GameBoard
                 return '?';
             }
 
-            let tileType = tileTypes.get(tileIndex, 0);
+            const tileType = tileTypes.get(tileIndex, 0);
             if (tile !== null && tileType !== null) {
                 return `${toTileString(tile)}(${gameBoardTypeToCharacter[tileType]})`;
             } else {
@@ -505,8 +505,8 @@ function toTileString(tile: number) {
     if (tile === Tile.Unknown) {
         return '?';
     } else {
-        let x = Math.floor(tile / 9) + 1;
-        let y = yTileNames[tile % 9];
+        const x = Math.floor(tile / 9) + 1;
+        const y = yTileNames[tile % 9];
         return x + y;
     }
 }
@@ -515,8 +515,8 @@ function fromTileString(str: string) {
     if (str === '?') {
         return Tile.Unknown;
     } else {
-        let x = parseInt(str.slice(0, str.length - 1), 10) - 1;
-        let y = yTileNames.indexOf(str.slice(str.length - 1));
+        const x = parseInt(str.slice(0, str.length - 1), 10) - 1;
+        const y = yTileNames.indexOf(str.slice(str.length - 1));
         return x * 9 + y;
     }
 }
@@ -575,7 +575,7 @@ function getNextActionString(action: ActionBase) {
     const nextPlayerID = action.playerID;
     const nextActionName = action.constructor.name.slice(6);
 
-    let parts: string[] = [nextPlayerID.toString(), nextActionName];
+    const parts: string[] = [nextPlayerID.toString(), nextActionName];
 
     if (action instanceof ActionSelectNewChain) {
         parts.push(action.availableChains.map((x: GameBoardType) => GameBoardType[x][0]).join(','));

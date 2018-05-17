@@ -76,7 +76,7 @@ export class Game {
     }
 
     processMoveDataMessage(message: any[]) {
-        let gameActionParameters: any[] = message[0];
+        const gameActionParameters: any[] = message[0];
 
         let timestamp: number | null = null;
         if (message.length >= 2) {
@@ -108,7 +108,7 @@ export class Game {
     }
 
     processRevealedTileRackTiles(entries: [number, number][]) {
-        let playerIDs: number[] = [];
+        const playerIDs: number[] = [];
 
         this.tileRacks = this.tileRacks.asMutable();
 
@@ -150,7 +150,7 @@ export class Game {
     }
 
     doGameAction(userID: number, moveIndex: number, parameters: any[], timestamp: number | null) {
-        let playerID = this.userIDs.indexOf(userID);
+        const playerID = this.userIDs.indexOf(userID);
         let currentAction = this.gameActionStack[this.gameActionStack.length - 1];
 
         if (playerID !== currentAction.playerID) {
@@ -179,7 +179,7 @@ export class Game {
     }
 
     drawTiles(playerID: number) {
-        let addDrewTileMessage = this.myUserID === null || this.myUserID === this.userIDs.get(playerID, 0);
+        const addDrewTileMessage = this.myUserID === null || this.myUserID === this.userIDs.get(playerID, 0);
 
         for (let i = 0; i < 6; i++) {
             if (this.tileRacks.get(playerID, defaultTileRack).get(i, 0) !== null) {
@@ -193,7 +193,7 @@ export class Game {
                 return;
             }
 
-            let tile = this.tileBag[this.nextTileBagIndex++];
+            const tile = this.tileBag[this.nextTileBagIndex++];
             this.tileRacks = this.tileRacks.setIn([playerID, i], tile);
 
             this.getCurrentMoveData().addTileBagTile(tile, playerID);
@@ -243,9 +243,9 @@ export class Game {
     }
 
     determineTileRackTypesForPlayer(playerID: number) {
-        let tileTypes: (GameBoardType | null)[] = [];
-        let lonelyTileIndexes: number[] = [];
-        let lonelyTileBorderTiles: { [key: number]: boolean } = {};
+        const tileTypes: (GameBoardType | null)[] = [];
+        const lonelyTileIndexes: number[] = [];
+        const lonelyTileBorderTiles: { [key: number]: boolean } = {};
 
         let canStartNewChain: boolean = false;
         for (let i = 0; i <= GameBoardType.Imperial; i++) {
@@ -256,11 +256,11 @@ export class Game {
         }
 
         for (let tileIndex = 0; tileIndex < 6; tileIndex++) {
-            let tile = this.tileRacks.get(playerID, defaultTileRack).get(tileIndex, 0);
+            const tile = this.tileRacks.get(playerID, defaultTileRack).get(tileIndex, 0);
             let tileType = null;
 
             if (tile !== null && tile !== Tile.Unknown) {
-                let borderTiles: number[] = [];
+                const borderTiles: number[] = [];
                 let borderTypes: GameBoardType[] = [];
                 const neighboringTiles = getNeighboringTiles(tile);
                 for (let i = 0; i < neighboringTiles.length; i++) {
@@ -320,11 +320,11 @@ export class Game {
 
         if (canStartNewChain) {
             for (let i = 0; i < lonelyTileIndexes.length; i++) {
-                let tileIndex = lonelyTileIndexes[i];
+                const tileIndex = lonelyTileIndexes[i];
 
-                let tileType = tileTypes[tileIndex];
+                const tileType = tileTypes[tileIndex];
                 if (tileType === GameBoardType.WillPutLonelyTileDown) {
-                    let tile = this.tileRacks.get(playerID, defaultTileRack).get(tileIndex, 0);
+                    const tile = this.tileRacks.get(playerID, defaultTileRack).get(tileIndex, 0);
                     if (tile !== null && lonelyTileBorderTiles[tile] === true) {
                         tileTypes[tileIndex] = GameBoardType.HaveNeighboringTileToo;
                     }
@@ -332,7 +332,7 @@ export class Game {
             }
         }
 
-        let tileRackTypes = this.tileRackTypes.asMutable();
+        const tileRackTypes = this.tileRackTypes.asMutable();
         for (let tileIndex = 0; tileIndex < 6; tileIndex++) {
             tileRackTypes.setIn([playerID, tileIndex], tileTypes[tileIndex]);
         }
@@ -352,8 +352,8 @@ export class Game {
     }
 
     fillCells(tile: number, gameBoardType: GameBoardType) {
-        let pending: number[] = [tile];
-        let found: { [key: number]: boolean } = {};
+        const pending: number[] = [tile];
+        const found: { [key: number]: boolean } = {};
         found[tile] = true;
         const excludedTypes: { [key: number]: boolean } = {};
         excludedTypes[GameBoardType.Nothing] = true;
@@ -394,11 +394,11 @@ export class Game {
         for (let i = 0; i < adjustments.length; i++) {
             const [scoreBoardIndex, change] = adjustments[i];
 
-            let value = scoreBoard.get(playerID, defaultScoreBoardRow).get(scoreBoardIndex, 0);
+            const value = scoreBoard.get(playerID, defaultScoreBoardRow).get(scoreBoardIndex, 0);
             scoreBoard = scoreBoard.setIn([playerID, scoreBoardIndex], value + change);
 
             if (scoreBoardIndex <= ScoreBoardIndex.Imperial) {
-                let value = scoreBoardAvailable.get(scoreBoardIndex, 0);
+                const value = scoreBoardAvailable.get(scoreBoardIndex, 0);
                 scoreBoardAvailable = scoreBoardAvailable.set(scoreBoardIndex, value - change);
             }
         }
@@ -411,9 +411,9 @@ export class Game {
         let scoreBoard = this.scoreBoard.asMutable();
 
         for (let playerID = 0; playerID < adjustments.length; playerID++) {
-            let change = adjustments[playerID];
+            const change = adjustments[playerID];
             if (change !== 0) {
-                let value = scoreBoard.get(playerID, defaultScoreBoardRow).get(scoreBoardIndex, 0);
+                const value = scoreBoard.get(playerID, defaultScoreBoardRow).get(scoreBoardIndex, 0);
                 scoreBoard = scoreBoard.setIn([playerID, scoreBoardIndex], value + change);
             }
         }

@@ -3,12 +3,12 @@ import { calculateBonuses, getNeighboringTiles, getNewTileBag, PlayerIDAndAmount
 describe('helpers', () => {
     describe('getNewTileBag', () => {
         it('should return a shuffled array containing all integers between 0 and 107 inclusive', () => {
-            let tileBagInOrder: number[] = new Array(108);
+            const tileBagInOrder: number[] = new Array(108);
             for (let i = 0; i < 108; i++) {
                 tileBagInOrder[i] = i;
             }
 
-            let tileBag = getNewTileBag();
+            const tileBag = getNewTileBag();
             expect(tileBag).not.toEqual(tileBagInOrder);
 
             tileBag.sort((a, b) => (a < b ? -1 : 1));

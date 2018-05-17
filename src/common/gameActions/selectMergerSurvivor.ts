@@ -11,8 +11,8 @@ export class ActionSelectMergerSurvivor extends ActionBase {
     constructor(game: Game, playerID: number, public chains: GameBoardType[], public tile: number) {
         super(game, playerID, GameAction.SelectMergerSurvivor);
 
-        let sizeToChains: { [key: number]: GameBoardType[] } = {};
-        let sizes: number[] = [];
+        const sizeToChains: { [key: number]: GameBoardType[] } = {};
+        const sizes: number[] = [];
         for (let i = 0; i < chains.length; i++) {
             const chain = chains[i];
             const size = this.game.gameBoardTypeCounts[chain];
@@ -71,7 +71,7 @@ export class ActionSelectMergerSurvivor extends ActionBase {
         this.game.determineTileRackTypesForEverybody();
 
         // pay bonuses
-        let bonuses: number[] = new Array(this.game.userIDs.size);
+        const bonuses: number[] = new Array(this.game.userIDs.size);
         for (let playerID = 0; playerID < bonuses.length; playerID++) {
             bonuses[playerID] = 0;
         }
@@ -89,7 +89,7 @@ export class ActionSelectMergerSurvivor extends ActionBase {
         }
         this.game.adjustScoreBoardColumn(ScoreBoardIndex.Cash, bonuses);
 
-        let actions: ActionBase[] = [];
+        const actions: ActionBase[] = [];
         for (let i = 0; i < this.chainsBySize.length; i++) {
             let chains = this.chainsBySize[i];
             if (i === 0) {

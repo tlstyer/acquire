@@ -87,11 +87,11 @@ export class ActionPurchaseShares extends ActionBase {
             throw new UserInputError('end game parameter is not 0 or 1');
         }
 
-        let chainCounts: number[] = [0, 0, 0, 0, 0, 0, 0];
+        const chainCounts: number[] = [0, 0, 0, 0, 0, 0, 0];
         for (let i = 0; i < chains.length; i++) {
             chainCounts[chains[i]]++;
         }
-        let chainsAndCounts: [ScoreBoardIndex, number][] = [];
+        const chainsAndCounts: [ScoreBoardIndex, number][] = [];
         for (let chain = 0; chain < chainCounts.length; chain++) {
             const count = chainCounts[chain];
             if (count > 0) {

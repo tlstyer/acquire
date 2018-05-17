@@ -57,7 +57,7 @@ export class GameHistory extends React.PureComponent<GameHistoryProps> {
         return (
             <div className={style.root} ref={this.parentRef}>
                 {moveDataHistory.map((moveData, i) => {
-                    let optionalProps: { [key: string]: any } = {};
+                    const optionalProps: { [key: string]: any } = {};
                     if (i === selectedMove) {
                         optionalProps.ref = this.selectedMoveRef;
                     }
@@ -91,7 +91,7 @@ class MoveHistory extends React.PureComponent<MoveHistoryProps> {
     render() {
         const { usernames, moveData, moveIndex, isSelected, onMoveClicked } = this.props;
 
-        let optionalProps: { [key: string]: any } = {};
+        const optionalProps: { [key: string]: any } = {};
         if (moveData.timestamp !== null) {
             const date = new Date(moveData.timestamp);
             optionalProps.title = date.toString();

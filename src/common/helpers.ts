@@ -1,7 +1,7 @@
 import { GameMode } from './enums';
 
 export function getNewTileBag() {
-    let tileBag: number[] = new Array(108);
+    const tileBag: number[] = new Array(108);
     for (let i = 0; i < 108; i++) {
         tileBag[i] = i;
     }
@@ -25,10 +25,10 @@ function initializeNeighboringTiles() {
     neighboringTiles = new Array(108);
 
     for (let tile = 0; tile < 108; tile++) {
-        let possibilities: number[] = [];
+        const possibilities: number[] = [];
 
-        let x = Math.floor(tile / 9);
-        let y = tile % 9;
+        const x = Math.floor(tile / 9);
+        const y = tile % 9;
 
         if (x > 0) {
             possibilities.push(tile - 9);

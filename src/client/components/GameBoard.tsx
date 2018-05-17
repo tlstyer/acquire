@@ -18,7 +18,7 @@ export class GameBoard extends React.PureComponent<GameBoardProps> {
     render() {
         const { gameBoard, tileRack, labelMode, cellSize, onCellClicked } = this.props;
 
-        let myTiles: { [key: number]: boolean } = {};
+        const myTiles: { [key: number]: boolean } = {};
         if (tileRack) {
             for (let tileIndex = 0; tileIndex < 6; tileIndex++) {
                 const tile = tileRack.get(tileIndex, 0);
@@ -56,7 +56,7 @@ export class GameBoard extends React.PureComponent<GameBoardProps> {
 
                 let className = gameBoardTypeToCSSClassName[gameBoardType];
 
-                let optionalProps: { [key: string]: any } = {};
+                const optionalProps: { [key: string]: any } = {};
                 if (gameBoardType === GameBoardType.IHaveThis && onCellClicked) {
                     optionalProps.onClick = () => onCellClicked(tile);
                     className = `${className} ${style.clickable}`;

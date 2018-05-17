@@ -43,7 +43,7 @@ export class ActionDisposeOfShares extends ActionBase {
         }
 
         if (tradeAmount > 0 || sellAmount > 0) {
-            let adjustments: [GameBoardType | ScoreBoardIndex, number][] = [[this.defunctChain, -tradeAmount - sellAmount]];
+            const adjustments: [GameBoardType | ScoreBoardIndex, number][] = [[this.defunctChain, -tradeAmount - sellAmount]];
             if (tradeAmount > 0) {
                 adjustments.push([this.controllingChain, tradeAmount / 2]);
             }

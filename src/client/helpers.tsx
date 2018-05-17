@@ -57,8 +57,8 @@ export function getTileString(tile: number) {
     if (tile === Tile.Unknown) {
         return '?';
     } else {
-        let x = Math.floor(tile / 9) + 1;
-        let y = yTileNames[tile % 9];
+        const x = Math.floor(tile / 9) + 1;
+        const y = yTileNames[tile % 9];
         return x + y;
     }
 }
