@@ -13,7 +13,6 @@
         "no-unused-variable": true,
         "object-literal-key-quotes": [true, "as-needed"],
         "object-literal-sort-keys": false,
-        "ordered-imports": true,
         "prefer-for-of": false,
         "quotemark": [true, "single", "jsx-single", "avoid-escape", "avoid-template"],
         "semicolon": [true, "always", "ignore-bound-class-methods"]
