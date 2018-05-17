@@ -19,6 +19,7 @@ export class Manager {
 
     connectionIDToClientID: Map<string, number> = new Map();
     clientIDToConnection: Map<number, Connection> = new Map();
+    clientIDToUserID: Map<number, number> = new Map();
 
     constructor(public server: Server, public userDataProvider: UserDataProvider) {}
 
@@ -75,6 +76,7 @@ export class Manager {
 
             this.connectionIDToClientID.delete(connection.id);
             this.clientIDToConnection.delete(clientID);
+            this.clientIDToUserID.delete(clientID);
         } else {
             this.connectionIDToPreLoggedInConnection.delete(connection.id);
         }
@@ -154,5 +156,6 @@ export class Manager {
         const clientID = this.nextClientID++;
         this.connectionIDToClientID.set(connection.id, clientID);
         this.clientIDToConnection.set(clientID, connection);
+        this.clientIDToUserID.set(clientID, userID);
     }
 }

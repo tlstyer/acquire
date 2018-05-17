@@ -133,7 +133,7 @@ describe('Manager', () => {
         });
 
         describe('gets logged in', () => {
-            async function getsLoggedInWithMessage(inputMessage: any) {
+            async function getsLoggedInWithMessage(inputMessage: any, expectedUserID: number) {
                 const [manager, server, userDataProvider] = getManagerAndStuff();
 
                 userDataProvider.createUser('has password', 'password');
@@ -151,18 +151,27 @@ describe('Manager', () => {
                 expect(manager.connectionIDToPreLoggedInConnection).toEqual(new Map());
                 expect(manager.connectionIDToClientID).toEqual(new Map([[connection.id, 1]]));
                 expect(manager.clientIDToConnection).toEqual(new Map([[1, connection]]));
+                expect(manager.clientIDToUserID).toEqual(new Map([[1, expectedUserID]]));
+
+                connection.close();
+
+                expect(manager.connectionIDToConnectionState).toEqual(new Map([]));
+                expect(manager.connectionIDToPreLoggedInConnection).toEqual(new Map());
+                expect(manager.connectionIDToClientID).toEqual(new Map());
+                expect(manager.clientIDToConnection).toEqual(new Map());
+                expect(manager.clientIDToUserID).toEqual(new Map());
             }
 
             it('after providing correct password', async () => {
-                await getsLoggedInWithMessage([0, 'has password', 'password', []]);
+                await getsLoggedInWithMessage([0, 'has password', 'password', []], 1);
             });
 
             it('after not providing a password when it is not set', async () => {
-                await getsLoggedInWithMessage([0, 'does not have password', '', []]);
+                await getsLoggedInWithMessage([0, 'does not have password', '', []], 2);
             });
 
             it('after not providing a password when user data does not exist', async () => {
-                await getsLoggedInWithMessage([0, 'no user data', '', []]);
+                await getsLoggedInWithMessage([0, 'no user data', '', []], 3);
             });
         });
     });
