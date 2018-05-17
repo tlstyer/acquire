@@ -1,5 +1,4 @@
 import { List } from 'immutable';
-
 import { defaultTileRackTypes } from './defaults';
 import { GameAction, GameBoardType, GameHistoryMessage, GameMode, PlayerArrangementMode, ScoreBoardIndex, Tile } from './enums';
 import { UserInputError } from './error';

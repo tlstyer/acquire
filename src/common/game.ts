@@ -1,5 +1,4 @@
 import { List } from 'immutable';
-
 import {
     defaultGameBoard,
     defaultMoveDataHistory,

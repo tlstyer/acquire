@@ -5,7 +5,6 @@ import './global.css';
 import { List } from 'immutable';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-
 import { defaultGameBoard, defaultMoveDataHistory } from '../common/defaults';
 import { GameBoardType, GameMode } from '../common/enums';
 import { Game } from '../common/game';

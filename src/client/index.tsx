@@ -3,7 +3,6 @@ import './global.css';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import * as SockJS from 'sockjs-client';
-
 import { LoginForm } from './components/LoginForm';
 
 function render() {

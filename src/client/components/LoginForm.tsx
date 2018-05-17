@@ -1,5 +1,4 @@
 import * as React from 'react';
-
 import { isASCII } from '../../common/helpers';
 import * as commonStyle from '../common.css';
 import { hackDoNotInterfereWithKeyboardShortcuts } from '../helpers';

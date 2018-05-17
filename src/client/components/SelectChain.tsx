@@ -1,5 +1,4 @@
 import * as React from 'react';
-
 import { GameBoardType } from '../../common/enums';
 import * as commonStyle from '../common.css';
 import { allChains, gameBoardTypeToCSSClassName, gameBoardTypeToHotelInitial } from '../helpers';

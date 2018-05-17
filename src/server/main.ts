@@ -1,6 +1,5 @@
 import * as http from 'http';
 import * as sockjs from 'sockjs';
-
 import { Manager } from './manager';
 import { TestUserDataProvider } from './userDataProvider';
 

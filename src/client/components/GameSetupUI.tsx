@@ -1,6 +1,5 @@
 import { List } from 'immutable';
 import * as React from 'react';
-
 import { GameMode, PlayerArrangementMode } from '../../common/enums';
 import { gameModeToNumPlayers, gameModeToTeamSize } from '../../common/helpers';
 import { gameModeToString, teamNumberToCSSClassName } from '../helpers';

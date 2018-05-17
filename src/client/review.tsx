@@ -3,7 +3,6 @@ import './global.css';
 import { List } from 'immutable';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-
 import { defaultTileRack, defaultTileRackTypes } from '../common/defaults';
 import { GameMode, PlayerArrangementMode } from '../common/enums';
 import { Game, MoveData } from '../common/game';

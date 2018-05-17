@@ -1,5 +1,4 @@
 import { List } from 'immutable';
-
 import { GameBoardType } from './enums';
 import { MoveData } from './game';
 

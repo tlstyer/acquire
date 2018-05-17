@@ -1,5 +1,4 @@
 import { List, Map } from 'immutable';
-
 import { GameMode, GameSetupChange, PlayerArrangementMode } from './enums';
 import { gameModeToNumPlayers, gameModeToTeamSize, shuffleArray } from './helpers';
 

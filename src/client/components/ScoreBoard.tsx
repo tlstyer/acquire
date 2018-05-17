@@ -1,6 +1,5 @@
 import { List } from 'immutable';
 import * as React from 'react';
-
 import { defaultScoreBoardRow } from '../../common/defaults';
 import { GameMode, ScoreBoardIndex } from '../../common/enums';
 import { gameModeToNumPlayers, gameModeToTeamSize } from '../../common/helpers';

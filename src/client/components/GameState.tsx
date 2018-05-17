@@ -1,6 +1,5 @@
 import { List } from 'immutable';
 import * as React from 'react';
-
 import { GameAction, GameBoardType } from '../../common/enums';
 import { ActionBase } from '../../common/gameActions/base';
 import { ActionDisposeOfShares } from '../../common/gameActions/disposeOfShares';

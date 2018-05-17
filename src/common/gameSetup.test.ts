@@ -1,7 +1,5 @@
-import 'seedrandom';
-
 import { List } from 'immutable';
-
+import 'seedrandom';
 import { GameMode, GameSetupChange, PlayerArrangementMode } from './enums';
 import { GameSetup } from './gameSetup';
 

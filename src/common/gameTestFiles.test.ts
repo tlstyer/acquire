@@ -1,6 +1,5 @@
 import * as fs from 'fs';
 import * as path from 'path';
-
 import { Game } from './game';
 import { runGameTestFile } from './runGameTestFile';
 

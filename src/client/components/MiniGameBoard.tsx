@@ -1,6 +1,5 @@
 import { List } from 'immutable';
 import * as React from 'react';
-
 import { GameBoardType } from '../../common/enums';
 import { gameBoardTypeToCSSClassName } from '../helpers';
 import * as style from './MiniGameBoard.css';

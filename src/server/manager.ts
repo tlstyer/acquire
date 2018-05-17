@@ -1,5 +1,4 @@
 import { Connection, Server } from 'sockjs';
-
 import { ErrorCode, MessageToClient } from '../common/enums';
 import { isASCII } from '../common/helpers';
 import { ReuseIDManager } from './reuseIDManager';

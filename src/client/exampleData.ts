@@ -1,5 +1,4 @@
 import { List } from 'immutable';
-
 import { defaultMoveDataHistory } from '../common/defaults';
 import { GameBoardType, GameHistoryMessage, GameMode, PlayerArrangementMode } from '../common/enums';
 import { Game } from '../common/game';
