@@ -157,6 +157,7 @@ describe('Manager', () => {
 
                 expect(manager.connectionIDToConnectionState).toEqual(new Map([[connection.id, ConnectionState.LoggedIn]]));
                 expect(manager.connectionIDToPreLoggedInConnection).toEqual(new Map());
+                expect(manager.clientIDManager.used).toEqual(new Set([1]));
                 expect(manager.connectionIDToClientID).toEqual(new Map([[connection.id, 1]]));
                 expect(manager.clientIDToConnection).toEqual(new Map([[1, connection]]));
                 expect(manager.clientIDToUserID).toEqual(new Map([[1, expectedUserID]]));
@@ -165,6 +166,7 @@ describe('Manager', () => {
 
                 expect(manager.connectionIDToConnectionState).toEqual(new Map([]));
                 expect(manager.connectionIDToPreLoggedInConnection).toEqual(new Map());
+                expect(manager.clientIDManager.used).toEqual(new Set());
                 expect(manager.connectionIDToClientID).toEqual(new Map());
                 expect(manager.clientIDToConnection).toEqual(new Map());
                 expect(manager.clientIDToUserID).toEqual(new Map());

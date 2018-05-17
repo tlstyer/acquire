@@ -2,6 +2,7 @@ import { Connection, Server } from 'sockjs';
 
 import { ErrorCode, MessageToClient } from '../common/enums';
 import { isASCII } from '../common/helpers';
+import { ReuseIDManager } from './reuseIDManager';
 import { UserDataProvider } from './userDataProvider';
 
 export enum ConnectionState {
@@ -11,12 +12,11 @@ export enum ConnectionState {
 }
 
 export class Manager {
-    nextClientID: number = 1;
-
     connectionIDToConnectionState: Map<string, ConnectionState> = new Map();
 
     connectionIDToPreLoggedInConnection: Map<string, Connection> = new Map();
 
+    clientIDManager: ReuseIDManager = new ReuseIDManager(60000);
     connectionIDToClientID: Map<string, number> = new Map();
     clientIDToConnection: Map<number, Connection> = new Map();
     clientIDToUserID: Map<number, number> = new Map();
@@ -74,6 +74,7 @@ export class Manager {
                 throw new Error('connection not in connectionIDToClientID');
             }
 
+            this.clientIDManager.returnID(clientID);
             this.connectionIDToClientID.delete(connection.id);
             this.clientIDToConnection.delete(clientID);
             this.clientIDToUserID.delete(clientID);
@@ -164,7 +165,7 @@ export class Manager {
 
         this.connectionIDToPreLoggedInConnection.delete(connection.id);
 
-        const clientID = this.nextClientID++;
+        const clientID = this.clientIDManager.getID();
         this.connectionIDToClientID.set(connection.id, clientID);
         this.clientIDToConnection.set(clientID, connection);
         this.clientIDToUserID.set(clientID, userID);
