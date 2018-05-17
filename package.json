@@ -31,6 +31,7 @@
         "postcss-import": "^11.1.0",
         "postcss-loader": "^2.1.5",
         "postcss-url": "^7.3.2",
+        "prettier": "^1.12.1",
         "raw-loader": "^0.5.1",
         "react": "^16.3.2",
         "react-dom": "^16.3.2",
@@ -41,6 +42,7 @@
         "style-loader": "^0.21.0",
         "ts-jest": "^22.4.6",
         "ts-node": "^6.0.3",
+        "tslint": "^5.10.0",
         "typescript": "^2.8.3",
         "typings-for-css-modules-loader": "^1.7.0",
         "webpack": "^4.8.2",
@@ -57,7 +59,9 @@
         "examples": "APP=examples yarn webpack-serve",
         "review": "APP=review yarn webpack-serve",
         "server": "nodemon -r ts-node/register src/server/main.ts",
-        "test": "jest"
+        "test": "jest",
+        "lint": "tslint --project tsconfig.json --config tslint.json --fix",
+        "format": "find src -type f -regex '.*\\.tsx?' -or -regex '.*\\.css' | xargs prettier --write"
     },
     "jest": {
         "transform": {
@@ -68,5 +72,11 @@
         "moduleNameMapper": {
             "\\.css$": "identity-obj-proxy"
         }
+    },
+    "prettier": {
+        "tabWidth": 4,
+        "singleQuote": true,
+        "printWidth": 160,
+        "trailingComma": "all"
     }
 }

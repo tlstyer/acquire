@@ -11,6 +11,7 @@ configureEnzyme();
 
 describe('TileRack', () => {
     it('renders correctly', () => {
+        // tslint:disable-next-line:no-empty
         const onTileClicked = (tile: number) => {};
 
         const component = renderer.create(

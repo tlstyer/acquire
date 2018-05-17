@@ -52,9 +52,9 @@ export function runGameTestFile(inputLines: string[]) {
                         }
                         break;
                     case 'user':
-                        const parts = value.split(' ');
-                        userIDs.push(parseInt(parts[0], 10));
-                        usernames.push(parts.slice(1).join(' '));
+                        const userParts = value.split(' ');
+                        userIDs.push(parseInt(userParts[0], 10));
+                        usernames.push(userParts.slice(1).join(' '));
                         break;
                     case 'host':
                         hostUserID = parseInt(value, 10);
@@ -234,7 +234,7 @@ function fromParameterStrings(gameAction: GameAction, strings: string[]) {
             } else {
                 parameters.push(strings[0].split(',').map(s => abbreviationToGameBoardType[s]));
             }
-            parameters.push(parseInt(strings[1]));
+            parameters.push(parseInt(strings[1], 10));
             break;
     }
 
@@ -546,7 +546,7 @@ const ghmshPurchasedShares = (ghmd: GameHistoryMessageData) => {
     ].join(' ');
 };
 
-const gameHistoryMessageStringHandlers: { [key: number]: Function } = {
+const gameHistoryMessageStringHandlers: { [key: number]: (ghmd: GameHistoryMessageData) => string } = {
     [GameHistoryMessage.TurnBegan]: ghmshPlayerID,
     [GameHistoryMessage.DrewPositionTile]: ghmshPlayerIDTile,
     [GameHistoryMessage.StartedGame]: ghmshPlayerID,

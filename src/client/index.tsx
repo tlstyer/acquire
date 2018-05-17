@@ -24,16 +24,16 @@ function onSubmitLoginForm(username: string, password: string) {
 function connect(username: string, password: string) {
     const sock = new SockJS('http://localhost:9999/sockjs');
 
-    sock.onopen = function(e) {
+    sock.onopen = e => {
         sock.send(JSON.stringify([0, username, password, []]));
     };
 
-    sock.onmessage = function(e) {
-        console.log(JSON.parse(e.data));
+    sock.onmessage = e => {
         sock.close();
     };
 
-    sock.onclose = function(e) {};
+    // tslint:disable-next-line:no-empty
+    sock.onclose = e => {};
 }
 
 render();

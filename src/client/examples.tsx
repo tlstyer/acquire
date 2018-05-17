@@ -1,3 +1,5 @@
+/* tslint:disable:no-console */
+
 import './global.css';
 
 import { List } from 'immutable';
@@ -201,7 +203,7 @@ class AllDemoProps {
                 ]),
                 buttonSize: 40,
                 keyboardShortcutsEnabled: false,
-                onTileClicked: onTileClicked,
+                onTileClicked,
             },
             {
                 tiles: List([71, null, 99, 12, 8, 17]),
@@ -215,14 +217,14 @@ class AllDemoProps {
                 ]),
                 buttonSize: 40,
                 keyboardShortcutsEnabled: false,
-                onTileClicked: onTileClicked,
+                onTileClicked,
             },
             {
                 tiles: List([null, 86, null, 38, null, 74]),
                 types: List([null, GameBoardType.CantPlayEver, null, GameBoardType.WillFormNewChain, null, GameBoardType.CantPlayNow]),
                 buttonSize: 40,
                 keyboardShortcutsEnabled: false,
-                onTileClicked: onTileClicked,
+                onTileClicked,
             },
         ];
 
@@ -336,7 +338,7 @@ class AllDemoProps {
         const nextGameActionsArray = getExampleNextGameActionsArray();
         this.gameStateProps = nextGameActionsArray.map(nextGameAction => ({
             usernames: nextGameAction.game.usernames,
-            nextGameAction: nextGameAction,
+            nextGameAction,
             width: 500,
             height: 22,
         }));

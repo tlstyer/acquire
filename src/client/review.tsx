@@ -28,15 +28,15 @@ function render() {
         movePlayerID = -1;
     }
 
-    let tileRack: List<number | null> | undefined;
+    let gameBoardTileRack: List<number | null> | undefined;
     if (game.userIDs.size > 1) {
         if (followedPlayerID !== null) {
-            tileRack = moveData.tileRacks.get(followedPlayerID, defaultTileRack);
+            gameBoardTileRack = moveData.tileRacks.get(followedPlayerID, defaultTileRack);
         } else if (movePlayerID !== -1) {
-            tileRack = moveData.tileRacks.get(movePlayerID, defaultTileRack);
+            gameBoardTileRack = moveData.tileRacks.get(movePlayerID, defaultTileRack);
         }
     } else {
-        tileRack = moveData.tileRacks.get(0, defaultTileRack);
+        gameBoardTileRack = moveData.tileRacks.get(0, defaultTileRack);
     }
 
     const windowWidth = window.innerWidth;
@@ -59,7 +59,7 @@ function render() {
     ReactDOM.render(
         <>
             <div style={{ position: 'absolute', left: gameBoardLeft, top: gameBoardTop }}>
-                <GameBoard gameBoard={moveData.gameBoard} tileRack={tileRack} labelMode={GameBoardLabelMode.Nothing} cellSize={gameBoardCellSize} />
+                <GameBoard gameBoard={moveData.gameBoard} tileRack={gameBoardTileRack} labelMode={GameBoardLabelMode.Nothing} cellSize={gameBoardCellSize} />
             </div>
             <div
                 className={style.rightSide}

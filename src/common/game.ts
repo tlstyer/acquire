@@ -362,8 +362,8 @@ export class Game {
 
         this.gameBoard = this.gameBoard.asMutable();
 
-        let t: number | undefined;
-        while ((t = pending.pop()) !== undefined) {
+        let t: number | undefined = pending.pop();
+        while (t !== undefined) {
             this.setGameBoardPosition(t, gameBoardType);
 
             const neighboringTiles = getNeighboringTiles(t);
@@ -374,6 +374,8 @@ export class Game {
                     found[neighboringTile] = true;
                 }
             }
+
+            t = pending.pop();
         }
 
         this.gameBoard = this.gameBoard.asImmutable();
@@ -398,8 +400,8 @@ export class Game {
             scoreBoard = scoreBoard.setIn([playerID, scoreBoardIndex], value + change);
 
             if (scoreBoardIndex <= ScoreBoardIndex.Imperial) {
-                const value = scoreBoardAvailable.get(scoreBoardIndex, 0);
-                scoreBoardAvailable = scoreBoardAvailable.set(scoreBoardIndex, value - change);
+                const available = scoreBoardAvailable.get(scoreBoardIndex, 0);
+                scoreBoardAvailable = scoreBoardAvailable.set(scoreBoardIndex, available - change);
             }
         }
 
@@ -542,8 +544,8 @@ export class Game {
         const [
             gameMode,
             playerArrangementMode,
-            _timeControlStartingAmount,
-            _timeControlIncrementAmount,
+            timeControlStartingAmount,
+            timeControlIncrementAmount,
             userIDs,
             usernames,
             hostUserID,

@@ -21,6 +21,7 @@ enum inputIndex {
 
 describe('DisposeOfShares', () => {
     it('renders correctly', () => {
+        // tslint:disable-next-line:no-empty
         const onSharesDisposed = (traded: number, sold: number) => {};
 
         const component = renderer.create(

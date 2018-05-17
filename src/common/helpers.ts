@@ -11,10 +11,9 @@ export function getNewTileBag() {
 
 // from https://stackoverflow.com/questions/6274339/how-can-i-shuffle-an-array
 export function shuffleArray(a: any[]) {
-    let j, x, i;
-    for (i = a.length - 1; i > 0; i--) {
-        j = Math.floor(Math.random() * (i + 1));
-        x = a[i];
+    for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        const x = a[i];
         a[i] = a[j];
         a[j] = x;
     }
@@ -114,10 +113,10 @@ export class PlayerIDAndAmount {
     constructor(public playerID: number, public amount: number) {}
 }
 
-export function isASCII(string: string) {
-    for (let i = 0; i < string.length; i++) {
-        const char_code = string.charCodeAt(i);
-        if (char_code < 32 || char_code > 126) {
+export function isASCII(str: string) {
+    for (let i = 0; i < str.length; i++) {
+        const charCode = str.charCodeAt(i);
+        if (charCode < 32 || charCode > 126) {
             return false;
         }
     }

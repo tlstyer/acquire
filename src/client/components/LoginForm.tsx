@@ -49,8 +49,8 @@ export class LoginForm extends React.PureComponent<LoginFormProps, LoginFormStat
         return (
             <form onKeyDown={hackDoNotInterfereWithKeyboardShortcuts} onSubmit={this.handleSubmit}>
                 {error !== undefined ? <div className={commonStyle.errorMessage}>{error}</div> : undefined}
-                Username: <input type="text" value={username} onChange={this.handleChangeUsername} /> Password:{' '}
-                <input type="password" value={password} onChange={this.handleChangePassword} /> <input type="submit" value={'Login'} />
+                Username: <input type={'text'} value={username} onChange={this.handleChangeUsername} /> Password:{' '}
+                <input type={'password'} value={password} onChange={this.handleChangePassword} /> <input type={'submit'} value={'Login'} />
             </form>
         );
     }
