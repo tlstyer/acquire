@@ -14,14 +14,20 @@ export class TestUserDataProvider implements UserDataProvider {
     usernameToUserData: Map<string, TestUserData> = new Map();
 
     async createUser(username: string, password: string | null) {
+        if (username === 'createUser error') {
+            throw new Error('createUser error');
+        }
+
         const userID = this.nextUserID++;
-
         this.usernameToUserData.set(username, new TestUserData(userID, password));
-
         return userID;
     }
 
     async lookupUser(username: string) {
+        if (username === 'lookupUser error') {
+            throw new Error('lookupUser error');
+        }
+
         return this.usernameToUserData.get(username) || null;
     }
 }

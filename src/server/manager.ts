@@ -117,7 +117,13 @@ export class Manager {
             return;
         }
 
-        const userData = await this.userDataProvider.lookupUser(username);
+        let userData;
+        try {
+            userData = await this.userDataProvider.lookupUser(username);
+        } catch (error) {
+            this.kickWithError(connection, ErrorCode.InternalServerError);
+            return;
+        }
 
         let userID: number = 0;
 
@@ -145,7 +151,12 @@ export class Manager {
                 this.kickWithError(connection, ErrorCode.ProvidedPassword);
                 return;
             } else {
-                userID = await this.userDataProvider.createUser(username, null);
+                try {
+                    userID = await this.userDataProvider.createUser(username, null);
+                } catch (error) {
+                    this.kickWithError(connection, ErrorCode.InternalServerError);
+                    return;
+                }
             }
         }
 

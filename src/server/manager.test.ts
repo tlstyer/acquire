@@ -130,6 +130,14 @@ describe('Manager', () => {
             it('after providing a password when user data does not exist', async () => {
                 await getsKickedWithMessage([0, 'no user data', 'password', []], ErrorCode.ProvidedPassword);
             });
+
+            it("after an error from user data provider's lookupUser()", async () => {
+                await getsKickedWithMessage([0, 'lookupUser error', 'password', []], ErrorCode.InternalServerError);
+            });
+
+            it("after an error from user data provider's createUser()", async () => {
+                await getsKickedWithMessage([0, 'createUser error', '', []], ErrorCode.InternalServerError);
+            });
         });
 
         describe('gets logged in', () => {

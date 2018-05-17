@@ -4,6 +4,7 @@ export enum MessageToClient {
 
 export enum ErrorCode {
     NotUsingLatestVersion,
+    InternalServerError,
     InvalidMessageFormat,
     InvalidUsername,
     MissingPassword,
