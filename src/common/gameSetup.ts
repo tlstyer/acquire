@@ -1,6 +1,5 @@
 import { List, Map } from 'immutable';
 
-import { username } from '../client/common.css';
 import { GameMode, GameSetupChange, PlayerArrangementMode } from './enums';
 import { gameModeToNumPlayers, gameModeToTeamSize, shuffleArray } from './helpers';
 
