@@ -11,6 +11,8 @@ const defaultApprovals: { [key: number]: List<boolean> } = {
     6: List<boolean>([false, false, false, false, false, false]),
 };
 
+type GameSetupJSON = [GameMode, PlayerArrangementMode, number, number[], number[]];
+
 export class GameSetup {
     usernames: List<string | null>;
     approvals: List<boolean>;
@@ -274,5 +276,64 @@ export class GameSetup {
         }
 
         return [List(userIDs), List(usernames)];
+    }
+
+    toJSON(): GameSetupJSON {
+        const userIDs: number[] = new Array(this.usernames.size);
+        this.usernames.forEach((username, position) => {
+            userIDs[position] = username !== null ? this.usernameToUserID.get(username) || 0 : 0;
+        });
+
+        const approvals: number[] = new Array(this.approvals.size);
+        this.approvals.forEach((approved, position) => {
+            approvals[position] = approved ? 1 : 0;
+        });
+
+        return [this.gameMode, this.playerArrangementMode, this.hostUserID, userIDs, approvals];
+    }
+
+    static fromJSON(json: GameSetupJSON, globalUserIDToUsername: Map<number, string>) {
+        const [gameMode, playerArrangementMode, hostUserID, userIDs, intApprovals] = json;
+
+        const hostUsername = globalUserIDToUsername.get(hostUserID) || '';
+
+        const gameSetup = new GameSetup(gameMode, playerArrangementMode, hostUserID, hostUsername);
+
+        const usernames: (string | null)[] = new Array(userIDs.length);
+        for (let position = 0; position < userIDs.length; position++) {
+            const userID = userIDs[position];
+
+            if (userID !== 0) {
+                const username = globalUserIDToUsername.get(userID) || '';
+
+                usernames[position] = username;
+
+                if (userID !== hostUserID) {
+                    gameSetup.usernameToUserID.set(username, userID);
+                    gameSetup.userIDToUsername.set(userID, username);
+                }
+            } else {
+                usernames[position] = null;
+            }
+        }
+
+        gameSetup.usernames = List(usernames);
+
+        const approvals: boolean[] = new Array(intApprovals.length);
+        let approvedByEverybody = true;
+        for (let position = 0; position < intApprovals.length; position++) {
+            const approved = intApprovals[position] === 1;
+
+            approvals[position] = approved;
+
+            if (!approved) {
+                approvedByEverybody = false;
+            }
+        }
+
+        gameSetup.approvals = List<boolean>(approvals);
+        gameSetup.approvedByEverybody = approvedByEverybody;
+
+        return gameSetup;
     }
 }

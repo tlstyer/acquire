@@ -682,4 +682,60 @@ describe('gameSetup', () => {
             });
         });
     });
+
+    describe('toJSON and fromJSON', () => {
+        const globalUserIDToUsername: Map<number, string> = new Map([[1, 'user1'], [2, 'user2'], [3, 'user3'], [4, 'user4'], [5, 'user5'], [6, 'user6']]);
+
+        it('just the host', () => {
+            const gameSetup = new GameSetup(GameMode.Teams2vs2, PlayerArrangementMode.SpecifyTeams, 1, 'user1');
+            gameSetup.swapPositions(0, 2);
+            gameSetup.clearHistory();
+
+            const gameSetup2 = GameSetup.fromJSON(gameSetup.toJSON(), globalUserIDToUsername);
+            gameSetup2.clearHistory();
+
+            expect(gameSetup2).toEqual(gameSetup);
+            expect(gameSetup2.toJSON()).toEqual(gameSetup.toJSON());
+        });
+
+        it('approved by some users', () => {
+            const gameSetup = new GameSetup(GameMode.Teams3vs3, PlayerArrangementMode.ExactOrder, 3, 'user3');
+            gameSetup.addUser(6, 'user6');
+            gameSetup.addUser(1, 'user1');
+            gameSetup.addUser(5, 'user5');
+            gameSetup.addUser(4, 'user4');
+            gameSetup.addUser(2, 'user2');
+            gameSetup.swapPositions(0, 4);
+            gameSetup.approve(2);
+            gameSetup.approve(5);
+            gameSetup.approve(6);
+            gameSetup.clearHistory();
+            expect(gameSetup.approvedByEverybody).toBe(false);
+
+            const gameSetup2 = GameSetup.fromJSON(gameSetup.toJSON(), globalUserIDToUsername);
+            gameSetup2.clearHistory();
+
+            expect(gameSetup2).toEqual(gameSetup);
+            expect(gameSetup2.toJSON()).toEqual(gameSetup.toJSON());
+        });
+
+        it('approved by everybody', () => {
+            const gameSetup = new GameSetup(GameMode.Singles3, PlayerArrangementMode.RandomOrder, 2, 'user2');
+            gameSetup.addUser(3, 'user3');
+            gameSetup.addUser(1, 'user1');
+            gameSetup.swapPositions(0, 1);
+            gameSetup.swapPositions(1, 2);
+            gameSetup.approve(3);
+            gameSetup.approve(2);
+            gameSetup.approve(1);
+            gameSetup.clearHistory();
+            expect(gameSetup.approvedByEverybody).toBe(true);
+
+            const gameSetup2 = GameSetup.fromJSON(gameSetup.toJSON(), globalUserIDToUsername);
+            gameSetup2.clearHistory();
+
+            expect(gameSetup2).toEqual(gameSetup);
+            expect(gameSetup2.toJSON()).toEqual(gameSetup.toJSON());
+        });
+    });
 });
