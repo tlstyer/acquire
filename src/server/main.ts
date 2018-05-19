@@ -1,6 +1,6 @@
 import * as http from 'http';
 import * as sockjs from 'sockjs';
-import { Manager } from './manager';
+import { ServerManager } from './serverManager';
 import { TestUserDataProvider } from './userDataProvider';
 
 const sockjsServer = sockjs.createServer({
@@ -13,5 +13,5 @@ httpServer.listen(9999, '0.0.0.0');
 const userDataProvider = new TestUserDataProvider();
 const nextInternalGameID = 1;
 
-const manager = new Manager(sockjsServer, userDataProvider, nextInternalGameID);
-manager.manage();
+const serverManager = new ServerManager(sockjsServer, userDataProvider, nextInternalGameID);
+serverManager.manage();

@@ -10,7 +10,7 @@ export enum ConnectionState {
     LoggedIn,
 }
 
-export class Manager {
+export class ServerManager {
     connectionIDToConnectionState: Map<string, ConnectionState> = new Map();
 
     connectionIDToPreLoggedInConnection: Map<string, Connection> = new Map();

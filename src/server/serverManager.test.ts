@@ -1,70 +1,70 @@
 import { ErrorCode, MessageToClient } from '../common/enums';
-import { ConnectionState, Manager } from './manager';
+import { ConnectionState, ServerManager } from './serverManager';
 import { TestUserDataProvider } from './userDataProvider';
 
-describe('Manager', () => {
+describe('ServerManager', () => {
     describe('when not sending first message', () => {
         it('can open connections and then close them', () => {
-            const { manager, server } = getManagerAndStuff();
+            const { serverManager, server } = getServerManagerAndStuff();
 
             const connection1 = new DummyConnection('connection ID 1');
             server.openConnection(connection1);
 
-            expect(manager.connectionIDToConnectionState).toEqual(new Map([[connection1.id, ConnectionState.WaitingForFirstMessage]]));
-            expect(manager.connectionIDToPreLoggedInConnection).toEqual(new Map([[connection1.id, connection1]]));
+            expect(serverManager.connectionIDToConnectionState).toEqual(new Map([[connection1.id, ConnectionState.WaitingForFirstMessage]]));
+            expect(serverManager.connectionIDToPreLoggedInConnection).toEqual(new Map([[connection1.id, connection1]]));
 
             const connection2 = new DummyConnection('connection ID 2');
             server.openConnection(connection2);
 
-            expect(manager.connectionIDToConnectionState).toEqual(
+            expect(serverManager.connectionIDToConnectionState).toEqual(
                 new Map([[connection1.id, ConnectionState.WaitingForFirstMessage], [connection2.id, ConnectionState.WaitingForFirstMessage]]),
             );
-            expect(manager.connectionIDToPreLoggedInConnection).toEqual(new Map([[connection1.id, connection1], [connection2.id, connection2]]));
+            expect(serverManager.connectionIDToPreLoggedInConnection).toEqual(new Map([[connection1.id, connection1], [connection2.id, connection2]]));
 
             connection1.close();
 
-            expect(manager.connectionIDToConnectionState).toEqual(new Map([[connection2.id, ConnectionState.WaitingForFirstMessage]]));
-            expect(manager.connectionIDToPreLoggedInConnection).toEqual(new Map([[connection2.id, connection2]]));
+            expect(serverManager.connectionIDToConnectionState).toEqual(new Map([[connection2.id, ConnectionState.WaitingForFirstMessage]]));
+            expect(serverManager.connectionIDToPreLoggedInConnection).toEqual(new Map([[connection2.id, connection2]]));
 
             connection2.close();
 
-            expect(manager.connectionIDToConnectionState).toEqual(new Map());
-            expect(manager.connectionIDToPreLoggedInConnection).toEqual(new Map());
+            expect(serverManager.connectionIDToConnectionState).toEqual(new Map());
+            expect(serverManager.connectionIDToPreLoggedInConnection).toEqual(new Map());
         });
 
         it('closing already closed connection does nothing', () => {
-            const { manager, server } = getManagerAndStuff();
+            const { serverManager, server } = getServerManagerAndStuff();
 
             const connection1 = new DummyConnection('connection ID 1');
             server.openConnection(connection1);
 
-            expect(manager.connectionIDToConnectionState).toEqual(new Map([[connection1.id, ConnectionState.WaitingForFirstMessage]]));
-            expect(manager.connectionIDToPreLoggedInConnection).toEqual(new Map([[connection1.id, connection1]]));
+            expect(serverManager.connectionIDToConnectionState).toEqual(new Map([[connection1.id, ConnectionState.WaitingForFirstMessage]]));
+            expect(serverManager.connectionIDToPreLoggedInConnection).toEqual(new Map([[connection1.id, connection1]]));
 
             const connection2 = new DummyConnection('connection ID 2');
             server.openConnection(connection2);
 
-            expect(manager.connectionIDToConnectionState).toEqual(
+            expect(serverManager.connectionIDToConnectionState).toEqual(
                 new Map([[connection1.id, ConnectionState.WaitingForFirstMessage], [connection2.id, ConnectionState.WaitingForFirstMessage]]),
             );
-            expect(manager.connectionIDToPreLoggedInConnection).toEqual(new Map([[connection1.id, connection1], [connection2.id, connection2]]));
+            expect(serverManager.connectionIDToPreLoggedInConnection).toEqual(new Map([[connection1.id, connection1], [connection2.id, connection2]]));
 
             connection1.close();
 
-            expect(manager.connectionIDToConnectionState).toEqual(new Map([[connection2.id, ConnectionState.WaitingForFirstMessage]]));
-            expect(manager.connectionIDToPreLoggedInConnection).toEqual(new Map([[connection2.id, connection2]]));
+            expect(serverManager.connectionIDToConnectionState).toEqual(new Map([[connection2.id, ConnectionState.WaitingForFirstMessage]]));
+            expect(serverManager.connectionIDToPreLoggedInConnection).toEqual(new Map([[connection2.id, connection2]]));
 
             connection1.close();
 
-            expect(manager.connectionIDToConnectionState).toEqual(new Map([[connection2.id, ConnectionState.WaitingForFirstMessage]]));
-            expect(manager.connectionIDToPreLoggedInConnection).toEqual(new Map([[connection2.id, connection2]]));
+            expect(serverManager.connectionIDToConnectionState).toEqual(new Map([[connection2.id, ConnectionState.WaitingForFirstMessage]]));
+            expect(serverManager.connectionIDToPreLoggedInConnection).toEqual(new Map([[connection2.id, connection2]]));
         });
     });
 
     describe('when sending first message', () => {
         describe('gets kicked', () => {
             async function getsKickedWithMessage(inputMessage: any, outputErrorCode: ErrorCode) {
-                const { server, userDataProvider } = getManagerAndStuff();
+                const { server, userDataProvider } = getServerManagerAndStuff();
 
                 userDataProvider.createUser('has password', 'password');
                 userDataProvider.createUser('does not have password', null);
@@ -142,7 +142,7 @@ describe('Manager', () => {
 
         describe('gets logged in', () => {
             async function getsLoggedInWithMessage(inputMessage: any, expectedUserID: number) {
-                const { manager, server, userDataProvider } = getManagerAndStuff();
+                const { serverManager, server, userDataProvider } = getServerManagerAndStuff();
 
                 userDataProvider.createUser('has password', 'password');
                 userDataProvider.createUser('does not have password', null);
@@ -155,21 +155,21 @@ describe('Manager', () => {
 
                 expect(connection.closed).toBe(false);
 
-                expect(manager.connectionIDToConnectionState).toEqual(new Map([[connection.id, ConnectionState.LoggedIn]]));
-                expect(manager.connectionIDToPreLoggedInConnection).toEqual(new Map());
-                expect(manager.clientIDManager.used).toEqual(new Set([1]));
-                expect(manager.connectionIDToClientID).toEqual(new Map([[connection.id, 1]]));
-                expect(manager.clientIDToConnection).toEqual(new Map([[1, connection]]));
-                expect(manager.clientIDToUserID).toEqual(new Map([[1, expectedUserID]]));
+                expect(serverManager.connectionIDToConnectionState).toEqual(new Map([[connection.id, ConnectionState.LoggedIn]]));
+                expect(serverManager.connectionIDToPreLoggedInConnection).toEqual(new Map());
+                expect(serverManager.clientIDManager.used).toEqual(new Set([1]));
+                expect(serverManager.connectionIDToClientID).toEqual(new Map([[connection.id, 1]]));
+                expect(serverManager.clientIDToConnection).toEqual(new Map([[1, connection]]));
+                expect(serverManager.clientIDToUserID).toEqual(new Map([[1, expectedUserID]]));
 
                 connection.close();
 
-                expect(manager.connectionIDToConnectionState).toEqual(new Map([]));
-                expect(manager.connectionIDToPreLoggedInConnection).toEqual(new Map());
-                expect(manager.clientIDManager.used).toEqual(new Set());
-                expect(manager.connectionIDToClientID).toEqual(new Map());
-                expect(manager.clientIDToConnection).toEqual(new Map());
-                expect(manager.clientIDToUserID).toEqual(new Map());
+                expect(serverManager.connectionIDToConnectionState).toEqual(new Map([]));
+                expect(serverManager.connectionIDToPreLoggedInConnection).toEqual(new Map());
+                expect(serverManager.clientIDManager.used).toEqual(new Set());
+                expect(serverManager.connectionIDToClientID).toEqual(new Map());
+                expect(serverManager.clientIDToConnection).toEqual(new Map());
+                expect(serverManager.clientIDToUserID).toEqual(new Map());
             }
 
             it('after providing correct password', async () => {
@@ -241,12 +241,12 @@ class DummyConnection {
     }
 }
 
-function getManagerAndStuff() {
+function getServerManagerAndStuff() {
     const server = new DummyServer();
     const userDataProvider = new TestUserDataProvider();
     // @ts-ignore
-    const manager = new Manager(server, userDataProvider, 1);
-    manager.manage();
+    const serverManager = new ServerManager(server, userDataProvider, 1);
+    serverManager.manage();
 
-    return { manager, server, userDataProvider };
+    return { serverManager, server, userDataProvider };
 }
