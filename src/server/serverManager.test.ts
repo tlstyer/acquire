@@ -7,13 +7,13 @@ describe('ServerManager', () => {
         it('can open connections and then close them', () => {
             const { serverManager, server } = getServerManagerAndStuff();
 
-            const connection1 = new DummyConnection('connection ID 1');
+            const connection1 = new TestConnection('connection ID 1');
             server.openConnection(connection1);
 
             expect(serverManager.connectionIDToConnectionState).toEqual(new Map([[connection1.id, ConnectionState.WaitingForFirstMessage]]));
             expect(serverManager.connectionIDToPreLoggedInConnection).toEqual(new Map([[connection1.id, connection1]]));
 
-            const connection2 = new DummyConnection('connection ID 2');
+            const connection2 = new TestConnection('connection ID 2');
             server.openConnection(connection2);
 
             expect(serverManager.connectionIDToConnectionState).toEqual(
@@ -35,13 +35,13 @@ describe('ServerManager', () => {
         it('closing already closed connection does nothing', () => {
             const { serverManager, server } = getServerManagerAndStuff();
 
-            const connection1 = new DummyConnection('connection ID 1');
+            const connection1 = new TestConnection('connection ID 1');
             server.openConnection(connection1);
 
             expect(serverManager.connectionIDToConnectionState).toEqual(new Map([[connection1.id, ConnectionState.WaitingForFirstMessage]]));
             expect(serverManager.connectionIDToPreLoggedInConnection).toEqual(new Map([[connection1.id, connection1]]));
 
-            const connection2 = new DummyConnection('connection ID 2');
+            const connection2 = new TestConnection('connection ID 2');
             server.openConnection(connection2);
 
             expect(serverManager.connectionIDToConnectionState).toEqual(
@@ -69,7 +69,7 @@ describe('ServerManager', () => {
                 userDataProvider.createUser('has password', 'password');
                 userDataProvider.createUser('does not have password', null);
 
-                const connection = new DummyConnection('connection');
+                const connection = new TestConnection('connection');
                 server.openConnection(connection);
                 connection.sendMessage(inputMessage);
 
@@ -147,7 +147,7 @@ describe('ServerManager', () => {
                 userDataProvider.createUser('has password', 'password');
                 userDataProvider.createUser('does not have password', null);
 
-                const connection = new DummyConnection('connection');
+                const connection = new TestConnection('connection');
                 server.openConnection(connection);
                 connection.sendMessage(inputMessage);
 
@@ -187,23 +187,23 @@ describe('ServerManager', () => {
     });
 });
 
-class DummyServer {
-    connectionListener: ((conn: DummyConnection) => any) | null = null;
+class TestServer {
+    connectionListener: ((conn: TestConnection) => any) | null = null;
 
-    on(event: string, listener: (conn: DummyConnection) => any) {
+    on(event: string, listener: (conn: TestConnection) => any) {
         if (event === 'connection') {
             this.connectionListener = listener;
         }
     }
 
-    openConnection(conn: DummyConnection) {
+    openConnection(conn: TestConnection) {
         if (this.connectionListener) {
             this.connectionListener(conn);
         }
     }
 }
 
-class DummyConnection {
+class TestConnection {
     dataListener: ((message: string) => any) | null = null;
     closeListener: (() => void) | null = null;
 
@@ -242,7 +242,7 @@ class DummyConnection {
 }
 
 function getServerManagerAndStuff() {
-    const server = new DummyServer();
+    const server = new TestServer();
     const userDataProvider = new TestUserDataProvider();
     // @ts-ignore
     const serverManager = new ServerManager(server, userDataProvider, 1);
