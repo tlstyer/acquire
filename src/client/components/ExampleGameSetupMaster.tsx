@@ -36,7 +36,7 @@ export class ExampleGameSetupMaster extends React.Component<ExampleGameSetupMast
         const numUsersInGame = gameSetup.usernameToUserID.size;
         const maxUsers = gameSetup.usernames.size;
 
-        const userIDs = [...gameSetup.userIDToUsername.sort().keys()];
+        const userIDs = [...gameSetup.userIDToUsername.keys()].sort((a, b) => (a < b ? -1 : 1));
 
         return (
             <div>
@@ -65,7 +65,7 @@ export class ExampleGameSetupMaster extends React.Component<ExampleGameSetupMast
                     }}
                 />
                 {userIDs.map(userID => {
-                    const username = gameSetup.userIDToUsername.get(userID, '');
+                    const username = gameSetup.userIDToUsername.get(userID) || '';
                     return username !== gameSetup.hostUsername ? (
                         <div key={username}>
                             <h2>{username}'s view</h2>

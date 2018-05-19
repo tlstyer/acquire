@@ -1,4 +1,4 @@
-import { List, Map } from 'immutable';
+import { List } from 'immutable';
 import { GameMode, GameSetupChange, PlayerArrangementMode } from './enums';
 import { gameModeToNumPlayers, gameModeToTeamSize, shuffleArray } from './helpers';
 
@@ -33,9 +33,9 @@ export class GameSetup {
 
         this.approvedByEverybody = false;
 
-        this.usernameToUserID = Map([[hostUsername, hostUserID]]);
+        this.usernameToUserID = new Map([[hostUsername, hostUserID]]);
 
-        this.userIDToUsername = Map([[hostUserID, hostUsername]]);
+        this.userIDToUsername = new Map([[hostUserID, hostUsername]]);
 
         this.history.push([GameSetupChange.Created, gameMode, playerArrangementMode, hostUserID]);
     }
@@ -58,8 +58,8 @@ export class GameSetup {
                 this.usernames = this.usernames.set(i, username);
                 this.approvals = defaultApprovals[gameModeToNumPlayers[this.gameMode]];
                 this.approvedByEverybody = false;
-                this.usernameToUserID = this.usernameToUserID.set(username, userID);
-                this.userIDToUsername = this.userIDToUsername.set(userID, username);
+                this.usernameToUserID.set(username, userID);
+                this.userIDToUsername.set(userID, username);
                 this.history.push([GameSetupChange.UserAdded, userID]);
                 break;
             }
@@ -71,7 +71,7 @@ export class GameSetup {
             return;
         }
 
-        const username = this.userIDToUsername.get(userID, '');
+        const username = this.userIDToUsername.get(userID);
 
         if (username === this.hostUsername) {
             return;
@@ -82,8 +82,8 @@ export class GameSetup {
                 this.usernames = this.usernames.set(i, null);
                 this.approvals = defaultApprovals[gameModeToNumPlayers[this.gameMode]];
                 this.approvedByEverybody = false;
-                this.usernameToUserID = this.usernameToUserID.delete(username);
-                this.userIDToUsername = this.userIDToUsername.delete(userID);
+                this.usernameToUserID.delete(username);
+                this.userIDToUsername.delete(userID);
                 this.history.push([GameSetupChange.UserRemoved, userID]);
                 break;
             }
@@ -99,7 +99,7 @@ export class GameSetup {
             return;
         }
 
-        const username = this.userIDToUsername.get(userID, '');
+        const username = this.userIDToUsername.get(userID);
 
         for (let i = 0; i < this.usernames.size; i++) {
             if (this.usernames.get(i, null) === username) {
@@ -226,13 +226,13 @@ export class GameSetup {
             return;
         }
 
-        const userID = this.usernameToUserID.get(username, 0);
+        const userID = this.usernameToUserID.get(username) || 0;
 
         this.usernames = this.usernames.set(position, null);
         this.approvals = defaultApprovals[gameModeToNumPlayers[this.gameMode]];
         this.approvedByEverybody = false;
-        this.usernameToUserID = this.usernameToUserID.delete(username);
-        this.userIDToUsername = this.userIDToUsername.delete(userID);
+        this.usernameToUserID.delete(username);
+        this.userIDToUsername.delete(userID);
         this.history.push([GameSetupChange.UserKicked, position]);
     }
 
@@ -270,7 +270,7 @@ export class GameSetup {
         const userIDs: number[] = new Array(usernames.length);
         for (let i = 0; i < usernames.length; i++) {
             const username = usernames[i];
-            userIDs[i] = this.usernameToUserID.get(username, 0);
+            userIDs[i] = this.usernameToUserID.get(username) || 0;
         }
 
         return [List(userIDs), List(usernames)];
