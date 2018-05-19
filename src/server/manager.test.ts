@@ -245,7 +245,7 @@ function getManagerAndStuff() {
     const server = new DummyServer();
     const userDataProvider = new TestUserDataProvider();
     // @ts-ignore
-    const manager = new Manager(server, userDataProvider);
+    const manager = new Manager(server, userDataProvider, 1);
     manager.manage();
 
     return { manager, server, userDataProvider };

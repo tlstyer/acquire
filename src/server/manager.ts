@@ -20,7 +20,7 @@ export class Manager {
     clientIDToConnection: Map<number, Connection> = new Map();
     clientIDToUserID: Map<number, number> = new Map();
 
-    constructor(public server: Server, public userDataProvider: UserDataProvider) {}
+    constructor(public server: Server, public userDataProvider: UserDataProvider, public nextInternalGameID: number) {}
 
     manage() {
         this.server.on('connection', connection => {
