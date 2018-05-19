@@ -44,6 +44,8 @@ export class ServerManager {
 
                 if (connectionState === ConnectionState.WaitingForFirstMessage) {
                     this.connectionIDToConnectionState.set(connection.id, ConnectionState.ProcessingFirstMessage);
+
+                    // tslint:disable-next-line:no-floating-promises
                     this.processFirstMessage(connection, message);
                 }
             });
@@ -125,7 +127,7 @@ export class ServerManager {
             return;
         }
 
-        let userID: number = 0;
+        let userID = 0;
 
         if (userData !== null) {
             if (userData.hasPassword) {

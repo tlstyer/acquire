@@ -66,8 +66,8 @@ describe('ServerManager', () => {
             async function getsKickedWithMessage(inputMessage: any, outputErrorCode: ErrorCode) {
                 const { server, userDataProvider } = getServerManagerAndStuff();
 
-                userDataProvider.createUser('has password', 'password');
-                userDataProvider.createUser('does not have password', null);
+                await userDataProvider.createUser('has password', 'password');
+                await userDataProvider.createUser('does not have password', null);
 
                 const connection = new TestConnection('connection');
                 server.openConnection(connection);
@@ -144,8 +144,8 @@ describe('ServerManager', () => {
             async function getsLoggedInWithMessage(inputMessage: any, expectedUserID: number) {
                 const { serverManager, server, userDataProvider } = getServerManagerAndStuff();
 
-                userDataProvider.createUser('has password', 'password');
-                userDataProvider.createUser('does not have password', null);
+                await userDataProvider.createUser('has password', 'password');
+                await userDataProvider.createUser('does not have password', null);
 
                 const connection = new TestConnection('connection');
                 server.openConnection(connection);

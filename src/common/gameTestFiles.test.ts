@@ -3,8 +3,8 @@ import * as path from 'path';
 import { Game } from './game';
 import { runGameTestFile } from './runGameTestFile';
 
-const inputBasePath: string = `${__dirname}/gameTestFiles/`;
-const outputBasePath: string = '';
+const inputBasePath = `${__dirname}/gameTestFiles/`;
+const outputBasePath = '';
 
 function processDirectory(base: string, dir: string) {
     describe(base === __dirname ? 'game test files' : dir, () => {

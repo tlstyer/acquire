@@ -17,7 +17,7 @@ export function runGameTestFile(inputLines: string[]) {
     let tileBag: number[] = [];
     const userIDs: number[] = [];
     const usernames: string[] = [];
-    let hostUserID: number = 0;
+    let hostUserID = 0;
     let myUserID: number | null = null;
 
     const outputLines: string[] = [];
@@ -504,9 +504,7 @@ function toTileString(tile: number) {
     if (tile === Tile.Unknown) {
         return '?';
     } else {
-        const x = Math.floor(tile / 9) + 1;
-        const y = yTileNames[tile % 9];
-        return x + y;
+        return `${Math.floor(tile / 9) + 1}${yTileNames[tile % 9]}`;
     }
 }
 

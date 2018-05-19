@@ -174,7 +174,7 @@ class ScoreBoardRow extends React.PureComponent<ScoreBoardRowProps> {
                 {scoreBoardRow.size === ScoreBoardIndex.Max ? (
                     <td className={defaultClassName}>{scoreBoardRow.get(7, 0) * 100}</td>
                 ) : (
-                    <td className={style.bottomRightCells}>{teamNumber !== undefined ? 'Team ' + teamNumber : undefined}</td>
+                    <td className={style.bottomRightCells}>{teamNumber !== undefined ? `Team ${teamNumber}` : undefined}</td>
                 )}
                 {scoreBoardRow.size === ScoreBoardIndex.Max ? (
                     <td className={defaultClassName}>{scoreBoardRow.get(8, 0) * 100}</td>

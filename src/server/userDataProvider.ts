@@ -10,7 +10,7 @@ export interface UserData {
 }
 
 export class TestUserDataProvider implements UserDataProvider {
-    nextUserID: number = 1;
+    nextUserID = 1;
     usernameToUserData: Map<string, TestUserData> = new Map();
 
     async createUser(username: string, password: string | null) {

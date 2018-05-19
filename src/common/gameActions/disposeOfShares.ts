@@ -6,7 +6,7 @@ import { ActionBase } from './base';
 
 export class ActionDisposeOfShares extends ActionBase {
     sharesOwnedInDefunctChain: number;
-    sharesAvailableInControllingChain: number = 0;
+    sharesAvailableInControllingChain = 0;
 
     constructor(game: Game, playerID: number, public defunctChain: GameBoardType, public controllingChain: GameBoardType) {
         super(game, playerID, GameAction.DisposeOfShares);

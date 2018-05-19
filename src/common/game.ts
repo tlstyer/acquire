@@ -22,14 +22,14 @@ import { calculateBonuses, getNeighboringTiles } from './helpers';
 type GameJSON = [GameMode, PlayerArrangementMode, number | null, number, number[], string[], number, number[], ([any] | [any, number])[]];
 
 export class Game {
-    nextTileBagIndex: number = 0;
+    nextTileBagIndex = 0;
     gameBoardTypeCounts: number[];
     protected currentMoveData: MoveData | null = null;
     moveDataHistory = defaultMoveDataHistory;
     gameActionStack: ActionBase[] = [];
-    numTurnsWithoutPlayedTiles: number = 0;
+    numTurnsWithoutPlayedTiles = 0;
 
-    turnPlayerID: number = 0;
+    turnPlayerID = 0;
     tileRacks = defaultTileRacks;
     tileRackTypes = defaultTileRackTypesList;
     gameBoard = defaultGameBoard;
@@ -246,7 +246,7 @@ export class Game {
         const lonelyTileIndexes: number[] = [];
         const lonelyTileBorderTiles: { [key: number]: boolean } = {};
 
-        let canStartNewChain: boolean = false;
+        let canStartNewChain = false;
         for (let i = 0; i <= GameBoardType.Imperial; i++) {
             if (this.gameBoardTypeCounts[i] === 0) {
                 canStartNewChain = true;
@@ -578,7 +578,7 @@ const dummyPlayerMessages: any[][] = [];
 const dummyWatcherMessage: any[] = [];
 
 export class MoveData {
-    playerID: number = -1;
+    playerID = -1;
     gameAction: GameAction = GameAction.StartGame;
     gameActionParameters: any[] = [];
     timestamp: number | null = null;
@@ -588,7 +588,7 @@ export class MoveData {
     gameHistoryMessages: GameHistoryMessageData[] = [];
     nextGameAction: ActionBase;
 
-    turnPlayerID: number = 0;
+    turnPlayerID = 0;
     tileRacks = defaultTileRacks;
     tileRackTypes = defaultTileRackTypesList;
     gameBoard = defaultGameBoard;

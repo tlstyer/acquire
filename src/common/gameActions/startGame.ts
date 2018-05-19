@@ -48,7 +48,7 @@ export class ActionStartGame extends ActionBase {
 }
 
 class PositionTileData {
-    playerID: number = 0;
+    playerID = 0;
 
     constructor(public tile: number, public tileBagIndex: number) {}
 }
