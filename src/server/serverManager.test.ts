@@ -75,7 +75,7 @@ describe('ServerManager', () => {
 
                 await new Promise(resolve => setTimeout(resolve, 0));
 
-                expect(connection.receivedMessages).toEqual([JSON.stringify([MessageToClient.FatalError, outputErrorCode])]);
+                expect(connection.receivedMessages).toEqual([[MessageToClient.FatalError, outputErrorCode]]);
                 expect(connection.closed).toBe(true);
             }
 
@@ -207,7 +207,7 @@ class TestConnection {
     dataListener: ((message: string) => any) | null = null;
     closeListener: (() => void) | null = null;
 
-    receivedMessages: string[] = [];
+    receivedMessages: any[] = [];
     closed = false;
 
     constructor(public id: string) {}
@@ -221,7 +221,7 @@ class TestConnection {
     }
 
     write(message: string) {
-        this.receivedMessages.push(message);
+        this.receivedMessages.push(JSON.parse(message));
     }
 
     sendMessage(message: any) {
