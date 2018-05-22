@@ -10,6 +10,7 @@ export enum ErrorCode {
     MissingPassword,
     ProvidedPassword,
     IncorrectPassword,
+    CouldNotConnect,
 }
 
 export enum GameAction {

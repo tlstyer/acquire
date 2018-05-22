@@ -1,4 +1,5 @@
 import * as SockJS from 'sockjs-client';
+import { ErrorCode, MessageToClient } from '../common/enums';
 import { ClientManager, ClientManagerPage } from './clientManager';
 
 jest.mock('sockjs-client');
@@ -26,14 +27,48 @@ describe('ClientManager', () => {
                 expect(testConnection.onclose).toBe(clientManager.onSocketClose);
             }
             expect(renderMock.mock.calls.length).toBe(2);
-
             expect(testConnection.sentMessages).toEqual([]);
 
             testConnection.triggerOpen();
 
             expect(renderMock.mock.calls.length).toBe(2);
-
             expect(testConnection.sentMessages).toEqual([[0, 'username', 'password', []]]);
+        });
+
+        it('goes back to login page upon fatal error followed by a closed connection', () => {
+            const { clientManager, testConnection, renderMock } = getClientManagerAndStuff();
+
+            clientManager.manage();
+
+            clientManager.onSubmitLoginForm('username', 'password');
+
+            testConnection.triggerOpen();
+
+            testConnection.triggerMessage([[MessageToClient.FatalError, ErrorCode.IncorrectPassword]]);
+
+            expect(clientManager.errorCode).toBe(ErrorCode.IncorrectPassword);
+            expect(clientManager.page).toBe(ClientManagerPage.Connecting);
+            expect(renderMock.mock.calls.length).toBe(3);
+
+            testConnection.triggerClose();
+
+            expect(clientManager.errorCode).toBe(ErrorCode.IncorrectPassword);
+            expect(clientManager.page).toBe(ClientManagerPage.Login);
+            expect(renderMock.mock.calls.length).toBe(4);
+        });
+
+        it('goes back to login page upon closed connection before receiving a message', () => {
+            const { clientManager, testConnection, renderMock } = getClientManagerAndStuff();
+
+            clientManager.manage();
+
+            clientManager.onSubmitLoginForm('username', 'password');
+
+            testConnection.triggerClose();
+
+            expect(clientManager.errorCode).toBe(ErrorCode.CouldNotConnect);
+            expect(clientManager.page).toBe(ClientManagerPage.Login);
+            expect(renderMock.mock.calls.length).toBe(3);
         });
     });
 });

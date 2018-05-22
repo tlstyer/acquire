@@ -3,6 +3,7 @@ import './global.css';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import * as SockJS from 'sockjs-client';
+import { ErrorCode, MessageToClient } from '../common/enums';
 import { LoginForm } from './components/LoginForm';
 
 export enum ClientManagerPage {
@@ -12,7 +13,19 @@ export enum ClientManagerPage {
     Game,
 }
 
+const errorCodeToMessage: { [key: number]: string } = {
+    [ErrorCode.NotUsingLatestVersion]: 'You are not using the latest version.',
+    [ErrorCode.InternalServerError]: 'An error occurred during the processing of your request.',
+    [ErrorCode.InvalidMessageFormat]: 'An error occurred during the processing of your request.',
+    [ErrorCode.InvalidUsername]: 'Invalid username. Username must have between 1 and 32 ASCII characters.',
+    [ErrorCode.MissingPassword]: 'Password is required.',
+    [ErrorCode.ProvidedPassword]: 'Password is not set for this user.',
+    [ErrorCode.IncorrectPassword]: 'Password is incorrect.',
+    [ErrorCode.CouldNotConnect]: 'Could not connect to the server.',
+};
+
 export class ClientManager {
+    errorCode: ErrorCode | null = null;
     page = ClientManagerPage.Login;
     socket: WebSocket | null = null;
 
@@ -20,6 +33,7 @@ export class ClientManager {
     password = '';
 
     renderPageFunctions: { [key: number]: () => JSX.Element };
+    onMessageFunctions: { [key: number]: (...params: any[]) => void };
 
     constructor() {
         this.renderPageFunctions = {
@@ -27,6 +41,10 @@ export class ClientManager {
             [ClientManagerPage.Connecting]: this.renderConnectingPage,
             [ClientManagerPage.Lobby]: this.renderLobbyPage,
             [ClientManagerPage.Game]: this.renderGamePage,
+        };
+
+        this.onMessageFunctions = {
+            [MessageToClient.FatalError]: this.onMessageFatalError,
         };
     }
 
@@ -43,12 +61,17 @@ export class ClientManager {
             <>
                 <h1>Acquire</h1>
                 <h2>Login</h2>
-                <LoginForm onSubmit={this.onSubmitLoginForm} />
+                <LoginForm
+                    error={this.errorCode !== null ? errorCodeToMessage[this.errorCode] : undefined}
+                    username={this.username}
+                    onSubmit={this.onSubmitLoginForm}
+                />
             </>
         );
     };
 
     onSubmitLoginForm = (username: string, password: string) => {
+        this.errorCode = null;
         this.page = ClientManagerPage.Connecting;
 
         this.username = username;
@@ -106,7 +129,25 @@ export class ClientManager {
         if (this.socket === null) {
             throw new Error('why is this.socket null?');
         }
+
+        const messages = JSON.parse(e.data);
+
+        for (let i = 0; i < messages.length; i++) {
+            const message = messages[i];
+            const handler = this.onMessageFunctions[message[0]];
+            handler.apply(this, message.slice(1));
+        }
+
+        if (this.page === ClientManagerPage.Connecting && this.errorCode === null) {
+            this.page = ClientManagerPage.Lobby;
+        }
+
+        this.render();
     };
+
+    onMessageFatalError(errorCode: ErrorCode) {
+        this.errorCode = errorCode;
+    }
 
     onSocketClose = (e: CloseEvent) => {
         if (this.socket === null) {
@@ -114,5 +155,14 @@ export class ClientManager {
         }
 
         this.socket = null;
+
+        if (this.errorCode !== null) {
+            this.page = ClientManagerPage.Login;
+        } else if (this.page === ClientManagerPage.Connecting) {
+            this.errorCode = ErrorCode.CouldNotConnect;
+            this.page = ClientManagerPage.Login;
+        }
+
+        this.render();
     };
 }
