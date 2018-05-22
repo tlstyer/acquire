@@ -85,7 +85,7 @@ export class ServerManager {
     }
 
     kickWithError(connection: Connection, errorCode: ErrorCode) {
-        connection.write(JSON.stringify([MessageToClient.FatalError, errorCode]));
+        connection.write(JSON.stringify([[MessageToClient.FatalError, errorCode]]));
         connection.close();
     }
 
