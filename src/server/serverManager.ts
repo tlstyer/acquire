@@ -16,10 +16,8 @@ export class ServerManager {
     connectionIDToPreLoggedInConnection: Map<string, Connection> = new Map();
 
     clientIDManager: ReuseIDManager = new ReuseIDManager(60000);
-    connectionIDToClientID: Map<string, number> = new Map();
-    clientIDToConnection: Map<number, Connection> = new Map();
-    clientIDToUserID: Map<number, number> = new Map();
-    userIDToClientIDs: Map<number, Set<number>> = new Map();
+    connectionIDToClient: Map<string, Client> = new Map();
+    userIDToUser: Map<number, User> = new Map();
 
     constructor(public server: Server, public userDataProvider: UserDataProvider, public nextInternalGameID: number) {}
 
@@ -71,27 +69,19 @@ export class ServerManager {
         this.connectionIDToConnectionState.delete(connection.id);
 
         if (connectionState === ConnectionState.LoggedIn) {
-            const clientID = this.connectionIDToClientID.get(connection.id);
-            if (clientID === undefined) {
-                throw new Error('connection not in connectionIDToClientID');
+            const client = this.connectionIDToClient.get(connection.id);
+            if (client === undefined) {
+                return;
             }
 
-            const userID = this.clientIDToUserID.get(clientID);
-            if (userID === undefined) {
-                throw new Error('client ID not in clientIDToUserID');
-            }
+            this.clientIDManager.returnID(client.id);
 
-            this.clientIDManager.returnID(clientID);
-            this.connectionIDToClientID.delete(connection.id);
-            this.clientIDToConnection.delete(clientID);
-            this.clientIDToUserID.delete(clientID);
+            this.connectionIDToClient.delete(connection.id);
 
-            const clientIDs = this.userIDToClientIDs.get(userID);
-            if (clientIDs !== undefined) {
-                clientIDs.delete(clientID);
-                if (clientIDs.size === 0) {
-                    this.userIDToClientIDs.delete(userID);
-                }
+            const user = client.user;
+            user.clients.delete(client);
+            if (user.clients.size === 0) {
+                this.userIDToUser.delete(user.id);
             }
         } else {
             this.connectionIDToPreLoggedInConnection.delete(connection.id);
@@ -180,16 +170,24 @@ export class ServerManager {
 
         this.connectionIDToPreLoggedInConnection.delete(connection.id);
 
-        const clientID = this.clientIDManager.getID();
-        this.connectionIDToClientID.set(connection.id, clientID);
-        this.clientIDToConnection.set(clientID, connection);
-        this.clientIDToUserID.set(clientID, userID);
-
-        const clientIDs = this.userIDToClientIDs.get(userID);
-        if (clientIDs !== undefined) {
-            clientIDs.add(clientID);
-        } else {
-            this.userIDToClientIDs.set(userID, new Set([clientID]));
+        let user = this.userIDToUser.get(userID);
+        if (user === undefined) {
+            user = new User(userID);
+            this.userIDToUser.set(userID, user);
         }
+
+        const client = new Client(this.clientIDManager.getID(), connection, user);
+        this.connectionIDToClient.set(connection.id, client);
+        user.clients.add(client);
     }
+}
+
+export class Client {
+    constructor(public id: number, public connection: Connection, public user: User) {}
+}
+
+export class User {
+    clients: Set<Client> = new Set();
+
+    constructor(public id: number) {}
 }
