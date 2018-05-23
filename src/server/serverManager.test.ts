@@ -142,7 +142,7 @@ describe('ServerManager', () => {
         });
 
         describe('gets logged in', () => {
-            async function getsLoggedInWithMessage(inputMessage: any, expectedUserID: number) {
+            async function getsLoggedIn(username: string, password: string, expectedUserID: number) {
                 const { serverManager, server, userDataProvider } = getServerManagerAndStuff();
 
                 await userDataProvider.createUser('has password', 'password');
@@ -150,21 +150,21 @@ describe('ServerManager', () => {
 
                 const connection1 = new TestConnection('connection 1');
                 server.openConnection(connection1);
-                connection1.sendMessage(inputMessage);
+                connection1.sendMessage([0, username, password, []]);
                 await new Promise(resolve => setTimeout(resolve, 0));
 
                 function expectJustConnection1Data() {
                     expect(serverManager.connectionIDToConnectionState).toEqual(new Map([[connection1.id, ConnectionState.LoggedIn]]));
                     expect(serverManager.connectionIDToPreLoggedInConnection).toEqual(new Map());
                     expect(serverManager.clientIDManager.used).toEqual(new Set([1]));
-                    expectClientAndUser(serverManager, [[expectedUserID, inputMessage[1], [[1, connection1]]]]);
+                    expectClientAndUser(serverManager, [[expectedUserID, username, [[1, connection1]]]]);
                     expect(connection1.closed).toBe(false);
                 }
                 expectJustConnection1Data();
 
                 const connection2 = new TestConnection('connection 2');
                 server.openConnection(connection2);
-                connection2.sendMessage(inputMessage);
+                connection2.sendMessage([0, username, password, []]);
                 await new Promise(resolve => setTimeout(resolve, 0));
 
                 expect(serverManager.connectionIDToConnectionState).toEqual(
@@ -172,7 +172,7 @@ describe('ServerManager', () => {
                 );
                 expect(serverManager.connectionIDToPreLoggedInConnection).toEqual(new Map());
                 expect(serverManager.clientIDManager.used).toEqual(new Set([1, 2]));
-                expectClientAndUser(serverManager, [[expectedUserID, inputMessage[1], [[1, connection1], [2, connection2]]]]);
+                expectClientAndUser(serverManager, [[expectedUserID, username, [[1, connection1], [2, connection2]]]]);
                 expect(connection1.closed).toBe(false);
                 expect(connection2.closed).toBe(false);
 
@@ -191,15 +191,15 @@ describe('ServerManager', () => {
             }
 
             it('after providing correct password', async () => {
-                await getsLoggedInWithMessage([0, 'has password', 'password', []], 1);
+                await getsLoggedIn('has password', 'password', 1);
             });
 
             it('after not providing a password when it is not set', async () => {
-                await getsLoggedInWithMessage([0, 'does not have password', '', []], 2);
+                await getsLoggedIn('does not have password', '', 2);
             });
 
             it('after not providing a password when user data does not exist', async () => {
-                await getsLoggedInWithMessage([0, 'no user data', '', []], 3);
+                await getsLoggedIn('no user data', '', 3);
             });
         });
     });
