@@ -147,22 +147,46 @@ describe('ServerManager', () => {
                 await userDataProvider.createUser('has password', 'password');
                 await userDataProvider.createUser('does not have password', null);
 
-                const connection = new TestConnection('connection');
-                server.openConnection(connection);
-                connection.sendMessage(inputMessage);
-
+                const connection1 = new TestConnection('connection 1');
+                server.openConnection(connection1);
+                connection1.sendMessage(inputMessage);
                 await new Promise(resolve => setTimeout(resolve, 0));
 
-                expect(connection.closed).toBe(false);
+                function expectJustConnection1Data() {
+                    expect(serverManager.connectionIDToConnectionState).toEqual(new Map([[connection1.id, ConnectionState.LoggedIn]]));
+                    expect(serverManager.connectionIDToPreLoggedInConnection).toEqual(new Map());
+                    expect(serverManager.clientIDManager.used).toEqual(new Set([1]));
+                    expect(serverManager.connectionIDToClientID).toEqual(new Map([[connection1.id, 1]]));
+                    expect(serverManager.clientIDToConnection).toEqual(new Map([[1, connection1]]));
+                    expect(serverManager.clientIDToUserID).toEqual(new Map([[1, expectedUserID]]));
+                    expect(serverManager.userIDToClientIDs).toEqual(new Map([[expectedUserID, new Set([1])]]));
+                    expect(connection1.closed).toBe(false);
+                }
+                expectJustConnection1Data();
 
-                expect(serverManager.connectionIDToConnectionState).toEqual(new Map([[connection.id, ConnectionState.LoggedIn]]));
+                const connection2 = new TestConnection('connection 2');
+                server.openConnection(connection2);
+                connection2.sendMessage(inputMessage);
+                await new Promise(resolve => setTimeout(resolve, 0));
+
+                expect(serverManager.connectionIDToConnectionState).toEqual(
+                    new Map([[connection1.id, ConnectionState.LoggedIn], [connection2.id, ConnectionState.LoggedIn]]),
+                );
                 expect(serverManager.connectionIDToPreLoggedInConnection).toEqual(new Map());
-                expect(serverManager.clientIDManager.used).toEqual(new Set([1]));
-                expect(serverManager.connectionIDToClientID).toEqual(new Map([[connection.id, 1]]));
-                expect(serverManager.clientIDToConnection).toEqual(new Map([[1, connection]]));
-                expect(serverManager.clientIDToUserID).toEqual(new Map([[1, expectedUserID]]));
+                expect(serverManager.clientIDManager.used).toEqual(new Set([1, 2]));
+                expect(serverManager.connectionIDToClientID).toEqual(new Map([[connection1.id, 1], [connection2.id, 2]]));
+                expect(serverManager.clientIDToConnection).toEqual(new Map([[1, connection1], [2, connection2]]));
+                expect(serverManager.clientIDToUserID).toEqual(new Map([[1, expectedUserID], [2, expectedUserID]]));
+                expect(serverManager.userIDToClientIDs).toEqual(new Map([[expectedUserID, new Set([1, 2])]]));
+                expect(connection1.closed).toBe(false);
+                expect(connection2.closed).toBe(false);
 
-                connection.close();
+                connection2.close();
+
+                expectJustConnection1Data();
+                expect(connection2.closed).toBe(true);
+
+                connection1.close();
 
                 expect(serverManager.connectionIDToConnectionState).toEqual(new Map([]));
                 expect(serverManager.connectionIDToPreLoggedInConnection).toEqual(new Map());
@@ -170,6 +194,8 @@ describe('ServerManager', () => {
                 expect(serverManager.connectionIDToClientID).toEqual(new Map());
                 expect(serverManager.clientIDToConnection).toEqual(new Map());
                 expect(serverManager.clientIDToUserID).toEqual(new Map());
+                expect(serverManager.userIDToClientIDs).toEqual(new Map());
+                expect(connection1.closed).toBe(true);
             }
 
             it('after providing correct password', async () => {

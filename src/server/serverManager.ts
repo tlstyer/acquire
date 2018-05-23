@@ -19,6 +19,7 @@ export class ServerManager {
     connectionIDToClientID: Map<string, number> = new Map();
     clientIDToConnection: Map<number, Connection> = new Map();
     clientIDToUserID: Map<number, number> = new Map();
+    userIDToClientIDs: Map<number, Set<number>> = new Map();
 
     constructor(public server: Server, public userDataProvider: UserDataProvider, public nextInternalGameID: number) {}
 
@@ -75,10 +76,23 @@ export class ServerManager {
                 throw new Error('connection not in connectionIDToClientID');
             }
 
+            const userID = this.clientIDToUserID.get(clientID);
+            if (userID === undefined) {
+                throw new Error('client ID not in clientIDToUserID');
+            }
+
             this.clientIDManager.returnID(clientID);
             this.connectionIDToClientID.delete(connection.id);
             this.clientIDToConnection.delete(clientID);
             this.clientIDToUserID.delete(clientID);
+
+            const clientIDs = this.userIDToClientIDs.get(userID);
+            if (clientIDs !== undefined) {
+                clientIDs.delete(clientID);
+                if (clientIDs.size === 0) {
+                    this.userIDToClientIDs.delete(userID);
+                }
+            }
         } else {
             this.connectionIDToPreLoggedInConnection.delete(connection.id);
         }
@@ -170,5 +184,12 @@ export class ServerManager {
         this.connectionIDToClientID.set(connection.id, clientID);
         this.clientIDToConnection.set(clientID, connection);
         this.clientIDToUserID.set(clientID, userID);
+
+        const clientIDs = this.userIDToClientIDs.get(userID);
+        if (clientIDs !== undefined) {
+            clientIDs.add(clientID);
+        } else {
+            this.userIDToClientIDs.set(userID, new Set([clientID]));
+        }
     }
 }
