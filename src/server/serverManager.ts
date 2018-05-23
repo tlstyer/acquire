@@ -83,6 +83,11 @@ export class ServerManager {
             if (user.clients.size === 0) {
                 this.userIDToUser.delete(user.id);
             }
+
+            const messageToOtherClients = JSON.stringify([this.getClientDisconnectedMessage(client)]);
+            this.connectionIDToClient.forEach(otherClient => {
+                otherClient.connection.write(messageToOtherClients);
+            });
         } else {
             this.connectionIDToPreLoggedInConnection.delete(connection.id);
         }
@@ -171,14 +176,68 @@ export class ServerManager {
         this.connectionIDToPreLoggedInConnection.delete(connection.id);
 
         let user = this.userIDToUser.get(userID);
+        let isNewUser = false;
         if (user === undefined) {
             user = new User(userID, username);
             this.userIDToUser.set(userID, user);
+            isNewUser = true;
         }
 
         const client = new Client(this.clientIDManager.getID(), connection, user);
         this.connectionIDToClient.set(connection.id, client);
         user.clients.add(client);
+
+        client.connection.write(JSON.stringify([this.getGreetingsMessage(gameDataArray)]));
+
+        const messageToOtherClients = JSON.stringify([this.getClientConnectedMessage(client, isNewUser)]);
+        this.connectionIDToClient.forEach(otherClient => {
+            if (otherClient !== client) {
+                otherClient.connection.write(messageToOtherClients);
+            }
+        });
+    }
+
+    getGreetingsMessage(gameDataArray: any[]) {
+        const users: any[] = [];
+        this.userIDToUser.forEach(user => {
+            const clients: any[] = [];
+            user.clients.forEach(client => {
+                clients.push([client.id]);
+            });
+
+            const userMessage: any[] = [user.id, user.name];
+            if (clients.length > 0) {
+                userMessage.push(clients);
+            }
+
+            users.push(userMessage);
+        });
+
+        const gamesBeingSetUp: any[] = [];
+
+        const games: any[] = [];
+
+        const nonexistentGames: number[] = gameDataArray.map(g => g[0]);
+
+        const message = [MessageToClient.Greetings, users, gamesBeingSetUp, games];
+        if (nonexistentGames.length > 0) {
+            message.push(nonexistentGames);
+        }
+
+        return message;
+    }
+
+    getClientConnectedMessage(client: Client, isNewUser: boolean) {
+        const message: any[] = [MessageToClient.ClientConnected, client.id, client.user.id];
+        if (isNewUser) {
+            message.push(client.user.name);
+        }
+
+        return message;
+    }
+
+    getClientDisconnectedMessage(client: Client) {
+        return [MessageToClient.ClientDisconnected, client.id];
     }
 }
 

@@ -161,6 +161,8 @@ describe('ServerManager', () => {
                     expect(connection1.closed).toBe(false);
                 }
                 expectJustConnection1Data();
+                expect(connection1.receivedMessages.length).toBe(1);
+                expect(connection1.receivedMessages[0]).toEqual([[MessageToClient.Greetings, [[expectedUserID, username, [[1]]]], [], []]]);
 
                 const connection2 = new TestConnection('connection 2');
                 server.openConnection(connection2);
@@ -175,11 +177,18 @@ describe('ServerManager', () => {
                 expectClientAndUser(serverManager, [[expectedUserID, username, [[1, connection1], [2, connection2]]]]);
                 expect(connection1.closed).toBe(false);
                 expect(connection2.closed).toBe(false);
+                expect(connection1.receivedMessages.length).toBe(2);
+                expect(connection1.receivedMessages[1]).toEqual([[MessageToClient.ClientConnected, 2, expectedUserID]]);
+                expect(connection2.receivedMessages.length).toBe(1);
+                expect(connection2.receivedMessages[0]).toEqual([[MessageToClient.Greetings, [[expectedUserID, username, [[1], [2]]]], [], []]]);
 
                 connection2.close();
 
                 expectJustConnection1Data();
                 expect(connection2.closed).toBe(true);
+                expect(connection1.receivedMessages.length).toBe(3);
+                expect(connection1.receivedMessages[2]).toEqual([[MessageToClient.ClientDisconnected, 2]]);
+                expect(connection2.receivedMessages.length).toBe(1);
 
                 connection1.close();
 
@@ -188,6 +197,8 @@ describe('ServerManager', () => {
                 expect(serverManager.clientIDManager.used).toEqual(new Set());
                 expectClientAndUser(serverManager, []);
                 expect(connection1.closed).toBe(true);
+                expect(connection1.receivedMessages.length).toBe(3);
+                expect(connection2.receivedMessages.length).toBe(1);
             }
 
             it('after providing correct password', async () => {
@@ -201,6 +212,47 @@ describe('ServerManager', () => {
             it('after not providing a password when user data does not exist', async () => {
                 await getsLoggedIn('no user data', '', 3);
             });
+        });
+    });
+
+    describe('MessageToClient.Greetings', () => {
+        it('user and client info is included', async () => {
+            const { server } = getServerManagerAndStuff();
+
+            await connectToServer(server, 'user 1');
+            await connectToServer(server, 'user 2');
+            await connectToServer(server, 'user 2');
+            await connectToServer(server, 'user 3');
+            await connectToServer(server, 'user 4');
+            await connectToServer(server, 'user 1');
+            const connection = await connectToServer(server, 'me');
+
+            expect(connection.receivedMessages.length).toBe(1);
+            expect(connection.receivedMessages[0]).toEqual([
+                [
+                    MessageToClient.Greetings,
+                    [[1, 'user 1', [[1], [6]]], [2, 'user 2', [[2], [3]]], [3, 'user 3', [[4]]], [4, 'user 4', [[5]]], [5, 'me', [[7]]]],
+                    [],
+                    [],
+                ],
+            ]);
+        });
+    });
+
+    describe('MessageToClient.ClientConnected', () => {
+        it('username parameter is excluded if already known', async () => {
+            const { server } = getServerManagerAndStuff();
+
+            const connection = await connectToServer(server, 'user 1');
+            await connectToServer(server, 'user 2');
+
+            expect(connection.receivedMessages.length).toBe(2);
+            expect(connection.receivedMessages[1]).toEqual([[MessageToClient.ClientConnected, 2, 2, 'user 2']]);
+
+            await connectToServer(server, 'user 2');
+
+            expect(connection.receivedMessages.length).toBe(3);
+            expect(connection.receivedMessages[2]).toEqual([[MessageToClient.ClientConnected, 3, 2]]);
         });
     });
 });
@@ -323,4 +375,13 @@ function uncirclereferenceifyUserIDToUser(userIDToUser: Map<number, User>) {
     });
 
     return uncirclereferenceified;
+}
+
+async function connectToServer(server: TestServer, username: string) {
+    const connection = new TestConnection(username);
+    server.openConnection(connection);
+    connection.sendMessage([0, username, '', []]);
+    await new Promise(resolve => setTimeout(resolve, 0));
+
+    return connection;
 }

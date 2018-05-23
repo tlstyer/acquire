@@ -1,5 +1,8 @@
 export enum MessageToClient {
     FatalError,
+    Greetings,
+    ClientConnected,
+    ClientDisconnected,
 }
 
 export enum ErrorCode {
