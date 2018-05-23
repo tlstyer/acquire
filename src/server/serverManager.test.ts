@@ -157,7 +157,7 @@ describe('ServerManager', () => {
                     expect(serverManager.connectionIDToConnectionState).toEqual(new Map([[connection1.id, ConnectionState.LoggedIn]]));
                     expect(serverManager.connectionIDToPreLoggedInConnection).toEqual(new Map());
                     expect(serverManager.clientIDManager.used).toEqual(new Set([1]));
-                    expectClientAndUser(serverManager, [[expectedUserID, [[1, connection1]]]]);
+                    expectClientAndUser(serverManager, [[expectedUserID, inputMessage[1], [[1, connection1]]]]);
                     expect(connection1.closed).toBe(false);
                 }
                 expectJustConnection1Data();
@@ -172,7 +172,7 @@ describe('ServerManager', () => {
                 );
                 expect(serverManager.connectionIDToPreLoggedInConnection).toEqual(new Map());
                 expect(serverManager.clientIDManager.used).toEqual(new Set([1, 2]));
-                expectClientAndUser(serverManager, [[expectedUserID, [[1, connection1], [2, connection2]]]]);
+                expectClientAndUser(serverManager, [[expectedUserID, inputMessage[1], [[1, connection1], [2, connection2]]]]);
                 expect(connection1.closed).toBe(false);
                 expect(connection2.closed).toBe(false);
 
@@ -270,16 +270,16 @@ function getServerManagerAndStuff() {
 }
 
 type ClientData = [number, TestConnection];
-type UserData = [number, ClientData[]];
+type UserData = [number, string, ClientData[]];
 type UncirclereferenceifiedConnectionIDToClient = Map<string, [number, Connection, number]>;
-type UncirclereferenceifiedUserIDToUser = Map<number, [number, Set<number>]>;
+type UncirclereferenceifiedUserIDToUser = Map<number, [number, string, Set<number>]>;
 
 function expectClientAndUser(serverManager: ServerManager, userDatas: UserData[]) {
     const connectionIDToClient: UncirclereferenceifiedConnectionIDToClient = new Map();
     const userIDToUser: UncirclereferenceifiedUserIDToUser = new Map();
 
     userDatas.forEach(userData => {
-        const [userID, clientDatas] = userData;
+        const [userID, username, clientDatas] = userData;
 
         const clientIDs = new Set<number>();
 
@@ -292,7 +292,7 @@ function expectClientAndUser(serverManager: ServerManager, userDatas: UserData[]
             clientIDs.add(clientID);
         });
 
-        userIDToUser.set(userID, [userID, clientIDs]);
+        userIDToUser.set(userID, [userID, username, clientIDs]);
     });
 
     expect(uncirclereferenceifyConnectionIDToClient(serverManager.connectionIDToClient)).toEqual(connectionIDToClient);
@@ -319,7 +319,7 @@ function uncirclereferenceifyUserIDToUser(userIDToUser: Map<number, User>) {
             clientIDs.add(client.id);
         });
 
-        uncirclereferenceified.set(userID, [user.id, clientIDs]);
+        uncirclereferenceified.set(userID, [user.id, user.name, clientIDs]);
     });
 
     return uncirclereferenceified;

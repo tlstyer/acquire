@@ -172,7 +172,7 @@ export class ServerManager {
 
         let user = this.userIDToUser.get(userID);
         if (user === undefined) {
-            user = new User(userID);
+            user = new User(userID, username);
             this.userIDToUser.set(userID, user);
         }
 
@@ -189,5 +189,5 @@ export class Client {
 export class User {
     clients: Set<Client> = new Set();
 
-    constructor(public id: number) {}
+    constructor(public id: number, public name: string) {}
 }
