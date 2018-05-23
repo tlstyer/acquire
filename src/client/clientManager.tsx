@@ -28,6 +28,8 @@ export class ClientManager {
     errorCode: ErrorCode | null = null;
     page = ClientManagerPage.Login;
     socket: WebSocket | null = null;
+    clientIDToClient: Map<number, Client> = new Map();
+    userIDToUser: Map<number, User> = new Map();
 
     username = '';
     password = '';
@@ -45,6 +47,9 @@ export class ClientManager {
 
         this.onMessageFunctions = {
             [MessageToClient.FatalError]: this.onMessageFatalError,
+            [MessageToClient.Greetings]: this.onMessageGreetings,
+            [MessageToClient.ClientConnected]: this.onMessageClientConnected,
+            [MessageToClient.ClientDisconnected]: this.onMessageClientDisconnected,
         };
     }
 
@@ -149,6 +154,52 @@ export class ClientManager {
         this.errorCode = errorCode;
     }
 
+    onMessageGreetings(users: any[], gamesBeingSetUp: any[], games: any[], nonexistentGames: number[]) {
+        this.clientIDToClient.clear();
+        this.userIDToUser.clear();
+
+        for (let i = 0; i < users.length; i++) {
+            const [userID, username, clientDatas] = users[i];
+
+            const user = new User(userID, username);
+            this.userIDToUser.set(userID, user);
+
+            for (let j = 0; j < clientDatas.length; j++) {
+                const clientData = clientDatas[j];
+                const clientID = clientData[0];
+
+                const client = new Client(clientID, user);
+                user.clients.add(client);
+                this.clientIDToClient.set(clientID, client);
+            }
+        }
+    }
+
+    onMessageClientConnected(clientID: number, userID: number, username?: string) {
+        let user: User;
+        if (username !== undefined) {
+            user = new User(userID, username);
+            this.userIDToUser.set(userID, user);
+        } else {
+            user = this.userIDToUser.get(userID)!;
+        }
+
+        const client = new Client(clientID, user);
+        user.clients.add(client);
+        this.clientIDToClient.set(clientID, client);
+    }
+
+    onMessageClientDisconnected(clientID: number) {
+        const client = this.clientIDToClient.get(clientID)!;
+        const user = client.user;
+
+        this.clientIDToClient.delete(clientID);
+        user.clients.delete(client);
+        if (user.clients.size === 0) {
+            this.userIDToUser.delete(user.id);
+        }
+    }
+
     onSocketClose = (e: CloseEvent) => {
         if (this.socket === null) {
             throw new Error('why is this.socket null?');
@@ -165,4 +216,14 @@ export class ClientManager {
 
         this.render();
     };
+}
+
+export class Client {
+    constructor(public id: number, public user: User) {}
+}
+
+export class User {
+    clients: Set<Client> = new Set();
+
+    constructor(public id: number, public name: string) {}
 }
