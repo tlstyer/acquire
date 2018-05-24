@@ -8,6 +8,7 @@ import * as ReactDOM from 'react-dom';
 import { defaultGameBoard, defaultMoveDataHistory } from '../common/defaults';
 import { GameBoardType, GameMode } from '../common/enums';
 import { Game } from '../common/game';
+import { CreateGame, CreateGameProps } from './components/CreateGame';
 import { DisposeOfShares, DisposeOfSharesProps } from './components/DisposeOfShares';
 import { ExampleGameSetupMaster } from './components/ExampleGameSetupMaster';
 import { GameBoard, GameBoardProps } from './components/GameBoard';
@@ -36,6 +37,7 @@ import {
 class AllDemoProps {
     loginFormProps: LoginFormProps[];
     headerProps: HeaderProps[];
+    createGameProps: CreateGameProps[];
     gameListingProps: GameListingProps[];
     gameBoardProps: GameBoardProps[];
     scoreBoardProps: ScoreBoardProps[];
@@ -59,6 +61,12 @@ class AllDemoProps {
         this.loginFormProps = [{ onSubmit: onSubmitLoginForm }, { error: 'error passed as a prop', username: 'tlstyer', onSubmit: onSubmitLoginForm }];
 
         this.headerProps = [{ username: 'tlstyer', isConnected: true }, { username: 'Another User', isConnected: false }];
+
+        this.createGameProps = [
+            { onSubmit: onSubmitCreateGame },
+            { gameMode: GameMode.Teams2vs2vs2, onSubmit: onSubmitCreateGame },
+            { gameMode: GameMode.Singles1, onSubmit: onSubmitCreateGame },
+        ];
 
         this.gameListingProps = [
             {
@@ -363,6 +371,9 @@ function render(props: AllDemoProps) {
             <h1>Header</h1>
             {renderComponentForEachProps(Header, props.headerProps)}
 
+            <h1>CreateGame</h1>
+            {renderComponentForEachProps(CreateGame, props.createGameProps)}
+
             <h1>GameListing</h1>
             {renderComponentForEachProps(GameListing, props.gameListingProps)}
 
@@ -460,6 +471,10 @@ function getPurchaseSharesDescription(props: PurchaseSharesProps) {
 
 function onSubmitLoginForm(username: string, password: string) {
     console.log('onSubmitLoginForm:', username, ',', password);
+}
+
+function onSubmitCreateGame(gameMode: GameMode) {
+    console.log('onSubmitCreateGame:', gameMode);
 }
 
 function onJoinClicked() {
