@@ -1,6 +1,7 @@
 import { Connection } from 'sockjs';
-import { ErrorCode, MessageToClient } from '../common/enums';
-import { Client, ConnectionState, ServerManager, User } from './serverManager';
+import { ErrorCode, GameMode, MessageToClient, MessageToServer, PlayerArrangementMode } from '../common/enums';
+import { GameSetup } from '../common/gameSetup';
+import { Client, ConnectionState, GameData, ServerManager, User } from './serverManager';
 import { TestUserDataProvider } from './userDataProvider';
 
 describe('ServerManager', () => {
@@ -251,6 +252,49 @@ describe('ServerManager', () => {
             });
         });
     });
+
+    describe('after logging in', () => {
+        it('kicks client due to invalid message', async () => {
+            await expectKicksClientDueToInvalidMessage([]);
+            await expectKicksClientDueToInvalidMessage([{}]);
+            await expectKicksClientDueToInvalidMessage([-1, 1, 2, 3]);
+        });
+    });
+
+    describe('create game', () => {
+        it('kicks client due to invalid message', async () => {
+            await expectKicksClientDueToInvalidMessage([MessageToServer.CreateGame]);
+            await expectKicksClientDueToInvalidMessage([MessageToServer.CreateGame, 1, 2]);
+            await expectKicksClientDueToInvalidMessage([MessageToServer.CreateGame, -1]);
+            await expectKicksClientDueToInvalidMessage([MessageToServer.CreateGame, {}]);
+        });
+
+        it('sends MessageToClient.GameCreated and MessageToClient.ClientEnteredGame when successful', async () => {
+            const { serverManager, server } = getServerManagerAndStuff();
+            serverManager.nextInternalGameID = 10;
+
+            const connection1 = await connectToServer(server, 'user 1');
+            const connection2 = await connectToServer(server, 'user 2');
+            connection1.clearReceivedMessages();
+            connection2.clearReceivedMessages();
+
+            connection2.sendMessage([MessageToServer.CreateGame, GameMode.Teams2vs2]);
+
+            const gameData = new GameData(10, 1);
+            gameData.gameSetup = new GameSetup(GameMode.Teams2vs2, PlayerArrangementMode.RandomOrder, 2, 'user 2');
+            expect(serverManager.gameIDToGameData).toEqual(new Map([[gameData.id, gameData]]));
+
+            expect(connection1.receivedMessages.length).toBe(1);
+            expect(connection2.receivedMessages.length).toBe(1);
+
+            const expectedMessage: any[] = [
+                [MessageToClient.GameCreated, gameData.id, gameData.externalID, GameMode.Teams2vs2, 2],
+                [MessageToClient.ClientEnteredGame, 2, gameData.externalID],
+            ];
+            expect(connection1.receivedMessages[0]).toEqual(expectedMessage);
+            expect(connection2.receivedMessages[0]).toEqual(expectedMessage);
+        });
+    });
 });
 
 class TestServer {
@@ -304,6 +348,10 @@ class TestConnection {
         if (this.closeListener) {
             this.closeListener();
         }
+    }
+
+    clearReceivedMessages() {
+        this.receivedMessages = [];
     }
 }
 
@@ -380,4 +428,17 @@ async function connectToServer(server: TestServer, username: string) {
     await new Promise(resolve => setTimeout(resolve, 0));
 
     return connection;
+}
+
+async function expectKicksClientDueToInvalidMessage(message: any[]) {
+    const { server } = getServerManagerAndStuff();
+
+    const connection = await connectToServer(server, 'user 1');
+    connection.clearReceivedMessages();
+
+    connection.sendMessage(message);
+
+    expect(connection.receivedMessages.length).toBe(1);
+    expect(connection.receivedMessages[0]).toEqual([[MessageToClient.FatalError, ErrorCode.InvalidMessage]]);
+    expect(connection.closed).toBe(true);
 }

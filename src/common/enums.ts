@@ -3,6 +3,12 @@ export enum MessageToClient {
     Greetings,
     ClientConnected,
     ClientDisconnected,
+    GameCreated,
+    ClientEnteredGame,
+}
+
+export enum MessageToServer {
+    CreateGame,
 }
 
 export enum ErrorCode {
@@ -13,6 +19,7 @@ export enum ErrorCode {
     MissingPassword,
     ProvidedPassword,
     IncorrectPassword,
+    InvalidMessage,
     CouldNotConnect,
 }
 

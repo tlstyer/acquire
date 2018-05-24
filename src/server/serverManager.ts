@@ -1,6 +1,7 @@
 import { Connection, Server } from 'sockjs';
-import { ErrorCode, MessageToClient } from '../common/enums';
-import { isASCII } from '../common/helpers';
+import { ErrorCode, GameMode, MessageToClient, MessageToServer, PlayerArrangementMode } from '../common/enums';
+import { GameSetup } from '../common/gameSetup';
+import { gameModeToNumPlayers, isASCII } from '../common/helpers';
 import { ReuseIDManager } from './reuseIDManager';
 import { UserDataProvider } from './userDataProvider';
 
@@ -19,7 +20,16 @@ export class ServerManager {
     connectionIDToClient: Map<string, Client> = new Map();
     userIDToUser: Map<number, User> = new Map();
 
-    constructor(public server: Server, public userDataProvider: UserDataProvider, public nextInternalGameID: number) {}
+    externalGameIDManager: ReuseIDManager = new ReuseIDManager(60000);
+    gameIDToGameData: Map<number, GameData> = new Map();
+
+    onMessageFunctions: { [key: number]: (client: Client, params: any[]) => void };
+
+    constructor(public server: Server, public userDataProvider: UserDataProvider, public nextInternalGameID: number) {
+        this.onMessageFunctions = {
+            [MessageToServer.CreateGame]: this.onMessageCreateGame,
+        };
+    }
 
     manage() {
         this.server.on('connection', connection => {
@@ -41,7 +51,16 @@ export class ServerManager {
 
                 const connectionState = this.connectionIDToConnectionState.get(connection.id);
 
-                if (connectionState === ConnectionState.WaitingForFirstMessage) {
+                if (connectionState === ConnectionState.LoggedIn) {
+                    const handler = this.onMessageFunctions[message[0]];
+
+                    if (handler) {
+                        const client = this.connectionIDToClient.get(connection.id)!;
+                        handler.call(this, client, message.slice(1));
+                    } else {
+                        this.kickWithError(connection, ErrorCode.InvalidMessage);
+                    }
+                } else if (connectionState === ConnectionState.WaitingForFirstMessage) {
                     this.connectionIDToConnectionState.set(connection.id, ConnectionState.ProcessingFirstMessage);
 
                     // tslint:disable-next-line:no-floating-promises
@@ -197,6 +216,29 @@ export class ServerManager {
         });
     }
 
+    onMessageCreateGame(client: Client, params: any[]) {
+        if (params.length !== 1) {
+            this.kickWithError(client.connection, ErrorCode.InvalidMessage);
+            return;
+        }
+
+        const gameMode: GameMode = params[0];
+        if (gameModeToNumPlayers[gameMode] === undefined) {
+            this.kickWithError(client.connection, ErrorCode.InvalidMessage);
+            return;
+        }
+
+        const gameData = new GameData(this.nextInternalGameID++, this.externalGameIDManager.getID());
+        gameData.gameSetup = new GameSetup(gameMode, PlayerArrangementMode.RandomOrder, client.user.id, client.user.name);
+
+        this.gameIDToGameData.set(gameData.id, gameData);
+
+        const message = JSON.stringify([this.getGameCreatedMessage(gameData, client), this.getClientEnteredGameMessage(gameData, client)]);
+        this.connectionIDToClient.forEach(aClient => {
+            aClient.connection.write(message);
+        });
+    }
+
     getGreetingsMessage(gameDataArray: any[]) {
         const users: any[] = [];
         this.userIDToUser.forEach(user => {
@@ -239,6 +281,14 @@ export class ServerManager {
     getClientDisconnectedMessage(client: Client) {
         return [MessageToClient.ClientDisconnected, client.id];
     }
+
+    getGameCreatedMessage(gameData: GameData, hostClient: Client) {
+        return [MessageToClient.GameCreated, gameData.id, gameData.externalID, gameData.gameSetup!.gameMode, hostClient.id];
+    }
+
+    getClientEnteredGameMessage(gameData: GameData, client: Client) {
+        return [MessageToClient.ClientEnteredGame, client.id, gameData.externalID];
+    }
 }
 
 export class Client {
@@ -249,4 +299,10 @@ export class User {
     clients: Set<Client> = new Set();
 
     constructor(public id: number, public name: string) {}
+}
+
+export class GameData {
+    gameSetup: GameSetup | null = null;
+
+    constructor(public id: number, public externalID: number) {}
 }
