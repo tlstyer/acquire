@@ -212,47 +212,43 @@ describe('ServerManager', () => {
             it('after not providing a password when user data does not exist', async () => {
                 await getsLoggedIn('no user data', '', 3);
             });
-        });
-    });
 
-    describe('MessageToClient.Greetings', () => {
-        it('user and client info is included', async () => {
-            const { server } = getServerManagerAndStuff();
+            it('user and client info is included in MessageToClient.Greetings message', async () => {
+                const { server } = getServerManagerAndStuff();
 
-            await connectToServer(server, 'user 1');
-            await connectToServer(server, 'user 2');
-            await connectToServer(server, 'user 2');
-            await connectToServer(server, 'user 3');
-            await connectToServer(server, 'user 4');
-            await connectToServer(server, 'user 1');
-            const connection = await connectToServer(server, 'me');
+                await connectToServer(server, 'user 1');
+                await connectToServer(server, 'user 2');
+                await connectToServer(server, 'user 2');
+                await connectToServer(server, 'user 3');
+                await connectToServer(server, 'user 4');
+                await connectToServer(server, 'user 1');
+                const connection = await connectToServer(server, 'me');
 
-            expect(connection.receivedMessages.length).toBe(1);
-            expect(connection.receivedMessages[0]).toEqual([
-                [
-                    MessageToClient.Greetings,
-                    [[1, 'user 1', [[1], [6]]], [2, 'user 2', [[2], [3]]], [3, 'user 3', [[4]]], [4, 'user 4', [[5]]], [5, 'me', [[7]]]],
-                    [],
-                    [],
-                ],
-            ]);
-        });
-    });
+                expect(connection.receivedMessages.length).toBe(1);
+                expect(connection.receivedMessages[0]).toEqual([
+                    [
+                        MessageToClient.Greetings,
+                        [[1, 'user 1', [[1], [6]]], [2, 'user 2', [[2], [3]]], [3, 'user 3', [[4]]], [4, 'user 4', [[5]]], [5, 'me', [[7]]]],
+                        [],
+                        [],
+                    ],
+                ]);
+            });
 
-    describe('MessageToClient.ClientConnected', () => {
-        it('username parameter is excluded if already known', async () => {
-            const { server } = getServerManagerAndStuff();
+            it('username parameter is excluded if already known in MessageToClient.ClientConnected message', async () => {
+                const { server } = getServerManagerAndStuff();
 
-            const connection = await connectToServer(server, 'user 1');
-            await connectToServer(server, 'user 2');
+                const connection = await connectToServer(server, 'user 1');
+                await connectToServer(server, 'user 2');
 
-            expect(connection.receivedMessages.length).toBe(2);
-            expect(connection.receivedMessages[1]).toEqual([[MessageToClient.ClientConnected, 2, 2, 'user 2']]);
+                expect(connection.receivedMessages.length).toBe(2);
+                expect(connection.receivedMessages[1]).toEqual([[MessageToClient.ClientConnected, 2, 2, 'user 2']]);
 
-            await connectToServer(server, 'user 2');
+                await connectToServer(server, 'user 2');
 
-            expect(connection.receivedMessages.length).toBe(3);
-            expect(connection.receivedMessages[2]).toEqual([[MessageToClient.ClientConnected, 3, 2]]);
+                expect(connection.receivedMessages.length).toBe(3);
+                expect(connection.receivedMessages[2]).toEqual([[MessageToClient.ClientConnected, 3, 2]]);
+            });
         });
     });
 });
