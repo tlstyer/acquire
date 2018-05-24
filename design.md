@@ -32,6 +32,62 @@ The host can "kick" a user, which removes them from the game.
 
 Users can leave a game.
 
+# Real-time protocol
+
+## Login
+
+Send array of:
+
+*   Version
+*   Username
+*   Password
+*   Game data:
+    *   Internal game ID
+    *   Move data history size
+*   Internal game ID to join (the game client was in before being disconnected)
+
+On unsuccessful connection request, send array of:
+
+*   MessageToClient.FatalError
+*   ErrorCode
+
+On successful connection request, send array of:
+
+*   MessageToClient.Greetings
+*   Users:
+    *   User ID
+    *   Username
+    *   Clients (exclude if none):
+        *   Client ID
+        *   External game ID (excluded if not in a game)
+*   Games being set up:
+    *   Internal game ID
+    *   External game ID
+    *   JSON parameters
+*   Games:
+    *   Internal game ID
+    *   Move history messages (skipping the messages the client already knows)
+    *   External game ID (excluded if client knows about this game)
+    *   Game mode (excluded if client knows about this game)
+    *   Player arrangement mode (excluded if client knows about this game)
+    *   User IDs (excluded if client knows about this game)
+    *   Host user ID (excluded if client knows about this game)
+*   Internal game IDs that are not active anymore (exclude if empty)
+
+On successful connection request, send other clients array of:
+
+*   MessageToClient.ClientConnected
+*   Client ID
+*   User ID
+*   Username (exclude if already known)
+
+## Disconnection
+
+Send other clients an array of:
+
+*   MessageToClient.ClientDisconnected
+*   Client ID
+
 # Game review data
 
 Array of:
