@@ -110,3 +110,15 @@ export const purchaseSharesKeyboardShortcutsDescription =
     'BACKSPACE or MINUS to remove the right-most chain from the cart, ' +
     'E or ASTERISK to toggle the End Game checkbox, ' +
     '0 or 8 or O to move to the OK button, ENTER to press it.';
+
+export const allGameModes: GameMode[] = [
+    GameMode.Singles1,
+    GameMode.Singles2,
+    GameMode.Singles3,
+    GameMode.Singles4,
+    GameMode.Singles5,
+    GameMode.Singles6,
+    GameMode.Teams2vs2,
+    GameMode.Teams2vs2vs2,
+    GameMode.Teams3vs3,
+];

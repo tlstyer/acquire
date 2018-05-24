@@ -2,7 +2,7 @@ import { List } from 'immutable';
 import * as React from 'react';
 import { GameMode, PlayerArrangementMode } from '../../common/enums';
 import { gameModeToNumPlayers, gameModeToTeamSize } from '../../common/helpers';
-import { gameModeToString, teamNumberToCSSClassName } from '../helpers';
+import { allGameModes, gameModeToString, teamNumberToCSSClassName } from '../helpers';
 import * as style from './GameSetupUI.css';
 
 export interface GameSetupUIProps {
@@ -229,18 +229,6 @@ const playerArrangementModeToString: { [key: number]: string } = {
     [PlayerArrangementMode.ExactOrder]: 'Exact Order',
     [PlayerArrangementMode.SpecifyTeams]: 'Specify Teams',
 };
-
-const allGameModes: GameMode[] = [
-    GameMode.Singles1,
-    GameMode.Singles2,
-    GameMode.Singles3,
-    GameMode.Singles4,
-    GameMode.Singles5,
-    GameMode.Singles6,
-    GameMode.Teams2vs2,
-    GameMode.Teams2vs2vs2,
-    GameMode.Teams3vs3,
-];
 
 const allPlayerArrangementModes: PlayerArrangementMode[] = [
     PlayerArrangementMode.RandomOrder,
