@@ -1,0 +1,17 @@
+.root {
+    & :first-child {
+        font-weight: bold;
+    }
+
+    & :not(:first-child) {
+        margin-left: 6px;
+    }
+}
+
+.connected {
+    color: green;
+}
+
+.reconnecting {
+    color: rgb(128, 128, 0);
+}

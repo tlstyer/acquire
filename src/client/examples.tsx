@@ -14,6 +14,7 @@ import { GameBoard, GameBoardProps } from './components/GameBoard';
 import { GameHistory, GameHistoryProps } from './components/GameHistory';
 import { GameListing, GameListingProps } from './components/GameListing';
 import { GameState, GameStateProps } from './components/GameState';
+import { Header, HeaderProps } from './components/Header';
 import { LoginForm, LoginFormProps } from './components/LoginForm';
 import { PurchaseShares, PurchaseSharesProps } from './components/PurchaseShares';
 import { ScoreBoard, ScoreBoardProps } from './components/ScoreBoard';
@@ -34,6 +35,7 @@ import {
 
 class AllDemoProps {
     loginFormProps: LoginFormProps[];
+    headerProps: HeaderProps[];
     gameListingProps: GameListingProps[];
     gameBoardProps: GameBoardProps[];
     scoreBoardProps: ScoreBoardProps[];
@@ -55,6 +57,8 @@ class AllDemoProps {
         const game2 = Game.fromJSON(JSON.parse(gameJson2));
 
         this.loginFormProps = [{ onSubmit: onSubmitLoginForm }, { error: 'error passed as a prop', username: 'tlstyer', onSubmit: onSubmitLoginForm }];
+
+        this.headerProps = [{ username: 'tlstyer', isConnected: true }, { username: 'Another User', isConnected: false }];
 
         this.gameListingProps = [
             {
@@ -355,6 +359,9 @@ function render(props: AllDemoProps) {
         <div className={style.root}>
             <h1>LoginForm</h1>
             {renderComponentForEachProps(LoginForm, props.loginFormProps)}
+
+            <h1>Header</h1>
+            {renderComponentForEachProps(Header, props.headerProps)}
 
             <h1>GameListing</h1>
             {renderComponentForEachProps(GameListing, props.gameListingProps)}
