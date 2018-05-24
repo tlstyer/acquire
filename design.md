@@ -36,7 +36,7 @@ Users can leave a game.
 
 ## Login
 
-Send array of:
+Client sends:
 
 *   Version
 *   Username
@@ -46,12 +46,12 @@ Send array of:
     *   Move data history size
 *   Internal game ID to join (the game client was in before being disconnected)
 
-On unsuccessful connection request, send array of:
+On unsuccessful connection request, server sends:
 
 *   MessageToClient.FatalError
 *   ErrorCode
 
-On successful connection request, send array of:
+On successful connection request, server sends:
 
 *   MessageToClient.Greetings
 *   Users:
@@ -74,7 +74,7 @@ On successful connection request, send array of:
     *   Host user ID (excluded if client knows about this game)
 *   Internal game IDs that are not active anymore (exclude if empty)
 
-On successful connection request, send other clients array of:
+On successful connection request, server sends other clients:
 
 *   MessageToClient.ClientConnected
 *   Client ID
@@ -83,7 +83,7 @@ On successful connection request, send other clients array of:
 
 ## Disconnection
 
-Send other clients an array of:
+Server sends other clients:
 
 *   MessageToClient.ClientDisconnected
 *   Client ID
