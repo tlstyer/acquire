@@ -53,7 +53,7 @@ function render() {
     const rightSideWidth = windowWidth - (gameBoardLeft + gameBoardWidth);
     const rightSideHeight = windowHeight + 2;
 
-    const scoreBoardCellWidth = Math.floor(gameBoardWidth / 18);
+    const scoreBoardCellWidth = Math.floor(Math.min(rightSideWidth - 2, gameBoardWidth) / 18);
 
     ReactDOM.render(
         <>
