@@ -19,9 +19,7 @@ export interface GameSetupUIProps {
     onApprove?: () => void;
 }
 
-interface GameSetupUIState {}
-
-export class GameSetupUI extends React.PureComponent<GameSetupUIProps, GameSetupUIState> {
+export class GameSetupUI extends React.PureComponent<GameSetupUIProps> {
     render() {
         const { gameMode, playerArrangementMode, usernames, onChangeGameMode, onChangePlayerArrangementMode } = this.props;
 
