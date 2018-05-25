@@ -391,7 +391,7 @@ class GameDataData {
     constructor(public gameID: number, public gameNumber: number) {}
 }
 
-// UCR = Un-Circle-Reference-ified
+// UCR = Un-Circular-Reference-ified
 
 class UCRClient {
     constructor(public clientID: number, public connection: Connection, public userID: number) {}
@@ -438,12 +438,12 @@ function expectClientAndUserAndGameData(serverManager: ServerManager, userDatas:
         userIDToUCRUser.set(userData.userID, new UCRUser(userData.userID, userData.username, clientIDs));
     });
 
-    expect(uncirclereferenceifyConnectionIDToClient(serverManager.connectionIDToClient)).toEqual(connectionIDToUCRClient);
-    expect(uncirclereferenceifyUserIDToUser(serverManager.userIDToUser)).toEqual(userIDToUCRUser);
-    expect(uncirclereferenceifyGameIDToGameData(serverManager.gameIDToGameData)).toEqual(gameIDTOUCRGameData);
+    expect(uncircularreferenceifyConnectionIDToClient(serverManager.connectionIDToClient)).toEqual(connectionIDToUCRClient);
+    expect(uncircularreferenceifyUserIDToUser(serverManager.userIDToUser)).toEqual(userIDToUCRUser);
+    expect(uncircularreferenceifyGameIDToGameData(serverManager.gameIDToGameData)).toEqual(gameIDTOUCRGameData);
 }
 
-function uncirclereferenceifyConnectionIDToClient(connectionIDToClient: Map<string, Client>) {
+function uncircularreferenceifyConnectionIDToClient(connectionIDToClient: Map<string, Client>) {
     const connectionIDToUCRClient: ConnectionIDToUCRClient = new Map();
 
     connectionIDToClient.forEach((client, connectionID) => {
@@ -453,7 +453,7 @@ function uncirclereferenceifyConnectionIDToClient(connectionIDToClient: Map<stri
     return connectionIDToUCRClient;
 }
 
-function uncirclereferenceifyUserIDToUser(userIDToUser: Map<number, User>) {
+function uncircularreferenceifyUserIDToUser(userIDToUser: Map<number, User>) {
     const userIDToUCRUser: UserIDToUCRUser = new Map();
 
     userIDToUser.forEach((user, userID) => {
@@ -469,7 +469,7 @@ function uncirclereferenceifyUserIDToUser(userIDToUser: Map<number, User>) {
     return userIDToUCRUser;
 }
 
-function uncirclereferenceifyGameIDToGameData(connectionIDToClient: Map<number, GameData>) {
+function uncircularreferenceifyGameIDToGameData(connectionIDToClient: Map<number, GameData>) {
     const gameIDTOUCRGameData: GameIDTOUCRGameData = new Map();
 
     connectionIDToClient.forEach((gameData, gameID) => {
