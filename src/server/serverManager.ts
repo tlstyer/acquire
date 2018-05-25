@@ -206,7 +206,7 @@ export class ServerManager {
         this.connectionIDToClient.set(connection.id, client);
         user.clients.add(client);
 
-        client.connection.write(JSON.stringify([this.getGreetingsMessage(gameDataArray)]));
+        client.connection.write(JSON.stringify([this.getGreetingsMessage(gameDataArray, client)]));
 
         const messageToOtherClients = JSON.stringify([this.getClientConnectedMessage(client, isNewUser)]);
         this.connectionIDToClient.forEach(otherClient => {
@@ -242,12 +242,12 @@ export class ServerManager {
         });
     }
 
-    getGreetingsMessage(gameDataArray: any[]) {
+    getGreetingsMessage(gameDataArray: any[], client: Client) {
         const users: any[] = [];
         this.userIDToUser.forEach(user => {
             const clients: any[] = [];
-            user.clients.forEach(client => {
-                clients.push([client.id]);
+            user.clients.forEach(aClient => {
+                clients.push([aClient.id]);
             });
 
             const userMessage: any[] = [user.id, user.name];
@@ -264,7 +264,7 @@ export class ServerManager {
 
         const nonexistentGames: number[] = gameDataArray.map(g => g[0]);
 
-        const message = [MessageToClient.Greetings, users, gamesBeingSetUp, games];
+        const message = [MessageToClient.Greetings, users, client.id, gamesBeingSetUp, games];
         if (nonexistentGames.length > 0) {
             message.push(nonexistentGames);
         }

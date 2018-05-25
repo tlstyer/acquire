@@ -34,7 +34,10 @@ const errorCodeToMessage: { [key: number]: string } = {
 export class ClientManager {
     errorCode: ErrorCode | null = null;
     page = ClientManagerPage.Login;
+
     socket: WebSocket | null = null;
+
+    myClient: Client | null = null;
     clientIDToClient: Map<number, Client> = new Map();
     userIDToUser: Map<number, User> = new Map();
     gameIDToGameData: Map<number, GameData> = new Map();
@@ -187,7 +190,7 @@ export class ClientManager {
         this.errorCode = errorCode;
     }
 
-    onMessageGreetings(users: any[], gamesBeingSetUp: any[], games: any[], nonexistentGames: number[]) {
+    onMessageGreetings(users: any[], myClientID: number, gamesBeingSetUp: any[], games: any[], nonexistentGames: number[]) {
         this.clientIDToClient.clear();
         this.userIDToUser.clear();
 
@@ -206,6 +209,8 @@ export class ClientManager {
                 this.clientIDToClient.set(clientID, client);
             }
         }
+
+        this.myClient = this.clientIDToClient.get(myClientID)!;
     }
 
     onMessageClientConnected(clientID: number, userID: number, username?: string) {

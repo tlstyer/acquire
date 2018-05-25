@@ -60,6 +60,7 @@ On successful connection request, server sends:
     *   Clients (exclude if none):
         *   Client ID
         *   Game display number (excluded if not in a game)
+*   Client ID
 *   Games being set up:
     *   Game ID
     *   Game display number
