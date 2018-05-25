@@ -3,8 +3,14 @@ import './global.css';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import * as SockJS from 'sockjs-client';
-import { ErrorCode, MessageToClient } from '../common/enums';
+import { defaultGameBoard } from '../common/defaults';
+import { ErrorCode, GameMode, MessageToClient, MessageToServer, PlayerArrangementMode } from '../common/enums';
+import { GameSetup } from '../common/gameSetup';
+import { CreateGame } from './components/CreateGame';
+import { GameListing } from './components/GameListing';
+import { Header } from './components/Header';
 import { LoginForm } from './components/LoginForm';
+import { GameStatus } from './enums';
 
 export enum ClientManagerPage {
     Login,
@@ -21,6 +27,7 @@ const errorCodeToMessage: { [key: number]: string } = {
     [ErrorCode.MissingPassword]: 'Password is required.',
     [ErrorCode.ProvidedPassword]: 'Password is not set for this user.',
     [ErrorCode.IncorrectPassword]: 'Password is incorrect.',
+    [ErrorCode.InvalidMessage]: 'An error occurred.',
     [ErrorCode.CouldNotConnect]: 'Could not connect to the server.',
 };
 
@@ -30,6 +37,8 @@ export class ClientManager {
     socket: WebSocket | null = null;
     clientIDToClient: Map<number, Client> = new Map();
     userIDToUser: Map<number, User> = new Map();
+    gameIDToGameData: Map<number, GameData> = new Map();
+    gameDisplayNumberToGameData: Map<number, GameData> = new Map();
 
     username = '';
     password = '';
@@ -50,6 +59,8 @@ export class ClientManager {
             [MessageToClient.Greetings]: this.onMessageGreetings,
             [MessageToClient.ClientConnected]: this.onMessageClientConnected,
             [MessageToClient.ClientDisconnected]: this.onMessageClientDisconnected,
+            [MessageToClient.GameCreated]: this.onMessageGameCreated,
+            [MessageToClient.ClientEnteredGame]: this.onMessageClientEnteredGame,
         };
     }
 
@@ -99,10 +110,32 @@ export class ClientManager {
     renderLobbyPage = () => {
         return (
             <>
-                <h1>Acquire</h1>
-                <p>Lobby</p>
+                <Header username={this.username} isConnected={this.socket !== null} />
+                <CreateGame onSubmit={this.onSubmitCreateGame} />
+                {[...this.gameIDToGameData].reverse().map(([gameID, gameData]) => {
+                    if (gameData.gameSetup !== null) {
+                        return (
+                            <GameListing
+                                key={gameID}
+                                gameBoard={defaultGameBoard}
+                                gameMode={gameData.gameSetup.gameMode}
+                                usernames={gameData.gameSetup.usernames}
+                                gameStatus={GameStatus.SettingUp}
+                                onJoinClicked={undefined}
+                                onRejoinClicked={undefined}
+                                onWatchClicked={undefined}
+                            />
+                        );
+                    }
+                })}
             </>
         );
+    };
+
+    onSubmitCreateGame = (gameMode: GameMode) => {
+        if (this.socket !== null) {
+            this.socket.send(JSON.stringify([MessageToServer.CreateGame, gameMode]));
+        }
     };
 
     renderGamePage = () => {
@@ -200,6 +233,24 @@ export class ClientManager {
         }
     }
 
+    onMessageGameCreated(gameID: number, gameDisplayNumber: number, gameMode: GameMode, hostClientID: number) {
+        const hostClient = this.clientIDToClient.get(hostClientID)!;
+
+        const gameData = new GameData(gameID, gameDisplayNumber);
+        gameData.gameSetup = new GameSetup(gameMode, PlayerArrangementMode.RandomOrder, hostClient.user.id, hostClient.user.name);
+
+        this.gameIDToGameData.set(gameID, gameData);
+        this.gameDisplayNumberToGameData.set(gameDisplayNumber, gameData);
+    }
+
+    onMessageClientEnteredGame(clientID: number, gameDisplayNumber: number) {
+        const client = this.clientIDToClient.get(clientID)!;
+        const gameData = this.gameDisplayNumberToGameData.get(gameDisplayNumber)!;
+
+        client.gameData = gameData;
+        gameData.clients.add(client);
+    }
+
     onSocketClose = (e: CloseEvent) => {
         if (this.socket === null) {
             throw new Error('why is this.socket null?');
@@ -219,6 +270,8 @@ export class ClientManager {
 }
 
 export class Client {
+    gameData: GameData | null = null;
+
     constructor(public id: number, public user: User) {}
 }
 
@@ -226,4 +279,12 @@ export class User {
     clients: Set<Client> = new Set();
 
     constructor(public id: number, public name: string) {}
+}
+
+export class GameData {
+    gameSetup: GameSetup | null = null;
+
+    clients: Set<Client> = new Set();
+
+    constructor(public id: number, public displayNumber: number) {}
 }
