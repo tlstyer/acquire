@@ -162,7 +162,7 @@ describe('ServerManager', () => {
                 }
                 expectJustConnection1Data();
                 expect(connection1.receivedMessages.length).toBe(1);
-                expect(connection1.receivedMessages[0]).toEqual([[MessageToClient.Greetings, [[expectedUserID, username, [[1]]]], 1, [], []]]);
+                expect(connection1.receivedMessages[0]).toEqual([[MessageToClient.Greetings, [[expectedUserID, username, [[1]]]], 1, []]]);
 
                 const connection2 = new TestConnection('connection 2');
                 server.openConnection(connection2);
@@ -184,7 +184,7 @@ describe('ServerManager', () => {
                 expect(connection1.receivedMessages.length).toBe(2);
                 expect(connection1.receivedMessages[1]).toEqual([[MessageToClient.ClientConnected, 2, expectedUserID]]);
                 expect(connection2.receivedMessages.length).toBe(1);
-                expect(connection2.receivedMessages[0]).toEqual([[MessageToClient.Greetings, [[expectedUserID, username, [[1], [2]]]], 2, [], []]]);
+                expect(connection2.receivedMessages[0]).toEqual([[MessageToClient.Greetings, [[expectedUserID, username, [[1], [2]]]], 2, []]]);
 
                 connection2.close();
 
@@ -234,7 +234,6 @@ describe('ServerManager', () => {
                         MessageToClient.Greetings,
                         [[1, 'user 1', [[1], [6]]], [2, 'user 2', [[2], [3]]], [3, 'user 3', [[4]]], [4, 'user 4', [[5]]], [5, 'me', [[7]]]],
                         7,
-                        [],
                         [],
                     ],
                 ]);

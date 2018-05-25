@@ -258,18 +258,9 @@ export class ServerManager {
             users.push(userMessage);
         });
 
-        const gamesBeingSetUp: any[] = [];
-
         const games: any[] = [];
 
-        const nonexistentGames: number[] = gameDataArray.map(g => g[0]);
-
-        const message = [MessageToClient.Greetings, users, client.id, gamesBeingSetUp, games];
-        if (nonexistentGames.length > 0) {
-            message.push(nonexistentGames);
-        }
-
-        return message;
+        return [MessageToClient.Greetings, users, client.id, games];
     }
 
     getClientConnectedMessage(client: Client, isNewUser: boolean) {

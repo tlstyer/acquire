@@ -72,7 +72,7 @@ describe('ClientManager', () => {
 
             testConnection.triggerOpen();
 
-            testConnection.triggerMessage([[MessageToClient.Greetings, [[1, 'user', [[1]]]], 1, [], []]]);
+            testConnection.triggerMessage([[MessageToClient.Greetings, [[1, 'user', [[1]]]], 1, []]]);
 
             expect(clientManager.errorCode).toBe(null);
             expect(clientManager.page).toBe(ClientManagerPage.Lobby);
@@ -93,7 +93,6 @@ describe('ClientManager', () => {
                     MessageToClient.Greetings,
                     [[1, 'user 1', [[1], [6]]], [2, 'user 2', [[2], [3]]], [3, 'user 3', [[4]]], [4, 'user 4', [[5]]], [5, 'me', [[7]]]],
                     7,
-                    [],
                     [],
                 ],
             ]);
@@ -119,7 +118,7 @@ describe('ClientManager', () => {
 
             clientManager.onSubmitLoginForm('me', '');
             testConnection.triggerOpen();
-            testConnection.triggerMessage([[MessageToClient.Greetings, [[1, 'me', [[2]]]], 2, [], []]]);
+            testConnection.triggerMessage([[MessageToClient.Greetings, [[1, 'me', [[2]]]], 2, []]]);
             testConnection.triggerMessage([[MessageToClient.ClientConnected, 4, 3, 'user 3']]);
 
             expectClientAndUserAndGameData(clientManager, [new UserData(1, 'me', [new ClientData(2)]), new UserData(3, 'user 3', [new ClientData(4)])], []);
@@ -130,7 +129,7 @@ describe('ClientManager', () => {
 
             clientManager.onSubmitLoginForm('me', '');
             testConnection.triggerOpen();
-            testConnection.triggerMessage([[MessageToClient.Greetings, [[1, 'me', [[2]]]], 2, [], []]]);
+            testConnection.triggerMessage([[MessageToClient.Greetings, [[1, 'me', [[2]]]], 2, []]]);
             testConnection.triggerMessage([[MessageToClient.ClientConnected, 4, 3, 'user 3']]);
             testConnection.triggerMessage([[MessageToClient.ClientConnected, 5, 3]]);
 
@@ -148,7 +147,7 @@ describe('ClientManager', () => {
 
             clientManager.onSubmitLoginForm('me', '');
             testConnection.triggerOpen();
-            testConnection.triggerMessage([[MessageToClient.Greetings, [[1, 'me', [[2]]]], 2, [], []]]);
+            testConnection.triggerMessage([[MessageToClient.Greetings, [[1, 'me', [[2]]]], 2, []]]);
             testConnection.triggerMessage([[MessageToClient.ClientConnected, 4, 3, 'user 3']]);
             testConnection.triggerMessage([[MessageToClient.ClientDisconnected, 4]]);
 
@@ -160,7 +159,7 @@ describe('ClientManager', () => {
 
             clientManager.onSubmitLoginForm('me', '');
             testConnection.triggerOpen();
-            testConnection.triggerMessage([[MessageToClient.Greetings, [[1, 'me', [[2]]]], 2, [], []]]);
+            testConnection.triggerMessage([[MessageToClient.Greetings, [[1, 'me', [[2]]]], 2, []]]);
             testConnection.triggerMessage([[MessageToClient.ClientConnected, 4, 3, 'user 3']]);
             testConnection.triggerMessage([[MessageToClient.ClientConnected, 5, 3]]);
             testConnection.triggerMessage([[MessageToClient.ClientDisconnected, 4]]);
@@ -175,7 +174,7 @@ describe('ClientManager', () => {
 
             clientManager.onSubmitLoginForm('me', '');
             testConnection.triggerOpen();
-            testConnection.triggerMessage([[MessageToClient.Greetings, [[1, 'me', [[2]]]], 2, [], []]]);
+            testConnection.triggerMessage([[MessageToClient.Greetings, [[1, 'me', [[2]]]], 2, []]]);
             testConnection.clearSentMessages();
 
             clientManager.onSubmitCreateGame(GameMode.Teams2vs2);
@@ -189,7 +188,7 @@ describe('ClientManager', () => {
 
             clientManager.onSubmitLoginForm('me', '');
             testConnection.triggerOpen();
-            testConnection.triggerMessage([[MessageToClient.Greetings, [[1, 'me', [[2]]]], 2, [], []]]);
+            testConnection.triggerMessage([[MessageToClient.Greetings, [[1, 'me', [[2]]]], 2, []]]);
             testConnection.triggerClose();
             testConnection.clearSentMessages();
 
@@ -205,7 +204,7 @@ describe('ClientManager', () => {
 
             clientManager.onSubmitLoginForm('me', '');
             testConnection.triggerOpen();
-            testConnection.triggerMessage([[MessageToClient.Greetings, [[1, 'me', [[2]]]], 2, [], []]]);
+            testConnection.triggerMessage([[MessageToClient.Greetings, [[1, 'me', [[2]]]], 2, []]]);
             testConnection.triggerMessage([[MessageToClient.ClientConnected, 4, 3, 'user 3']]);
             testConnection.triggerMessage([[MessageToClient.GameCreated, 10, 1, GameMode.Teams2vs2, 2]]);
 
@@ -229,7 +228,7 @@ describe('ClientManager', () => {
 
             clientManager.onSubmitLoginForm('me', '');
             testConnection.triggerOpen();
-            testConnection.triggerMessage([[MessageToClient.Greetings, [[1, 'me', [[2]]]], 2, [], []]]);
+            testConnection.triggerMessage([[MessageToClient.Greetings, [[1, 'me', [[2]]]], 2, []]]);
             testConnection.triggerMessage([[MessageToClient.ClientConnected, 4, 3, 'user 3']]);
             testConnection.triggerMessage([[MessageToClient.GameCreated, 10, 1, GameMode.Teams2vs2, 2], [MessageToClient.ClientEnteredGame, 2, 1]]);
 
@@ -245,7 +244,7 @@ describe('ClientManager', () => {
 
             clientManager.onSubmitLoginForm('me', '');
             testConnection.triggerOpen();
-            testConnection.triggerMessage([[MessageToClient.Greetings, [[1, 'me', [[2]]]], 2, [], []]]);
+            testConnection.triggerMessage([[MessageToClient.Greetings, [[1, 'me', [[2]]]], 2, []]]);
             testConnection.triggerMessage([[MessageToClient.ClientConnected, 4, 3, 'user 3']]);
             testConnection.triggerMessage([[MessageToClient.GameCreated, 10, 1, GameMode.Teams2vs2, 4], [MessageToClient.ClientEnteredGame, 4, 1]]);
 

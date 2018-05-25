@@ -61,19 +61,16 @@ On successful connection request, server sends:
         *   Client ID
         *   Game display number (excluded if not in a game)
 *   Client ID
-*   Games being set up:
+*   Games being set up and games:
+    *   0 for game being set up or 1 for game
     *   Game ID
     *   Game display number
-    *   JSON parameters
-*   Games:
-    *   Game ID
-    *   Move history messages (skipping the messages the client already knows)
-    *   Game display number (excluded if client knows about this game)
-    *   Game mode (excluded if client knows about this game)
-    *   Player arrangement mode (excluded if client knows about this game)
-    *   User IDs (excluded if client knows about this game)
-    *   Host user ID (excluded if client knows about this game)
-*   Game IDs that are not active anymore (exclude if empty)
+    *   If game being set up, include JSON parameters from GameSetup
+    *   If game, include array of move history messages (skipping the messages the client already knows)
+    *   If game and client doesn't know about this game, include game mode
+    *   If game and client doesn't know about this game, include player arrangement mode
+    *   If game and client doesn't know about this game, include user IDs
+    *   If game and client doesn't know about this game, include host user ID
 
 On successful connection request, server sends other clients:
 
