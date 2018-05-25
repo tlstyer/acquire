@@ -472,10 +472,10 @@ function uncircularreferenceifyUserIDToUser(userIDToUser: Map<number, User>) {
     return userIDToUCRUser;
 }
 
-function uncircularreferenceifyGameIDToGameData(connectionIDToClient: Map<number, GameData>) {
+function uncircularreferenceifyGameIDToGameData(gameIDToGameData: Map<number, GameData>) {
     const gameIDTOUCRGameData: GameIDTOUCRGameData = new Map();
 
-    connectionIDToClient.forEach((gameData, gameID) => {
+    gameIDToGameData.forEach((gameData, gameID) => {
         const ucrGameData = new UCRGameData(gameData.id, gameData.displayNumber);
 
         gameData.clients.forEach(client => {
