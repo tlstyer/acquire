@@ -88,6 +88,27 @@ Server sends other clients:
 *   MessageToClient.ClientDisconnected
 *   Client ID
 
+## Create game
+
+Client sends:
+
+*   MessageToServer.CreateGame
+*   Game mode
+
+Server sends all clients:
+
+*   MessageToClient.GameCreated
+*   Game ID
+*   Game display number
+*   Game mode
+*   Host client ID
+
+Server sends all clients:
+
+*   MessageToClient.ClientEnteredGame
+*   Client ID
+*   Game display number
+
 # Game review data
 
 Array of:
