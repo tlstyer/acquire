@@ -61,7 +61,7 @@
         "server": "nodemon -r ts-node/register src/server/main.ts",
         "test": "jest",
         "lint": "tslint --project tsconfig.json --config tslint.json --fix",
-        "format": "find src -type f -regex '.*\\.tsx?' -or -regex '.*\\.css' -or -regex '.*\\.md' | xargs prettier --write"
+        "format": "find src -type f -regex '.*\\.tsx?' -or -regex '.*\\.css' -or -regex '.*\\.md' | xargs prettier --write --loglevel warn"
     },
     "jest": {
         "transform": {
@@ -74,9 +74,9 @@
         }
     },
     "prettier": {
-        "tabWidth": 4,
-        "singleQuote": true,
         "printWidth": 160,
+        "singleQuote": true,
+        "tabWidth": 4,
         "trailingComma": "all"
     }
 }
