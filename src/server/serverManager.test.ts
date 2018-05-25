@@ -1,6 +1,5 @@
 import { Connection } from 'sockjs';
 import { ErrorCode, GameMode, MessageToClient, MessageToServer, PlayerArrangementMode } from '../common/enums';
-import { GameSetup } from '../common/gameSetup';
 import { Client, ConnectionState, GameData, ServerManager, User } from './serverManager';
 import { TestUserDataProvider } from './userDataProvider';
 
@@ -158,7 +157,7 @@ describe('ServerManager', () => {
                     expect(serverManager.connectionIDToConnectionState).toEqual(new Map([[connection1.id, ConnectionState.LoggedIn]]));
                     expect(serverManager.connectionIDToPreLoggedInConnection).toEqual(new Map());
                     expect(serverManager.clientIDManager.used).toEqual(new Set([1]));
-                    expectClientAndUser(serverManager, [new UserData(expectedUserID, username, [new ClientData(1, connection1)])]);
+                    expectClientAndUserAndGameData(serverManager, [new UserData(expectedUserID, username, [new ClientData(1, connection1)])], []);
                     expect(connection1.closed).toBe(false);
                 }
                 expectJustConnection1Data();
@@ -175,7 +174,11 @@ describe('ServerManager', () => {
                 );
                 expect(serverManager.connectionIDToPreLoggedInConnection).toEqual(new Map());
                 expect(serverManager.clientIDManager.used).toEqual(new Set([1, 2]));
-                expectClientAndUser(serverManager, [new UserData(expectedUserID, username, [new ClientData(1, connection1), new ClientData(2, connection2)])]);
+                expectClientAndUserAndGameData(
+                    serverManager,
+                    [new UserData(expectedUserID, username, [new ClientData(1, connection1), new ClientData(2, connection2)])],
+                    [],
+                );
                 expect(connection1.closed).toBe(false);
                 expect(connection2.closed).toBe(false);
                 expect(connection1.receivedMessages.length).toBe(2);
@@ -196,7 +199,7 @@ describe('ServerManager', () => {
                 expect(serverManager.connectionIDToConnectionState).toEqual(new Map([]));
                 expect(serverManager.connectionIDToPreLoggedInConnection).toEqual(new Map());
                 expect(serverManager.clientIDManager.used).toEqual(new Set());
-                expectClientAndUser(serverManager, []);
+                expectClientAndUserAndGameData(serverManager, [], []);
                 expect(connection1.closed).toBe(true);
                 expect(connection1.receivedMessages.length).toBe(3);
                 expect(connection2.receivedMessages.length).toBe(1);
@@ -278,19 +281,30 @@ describe('ServerManager', () => {
             connection1.clearReceivedMessages();
             connection2.clearReceivedMessages();
 
+            expectClientAndUserAndGameData(
+                serverManager,
+                [new UserData(1, 'user 1', [new ClientData(1, connection1)]), new UserData(2, 'user 2', [new ClientData(2, connection2)])],
+                [],
+            );
+
             connection2.sendMessage([MessageToServer.CreateGame, GameMode.Teams2vs2]);
 
-            const gameData = new GameData(10, 1);
-            gameData.gameSetup = new GameSetup(GameMode.Teams2vs2, PlayerArrangementMode.RandomOrder, 2, 'user 2');
-            expect(serverManager.gameIDToGameData).toEqual(new Map([[gameData.id, gameData]]));
+            expectClientAndUserAndGameData(
+                serverManager,
+                [new UserData(1, 'user 1', [new ClientData(1, connection1)]), new UserData(2, 'user 2', [new ClientData(2, connection2, 10)])],
+                [new GameDataData(10, 1)],
+            );
+
+            const gameSetup = serverManager.gameIDToGameData.get(10)!.gameSetup!;
+            expect(gameSetup.gameMode).toBe(GameMode.Teams2vs2);
+            expect(gameSetup.playerArrangementMode).toBe(PlayerArrangementMode.RandomOrder);
+            expect(gameSetup.hostUserID).toBe(2);
+            expect(gameSetup.hostUsername).toBe('user 2');
 
             expect(connection1.receivedMessages.length).toBe(1);
             expect(connection2.receivedMessages.length).toBe(1);
 
-            const expectedMessage: any[] = [
-                [MessageToClient.GameCreated, gameData.id, gameData.number, GameMode.Teams2vs2, 2],
-                [MessageToClient.ClientEnteredGame, 2, gameData.number],
-            ];
+            const expectedMessage: any[] = [[MessageToClient.GameCreated, 10, 1, GameMode.Teams2vs2, 2], [MessageToClient.ClientEnteredGame, 2, 1]];
             expect(connection1.receivedMessages[0]).toEqual(expectedMessage);
             expect(connection2.receivedMessages[0]).toEqual(expectedMessage);
         });
@@ -366,11 +380,15 @@ function getServerManagerAndStuff() {
 }
 
 class ClientData {
-    constructor(public clientID: number, public connection: TestConnection) {}
+    constructor(public clientID: number, public connection: TestConnection, public gameID?: number) {}
 }
 
 class UserData {
     constructor(public userID: number, public username: string, public clientDatas: ClientData[]) {}
+}
+
+class GameDataData {
+    constructor(public gameID: number, public gameNumber: number) {}
 }
 
 // UCR = Un-Circle-Reference-ified
@@ -383,12 +401,24 @@ class UCRUser {
     constructor(public userID: number, public username: string, public clientIDs: Set<number>) {}
 }
 
+class UCRGameData {
+    clientIDs = new Set<number>();
+
+    constructor(public gameID: number, public gameNumber: number) {}
+}
+
 type ConnectionIDToUCRClient = Map<string, UCRClient>;
 type UserIDToUCRUser = Map<number, UCRUser>;
+type GameIDTOUCRGameData = Map<number, UCRGameData>;
 
-function expectClientAndUser(serverManager: ServerManager, userDatas: UserData[]) {
+function expectClientAndUserAndGameData(serverManager: ServerManager, userDatas: UserData[], gameDataDatas: GameDataData[]) {
     const connectionIDToUCRClient: ConnectionIDToUCRClient = new Map();
     const userIDToUCRUser: UserIDToUCRUser = new Map();
+    const gameIDTOUCRGameData: GameIDTOUCRGameData = new Map();
+
+    gameDataDatas.forEach(gameDataData => {
+        gameIDTOUCRGameData.set(gameDataData.gameID, new UCRGameData(gameDataData.gameID, gameDataData.gameNumber));
+    });
 
     userDatas.forEach(userData => {
         const clientIDs = new Set<number>();
@@ -398,6 +428,9 @@ function expectClientAndUser(serverManager: ServerManager, userDatas: UserData[]
             const connection: Connection = clientData.connection;
 
             connectionIDToUCRClient.set(clientData.connection.id, new UCRClient(clientData.clientID, connection, userData.userID));
+            if (clientData.gameID !== undefined) {
+                gameIDTOUCRGameData.get(clientData.gameID)!.clientIDs.add(clientData.clientID);
+            }
 
             clientIDs.add(clientData.clientID);
         });
@@ -407,6 +440,7 @@ function expectClientAndUser(serverManager: ServerManager, userDatas: UserData[]
 
     expect(uncirclereferenceifyConnectionIDToClient(serverManager.connectionIDToClient)).toEqual(connectionIDToUCRClient);
     expect(uncirclereferenceifyUserIDToUser(serverManager.userIDToUser)).toEqual(userIDToUCRUser);
+    expect(uncirclereferenceifyGameIDToGameData(serverManager.gameIDToGameData)).toEqual(gameIDTOUCRGameData);
 }
 
 function uncirclereferenceifyConnectionIDToClient(connectionIDToClient: Map<string, Client>) {
@@ -433,6 +467,22 @@ function uncirclereferenceifyUserIDToUser(userIDToUser: Map<number, User>) {
     });
 
     return userIDToUCRUser;
+}
+
+function uncirclereferenceifyGameIDToGameData(connectionIDToClient: Map<number, GameData>) {
+    const gameIDTOUCRGameData: GameIDTOUCRGameData = new Map();
+
+    connectionIDToClient.forEach((gameData, gameID) => {
+        const ucrGameData = new UCRGameData(gameData.id, gameData.number);
+
+        gameData.clients.forEach(client => {
+            ucrGameData.clientIDs.add(client.id);
+        });
+
+        gameIDTOUCRGameData.set(gameID, ucrGameData);
+    });
+
+    return gameIDTOUCRGameData;
 }
 
 async function connectToServer(server: TestServer, username: string) {

@@ -230,6 +230,9 @@ export class ServerManager {
 
         const gameData = new GameData(this.nextGameID++, this.gameNumberManager.getID());
         gameData.gameSetup = new GameSetup(gameMode, PlayerArrangementMode.RandomOrder, client.user.id, client.user.name);
+        gameData.clients.add(client);
+
+        client.gameData = gameData;
 
         this.gameIDToGameData.set(gameData.id, gameData);
 
@@ -292,6 +295,8 @@ export class ServerManager {
 }
 
 export class Client {
+    gameData: GameData | null = null;
+
     constructor(public id: number, public connection: Connection, public user: User) {}
 }
 
@@ -303,6 +308,8 @@ export class User {
 
 export class GameData {
     gameSetup: GameSetup | null = null;
+
+    clients: Set<Client> = new Set();
 
     constructor(public id: number, public number: number) {}
 }
