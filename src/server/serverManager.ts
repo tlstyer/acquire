@@ -20,7 +20,7 @@ export class ServerManager {
     connectionIDToClient: Map<string, Client> = new Map();
     userIDToUser: Map<number, User> = new Map();
 
-    gameNumberManager: ReuseIDManager = new ReuseIDManager(60000);
+    gameDisplayNumberManager: ReuseIDManager = new ReuseIDManager(60000);
     gameIDToGameData: Map<number, GameData> = new Map();
 
     onMessageFunctions: { [key: number]: (client: Client, params: any[]) => void };
@@ -228,7 +228,7 @@ export class ServerManager {
             return;
         }
 
-        const gameData = new GameData(this.nextGameID++, this.gameNumberManager.getID());
+        const gameData = new GameData(this.nextGameID++, this.gameDisplayNumberManager.getID());
         gameData.gameSetup = new GameSetup(gameMode, PlayerArrangementMode.RandomOrder, client.user.id, client.user.name);
         gameData.clients.add(client);
 
@@ -286,11 +286,11 @@ export class ServerManager {
     }
 
     getGameCreatedMessage(gameData: GameData, hostClient: Client) {
-        return [MessageToClient.GameCreated, gameData.id, gameData.number, gameData.gameSetup!.gameMode, hostClient.id];
+        return [MessageToClient.GameCreated, gameData.id, gameData.displayNumber, gameData.gameSetup!.gameMode, hostClient.id];
     }
 
     getClientEnteredGameMessage(gameData: GameData, client: Client) {
-        return [MessageToClient.ClientEnteredGame, client.id, gameData.number];
+        return [MessageToClient.ClientEnteredGame, client.id, gameData.displayNumber];
     }
 }
 
@@ -311,5 +311,5 @@ export class GameData {
 
     clients: Set<Client> = new Set();
 
-    constructor(public id: number, public number: number) {}
+    constructor(public id: number, public displayNumber: number) {}
 }
