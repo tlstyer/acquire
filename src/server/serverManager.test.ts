@@ -394,7 +394,7 @@ class GameDataData {
 // UCR = Un-Circular-Reference-ified
 
 class UCRClient {
-    constructor(public clientID: number, public connection: Connection, public userID: number) {}
+    constructor(public clientID: number, public connection: Connection, public gameID: number | null, public userID: number) {}
 }
 
 class UCRUser {
@@ -426,8 +426,9 @@ function expectClientAndUserAndGameData(serverManager: ServerManager, userDatas:
         userData.clientDatas.forEach(clientData => {
             // @ts-ignore
             const connection: Connection = clientData.connection;
+            const gameID = clientData.gameID !== undefined ? clientData.gameID : null;
 
-            connectionIDToUCRClient.set(clientData.connection.id, new UCRClient(clientData.clientID, connection, userData.userID));
+            connectionIDToUCRClient.set(clientData.connection.id, new UCRClient(clientData.clientID, connection, gameID, userData.userID));
             if (clientData.gameID !== undefined) {
                 gameIDTOUCRGameData.get(clientData.gameID)!.clientIDs.add(clientData.clientID);
             }
@@ -447,7 +448,9 @@ function uncircularreferenceifyConnectionIDToClient(connectionIDToClient: Map<st
     const connectionIDToUCRClient: ConnectionIDToUCRClient = new Map();
 
     connectionIDToClient.forEach((client, connectionID) => {
-        connectionIDToUCRClient.set(connectionID, new UCRClient(client.id, client.connection, client.user.id));
+        const gameID = client.gameData !== null ? client.gameData.id : null;
+
+        connectionIDToUCRClient.set(connectionID, new UCRClient(client.id, client.connection, gameID, client.user.id));
     });
 
     return connectionIDToUCRClient;
