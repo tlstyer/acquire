@@ -271,7 +271,7 @@ describe('ServerManager', () => {
 
         it('sends MessageToClient.GameCreated and MessageToClient.ClientEnteredGame when successful', async () => {
             const { serverManager, server } = getServerManagerAndStuff();
-            serverManager.nextInternalGameID = 10;
+            serverManager.nextGameID = 10;
 
             const connection1 = await connectToServer(server, 'user 1');
             const connection2 = await connectToServer(server, 'user 2');
@@ -288,8 +288,8 @@ describe('ServerManager', () => {
             expect(connection2.receivedMessages.length).toBe(1);
 
             const expectedMessage: any[] = [
-                [MessageToClient.GameCreated, gameData.id, gameData.externalID, GameMode.Teams2vs2, 2],
-                [MessageToClient.ClientEnteredGame, 2, gameData.externalID],
+                [MessageToClient.GameCreated, gameData.id, gameData.number, GameMode.Teams2vs2, 2],
+                [MessageToClient.ClientEnteredGame, 2, gameData.number],
             ];
             expect(connection1.receivedMessages[0]).toEqual(expectedMessage);
             expect(connection2.receivedMessages[0]).toEqual(expectedMessage);

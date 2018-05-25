@@ -11,7 +11,7 @@ sockjsServer.installHandlers(httpServer, { prefix: '/sockjs' });
 httpServer.listen(9999, '0.0.0.0');
 
 const userDataProvider = new TestUserDataProvider();
-const nextInternalGameID = 1;
+const nextGameID = 1;
 
-const serverManager = new ServerManager(sockjsServer, userDataProvider, nextInternalGameID);
+const serverManager = new ServerManager(sockjsServer, userDataProvider, nextGameID);
 serverManager.manage();

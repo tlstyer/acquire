@@ -42,9 +42,9 @@ Client sends:
 *   Username
 *   Password
 *   Game data:
-    *   Internal game ID
+    *   Game ID
     *   Move data history size
-*   Internal game ID to join (the game client was in before being disconnected)
+*   Game ID to join (the game client was in before being disconnected)
 
 On unsuccessful connection request, server sends:
 
@@ -59,20 +59,20 @@ On successful connection request, server sends:
     *   Username
     *   Clients (exclude if none):
         *   Client ID
-        *   External game ID (excluded if not in a game)
+        *   Game number (excluded if not in a game)
 *   Games being set up:
-    *   Internal game ID
-    *   External game ID
+    *   Game ID
+    *   Game number
     *   JSON parameters
 *   Games:
-    *   Internal game ID
+    *   Game ID
     *   Move history messages (skipping the messages the client already knows)
-    *   External game ID (excluded if client knows about this game)
+    *   Game number (excluded if client knows about this game)
     *   Game mode (excluded if client knows about this game)
     *   Player arrangement mode (excluded if client knows about this game)
     *   User IDs (excluded if client knows about this game)
     *   Host user ID (excluded if client knows about this game)
-*   Internal game IDs that are not active anymore (exclude if empty)
+*   Game IDs that are not active anymore (exclude if empty)
 
 On successful connection request, server sends other clients:
 

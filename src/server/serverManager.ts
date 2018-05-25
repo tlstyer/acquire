@@ -20,12 +20,12 @@ export class ServerManager {
     connectionIDToClient: Map<string, Client> = new Map();
     userIDToUser: Map<number, User> = new Map();
 
-    externalGameIDManager: ReuseIDManager = new ReuseIDManager(60000);
+    gameNumberManager: ReuseIDManager = new ReuseIDManager(60000);
     gameIDToGameData: Map<number, GameData> = new Map();
 
     onMessageFunctions: { [key: number]: (client: Client, params: any[]) => void };
 
-    constructor(public server: Server, public userDataProvider: UserDataProvider, public nextInternalGameID: number) {
+    constructor(public server: Server, public userDataProvider: UserDataProvider, public nextGameID: number) {
         this.onMessageFunctions = {
             [MessageToServer.CreateGame]: this.onMessageCreateGame,
         };
@@ -228,7 +228,7 @@ export class ServerManager {
             return;
         }
 
-        const gameData = new GameData(this.nextInternalGameID++, this.externalGameIDManager.getID());
+        const gameData = new GameData(this.nextGameID++, this.gameNumberManager.getID());
         gameData.gameSetup = new GameSetup(gameMode, PlayerArrangementMode.RandomOrder, client.user.id, client.user.name);
 
         this.gameIDToGameData.set(gameData.id, gameData);
@@ -283,11 +283,11 @@ export class ServerManager {
     }
 
     getGameCreatedMessage(gameData: GameData, hostClient: Client) {
-        return [MessageToClient.GameCreated, gameData.id, gameData.externalID, gameData.gameSetup!.gameMode, hostClient.id];
+        return [MessageToClient.GameCreated, gameData.id, gameData.number, gameData.gameSetup!.gameMode, hostClient.id];
     }
 
     getClientEnteredGameMessage(gameData: GameData, client: Client) {
-        return [MessageToClient.ClientEnteredGame, client.id, gameData.externalID];
+        return [MessageToClient.ClientEnteredGame, client.id, gameData.number];
     }
 }
 
@@ -304,5 +304,5 @@ export class User {
 export class GameData {
     gameSetup: GameSetup | null = null;
 
-    constructor(public id: number, public externalID: number) {}
+    constructor(public id: number, public number: number) {}
 }
