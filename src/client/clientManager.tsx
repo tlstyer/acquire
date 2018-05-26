@@ -219,6 +219,19 @@ export class ClientManager {
     onMessageGreetings(myClientID: number, users: any[], games: any[]) {
         this.clientIDToClient.clear();
         this.userIDToUser.clear();
+        this.gameIDToGameData.clear();
+        this.gameDisplayNumberToGameData.clear();
+
+        for (let i = 0; i < games.length; i++) {
+            const gameParams = games[i];
+            const gameID: number = gameParams[1];
+            const gameDisplayNumber: number = gameParams[2];
+
+            const gameData = new GameData(gameID, gameDisplayNumber);
+
+            this.gameIDToGameData.set(gameID, gameData);
+            this.gameDisplayNumberToGameData.set(gameDisplayNumber, gameData);
+        }
 
         for (let i = 0; i < users.length; i++) {
             const [userID, username, clientDatas] = users[i];
@@ -228,11 +241,27 @@ export class ClientManager {
 
             for (let j = 0; j < clientDatas.length; j++) {
                 const clientData = clientDatas[j];
-                const clientID = clientData[0];
+                const clientID: number = clientData[0];
+                const gameDisplayNumber: number | undefined = clientData[1];
 
                 const client = new Client(clientID, user);
                 user.clients.add(client);
+                if (gameDisplayNumber !== undefined) {
+                    this.gameDisplayNumberToGameData.get(gameDisplayNumber)!.clients.add(client);
+                }
                 this.clientIDToClient.set(clientID, client);
+            }
+        }
+
+        for (let i = 0; i < games.length; i++) {
+            const gameParams = games[i];
+            const isGameSetup = gameParams[0] === 0;
+            const gameID: number = gameParams[1];
+
+            const gameData = this.gameIDToGameData.get(gameID)!;
+
+            if (isGameSetup) {
+                gameData.gameSetup = GameSetup.fromJSON(gameParams.slice(3), this.getUsernameForUserID);
             }
         }
 
@@ -301,6 +330,10 @@ export class ClientManager {
         }
 
         this.render();
+    };
+
+    getUsernameForUserID = (userID: number) => {
+        return this.userIDToUser.get(userID)!.name;
     };
 }
 

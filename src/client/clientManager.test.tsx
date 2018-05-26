@@ -88,26 +88,28 @@ describe('ClientManager', () => {
 
             clientManager.onSubmitLoginForm('me', '');
             testConnection.triggerOpen();
+            const gameSetupJSON = [GameMode.Teams3vs3, PlayerArrangementMode.RandomOrder, 4, [4, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0]];
             testConnection.triggerMessage([
                 [
                     MessageToClient.Greetings,
                     7,
-                    [[1, 'user 1', [[1], [6]]], [2, 'user 2', [[2], [3]]], [3, 'user 3', [[4]]], [4, 'user 4', [[5]]], [5, 'me', [[7]]]],
-                    [],
+                    [[1, 'user 1', [[1], [6]]], [2, 'user 2', [[2], [3]]], [3, 'user 3', [[4]]], [4, 'user 4', [[5, 1]]], [5, 'me', [[7]]]],
+                    [[0, 1, 1, ...gameSetupJSON]],
                 ],
             ]);
 
             expect(clientManager.myClient).toBe(clientManager.clientIDToClient.get(7));
+            expect(clientManager.gameIDToGameData.get(1)!.gameSetup!.toJSON()).toEqual(gameSetupJSON);
             expectClientAndUserAndGameData(
                 clientManager,
                 [
                     new UserData(1, 'user 1', [new ClientData(1), new ClientData(6)]),
                     new UserData(2, 'user 2', [new ClientData(2), new ClientData(3)]),
                     new UserData(3, 'user 3', [new ClientData(4)]),
-                    new UserData(4, 'user 4', [new ClientData(5)]),
+                    new UserData(4, 'user 4', [new ClientData(5, 1)]),
                     new UserData(5, 'me', [new ClientData(7)]),
                 ],
-                [],
+                [new GameDataData(1, 1)],
             );
         });
     });

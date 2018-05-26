@@ -251,7 +251,11 @@ export class ServerManager {
         this.userIDToUser.forEach(user => {
             const clients: any[] = [];
             user.clients.forEach(aClient => {
-                clients.push([aClient.id]);
+                const clientData = [aClient.id];
+                if (aClient.gameData !== null) {
+                    clientData.push(aClient.gameData.displayNumber);
+                }
+                clients.push(clientData);
             });
 
             const userMessage: any[] = [user.id, user.name];
@@ -263,6 +267,13 @@ export class ServerManager {
         });
 
         const games: any[] = [];
+        this.gameIDToGameData.forEach(gameData => {
+            const message: any[] = [gameData.gameSetup !== null ? 0 : 1, gameData.id, gameData.displayNumber];
+            if (gameData.gameSetup !== null) {
+                message.push(...gameData.gameSetup.toJSON());
+            }
+            games.push(message);
+        });
 
         return [MessageToClient.Greetings, client.id, users, games];
     }

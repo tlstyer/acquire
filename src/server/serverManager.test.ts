@@ -217,15 +217,17 @@ describe('ServerManager', () => {
                 await getsLoggedIn('no user data', '', 3);
             });
 
-            it('user and client info is included in MessageToClient.Greetings message', async () => {
-                const { server } = getServerManagerAndStuff();
+            it('MessageToClient.Greetings message is correct', async () => {
+                const { serverManager, server } = getServerManagerAndStuff();
 
                 await connectToServer(server, 'user 1');
                 await connectToServer(server, 'user 2');
                 await connectToServer(server, 'user 2');
                 await connectToServer(server, 'user 3');
-                await connectToServer(server, 'user 4');
+                const connection4 = await connectToServer(server, 'user 4');
                 await connectToServer(server, 'user 1');
+                connection4.sendMessage([MessageToServer.CreateGame, GameMode.Teams3vs3]);
+
                 const connection = await connectToServer(server, 'me');
 
                 expect(connection.receivedMessages.length).toBe(1);
@@ -233,8 +235,8 @@ describe('ServerManager', () => {
                     [
                         MessageToClient.Greetings,
                         7,
-                        [[1, 'user 1', [[1], [6]]], [2, 'user 2', [[2], [3]]], [3, 'user 3', [[4]]], [4, 'user 4', [[5]]], [5, 'me', [[7]]]],
-                        [],
+                        [[1, 'user 1', [[1], [6]]], [2, 'user 2', [[2], [3]]], [3, 'user 3', [[4]]], [4, 'user 4', [[5, 1]]], [5, 'me', [[7]]]],
+                        [[0, 1, 1, ...serverManager.gameIDToGameData.get(1)!.gameSetup!.toJSON()]],
                     ],
                 ]);
             });
