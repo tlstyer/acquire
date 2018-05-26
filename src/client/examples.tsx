@@ -1,5 +1,3 @@
-/* tslint:disable:no-console */
-
 import './global.css';
 
 import { List } from 'immutable';
@@ -33,6 +31,8 @@ import {
     selectChainKeyboardShortcutsDescription,
     tileRackKeyboardShortcutsDescription,
 } from './helpers';
+
+/* tslint:disable:no-console */
 
 class AllDemoProps {
     loginFormProps: LoginFormProps[];
