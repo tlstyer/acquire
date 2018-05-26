@@ -292,10 +292,10 @@ export class GameSetup {
         return [this.gameMode, this.playerArrangementMode, this.hostUserID, userIDs, approvals];
     }
 
-    static fromJSON(json: GameSetupJSON, globalUserIDToUsername: Map<number, string>) {
+    static fromJSON(json: GameSetupJSON, getUsernameForUserID: (userID: number) => string) {
         const [gameMode, playerArrangementMode, hostUserID, userIDs, intApprovals] = json;
 
-        const hostUsername = globalUserIDToUsername.get(hostUserID) || '';
+        const hostUsername = getUsernameForUserID(hostUserID);
 
         const gameSetup = new GameSetup(gameMode, playerArrangementMode, hostUserID, hostUsername);
 
@@ -304,7 +304,7 @@ export class GameSetup {
             const userID = userIDs[position];
 
             if (userID !== 0) {
-                const username = globalUserIDToUsername.get(userID) || '';
+                const username = getUsernameForUserID(userID);
 
                 usernames[position] = username;
 

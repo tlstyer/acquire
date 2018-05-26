@@ -684,14 +684,18 @@ describe('gameSetup', () => {
     });
 
     describe('toJSON and fromJSON', () => {
-        const globalUserIDToUsername: Map<number, string> = new Map([[1, 'user1'], [2, 'user2'], [3, 'user3'], [4, 'user4'], [5, 'user5'], [6, 'user6']]);
+        const userIDToUsername: Map<number, string> = new Map([[1, 'user1'], [2, 'user2'], [3, 'user3'], [4, 'user4'], [5, 'user5'], [6, 'user6']]);
+
+        function getUsernameForUserID(userID: number) {
+            return userIDToUsername.get(userID)!;
+        }
 
         it('just the host', () => {
             const gameSetup = new GameSetup(GameMode.Teams2vs2, PlayerArrangementMode.SpecifyTeams, 1, 'user1');
             gameSetup.swapPositions(0, 2);
             gameSetup.clearHistory();
 
-            const gameSetup2 = GameSetup.fromJSON(gameSetup.toJSON(), globalUserIDToUsername);
+            const gameSetup2 = GameSetup.fromJSON(gameSetup.toJSON(), getUsernameForUserID);
             gameSetup2.clearHistory();
 
             expect(gameSetup2).toEqual(gameSetup);
@@ -712,7 +716,7 @@ describe('gameSetup', () => {
             gameSetup.clearHistory();
             expect(gameSetup.approvedByEverybody).toBe(false);
 
-            const gameSetup2 = GameSetup.fromJSON(gameSetup.toJSON(), globalUserIDToUsername);
+            const gameSetup2 = GameSetup.fromJSON(gameSetup.toJSON(), getUsernameForUserID);
             gameSetup2.clearHistory();
 
             expect(gameSetup2).toEqual(gameSetup);
@@ -731,7 +735,7 @@ describe('gameSetup', () => {
             gameSetup.clearHistory();
             expect(gameSetup.approvedByEverybody).toBe(true);
 
-            const gameSetup2 = GameSetup.fromJSON(gameSetup.toJSON(), globalUserIDToUsername);
+            const gameSetup2 = GameSetup.fromJSON(gameSetup.toJSON(), getUsernameForUserID);
             gameSetup2.clearHistory();
 
             expect(gameSetup2).toEqual(gameSetup);
