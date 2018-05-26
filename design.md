@@ -54,13 +54,13 @@ On unsuccessful connection request, server sends:
 On successful connection request, server sends:
 
 *   MessageToClient.Greetings
+*   Client ID
 *   Users:
     *   User ID
     *   Username
     *   Clients (exclude if none):
         *   Client ID
         *   Game display number (excluded if not in a game)
-*   Client ID
 *   Games being set up and games:
     *   0 for game being set up or 1 for game
     *   Game ID

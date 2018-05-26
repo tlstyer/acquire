@@ -260,7 +260,7 @@ export class ServerManager {
 
         const games: any[] = [];
 
-        return [MessageToClient.Greetings, users, client.id, games];
+        return [MessageToClient.Greetings, client.id, users, games];
     }
 
     getClientConnectedMessage(client: Client, isNewUser: boolean) {

@@ -190,7 +190,7 @@ export class ClientManager {
         this.errorCode = errorCode;
     }
 
-    onMessageGreetings(users: any[], myClientID: number, games: any[]) {
+    onMessageGreetings(myClientID: number, users: any[], games: any[]) {
         this.clientIDToClient.clear();
         this.userIDToUser.clear();
 
