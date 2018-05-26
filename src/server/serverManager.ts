@@ -228,6 +228,10 @@ export class ServerManager {
             return;
         }
 
+        if (client.gameData !== null) {
+            return;
+        }
+
         const gameData = new GameData(this.nextGameID++, this.gameDisplayNumberManager.getID());
         gameData.gameSetup = new GameSetup(gameMode, PlayerArrangementMode.RandomOrder, client.user.id, client.user.name);
         gameData.clients.add(client);

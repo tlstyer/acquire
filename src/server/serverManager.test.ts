@@ -308,6 +308,23 @@ describe('ServerManager', () => {
             expect(connection1.receivedMessages[0]).toEqual(expectedMessage);
             expect(connection2.receivedMessages[0]).toEqual(expectedMessage);
         });
+
+        it('disallows creating a game when currently in a game', async () => {
+            const { serverManager, server } = getServerManagerAndStuff();
+            serverManager.nextGameID = 10;
+
+            const connection1 = await connectToServer(server, 'user 1');
+            const connection2 = await connectToServer(server, 'user 2');
+            connection2.sendMessage([MessageToServer.CreateGame, GameMode.Teams2vs2]);
+            connection1.clearReceivedMessages();
+            connection2.clearReceivedMessages();
+
+            connection2.sendMessage([MessageToServer.CreateGame, GameMode.Teams2vs2]);
+
+            expect(serverManager.gameIDToGameData.size).toBe(1);
+            expect(connection1.receivedMessages.length).toBe(0);
+            expect(connection2.receivedMessages.length).toBe(0);
+        });
     });
 });
 
