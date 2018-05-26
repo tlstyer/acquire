@@ -232,6 +232,7 @@ describe('ClientManager', () => {
             testConnection.triggerMessage([[MessageToClient.ClientConnected, 4, 3, 'user 3']]);
             testConnection.triggerMessage([[MessageToClient.GameCreated, 10, 1, GameMode.Teams2vs2, 2], [MessageToClient.ClientEnteredGame, 2, 1]]);
 
+            expect(clientManager.page).toBe(ClientManagerPage.Game);
             expectClientAndUserAndGameData(
                 clientManager,
                 [new UserData(1, 'me', [new ClientData(2, 10)]), new UserData(3, 'user 3', [new ClientData(4)])],
@@ -248,6 +249,7 @@ describe('ClientManager', () => {
             testConnection.triggerMessage([[MessageToClient.ClientConnected, 4, 3, 'user 3']]);
             testConnection.triggerMessage([[MessageToClient.GameCreated, 10, 1, GameMode.Teams2vs2, 4], [MessageToClient.ClientEnteredGame, 4, 1]]);
 
+            expect(clientManager.page).toBe(ClientManagerPage.Lobby);
             expectClientAndUserAndGameData(
                 clientManager,
                 [new UserData(1, 'me', [new ClientData(2)]), new UserData(3, 'user 3', [new ClientData(4, 10)])],

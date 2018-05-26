@@ -8,6 +8,7 @@ import { ErrorCode, GameMode, MessageToClient, MessageToServer, PlayerArrangemen
 import { GameSetup } from '../common/gameSetup';
 import { CreateGame } from './components/CreateGame';
 import { GameListing } from './components/GameListing';
+import { GameSetupUI } from './components/GameSetupUI';
 import { Header } from './components/Header';
 import { LoginForm } from './components/LoginForm';
 import { GameStatus } from './enums';
@@ -143,13 +144,37 @@ export class ClientManager {
     };
 
     renderGamePage = () => {
+        const gameData = this.myClient!.gameData!;
+
         return (
             <>
-                <h1>Acquire</h1>
-                <p>Game</p>
+                <Header username={this.username} isConnected={this.socket !== null} />
+                {gameData.gameSetup !== null ? this.renderGamePageGameSetup() : undefined}
             </>
         );
     };
+
+    renderGamePageGameSetup() {
+        const gameSetup = this.myClient!.gameData!.gameSetup!;
+
+        return (
+            <>
+                <GameSetupUI
+                    gameMode={gameSetup.gameMode}
+                    playerArrangementMode={gameSetup.playerArrangementMode}
+                    usernames={gameSetup.usernames}
+                    approvals={gameSetup.approvals}
+                    hostUsername={gameSetup.hostUsername}
+                    myUsername={this.username}
+                    onChangeGameMode={undefined}
+                    onChangePlayerArrangementMode={undefined}
+                    onSwapPositions={undefined}
+                    onKickUser={undefined}
+                    onApprove={undefined}
+                />
+            </>
+        );
+    }
 
     connect = () => {
         this.socket = new SockJS('http://localhost:9999/sockjs');
@@ -255,6 +280,10 @@ export class ClientManager {
 
         client.gameData = gameData;
         gameData.clients.add(client);
+
+        if (client === this.myClient) {
+            this.page = ClientManagerPage.Game;
+        }
     }
 
     onSocketClose = (e: CloseEvent) => {
