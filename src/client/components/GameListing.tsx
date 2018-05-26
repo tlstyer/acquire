@@ -9,8 +9,9 @@ import { MiniGameBoard } from './MiniGameBoard';
 
 export interface GameListingProps {
     gameBoard: List<GameBoardType>;
-    gameMode: GameMode;
     usernames: List<string | null>;
+    gameDisplayNumber: number;
+    gameMode: GameMode;
     gameStatus: GameStatus;
     onJoinClicked?: () => void;
     onRejoinClicked?: () => void;
@@ -19,7 +20,7 @@ export interface GameListingProps {
 
 export class GameListing extends React.PureComponent<GameListingProps> {
     render() {
-        const { gameBoard, gameMode, usernames, gameStatus, onJoinClicked, onRejoinClicked, onWatchClicked } = this.props;
+        const { gameBoard, usernames, gameDisplayNumber, gameMode, gameStatus, onJoinClicked, onRejoinClicked, onWatchClicked } = this.props;
 
         const isTeamGame = gameModeToTeamSize[gameMode] > 1;
         const numTeams = gameModeToNumPlayers[gameMode] / gameModeToTeamSize[gameMode];
@@ -39,6 +40,7 @@ export class GameListing extends React.PureComponent<GameListingProps> {
                     </tbody>
                 </table>
                 <div className={style.other}>
+                    <div>Game #{gameDisplayNumber}</div>
                     <div>{gameModeToString[gameMode]}</div>
                     <div>{gameStatusToString[gameStatus]}</div>
                     {onJoinClicked ? (

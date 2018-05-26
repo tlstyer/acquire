@@ -121,8 +121,9 @@ export class ClientManager {
                             <GameListing
                                 key={gameID}
                                 gameBoard={defaultGameBoard}
-                                gameMode={gameData.gameSetup.gameMode}
                                 usernames={gameData.gameSetup.usernames}
+                                gameDisplayNumber={gameData.displayNumber}
+                                gameMode={gameData.gameSetup.gameMode}
                                 gameStatus={GameStatus.SettingUp}
                                 onJoinClicked={undefined}
                                 onRejoinClicked={undefined}
