@@ -123,26 +123,26 @@ export function isASCII(str: string) {
     return true;
 }
 
-export const gameModeToNumPlayers: { [key: number]: number } = {
-    [GameMode.Singles1]: 1,
-    [GameMode.Singles2]: 2,
-    [GameMode.Singles3]: 3,
-    [GameMode.Singles4]: 4,
-    [GameMode.Singles5]: 5,
-    [GameMode.Singles6]: 6,
-    [GameMode.Teams2vs2]: 4,
-    [GameMode.Teams2vs2vs2]: 6,
-    [GameMode.Teams3vs3]: 6,
-};
+export const gameModeToNumPlayers = new Map<GameMode, number>([
+    [GameMode.Singles1, 1],
+    [GameMode.Singles2, 2],
+    [GameMode.Singles3, 3],
+    [GameMode.Singles4, 4],
+    [GameMode.Singles5, 5],
+    [GameMode.Singles6, 6],
+    [GameMode.Teams2vs2, 4],
+    [GameMode.Teams2vs2vs2, 6],
+    [GameMode.Teams3vs3, 6],
+]);
 
-export const gameModeToTeamSize: { [key: number]: number } = {
-    [GameMode.Singles1]: 1,
-    [GameMode.Singles2]: 1,
-    [GameMode.Singles3]: 1,
-    [GameMode.Singles4]: 1,
-    [GameMode.Singles5]: 1,
-    [GameMode.Singles6]: 1,
-    [GameMode.Teams2vs2]: 2,
-    [GameMode.Teams2vs2vs2]: 2,
-    [GameMode.Teams3vs3]: 3,
-};
+export const gameModeToTeamSize = new Map<GameMode, number>([
+    [GameMode.Singles1, 1],
+    [GameMode.Singles2, 1],
+    [GameMode.Singles3, 1],
+    [GameMode.Singles4, 1],
+    [GameMode.Singles5, 1],
+    [GameMode.Singles6, 1],
+    [GameMode.Teams2vs2, 2],
+    [GameMode.Teams2vs2vs2, 2],
+    [GameMode.Teams3vs3, 3],
+]);

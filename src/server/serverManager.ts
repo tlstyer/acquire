@@ -23,12 +23,10 @@ export class ServerManager {
     gameDisplayNumberManager: ReuseIDManager = new ReuseIDManager(60000);
     gameIDToGameData: Map<number, GameData> = new Map();
 
-    onMessageFunctions: { [key: number]: (client: Client, params: any[]) => void };
+    onMessageFunctions: Map<MessageToServer, (client: Client, params: any[]) => void>;
 
     constructor(public server: Server, public userDataProvider: UserDataProvider, public nextGameID: number) {
-        this.onMessageFunctions = {
-            [MessageToServer.CreateGame]: this.onMessageCreateGame,
-        };
+        this.onMessageFunctions = new Map([[MessageToServer.CreateGame, this.onMessageCreateGame]]);
     }
 
     manage() {
@@ -52,7 +50,7 @@ export class ServerManager {
                 const connectionState = this.connectionIDToConnectionState.get(connection.id);
 
                 if (connectionState === ConnectionState.LoggedIn) {
-                    const handler = this.onMessageFunctions[message[0]];
+                    const handler = this.onMessageFunctions.get(message[0]);
 
                     if (handler) {
                         const client = this.connectionIDToClient.get(connection.id)!;
@@ -223,7 +221,7 @@ export class ServerManager {
         }
 
         const gameMode: GameMode = params[0];
-        if (gameModeToNumPlayers[gameMode] === undefined) {
+        if (!gameModeToNumPlayers.has(gameMode)) {
             this.kickWithError(client.connection, ErrorCode.InvalidMessage);
             return;
         }

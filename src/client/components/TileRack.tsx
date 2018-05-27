@@ -13,14 +13,7 @@ export interface TileRackProps {
     onTileClicked: (tile: number) => void;
 }
 
-const keyboardShortcutToTileIndex: { [key: string]: number } = {
-    1: 0,
-    2: 1,
-    3: 2,
-    4: 3,
-    5: 4,
-    6: 5,
-};
+const keyboardShortcutToTileIndex = new Map<string, number>([['1', 0], ['2', 1], ['3', 2], ['4', 3], ['5', 4], ['6', 5]]);
 
 export class TileRack extends React.Component<TileRackProps> {
     buttonRefs: React.RefObject<HTMLInputElement>[];
@@ -59,8 +52,8 @@ export class TileRack extends React.Component<TileRackProps> {
 
         const keyName = event.key;
 
-        if (keyboardShortcutToTileIndex.hasOwnProperty(keyName)) {
-            const tileIndex = keyboardShortcutToTileIndex[keyName];
+        if (keyboardShortcutToTileIndex.has(keyName)) {
+            const tileIndex = keyboardShortcutToTileIndex.get(keyName)!;
             const button = this.buttonRefs[tileIndex].current;
             if (button !== null) {
                 button.focus();
@@ -87,7 +80,7 @@ export class TileRack extends React.Component<TileRackProps> {
                             <input
                                 key={i}
                                 type={'button'}
-                                className={commonStyle.hotelButton + ' ' + gameBoardTypeToCSSClassName[type]}
+                                className={commonStyle.hotelButton + ' ' + gameBoardTypeToCSSClassName.get(type)}
                                 style={buttonStyle}
                                 value={getTileString(tile)}
                                 disabled={disabled}

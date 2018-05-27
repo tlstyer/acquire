@@ -29,7 +29,7 @@ export class TileRackReadOnly extends React.PureComponent<TileRackReadOnlyProps>
 
                     if (tile !== null && type !== null) {
                         return (
-                            <div key={i} className={style.button + ' ' + gameBoardTypeToCSSClassName[type]} style={buttonStyle}>
+                            <div key={i} className={style.button + ' ' + gameBoardTypeToCSSClassName.get(type)} style={buttonStyle}>
                                 <div>{getTileString(tile)}</div>
                             </div>
                         );

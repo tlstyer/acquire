@@ -20,39 +20,39 @@ interface PurchaseSharesState {
     endGame: boolean;
 }
 
-const keyboardShortcutToAddedChain: { [key: string]: number } = {
-    1: 0,
-    l: 0,
-    2: 1,
-    t: 1,
-    3: 2,
-    a: 2,
-    4: 3,
-    f: 3,
-    5: 4,
-    w: 4,
-    6: 5,
-    c: 5,
-    7: 6,
-    i: 6,
-};
+const keyboardShortcutToAddedChain = new Map<string, number>([
+    ['1', 0],
+    ['l', 0],
+    ['2', 1],
+    ['t', 1],
+    ['3', 2],
+    ['a', 2],
+    ['4', 3],
+    ['f', 3],
+    ['5', 4],
+    ['w', 4],
+    ['6', 5],
+    ['c', 5],
+    ['7', 6],
+    ['i', 6],
+]);
 
-const keyboardShortcutToRemovedChain: { [key: string]: number } = {
-    '!': 0,
-    L: 0,
-    '@': 1,
-    T: 1,
-    '#': 2,
-    A: 2,
-    $: 3,
-    F: 3,
-    '%': 4,
-    W: 4,
-    '^': 5,
-    C: 5,
-    '&': 6,
-    I: 6,
-};
+const keyboardShortcutToRemovedChain = new Map<string, number>([
+    ['!', 0],
+    ['L', 0],
+    ['@', 1],
+    ['T', 1],
+    ['#', 2],
+    ['A', 2],
+    ['$', 3],
+    ['F', 3],
+    ['%', 4],
+    ['W', 4],
+    ['^', 5],
+    ['C', 5],
+    ['&', 6],
+    ['I', 6],
+]);
 
 export class PurchaseShares extends React.Component<PurchaseSharesProps, PurchaseSharesState> {
     availableButtonRefs: React.RefObject<HTMLInputElement>[];
@@ -124,15 +124,15 @@ export class PurchaseShares extends React.Component<PurchaseSharesProps, Purchas
 
         const keyName = event.key;
 
-        if (keyboardShortcutToAddedChain.hasOwnProperty(keyName)) {
-            const chain = keyboardShortcutToAddedChain[keyName];
+        if (keyboardShortcutToAddedChain.has(keyName)) {
+            const chain = keyboardShortcutToAddedChain.get(keyName)!;
             const button = this.availableButtonRefs[chain].current;
             if (button !== null) {
                 button.focus();
                 button.click();
             }
-        } else if (keyboardShortcutToRemovedChain.hasOwnProperty(keyName)) {
-            const chain = keyboardShortcutToRemovedChain[keyName];
+        } else if (keyboardShortcutToRemovedChain.has(keyName)) {
+            const chain = keyboardShortcutToRemovedChain.get(keyName)!;
             for (let i = 2; i >= 0; i--) {
                 if (this.state.cart[i] === chain) {
                     const cart = [...this.state.cart];
@@ -168,17 +168,15 @@ export class PurchaseShares extends React.Component<PurchaseSharesProps, Purchas
         const { scoreBoardAvailable, scoreBoardPrice, cash, buttonSize } = this.props;
         const { cart, endGame } = this.state;
 
-        const chainToNumSharesInCart: { [key: number]: number } = {};
+        const chainToNumSharesInCart = new Map<number, number>();
         let totalPrice = 0;
         let numItemsInCart = 0;
         for (let i = 0; i < 3; i++) {
             const chain = cart[i];
             if (chain !== null) {
-                if (!chainToNumSharesInCart[chain]) {
-                    chainToNumSharesInCart[chain] = 0;
-                }
+                const numSharesInCart = chainToNumSharesInCart.get(chain) || 0;
 
-                chainToNumSharesInCart[chain]++;
+                chainToNumSharesInCart.set(chain, numSharesInCart + 1);
                 totalPrice += scoreBoardPrice.get(chain, 0);
                 numItemsInCart++;
             }
@@ -206,7 +204,7 @@ export class PurchaseShares extends React.Component<PurchaseSharesProps, Purchas
                             const numAvailable = scoreBoardAvailable.get(chain, 0);
 
                             if (numAvailable > 0) {
-                                const numRemaining = numAvailable - (chainToNumSharesInCart[chain] ? chainToNumSharesInCart[chain] : 0);
+                                const numRemaining = numAvailable - (chainToNumSharesInCart.get(chain) || 0);
                                 const canAddThis = numItemsInCart < 3 && numRemaining > 0 && scoreBoardPrice.get(chain, 0) <= left;
 
                                 if (canAddThis) {
@@ -214,9 +212,9 @@ export class PurchaseShares extends React.Component<PurchaseSharesProps, Purchas
                                         <input
                                             key={chain}
                                             type={'button'}
-                                            className={commonStyle.hotelButton + ' ' + gameBoardTypeToCSSClassName[chain]}
+                                            className={commonStyle.hotelButton + ' ' + gameBoardTypeToCSSClassName.get(chain)}
                                             style={buttonStyle}
-                                            value={gameBoardTypeToHotelInitial[chain]}
+                                            value={gameBoardTypeToHotelInitial.get(chain)}
                                             ref={this.availableButtonRefs[chain]}
                                             onClick={() => {
                                                 for (let i = 0; i < 3; i++) {
@@ -237,7 +235,7 @@ export class PurchaseShares extends React.Component<PurchaseSharesProps, Purchas
                                             type={'button'}
                                             className={commonStyle.hotelButton}
                                             style={buttonStyle}
-                                            value={gameBoardTypeToHotelInitial[chain]}
+                                            value={gameBoardTypeToHotelInitial.get(chain)}
                                             disabled={true}
                                             ref={this.availableButtonRefs[chain]}
                                         />
@@ -282,7 +280,7 @@ export class PurchaseShares extends React.Component<PurchaseSharesProps, Purchas
                                     <input
                                         key={i}
                                         type={'button'}
-                                        className={commonStyle.hotelButton + ' ' + gameBoardTypeToCSSClassName[chain]}
+                                        className={commonStyle.hotelButton + ' ' + gameBoardTypeToCSSClassName.get(chain)}
                                         style={cartButtonStyle}
                                         value={scoreBoardPrice.get(chain, 0) * 100}
                                         onClick={() => {

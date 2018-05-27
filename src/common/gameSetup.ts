@@ -2,14 +2,14 @@ import { List } from 'immutable';
 import { GameMode, GameSetupChange, PlayerArrangementMode } from './enums';
 import { gameModeToNumPlayers, gameModeToTeamSize, shuffleArray } from './helpers';
 
-const defaultApprovals: { [key: number]: List<boolean> } = {
-    1: List<boolean>([false]),
-    2: List<boolean>([false, false]),
-    3: List<boolean>([false, false, false]),
-    4: List<boolean>([false, false, false, false]),
-    5: List<boolean>([false, false, false, false, false]),
-    6: List<boolean>([false, false, false, false, false, false]),
-};
+const defaultApprovals = new Map<number, List<boolean>>([
+    [1, List<boolean>([false])],
+    [2, List<boolean>([false, false])],
+    [3, List<boolean>([false, false, false])],
+    [4, List<boolean>([false, false, false, false])],
+    [5, List<boolean>([false, false, false, false, false])],
+    [6, List<boolean>([false, false, false, false, false, false])],
+]);
 
 type GameSetupJSON = [GameMode, PlayerArrangementMode, number, number[], number[]];
 
@@ -22,7 +22,7 @@ export class GameSetup {
     history: any[] = [];
 
     constructor(public gameMode: GameMode, public playerArrangementMode: PlayerArrangementMode, public hostUserID: number, public hostUsername: string) {
-        const numPlayers = gameModeToNumPlayers[gameMode];
+        const numPlayers = gameModeToNumPlayers.get(gameMode)!;
 
         const usernames: (string | null)[] = new Array(numPlayers);
         for (let i = 0; i < numPlayers; i++) {
@@ -31,7 +31,7 @@ export class GameSetup {
         usernames[0] = hostUsername;
         this.usernames = List(usernames);
 
-        this.approvals = defaultApprovals[numPlayers];
+        this.approvals = defaultApprovals.get(numPlayers)!;
 
         this.approvedByEverybody = false;
 
@@ -58,7 +58,7 @@ export class GameSetup {
         for (let i = 0; i < this.usernames.size; i++) {
             if (this.usernames.get(i, null) === null) {
                 this.usernames = this.usernames.set(i, username);
-                this.approvals = defaultApprovals[gameModeToNumPlayers[this.gameMode]];
+                this.approvals = defaultApprovals.get(gameModeToNumPlayers.get(this.gameMode)!)!;
                 this.approvedByEverybody = false;
                 this.usernameToUserID.set(username, userID);
                 this.userIDToUsername.set(userID, username);
@@ -82,7 +82,7 @@ export class GameSetup {
         for (let i = 0; i < this.usernames.size; i++) {
             if (this.usernames.get(i, null) === username) {
                 this.usernames = this.usernames.set(i, null);
-                this.approvals = defaultApprovals[gameModeToNumPlayers[this.gameMode]];
+                this.approvals = defaultApprovals.get(gameModeToNumPlayers.get(this.gameMode)!)!;
                 this.approvedByEverybody = false;
                 this.usernameToUserID.delete(username);
                 this.userIDToUsername.delete(userID);
@@ -121,12 +121,12 @@ export class GameSetup {
             return;
         }
 
-        const newNumPlayers = gameModeToNumPlayers[gameMode] || 0;
+        const newNumPlayers = gameModeToNumPlayers.get(gameMode) || 0;
         if (this.usernameToUserID.size > newNumPlayers) {
             return;
         }
 
-        const oldNumPlayers = gameModeToNumPlayers[this.gameMode];
+        const oldNumPlayers = gameModeToNumPlayers.get(this.gameMode)!;
 
         if (newNumPlayers !== oldNumPlayers) {
             const usernames = this.usernames.toJS();
@@ -154,10 +154,10 @@ export class GameSetup {
             this.usernames = List(usernames);
         }
 
-        this.approvals = defaultApprovals[newNumPlayers];
+        this.approvals = defaultApprovals.get(newNumPlayers)!;
         this.approvedByEverybody = false;
 
-        const isTeamGame = gameModeToTeamSize[gameMode] > 1;
+        const isTeamGame = gameModeToTeamSize.get(gameMode)! > 1;
         if (!isTeamGame && this.playerArrangementMode === PlayerArrangementMode.SpecifyTeams) {
             this.playerArrangementMode = PlayerArrangementMode.RandomOrder;
         }
@@ -179,13 +179,13 @@ export class GameSetup {
             return;
         }
 
-        const isTeamGame = gameModeToTeamSize[this.gameMode] > 1;
+        const isTeamGame = gameModeToTeamSize.get(this.gameMode)! > 1;
         if (!isTeamGame && playerArrangementMode === PlayerArrangementMode.SpecifyTeams) {
             return;
         }
 
         this.playerArrangementMode = playerArrangementMode;
-        this.approvals = defaultApprovals[gameModeToNumPlayers[this.gameMode]];
+        this.approvals = defaultApprovals.get(gameModeToNumPlayers.get(this.gameMode)!)!;
         this.approvedByEverybody = false;
         this.history.push([GameSetupChange.PlayerArrangementModeChanged, playerArrangementMode]);
     }
@@ -208,7 +208,7 @@ export class GameSetup {
         usernames.set(position2, this.usernames.get(position1, null));
         this.usernames = usernames.asImmutable();
 
-        this.approvals = defaultApprovals[gameModeToNumPlayers[this.gameMode]];
+        this.approvals = defaultApprovals.get(gameModeToNumPlayers.get(this.gameMode)!)!;
         this.approvedByEverybody = false;
 
         this.history.push([GameSetupChange.PositionsSwapped, position1, position2]);
@@ -231,7 +231,7 @@ export class GameSetup {
         const userID = this.usernameToUserID.get(username) || 0;
 
         this.usernames = this.usernames.set(position, null);
-        this.approvals = defaultApprovals[gameModeToNumPlayers[this.gameMode]];
+        this.approvals = defaultApprovals.get(gameModeToNumPlayers.get(this.gameMode)!)!;
         this.approvedByEverybody = false;
         this.usernameToUserID.delete(username);
         this.userIDToUsername.delete(userID);

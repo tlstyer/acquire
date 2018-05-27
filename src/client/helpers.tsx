@@ -5,50 +5,46 @@ import { GameStatus } from './enums';
 
 export const allChains = [0, 1, 2, 3, 4, 5, 6];
 
-export const gameBoardTypeToCSSClassName: { [key: number]: string } = {
-    [GameBoardType.Luxor]: common.luxor,
-    [GameBoardType.Tower]: common.tower,
-    [GameBoardType.American]: common.american,
-    [GameBoardType.Festival]: common.festival,
-    [GameBoardType.Worldwide]: common.worldwide,
-    [GameBoardType.Continental]: common.continental,
-    [GameBoardType.Imperial]: common.imperial,
-    [GameBoardType.Nothing]: common.nothing,
-    [GameBoardType.NothingYet]: common.nothingYet,
-    [GameBoardType.CantPlayEver]: common.cantPlayEver,
-    [GameBoardType.IHaveThis]: common.iHaveThis,
-    [GameBoardType.WillPutLonelyTileDown]: common.willPutLonelyTileDown,
-    [GameBoardType.HaveNeighboringTileToo]: common.haveNeighboringTileToo,
-    [GameBoardType.WillFormNewChain]: common.willFormNewChain,
-    [GameBoardType.WillMergeChains]: common.willMergeChains,
-    [GameBoardType.CantPlayNow]: common.cantPlayNow,
-};
+export const gameBoardTypeToCSSClassName = new Map<GameBoardType, string>([
+    [GameBoardType.Luxor, common.luxor],
+    [GameBoardType.Tower, common.tower],
+    [GameBoardType.American, common.american],
+    [GameBoardType.Festival, common.festival],
+    [GameBoardType.Worldwide, common.worldwide],
+    [GameBoardType.Continental, common.continental],
+    [GameBoardType.Imperial, common.imperial],
+    [GameBoardType.Nothing, common.nothing],
+    [GameBoardType.NothingYet, common.nothingYet],
+    [GameBoardType.CantPlayEver, common.cantPlayEver],
+    [GameBoardType.IHaveThis, common.iHaveThis],
+    [GameBoardType.WillPutLonelyTileDown, common.willPutLonelyTileDown],
+    [GameBoardType.HaveNeighboringTileToo, common.haveNeighboringTileToo],
+    [GameBoardType.WillFormNewChain, common.willFormNewChain],
+    [GameBoardType.WillMergeChains, common.willMergeChains],
+    [GameBoardType.CantPlayNow, common.cantPlayNow],
+]);
 
-export const gameBoardTypeToHotelInitial: { [key: number]: string } = {
-    [GameBoardType.Luxor]: 'L',
-    [GameBoardType.Tower]: 'T',
-    [GameBoardType.American]: 'A',
-    [GameBoardType.Festival]: 'F',
-    [GameBoardType.Worldwide]: 'W',
-    [GameBoardType.Continental]: 'C',
-    [GameBoardType.Imperial]: 'I',
-};
+export const gameBoardTypeToHotelInitial = new Map<GameBoardType, string>([
+    [GameBoardType.Luxor, 'L'],
+    [GameBoardType.Tower, 'T'],
+    [GameBoardType.American, 'A'],
+    [GameBoardType.Festival, 'F'],
+    [GameBoardType.Worldwide, 'W'],
+    [GameBoardType.Continental, 'C'],
+    [GameBoardType.Imperial, 'I'],
+]);
 
-const gameBoardTypeToHotelName: { [key: number]: string } = {
-    [GameBoardType.Luxor]: 'Luxor',
-    [GameBoardType.Tower]: 'Tower',
-    [GameBoardType.American]: 'American',
-    [GameBoardType.Festival]: 'Festival',
-    [GameBoardType.Worldwide]: 'Worldwide',
-    [GameBoardType.Continental]: 'Continental',
-    [GameBoardType.Imperial]: 'Imperial',
-};
+const gameBoardTypeToHotelName = new Map<GameBoardType, string>([
+    [GameBoardType.Luxor, 'Luxor'],
+    [GameBoardType.Tower, 'Tower'],
+    [GameBoardType.American, 'American'],
+    [GameBoardType.Festival, 'Festival'],
+    [GameBoardType.Worldwide, 'Worldwide'],
+    [GameBoardType.Continental, 'Continental'],
+    [GameBoardType.Imperial, 'Imperial'],
+]);
 
-export const teamNumberToCSSClassName: { [key: number]: string } = {
-    1: common.team1,
-    2: common.team2,
-    3: common.team3,
-};
+export const teamNumberToCSSClassName = new Map<number, string>([[1, common.team1], [2, common.team2], [3, common.team3]]);
 
 const yTileNames = 'ABCDEFGHI';
 
@@ -73,26 +69,26 @@ export function getUsernameSpan(username: string) {
 }
 
 export function getHotelNameSpan(chain: GameBoardType) {
-    return <span className={gameBoardTypeToCSSClassName[chain]}>{gameBoardTypeToHotelName[chain]}</span>;
+    return <span className={gameBoardTypeToCSSClassName.get(chain)}>{gameBoardTypeToHotelName.get(chain)}</span>;
 }
 
-export const gameModeToString: { [key: number]: string } = {
-    [GameMode.Singles1]: 'Singles 1',
-    [GameMode.Singles2]: 'Singles 2',
-    [GameMode.Singles3]: 'Singles 3',
-    [GameMode.Singles4]: 'Singles 4',
-    [GameMode.Singles5]: 'Singles 5',
-    [GameMode.Singles6]: 'Singles 6',
-    [GameMode.Teams2vs2]: 'Teams 2 vs 2',
-    [GameMode.Teams2vs2vs2]: 'Teams 2 vs 2 vs 2',
-    [GameMode.Teams3vs3]: 'Teams 3 vs 3',
-};
+export const gameModeToString = new Map<GameMode, string>([
+    [GameMode.Singles1, 'Singles 1'],
+    [GameMode.Singles2, 'Singles 2'],
+    [GameMode.Singles3, 'Singles 3'],
+    [GameMode.Singles4, 'Singles 4'],
+    [GameMode.Singles5, 'Singles 5'],
+    [GameMode.Singles6, 'Singles 6'],
+    [GameMode.Teams2vs2, 'Teams 2 vs 2'],
+    [GameMode.Teams2vs2vs2, 'Teams 2 vs 2 vs 2'],
+    [GameMode.Teams3vs3, 'Teams 3 vs 3'],
+]);
 
-export const gameStatusToString: { [key: number]: string } = {
-    [GameStatus.SettingUp]: 'Setting Up',
-    [GameStatus.InProgress]: 'In Progress',
-    [GameStatus.Completed]: 'Completed',
-};
+export const gameStatusToString = new Map<GameStatus, string>([
+    [GameStatus.SettingUp, 'Setting Up'],
+    [GameStatus.InProgress, 'In Progress'],
+    [GameStatus.Completed, 'Completed'],
+]);
 
 export function hackDoNotInterfereWithKeyboardShortcuts(event: React.KeyboardEvent<HTMLElement>) {
     event.stopPropagation();

@@ -22,8 +22,8 @@ export class GameListing extends React.PureComponent<GameListingProps> {
     render() {
         const { gameBoard, usernames, gameDisplayNumber, gameMode, gameStatus, onJoinClicked, onRejoinClicked, onWatchClicked } = this.props;
 
-        const isTeamGame = gameModeToTeamSize[gameMode] > 1;
-        const numTeams = gameModeToNumPlayers[gameMode] / gameModeToTeamSize[gameMode];
+        const isTeamGame = gameModeToTeamSize.get(gameMode)! > 1;
+        const numTeams = gameModeToNumPlayers.get(gameMode)! / gameModeToTeamSize.get(gameMode)!;
 
         return (
             <div>
@@ -34,15 +34,15 @@ export class GameListing extends React.PureComponent<GameListingProps> {
                     <tbody>
                         {usernames.map((username, i) => (
                             <tr key={i}>
-                                <td className={isTeamGame ? teamNumberToCSSClassName[i % numTeams + 1] : style.player}>{username}</td>
+                                <td className={isTeamGame ? teamNumberToCSSClassName.get(i % numTeams + 1) : style.player}>{username}</td>
                             </tr>
                         ))}
                     </tbody>
                 </table>
                 <div className={style.other}>
                     <div>Game #{gameDisplayNumber}</div>
-                    <div>{gameModeToString[gameMode]}</div>
-                    <div>{gameStatusToString[gameStatus]}</div>
+                    <div>{gameModeToString.get(gameMode)}</div>
+                    <div>{gameStatusToString.get(gameStatus)}</div>
                     {onJoinClicked ? (
                         <div>
                             <input type={'button'} value={'Join'} onClick={onJoinClicked} />

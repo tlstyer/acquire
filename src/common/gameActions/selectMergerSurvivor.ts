@@ -11,24 +11,28 @@ export class ActionSelectMergerSurvivor extends ActionBase {
     constructor(game: Game, playerID: number, public chains: GameBoardType[], public tile: number) {
         super(game, playerID, GameAction.SelectMergerSurvivor);
 
-        const sizeToChains: { [key: number]: GameBoardType[] } = {};
+        const sizeToChains = new Map<number, GameBoardType[]>();
         const sizes: number[] = [];
         for (let i = 0; i < chains.length; i++) {
             const chain = chains[i];
             const size = this.game.gameBoardTypeCounts[chain];
-            if (!sizeToChains[size]) {
-                sizeToChains[size] = [];
+
+            let chainsOfThisSize = sizeToChains.get(size);
+            if (chainsOfThisSize === undefined) {
+                chainsOfThisSize = [];
+                sizeToChains.set(size, chainsOfThisSize);
                 sizes.push(size);
             }
-            sizeToChains[size].push(chain);
+
+            chainsOfThisSize.push(chain);
         }
 
         sizes.sort((a, b) => (a < b ? 1 : -1));
 
-        const chainsBySize = new Array(sizes.length);
+        const chainsBySize: GameBoardType[][] = new Array(sizes.length);
         for (let i = 0; i < sizes.length; i++) {
             const size = sizes[i];
-            chainsBySize[i] = sizeToChains[size];
+            chainsBySize[i] = sizeToChains.get(size)!;
         }
 
         this.chainsBySize = chainsBySize;

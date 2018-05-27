@@ -181,36 +181,28 @@ export function runGameTestFile(inputLines: string[]) {
 }
 
 function getDuplicatedTiles(tileBag: number[]) {
-    const tileCounts: { [key: number]: number } = {};
+    const tiles = new Set<number>();
+    const duplicatedTiles = new Set<number>();
     for (let i = 0; i < tileBag.length; i++) {
         const tile = tileBag[i];
-        if (typeof tileCounts[tile] === 'undefined') {
-            tileCounts[tile] = 0;
+        if (tiles.has(tile)) {
+            duplicatedTiles.add(tile);
         }
-        tileCounts[tile]++;
+        tiles.add(tile);
     }
 
-    const duplicatedTiles: number[] = [];
-    for (const tile in tileCounts) {
-        if (tileCounts.hasOwnProperty(tile)) {
-            if (tileCounts[tile] > 1) {
-                duplicatedTiles.push(parseInt(tile, 10));
-            }
-        }
-    }
-
-    return duplicatedTiles;
+    return [...duplicatedTiles.values()];
 }
 
-const abbreviationToGameBoardType: { [key: string]: GameBoardType } = {
-    L: GameBoardType.Luxor,
-    T: GameBoardType.Tower,
-    A: GameBoardType.American,
-    F: GameBoardType.Festival,
-    W: GameBoardType.Worldwide,
-    C: GameBoardType.Continental,
-    I: GameBoardType.Imperial,
-};
+const abbreviationToGameBoardType = new Map<string, GameBoardType>([
+    ['L', GameBoardType.Luxor],
+    ['T', GameBoardType.Tower],
+    ['A', GameBoardType.American],
+    ['F', GameBoardType.Festival],
+    ['W', GameBoardType.Worldwide],
+    ['C', GameBoardType.Continental],
+    ['I', GameBoardType.Imperial],
+]);
 
 function fromParameterStrings(gameAction: GameAction, strings: string[]) {
     const parameters: any[] = [];
@@ -222,7 +214,7 @@ function fromParameterStrings(gameAction: GameAction, strings: string[]) {
         case GameAction.SelectNewChain:
         case GameAction.SelectMergerSurvivor:
         case GameAction.SelectChainToDisposeOfNext:
-            parameters.push(abbreviationToGameBoardType[strings[0]]);
+            parameters.push(abbreviationToGameBoardType.get(strings[0])!);
             break;
         case GameAction.DisposeOfShares:
             parameters.push(...strings.map(s => parseInt(s, 10)));
@@ -231,7 +223,7 @@ function fromParameterStrings(gameAction: GameAction, strings: string[]) {
             if (strings[0] === 'x') {
                 parameters.push([]);
             } else {
-                parameters.push(strings[0].split(',').map(s => abbreviationToGameBoardType[s]));
+                parameters.push(strings[0].split(',').map(s => abbreviationToGameBoardType.get(s)));
             }
             parameters.push(parseInt(strings[1], 10));
             break;
@@ -250,7 +242,7 @@ function toParameterStrings(gameAction: GameAction, parameters: any[]) {
         case GameAction.SelectNewChain:
         case GameAction.SelectMergerSurvivor:
         case GameAction.SelectChainToDisposeOfNext:
-            strings.push(gameBoardTypeToCharacter[parameters[0]]);
+            strings.push(gameBoardTypeToCharacter.get(parameters[0])!);
             break;
         case GameAction.DisposeOfShares:
             strings.push(...parameters.map(p => p.toString()));
@@ -259,7 +251,7 @@ function toParameterStrings(gameAction: GameAction, parameters: any[]) {
             if (parameters[0].length === 0) {
                 strings.push('x');
             } else {
-                strings.push(parameters[0].map((p: number) => gameBoardTypeToCharacter[p]).join(','));
+                strings.push(parameters[0].map((p: number) => gameBoardTypeToCharacter.get(p)).join(','));
             }
             strings.push(parameters[1].toString());
             break;
@@ -404,30 +396,30 @@ function getRevealedTileBagTilesStringForPlayer(revealedTileBagTiles: MoveDataTi
     return parts.join(', ');
 }
 
-const gameBoardTypeToCharacter: { [key: number]: string } = {
-    [GameBoardType.Luxor]: 'L',
-    [GameBoardType.Tower]: 'T',
-    [GameBoardType.American]: 'A',
-    [GameBoardType.Festival]: 'F',
-    [GameBoardType.Worldwide]: 'W',
-    [GameBoardType.Continental]: 'C',
-    [GameBoardType.Imperial]: 'I',
-    [GameBoardType.Nothing]: '·',
-    [GameBoardType.NothingYet]: 'O',
-    [GameBoardType.CantPlayEver]: '█',
-    [GameBoardType.IHaveThis]: 'i',
-    [GameBoardType.WillPutLonelyTileDown]: 'l',
-    [GameBoardType.HaveNeighboringTileToo]: 'h',
-    [GameBoardType.WillFormNewChain]: 'n',
-    [GameBoardType.WillMergeChains]: 'm',
-    [GameBoardType.CantPlayNow]: 'c',
-};
+const gameBoardTypeToCharacter = new Map<GameBoardType, string>([
+    [GameBoardType.Luxor, 'L'],
+    [GameBoardType.Tower, 'T'],
+    [GameBoardType.American, 'A'],
+    [GameBoardType.Festival, 'F'],
+    [GameBoardType.Worldwide, 'W'],
+    [GameBoardType.Continental, 'C'],
+    [GameBoardType.Imperial, 'I'],
+    [GameBoardType.Nothing, '·'],
+    [GameBoardType.NothingYet, 'O'],
+    [GameBoardType.CantPlayEver, '█'],
+    [GameBoardType.IHaveThis, 'i'],
+    [GameBoardType.WillPutLonelyTileDown, 'l'],
+    [GameBoardType.HaveNeighboringTileToo, 'h'],
+    [GameBoardType.WillFormNewChain, 'n'],
+    [GameBoardType.WillMergeChains, 'm'],
+    [GameBoardType.CantPlayNow, 'c'],
+]);
 function getGameBoardLines(gameBoard: List<GameBoardType>) {
     const lines: string[] = new Array(9);
     const chars: string[] = new Array(12);
     for (let y = 0; y < 9; y++) {
         for (let x = 0; x < 12; x++) {
-            chars[x] = gameBoardTypeToCharacter[gameBoard.get(x * 9 + y, 0)];
+            chars[x] = gameBoardTypeToCharacter.get(gameBoard.get(x * 9 + y, 0))!;
         }
         lines[y] = chars.join('');
     }
@@ -482,7 +474,7 @@ function getTileRackString(tiles: List<number | null>, tileTypes: List<GameBoard
 
             const tileType = tileTypes.get(tileIndex, 0);
             if (tile !== null && tileType !== null) {
-                return `${toTileString(tile)}(${gameBoardTypeToCharacter[tileType]})`;
+                return `${toTileString(tile)}(${gameBoardTypeToCharacter.get(tileType)})`;
             } else {
                 return 'none';
             }
@@ -543,29 +535,29 @@ const ghmshPurchasedShares = (ghmd: GameHistoryMessageData) => {
     ].join(' ');
 };
 
-const gameHistoryMessageStringHandlers: { [key: number]: (ghmd: GameHistoryMessageData) => string } = {
-    [GameHistoryMessage.TurnBegan]: ghmshPlayerID,
-    [GameHistoryMessage.DrewPositionTile]: ghmshPlayerIDTile,
-    [GameHistoryMessage.StartedGame]: ghmshPlayerID,
-    [GameHistoryMessage.DrewTile]: ghmshPlayerIDTile,
-    [GameHistoryMessage.HasNoPlayableTile]: ghmshPlayerID,
-    [GameHistoryMessage.PlayedTile]: ghmshPlayerIDTile,
-    [GameHistoryMessage.FormedChain]: ghmshPlayerIDType,
-    [GameHistoryMessage.MergedChains]: ghmshMergedChains,
-    [GameHistoryMessage.SelectedMergerSurvivor]: ghmshPlayerIDType,
-    [GameHistoryMessage.SelectedChainToDisposeOfNext]: ghmshPlayerIDType,
-    [GameHistoryMessage.ReceivedBonus]: ghmshPlayerIDType,
-    [GameHistoryMessage.DisposedOfShares]: ghmshPlayerIDType,
-    [GameHistoryMessage.CouldNotAffordAnyShares]: ghmshPlayerID,
-    [GameHistoryMessage.PurchasedShares]: ghmshPurchasedShares,
-    [GameHistoryMessage.DrewLastTile]: ghmshPlayerID,
-    [GameHistoryMessage.ReplacedDeadTile]: ghmshPlayerIDTile,
-    [GameHistoryMessage.EndedGame]: ghmshPlayerID,
-    [GameHistoryMessage.NoTilesPlayedForEntireRound]: ghmsh,
-    [GameHistoryMessage.AllTilesPlayed]: ghmsh,
-};
+const gameHistoryMessageStringHandlers = new Map<number, (ghmd: GameHistoryMessageData) => string>([
+    [GameHistoryMessage.TurnBegan, ghmshPlayerID],
+    [GameHistoryMessage.DrewPositionTile, ghmshPlayerIDTile],
+    [GameHistoryMessage.StartedGame, ghmshPlayerID],
+    [GameHistoryMessage.DrewTile, ghmshPlayerIDTile],
+    [GameHistoryMessage.HasNoPlayableTile, ghmshPlayerID],
+    [GameHistoryMessage.PlayedTile, ghmshPlayerIDTile],
+    [GameHistoryMessage.FormedChain, ghmshPlayerIDType],
+    [GameHistoryMessage.MergedChains, ghmshMergedChains],
+    [GameHistoryMessage.SelectedMergerSurvivor, ghmshPlayerIDType],
+    [GameHistoryMessage.SelectedChainToDisposeOfNext, ghmshPlayerIDType],
+    [GameHistoryMessage.ReceivedBonus, ghmshPlayerIDType],
+    [GameHistoryMessage.DisposedOfShares, ghmshPlayerIDType],
+    [GameHistoryMessage.CouldNotAffordAnyShares, ghmshPlayerID],
+    [GameHistoryMessage.PurchasedShares, ghmshPurchasedShares],
+    [GameHistoryMessage.DrewLastTile, ghmshPlayerID],
+    [GameHistoryMessage.ReplacedDeadTile, ghmshPlayerIDTile],
+    [GameHistoryMessage.EndedGame, ghmshPlayerID],
+    [GameHistoryMessage.NoTilesPlayedForEntireRound, ghmsh],
+    [GameHistoryMessage.AllTilesPlayed, ghmsh],
+]);
 function getGameHistoryMessageString(gameHistoryMessage: GameHistoryMessageData) {
-    return gameHistoryMessageStringHandlers[gameHistoryMessage.gameHistoryMessage](gameHistoryMessage);
+    return gameHistoryMessageStringHandlers.get(gameHistoryMessage.gameHistoryMessage)!(gameHistoryMessage);
 }
 
 function getNextActionString(action: ActionBase) {

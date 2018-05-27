@@ -24,22 +24,22 @@ const typeToInstructions = {
     [SelectChainTitle.SelectChainToDisposeOfNext]: 'Chain to dispose of next',
 };
 
-const keyboardShortcutToChain: { [key: string]: number } = {
-    1: 0,
-    l: 0,
-    2: 1,
-    t: 1,
-    3: 2,
-    a: 2,
-    4: 3,
-    f: 3,
-    5: 4,
-    w: 4,
-    6: 5,
-    c: 5,
-    7: 6,
-    i: 6,
-};
+const keyboardShortcutToChain = new Map<string, number>([
+    ['1', 0],
+    ['l', 0],
+    ['2', 1],
+    ['t', 1],
+    ['3', 2],
+    ['a', 2],
+    ['4', 3],
+    ['f', 3],
+    ['5', 4],
+    ['w', 4],
+    ['6', 5],
+    ['c', 5],
+    ['7', 6],
+    ['i', 6],
+]);
 
 export class SelectChain extends React.Component<SelectChainProps> {
     buttonRefs: React.RefObject<HTMLInputElement>[];
@@ -78,8 +78,8 @@ export class SelectChain extends React.Component<SelectChainProps> {
 
         const keyName = event.key;
 
-        if (keyboardShortcutToChain.hasOwnProperty(keyName)) {
-            const tileIndex = keyboardShortcutToChain[keyName];
+        if (keyboardShortcutToChain.has(keyName)) {
+            const tileIndex = keyboardShortcutToChain.get(keyName)!;
             const button = this.buttonRefs[tileIndex].current;
             if (button !== null) {
                 button.focus();
@@ -105,9 +105,9 @@ export class SelectChain extends React.Component<SelectChainProps> {
                                 <input
                                     key={chain}
                                     type={'button'}
-                                    className={commonStyle.hotelButton + ' ' + gameBoardTypeToCSSClassName[chain]}
+                                    className={commonStyle.hotelButton + ' ' + gameBoardTypeToCSSClassName.get(chain)}
                                     style={buttonStyle}
-                                    value={gameBoardTypeToHotelInitial[chain]}
+                                    value={gameBoardTypeToHotelInitial.get(chain)}
                                     ref={this.buttonRefs[chain]}
                                     onClick={() => onChainSelected(chain)}
                                 />

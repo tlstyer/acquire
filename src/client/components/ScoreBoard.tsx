@@ -34,8 +34,8 @@ export class ScoreBoard extends React.PureComponent<ScoreBoardProps> {
             cellWidth,
         } = this.props;
 
-        const isTeamGame = gameModeToTeamSize[gameMode] > 1;
-        const numTeams = gameModeToNumPlayers[gameMode] / gameModeToTeamSize[gameMode];
+        const isTeamGame = gameModeToTeamSize.get(gameMode)! > 1;
+        const numTeams = gameModeToNumPlayers.get(gameMode)! / gameModeToTeamSize.get(gameMode)!;
 
         const teamNumbers: (number | undefined)[] = new Array(3);
         const teamTotals: (number | undefined)[] = new Array(3);
@@ -67,7 +67,7 @@ export class ScoreBoard extends React.PureComponent<ScoreBoardProps> {
                             isPlayersMove={playerID === movePlayerID}
                             scoreBoardRow={scoreBoard.get(playerID, defaultScoreBoardRow)}
                             safeChains={safeChains}
-                            defaultClassName={isTeamGame ? teamNumberToCSSClassName[playerID % numTeams + 1] : style.player}
+                            defaultClassName={isTeamGame ? teamNumberToCSSClassName.get(playerID % numTeams + 1)! : style.player}
                             zeroValueReplacement={''}
                         />
                     ))}
@@ -124,8 +124,8 @@ class ScoreBoardHeader extends React.PureComponent {
             <tr>
                 <td className={style.playerHeader}>Player</td>
                 {allChains.map(chain => (
-                    <td key={chain} className={gameBoardTypeToCSSClassName[chain]}>
-                        {gameBoardTypeToHotelInitial[chain]}
+                    <td key={chain} className={gameBoardTypeToCSSClassName.get(chain)}>
+                        {gameBoardTypeToHotelInitial.get(chain)}
                     </td>
                 ))}
                 <td className={style.cashAndNetHeader}>Cash</td>
@@ -179,7 +179,7 @@ class ScoreBoardRow extends React.PureComponent<ScoreBoardRowProps> {
                 {scoreBoardRow.size === ScoreBoardIndex.Max ? (
                     <td className={defaultClassName}>{scoreBoardRow.get(8, 0) * 100}</td>
                 ) : (
-                    <td className={teamNumber !== undefined ? teamNumberToCSSClassName[teamNumber] : style.bottomRightCells}>
+                    <td className={teamNumber !== undefined ? teamNumberToCSSClassName.get(teamNumber) : style.bottomRightCells}>
                         {teamTotal !== undefined ? teamTotal * 100 : undefined}
                     </td>
                 )}

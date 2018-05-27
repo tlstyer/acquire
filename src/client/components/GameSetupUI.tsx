@@ -33,7 +33,7 @@ export class GameSetupUI extends React.PureComponent<GameSetupUIProps> {
 
         const gameIsFull = numUsersInGame === usernames.size;
 
-        const isTeamGame = gameModeToTeamSize[gameMode] > 1;
+        const isTeamGame = gameModeToTeamSize.get(gameMode)! > 1;
 
         return (
             <div>
@@ -44,13 +44,13 @@ export class GameSetupUI extends React.PureComponent<GameSetupUIProps> {
                         onChange={(event: React.FormEvent<HTMLSelectElement>) => onChangeGameMode(parseInt(event.currentTarget.value, 10))}
                     >
                         {allGameModes.map(gm => (
-                            <option key={gm} value={gm} disabled={gameModeToNumPlayers[gm] < numUsersInGame}>
-                                {gameModeToString[gm]}
+                            <option key={gm} value={gm} disabled={gameModeToNumPlayers.get(gm)! < numUsersInGame}>
+                                {gameModeToString.get(gm)}
                             </option>
                         ))}
                     </select>
                 ) : (
-                    gameModeToString[gameMode]
+                    gameModeToString.get(gameMode)
                 )}
                 <br />
                 Player arrangement mode:{' '}
@@ -63,7 +63,7 @@ export class GameSetupUI extends React.PureComponent<GameSetupUIProps> {
                             pam =>
                                 pam !== PlayerArrangementMode.SpecifyTeams || isTeamGame ? (
                                     <option key={pam} value={pam}>
-                                        {playerArrangementModeToString[pam]}
+                                        {playerArrangementModeToString.get(pam)}
                                     </option>
                                 ) : (
                                     undefined
@@ -71,7 +71,7 @@ export class GameSetupUI extends React.PureComponent<GameSetupUIProps> {
                         )}
                     </select>
                 ) : (
-                    playerArrangementModeToString[playerArrangementMode]
+                    playerArrangementModeToString.get(playerArrangementMode)
                 )}
                 <br />
                 {playerArrangementMode === PlayerArrangementMode.RandomOrder
@@ -106,15 +106,15 @@ export class GameSetupUI extends React.PureComponent<GameSetupUIProps> {
 
         const lastIndex = usernames.size - 1;
 
-        const isTeamGame = gameModeToTeamSize[gameMode] > 1;
-        const numTeams = gameModeToNumPlayers[gameMode] / gameModeToTeamSize[gameMode];
+        const isTeamGame = gameModeToTeamSize.get(gameMode)! > 1;
+        const numTeams = gameModeToNumPlayers.get(gameMode)! / gameModeToTeamSize.get(gameMode)!;
 
         return (
             <table className={style.table}>
                 <tbody>
                     {usernames.map((username, i) => (
                         <tr key={i}>
-                            <td className={isTeamGame ? teamNumberToCSSClassName[i % numTeams + 1] : style.user}>{username}</td>
+                            <td className={isTeamGame ? teamNumberToCSSClassName.get(i % numTeams + 1) : style.user}>{username}</td>
                             {onSwapPositions !== undefined ? (
                                 <td>{i > 0 ? <input type={'button'} value={'▲'} onClick={() => onSwapPositions(i, i - 1)} /> : undefined}</td>
                             ) : (
@@ -137,7 +137,7 @@ export class GameSetupUI extends React.PureComponent<GameSetupUIProps> {
     renderSpecifyTeams(showApprovals: boolean) {
         const { gameMode, usernames, onSwapPositions } = this.props;
 
-        const specifyTeamsEntries = teamGameModeToSpecifyTeamsEntries[gameMode];
+        const specifyTeamsEntries = teamGameModeToSpecifyTeamsEntries.get(gameMode)!;
 
         return (
             <table className={style.table}>
@@ -224,11 +224,11 @@ export class GameSetupUI extends React.PureComponent<GameSetupUIProps> {
     }
 }
 
-const playerArrangementModeToString: { [key: number]: string } = {
-    [PlayerArrangementMode.RandomOrder]: 'Random Order',
-    [PlayerArrangementMode.ExactOrder]: 'Exact Order',
-    [PlayerArrangementMode.SpecifyTeams]: 'Specify Teams',
-};
+const playerArrangementModeToString = new Map<PlayerArrangementMode, string>([
+    [PlayerArrangementMode.RandomOrder, 'Random Order'],
+    [PlayerArrangementMode.ExactOrder, 'Exact Order'],
+    [PlayerArrangementMode.SpecifyTeams, 'Specify Teams'],
+]);
 
 const allPlayerArrangementModes: PlayerArrangementMode[] = [
     PlayerArrangementMode.RandomOrder,
@@ -240,31 +240,34 @@ class SpecifyTeamsEntry {
     constructor(public index: number, public upIndex: number | null, public downIndex: number | null) {}
 }
 
-const teamGameModeToSpecifyTeamsEntries: { [key: number]: (SpecifyTeamsEntry | null)[] } = {
-    [GameMode.Teams2vs2]: [
-        new SpecifyTeamsEntry(0, null, 2),
-        new SpecifyTeamsEntry(2, 0, 1),
-        null,
-        new SpecifyTeamsEntry(1, 2, 3),
-        new SpecifyTeamsEntry(3, 1, null),
+const teamGameModeToSpecifyTeamsEntries = new Map<GameMode, (SpecifyTeamsEntry | null)[]>([
+    [
+        GameMode.Teams2vs2,
+        [new SpecifyTeamsEntry(0, null, 2), new SpecifyTeamsEntry(2, 0, 1), null, new SpecifyTeamsEntry(1, 2, 3), new SpecifyTeamsEntry(3, 1, null)],
     ],
-    [GameMode.Teams2vs2vs2]: [
-        new SpecifyTeamsEntry(0, null, 3),
-        new SpecifyTeamsEntry(3, 0, 1),
-        null,
-        new SpecifyTeamsEntry(1, 3, 4),
-        new SpecifyTeamsEntry(4, 1, 2),
-        null,
-        new SpecifyTeamsEntry(2, 4, 5),
-        new SpecifyTeamsEntry(5, 2, null),
+    [
+        GameMode.Teams2vs2vs2,
+        [
+            new SpecifyTeamsEntry(0, null, 3),
+            new SpecifyTeamsEntry(3, 0, 1),
+            null,
+            new SpecifyTeamsEntry(1, 3, 4),
+            new SpecifyTeamsEntry(4, 1, 2),
+            null,
+            new SpecifyTeamsEntry(2, 4, 5),
+            new SpecifyTeamsEntry(5, 2, null),
+        ],
     ],
-    [GameMode.Teams3vs3]: [
-        new SpecifyTeamsEntry(0, null, 2),
-        new SpecifyTeamsEntry(2, 0, 4),
-        new SpecifyTeamsEntry(4, 2, 1),
-        null,
-        new SpecifyTeamsEntry(1, 4, 3),
-        new SpecifyTeamsEntry(3, 1, 5),
-        new SpecifyTeamsEntry(5, 3, null),
+    [
+        GameMode.Teams3vs3,
+        [
+            new SpecifyTeamsEntry(0, null, 2),
+            new SpecifyTeamsEntry(2, 0, 4),
+            new SpecifyTeamsEntry(4, 2, 1),
+            null,
+            new SpecifyTeamsEntry(1, 4, 3),
+            new SpecifyTeamsEntry(3, 1, 5),
+            new SpecifyTeamsEntry(5, 3, null),
+        ],
     ],
-};
+]);

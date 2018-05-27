@@ -21,23 +21,23 @@ interface DisposeOfSharesState {
     sellMax: number;
 }
 
-const keyboardShortcutToButtonIndex: { [key: string]: number } = {
-    1: 0,
-    k: 0,
-    2: 1,
-    t: 1,
-    3: 2,
-    T: 2,
-    4: 3,
-    5: 4,
-    s: 4,
-    6: 5,
-    S: 5,
-    7: 6,
-    0: 7,
-    8: 7,
-    o: 7,
-};
+const keyboardShortcutToButtonIndex = new Map<string, number>([
+    ['1', 0],
+    ['k', 0],
+    ['2', 1],
+    ['t', 1],
+    ['3', 2],
+    ['T', 2],
+    ['4', 3],
+    ['5', 4],
+    ['s', 4],
+    ['6', 5],
+    ['S', 5],
+    ['7', 6],
+    ['0', 7],
+    ['8', 7],
+    ['o', 7],
+]);
 
 export class DisposeOfShares extends React.Component<DisposeOfSharesProps, DisposeOfSharesState> {
     buttonRefs: React.RefObject<HTMLInputElement>[];
@@ -109,7 +109,7 @@ export class DisposeOfShares extends React.Component<DisposeOfSharesProps, Dispo
         const keyName = event.key;
 
         if (keyboardShortcutToButtonIndex.hasOwnProperty(keyName)) {
-            const buttonIndex = keyboardShortcutToButtonIndex[keyName];
+            const buttonIndex = keyboardShortcutToButtonIndex.get(keyName)!;
             const button = this.buttonRefs[buttonIndex].current;
             if (button !== null) {
                 button.focus();
@@ -132,8 +132,8 @@ export class DisposeOfShares extends React.Component<DisposeOfSharesProps, Dispo
 
         return (
             <div className={style.root}>
-                <fieldset className={gameBoardTypeToCSSClassName[defunctChain]}>
-                    <legend className={gameBoardTypeToCSSClassName[defunctChain]}>Keep</legend>
+                <fieldset className={gameBoardTypeToCSSClassName.get(defunctChain)}>
+                    <legend className={gameBoardTypeToCSSClassName.get(defunctChain)}>Keep</legend>
                     <span>{keep}</span>
                     <input
                         type={'button'}
@@ -143,8 +143,8 @@ export class DisposeOfShares extends React.Component<DisposeOfSharesProps, Dispo
                         onClick={keepAllDisabled ? undefined : this.handleKeepAll}
                     />
                 </fieldset>
-                <fieldset className={gameBoardTypeToCSSClassName[controllingChain]}>
-                    <legend className={gameBoardTypeToCSSClassName[controllingChain]}>Trade</legend>
+                <fieldset className={gameBoardTypeToCSSClassName.get(controllingChain)}>
+                    <legend className={gameBoardTypeToCSSClassName.get(controllingChain)}>Trade</legend>
                     <span>{trade}</span>
                     <input
                         type={'button'}

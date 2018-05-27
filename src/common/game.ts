@@ -244,7 +244,7 @@ export class Game {
     determineTileRackTypesForPlayer(playerID: number) {
         const tileTypes: (GameBoardType | null)[] = [];
         const lonelyTileIndexes: number[] = [];
-        const lonelyTileBorderTiles: { [key: number]: boolean } = {};
+        const lonelyTileBorderTiles = new Set<number>();
 
         let canStartNewChain = false;
         for (let i = 0; i <= GameBoardType.Imperial; i++) {
@@ -286,7 +286,7 @@ export class Game {
                     tileType = GameBoardType.WillPutLonelyTileDown;
                     lonelyTileIndexes.push(tileIndex);
                     for (let i = 0; i < borderTiles.length; i++) {
-                        lonelyTileBorderTiles[borderTiles[i]] = true;
+                        lonelyTileBorderTiles.add(borderTiles[i]);
                     }
                 } else if (borderTypes.length === 1) {
                     if (borderTypes.indexOf(GameBoardType.NothingYet) !== -1) {
@@ -324,7 +324,7 @@ export class Game {
                 const tileType = tileTypes[tileIndex];
                 if (tileType === GameBoardType.WillPutLonelyTileDown) {
                     const tile = this.tileRacks.get(playerID, defaultTileRack).get(tileIndex, 0);
-                    if (tile !== null && lonelyTileBorderTiles[tile] === true) {
+                    if (tile !== null && lonelyTileBorderTiles.has(tile)) {
                         tileTypes[tileIndex] = GameBoardType.HaveNeighboringTileToo;
                     }
                 }
@@ -352,12 +352,8 @@ export class Game {
 
     fillCells(tile: number, gameBoardType: GameBoardType) {
         const pending: number[] = [tile];
-        const found: { [key: number]: boolean } = {};
-        found[tile] = true;
-        const excludedTypes: { [key: number]: boolean } = {};
-        excludedTypes[GameBoardType.Nothing] = true;
-        excludedTypes[GameBoardType.CantPlayEver] = true;
-        excludedTypes[gameBoardType] = true;
+        const found = new Set<number>([tile]);
+        const excludedTypes = new Set<GameBoardType>([GameBoardType.Nothing, GameBoardType.CantPlayEver, gameBoardType]);
 
         this.gameBoard = this.gameBoard.asMutable();
 
@@ -368,9 +364,9 @@ export class Game {
             const neighboringTiles = getNeighboringTiles(t);
             for (let i = 0; i < neighboringTiles.length; i++) {
                 const neighboringTile = neighboringTiles[i];
-                if (found[neighboringTile] !== true && excludedTypes[this.gameBoard.get(neighboringTile, 0)] !== true) {
+                if (!found.has(neighboringTile) && !excludedTypes.has(this.gameBoard.get(neighboringTile, 0))) {
                     pending.push(neighboringTile);
-                    found[neighboringTile] = true;
+                    found.add(neighboringTile);
                 }
             }
 
@@ -598,7 +594,7 @@ export class MoveData {
     scoreBoardPrice = defaultScoreBoardPrice;
     safeChains = defaultSafeChains;
 
-    revealedTileBagTilesLookup: { [key: number]: MoveDataTileBagTile } = {};
+    revealedTileBagTilesLookup = new Map<number, MoveDataTileBagTile>();
 
     playerMessages: any[][] = dummyPlayerMessages;
     watcherMessage: any[] = dummyWatcherMessage;
@@ -618,14 +614,14 @@ export class MoveData {
     addTileBagTile(tile: number, playerID: number | null) {
         const moveDataTileBagTile = new MoveDataTileBagTile(tile, playerID);
         this.revealedTileBagTiles.push(moveDataTileBagTile);
-        this.revealedTileBagTilesLookup[tile] = moveDataTileBagTile;
+        this.revealedTileBagTilesLookup.set(tile, moveDataTileBagTile);
     }
 
     addPlayedTile(tile: number, playerID: number) {
         // if already in the tile bag additions
-        if (this.revealedTileBagTilesLookup[tile]) {
+        if (this.revealedTileBagTilesLookup.has(tile)) {
             // change it to public
-            this.revealedTileBagTilesLookup[tile].playerIDWithPermission = null;
+            this.revealedTileBagTilesLookup.get(tile)!.playerIDWithPermission = null;
         } else {
             // add it to the tile rack additions
             this.revealedTileRackTiles.push(new MoveDataTileRackTile(tile, playerID));
@@ -654,7 +650,7 @@ export class MoveData {
 
         if (this.revealedTileBagTiles.length > 0) {
             // save some memory
-            this.revealedTileBagTilesLookup = {};
+            this.revealedTileBagTilesLookup.clear();
         }
     }
 

@@ -17,12 +17,12 @@ export class GameBoard extends React.PureComponent<GameBoardProps> {
     render() {
         const { gameBoard, tileRack, labelMode, cellSize, onCellClicked } = this.props;
 
-        const myTiles: { [key: number]: boolean } = {};
+        const myTiles = new Set<number>();
         if (tileRack) {
             for (let tileIndex = 0; tileIndex < 6; tileIndex++) {
                 const tile = tileRack.get(tileIndex, 0);
                 if (tile !== null) {
-                    myTiles[tile] = true;
+                    myTiles.add(tile);
                 }
             }
         }
@@ -32,7 +32,7 @@ export class GameBoard extends React.PureComponent<GameBoardProps> {
             const cells = new Array(12);
             for (let x = 0; x < 12; x++) {
                 const tile = x * 9 + y;
-                const gameBoardType = myTiles[tile] ? GameBoardType.IHaveThis : gameBoard.get(tile, 0);
+                const gameBoardType = myTiles.has(tile) ? GameBoardType.IHaveThis : gameBoard.get(tile, 0);
 
                 let label;
                 if (labelMode === GameBoardLabelMode.Coordinates) {
@@ -41,7 +41,7 @@ export class GameBoard extends React.PureComponent<GameBoardProps> {
                     if (gameBoardType === GameBoardType.Nothing || gameBoardType === GameBoardType.IHaveThis) {
                         label = getTileString(tile);
                     } else if (gameBoardType <= GameBoardType.Imperial) {
-                        label = gameBoardTypeToHotelInitial[gameBoardType];
+                        label = gameBoardTypeToHotelInitial.get(gameBoardType);
                     } else {
                         label = '';
                     }
@@ -53,7 +53,7 @@ export class GameBoard extends React.PureComponent<GameBoardProps> {
                     }
                 }
 
-                let className = gameBoardTypeToCSSClassName[gameBoardType];
+                let className = gameBoardTypeToCSSClassName.get(gameBoardType)!;
 
                 const optionalProps: { [key: string]: any } = {};
                 if (gameBoardType === GameBoardType.IHaveThis && onCellClicked) {

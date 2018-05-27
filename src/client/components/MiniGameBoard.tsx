@@ -20,7 +20,7 @@ export class MiniGameBoard extends React.PureComponent<MiniGameBoardProps> {
                 const tile = x * 9 + y;
                 const gameBoardType = gameBoard.get(tile, 0);
 
-                cells[x] = <td key={x} className={gameBoardTypeToCSSClassName[gameBoardType]} />;
+                cells[x] = <td key={x} className={gameBoardTypeToCSSClassName.get(gameBoardType)} />;
             }
             rows[y] = <tr key={y}>{cells}</tr>;
         }

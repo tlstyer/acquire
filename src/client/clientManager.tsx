@@ -20,17 +20,17 @@ export enum ClientManagerPage {
     Game,
 }
 
-const errorCodeToMessage: { [key: number]: string } = {
-    [ErrorCode.NotUsingLatestVersion]: 'You are not using the latest version.',
-    [ErrorCode.InternalServerError]: 'An error occurred during the processing of your request.',
-    [ErrorCode.InvalidMessageFormat]: 'An error occurred during the processing of your request.',
-    [ErrorCode.InvalidUsername]: 'Invalid username. Username must have between 1 and 32 ASCII characters.',
-    [ErrorCode.MissingPassword]: 'Password is required.',
-    [ErrorCode.ProvidedPassword]: 'Password is not set for this user.',
-    [ErrorCode.IncorrectPassword]: 'Password is incorrect.',
-    [ErrorCode.InvalidMessage]: 'An error occurred.',
-    [ErrorCode.CouldNotConnect]: 'Could not connect to the server.',
-};
+const errorCodeToMessage = new Map<ErrorCode, string>([
+    [ErrorCode.NotUsingLatestVersion, 'You are not using the latest version.'],
+    [ErrorCode.InternalServerError, 'An error occurred during the processing of your request.'],
+    [ErrorCode.InvalidMessageFormat, 'An error occurred during the processing of your request.'],
+    [ErrorCode.InvalidUsername, 'Invalid username. Username must have between 1 and 32 ASCII characters.'],
+    [ErrorCode.MissingPassword, 'Password is required.'],
+    [ErrorCode.ProvidedPassword, 'Password is not set for this user.'],
+    [ErrorCode.IncorrectPassword, 'Password is incorrect.'],
+    [ErrorCode.InvalidMessage, 'An error occurred.'],
+    [ErrorCode.CouldNotConnect, 'Could not connect to the server.'],
+]);
 
 export class ClientManager {
     errorCode: ErrorCode | null = null;
@@ -47,25 +47,26 @@ export class ClientManager {
     username = '';
     password = '';
 
-    renderPageFunctions: { [key: number]: () => JSX.Element };
-    onMessageFunctions: { [key: number]: (...params: any[]) => void };
+    renderPageFunctions: Map<ClientManagerPage, () => JSX.Element>;
+    onMessageFunctions: Map<MessageToClient, (...params: any[]) => void>;
 
     constructor() {
-        this.renderPageFunctions = {
-            [ClientManagerPage.Login]: this.renderLoginPage,
-            [ClientManagerPage.Connecting]: this.renderConnectingPage,
-            [ClientManagerPage.Lobby]: this.renderLobbyPage,
-            [ClientManagerPage.Game]: this.renderGamePage,
-        };
+        this.renderPageFunctions = new Map([
+            [ClientManagerPage.Login, this.renderLoginPage],
+            [ClientManagerPage.Connecting, this.renderConnectingPage],
+            [ClientManagerPage.Lobby, this.renderLobbyPage],
+            [ClientManagerPage.Game, this.renderGamePage],
+        ]);
 
-        this.onMessageFunctions = {
-            [MessageToClient.FatalError]: this.onMessageFatalError,
-            [MessageToClient.Greetings]: this.onMessageGreetings,
-            [MessageToClient.ClientConnected]: this.onMessageClientConnected,
-            [MessageToClient.ClientDisconnected]: this.onMessageClientDisconnected,
-            [MessageToClient.GameCreated]: this.onMessageGameCreated,
-            [MessageToClient.ClientEnteredGame]: this.onMessageClientEnteredGame,
-        };
+        const mf: [number, (...params: any[]) => void][] = [
+            [MessageToClient.FatalError, this.onMessageFatalError],
+            [MessageToClient.Greetings, this.onMessageGreetings],
+            [MessageToClient.ClientConnected, this.onMessageClientConnected],
+            [MessageToClient.ClientDisconnected, this.onMessageClientDisconnected],
+            [MessageToClient.GameCreated, this.onMessageGameCreated],
+            [MessageToClient.ClientEnteredGame, this.onMessageClientEnteredGame],
+        ];
+        this.onMessageFunctions = new Map(mf);
     }
 
     manage() {
@@ -73,7 +74,7 @@ export class ClientManager {
     }
 
     render() {
-        ReactDOM.render(this.renderPageFunctions[this.page](), document.getElementById('root'));
+        ReactDOM.render(this.renderPageFunctions.get(this.page)!(), document.getElementById('root'));
     }
 
     renderLoginPage = () => {
@@ -82,7 +83,7 @@ export class ClientManager {
                 <h1>Acquire</h1>
                 <h2>Login</h2>
                 <LoginForm
-                    error={this.errorCode !== null ? errorCodeToMessage[this.errorCode] : undefined}
+                    error={this.errorCode !== null ? errorCodeToMessage.get(this.errorCode) : undefined}
                     username={this.username}
                     onSubmit={this.onSubmitLoginForm}
                 />
@@ -201,7 +202,7 @@ export class ClientManager {
 
         for (let i = 0; i < messages.length; i++) {
             const message = messages[i];
-            const handler = this.onMessageFunctions[message[0]];
+            const handler = this.onMessageFunctions.get(message[0])!;
             handler.apply(this, message.slice(1));
         }
 

@@ -466,7 +466,7 @@ function getPurchaseSharesDescription(props: PurchaseSharesProps) {
     for (let chain = 0; chain < 7; chain++) {
         const numAvailable = props.scoreBoardAvailable.get(chain, 0);
         if (numAvailable !== 0) {
-            parts.push(`${numAvailable}${gameBoardTypeToHotelInitial[chain]}@$${props.scoreBoardPrice.get(chain, 0) * 100}`);
+            parts.push(`${numAvailable}${gameBoardTypeToHotelInitial.get(chain)}@$${props.scoreBoardPrice.get(chain, 0) * 100}`);
         }
     }
 
@@ -508,7 +508,7 @@ function onMoveClicked(index: number) {
 }
 
 function onChainSelected(chain: GameBoardType) {
-    console.log('onChainSelected:', gameBoardTypeToHotelInitial[chain]);
+    console.log('onChainSelected:', gameBoardTypeToHotelInitial.get(chain));
 }
 
 function onSharesDisposed(traded: number, sold: number) {
