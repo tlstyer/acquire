@@ -99,7 +99,7 @@ export class ServerManager {
 
             const user = client.user;
             user.clients.delete(client);
-            if (user.clients.size === 0) {
+            if (user.clients.size === 0 && user.numGames === 0) {
                 this.userIDToUser.delete(user.id);
             }
 
@@ -237,6 +237,7 @@ export class ServerManager {
         gameData.clients.add(client);
 
         client.gameData = gameData;
+        client.user.numGames++;
 
         this.gameIDToGameData.set(gameData.id, gameData);
 
@@ -308,6 +309,8 @@ export class Client {
 
 export class User {
     clients: Set<Client> = new Set();
+
+    numGames = 0;
 
     constructor(public id: number, public name: string) {}
 }

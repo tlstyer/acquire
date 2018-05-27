@@ -83,23 +83,31 @@ describe('ClientManager', () => {
     });
 
     describe('MessageToClient.Greetings', () => {
-        it('user and client info is included', async () => {
+        it('message is processed correctly', async () => {
             const { clientManager, testConnection } = getClientManagerAndStuff();
 
             clientManager.onSubmitLoginForm('me', '');
             testConnection.triggerOpen();
-            const gameSetupJSON = [GameMode.Teams3vs3, PlayerArrangementMode.RandomOrder, 4, [4, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0]];
+            const gameSetupJSON1 = [GameMode.Teams3vs3, PlayerArrangementMode.RandomOrder, 4, [4, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0]];
+            const gameSetupJSON2 = [GameMode.Singles2, PlayerArrangementMode.ExactOrder, 5, [9, 5], [0, 1]];
             testConnection.triggerMessage([
                 [
                     MessageToClient.Greetings,
                     7,
-                    [[1, 'user 1', [[1], [6]]], [2, 'user 2', [[2], [3]]], [3, 'user 3', [[4]]], [4, 'user 4', [[5, 1]]], [5, 'me', [[7]]]],
-                    [[0, 1, 1, ...gameSetupJSON]],
+                    [[1, 'user 1', [[1], [6]]], [2, 'user 2', [[2], [3]]], [3, 'user 3', [[4]]], [4, 'user 4', [[5, 1]]], [5, 'me', [[7]]], [9, 'user 9']],
+                    [[0, 1, 1, ...gameSetupJSON1], [0, 2, 3, ...gameSetupJSON2]],
                 ],
             ]);
 
+            expect(clientManager.userIDToUser.get(1)!.numGames).toBe(0);
+            expect(clientManager.userIDToUser.get(2)!.numGames).toBe(0);
+            expect(clientManager.userIDToUser.get(3)!.numGames).toBe(0);
+            expect(clientManager.userIDToUser.get(4)!.numGames).toBe(1);
+            expect(clientManager.userIDToUser.get(5)!.numGames).toBe(1);
+            expect(clientManager.userIDToUser.get(9)!.numGames).toBe(1);
             expect(clientManager.myClient).toBe(clientManager.clientIDToClient.get(7));
-            expect(clientManager.gameIDToGameData.get(1)!.gameSetup!.toJSON()).toEqual(gameSetupJSON);
+            expect(clientManager.gameIDToGameData.get(1)!.gameSetup!.toJSON()).toEqual(gameSetupJSON1);
+            expect(clientManager.gameIDToGameData.get(2)!.gameSetup!.toJSON()).toEqual(gameSetupJSON2);
             expectClientAndUserAndGameData(
                 clientManager,
                 [
@@ -108,8 +116,9 @@ describe('ClientManager', () => {
                     new UserData(3, 'user 3', [new ClientData(4)]),
                     new UserData(4, 'user 4', [new ClientData(5, 1)]),
                     new UserData(5, 'me', [new ClientData(7)]),
+                    new UserData(9, 'user 9', []),
                 ],
-                [new GameDataData(1, 1)],
+                [new GameDataData(1, 1), new GameDataData(2, 3)],
             );
         });
     });
@@ -168,6 +177,24 @@ describe('ClientManager', () => {
 
             expectClientAndUserAndGameData(clientManager, [new UserData(1, 'me', [new ClientData(2)]), new UserData(3, 'user 3', [new ClientData(5)])], []);
         });
+
+        it('user is not deleted if they are in a game', async () => {
+            const { clientManager, testConnection } = getClientManagerAndStuff();
+
+            clientManager.onSubmitLoginForm('me', '');
+            testConnection.triggerOpen();
+            testConnection.triggerMessage([[MessageToClient.Greetings, 2, [[1, 'me', [[2]]]], []]]);
+            testConnection.triggerMessage([[MessageToClient.ClientConnected, 4, 3, 'user 3']]);
+            testConnection.triggerMessage([[MessageToClient.GameCreated, 10, 1, GameMode.Teams2vs2, 4]]);
+            testConnection.triggerMessage([[MessageToClient.ClientDisconnected, 4]]);
+
+            expect(clientManager.userIDToUser.get(3)!.numGames).toBe(1);
+            expectClientAndUserAndGameData(
+                clientManager,
+                [new UserData(1, 'me', [new ClientData(2)]), new UserData(3, 'user 3', [])],
+                [new GameDataData(10, 1)],
+            );
+        });
     });
 
     describe('onSubmitCreateGame', () => {
@@ -216,6 +243,7 @@ describe('ClientManager', () => {
                 [new GameDataData(10, 1)],
             );
 
+            expect(clientManager.userIDToUser.get(1)!.numGames).toBe(1);
             const gameSetup = clientManager.gameIDToGameData.get(10)!.gameSetup!;
             expect(gameSetup.gameMode).toBe(GameMode.Teams2vs2);
             expect(gameSetup.playerArrangementMode).toBe(PlayerArrangementMode.RandomOrder);

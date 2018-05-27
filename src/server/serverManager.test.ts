@@ -223,9 +223,11 @@ describe('ServerManager', () => {
                 await connectToServer(server, 'user 1');
                 await connectToServer(server, 'user 2');
                 await connectToServer(server, 'user 2');
-                await connectToServer(server, 'user 3');
+                const connection3 = await connectToServer(server, 'user 3');
                 const connection4 = await connectToServer(server, 'user 4');
                 await connectToServer(server, 'user 1');
+                connection3.sendMessage([MessageToServer.CreateGame, GameMode.Singles2]);
+                connection3.close();
                 connection4.sendMessage([MessageToServer.CreateGame, GameMode.Teams3vs3]);
 
                 const connection = await connectToServer(server, 'me');
@@ -235,8 +237,11 @@ describe('ServerManager', () => {
                     [
                         MessageToClient.Greetings,
                         7,
-                        [[1, 'user 1', [[1], [6]]], [2, 'user 2', [[2], [3]]], [3, 'user 3', [[4]]], [4, 'user 4', [[5, 1]]], [5, 'me', [[7]]]],
-                        [[0, 1, 1, ...serverManager.gameIDToGameData.get(1)!.gameSetup!.toJSON()]],
+                        [[1, 'user 1', [[1], [6]]], [2, 'user 2', [[2], [3]]], [3, 'user 3'], [4, 'user 4', [[5, 2]]], [5, 'me', [[7]]]],
+                        [
+                            [0, 1, 1, ...serverManager.gameIDToGameData.get(1)!.gameSetup!.toJSON()],
+                            [0, 2, 2, ...serverManager.gameIDToGameData.get(2)!.gameSetup!.toJSON()],
+                        ],
                     ],
                 ]);
             });
@@ -291,6 +296,9 @@ describe('ServerManager', () => {
 
             connection2.sendMessage([MessageToServer.CreateGame, GameMode.Teams2vs2]);
 
+            expect(serverManager.userIDToUser.get(1)!.numGames).toBe(0);
+            expect(serverManager.userIDToUser.get(2)!.numGames).toBe(1);
+
             expectClientAndUserAndGameData(
                 serverManager,
                 [new UserData(1, 'user 1', [new ClientData(1, connection1)]), new UserData(2, 'user 2', [new ClientData(2, connection2, 10)])],
@@ -323,6 +331,7 @@ describe('ServerManager', () => {
 
             connection2.sendMessage([MessageToServer.CreateGame, GameMode.Teams2vs2]);
 
+            expect(serverManager.userIDToUser.get(2)!.numGames).toBe(1);
             expect(serverManager.gameIDToGameData.size).toBe(1);
             expect(connection1.receivedMessages.length).toBe(0);
             expect(connection2.receivedMessages.length).toBe(0);

@@ -239,17 +239,19 @@ export class ClientManager {
             const user = new User(userID, username);
             this.userIDToUser.set(userID, user);
 
-            for (let j = 0; j < clientDatas.length; j++) {
-                const clientData = clientDatas[j];
-                const clientID: number = clientData[0];
-                const gameDisplayNumber: number | undefined = clientData[1];
+            if (clientDatas !== undefined) {
+                for (let j = 0; j < clientDatas.length; j++) {
+                    const clientData = clientDatas[j];
+                    const clientID: number = clientData[0];
+                    const gameDisplayNumber: number | undefined = clientData[1];
 
-                const client = new Client(clientID, user);
-                user.clients.add(client);
-                if (gameDisplayNumber !== undefined) {
-                    this.gameDisplayNumberToGameData.get(gameDisplayNumber)!.clients.add(client);
+                    const client = new Client(clientID, user);
+                    user.clients.add(client);
+                    if (gameDisplayNumber !== undefined) {
+                        this.gameDisplayNumberToGameData.get(gameDisplayNumber)!.clients.add(client);
+                    }
+                    this.clientIDToClient.set(clientID, client);
                 }
-                this.clientIDToClient.set(clientID, client);
             }
         }
 
@@ -261,7 +263,17 @@ export class ClientManager {
             const gameData = this.gameIDToGameData.get(gameID)!;
 
             if (isGameSetup) {
-                gameData.gameSetup = GameSetup.fromJSON(gameParams.slice(3), this.getUsernameForUserID);
+                const gameSetupJSON = gameParams.slice(3);
+
+                gameData.gameSetup = GameSetup.fromJSON(gameSetupJSON, this.getUsernameForUserID);
+
+                const userIDs: number[] = gameSetupJSON[3];
+                for (let j = 0; j < userIDs.length; j++) {
+                    const userID = userIDs[j];
+                    if (userID !== 0) {
+                        this.userIDToUser.get(userID)!.numGames++;
+                    }
+                }
             }
         }
 
@@ -288,7 +300,7 @@ export class ClientManager {
 
         this.clientIDToClient.delete(clientID);
         user.clients.delete(client);
-        if (user.clients.size === 0) {
+        if (user.clients.size === 0 && user.numGames === 0) {
             this.userIDToUser.delete(user.id);
         }
     }
@@ -298,6 +310,8 @@ export class ClientManager {
 
         const gameData = new GameData(gameID, gameDisplayNumber);
         gameData.gameSetup = new GameSetup(gameMode, PlayerArrangementMode.RandomOrder, hostClient.user.id, hostClient.user.name);
+
+        hostClient.user.numGames++;
 
         this.gameIDToGameData.set(gameID, gameData);
         this.gameDisplayNumberToGameData.set(gameDisplayNumber, gameData);
@@ -345,6 +359,8 @@ export class Client {
 
 export class User {
     clients: Set<Client> = new Set();
+
+    numGames = 0;
 
     constructor(public id: number, public name: string) {}
 }
