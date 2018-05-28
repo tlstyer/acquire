@@ -322,7 +322,7 @@ function getMoveDataLines(moveData: MoveData, revealedTilesPlayerID: number | nu
         if (moveData.revealedTileRackTiles.length > 0) {
             const str = moveData.revealedTileRackTiles
                 .map(trt => {
-                    return toTileString(trt.tile) + ':' + trt.playerIDBelongsTo.toString();
+                    return `${toTileString(trt.tile)}:${trt.playerIDBelongsTo.toString()}`;
                 })
                 .join(', ');
             lines.push(`  revealed tile rack tiles: ${str}`);
@@ -331,7 +331,7 @@ function getMoveDataLines(moveData: MoveData, revealedTilesPlayerID: number | nu
         if (moveData.revealedTileBagTiles.length > 0) {
             const str = moveData.revealedTileBagTiles
                 .map(tbt => {
-                    return toTileString(tbt.tile) + ':' + (tbt.playerIDWithPermission === null ? 'all' : tbt.playerIDWithPermission.toString());
+                    return `${toTileString(tbt.tile)}:${tbt.playerIDWithPermission === null ? 'all' : tbt.playerIDWithPermission.toString()}`;
                 })
                 .join(', ');
             lines.push(`  revealed tile bag tiles: ${str}`);

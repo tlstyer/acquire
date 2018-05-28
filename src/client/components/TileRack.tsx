@@ -80,7 +80,7 @@ export class TileRack extends React.Component<TileRackProps> {
                             <input
                                 key={i}
                                 type={'button'}
-                                className={commonStyle.hotelButton + ' ' + gameBoardTypeToCSSClassName.get(type)}
+                                className={`${commonStyle.hotelButton} ${gameBoardTypeToCSSClassName.get(type)}`}
                                 style={buttonStyle}
                                 value={getTileString(tile)}
                                 disabled={disabled}

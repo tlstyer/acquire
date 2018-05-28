@@ -105,7 +105,7 @@ export class SelectChain extends React.Component<SelectChainProps> {
                                 <input
                                     key={chain}
                                     type={'button'}
-                                    className={commonStyle.hotelButton + ' ' + gameBoardTypeToCSSClassName.get(chain)}
+                                    className={`${commonStyle.hotelButton} ${gameBoardTypeToCSSClassName.get(chain)}`}
                                     style={buttonStyle}
                                     value={gameBoardTypeToHotelInitial.get(chain)}
                                     ref={this.buttonRefs[chain]}

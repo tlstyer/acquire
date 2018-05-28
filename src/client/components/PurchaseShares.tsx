@@ -212,7 +212,7 @@ export class PurchaseShares extends React.Component<PurchaseSharesProps, Purchas
                                         <input
                                             key={chain}
                                             type={'button'}
-                                            className={commonStyle.hotelButton + ' ' + gameBoardTypeToCSSClassName.get(chain)}
+                                            className={`${commonStyle.hotelButton} ${gameBoardTypeToCSSClassName.get(chain)}`}
                                             style={buttonStyle}
                                             value={gameBoardTypeToHotelInitial.get(chain)}
                                             ref={this.availableButtonRefs[chain]}
@@ -280,7 +280,7 @@ export class PurchaseShares extends React.Component<PurchaseSharesProps, Purchas
                                     <input
                                         key={i}
                                         type={'button'}
-                                        className={commonStyle.hotelButton + ' ' + gameBoardTypeToCSSClassName.get(chain)}
+                                        className={`${commonStyle.hotelButton} ${gameBoardTypeToCSSClassName.get(chain)}`}
                                         style={cartButtonStyle}
                                         value={scoreBoardPrice.get(chain, 0) * 100}
                                         onClick={() => {
