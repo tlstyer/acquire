@@ -11,7 +11,7 @@ export interface UserData {
 
 export class TestUserDataProvider implements UserDataProvider {
     nextUserID = 1;
-    usernameToUserData: Map<string, TestUserData> = new Map();
+    usernameToUserData = new Map<string, TestUserData>();
 
     async createUser(username: string, password: string | null) {
         if (username === 'createUser error') {

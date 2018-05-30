@@ -39,10 +39,10 @@ export class ClientManager {
     socket: WebSocket | null = null;
 
     myClient: Client | null = null;
-    clientIDToClient: Map<number, Client> = new Map();
-    userIDToUser: Map<number, User> = new Map();
-    gameIDToGameData: Map<number, GameData> = new Map();
-    gameDisplayNumberToGameData: Map<number, GameData> = new Map();
+    clientIDToClient = new Map<number, Client>();
+    userIDToUser = new Map<number, User>();
+    gameIDToGameData = new Map<number, GameData>();
+    gameDisplayNumberToGameData = new Map<number, GameData>();
 
     username = '';
     password = '';
@@ -359,7 +359,7 @@ export class Client {
 }
 
 export class User {
-    clients: Set<Client> = new Set();
+    clients = new Set<Client>();
 
     numGames = 0;
 
@@ -369,7 +369,7 @@ export class User {
 export class GameData {
     gameSetup: GameSetup | null = null;
 
-    clients: Set<Client> = new Set();
+    clients = new Set<Client>();
 
     constructor(public id: number, public displayNumber: number) {}
 }

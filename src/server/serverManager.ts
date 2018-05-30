@@ -12,16 +12,16 @@ export enum ConnectionState {
 }
 
 export class ServerManager {
-    connectionIDToConnectionState: Map<string, ConnectionState> = new Map();
+    connectionIDToConnectionState = new Map<string, ConnectionState>();
 
-    connectionIDToPreLoggedInConnection: Map<string, Connection> = new Map();
+    connectionIDToPreLoggedInConnection = new Map<string, Connection>();
 
     clientIDManager: ReuseIDManager = new ReuseIDManager(60000);
-    connectionIDToClient: Map<string, Client> = new Map();
-    userIDToUser: Map<number, User> = new Map();
+    connectionIDToClient = new Map<string, Client>();
+    userIDToUser = new Map<number, User>();
 
     gameDisplayNumberManager: ReuseIDManager = new ReuseIDManager(60000);
-    gameIDToGameData: Map<number, GameData> = new Map();
+    gameIDToGameData = new Map<number, GameData>();
 
     onMessageFunctions: Map<MessageToServer, (client: Client, params: any[]) => void>;
 
@@ -306,7 +306,7 @@ export class Client {
 }
 
 export class User {
-    clients: Set<Client> = new Set();
+    clients = new Set<Client>();
 
     numGames = 0;
 
@@ -316,7 +316,7 @@ export class User {
 export class GameData {
     gameSetup: GameSetup | null = null;
 
-    clients: Set<Client> = new Set();
+    clients = new Set<Client>();
 
     constructor(public id: number, public displayNumber: number) {}
 }
