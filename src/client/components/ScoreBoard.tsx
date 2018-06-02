@@ -67,7 +67,7 @@ export class ScoreBoard extends React.PureComponent<ScoreBoardProps> {
                             isPlayersMove={playerID === movePlayerID}
                             scoreBoardRow={scoreBoard.get(playerID, defaultScoreBoardRow)}
                             safeChains={safeChains}
-                            defaultClassName={isTeamGame ? teamNumberToCSSClassName.get(playerID % numTeams + 1)! : style.player}
+                            defaultClassName={isTeamGame ? teamNumberToCSSClassName.get((playerID % numTeams) + 1)! : style.player}
                             zeroValueReplacement={''}
                         />
                     ))}

@@ -4,7 +4,7 @@ import { ServerManager } from './serverManager';
 import { TestUserDataProvider } from './userDataProvider';
 
 const sockjsServer = sockjs.createServer({
-    sockjs_url: 'https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js',
+    sockjs_url: 'https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.5/sockjs.min.js',
 });
 const httpServer = http.createServer();
 sockjsServer.installHandlers(httpServer, { prefix: '/sockjs' });

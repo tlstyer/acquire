@@ -8,22 +8,22 @@
     "devDependencies": {
         "@types/enzyme": "^3.1.10",
         "@types/enzyme-adapter-react-16": "^1.0.2",
-        "@types/jest": "^22.2.3",
-        "@types/node": "^10.1.2",
-        "@types/react": "^16.3.14",
+        "@types/jest": "^23.0.0",
+        "@types/node": "^10.3.0",
+        "@types/react": "^16.3.16",
         "@types/react-dom": "^16.0.5",
         "@types/react-test-renderer": "^16.0.1",
         "@types/sockjs": "^0.3.31",
         "@types/sockjs-client": "^1.1.0",
         "awesome-typescript-loader": "^5.0.0",
-        "caniuse-lite": "^1.0.30000846",
+        "caniuse-lite": "^1.0.30000847",
         "css-loader": "^0.28.11",
         "enzyme": "^3.3.0",
         "enzyme-adapter-react-16": "^1.1.1",
         "html-webpack-externals-plugin": "^3.8.0",
         "html-webpack-plugin": "^3.2.0",
         "identity-obj-proxy": "^3.0.0",
-        "jest": "^23.0.0",
+        "jest": "^23.1.0",
         "mini-css-extract-plugin": "^0.4.0",
         "nodemon": "^1.17.5",
         "normalize.css": "^8.0.0",
@@ -31,22 +31,22 @@
         "postcss-import": "^11.1.0",
         "postcss-loader": "^2.1.5",
         "postcss-url": "^7.3.2",
-        "prettier": "^1.12.1",
+        "prettier": "^1.13.4",
         "raw-loader": "^0.5.1",
         "react": "^16.4.0",
         "react-dom": "^16.4.0",
         "react-test-renderer": "^16.4.0",
         "seedrandom": "^2.4.3",
-        "sockjs-client": "^1.1.4",
+        "sockjs-client": "^1.1.5",
         "source-map-loader": "^0.2.3",
         "style-loader": "^0.21.0",
         "ts-jest": "^22.4.6",
         "ts-node": "^6.0.5",
         "tslint": "^5.10.0",
-        "typescript": "^2.8.3",
+        "typescript": "2.8.3",
         "typings-for-css-modules-loader": "^1.7.0",
-        "webpack": "^4.8.3",
-        "webpack-cli": "^2.1.4",
+        "webpack": "^4.10.2",
+        "webpack-cli": "^3.0.0",
         "webpack-serve": "^1.0.2"
     },
     "scripts": {
@@ -61,15 +61,21 @@
         "server": "nodemon -r ts-node/register src/server/main.ts",
         "test": "jest",
         "lint": "tslint --project tsconfig.json --config tslint.json --fix",
-        "format":
-            "find . \\( -path ./.git -o -path ./node_modules \\) -prune -o -print | grep -E '\\.(css|js(on)?|md|tsx?)$' | xargs prettier --write --loglevel warn"
+        "format": "find . \\( -path ./.git -o -path ./node_modules \\) -prune -o -print | grep -E '\\.(css|js(on)?|md|tsx?)$' | xargs prettier --write --loglevel warn"
     },
     "jest": {
         "transform": {
             "^.+\\.tsx?$": "ts-jest"
         },
         "testRegex": "^.+\\.test\\.tsx?$",
-        "moduleFileExtensions": ["ts", "tsx", "js", "jsx", "json", "node"],
+        "moduleFileExtensions": [
+            "ts",
+            "tsx",
+            "js",
+            "jsx",
+            "json",
+            "node"
+        ],
         "moduleNameMapper": {
             "\\.css$": "identity-obj-proxy"
         }

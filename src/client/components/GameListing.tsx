@@ -34,7 +34,7 @@ export class GameListing extends React.PureComponent<GameListingProps> {
                     <tbody>
                         {usernames.map((username, i) => (
                             <tr key={i}>
-                                <td className={isTeamGame ? teamNumberToCSSClassName.get(i % numTeams + 1) : style.player}>{username}</td>
+                                <td className={isTeamGame ? teamNumberToCSSClassName.get((i % numTeams) + 1) : style.player}>{username}</td>
                             </tr>
                         ))}
                     </tbody>

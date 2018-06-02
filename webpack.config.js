@@ -107,7 +107,7 @@ function getProductionConfig(APP) {
         externals.push({
             module: 'sockjs-client',
             global: 'SockJS',
-            entry: 'https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js',
+            entry: 'https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.5/sockjs.min.js',
         });
     }
 

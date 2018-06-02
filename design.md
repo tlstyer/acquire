@@ -2,27 +2,27 @@
 
 The host picks the initial game mode, which is one of:
 
-*   Singles 1
-*   Singles 2
-*   Singles 3
-*   Singles 4
-*   Singles 5
-*   Singles 6
-*   Teams 2 vs 2
-*   Teams 2 vs 2 vs 2
-*   Teams 3 vs 3
+-   Singles 1
+-   Singles 2
+-   Singles 3
+-   Singles 4
+-   Singles 5
+-   Singles 6
+-   Teams 2 vs 2
+-   Teams 2 vs 2 vs 2
+-   Teams 3 vs 3
 
 The host can later change the game mode to any mode which requires the same or more than the number of users who are already in the game.
 
 The host can choose the arrangement of the players, one of:
 
-*   Random order
-    *   Player order will be randomized
-*   Exact order
-    *   This exact player order will be used
-*   Specify teams (team games only)
-    *   Can arrange the users into teams
-    *   Player order will be randomized, but the teams selected will be honored
+-   Random order
+    -   Player order will be randomized
+-   Exact order
+    -   This exact player order will be used
+-   Specify teams (team games only)
+    -   Can arrange the users into teams
+    -   Player order will be randomized, but the teams selected will be honored
 
 When the game has the required number of players and everybody has accepted the setup, then the game is automatically started.
 
@@ -38,102 +38,102 @@ Users can leave a game.
 
 Client sends:
 
-*   Version
-*   Username
-*   Password
-*   Game data:
-    *   Game ID
-    *   Move data history size
-*   Game ID to join (the game client was in before being disconnected)
+-   Version
+-   Username
+-   Password
+-   Game data:
+    -   Game ID
+    -   Move data history size
+-   Game ID to join (the game client was in before being disconnected)
 
 On unsuccessful connection request, server sends:
 
-*   MessageToClient.FatalError
-*   ErrorCode
+-   MessageToClient.FatalError
+-   ErrorCode
 
 On successful connection request, server sends:
 
-*   MessageToClient.Greetings
-*   Client ID
-*   Users:
-    *   User ID
-    *   Username
-    *   Clients (exclude if none):
-        *   Client ID
-        *   Game display number (excluded if not in a game)
-*   Games being set up and games:
-    *   0 for game being set up or 1 for game
-    *   Game ID
-    *   Game display number
-    *   If game being set up, include JSON parameters from GameSetup
-    *   If game, include array of move history messages (skipping the messages the client already knows)
-    *   If game and client doesn't know about this game, include game mode
-    *   If game and client doesn't know about this game, include player arrangement mode
-    *   If game and client doesn't know about this game, include user IDs
-    *   If game and client doesn't know about this game, include host user ID
+-   MessageToClient.Greetings
+-   Client ID
+-   Users:
+    -   User ID
+    -   Username
+    -   Clients (exclude if none):
+        -   Client ID
+        -   Game display number (excluded if not in a game)
+-   Games being set up and games:
+    -   0 for game being set up or 1 for game
+    -   Game ID
+    -   Game display number
+    -   If game being set up, include JSON parameters from GameSetup
+    -   If game, include array of move history messages (skipping the messages the client already knows)
+    -   If game and client doesn't know about this game, include game mode
+    -   If game and client doesn't know about this game, include player arrangement mode
+    -   If game and client doesn't know about this game, include user IDs
+    -   If game and client doesn't know about this game, include host user ID
 
 On successful connection request, server sends other clients:
 
-*   MessageToClient.ClientConnected
-*   Client ID
-*   User ID
-*   Username (exclude if already known)
+-   MessageToClient.ClientConnected
+-   Client ID
+-   User ID
+-   Username (exclude if already known)
 
 ## Disconnection
 
 Server sends other clients:
 
-*   MessageToClient.ClientDisconnected
-*   Client ID
+-   MessageToClient.ClientDisconnected
+-   Client ID
 
 ## Create game
 
 Client sends:
 
-*   MessageToServer.CreateGame
-*   Game mode
+-   MessageToServer.CreateGame
+-   Game mode
 
 Server sends all clients:
 
-*   MessageToClient.GameCreated
-*   Game ID
-*   Game display number
-*   Game mode
-*   Host client ID
+-   MessageToClient.GameCreated
+-   Game ID
+-   Game display number
+-   Game mode
+-   Host client ID
 
 Server sends all clients:
 
-*   MessageToClient.ClientEnteredGame
-*   Client ID
-*   Game display number
+-   MessageToClient.ClientEnteredGame
+-   Client ID
+-   Game display number
 
 # Game review data
 
 Array of:
 
-*   Game mode
-*   Player arrangement mode
-*   Time control starting amount (in seconds, null meaning infinite)
-*   Time control increment amount (in seconds)
-*   User ID array in player order
-*   User name array in player order
-*   User ID of host
-*   Tile bag array
-    *   0 for 1A, 1 for 1B, 2 for 1C, ...
-    *   9 for 2A, 10 for 2B, 11 for 2C, ...
-*   Game actions
-    *   Only the parameters
-    *   Timestamp
-        *   If previous game action had a timestamp, then milliseconds since previous game action
-        *   Otherwise, milliseconds since Unix epoch
-        *   If timestamp is unknown, then exclude it
-    *   Whether game action was automatically played due to time expiry or forfeit
-        *   1 for yes
-        *   Excluded for no
+-   Game mode
+-   Player arrangement mode
+-   Time control starting amount (in seconds, null meaning infinite)
+-   Time control increment amount (in seconds)
+-   User ID array in player order
+-   User name array in player order
+-   User ID of host
+-   Tile bag array
+    -   0 for 1A, 1 for 1B, 2 for 1C, ...
+    -   9 for 2A, 10 for 2B, 11 for 2C, ...
+-   Game actions
+    -   Only the parameters
+    -   Timestamp
+        -   If previous game action had a timestamp, then milliseconds since previous game action
+        -   Otherwise, milliseconds since Unix epoch
+        -   If timestamp is unknown, then exclude it
+    -   Whether game action was automatically played due to time expiry or forfeit
+        -   1 for yes
+        -   Excluded for no
 
 May add later:
 
-*   When forfeits occurred
+-   When forfeits occurred
 
 # Game history message types and their parameters
 

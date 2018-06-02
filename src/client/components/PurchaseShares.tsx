@@ -191,7 +191,7 @@ export class PurchaseShares extends React.Component<PurchaseSharesProps, Purchas
         };
 
         const cartButtonStyle = {
-            width: Math.floor(buttonSize * 4 / 3),
+            width: Math.floor(buttonSize * (4 / 3)),
             height: buttonSize,
         };
 

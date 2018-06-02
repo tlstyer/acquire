@@ -114,7 +114,7 @@ export class GameSetupUI extends React.PureComponent<GameSetupUIProps> {
                 <tbody>
                     {usernames.map((username, i) => (
                         <tr key={i}>
-                            <td className={isTeamGame ? teamNumberToCSSClassName.get(i % numTeams + 1) : style.user}>{username}</td>
+                            <td className={isTeamGame ? teamNumberToCSSClassName.get((i % numTeams) + 1) : style.user}>{username}</td>
                             {onSwapPositions !== undefined ? (
                                 <td>{i > 0 ? <input type={'button'} value={'▲'} onClick={() => onSwapPositions(i, i - 1)} /> : undefined}</td>
                             ) : (
