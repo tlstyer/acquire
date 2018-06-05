@@ -231,7 +231,7 @@ export class ServerManager {
         }
 
         const gameData = new GameData(this.nextGameID++, this.gameDisplayNumberManager.getID());
-        gameData.gameSetup = new GameSetup(gameMode, PlayerArrangementMode.RandomOrder, client.user.id, client.user.name);
+        gameData.gameSetup = new GameSetup(gameMode, PlayerArrangementMode.RandomOrder, client.user.id, this.getUsernameForUserID);
         gameData.clients.add(client);
 
         client.gameData = gameData;
@@ -297,6 +297,10 @@ export class ServerManager {
     getClientEnteredGameMessage(gameData: GameData, client: Client) {
         return [MessageToClient.ClientEnteredGame, client.id, gameData.displayNumber];
     }
+
+    getUsernameForUserID = (userID: number) => {
+        return this.userIDToUser.get(userID)!.name;
+    };
 }
 
 export class Client {

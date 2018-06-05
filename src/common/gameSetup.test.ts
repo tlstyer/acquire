@@ -7,13 +7,14 @@ const dummyApprovals = List([true]);
 
 describe('gameSetup', () => {
     it('can construct', () => {
-        const gameSetup = new GameSetup(GameMode.Singles4, PlayerArrangementMode.RandomOrder, 1, 'Host');
+        const gameSetup = new GameSetup(GameMode.Singles4, PlayerArrangementMode.RandomOrder, 1, getUsernameForUserID);
 
         expect(gameSetup.gameMode).toBe(GameMode.Singles4);
         expect(gameSetup.playerArrangementMode).toBe(PlayerArrangementMode.RandomOrder);
         expect(gameSetup.hostUserID).toBe(1);
-        expect(gameSetup.hostUsername).toBe('Host');
-        expect(gameSetup.usernames.toJS()).toEqual(['Host', null, null, null]);
+        expect(gameSetup.getUsernameForUserID).toBe(getUsernameForUserID);
+        expect(gameSetup.hostUsername).toBe('user 1');
+        expect(gameSetup.usernames.toJS()).toEqual(['user 1', null, null, null]);
         expect(gameSetup.approvals.toJS()).toEqual([false, false, false, false]);
         expect(gameSetup.approvedByEverybody).toBe(false);
         expect(gameSetup.usernameToUserID.size).toEqual(1);
@@ -23,37 +24,37 @@ describe('gameSetup', () => {
 
     describe('addUser', () => {
         it('can add users until full', () => {
-            const gameSetup = new GameSetup(GameMode.Singles3, PlayerArrangementMode.RandomOrder, 1, 'Host');
+            const gameSetup = new GameSetup(GameMode.Singles3, PlayerArrangementMode.RandomOrder, 1, getUsernameForUserID);
             gameSetup.clearHistory();
 
-            gameSetup.addUser(3, 'accepted user 1');
-            gameSetup.addUser(4, 'accepted user 2');
-            gameSetup.addUser(5, 'rejected user');
+            gameSetup.addUser(3);
+            gameSetup.addUser(4);
+            gameSetup.addUser(5);
 
-            expect(gameSetup.usernames.toJS()).toEqual(['Host', 'accepted user 1', 'accepted user 2']);
+            expect(gameSetup.usernames.toJS()).toEqual(['user 1', 'user 3', 'user 4']);
             expect(gameSetup.usernameToUserID.size).toEqual(3);
             expect(gameSetup.userIDToUsername.size).toEqual(3);
             expect(gameSetup.history).toEqual([[GameSetupChange.UserAdded, 3], [GameSetupChange.UserAdded, 4]]);
         });
 
         it('duplicate users are rejected', () => {
-            const gameSetup = new GameSetup(GameMode.Singles3, PlayerArrangementMode.RandomOrder, 1, 'Host');
+            const gameSetup = new GameSetup(GameMode.Singles3, PlayerArrangementMode.RandomOrder, 1, getUsernameForUserID);
 
-            gameSetup.addUser(6, 'user');
-            gameSetup.addUser(6, 'user');
+            gameSetup.addUser(6);
+            gameSetup.addUser(6);
 
-            expect(gameSetup.usernames.toJS()).toEqual(['Host', 'user', null]);
+            expect(gameSetup.usernames.toJS()).toEqual(['user 1', 'user 6', null]);
             expect(gameSetup.usernameToUserID.size).toEqual(2);
             expect(gameSetup.userIDToUsername.size).toEqual(2);
             expect(gameSetup.history).toEqual([[GameSetupChange.UserAdded, 6]]);
         });
 
         it('approvals are reset', () => {
-            const gameSetup = new GameSetup(GameMode.Singles3, PlayerArrangementMode.RandomOrder, 1, 'Host');
+            const gameSetup = new GameSetup(GameMode.Singles3, PlayerArrangementMode.RandomOrder, 1, getUsernameForUserID);
             gameSetup.approvals = dummyApprovals;
             gameSetup.approvedByEverybody = true;
 
-            gameSetup.addUser(3, 'user');
+            gameSetup.addUser(3);
 
             expect(gameSetup.approvals.toJS()).toEqual([false, false, false]);
             expect(gameSetup.approvedByEverybody).toBe(false);
@@ -62,42 +63,42 @@ describe('gameSetup', () => {
 
     describe('removeUser', () => {
         it('can remove users', () => {
-            const gameSetup = new GameSetup(GameMode.Singles3, PlayerArrangementMode.RandomOrder, 1, 'Host');
-            gameSetup.addUser(7, 'user 1');
-            gameSetup.addUser(2, 'user 2');
+            const gameSetup = new GameSetup(GameMode.Singles3, PlayerArrangementMode.RandomOrder, 1, getUsernameForUserID);
+            gameSetup.addUser(7);
+            gameSetup.addUser(2);
             gameSetup.clearHistory();
 
             gameSetup.removeUser(7);
 
-            expect(gameSetup.usernames.toJS()).toEqual(['Host', null, 'user 2']);
+            expect(gameSetup.usernames.toJS()).toEqual(['user 1', null, 'user 2']);
             expect(gameSetup.usernameToUserID.size).toEqual(2);
             expect(gameSetup.userIDToUsername.size).toEqual(2);
             expect(gameSetup.history).toEqual([[GameSetupChange.UserRemoved, 7]]);
 
             gameSetup.removeUser(2);
 
-            expect(gameSetup.usernames.toJS()).toEqual(['Host', null, null]);
+            expect(gameSetup.usernames.toJS()).toEqual(['user 1', null, null]);
             expect(gameSetup.usernameToUserID.size).toEqual(1);
             expect(gameSetup.userIDToUsername.size).toEqual(1);
             expect(gameSetup.history).toEqual([[GameSetupChange.UserRemoved, 7], [GameSetupChange.UserRemoved, 2]]);
         });
 
         it('cannot remove host', () => {
-            const gameSetup = new GameSetup(GameMode.Singles3, PlayerArrangementMode.RandomOrder, 1, 'Host');
-            gameSetup.addUser(2, 'user');
+            const gameSetup = new GameSetup(GameMode.Singles3, PlayerArrangementMode.RandomOrder, 1, getUsernameForUserID);
+            gameSetup.addUser(2);
             gameSetup.clearHistory();
 
             gameSetup.removeUser(1);
 
-            expect(gameSetup.usernames.toJS()).toEqual(['Host', 'user', null]);
+            expect(gameSetup.usernames.toJS()).toEqual(['user 1', 'user 2', null]);
             expect(gameSetup.usernameToUserID.size).toEqual(2);
             expect(gameSetup.userIDToUsername.size).toEqual(2);
             expect(gameSetup.history).toEqual([]);
         });
 
         it('approvals are reset', () => {
-            const gameSetup = new GameSetup(GameMode.Singles3, PlayerArrangementMode.RandomOrder, 1, 'Host');
-            gameSetup.addUser(7, 'user 1');
+            const gameSetup = new GameSetup(GameMode.Singles3, PlayerArrangementMode.RandomOrder, 1, getUsernameForUserID);
+            gameSetup.addUser(7);
             gameSetup.clearHistory();
             gameSetup.approvals = dummyApprovals;
             gameSetup.approvedByEverybody = true;
@@ -111,8 +112,8 @@ describe('gameSetup', () => {
 
     describe('approve', () => {
         it('cannot approve if not in game', () => {
-            const gameSetup = new GameSetup(GameMode.Singles2, PlayerArrangementMode.RandomOrder, 1, 'Host');
-            gameSetup.addUser(2, 'user');
+            const gameSetup = new GameSetup(GameMode.Singles2, PlayerArrangementMode.RandomOrder, 1, getUsernameForUserID);
+            gameSetup.addUser(2);
             gameSetup.clearHistory();
 
             expect(gameSetup.approvals.toJS()).toEqual([false, false]);
@@ -126,8 +127,8 @@ describe('gameSetup', () => {
         });
 
         it('cannot approve if game is not full', () => {
-            const gameSetup = new GameSetup(GameMode.Singles3, PlayerArrangementMode.RandomOrder, 1, 'Host');
-            gameSetup.addUser(2, 'user');
+            const gameSetup = new GameSetup(GameMode.Singles3, PlayerArrangementMode.RandomOrder, 1, getUsernameForUserID);
+            gameSetup.addUser(2);
             gameSetup.clearHistory();
 
             expect(gameSetup.approvals.toJS()).toEqual([false, false, false]);
@@ -141,8 +142,8 @@ describe('gameSetup', () => {
         });
 
         it('cannot approve if already approved', () => {
-            const gameSetup = new GameSetup(GameMode.Singles2, PlayerArrangementMode.RandomOrder, 1, 'Host');
-            gameSetup.addUser(2, 'user');
+            const gameSetup = new GameSetup(GameMode.Singles2, PlayerArrangementMode.RandomOrder, 1, getUsernameForUserID);
+            gameSetup.addUser(2);
             gameSetup.approve(2);
             gameSetup.clearHistory();
 
@@ -157,8 +158,8 @@ describe('gameSetup', () => {
         });
 
         it('can approve', () => {
-            const gameSetup = new GameSetup(GameMode.Singles2, PlayerArrangementMode.RandomOrder, 1, 'Host');
-            gameSetup.addUser(2, 'user');
+            const gameSetup = new GameSetup(GameMode.Singles2, PlayerArrangementMode.RandomOrder, 1, getUsernameForUserID);
+            gameSetup.addUser(2);
             gameSetup.clearHistory();
 
             expect(gameSetup.approvals.toJS()).toEqual([false, false]);
@@ -172,9 +173,9 @@ describe('gameSetup', () => {
         });
 
         it('approvedByEverybody set to true when last approval received', () => {
-            const gameSetup = new GameSetup(GameMode.Singles3, PlayerArrangementMode.RandomOrder, 1, 'Host');
-            gameSetup.addUser(2, 'user2');
-            gameSetup.addUser(3, 'user3');
+            const gameSetup = new GameSetup(GameMode.Singles3, PlayerArrangementMode.RandomOrder, 1, getUsernameForUserID);
+            gameSetup.addUser(2);
+            gameSetup.addUser(3);
             gameSetup.approve(1);
             gameSetup.approve(3);
             gameSetup.clearHistory();
@@ -192,7 +193,7 @@ describe('gameSetup', () => {
 
     describe('changeGameMode', () => {
         it('cannot change to a nonexistent mode', () => {
-            const gameSetup = new GameSetup(GameMode.Teams2vs2, PlayerArrangementMode.RandomOrder, 1, 'Host');
+            const gameSetup = new GameSetup(GameMode.Teams2vs2, PlayerArrangementMode.RandomOrder, 1, getUsernameForUserID);
 
             expect(gameSetup.gameMode).toBe(GameMode.Teams2vs2);
 
@@ -210,121 +211,121 @@ describe('gameSetup', () => {
         });
 
         it('cannot change to the same mode', () => {
-            const gameSetup = new GameSetup(GameMode.Teams2vs2, PlayerArrangementMode.RandomOrder, 1, 'Host');
-            gameSetup.addUser(2, 'user');
+            const gameSetup = new GameSetup(GameMode.Teams2vs2, PlayerArrangementMode.RandomOrder, 1, getUsernameForUserID);
+            gameSetup.addUser(2);
             gameSetup.clearHistory();
 
             expect(gameSetup.gameMode).toBe(GameMode.Teams2vs2);
-            expect(gameSetup.usernames.toJS()).toEqual(['Host', 'user', null, null]);
+            expect(gameSetup.usernames.toJS()).toEqual(['user 1', 'user 2', null, null]);
 
             gameSetup.changeGameMode(GameMode.Teams2vs2);
 
             expect(gameSetup.gameMode).toBe(GameMode.Teams2vs2);
-            expect(gameSetup.usernames.toJS()).toEqual(['Host', 'user', null, null]);
+            expect(gameSetup.usernames.toJS()).toEqual(['user 1', 'user 2', null, null]);
             expect(gameSetup.history).toEqual([]);
         });
 
         it('cannot change to a mode where fewer players are needed than are currently in the game', () => {
-            const gameSetup = new GameSetup(GameMode.Singles4, PlayerArrangementMode.RandomOrder, 1, 'Host');
-            gameSetup.addUser(2, 'user 2');
-            gameSetup.addUser(3, 'user 3');
-            gameSetup.addUser(4, 'user 4');
+            const gameSetup = new GameSetup(GameMode.Singles4, PlayerArrangementMode.RandomOrder, 1, getUsernameForUserID);
+            gameSetup.addUser(2);
+            gameSetup.addUser(3);
+            gameSetup.addUser(4);
             gameSetup.removeUser(3);
             gameSetup.clearHistory();
 
             expect(gameSetup.gameMode).toBe(GameMode.Singles4);
-            expect(gameSetup.usernames.toJS()).toEqual(['Host', 'user 2', null, 'user 4']);
+            expect(gameSetup.usernames.toJS()).toEqual(['user 1', 'user 2', null, 'user 4']);
 
             gameSetup.changeGameMode(GameMode.Singles2);
 
             expect(gameSetup.gameMode).toBe(GameMode.Singles4);
-            expect(gameSetup.usernames.toJS()).toEqual(['Host', 'user 2', null, 'user 4']);
+            expect(gameSetup.usernames.toJS()).toEqual(['user 1', 'user 2', null, 'user 4']);
             expect(gameSetup.history).toEqual([]);
         });
 
         it('can change mode', () => {
-            const gameSetup = new GameSetup(GameMode.Teams2vs2, PlayerArrangementMode.RandomOrder, 1, 'Host');
-            gameSetup.addUser(2, 'user');
+            const gameSetup = new GameSetup(GameMode.Teams2vs2, PlayerArrangementMode.RandomOrder, 1, getUsernameForUserID);
+            gameSetup.addUser(2);
             gameSetup.clearHistory();
 
             expect(gameSetup.gameMode).toBe(GameMode.Teams2vs2);
-            expect(gameSetup.usernames.toJS()).toEqual(['Host', 'user', null, null]);
+            expect(gameSetup.usernames.toJS()).toEqual(['user 1', 'user 2', null, null]);
 
             gameSetup.changeGameMode(GameMode.Singles4);
 
             expect(gameSetup.gameMode).toBe(GameMode.Singles4);
-            expect(gameSetup.usernames.toJS()).toEqual(['Host', 'user', null, null]);
+            expect(gameSetup.usernames.toJS()).toEqual(['user 1', 'user 2', null, null]);
             expect(gameSetup.history).toEqual([[GameSetupChange.GameModeChanged, GameMode.Singles4]]);
         });
 
         it('spots added for added player positions', () => {
-            const gameSetup = new GameSetup(GameMode.Singles2, PlayerArrangementMode.ExactOrder, 1, 'Host');
-            gameSetup.addUser(2, 'user');
+            const gameSetup = new GameSetup(GameMode.Singles2, PlayerArrangementMode.ExactOrder, 1, getUsernameForUserID);
+            gameSetup.addUser(2);
             gameSetup.clearHistory();
 
             expect(gameSetup.gameMode).toBe(GameMode.Singles2);
-            expect(gameSetup.usernames.toJS()).toEqual(['Host', 'user']);
+            expect(gameSetup.usernames.toJS()).toEqual(['user 1', 'user 2']);
 
             gameSetup.changeGameMode(GameMode.Singles4);
 
             expect(gameSetup.gameMode).toBe(GameMode.Singles4);
-            expect(gameSetup.usernames.toJS()).toEqual(['Host', 'user', null, null]);
+            expect(gameSetup.usernames.toJS()).toEqual(['user 1', 'user 2', null, null]);
             expect(gameSetup.history).toEqual([[GameSetupChange.GameModeChanged, GameMode.Singles4]]);
         });
 
         it('spots removed for removed player positions', () => {
-            const gameSetup = new GameSetup(GameMode.Singles4, PlayerArrangementMode.ExactOrder, 1, 'Host');
-            gameSetup.addUser(2, 'user');
+            const gameSetup = new GameSetup(GameMode.Singles4, PlayerArrangementMode.ExactOrder, 1, getUsernameForUserID);
+            gameSetup.addUser(2);
             gameSetup.clearHistory();
 
             expect(gameSetup.gameMode).toBe(GameMode.Singles4);
-            expect(gameSetup.usernames.toJS()).toEqual(['Host', 'user', null, null]);
+            expect(gameSetup.usernames.toJS()).toEqual(['user 1', 'user 2', null, null]);
 
             gameSetup.changeGameMode(GameMode.Singles2);
 
             expect(gameSetup.gameMode).toBe(GameMode.Singles2);
-            expect(gameSetup.usernames.toJS()).toEqual(['Host', 'user']);
+            expect(gameSetup.usernames.toJS()).toEqual(['user 1', 'user 2']);
             expect(gameSetup.history).toEqual([[GameSetupChange.GameModeChanged, GameMode.Singles2]]);
         });
 
         it('spots removed and positions shifted for removed player positions', () => {
-            const gameSetup = new GameSetup(GameMode.Teams3vs3, PlayerArrangementMode.RandomOrder, 1, 'Host');
-            gameSetup.addUser(2, 'user 2');
-            gameSetup.addUser(3, 'user 3');
-            gameSetup.addUser(4, 'user 4');
-            gameSetup.addUser(5, 'user 5');
-            gameSetup.addUser(6, 'user 6');
+            const gameSetup = new GameSetup(GameMode.Teams3vs3, PlayerArrangementMode.RandomOrder, 1, getUsernameForUserID);
+            gameSetup.addUser(2);
+            gameSetup.addUser(3);
+            gameSetup.addUser(4);
+            gameSetup.addUser(5);
+            gameSetup.addUser(6);
             gameSetup.removeUser(2);
             gameSetup.removeUser(4);
             gameSetup.clearHistory();
 
             expect(gameSetup.gameMode).toBe(GameMode.Teams3vs3);
-            expect(gameSetup.usernames.toJS()).toEqual(['Host', null, 'user 3', null, 'user 5', 'user 6']);
+            expect(gameSetup.usernames.toJS()).toEqual(['user 1', null, 'user 3', null, 'user 5', 'user 6']);
 
             gameSetup.changeGameMode(GameMode.Teams2vs2);
 
             expect(gameSetup.gameMode).toBe(GameMode.Teams2vs2);
-            expect(gameSetup.usernames.toJS()).toEqual(['Host', 'user 5', 'user 3', 'user 6']);
+            expect(gameSetup.usernames.toJS()).toEqual(['user 1', 'user 5', 'user 3', 'user 6']);
             expect(gameSetup.history).toEqual([[GameSetupChange.GameModeChanged, GameMode.Teams2vs2]]);
         });
 
         it('player arrangement mode changed to RandomOrder from SpecifyTeams when switching to a Singles game', () => {
-            const gameSetup = new GameSetup(GameMode.Teams2vs2, PlayerArrangementMode.SpecifyTeams, 1, 'Host');
+            const gameSetup = new GameSetup(GameMode.Teams2vs2, PlayerArrangementMode.SpecifyTeams, 1, getUsernameForUserID);
 
             expect(gameSetup.gameMode).toBe(GameMode.Teams2vs2);
             expect(gameSetup.playerArrangementMode).toBe(PlayerArrangementMode.SpecifyTeams);
-            expect(gameSetup.usernames.toJS()).toEqual(['Host', null, null, null]);
+            expect(gameSetup.usernames.toJS()).toEqual(['user 1', null, null, null]);
 
             gameSetup.changeGameMode(GameMode.Singles4);
 
             expect(gameSetup.gameMode).toBe(GameMode.Singles4);
             expect(gameSetup.playerArrangementMode).toBe(PlayerArrangementMode.RandomOrder);
-            expect(gameSetup.usernames.toJS()).toEqual(['Host', null, null, null]);
+            expect(gameSetup.usernames.toJS()).toEqual(['user 1', null, null, null]);
             expect(gameSetup.history).toEqual([[GameSetupChange.GameModeChanged, GameMode.Singles4]]);
         });
 
         it('approvals are reset', () => {
-            const gameSetup = new GameSetup(GameMode.Teams2vs2, PlayerArrangementMode.SpecifyTeams, 1, 'Host');
+            const gameSetup = new GameSetup(GameMode.Teams2vs2, PlayerArrangementMode.SpecifyTeams, 1, getUsernameForUserID);
             gameSetup.approvals = dummyApprovals;
             gameSetup.approvedByEverybody = true;
 
@@ -337,7 +338,7 @@ describe('gameSetup', () => {
 
     describe('changePlayerArrangementMode', () => {
         it('cannot change to a nonexistent mode', () => {
-            const gameSetup = new GameSetup(GameMode.Teams2vs2, PlayerArrangementMode.RandomOrder, 1, 'Host');
+            const gameSetup = new GameSetup(GameMode.Teams2vs2, PlayerArrangementMode.RandomOrder, 1, getUsernameForUserID);
 
             expect(gameSetup.playerArrangementMode).toBe(PlayerArrangementMode.RandomOrder);
 
@@ -356,7 +357,7 @@ describe('gameSetup', () => {
         });
 
         it('cannot change to the same mode', () => {
-            const gameSetup = new GameSetup(GameMode.Teams2vs2, PlayerArrangementMode.SpecifyTeams, 1, 'Host');
+            const gameSetup = new GameSetup(GameMode.Teams2vs2, PlayerArrangementMode.SpecifyTeams, 1, getUsernameForUserID);
 
             expect(gameSetup.playerArrangementMode).toBe(PlayerArrangementMode.SpecifyTeams);
 
@@ -367,7 +368,7 @@ describe('gameSetup', () => {
         });
 
         it('cannot change to SpecifyTeams when game is not a teams game', () => {
-            const gameSetup = new GameSetup(GameMode.Singles4, PlayerArrangementMode.RandomOrder, 1, 'Host');
+            const gameSetup = new GameSetup(GameMode.Singles4, PlayerArrangementMode.RandomOrder, 1, getUsernameForUserID);
 
             expect(gameSetup.playerArrangementMode).toBe(PlayerArrangementMode.RandomOrder);
 
@@ -378,7 +379,7 @@ describe('gameSetup', () => {
         });
 
         it('can change mode', () => {
-            const gameSetup = new GameSetup(GameMode.Teams2vs2, PlayerArrangementMode.SpecifyTeams, 1, 'Host');
+            const gameSetup = new GameSetup(GameMode.Teams2vs2, PlayerArrangementMode.SpecifyTeams, 1, getUsernameForUserID);
 
             expect(gameSetup.playerArrangementMode).toBe(PlayerArrangementMode.SpecifyTeams);
 
@@ -389,7 +390,7 @@ describe('gameSetup', () => {
         });
 
         it('approvals are reset', () => {
-            const gameSetup = new GameSetup(GameMode.Teams2vs2, PlayerArrangementMode.SpecifyTeams, 1, 'Host');
+            const gameSetup = new GameSetup(GameMode.Teams2vs2, PlayerArrangementMode.SpecifyTeams, 1, getUsernameForUserID);
             gameSetup.approvals = dummyApprovals;
             gameSetup.approvedByEverybody = true;
 
@@ -402,13 +403,13 @@ describe('gameSetup', () => {
 
     describe('swapPositions', () => {
         it('cannot swap invalid positions', () => {
-            const gameSetup = new GameSetup(GameMode.Teams2vs2, PlayerArrangementMode.SpecifyTeams, 1, 'Host');
-            gameSetup.addUser(2, 'user 2');
-            gameSetup.addUser(3, 'user 3');
-            gameSetup.addUser(4, 'user 4');
+            const gameSetup = new GameSetup(GameMode.Teams2vs2, PlayerArrangementMode.SpecifyTeams, 1, getUsernameForUserID);
+            gameSetup.addUser(2);
+            gameSetup.addUser(3);
+            gameSetup.addUser(4);
             gameSetup.clearHistory();
 
-            expect(gameSetup.usernames.toJS()).toEqual(['Host', 'user 2', 'user 3', 'user 4']);
+            expect(gameSetup.usernames.toJS()).toEqual(['user 1', 'user 2', 'user 3', 'user 4']);
 
             // @ts-ignore
             gameSetup.swapPositions('invalid mode', 0);
@@ -428,53 +429,53 @@ describe('gameSetup', () => {
             gameSetup.swapPositions(0, -1);
             gameSetup.swapPositions(0, 4);
 
-            expect(gameSetup.usernames.toJS()).toEqual(['Host', 'user 2', 'user 3', 'user 4']);
+            expect(gameSetup.usernames.toJS()).toEqual(['user 1', 'user 2', 'user 3', 'user 4']);
             expect(gameSetup.history).toEqual([]);
         });
 
         it('cannot swap position with itself', () => {
-            const gameSetup = new GameSetup(GameMode.Singles3, PlayerArrangementMode.ExactOrder, 1, 'Host');
-            gameSetup.addUser(2, 'user 2');
-            gameSetup.addUser(3, 'user 3');
+            const gameSetup = new GameSetup(GameMode.Singles3, PlayerArrangementMode.ExactOrder, 1, getUsernameForUserID);
+            gameSetup.addUser(2);
+            gameSetup.addUser(3);
             gameSetup.clearHistory();
 
-            expect(gameSetup.usernames.toJS()).toEqual(['Host', 'user 2', 'user 3']);
+            expect(gameSetup.usernames.toJS()).toEqual(['user 1', 'user 2', 'user 3']);
 
             gameSetup.swapPositions(1, 1);
 
-            expect(gameSetup.usernames.toJS()).toEqual(['Host', 'user 2', 'user 3']);
+            expect(gameSetup.usernames.toJS()).toEqual(['user 1', 'user 2', 'user 3']);
             expect(gameSetup.history).toEqual([]);
         });
 
         it('can swap positions', () => {
-            const gameSetup = new GameSetup(GameMode.Teams2vs2, PlayerArrangementMode.SpecifyTeams, 1, 'Host');
-            gameSetup.addUser(2, 'user 2');
-            gameSetup.addUser(3, 'user 3');
-            gameSetup.addUser(4, 'user 4');
+            const gameSetup = new GameSetup(GameMode.Teams2vs2, PlayerArrangementMode.SpecifyTeams, 1, getUsernameForUserID);
+            gameSetup.addUser(2);
+            gameSetup.addUser(3);
+            gameSetup.addUser(4);
             gameSetup.clearHistory();
 
-            expect(gameSetup.usernames.toJS()).toEqual(['Host', 'user 2', 'user 3', 'user 4']);
+            expect(gameSetup.usernames.toJS()).toEqual(['user 1', 'user 2', 'user 3', 'user 4']);
             gameSetup.swapPositions(0, 1);
-            expect(gameSetup.usernames.toJS()).toEqual(['user 2', 'Host', 'user 3', 'user 4']);
+            expect(gameSetup.usernames.toJS()).toEqual(['user 2', 'user 1', 'user 3', 'user 4']);
             expect(gameSetup.history).toEqual([[GameSetupChange.PositionsSwapped, 0, 1]]);
             gameSetup.clearHistory();
 
             gameSetup.swapPositions(2, 3);
-            expect(gameSetup.usernames.toJS()).toEqual(['user 2', 'Host', 'user 4', 'user 3']);
+            expect(gameSetup.usernames.toJS()).toEqual(['user 2', 'user 1', 'user 4', 'user 3']);
             expect(gameSetup.history).toEqual([[GameSetupChange.PositionsSwapped, 2, 3]]);
             gameSetup.clearHistory();
 
             gameSetup.swapPositions(0, 3);
-            expect(gameSetup.usernames.toJS()).toEqual(['user 3', 'Host', 'user 4', 'user 2']);
+            expect(gameSetup.usernames.toJS()).toEqual(['user 3', 'user 1', 'user 4', 'user 2']);
             expect(gameSetup.history).toEqual([[GameSetupChange.PositionsSwapped, 0, 3]]);
             gameSetup.clearHistory();
         });
 
         it('approvals are reset', () => {
-            const gameSetup = new GameSetup(GameMode.Teams2vs2, PlayerArrangementMode.SpecifyTeams, 1, 'Host');
-            gameSetup.addUser(2, 'user 2');
-            gameSetup.addUser(3, 'user 3');
-            gameSetup.addUser(4, 'user 4');
+            const gameSetup = new GameSetup(GameMode.Teams2vs2, PlayerArrangementMode.SpecifyTeams, 1, getUsernameForUserID);
+            gameSetup.addUser(2);
+            gameSetup.addUser(3);
+            gameSetup.addUser(4);
             gameSetup.clearHistory();
             gameSetup.approvals = dummyApprovals;
             gameSetup.approvedByEverybody = true;
@@ -488,13 +489,13 @@ describe('gameSetup', () => {
 
     describe('kickUser', () => {
         it('cannot kick invalid position', () => {
-            const gameSetup = new GameSetup(GameMode.Teams2vs2, PlayerArrangementMode.SpecifyTeams, 1, 'Host');
-            gameSetup.addUser(2, 'user 2');
-            gameSetup.addUser(3, 'user 3');
-            gameSetup.addUser(4, 'user 4');
+            const gameSetup = new GameSetup(GameMode.Teams2vs2, PlayerArrangementMode.SpecifyTeams, 1, getUsernameForUserID);
+            gameSetup.addUser(2);
+            gameSetup.addUser(3);
+            gameSetup.addUser(4);
             gameSetup.clearHistory();
 
-            expect(gameSetup.usernames.toJS()).toEqual(['Host', 'user 2', 'user 3', 'user 4']);
+            expect(gameSetup.usernames.toJS()).toEqual(['user 1', 'user 2', 'user 3', 'user 4']);
 
             // @ts-ignore
             gameSetup.kickUser('invalid position');
@@ -505,60 +506,60 @@ describe('gameSetup', () => {
             gameSetup.kickUser(-1);
             gameSetup.kickUser(4);
 
-            expect(gameSetup.usernames.toJS()).toEqual(['Host', 'user 2', 'user 3', 'user 4']);
+            expect(gameSetup.usernames.toJS()).toEqual(['user 1', 'user 2', 'user 3', 'user 4']);
             expect(gameSetup.history).toEqual([]);
         });
 
         it('cannot kick position that does not have a user', () => {
-            const gameSetup = new GameSetup(GameMode.Teams2vs2, PlayerArrangementMode.SpecifyTeams, 1, 'Host');
-            gameSetup.addUser(2, 'user 2');
-            gameSetup.addUser(3, 'user 3');
+            const gameSetup = new GameSetup(GameMode.Teams2vs2, PlayerArrangementMode.SpecifyTeams, 1, getUsernameForUserID);
+            gameSetup.addUser(2);
+            gameSetup.addUser(3);
             gameSetup.clearHistory();
 
-            expect(gameSetup.usernames.toJS()).toEqual(['Host', 'user 2', 'user 3', null]);
+            expect(gameSetup.usernames.toJS()).toEqual(['user 1', 'user 2', 'user 3', null]);
 
             gameSetup.kickUser(3);
 
-            expect(gameSetup.usernames.toJS()).toEqual(['Host', 'user 2', 'user 3', null]);
+            expect(gameSetup.usernames.toJS()).toEqual(['user 1', 'user 2', 'user 3', null]);
             expect(gameSetup.history).toEqual([]);
         });
 
         it('cannot kick position that belongs to the host', () => {
-            const gameSetup = new GameSetup(GameMode.Teams2vs2, PlayerArrangementMode.SpecifyTeams, 1, 'Host');
-            gameSetup.addUser(2, 'user 2');
-            gameSetup.addUser(3, 'user 3');
+            const gameSetup = new GameSetup(GameMode.Teams2vs2, PlayerArrangementMode.SpecifyTeams, 1, getUsernameForUserID);
+            gameSetup.addUser(2);
+            gameSetup.addUser(3);
             gameSetup.clearHistory();
 
-            expect(gameSetup.usernames.toJS()).toEqual(['Host', 'user 2', 'user 3', null]);
+            expect(gameSetup.usernames.toJS()).toEqual(['user 1', 'user 2', 'user 3', null]);
 
             gameSetup.kickUser(0);
 
-            expect(gameSetup.usernames.toJS()).toEqual(['Host', 'user 2', 'user 3', null]);
+            expect(gameSetup.usernames.toJS()).toEqual(['user 1', 'user 2', 'user 3', null]);
             expect(gameSetup.history).toEqual([]);
         });
 
         it('can kick user', () => {
-            const gameSetup = new GameSetup(GameMode.Teams2vs2, PlayerArrangementMode.SpecifyTeams, 1, 'Host');
-            gameSetup.addUser(2, 'user 2');
-            gameSetup.addUser(3, 'user 3');
+            const gameSetup = new GameSetup(GameMode.Teams2vs2, PlayerArrangementMode.SpecifyTeams, 1, getUsernameForUserID);
+            gameSetup.addUser(2);
+            gameSetup.addUser(3);
             gameSetup.clearHistory();
 
-            expect(gameSetup.usernames.toJS()).toEqual(['Host', 'user 2', 'user 3', null]);
+            expect(gameSetup.usernames.toJS()).toEqual(['user 1', 'user 2', 'user 3', null]);
             expect(gameSetup.usernameToUserID.size).toEqual(3);
             expect(gameSetup.userIDToUsername.size).toEqual(3);
 
             gameSetup.kickUser(1);
 
-            expect(gameSetup.usernames.toJS()).toEqual(['Host', null, 'user 3', null]);
+            expect(gameSetup.usernames.toJS()).toEqual(['user 1', null, 'user 3', null]);
             expect(gameSetup.usernameToUserID.size).toEqual(2);
             expect(gameSetup.userIDToUsername.size).toEqual(2);
             expect(gameSetup.history).toEqual([[GameSetupChange.UserKicked, 1]]);
         });
 
         it('approvals are reset', () => {
-            const gameSetup = new GameSetup(GameMode.Teams2vs2, PlayerArrangementMode.SpecifyTeams, 1, 'Host');
-            gameSetup.addUser(2, 'user 2');
-            gameSetup.addUser(3, 'user 3');
+            const gameSetup = new GameSetup(GameMode.Teams2vs2, PlayerArrangementMode.SpecifyTeams, 1, getUsernameForUserID);
+            gameSetup.addUser(2);
+            gameSetup.addUser(3);
             gameSetup.clearHistory();
             gameSetup.approvals = dummyApprovals;
             gameSetup.approvedByEverybody = true;
@@ -573,13 +574,13 @@ describe('gameSetup', () => {
     describe('getFinalUserIDsAndUsernames', () => {
         describe('player arrangement mode is RandomOrder', () => {
             it('returns user IDs and usernames in a random order', () => {
-                const gameSetup = new GameSetup(GameMode.Singles4, PlayerArrangementMode.RandomOrder, 1, 'Host');
-                gameSetup.addUser(2, 'user 2');
-                gameSetup.addUser(3, 'user 3');
-                gameSetup.addUser(4, 'user 4');
+                const gameSetup = new GameSetup(GameMode.Singles4, PlayerArrangementMode.RandomOrder, 1, getUsernameForUserID);
+                gameSetup.addUser(2);
+                gameSetup.addUser(3);
+                gameSetup.addUser(4);
                 gameSetup.clearHistory();
 
-                expect(gameSetup.usernames.toJS()).toEqual(['Host', 'user 2', 'user 3', 'user 4']);
+                expect(gameSetup.usernames.toJS()).toEqual(['user 1', 'user 2', 'user 3', 'user 4']);
 
                 // @ts-ignore
                 Math.seedrandom('random');
@@ -587,36 +588,36 @@ describe('gameSetup', () => {
                 const [userIDs, usernames] = gameSetup.getFinalUserIDsAndUsernames();
 
                 expect(userIDs.toJS()).toEqual([3, 1, 4, 2]);
-                expect(usernames.toJS()).toEqual(['user 3', 'Host', 'user 4', 'user 2']);
+                expect(usernames.toJS()).toEqual(['user 3', 'user 1', 'user 4', 'user 2']);
             });
         });
 
         describe('player arrangement mode is ExactOrder', () => {
             it('returns user IDs and usernames in the order specified', () => {
-                const gameSetup = new GameSetup(GameMode.Teams2vs2, PlayerArrangementMode.ExactOrder, 1, 'Host');
-                gameSetup.addUser(2, 'user 2');
-                gameSetup.addUser(3, 'user 3');
-                gameSetup.addUser(4, 'user 4');
+                const gameSetup = new GameSetup(GameMode.Teams2vs2, PlayerArrangementMode.ExactOrder, 1, getUsernameForUserID);
+                gameSetup.addUser(2);
+                gameSetup.addUser(3);
+                gameSetup.addUser(4);
                 gameSetup.clearHistory();
 
-                expect(gameSetup.usernames.toJS()).toEqual(['Host', 'user 2', 'user 3', 'user 4']);
+                expect(gameSetup.usernames.toJS()).toEqual(['user 1', 'user 2', 'user 3', 'user 4']);
 
                 const [userIDs, usernames] = gameSetup.getFinalUserIDsAndUsernames();
 
                 expect(userIDs.toJS()).toEqual([1, 2, 3, 4]);
-                expect(usernames.toJS()).toEqual(['Host', 'user 2', 'user 3', 'user 4']);
+                expect(usernames.toJS()).toEqual(['user 1', 'user 2', 'user 3', 'user 4']);
             });
         });
 
         describe('player arrangement mode is SpecifyTeams', () => {
             it('teams and players within teams are randomized when gameMode is Teams2vs2', () => {
-                const gameSetup = new GameSetup(GameMode.Teams2vs2, PlayerArrangementMode.SpecifyTeams, 1, 'Host');
-                gameSetup.addUser(2, 'user 2');
-                gameSetup.addUser(3, 'user 3');
-                gameSetup.addUser(4, 'user 4');
+                const gameSetup = new GameSetup(GameMode.Teams2vs2, PlayerArrangementMode.SpecifyTeams, 1, getUsernameForUserID);
+                gameSetup.addUser(2);
+                gameSetup.addUser(3);
+                gameSetup.addUser(4);
                 gameSetup.clearHistory();
 
-                expect(gameSetup.usernames.toJS()).toEqual(['Host', 'user 2', 'user 3', 'user 4']);
+                expect(gameSetup.usernames.toJS()).toEqual(['user 1', 'user 2', 'user 3', 'user 4']);
 
                 // @ts-ignore
                 Math.seedrandom('random');
@@ -624,19 +625,19 @@ describe('gameSetup', () => {
                 const [userIDs, usernames] = gameSetup.getFinalUserIDsAndUsernames();
 
                 expect(userIDs.toJS()).toEqual([2, 3, 4, 1]);
-                expect(usernames.toJS()).toEqual(['user 2', 'user 3', 'user 4', 'Host']);
+                expect(usernames.toJS()).toEqual(['user 2', 'user 3', 'user 4', 'user 1']);
             });
 
             it('teams and players within teams are randomized when gameMode is Teams2vs2vs2', () => {
-                const gameSetup = new GameSetup(GameMode.Teams2vs2vs2, PlayerArrangementMode.SpecifyTeams, 1, 'Host');
-                gameSetup.addUser(2, 'user 2');
-                gameSetup.addUser(3, 'user 3');
-                gameSetup.addUser(4, 'user 4');
-                gameSetup.addUser(5, 'user 5');
-                gameSetup.addUser(6, 'user 6');
+                const gameSetup = new GameSetup(GameMode.Teams2vs2vs2, PlayerArrangementMode.SpecifyTeams, 1, getUsernameForUserID);
+                gameSetup.addUser(2);
+                gameSetup.addUser(3);
+                gameSetup.addUser(4);
+                gameSetup.addUser(5);
+                gameSetup.addUser(6);
                 gameSetup.clearHistory();
 
-                expect(gameSetup.usernames.toJS()).toEqual(['Host', 'user 2', 'user 3', 'user 4', 'user 5', 'user 6']);
+                expect(gameSetup.usernames.toJS()).toEqual(['user 1', 'user 2', 'user 3', 'user 4', 'user 5', 'user 6']);
 
                 // @ts-ignore
                 Math.seedrandom('random');
@@ -644,19 +645,19 @@ describe('gameSetup', () => {
                 const [userIDs, usernames] = gameSetup.getFinalUserIDsAndUsernames();
 
                 expect(userIDs.toJS()).toEqual([4, 3, 2, 1, 6, 5]);
-                expect(usernames.toJS()).toEqual(['user 4', 'user 3', 'user 2', 'Host', 'user 6', 'user 5']);
+                expect(usernames.toJS()).toEqual(['user 4', 'user 3', 'user 2', 'user 1', 'user 6', 'user 5']);
             });
 
             it('teams and players within teams are randomized when gameMode is Teams3vs3', () => {
-                const gameSetup = new GameSetup(GameMode.Teams3vs3, PlayerArrangementMode.SpecifyTeams, 1, 'Host');
-                gameSetup.addUser(2, 'user 2');
-                gameSetup.addUser(3, 'user 3');
-                gameSetup.addUser(4, 'user 4');
-                gameSetup.addUser(5, 'user 5');
-                gameSetup.addUser(6, 'user 6');
+                const gameSetup = new GameSetup(GameMode.Teams3vs3, PlayerArrangementMode.SpecifyTeams, 1, getUsernameForUserID);
+                gameSetup.addUser(2);
+                gameSetup.addUser(3);
+                gameSetup.addUser(4);
+                gameSetup.addUser(5);
+                gameSetup.addUser(6);
                 gameSetup.clearHistory();
 
-                expect(gameSetup.usernames.toJS()).toEqual(['Host', 'user 2', 'user 3', 'user 4', 'user 5', 'user 6']);
+                expect(gameSetup.usernames.toJS()).toEqual(['user 1', 'user 2', 'user 3', 'user 4', 'user 5', 'user 6']);
 
                 // @ts-ignore
                 Math.seedrandom('random!!!!');
@@ -664,20 +665,14 @@ describe('gameSetup', () => {
                 const [userIDs, usernames] = gameSetup.getFinalUserIDsAndUsernames();
 
                 expect(userIDs.toJS()).toEqual([5, 4, 1, 6, 3, 2]);
-                expect(usernames.toJS()).toEqual(['user 5', 'user 4', 'Host', 'user 6', 'user 3', 'user 2']);
+                expect(usernames.toJS()).toEqual(['user 5', 'user 4', 'user 1', 'user 6', 'user 3', 'user 2']);
             });
         });
     });
 
     describe('toJSON and fromJSON', () => {
-        const userIDToUsername: Map<number, string> = new Map([[1, 'user1'], [2, 'user2'], [3, 'user3'], [4, 'user4'], [5, 'user5'], [6, 'user6']]);
-
-        function getUsernameForUserID(userID: number) {
-            return userIDToUsername.get(userID)!;
-        }
-
         it('just the host', () => {
-            const gameSetup = new GameSetup(GameMode.Teams2vs2, PlayerArrangementMode.SpecifyTeams, 1, 'user1');
+            const gameSetup = new GameSetup(GameMode.Teams2vs2, PlayerArrangementMode.SpecifyTeams, 1, getUsernameForUserID);
             gameSetup.swapPositions(0, 2);
             gameSetup.clearHistory();
 
@@ -689,12 +684,12 @@ describe('gameSetup', () => {
         });
 
         it('approved by some users', () => {
-            const gameSetup = new GameSetup(GameMode.Teams3vs3, PlayerArrangementMode.ExactOrder, 3, 'user3');
-            gameSetup.addUser(6, 'user6');
-            gameSetup.addUser(1, 'user1');
-            gameSetup.addUser(5, 'user5');
-            gameSetup.addUser(4, 'user4');
-            gameSetup.addUser(2, 'user2');
+            const gameSetup = new GameSetup(GameMode.Teams3vs3, PlayerArrangementMode.ExactOrder, 3, getUsernameForUserID);
+            gameSetup.addUser(6);
+            gameSetup.addUser(1);
+            gameSetup.addUser(5);
+            gameSetup.addUser(4);
+            gameSetup.addUser(2);
             gameSetup.swapPositions(0, 4);
             gameSetup.approve(2);
             gameSetup.approve(5);
@@ -710,9 +705,9 @@ describe('gameSetup', () => {
         });
 
         it('approved by everybody', () => {
-            const gameSetup = new GameSetup(GameMode.Singles3, PlayerArrangementMode.RandomOrder, 2, 'user2');
-            gameSetup.addUser(3, 'user3');
-            gameSetup.addUser(1, 'user1');
+            const gameSetup = new GameSetup(GameMode.Singles3, PlayerArrangementMode.RandomOrder, 2, getUsernameForUserID);
+            gameSetup.addUser(3);
+            gameSetup.addUser(1);
             gameSetup.swapPositions(0, 1);
             gameSetup.swapPositions(1, 2);
             gameSetup.approve(3);
@@ -729,3 +724,17 @@ describe('gameSetup', () => {
         });
     });
 });
+
+const userIDToUsername: Map<number, string> = new Map([
+    [1, 'user 1'],
+    [2, 'user 2'],
+    [3, 'user 3'],
+    [4, 'user 4'],
+    [5, 'user 5'],
+    [6, 'user 6'],
+    [7, 'user 7'],
+]);
+
+function getUsernameForUserID(userID: number) {
+    return userIDToUsername.get(userID)!;
+}

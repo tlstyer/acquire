@@ -14,6 +14,7 @@ const defaultApprovals = new Map<number, List<boolean>>([
 type GameSetupJSON = [GameMode, PlayerArrangementMode, number, number[], number[]];
 
 export class GameSetup {
+    hostUsername: string;
     usernames: List<string | null>;
     approvals: List<boolean>;
     approvedByEverybody: boolean;
@@ -21,30 +22,37 @@ export class GameSetup {
     userIDToUsername: Map<number, string>;
     history: any[] = [];
 
-    constructor(public gameMode: GameMode, public playerArrangementMode: PlayerArrangementMode, public hostUserID: number, public hostUsername: string) {
+    constructor(
+        public gameMode: GameMode,
+        public playerArrangementMode: PlayerArrangementMode,
+        public hostUserID: number,
+        public getUsernameForUserID: (userID: number) => string,
+    ) {
         const numPlayers = gameModeToNumPlayers.get(gameMode)!;
+        this.hostUsername = getUsernameForUserID(hostUserID);
 
         const usernames: (string | null)[] = new Array(numPlayers);
         for (let i = 0; i < numPlayers; i++) {
             usernames[i] = null;
         }
-        usernames[0] = hostUsername;
+        usernames[0] = this.hostUsername;
         this.usernames = List(usernames);
 
         this.approvals = defaultApprovals.get(numPlayers)!;
 
         this.approvedByEverybody = false;
 
-        this.usernameToUserID = new Map([[hostUsername, hostUserID]]);
+        this.usernameToUserID = new Map([[this.hostUsername, hostUserID]]);
 
-        this.userIDToUsername = new Map([[hostUserID, hostUsername]]);
-
+        this.userIDToUsername = new Map([[hostUserID, this.hostUsername]]);
     }
 
-    addUser(userID: number, username: string) {
+    addUser(userID: number) {
         if (this.usernameToUserID.size === this.usernames.size) {
             return;
         }
+
+        const username = this.getUsernameForUserID(userID);
 
         if (this.usernameToUserID.has(username)) {
             return;
@@ -294,9 +302,7 @@ export class GameSetup {
     static fromJSON(json: GameSetupJSON, getUsernameForUserID: (userID: number) => string) {
         const [gameMode, playerArrangementMode, hostUserID, userIDs, intApprovals] = json;
 
-        const hostUsername = getUsernameForUserID(hostUserID);
-
-        const gameSetup = new GameSetup(gameMode, playerArrangementMode, hostUserID, hostUsername);
+        const gameSetup = new GameSetup(gameMode, playerArrangementMode, hostUserID, getUsernameForUserID);
 
         const usernames: (string | null)[] = new Array(userIDs.length);
         for (let position = 0; position < userIDs.length; position++) {

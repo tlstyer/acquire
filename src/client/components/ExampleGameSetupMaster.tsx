@@ -20,7 +20,7 @@ export class ExampleGameSetupMaster extends React.Component<ExampleGameSetupMast
         super(props);
 
         this.state = {
-            gameSetup: new GameSetup(GameMode.Singles4, PlayerArrangementMode.RandomOrder, 1, 'Host'),
+            gameSetup: new GameSetup(GameMode.Singles4, PlayerArrangementMode.RandomOrder, 1, getUsernameForUserID),
             simulatedNetworkDelay: 250,
             nextUserId: 2,
         };
@@ -129,11 +129,10 @@ export class ExampleGameSetupMaster extends React.Component<ExampleGameSetupMast
         const { gameSetup } = this.state;
 
         const userID = this.state.nextUserId;
-        const username = `User ${this.state.nextUserId}`;
 
-        console.log('addUser', userID, username);
+        console.log('addUser', userID);
 
-        gameSetup.addUser(userID, username);
+        gameSetup.addUser(userID);
         this.setState({ gameSetup, nextUserId: userID + 1 });
     };
 
@@ -180,4 +179,12 @@ export class ExampleGameSetupMaster extends React.Component<ExampleGameSetupMast
             this.setState({ gameSetup });
         }, this.state.simulatedNetworkDelay);
     };
+}
+
+function getUsernameForUserID(userID: number) {
+    if (userID === 1) {
+        return 'Host';
+    } else {
+        return `User ${userID}`;
+    }
 }

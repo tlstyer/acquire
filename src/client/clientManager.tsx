@@ -310,7 +310,7 @@ export class ClientManager {
         const hostClient = this.clientIDToClient.get(hostClientID)!;
 
         const gameData = new GameData(gameID, gameDisplayNumber);
-        gameData.gameSetup = new GameSetup(gameMode, PlayerArrangementMode.RandomOrder, hostClient.user.id, hostClient.user.name);
+        gameData.gameSetup = new GameSetup(gameMode, PlayerArrangementMode.RandomOrder, hostClient.user.id, this.getUsernameForUserID);
 
         hostClient.user.numGames++;
 
