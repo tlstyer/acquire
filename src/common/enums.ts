@@ -89,7 +89,6 @@ export enum GameMode {
 }
 
 export enum GameSetupChange {
-    Created,
     UserAdded,
     UserRemoved,
     UserApprovedOfGameSetup,

@@ -18,10 +18,6 @@ describe('gameSetup', () => {
         expect(gameSetup.approvedByEverybody).toBe(false);
         expect(gameSetup.usernameToUserID.size).toEqual(1);
         expect(gameSetup.userIDToUsername.size).toEqual(1);
-        expect(gameSetup.history).toEqual([[GameSetupChange.Created, GameMode.Singles4, PlayerArrangementMode.RandomOrder, 1]]);
-
-        gameSetup.clearHistory();
-
         expect(gameSetup.history).toEqual([]);
     });
 
@@ -42,7 +38,6 @@ describe('gameSetup', () => {
 
         it('duplicate users are rejected', () => {
             const gameSetup = new GameSetup(GameMode.Singles3, PlayerArrangementMode.RandomOrder, 1, 'Host');
-            gameSetup.clearHistory();
 
             gameSetup.addUser(6, 'user');
             gameSetup.addUser(6, 'user');
@@ -55,7 +50,6 @@ describe('gameSetup', () => {
 
         it('approvals are reset', () => {
             const gameSetup = new GameSetup(GameMode.Singles3, PlayerArrangementMode.RandomOrder, 1, 'Host');
-            gameSetup.clearHistory();
             gameSetup.approvals = dummyApprovals;
             gameSetup.approvedByEverybody = true;
 
@@ -199,7 +193,6 @@ describe('gameSetup', () => {
     describe('changeGameMode', () => {
         it('cannot change to a nonexistent mode', () => {
             const gameSetup = new GameSetup(GameMode.Teams2vs2, PlayerArrangementMode.RandomOrder, 1, 'Host');
-            gameSetup.clearHistory();
 
             expect(gameSetup.gameMode).toBe(GameMode.Teams2vs2);
 
@@ -317,7 +310,6 @@ describe('gameSetup', () => {
 
         it('player arrangement mode changed to RandomOrder from SpecifyTeams when switching to a Singles game', () => {
             const gameSetup = new GameSetup(GameMode.Teams2vs2, PlayerArrangementMode.SpecifyTeams, 1, 'Host');
-            gameSetup.clearHistory();
 
             expect(gameSetup.gameMode).toBe(GameMode.Teams2vs2);
             expect(gameSetup.playerArrangementMode).toBe(PlayerArrangementMode.SpecifyTeams);
@@ -333,7 +325,6 @@ describe('gameSetup', () => {
 
         it('approvals are reset', () => {
             const gameSetup = new GameSetup(GameMode.Teams2vs2, PlayerArrangementMode.SpecifyTeams, 1, 'Host');
-            gameSetup.clearHistory();
             gameSetup.approvals = dummyApprovals;
             gameSetup.approvedByEverybody = true;
 
@@ -347,7 +338,6 @@ describe('gameSetup', () => {
     describe('changePlayerArrangementMode', () => {
         it('cannot change to a nonexistent mode', () => {
             const gameSetup = new GameSetup(GameMode.Teams2vs2, PlayerArrangementMode.RandomOrder, 1, 'Host');
-            gameSetup.clearHistory();
 
             expect(gameSetup.playerArrangementMode).toBe(PlayerArrangementMode.RandomOrder);
 
@@ -367,7 +357,6 @@ describe('gameSetup', () => {
 
         it('cannot change to the same mode', () => {
             const gameSetup = new GameSetup(GameMode.Teams2vs2, PlayerArrangementMode.SpecifyTeams, 1, 'Host');
-            gameSetup.clearHistory();
 
             expect(gameSetup.playerArrangementMode).toBe(PlayerArrangementMode.SpecifyTeams);
 
@@ -379,7 +368,6 @@ describe('gameSetup', () => {
 
         it('cannot change to SpecifyTeams when game is not a teams game', () => {
             const gameSetup = new GameSetup(GameMode.Singles4, PlayerArrangementMode.RandomOrder, 1, 'Host');
-            gameSetup.clearHistory();
 
             expect(gameSetup.playerArrangementMode).toBe(PlayerArrangementMode.RandomOrder);
 
@@ -391,7 +379,6 @@ describe('gameSetup', () => {
 
         it('can change mode', () => {
             const gameSetup = new GameSetup(GameMode.Teams2vs2, PlayerArrangementMode.SpecifyTeams, 1, 'Host');
-            gameSetup.clearHistory();
 
             expect(gameSetup.playerArrangementMode).toBe(PlayerArrangementMode.SpecifyTeams);
 
@@ -403,7 +390,6 @@ describe('gameSetup', () => {
 
         it('approvals are reset', () => {
             const gameSetup = new GameSetup(GameMode.Teams2vs2, PlayerArrangementMode.SpecifyTeams, 1, 'Host');
-            gameSetup.clearHistory();
             gameSetup.approvals = dummyApprovals;
             gameSetup.approvedByEverybody = true;
 

@@ -38,8 +38,6 @@ export class GameSetup {
         this.usernameToUserID = new Map([[hostUsername, hostUserID]]);
 
         this.userIDToUsername = new Map([[hostUserID, hostUsername]]);
-
-        this.history.push([GameSetupChange.Created, gameMode, playerArrangementMode, hostUserID]);
     }
 
     clearHistory() {
