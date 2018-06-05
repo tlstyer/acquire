@@ -38,10 +38,7 @@ export class GameSetup {
         this.usernameToUserID = new Map([[hostUsername, hostUserID]]);
 
         this.userIDToUsername = new Map([[hostUserID, hostUsername]]);
-    }
 
-    clearHistory() {
-        this.history = [];
     }
 
     addUser(userID: number, username: string) {
@@ -234,6 +231,10 @@ export class GameSetup {
         this.usernameToUserID.delete(username);
         this.userIDToUsername.delete(userID);
         this.history.push([GameSetupChange.UserKicked, position]);
+    }
+
+    clearHistory() {
+        this.history = [];
     }
 
     getFinalUserIDsAndUsernames(): [List<number>, List<string>] {
