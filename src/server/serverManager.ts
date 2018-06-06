@@ -22,6 +22,7 @@ export class ServerManager {
 
     gameDisplayNumberManager: ReuseIDManager = new ReuseIDManager(60000);
     gameIDToGameData = new Map<number, GameData>();
+    gameDisplayNumberToGameData = new Map<number, GameData>();
 
     onMessageFunctions: Map<MessageToServer, (client: Client, params: any[]) => void>;
 
@@ -238,6 +239,7 @@ export class ServerManager {
         client.user.numGames++;
 
         this.gameIDToGameData.set(gameData.id, gameData);
+        this.gameDisplayNumberToGameData.set(gameData.displayNumber, gameData);
 
         const message = JSON.stringify([this.getGameCreatedMessage(gameData, client), this.getClientEnteredGameMessage(gameData, client)]);
         this.connectionIDToClient.forEach(aClient => {
