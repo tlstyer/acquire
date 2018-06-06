@@ -8,7 +8,7 @@ exports[`GameHistory renders correctly 1`] = `
     <div
       className="move"
       onClick={[Function]}
-      title="Fri Apr 27 2018 23:17:09 GMT-0700 (Pacific Daylight Time)"
+      title="new Date(1524896229792).toString()"
     >
       <div>
         <fieldset

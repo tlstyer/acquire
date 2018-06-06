@@ -8,12 +8,25 @@ import { GameHistory } from './GameHistory';
 
 configureEnzyme();
 
+class TestDate {
+    constructor(public now: number) {}
+
+    toString() {
+        return `new Date(${this.now}).toString()`;
+    }
+}
+
 describe('GameHistory', () => {
     const onMoveClicked = jest.fn();
     const game = getDummyGameForGetGameHistory();
     const jsx = (
         <GameHistory usernames={List(['Tim', 'Rita', 'Dad', 'Mom'])} moveDataHistory={game.moveDataHistory} selectedMove={1} onMoveClicked={onMoveClicked} />
     );
+
+    const now = Date.now;
+    // @ts-ignore
+    Date = TestDate;
+    Date.now = now;
 
     it('renders correctly', () => {
         const component = renderer.create(jsx);
