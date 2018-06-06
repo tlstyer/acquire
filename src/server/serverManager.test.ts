@@ -337,6 +337,76 @@ describe('ServerManager', () => {
             expect(connection2.receivedMessages.length).toBe(0);
         });
     });
+
+    describe('enter game', () => {
+        it('kicks client due to invalid message', async () => {
+            await expectKicksClientDueToInvalidMessage([MessageToServer.EnterGame]);
+            await expectKicksClientDueToInvalidMessage([MessageToServer.EnterGame, 1, 2]);
+            await expectKicksClientDueToInvalidMessage([MessageToServer.EnterGame, -1]);
+            await expectKicksClientDueToInvalidMessage([MessageToServer.EnterGame, {}]);
+        });
+
+        it('sends MessageToClient.ClientEnteredGame when successful', async () => {
+            const { serverManager, server } = getServerManagerAndStuff();
+            serverManager.nextGameID = 10;
+
+            const connection1 = await connectToServer(server, 'user 1');
+            const connection2 = await connectToServer(server, 'user 2');
+            connection1.sendMessage([MessageToServer.CreateGame, GameMode.Teams2vs2]);
+            connection1.clearReceivedMessages();
+            connection2.clearReceivedMessages();
+
+            expectClientAndUserAndGameData(
+                serverManager,
+                [new UserData(1, 'user 1', [new ClientData(1, connection1, 10)]), new UserData(2, 'user 2', [new ClientData(2, connection2)])],
+                [new GameDataData(10, 1)],
+            );
+
+            connection2.sendMessage([MessageToServer.EnterGame, 1]);
+
+            expectClientAndUserAndGameData(
+                serverManager,
+                [new UserData(1, 'user 1', [new ClientData(1, connection1, 10)]), new UserData(2, 'user 2', [new ClientData(2, connection2, 10)])],
+                [new GameDataData(10, 1)],
+            );
+
+            expect(connection1.receivedMessages.length).toBe(1);
+            expect(connection2.receivedMessages.length).toBe(1);
+
+            const expectedMessage: any[] = [[MessageToClient.ClientEnteredGame, 2, 1]];
+            expect(connection1.receivedMessages[0]).toEqual(expectedMessage);
+            expect(connection2.receivedMessages[0]).toEqual(expectedMessage);
+        });
+
+        it('disallows entering a game when currently in a game', async () => {
+            const { serverManager, server } = getServerManagerAndStuff();
+            serverManager.nextGameID = 10;
+
+            const connection1 = await connectToServer(server, 'user 1');
+            const connection2 = await connectToServer(server, 'user 2');
+            const connection3 = await connectToServer(server, 'user 3');
+            connection1.sendMessage([MessageToServer.CreateGame, GameMode.Teams2vs2]);
+            connection2.sendMessage([MessageToServer.CreateGame, GameMode.Singles3]);
+            connection3.sendMessage([MessageToServer.EnterGame, 2]);
+            connection1.clearReceivedMessages();
+            connection2.clearReceivedMessages();
+            connection3.clearReceivedMessages();
+
+            connection1.sendMessage([MessageToServer.EnterGame, 1]);
+            connection1.sendMessage([MessageToServer.EnterGame, 2]);
+            connection2.sendMessage([MessageToServer.EnterGame, 1]);
+            connection2.sendMessage([MessageToServer.EnterGame, 2]);
+            connection3.sendMessage([MessageToServer.EnterGame, 1]);
+            connection3.sendMessage([MessageToServer.EnterGame, 2]);
+
+            expect(connection1.receivedMessages.length).toBe(0);
+            expect(connection2.receivedMessages.length).toBe(0);
+            expect(connection3.receivedMessages.length).toBe(0);
+            expect(connection1.closed).toBe(false);
+            expect(connection2.closed).toBe(false);
+            expect(connection3.closed).toBe(false);
+        });
+    });
 });
 
 class TestServer {

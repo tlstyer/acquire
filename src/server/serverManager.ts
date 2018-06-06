@@ -27,7 +27,7 @@ export class ServerManager {
     onMessageFunctions: Map<MessageToServer, (client: Client, params: any[]) => void>;
 
     constructor(public server: Server, public userDataProvider: UserDataProvider, public nextGameID: number) {
-        this.onMessageFunctions = new Map([[MessageToServer.CreateGame, this.onMessageCreateGame]]);
+        this.onMessageFunctions = new Map([[MessageToServer.CreateGame, this.onMessageCreateGame], [MessageToServer.EnterGame, this.onMessageEnterGame]]);
     }
 
     manage() {
@@ -242,6 +242,34 @@ export class ServerManager {
         this.gameDisplayNumberToGameData.set(gameData.displayNumber, gameData);
 
         const message = JSON.stringify([this.getGameCreatedMessage(gameData, client), this.getClientEnteredGameMessage(gameData, client)]);
+        this.connectionIDToClient.forEach(aClient => {
+            aClient.connection.write(message);
+        });
+    }
+
+    onMessageEnterGame(client: Client, params: any[]) {
+        if (params.length !== 1) {
+            this.kickWithError(client.connection, ErrorCode.InvalidMessage);
+            return;
+        }
+
+        const gameDisplayNumber: number = params[0];
+        const gameData = this.gameDisplayNumberToGameData.get(gameDisplayNumber);
+        if (gameData === undefined) {
+            this.kickWithError(client.connection, ErrorCode.InvalidMessage);
+            return;
+        }
+
+        if (client.gameData !== null) {
+            return;
+        }
+
+        gameData.clients.add(client);
+
+        client.gameData = gameData;
+        client.user.numGames++;
+
+        const message = JSON.stringify([this.getClientEnteredGameMessage(gameData, client)]);
         this.connectionIDToClient.forEach(aClient => {
             aClient.connection.write(message);
         });

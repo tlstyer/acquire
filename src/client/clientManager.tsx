@@ -127,7 +127,7 @@ export class ClientManager {
                                 gameDisplayNumber={gameData.displayNumber}
                                 gameMode={gameData.gameSetup.gameMode}
                                 gameStatus={GameStatus.SettingUp}
-                                onEnterClicked={onEnterClicked}
+                                onEnterClicked={gameData.onEnterClicked}
                             />
                         );
                     }
@@ -226,7 +226,7 @@ export class ClientManager {
             const gameID: number = gameParams[1];
             const gameDisplayNumber: number = gameParams[2];
 
-            const gameData = new GameData(gameID, gameDisplayNumber);
+            const gameData = new GameData(gameID, gameDisplayNumber, this);
 
             this.gameIDToGameData.set(gameID, gameData);
             this.gameDisplayNumberToGameData.set(gameDisplayNumber, gameData);
@@ -307,7 +307,7 @@ export class ClientManager {
     onMessageGameCreated(gameID: number, gameDisplayNumber: number, gameMode: GameMode, hostClientID: number) {
         const hostClient = this.clientIDToClient.get(hostClientID)!;
 
-        const gameData = new GameData(gameID, gameDisplayNumber);
+        const gameData = new GameData(gameID, gameDisplayNumber, this);
         gameData.gameSetup = new GameSetup(gameMode, PlayerArrangementMode.RandomOrder, hostClient.user.id, this.getUsernameForUserID);
 
         hostClient.user.numGames++;
@@ -369,7 +369,11 @@ export class GameData {
 
     clients = new Set<Client>();
 
-    constructor(public id: number, public displayNumber: number) {}
-}
+    constructor(public id: number, public displayNumber: number, public clientManager: ClientManager) {}
 
-function onEnterClicked() {}
+    onEnterClicked = () => {
+        if (this.clientManager.socket !== null) {
+            this.clientManager.socket.send(JSON.stringify([MessageToServer.EnterGame, this.displayNumber]));
+        }
+    };
+}

@@ -9,6 +9,7 @@ export enum MessageToClient {
 
 export enum MessageToServer {
     CreateGame,
+    EnterGame,
 }
 
 export enum ErrorCode {

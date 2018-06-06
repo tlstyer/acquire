@@ -287,6 +287,50 @@ describe('ClientManager', () => {
             );
         });
     });
+
+    describe('onEnterClicked', () => {
+        it('sends EnterGame message when connected', async () => {
+            const { clientManager, testConnection } = getClientManagerAndStuff();
+
+            clientManager.onSubmitLoginForm('me', '');
+            testConnection.triggerOpen();
+            testConnection.triggerMessage([
+                [
+                    MessageToClient.Greetings,
+                    2,
+                    [[1, 'user 1', [[1, 1]]], [2, 'me', [[2]]]],
+                    [[0, 10, 1, GameMode.Teams2vs2, PlayerArrangementMode.RandomOrder, 1, [1, 0, 0, 0], [0, 0, 0, 0]]],
+                ],
+            ]);
+            testConnection.clearSentMessages();
+
+            clientManager.gameDisplayNumberToGameData.get(1)!.onEnterClicked();
+
+            expect(testConnection.sentMessages.length).toBe(1);
+            expect(testConnection.sentMessages[0]).toEqual([MessageToServer.EnterGame, 1]);
+        });
+
+        it('does not send EnterGame message when not connected', async () => {
+            const { clientManager, testConnection } = getClientManagerAndStuff();
+
+            clientManager.onSubmitLoginForm('me', '');
+            testConnection.triggerOpen();
+            testConnection.triggerMessage([
+                [
+                    MessageToClient.Greetings,
+                    2,
+                    [[1, 'user 1', [[1, 1]]], [2, 'me', [[2]]]],
+                    [[0, 10, 1, GameMode.Teams2vs2, PlayerArrangementMode.RandomOrder, 1, [1, 0, 0, 0], [0, 0, 0, 0]]],
+                ],
+            ]);
+            testConnection.triggerClose();
+            testConnection.clearSentMessages();
+
+            clientManager.gameDisplayNumberToGameData.get(1)!.onEnterClicked();
+
+            expect(testConnection.sentMessages.length).toBe(0);
+        });
+    });
 });
 
 class TestConnection {

@@ -107,6 +107,15 @@ Server sends all clients:
 -   Client ID
 -   Game display number
 
+## Enter game
+
+Client sends:
+
+-   MessageToServer.EnterGame
+-   Game display number
+
+Server sends MessageToClient.ClientEnteredGame to all clients
+
 # Game review data
 
 Array of:
