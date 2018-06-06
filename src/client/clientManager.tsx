@@ -127,9 +127,7 @@ export class ClientManager {
                                 gameDisplayNumber={gameData.displayNumber}
                                 gameMode={gameData.gameSetup.gameMode}
                                 gameStatus={GameStatus.SettingUp}
-                                onJoinClicked={undefined}
-                                onRejoinClicked={undefined}
-                                onWatchClicked={undefined}
+                                onEnterClicked={onEnterClicked}
                             />
                         );
                     }
@@ -373,3 +371,5 @@ export class GameData {
 
     constructor(public id: number, public displayNumber: number) {}
 }
+
+function onEnterClicked() {}

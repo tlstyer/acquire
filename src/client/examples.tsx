@@ -75,8 +75,7 @@ class AllDemoProps {
                 gameDisplayNumber: 1,
                 gameMode: GameMode.Singles4,
                 gameStatus: GameStatus.SettingUp,
-                onJoinClicked,
-                onWatchClicked,
+                onEnterClicked,
             },
             {
                 gameBoard: game1 !== null ? game1.gameBoard : defaultGameBoard,
@@ -84,7 +83,7 @@ class AllDemoProps {
                 gameDisplayNumber: 2,
                 gameMode: GameMode.Teams2vs2vs2,
                 gameStatus: GameStatus.InProgress,
-                onRejoinClicked,
+                onEnterClicked,
             },
             {
                 gameBoard: game2 !== null ? game2.gameBoard : defaultGameBoard,
@@ -92,17 +91,7 @@ class AllDemoProps {
                 gameDisplayNumber: 3,
                 gameMode: GameMode.Teams2vs2,
                 gameStatus: GameStatus.Completed,
-                onWatchClicked,
-            },
-            {
-                gameBoard: defaultGameBoard,
-                usernames: List(['Show', 'All', 'Buttons', 'Example']),
-                gameDisplayNumber: 4,
-                gameMode: GameMode.Singles4,
-                gameStatus: GameStatus.SettingUp,
-                onJoinClicked,
-                onRejoinClicked,
-                onWatchClicked,
+                onEnterClicked,
             },
         ];
 
@@ -481,16 +470,8 @@ function onSubmitCreateGame(gameMode: GameMode) {
     console.log('onSubmitCreateGame:', gameMode);
 }
 
-function onJoinClicked() {
-    console.log('onJoinClicked');
-}
-
-function onRejoinClicked() {
-    console.log('onRejoinClicked');
-}
-
-function onWatchClicked() {
-    console.log('onWatchClicked');
+function onEnterClicked() {
+    console.log('onEnterClicked');
 }
 
 function onTileClicked(tile: number) {

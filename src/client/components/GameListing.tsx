@@ -13,14 +13,12 @@ export interface GameListingProps {
     gameDisplayNumber: number;
     gameMode: GameMode;
     gameStatus: GameStatus;
-    onJoinClicked?: () => void;
-    onRejoinClicked?: () => void;
-    onWatchClicked?: () => void;
+    onEnterClicked: () => void;
 }
 
 export class GameListing extends React.PureComponent<GameListingProps> {
     render() {
-        const { gameBoard, usernames, gameDisplayNumber, gameMode, gameStatus, onJoinClicked, onRejoinClicked, onWatchClicked } = this.props;
+        const { gameBoard, usernames, gameDisplayNumber, gameMode, gameStatus, onEnterClicked } = this.props;
 
         const isTeamGame = gameModeToTeamSize.get(gameMode)! > 1;
         const numTeams = gameModeToNumPlayers.get(gameMode)! / gameModeToTeamSize.get(gameMode)!;
@@ -43,27 +41,9 @@ export class GameListing extends React.PureComponent<GameListingProps> {
                     <div>Game #{gameDisplayNumber}</div>
                     <div>{gameModeToString.get(gameMode)}</div>
                     <div>{gameStatusToString.get(gameStatus)}</div>
-                    {onJoinClicked ? (
-                        <div>
-                            <input type={'button'} value={'Join'} onClick={onJoinClicked} />
-                        </div>
-                    ) : (
-                        undefined
-                    )}
-                    {onRejoinClicked ? (
-                        <div>
-                            <input type={'button'} value={'Rejoin'} onClick={onRejoinClicked} />
-                        </div>
-                    ) : (
-                        undefined
-                    )}
-                    {onWatchClicked ? (
-                        <div>
-                            <input type={'button'} value={'Watch'} onClick={onWatchClicked} />
-                        </div>
-                    ) : (
-                        undefined
-                    )}
+                    <div>
+                        <input type={'button'} value={'Enter'} onClick={onEnterClicked} />
+                    </div>
                 </div>
             </div>
         );
