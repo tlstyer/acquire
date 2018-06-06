@@ -21,6 +21,7 @@ export class GameSetup {
     usernameToUserID: Map<string, number>;
     userIDToUsername: Map<number, string>;
     history: any[] = [];
+    changeFunctions: Map<GameSetupChange, (...params: any[]) => void>;
 
     constructor(
         public gameMode: GameMode,
@@ -45,6 +46,17 @@ export class GameSetup {
         this.usernameToUserID = new Map([[this.hostUsername, hostUserID]]);
 
         this.userIDToUsername = new Map([[hostUserID, this.hostUsername]]);
+
+        const cf: [GameSetupChange, (...params: any[]) => void][] = [
+            [GameSetupChange.UserAdded, this.addUser],
+            [GameSetupChange.UserRemoved, this.removeUser],
+            [GameSetupChange.UserApprovedOfGameSetup, this.approve],
+            [GameSetupChange.GameModeChanged, this.changeGameMode],
+            [GameSetupChange.PlayerArrangementModeChanged, this.changePlayerArrangementMode],
+            [GameSetupChange.PositionsSwapped, this.swapPositions],
+            [GameSetupChange.UserKicked, this.kickUser],
+        ];
+        this.changeFunctions = new Map(cf);
     }
 
     addUser(userID: number) {
@@ -239,6 +251,24 @@ export class GameSetup {
         this.usernameToUserID.delete(username);
         this.userIDToUsername.delete(userID);
         this.history.push([GameSetupChange.UserKicked, position]);
+    }
+
+    processChange(message: any[]) {
+        if (!Array.isArray(message)) {
+            return;
+        }
+
+        const changeFunction = this.changeFunctions.get(message[0]);
+        if (changeFunction === undefined) {
+            return;
+        }
+
+        const parameters = message.slice(1);
+        if (parameters.length !== changeFunction.length) {
+            return;
+        }
+
+        changeFunction.apply(this, parameters);
     }
 
     clearHistory() {

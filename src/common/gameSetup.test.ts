@@ -571,6 +571,65 @@ describe('gameSetup', () => {
         });
     });
 
+    describe('processChange', () => {
+        it('no changes upon invalid message', () => {
+            const gameSetup = new GameSetup(GameMode.Singles4, PlayerArrangementMode.RandomOrder, 1, getUsernameForUserID);
+
+            // @ts-ignore
+            gameSetup.processChange(null);
+            expect(gameSetup.history).toEqual([]);
+
+            // @ts-ignore
+            gameSetup.processChange({});
+            expect(gameSetup.history).toEqual([]);
+
+            gameSetup.processChange([]);
+            expect(gameSetup.history).toEqual([]);
+
+            gameSetup.processChange(['not an integer']);
+            expect(gameSetup.history).toEqual([]);
+
+            gameSetup.processChange([-1]);
+            expect(gameSetup.history).toEqual([]);
+
+            gameSetup.processChange([GameSetupChange.UserAdded]);
+            expect(gameSetup.history).toEqual([]);
+
+            gameSetup.processChange([GameSetupChange.UserAdded, 1, 2]);
+            expect(gameSetup.history).toEqual([]);
+        });
+
+        it('changes are processed', () => {
+            const gameSetup = new GameSetup(GameMode.Singles4, PlayerArrangementMode.RandomOrder, 1, getUsernameForUserID);
+
+            gameSetup.processChange([GameSetupChange.UserAdded, 2]);
+            gameSetup.processChange([GameSetupChange.UserAdded, 3]);
+            gameSetup.processChange([GameSetupChange.UserAdded, 4]);
+            gameSetup.processChange([GameSetupChange.UserRemoved, 3]);
+            gameSetup.processChange([GameSetupChange.GameModeChanged, GameMode.Teams2vs2]);
+            gameSetup.processChange([GameSetupChange.PlayerArrangementModeChanged, PlayerArrangementMode.ExactOrder]);
+            gameSetup.processChange([GameSetupChange.PositionsSwapped, 0, 3]);
+            gameSetup.processChange([GameSetupChange.UserKicked, 1]);
+            gameSetup.processChange([GameSetupChange.UserAdded, 5]);
+            gameSetup.processChange([GameSetupChange.UserAdded, 6]);
+            gameSetup.processChange([GameSetupChange.UserApprovedOfGameSetup, 1]);
+            gameSetup.processChange([GameSetupChange.UserApprovedOfGameSetup, 4]);
+            gameSetup.processChange([GameSetupChange.UserApprovedOfGameSetup, 5]);
+            gameSetup.processChange([GameSetupChange.UserApprovedOfGameSetup, 6]);
+
+            expect(gameSetup.gameMode).toBe(GameMode.Teams2vs2);
+            expect(gameSetup.playerArrangementMode).toBe(PlayerArrangementMode.ExactOrder);
+            expect(gameSetup.hostUserID).toBe(1);
+            expect(gameSetup.getUsernameForUserID).toBe(getUsernameForUserID);
+            expect(gameSetup.hostUsername).toBe('user 1');
+            expect(gameSetup.usernames.toJS()).toEqual(['user 4', 'user 5', 'user 6', 'user 1']);
+            expect(gameSetup.approvals.toJS()).toEqual([true, true, true, true]);
+            expect(gameSetup.approvedByEverybody).toBe(true);
+            expect(gameSetup.usernameToUserID.size).toEqual(4);
+            expect(gameSetup.userIDToUsername.size).toEqual(4);
+        });
+    });
+
     describe('getFinalUserIDsAndUsernames', () => {
         describe('player arrangement mode is RandomOrder', () => {
             it('returns user IDs and usernames in a random order', () => {
@@ -679,8 +738,7 @@ describe('gameSetup', () => {
             const gameSetup2 = GameSetup.fromJSON(gameSetup.toJSON(), getUsernameForUserID);
             gameSetup2.clearHistory();
 
-            expect(gameSetup2).toEqual(gameSetup);
-            expect(gameSetup2.toJSON()).toEqual(gameSetup.toJSON());
+            expectEqualGameSetups(gameSetup, gameSetup2);
         });
 
         it('approved by some users', () => {
@@ -700,8 +758,7 @@ describe('gameSetup', () => {
             const gameSetup2 = GameSetup.fromJSON(gameSetup.toJSON(), getUsernameForUserID);
             gameSetup2.clearHistory();
 
-            expect(gameSetup2).toEqual(gameSetup);
-            expect(gameSetup2.toJSON()).toEqual(gameSetup.toJSON());
+            expectEqualGameSetups(gameSetup, gameSetup2);
         });
 
         it('approved by everybody', () => {
@@ -719,8 +776,7 @@ describe('gameSetup', () => {
             const gameSetup2 = GameSetup.fromJSON(gameSetup.toJSON(), getUsernameForUserID);
             gameSetup2.clearHistory();
 
-            expect(gameSetup2).toEqual(gameSetup);
-            expect(gameSetup2.toJSON()).toEqual(gameSetup.toJSON());
+            expectEqualGameSetups(gameSetup, gameSetup2);
         });
     });
 });
@@ -737,4 +793,11 @@ const userIDToUsername: Map<number, string> = new Map([
 
 function getUsernameForUserID(userID: number) {
     return userIDToUsername.get(userID)!;
+}
+
+function expectEqualGameSetups(gameSetup1: GameSetup, gameSetup2: GameSetup) {
+    gameSetup1.changeFunctions.clear();
+    gameSetup2.changeFunctions.clear();
+    expect(gameSetup2).toEqual(gameSetup1);
+    expect(gameSetup2.toJSON()).toEqual(gameSetup1.toJSON());
 }
