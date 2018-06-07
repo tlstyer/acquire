@@ -247,7 +247,9 @@ export class ClientManager {
                     const client = new Client(clientID, user);
                     user.clients.add(client);
                     if (gameDisplayNumber !== undefined) {
-                        this.gameDisplayNumberToGameData.get(gameDisplayNumber)!.clients.add(client);
+                        const gameData = this.gameDisplayNumberToGameData.get(gameDisplayNumber)!;
+                        client.gameData = gameData;
+                        gameData.clients.add(client);
                     }
                     this.clientIDToClient.set(clientID, client);
                 }
