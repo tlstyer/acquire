@@ -65,6 +65,7 @@ export class ClientManager {
             [MessageToClient.ClientDisconnected, this.onMessageClientDisconnected],
             [MessageToClient.GameCreated, this.onMessageGameCreated],
             [MessageToClient.ClientEnteredGame, this.onMessageClientEnteredGame],
+            [MessageToClient.ClientExitedGame, this.onMessageClientExitedGame],
         ];
         this.onMessageFunctions = new Map(mf);
     }
@@ -148,9 +149,16 @@ export class ClientManager {
         return (
             <>
                 <Header username={this.username} isConnected={this.socket !== null} />
+                <input type={'button'} value={'Exit Game'} onClick={this.onExitGameClicked} />
                 {gameData.gameSetup !== null ? this.renderGamePageGameSetup() : undefined}
             </>
         );
+    };
+
+    onExitGameClicked = () => {
+        if (this.socket !== null) {
+            this.socket.send(JSON.stringify([MessageToServer.ExitGame]));
+        }
     };
 
     renderGamePageGameSetup() {
@@ -202,10 +210,6 @@ export class ClientManager {
             const message = messages[i];
             const handler = this.onMessageFunctions.get(message[0])!;
             handler.apply(this, message.slice(1));
-        }
-
-        if (this.page === ClientManagerPage.Connecting && this.errorCode === null) {
-            this.page = ClientManagerPage.Lobby;
         }
 
         this.render();
@@ -279,6 +283,8 @@ export class ClientManager {
         }
 
         this.myClient = this.clientIDToClient.get(myClientID)!;
+
+        this.page = this.myClient.gameData !== null ? ClientManagerPage.Game : ClientManagerPage.Lobby;
     }
 
     onMessageClientConnected(clientID: number, userID: number, username?: string) {
@@ -327,6 +333,18 @@ export class ClientManager {
 
         if (client === this.myClient) {
             this.page = ClientManagerPage.Game;
+        }
+    }
+
+    onMessageClientExitedGame(clientID: number) {
+        const client = this.clientIDToClient.get(clientID)!;
+        const gameData = client.gameData!;
+
+        client.gameData = null;
+        gameData.clients.delete(client);
+
+        if (client === this.myClient) {
+            this.page = ClientManagerPage.Lobby;
         }
     }
 

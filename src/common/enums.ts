@@ -5,11 +5,13 @@ export enum MessageToClient {
     ClientDisconnected,
     GameCreated,
     ClientEnteredGame,
+    ClientExitedGame,
 }
 
 export enum MessageToServer {
     CreateGame,
     EnterGame,
+    ExitGame,
 }
 
 export enum ErrorCode {

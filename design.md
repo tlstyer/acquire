@@ -116,6 +116,17 @@ Client sends:
 
 Server sends MessageToClient.ClientEnteredGame to all clients
 
+## Exit game
+
+Client sends:
+
+-   MessageToServer.ExitGame
+
+Server sends all clients:
+
+-   MessageToClient.ClientExitedGame
+-   Client ID
+
 # Game review data
 
 Array of:

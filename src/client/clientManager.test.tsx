@@ -331,6 +331,114 @@ describe('ClientManager', () => {
             expect(testConnection.sentMessages.length).toBe(0);
         });
     });
+
+    describe('onExitGameClicked', () => {
+        it('sends ExitGame message when connected', async () => {
+            const { clientManager, testConnection } = getClientManagerAndStuff();
+
+            clientManager.onSubmitLoginForm('me', '');
+            testConnection.triggerOpen();
+            testConnection.triggerMessage([
+                [
+                    MessageToClient.Greetings,
+                    2,
+                    [[1, 'user 1', [[1, 1]]], [2, 'me', [[2, 1]]]],
+                    [[0, 10, 1, GameMode.Teams2vs2, PlayerArrangementMode.RandomOrder, 1, [1, 0, 0, 0], [0, 0, 0, 0]]],
+                ],
+            ]);
+            testConnection.clearSentMessages();
+
+            clientManager.onExitGameClicked();
+
+            expect(testConnection.sentMessages.length).toBe(1);
+            expect(testConnection.sentMessages[0]).toEqual([MessageToServer.ExitGame]);
+        });
+
+        it('does not send ExitGame message when not connected', async () => {
+            const { clientManager, testConnection } = getClientManagerAndStuff();
+
+            clientManager.onSubmitLoginForm('me', '');
+            testConnection.triggerOpen();
+            testConnection.triggerMessage([
+                [
+                    MessageToClient.Greetings,
+                    2,
+                    [[1, 'user 1', [[1, 1]]], [2, 'me', [[2, 1]]]],
+                    [[0, 10, 1, GameMode.Teams2vs2, PlayerArrangementMode.RandomOrder, 1, [1, 0, 0, 0], [0, 0, 0, 0]]],
+                ],
+            ]);
+            testConnection.triggerClose();
+            testConnection.clearSentMessages();
+
+            clientManager.onExitGameClicked();
+
+            expect(testConnection.sentMessages.length).toBe(0);
+        });
+    });
+
+    describe('MessageToClient.ClientExitedGame', () => {
+        it('own client exits game', async () => {
+            const { clientManager, testConnection } = getClientManagerAndStuff();
+
+            clientManager.onSubmitLoginForm('me', '');
+            testConnection.triggerOpen();
+            testConnection.triggerMessage([
+                [
+                    MessageToClient.Greetings,
+                    2,
+                    [[1, 'user 1', [[1, 1]]], [2, 'me', [[2, 1]]]],
+                    [[0, 10, 1, GameMode.Teams2vs2, PlayerArrangementMode.RandomOrder, 1, [1, 2, 0, 0], [0, 0, 0, 0]]],
+                ],
+            ]);
+
+            expect(clientManager.page).toBe(ClientManagerPage.Game);
+            expectClientAndUserAndGameData(
+                clientManager,
+                [new UserData(1, 'user 1', [new ClientData(1, 10)]), new UserData(2, 'me', [new ClientData(2, 10)])],
+                [new GameDataData(10, 1)],
+            );
+
+            testConnection.triggerMessage([[MessageToClient.ClientExitedGame, 2]]);
+
+            expect(clientManager.page).toBe(ClientManagerPage.Lobby);
+            expectClientAndUserAndGameData(
+                clientManager,
+                [new UserData(1, 'user 1', [new ClientData(1, 10)]), new UserData(2, 'me', [new ClientData(2)])],
+                [new GameDataData(10, 1)],
+            );
+        });
+
+        it('other client exits game', async () => {
+            const { clientManager, testConnection } = getClientManagerAndStuff();
+
+            clientManager.onSubmitLoginForm('me', '');
+            testConnection.triggerOpen();
+            testConnection.triggerMessage([
+                [
+                    MessageToClient.Greetings,
+                    2,
+                    [[1, 'user 1', [[1, 1]]], [2, 'me', [[2, 1]]]],
+                    [[0, 10, 1, GameMode.Teams2vs2, PlayerArrangementMode.RandomOrder, 1, [1, 2, 0, 0], [0, 0, 0, 0]]],
+                ],
+            ]);
+
+            expect(clientManager.page).toBe(ClientManagerPage.Game);
+            expectClientAndUserAndGameData(
+                clientManager,
+                [new UserData(1, 'user 1', [new ClientData(1, 10)]), new UserData(2, 'me', [new ClientData(2, 10)])],
+                [new GameDataData(10, 1)],
+            );
+
+            testConnection.triggerMessage([[MessageToClient.ClientExitedGame, 1]]);
+
+            expect(clientManager.page).toBe(ClientManagerPage.Game);
+            expectClientAndUserAndGameData(
+                clientManager,
+                [new UserData(1, 'user 1', [new ClientData(1)]), new UserData(2, 'me', [new ClientData(2, 10)])],
+                [new GameDataData(10, 1)],
+            );
+        });
+    });
 });
 
 class TestConnection {
