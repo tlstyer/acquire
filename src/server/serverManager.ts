@@ -271,7 +271,6 @@ export class ServerManager {
         gameData.clients.add(client);
 
         client.gameData = gameData;
-        client.user.numGames++;
 
         const message = JSON.stringify([this.getClientEnteredGameMessage(gameData, client)]);
         this.connectionIDToClient.forEach(aClient => {
@@ -293,7 +292,6 @@ export class ServerManager {
         gameData.clients.delete(client);
 
         client.gameData = null;
-        client.user.numGames--;
 
         const message = JSON.stringify([this.getClientExitedGameMessage(client)]);
         this.connectionIDToClient.forEach(aClient => {
