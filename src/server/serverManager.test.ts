@@ -239,8 +239,8 @@ describe('ServerManager', () => {
                         7,
                         [[1, 'user 1', [[1], [6]]], [2, 'user 2', [[2], [3]]], [3, 'user 3'], [4, 'user 4', [[5, 2]]], [5, 'me', [[7]]]],
                         [
-                            [0, 1, 1, ...serverManager.gameIDToGameData.get(1)!.gameSetup!.toJSON()],
-                            [0, 2, 2, ...serverManager.gameIDToGameData.get(2)!.gameSetup!.toJSON()],
+                            [0, 10, 1, ...serverManager.gameDisplayNumberToGameData.get(1)!.gameSetup!.toJSON()],
+                            [0, 11, 2, ...serverManager.gameDisplayNumberToGameData.get(2)!.gameSetup!.toJSON()],
                         ],
                     ],
                 ]);
@@ -281,7 +281,6 @@ describe('ServerManager', () => {
 
         it('sends MessageToClient.GameCreated and MessageToClient.ClientEnteredGame when successful', async () => {
             const { serverManager, server } = getServerManagerAndStuff();
-            serverManager.nextGameID = 10;
 
             const connection1 = await connectToServer(server, 'user 1');
             const connection2 = await connectToServer(server, 'user 2');
@@ -321,7 +320,6 @@ describe('ServerManager', () => {
 
         it('disallows creating a game when currently in a game', async () => {
             const { serverManager, server } = getServerManagerAndStuff();
-            serverManager.nextGameID = 10;
 
             const connection1 = await connectToServer(server, 'user 1');
             const connection2 = await connectToServer(server, 'user 2');
@@ -348,7 +346,6 @@ describe('ServerManager', () => {
 
         it('sends MessageToClient.ClientEnteredGame when successful', async () => {
             const { serverManager, server } = getServerManagerAndStuff();
-            serverManager.nextGameID = 10;
 
             const connection1 = await connectToServer(server, 'user 1');
             const connection2 = await connectToServer(server, 'user 2');
@@ -380,7 +377,6 @@ describe('ServerManager', () => {
 
         it('disallows entering a game when currently in a game', async () => {
             const { serverManager, server } = getServerManagerAndStuff();
-            serverManager.nextGameID = 10;
 
             const connection1 = await connectToServer(server, 'user 1');
             const connection2 = await connectToServer(server, 'user 2');
@@ -416,7 +412,6 @@ describe('ServerManager', () => {
 
         it('sends MessageToClient.ClientExitedGame when successful', async () => {
             const { serverManager, server } = getServerManagerAndStuff();
-            serverManager.nextGameID = 10;
 
             const connection1 = await connectToServer(server, 'user 1');
             const connection2 = await connectToServer(server, 'user 2');
@@ -449,7 +444,6 @@ describe('ServerManager', () => {
 
         it('disallows exiting a game when not in a game', async () => {
             const { serverManager, server } = getServerManagerAndStuff();
-            serverManager.nextGameID = 10;
 
             const connection1 = await connectToServer(server, 'user 1');
             const connection2 = await connectToServer(server, 'user 2');
@@ -541,7 +535,7 @@ function getServerManagerAndStuff() {
     const server = new TestServer();
     const userDataProvider = new TestUserDataProvider();
     // @ts-ignore
-    const serverManager = new ServerManager(server, userDataProvider, 1);
+    const serverManager = new ServerManager(server, userDataProvider, 10);
     serverManager.manage();
 
     return { serverManager, server, userDataProvider };
