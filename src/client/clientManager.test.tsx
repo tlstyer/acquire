@@ -603,7 +603,7 @@ function uncircularreferenceifyUserIDToUser(userIDToUser: Map<number, User>, gam
     gameIDToGameData.forEach(gameData => {
         let userIDs: number[];
         if (gameData.gameSetup !== null) {
-            userIDs = [...gameData.gameSetup.userIDToUsername.keys()];
+            userIDs = [...gameData.gameSetup.userIDsSet];
         } else {
             userIDs = [];
         }
@@ -627,7 +627,7 @@ function uncircularreferenceifyGameIDToGameData(gameIDToGameData: Map<number, Ga
     gameIDToGameData.forEach((gameData, gameID) => {
         let userIDs: Set<number>;
         if (gameData.gameSetup !== null) {
-            userIDs = new Set(gameData.gameSetup.userIDToUsername.keys());
+            userIDs = gameData.gameSetup.userIDsSet;
         } else {
             userIDs = new Set();
         }

@@ -33,10 +33,10 @@ export class ExampleGameSetupMaster extends React.Component<ExampleGameSetupMast
     render() {
         const { gameSetup, simulatedNetworkDelay } = this.state;
 
-        const numUsersInGame = gameSetup.usernameToUserID.size;
+        const numUsersInGame = gameSetup.userIDsSet.size;
         const maxUsers = gameSetup.usernames.size;
 
-        const userIDs = [...gameSetup.userIDToUsername.keys()].sort((a, b) => (a < b ? -1 : 1));
+        const userIDs = [...gameSetup.userIDsSet].sort((a, b) => (a < b ? -1 : 1));
 
         return (
             <div>
@@ -65,8 +65,8 @@ export class ExampleGameSetupMaster extends React.Component<ExampleGameSetupMast
                     }}
                 />
                 {userIDs.map(userID => {
-                    const username = gameSetup.userIDToUsername.get(userID) || '';
-                    return username !== gameSetup.hostUsername ? (
+                    const username = getUsernameForUserID(userID);
+                    return userID !== gameSetup.hostUserID ? (
                         <div key={username}>
                             <h2>{username}'s view</h2>
                             <input
