@@ -48,9 +48,10 @@ export class ExampleGameSetupMaster extends React.Component<ExampleGameSetupMast
                     gameMode={gameSetup.gameMode}
                     playerArrangementMode={gameSetup.playerArrangementMode}
                     usernames={gameSetup.usernames}
+                    userIDs={gameSetup.userIDs}
                     approvals={gameSetup.approvals}
-                    hostUsername={gameSetup.hostUsername}
-                    myUsername={gameSetup.hostUsername}
+                    hostUserID={gameSetup.hostUserID}
+                    myUserID={gameSetup.hostUserID}
                     onChangeGameMode={this.handleChangeGameMode}
                     onChangePlayerArrangementMode={this.handleChangePlayerArrangementMode}
                     onSwapPositions={this.handleSwapPositions}
@@ -87,9 +88,10 @@ export class ExampleGameSetupMaster extends React.Component<ExampleGameSetupMast
                                 gameMode={gameSetup.gameMode}
                                 playerArrangementMode={gameSetup.playerArrangementMode}
                                 usernames={gameSetup.usernames}
+                                userIDs={gameSetup.userIDs}
                                 approvals={gameSetup.approvals}
-                                hostUsername={gameSetup.hostUsername}
-                                myUsername={username}
+                                hostUserID={gameSetup.hostUserID}
+                                myUserID={userID}
                                 onApprove={() => {
                                     setTimeout(() => {
                                         console.log('approve', userID);
@@ -109,9 +111,10 @@ export class ExampleGameSetupMaster extends React.Component<ExampleGameSetupMast
                     gameMode={gameSetup.gameMode}
                     playerArrangementMode={gameSetup.playerArrangementMode}
                     usernames={gameSetup.usernames}
+                    userIDs={gameSetup.userIDs}
                     approvals={gameSetup.approvals}
-                    hostUsername={gameSetup.hostUsername}
-                    myUsername={watcherUsername}
+                    hostUserID={gameSetup.hostUserID}
+                    myUserID={-1}
                 />
             </div>
         );

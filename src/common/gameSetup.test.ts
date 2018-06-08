@@ -488,7 +488,7 @@ describe('gameSetup', () => {
     });
 
     describe('kickUser', () => {
-        it('cannot kick invalid position', () => {
+        it('cannot kick invalid user', () => {
             const gameSetup = new GameSetup(GameMode.Teams2vs2, PlayerArrangementMode.SpecifyTeams, 1, getUsernameForUserID);
             gameSetup.addUser(2);
             gameSetup.addUser(3);
@@ -504,13 +504,12 @@ describe('gameSetup', () => {
             // @ts-ignore
             gameSetup.kickUser({});
             gameSetup.kickUser(-1);
-            gameSetup.kickUser(4);
 
             expect(gameSetup.usernames.toJS()).toEqual(['user 1', 'user 2', 'user 3', 'user 4']);
             expect(gameSetup.history).toEqual([]);
         });
 
-        it('cannot kick position that does not have a user', () => {
+        it('cannot kick user that is not in the game', () => {
             const gameSetup = new GameSetup(GameMode.Teams2vs2, PlayerArrangementMode.SpecifyTeams, 1, getUsernameForUserID);
             gameSetup.addUser(2);
             gameSetup.addUser(3);
@@ -518,13 +517,13 @@ describe('gameSetup', () => {
 
             expect(gameSetup.usernames.toJS()).toEqual(['user 1', 'user 2', 'user 3', null]);
 
-            gameSetup.kickUser(3);
+            gameSetup.kickUser(4);
 
             expect(gameSetup.usernames.toJS()).toEqual(['user 1', 'user 2', 'user 3', null]);
             expect(gameSetup.history).toEqual([]);
         });
 
-        it('cannot kick position that belongs to the host', () => {
+        it('cannot kick the host', () => {
             const gameSetup = new GameSetup(GameMode.Teams2vs2, PlayerArrangementMode.SpecifyTeams, 1, getUsernameForUserID);
             gameSetup.addUser(2);
             gameSetup.addUser(3);
@@ -532,7 +531,7 @@ describe('gameSetup', () => {
 
             expect(gameSetup.usernames.toJS()).toEqual(['user 1', 'user 2', 'user 3', null]);
 
-            gameSetup.kickUser(0);
+            gameSetup.kickUser(1);
 
             expect(gameSetup.usernames.toJS()).toEqual(['user 1', 'user 2', 'user 3', null]);
             expect(gameSetup.history).toEqual([]);
@@ -548,12 +547,12 @@ describe('gameSetup', () => {
             expect(gameSetup.userIDs.toJS()).toEqual([1, 2, 3, null]);
             expect(gameSetup.userIDsSet).toEqual(new Set([1, 2, 3]));
 
-            gameSetup.kickUser(1);
+            gameSetup.kickUser(2);
 
             expect(gameSetup.usernames.toJS()).toEqual(['user 1', null, 'user 3', null]);
             expect(gameSetup.userIDs.toJS()).toEqual([1, null, 3, null]);
             expect(gameSetup.userIDsSet).toEqual(new Set([1, 3]));
-            expect(gameSetup.history).toEqual([[GameSetupChange.UserKicked, 1]]);
+            expect(gameSetup.history).toEqual([[GameSetupChange.UserKicked, 2]]);
         });
 
         it('approvals are reset', () => {
@@ -564,7 +563,7 @@ describe('gameSetup', () => {
             gameSetup.approvals = dummyApprovals;
             gameSetup.approvedByEverybody = true;
 
-            gameSetup.kickUser(1);
+            gameSetup.kickUser(2);
 
             expect(gameSetup.approvals.toJS()).toEqual([false, false, false, false]);
             expect(gameSetup.approvedByEverybody).toBe(false);
@@ -609,7 +608,7 @@ describe('gameSetup', () => {
             gameSetup.processChange([GameSetupChange.GameModeChanged, GameMode.Teams2vs2]);
             gameSetup.processChange([GameSetupChange.PlayerArrangementModeChanged, PlayerArrangementMode.ExactOrder]);
             gameSetup.processChange([GameSetupChange.PositionsSwapped, 0, 3]);
-            gameSetup.processChange([GameSetupChange.UserKicked, 1]);
+            gameSetup.processChange([GameSetupChange.UserKicked, 2]);
             gameSetup.processChange([GameSetupChange.UserAdded, 5]);
             gameSetup.processChange([GameSetupChange.UserAdded, 6]);
             gameSetup.processChange([GameSetupChange.UserApprovedOfGameSetup, 1]);

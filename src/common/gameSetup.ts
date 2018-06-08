@@ -238,13 +238,8 @@ export class GameSetup {
         this.history.push([GameSetupChange.PositionsSwapped, position1, position2]);
     }
 
-    kickUser(position: number) {
-        if (!Number.isInteger(position) || position < 0 || position >= this.usernames.size) {
-            return;
-        }
-
-        const userID = this.userIDs.get(position);
-        if (userID === null || userID === undefined) {
+    kickUser(userID: number) {
+        if (!this.userIDsSet.has(userID)) {
             return;
         }
 
@@ -252,12 +247,17 @@ export class GameSetup {
             return;
         }
 
-        this.usernames = this.usernames.set(position, null);
-        this.userIDs = this.userIDs.set(position, null);
-        this.userIDsSet.delete(userID);
-        this.approvals = defaultApprovals.get(gameModeToNumPlayers.get(this.gameMode)!)!;
-        this.approvedByEverybody = false;
-        this.history.push([GameSetupChange.UserKicked, position]);
+        for (let position = 0; position < this.userIDs.size; position++) {
+            if (this.userIDs.get(position) === userID) {
+                this.usernames = this.usernames.set(position, null);
+                this.userIDs = this.userIDs.set(position, null);
+                this.userIDsSet.delete(userID);
+                this.approvals = defaultApprovals.get(gameModeToNumPlayers.get(this.gameMode)!)!;
+                this.approvedByEverybody = false;
+                this.history.push([GameSetupChange.UserKicked, userID]);
+                break;
+            }
+        }
     }
 
     processChange(message: any[]) {

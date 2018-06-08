@@ -9,9 +9,10 @@ export interface GameSetupUIProps {
     gameMode: GameMode;
     playerArrangementMode: PlayerArrangementMode;
     usernames: List<string | null>;
+    userIDs: List<number | null>;
     approvals: List<boolean>;
-    hostUsername: string;
-    myUsername: string;
+    hostUserID: number;
+    myUserID: number;
     onChangeGameMode?: (gameMode: GameMode) => void;
     onChangePlayerArrangementMode?: (playerArrangementMode: PlayerArrangementMode) => void;
     onSwapPositions?: (position1: number, position2: number) => void;
@@ -189,29 +190,27 @@ export class GameSetupUI extends React.PureComponent<GameSetupUIProps> {
     }
 
     renderKickUserCell(index: number) {
-        const { usernames, hostUsername, onKickUser } = this.props;
+        const { userIDs, hostUserID, onKickUser } = this.props;
 
         if (onKickUser !== undefined) {
-            const username = usernames.get(index, null);
+            const userID = userIDs.get(index, null);
 
             return (
-                <td>
-                    {username !== null && username !== hostUsername ? <input type={'button'} value={'Kick'} onClick={() => onKickUser(index)} /> : undefined}
-                </td>
+                <td>{userID !== null && userID !== hostUserID ? <input type={'button'} value={'Kick'} onClick={() => onKickUser(userID)} /> : undefined}</td>
             );
         }
     }
 
     renderApproveCell(index: number) {
-        const { usernames, approvals, myUsername, onApprove } = this.props;
+        const { userIDs, approvals, myUserID, onApprove } = this.props;
 
         const approved = approvals.get(index, false);
 
         if (approved) {
             return <td className={style.ready}>Ready</td>;
         } else {
-            const username = usernames.get(index, null);
-            if (username === myUsername) {
+            const userID = userIDs.get(index, null);
+            if (userID === myUserID) {
                 return (
                     <td>
                         <input type={'button'} value={'Ready'} onClick={onApprove} />

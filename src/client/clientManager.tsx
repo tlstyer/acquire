@@ -170,9 +170,10 @@ export class ClientManager {
                     gameMode={gameSetup.gameMode}
                     playerArrangementMode={gameSetup.playerArrangementMode}
                     usernames={gameSetup.usernames}
+                    userIDs={gameSetup.userIDs}
                     approvals={gameSetup.approvals}
-                    hostUsername={gameSetup.hostUsername}
-                    myUsername={this.username}
+                    hostUserID={gameSetup.hostUserID}
+                    myUserID={this.myClient!.user.id}
                     onChangeGameMode={undefined}
                     onChangePlayerArrangementMode={undefined}
                     onSwapPositions={undefined}
