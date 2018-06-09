@@ -334,45 +334,11 @@ describe('ClientManager', () => {
 
     describe('onExitGameClicked', () => {
         it('sends ExitGame message when connected', () => {
-            const { clientManager, testConnection } = getClientManagerAndStuff();
-
-            clientManager.onSubmitLoginForm('me', '');
-            testConnection.triggerOpen();
-            testConnection.triggerMessage([
-                [
-                    MessageToClient.Greetings,
-                    2,
-                    [[1, 'user 1', [[1, 1]]], [2, 'me', [[2, 1]]]],
-                    [[0, 10, 1, GameMode.Teams2vs2, PlayerArrangementMode.RandomOrder, 1, [1, 0, 0, 0], [0, 0, 0, 0]]],
-                ],
-            ]);
-            testConnection.clearSentMessages();
-
-            clientManager.onExitGameClicked();
-
-            expect(testConnection.sentMessages.length).toBe(1);
-            expect(testConnection.sentMessages[0]).toEqual([MessageToServer.ExitGame]);
+            sendsMessageWhenConnected(clientManager => clientManager.onExitGameClicked(), [MessageToServer.ExitGame]);
         });
 
         it('does not send ExitGame message when not connected', () => {
-            const { clientManager, testConnection } = getClientManagerAndStuff();
-
-            clientManager.onSubmitLoginForm('me', '');
-            testConnection.triggerOpen();
-            testConnection.triggerMessage([
-                [
-                    MessageToClient.Greetings,
-                    2,
-                    [[1, 'user 1', [[1, 1]]], [2, 'me', [[2, 1]]]],
-                    [[0, 10, 1, GameMode.Teams2vs2, PlayerArrangementMode.RandomOrder, 1, [1, 0, 0, 0], [0, 0, 0, 0]]],
-                ],
-            ]);
-            testConnection.triggerClose();
-            testConnection.clearSentMessages();
-
-            clientManager.onExitGameClicked();
-
-            expect(testConnection.sentMessages.length).toBe(0);
+            doesNotSendMessageWhenNotConnected(clientManager => clientManager.onExitGameClicked());
         });
     });
 
