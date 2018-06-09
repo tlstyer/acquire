@@ -560,9 +560,7 @@ class UCRClient {
 }
 
 class UCRUser {
-    numGames = 0;
-
-    constructor(public userID: number, public username: string, public clientIDs: Set<number>) {}
+    constructor(public userID: number, public username: string, public clientIDs: Set<number>, public numGames: number) {}
 }
 
 class UCRGameData {
@@ -604,7 +602,7 @@ function expectClientAndUserAndGameData(serverManager: ServerManager, userDatas:
             clientIDs.add(clientData.clientID);
         });
 
-        userIDToUCRUser.set(userData.userID, new UCRUser(userData.userID, userData.username, clientIDs));
+        userIDToUCRUser.set(userData.userID, new UCRUser(userData.userID, userData.username, clientIDs, 0));
     });
 
     gameDataDatas.forEach(gameDataData => {
@@ -647,25 +645,7 @@ function uncircularreferenceifyUserIDToUser(userIDToUser: Map<number, User>, gam
             clientIDs.add(client.id);
         });
 
-        userIDToUCRUser.set(userID, new UCRUser(user.id, user.name, clientIDs));
-    });
-
-    gameIDToGameData.forEach(gameData => {
-        let userIDs: number[];
-        if (gameData.gameSetup !== null) {
-            userIDs = [...gameData.gameSetup.userIDsSet];
-        } else {
-            userIDs = [];
-        }
-
-        userIDs.forEach(userID => {
-            const ucrUser = userIDToUCRUser.get(userID);
-            if (ucrUser !== undefined) {
-                ucrUser.numGames++;
-            } else {
-                fail('user in a game but not in users map');
-            }
-        });
+        userIDToUCRUser.set(userID, new UCRUser(user.id, user.name, clientIDs, user.numGames));
     });
 
     return userIDToUCRUser;
