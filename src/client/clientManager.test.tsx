@@ -83,7 +83,7 @@ describe('ClientManager', () => {
     });
 
     describe('MessageToClient.Greetings', () => {
-        it('message is processed correctly', async () => {
+        it('message is processed correctly', () => {
             const { clientManager, testConnection } = getClientManagerAndStuff();
 
             clientManager.onSubmitLoginForm('me', '');
@@ -124,7 +124,7 @@ describe('ClientManager', () => {
     });
 
     describe('MessageToClient.ClientConnected', () => {
-        it('new user and client added', async () => {
+        it('new user and client added', () => {
             const { clientManager, testConnection } = getClientManagerAndStuff();
 
             clientManager.onSubmitLoginForm('me', '');
@@ -135,7 +135,7 @@ describe('ClientManager', () => {
             expectClientAndUserAndGameData(clientManager, [new UserData(1, 'me', [new ClientData(2)]), new UserData(3, 'user 3', [new ClientData(4)])], []);
         });
 
-        it('client added for existing user', async () => {
+        it('client added for existing user', () => {
             const { clientManager, testConnection } = getClientManagerAndStuff();
 
             clientManager.onSubmitLoginForm('me', '');
@@ -153,7 +153,7 @@ describe('ClientManager', () => {
     });
 
     describe('MessageToClient.ClientDisconnected', () => {
-        it('sole client of a user disconnects', async () => {
+        it('sole client of a user disconnects', () => {
             const { clientManager, testConnection } = getClientManagerAndStuff();
 
             clientManager.onSubmitLoginForm('me', '');
@@ -165,7 +165,7 @@ describe('ClientManager', () => {
             expectClientAndUserAndGameData(clientManager, [new UserData(1, 'me', [new ClientData(2)])], []);
         });
 
-        it('a client of a user disconnects, leaving another client still connected', async () => {
+        it('a client of a user disconnects, leaving another client still connected', () => {
             const { clientManager, testConnection } = getClientManagerAndStuff();
 
             clientManager.onSubmitLoginForm('me', '');
@@ -178,7 +178,7 @@ describe('ClientManager', () => {
             expectClientAndUserAndGameData(clientManager, [new UserData(1, 'me', [new ClientData(2)]), new UserData(3, 'user 3', [new ClientData(5)])], []);
         });
 
-        it('user is not deleted if they are in a game', async () => {
+        it('user is not deleted if they are in a game', () => {
             const { clientManager, testConnection } = getClientManagerAndStuff();
 
             clientManager.onSubmitLoginForm('me', '');
@@ -198,7 +198,7 @@ describe('ClientManager', () => {
     });
 
     describe('onSubmitCreateGame', () => {
-        it('sends CreateGame message when connected', async () => {
+        it('sends CreateGame message when connected', () => {
             const { clientManager, testConnection } = getClientManagerAndStuff();
 
             clientManager.onSubmitLoginForm('me', '');
@@ -212,7 +212,7 @@ describe('ClientManager', () => {
             expect(testConnection.sentMessages[0]).toEqual([MessageToServer.CreateGame, GameMode.Teams2vs2]);
         });
 
-        it('does not send CreateGame message when not connected', async () => {
+        it('does not send CreateGame message when not connected', () => {
             const { clientManager, testConnection } = getClientManagerAndStuff();
 
             clientManager.onSubmitLoginForm('me', '');
@@ -228,7 +228,7 @@ describe('ClientManager', () => {
     });
 
     describe('MessageToClient.GameCreated', () => {
-        it('game is added', async () => {
+        it('game is added', () => {
             const { clientManager, testConnection } = getClientManagerAndStuff();
 
             clientManager.onSubmitLoginForm('me', '');
@@ -253,7 +253,7 @@ describe('ClientManager', () => {
     });
 
     describe('MessageToClient.ClientEnteredGame', () => {
-        it('own client enters game', async () => {
+        it('own client enters game', () => {
             const { clientManager, testConnection } = getClientManagerAndStuff();
 
             clientManager.onSubmitLoginForm('me', '');
@@ -270,7 +270,7 @@ describe('ClientManager', () => {
             );
         });
 
-        it('other client enters game', async () => {
+        it('other client enters game', () => {
             const { clientManager, testConnection } = getClientManagerAndStuff();
 
             clientManager.onSubmitLoginForm('me', '');
@@ -289,7 +289,7 @@ describe('ClientManager', () => {
     });
 
     describe('onEnterClicked', () => {
-        it('sends EnterGame message when connected', async () => {
+        it('sends EnterGame message when connected', () => {
             const { clientManager, testConnection } = getClientManagerAndStuff();
 
             clientManager.onSubmitLoginForm('me', '');
@@ -310,7 +310,7 @@ describe('ClientManager', () => {
             expect(testConnection.sentMessages[0]).toEqual([MessageToServer.EnterGame, 1]);
         });
 
-        it('does not send EnterGame message when not connected', async () => {
+        it('does not send EnterGame message when not connected', () => {
             const { clientManager, testConnection } = getClientManagerAndStuff();
 
             clientManager.onSubmitLoginForm('me', '');
@@ -333,7 +333,7 @@ describe('ClientManager', () => {
     });
 
     describe('onExitGameClicked', () => {
-        it('sends ExitGame message when connected', async () => {
+        it('sends ExitGame message when connected', () => {
             const { clientManager, testConnection } = getClientManagerAndStuff();
 
             clientManager.onSubmitLoginForm('me', '');
@@ -354,7 +354,7 @@ describe('ClientManager', () => {
             expect(testConnection.sentMessages[0]).toEqual([MessageToServer.ExitGame]);
         });
 
-        it('does not send ExitGame message when not connected', async () => {
+        it('does not send ExitGame message when not connected', () => {
             const { clientManager, testConnection } = getClientManagerAndStuff();
 
             clientManager.onSubmitLoginForm('me', '');
@@ -377,7 +377,7 @@ describe('ClientManager', () => {
     });
 
     describe('MessageToClient.ClientExitedGame', () => {
-        it('own client exits game', async () => {
+        it('own client exits game', () => {
             const { clientManager, testConnection } = getClientManagerAndStuff();
 
             clientManager.onSubmitLoginForm('me', '');
@@ -408,7 +408,7 @@ describe('ClientManager', () => {
             );
         });
 
-        it('other client exits game', async () => {
+        it('other client exits game', () => {
             const { clientManager, testConnection } = getClientManagerAndStuff();
 
             clientManager.onSubmitLoginForm('me', '');
