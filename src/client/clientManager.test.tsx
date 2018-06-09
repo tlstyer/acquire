@@ -1,5 +1,5 @@
 import * as SockJS from 'sockjs-client';
-import { ErrorCode, GameMode, MessageToClient, MessageToServer, PlayerArrangementMode } from '../common/enums';
+import { ErrorCode, GameMode, GameSetupChange, MessageToClient, MessageToServer, PlayerArrangementMode } from '../common/enums';
 import { Client, ClientManager, ClientManagerPage, GameData, User } from './clientManager';
 
 jest.mock('sockjs-client');
@@ -439,6 +439,296 @@ describe('ClientManager', () => {
             );
         });
     });
+
+    describe('onJoinGame', () => {
+        it('sends JoinGame message when connected', () => {
+            sendsMessageWhenConnected(clientManager => clientManager.onJoinGame(), [MessageToServer.JoinGame]);
+        });
+
+        it('does not send JoinGame message when not connected', () => {
+            doesNotSendMessageWhenNotConnected(clientManager => clientManager.onJoinGame());
+        });
+    });
+
+    describe('onUnjoinGame', () => {
+        it('sends UnjoinGame message when connected', () => {
+            sendsMessageWhenConnected(clientManager => clientManager.onUnjoinGame(), [MessageToServer.UnjoinGame]);
+        });
+
+        it('does not send UnjoinGame message when not connected', () => {
+            doesNotSendMessageWhenNotConnected(clientManager => clientManager.onUnjoinGame());
+        });
+    });
+
+    describe('onApproveOfGameSetup', () => {
+        it('sends ApproveOfGameSetup message when connected', () => {
+            sendsMessageWhenConnected(clientManager => clientManager.onApproveOfGameSetup(), [MessageToServer.ApproveOfGameSetup]);
+        });
+
+        it('does not send ApproveOfGameSetup message when not connected', () => {
+            doesNotSendMessageWhenNotConnected(clientManager => clientManager.onApproveOfGameSetup());
+        });
+    });
+
+    describe('onChangeGameMode', () => {
+        it('sends ChangeGameMode message when connected', () => {
+            sendsMessageWhenConnected(clientManager => clientManager.onChangeGameMode(GameMode.Teams2vs2), [
+                MessageToServer.ChangeGameMode,
+                GameMode.Teams2vs2,
+            ]);
+        });
+
+        it('does not send ChangeGameMode message when not connected', () => {
+            doesNotSendMessageWhenNotConnected(clientManager => clientManager.onChangeGameMode(GameMode.Teams2vs2));
+        });
+    });
+
+    describe('onChangePlayerArrangementMode', () => {
+        it('sends ChangePlayerArrangementMode message when connected', () => {
+            sendsMessageWhenConnected(clientManager => clientManager.onChangePlayerArrangementMode(PlayerArrangementMode.ExactOrder), [
+                MessageToServer.ChangePlayerArrangementMode,
+                PlayerArrangementMode.ExactOrder,
+            ]);
+        });
+
+        it('does not send ChangePlayerArrangementMode message when not connected', () => {
+            doesNotSendMessageWhenNotConnected(clientManager => clientManager.onChangePlayerArrangementMode(PlayerArrangementMode.ExactOrder));
+        });
+    });
+
+    describe('onSwapPositions', () => {
+        it('sends SwapPositions message when connected', () => {
+            sendsMessageWhenConnected(clientManager => clientManager.onSwapPositions(0, 1), [MessageToServer.SwapPositions, 0, 1]);
+        });
+
+        it('does not send SwapPositions message when not connected', () => {
+            doesNotSendMessageWhenNotConnected(clientManager => clientManager.onSwapPositions(0, 1));
+        });
+    });
+
+    describe('onKickUser', () => {
+        it('sends KickUser message when connected', () => {
+            sendsMessageWhenConnected(clientManager => clientManager.onKickUser(5), [MessageToServer.KickUser, 5]);
+        });
+
+        it('does not send KickUser message when not connected', () => {
+            doesNotSendMessageWhenNotConnected(clientManager => clientManager.onKickUser(5));
+        });
+    });
+
+    describe('MessageToClient.GameSetupChanged', () => {
+        it('UserAdded message is processed correctly', () => {
+            const { clientManager, testConnection } = getClientManagerAndStuff();
+
+            clientManager.onSubmitLoginForm('me', '');
+            testConnection.triggerOpen();
+            testConnection.triggerMessage([
+                [
+                    MessageToClient.Greetings,
+                    2,
+                    [[1, 'user 1', [[1, 1]]], [2, 'me', [[2, 1]]]],
+                    [[0, 10, 1, GameMode.Teams2vs2, PlayerArrangementMode.RandomOrder, 1, [1, 0, 0, 0], [0, 0, 0, 0]]],
+                ],
+            ]);
+
+            expectClientAndUserAndGameData(
+                clientManager,
+                [new UserData(1, 'user 1', [new ClientData(1, 10)]), new UserData(2, 'me', [new ClientData(2, 10)])],
+                [new GameDataData(10, 1, [1])],
+            );
+
+            testConnection.triggerMessage([[MessageToClient.GameSetupChanged, 1, GameSetupChange.UserAdded, 2]]);
+
+            expectClientAndUserAndGameData(
+                clientManager,
+                [new UserData(1, 'user 1', [new ClientData(1, 10)]), new UserData(2, 'me', [new ClientData(2, 10)])],
+                [new GameDataData(10, 1, [1, 2])],
+            );
+            expect(clientManager.gameIDToGameData.get(10)!.gameSetup!.userIDs.toJS()).toEqual([1, 2, null, null]);
+        });
+
+        it('UserRemoved message is processed correctly', () => {
+            const { clientManager, testConnection } = getClientManagerAndStuff();
+
+            clientManager.onSubmitLoginForm('me', '');
+            testConnection.triggerOpen();
+            testConnection.triggerMessage([
+                [
+                    MessageToClient.Greetings,
+                    2,
+                    [[1, 'user 1', [[1, 1]]], [2, 'me', [[2, 1]]]],
+                    [[0, 10, 1, GameMode.Teams2vs2, PlayerArrangementMode.RandomOrder, 1, [1, 2, 0, 0], [0, 0, 0, 0]]],
+                ],
+            ]);
+
+            expectClientAndUserAndGameData(
+                clientManager,
+                [new UserData(1, 'user 1', [new ClientData(1, 10)]), new UserData(2, 'me', [new ClientData(2, 10)])],
+                [new GameDataData(10, 1, [1, 2])],
+            );
+
+            testConnection.triggerMessage([[MessageToClient.GameSetupChanged, 1, GameSetupChange.UserRemoved, 2]]);
+
+            expectClientAndUserAndGameData(
+                clientManager,
+                [new UserData(1, 'user 1', [new ClientData(1, 10)]), new UserData(2, 'me', [new ClientData(2, 10)])],
+                [new GameDataData(10, 1, [1])],
+            );
+            expect(clientManager.gameIDToGameData.get(10)!.gameSetup!.userIDs.toJS()).toEqual([1, null, null, null]);
+        });
+
+        it('UserApprovedOfGameSetup message is processed correctly', () => {
+            const { clientManager, testConnection } = getClientManagerAndStuff();
+
+            clientManager.onSubmitLoginForm('me', '');
+            testConnection.triggerOpen();
+            testConnection.triggerMessage([
+                [
+                    MessageToClient.Greetings,
+                    2,
+                    [[1, 'user 1', [[1, 1]]], [2, 'me', [[2, 1]]]],
+                    [[0, 10, 1, GameMode.Singles2, PlayerArrangementMode.RandomOrder, 1, [1, 2], [0, 0]]],
+                ],
+            ]);
+
+            expectClientAndUserAndGameData(
+                clientManager,
+                [new UserData(1, 'user 1', [new ClientData(1, 10)]), new UserData(2, 'me', [new ClientData(2, 10)])],
+                [new GameDataData(10, 1, [1, 2])],
+            );
+
+            testConnection.triggerMessage([[MessageToClient.GameSetupChanged, 1, GameSetupChange.UserApprovedOfGameSetup, 2]]);
+
+            expectClientAndUserAndGameData(
+                clientManager,
+                [new UserData(1, 'user 1', [new ClientData(1, 10)]), new UserData(2, 'me', [new ClientData(2, 10)])],
+                [new GameDataData(10, 1, [1, 2])],
+            );
+            expect(clientManager.gameIDToGameData.get(10)!.gameSetup!.approvals.toJS()).toEqual([false, true]);
+        });
+
+        it('GameModeChanged message is processed correctly', () => {
+            const { clientManager, testConnection } = getClientManagerAndStuff();
+
+            clientManager.onSubmitLoginForm('me', '');
+            testConnection.triggerOpen();
+            testConnection.triggerMessage([
+                [
+                    MessageToClient.Greetings,
+                    2,
+                    [[1, 'user 1', [[1, 1]]], [2, 'me', [[2, 1]]]],
+                    [[0, 10, 1, GameMode.Singles2, PlayerArrangementMode.RandomOrder, 1, [1, 2], [0, 0]]],
+                ],
+            ]);
+
+            expectClientAndUserAndGameData(
+                clientManager,
+                [new UserData(1, 'user 1', [new ClientData(1, 10)]), new UserData(2, 'me', [new ClientData(2, 10)])],
+                [new GameDataData(10, 1, [1, 2])],
+            );
+
+            testConnection.triggerMessage([[MessageToClient.GameSetupChanged, 1, GameSetupChange.GameModeChanged, GameMode.Singles3]]);
+
+            expectClientAndUserAndGameData(
+                clientManager,
+                [new UserData(1, 'user 1', [new ClientData(1, 10)]), new UserData(2, 'me', [new ClientData(2, 10)])],
+                [new GameDataData(10, 1, [1, 2])],
+            );
+            expect(clientManager.gameIDToGameData.get(10)!.gameSetup!.gameMode).toEqual(GameMode.Singles3);
+        });
+
+        it('PlayerArrangementModeChanged message is processed correctly', () => {
+            const { clientManager, testConnection } = getClientManagerAndStuff();
+
+            clientManager.onSubmitLoginForm('me', '');
+            testConnection.triggerOpen();
+            testConnection.triggerMessage([
+                [
+                    MessageToClient.Greetings,
+                    2,
+                    [[1, 'user 1', [[1, 1]]], [2, 'me', [[2, 1]]]],
+                    [[0, 10, 1, GameMode.Singles2, PlayerArrangementMode.RandomOrder, 1, [1, 2], [0, 0]]],
+                ],
+            ]);
+
+            expectClientAndUserAndGameData(
+                clientManager,
+                [new UserData(1, 'user 1', [new ClientData(1, 10)]), new UserData(2, 'me', [new ClientData(2, 10)])],
+                [new GameDataData(10, 1, [1, 2])],
+            );
+
+            testConnection.triggerMessage([
+                [MessageToClient.GameSetupChanged, 1, GameSetupChange.PlayerArrangementModeChanged, PlayerArrangementMode.ExactOrder],
+            ]);
+
+            expectClientAndUserAndGameData(
+                clientManager,
+                [new UserData(1, 'user 1', [new ClientData(1, 10)]), new UserData(2, 'me', [new ClientData(2, 10)])],
+                [new GameDataData(10, 1, [1, 2])],
+            );
+            expect(clientManager.gameIDToGameData.get(10)!.gameSetup!.playerArrangementMode).toEqual(PlayerArrangementMode.ExactOrder);
+        });
+
+        it('PositionsSwapped message is processed correctly', () => {
+            const { clientManager, testConnection } = getClientManagerAndStuff();
+
+            clientManager.onSubmitLoginForm('me', '');
+            testConnection.triggerOpen();
+            testConnection.triggerMessage([
+                [
+                    MessageToClient.Greetings,
+                    2,
+                    [[1, 'user 1', [[1, 1]]], [2, 'me', [[2, 1]]]],
+                    [[0, 10, 1, GameMode.Teams2vs2, PlayerArrangementMode.RandomOrder, 1, [1, 2, 0, 0], [0, 0, 0, 0]]],
+                ],
+            ]);
+
+            expectClientAndUserAndGameData(
+                clientManager,
+                [new UserData(1, 'user 1', [new ClientData(1, 10)]), new UserData(2, 'me', [new ClientData(2, 10)])],
+                [new GameDataData(10, 1, [1, 2])],
+            );
+
+            testConnection.triggerMessage([[MessageToClient.GameSetupChanged, 1, GameSetupChange.PositionsSwapped, 0, 1]]);
+
+            expectClientAndUserAndGameData(
+                clientManager,
+                [new UserData(1, 'user 1', [new ClientData(1, 10)]), new UserData(2, 'me', [new ClientData(2, 10)])],
+                [new GameDataData(10, 1, [1, 2])],
+            );
+            expect(clientManager.gameIDToGameData.get(10)!.gameSetup!.userIDs.toJS()).toEqual([2, 1, null, null]);
+        });
+
+        it('UserKicked message is processed correctly', () => {
+            const { clientManager, testConnection } = getClientManagerAndStuff();
+
+            clientManager.onSubmitLoginForm('me', '');
+            testConnection.triggerOpen();
+            testConnection.triggerMessage([
+                [
+                    MessageToClient.Greetings,
+                    2,
+                    [[1, 'user 1', [[1, 1]]], [2, 'me', [[2, 1]]]],
+                    [[0, 10, 1, GameMode.Teams2vs2, PlayerArrangementMode.RandomOrder, 1, [1, 2, 0, 0], [0, 0, 0, 0]]],
+                ],
+            ]);
+
+            expectClientAndUserAndGameData(
+                clientManager,
+                [new UserData(1, 'user 1', [new ClientData(1, 10)]), new UserData(2, 'me', [new ClientData(2, 10)])],
+                [new GameDataData(10, 1, [1, 2])],
+            );
+
+            testConnection.triggerMessage([[MessageToClient.GameSetupChanged, 1, GameSetupChange.UserKicked, 2]]);
+
+            expectClientAndUserAndGameData(
+                clientManager,
+                [new UserData(1, 'user 1', [new ClientData(1, 10)]), new UserData(2, 'me', [new ClientData(2, 10)])],
+                [new GameDataData(10, 1, [1])],
+            );
+            expect(clientManager.gameIDToGameData.get(10)!.gameSetup!.userIDs.toJS()).toEqual([1, null, null, null]);
+        });
+    });
 });
 
 class TestConnection {
@@ -622,4 +912,30 @@ function uncircularreferenceifyGameIDToGameData(gameIDToGameData: Map<number, Ga
     });
 
     return gameIDTOUCRGameData;
+}
+
+function sendsMessageWhenConnected(handlerCallback: (clientManager: ClientManager) => void, expectedMessage: any[]) {
+    const { clientManager, testConnection } = getClientManagerAndStuff();
+
+    clientManager.onSubmitLoginForm('me', '');
+    testConnection.triggerOpen();
+    testConnection.clearSentMessages();
+
+    handlerCallback(clientManager);
+
+    expect(testConnection.sentMessages.length).toBe(1);
+    expect(testConnection.sentMessages[0]).toEqual(expectedMessage);
+}
+
+function doesNotSendMessageWhenNotConnected(handlerCallback: (clientManager: ClientManager) => void) {
+    const { clientManager, testConnection } = getClientManagerAndStuff();
+
+    clientManager.onSubmitLoginForm('me', '');
+    testConnection.triggerOpen();
+    testConnection.triggerClose();
+    testConnection.clearSentMessages();
+
+    handlerCallback(clientManager);
+
+    expect(testConnection.sentMessages.length).toBe(0);
 }

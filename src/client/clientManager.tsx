@@ -4,7 +4,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import * as SockJS from 'sockjs-client';
 import { defaultGameBoard } from '../common/defaults';
-import { ErrorCode, GameMode, MessageToClient, MessageToServer, PlayerArrangementMode } from '../common/enums';
+import { ErrorCode, GameMode, GameSetupChange, MessageToClient, MessageToServer, PlayerArrangementMode } from '../common/enums';
 import { GameSetup } from '../common/gameSetup';
 import { CreateGame } from './components/CreateGame';
 import { GameListing } from './components/GameListing';
@@ -66,6 +66,7 @@ export class ClientManager {
             [MessageToClient.GameCreated, this.onMessageGameCreated],
             [MessageToClient.ClientEnteredGame, this.onMessageClientEnteredGame],
             [MessageToClient.ClientExitedGame, this.onMessageClientExitedGame],
+            [MessageToClient.GameSetupChanged, this.onMessageGameSetupChanged],
         ];
         this.onMessageFunctions = new Map(mf);
     }
@@ -149,7 +150,11 @@ export class ClientManager {
         return (
             <>
                 <Header username={this.username} isConnected={this.socket !== null} />
-                <input type={'button'} value={'Exit Game'} onClick={this.onExitGameClicked} />
+
+                <div>
+                    <input type={'button'} value={'Exit Game'} onClick={this.onExitGameClicked} />
+                </div>
+
                 {gameData.gameSetup !== null ? this.renderGamePageGameSetup() : undefined}
             </>
         );
@@ -163,9 +168,28 @@ export class ClientManager {
 
     renderGamePageGameSetup() {
         const gameSetup = this.myClient!.gameData!.gameSetup!;
+        const myUserID = this.myClient!.user.id;
+        const isHost = myUserID === gameSetup.hostUserID;
+        const isJoined = gameSetup.userIDsSet.has(myUserID);
 
         return (
             <>
+                {!isHost && !isJoined ? (
+                    <div>
+                        <input type={'button'} value={'Sit Down'} onClick={this.onJoinGame} />
+                    </div>
+                ) : (
+                    undefined
+                )}
+
+                {!isHost && isJoined ? (
+                    <div>
+                        <input type={'button'} value={'Stand Up'} onClick={this.onUnjoinGame} />
+                    </div>
+                ) : (
+                    undefined
+                )}
+
                 <GameSetupUI
                     gameMode={gameSetup.gameMode}
                     playerArrangementMode={gameSetup.playerArrangementMode}
@@ -174,15 +198,57 @@ export class ClientManager {
                     approvals={gameSetup.approvals}
                     hostUserID={gameSetup.hostUserID}
                     myUserID={this.myClient!.user.id}
-                    onChangeGameMode={undefined}
-                    onChangePlayerArrangementMode={undefined}
-                    onSwapPositions={undefined}
-                    onKickUser={undefined}
-                    onApprove={undefined}
+                    onChangeGameMode={isHost ? this.onChangeGameMode : undefined}
+                    onChangePlayerArrangementMode={isHost ? this.onChangePlayerArrangementMode : undefined}
+                    onSwapPositions={isHost ? this.onSwapPositions : undefined}
+                    onKickUser={isHost ? this.onKickUser : undefined}
+                    onApprove={this.onApproveOfGameSetup}
                 />
             </>
         );
     }
+
+    onJoinGame = () => {
+        if (this.socket !== null) {
+            this.socket.send(JSON.stringify([MessageToServer.JoinGame]));
+        }
+    };
+
+    onUnjoinGame = () => {
+        if (this.socket !== null) {
+            this.socket.send(JSON.stringify([MessageToServer.UnjoinGame]));
+        }
+    };
+
+    onApproveOfGameSetup = () => {
+        if (this.socket !== null) {
+            this.socket.send(JSON.stringify([MessageToServer.ApproveOfGameSetup]));
+        }
+    };
+
+    onChangeGameMode = (gameMode: GameMode) => {
+        if (this.socket !== null) {
+            this.socket.send(JSON.stringify([MessageToServer.ChangeGameMode, gameMode]));
+        }
+    };
+
+    onChangePlayerArrangementMode = (playerArrangementMode: PlayerArrangementMode) => {
+        if (this.socket !== null) {
+            this.socket.send(JSON.stringify([MessageToServer.ChangePlayerArrangementMode, playerArrangementMode]));
+        }
+    };
+
+    onSwapPositions = (position1: number, position2: number) => {
+        if (this.socket !== null) {
+            this.socket.send(JSON.stringify([MessageToServer.SwapPositions, position1, position2]));
+        }
+    };
+
+    onKickUser = (position: number) => {
+        if (this.socket !== null) {
+            this.socket.send(JSON.stringify([MessageToServer.KickUser, position]));
+        }
+    };
 
     connect = () => {
         this.socket = new SockJS('http://localhost:9999/sockjs');
@@ -308,9 +374,7 @@ export class ClientManager {
 
         this.clientIDToClient.delete(clientID);
         user.clients.delete(client);
-        if (user.clients.size === 0 && user.numGames === 0) {
-            this.userIDToUser.delete(user.id);
-        }
+        this.deleteUserIfItDoesNotHaveReferences(user);
     }
 
     onMessageGameCreated(gameID: number, gameDisplayNumber: number, gameMode: GameMode, hostClientID: number) {
@@ -349,6 +413,24 @@ export class ClientManager {
         }
     }
 
+    onMessageGameSetupChanged(gameDisplayNumber: number, ...params: any[]) {
+        const gameSetup = this.gameDisplayNumberToGameData.get(gameDisplayNumber)!.gameSetup!;
+
+        gameSetup.processChange(params);
+
+        switch (params[0]) {
+            case GameSetupChange.UserAdded:
+                this.userIDToUser.get(params[1])!.numGames++;
+                break;
+            case GameSetupChange.UserRemoved:
+            case GameSetupChange.UserKicked:
+                const user = this.userIDToUser.get(params[1])!;
+                user.numGames--;
+                this.deleteUserIfItDoesNotHaveReferences(user);
+                break;
+        }
+    }
+
     onSocketClose = (e: CloseEvent) => {
         if (this.socket === null) {
             throw new Error('why is this.socket null?');
@@ -369,6 +451,12 @@ export class ClientManager {
     getUsernameForUserID = (userID: number) => {
         return this.userIDToUser.get(userID)!.name;
     };
+
+    deleteUserIfItDoesNotHaveReferences(user: User) {
+        if (user.clients.size === 0 && user.numGames === 0) {
+            this.userIDToUser.delete(user.id);
+        }
+    }
 }
 
 export class Client {

@@ -6,12 +6,20 @@ export enum MessageToClient {
     GameCreated,
     ClientEnteredGame,
     ClientExitedGame,
+    GameSetupChanged,
 }
 
 export enum MessageToServer {
     CreateGame,
     EnterGame,
     ExitGame,
+    JoinGame,
+    UnjoinGame,
+    ApproveOfGameSetup,
+    ChangeGameMode,
+    ChangePlayerArrangementMode,
+    SwapPositions,
+    KickUser,
 }
 
 export enum ErrorCode {

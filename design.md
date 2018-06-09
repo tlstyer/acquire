@@ -127,6 +127,19 @@ Server sends all clients:
 -   MessageToClient.ClientExitedGame
 -   Client ID
 
+## Game setup changes
+
+Client sends:
+
+-   MessageToServer.JoinGame or MessageToServer.UnjoinGame or MessageToServer.ApproveOfGameSetup or MessageToServer.ChangeGameMode or MessageToServer.ChangePlayerArrangementMode or MessageToServer.SwapPositions or MessageToServer.KickUser
+-   Required parameters
+
+Server sends all clients:
+
+-   MessageToClient.GameSetupChanged
+-   Game display number
+-   GameSetup change message
+
 # Game review data
 
 Array of:

@@ -31,6 +31,13 @@ export class ServerManager {
             [MessageToServer.CreateGame, this.onMessageCreateGame],
             [MessageToServer.EnterGame, this.onMessageEnterGame],
             [MessageToServer.ExitGame, this.onMessageExitGame],
+            [MessageToServer.JoinGame, this.onMessageJoinGame],
+            [MessageToServer.UnjoinGame, this.onMessageUnjoinGame],
+            [MessageToServer.ApproveOfGameSetup, this.onMessageApproveOfGameSetup],
+            [MessageToServer.ChangeGameMode, this.onMessageChangeGameMode],
+            [MessageToServer.ChangePlayerArrangementMode, this.onMessageChangePlayerArrangementMode],
+            [MessageToServer.SwapPositions, this.onMessageSwapPositions],
+            [MessageToServer.KickUser, this.onMessageKickUser],
         ]);
     }
 
@@ -102,9 +109,7 @@ export class ServerManager {
 
             const user = client.user;
             user.clients.delete(client);
-            if (user.clients.size === 0 && user.numGames === 0) {
-                this.userIDToUser.delete(user.id);
-            }
+            this.deleteUserIfItDoesNotHaveReferences(user);
 
             const messageToOtherClients = JSON.stringify([this.getClientDisconnectedMessage(client)]);
             this.connectionIDToClient.forEach(otherClient => {
@@ -299,6 +304,207 @@ export class ServerManager {
         });
     }
 
+    onMessageJoinGame(client: Client, params: any[]) {
+        const gameData = client.gameData;
+        if (gameData === null) {
+            return;
+        }
+
+        const gameSetup = gameData.gameSetup;
+        if (gameSetup === null) {
+            return;
+        }
+
+        if (params.length !== 0) {
+            this.kickWithError(client.connection, ErrorCode.InvalidMessage);
+            return;
+        }
+
+        gameSetup.addUser(client.user.id);
+
+        if (gameSetup.history.length > 0) {
+            client.user.numGames++;
+
+            this.sendGameSetupChanges(gameData);
+        }
+    }
+
+    onMessageUnjoinGame(client: Client, params: any[]) {
+        const gameData = client.gameData;
+        if (gameData === null) {
+            return;
+        }
+
+        const gameSetup = gameData.gameSetup;
+        if (gameSetup === null) {
+            return;
+        }
+
+        if (params.length !== 0) {
+            this.kickWithError(client.connection, ErrorCode.InvalidMessage);
+            return;
+        }
+
+        gameSetup.removeUser(client.user.id);
+
+        if (gameSetup.history.length > 0) {
+            client.user.numGames--;
+            this.deleteUserIfItDoesNotHaveReferences(client.user);
+
+            this.sendGameSetupChanges(gameData);
+        }
+    }
+
+    onMessageApproveOfGameSetup(client: Client, params: any[]) {
+        const gameData = client.gameData;
+        if (gameData === null) {
+            return;
+        }
+
+        const gameSetup = gameData.gameSetup;
+        if (gameSetup === null) {
+            return;
+        }
+
+        if (params.length !== 0) {
+            this.kickWithError(client.connection, ErrorCode.InvalidMessage);
+            return;
+        }
+
+        gameSetup.approve(client.user.id);
+
+        if (gameSetup.history.length > 0) {
+            this.sendGameSetupChanges(gameData);
+        }
+    }
+
+    onMessageChangeGameMode(client: Client, params: any[]) {
+        const gameData = client.gameData;
+        if (gameData === null) {
+            return;
+        }
+
+        const gameSetup = gameData.gameSetup;
+        if (gameSetup === null) {
+            return;
+        }
+
+        if (client.user.id !== gameSetup.hostUserID) {
+            this.kickWithError(client.connection, ErrorCode.InvalidMessage);
+            return;
+        }
+
+        if (params.length !== gameSetup.changeGameMode.length) {
+            this.kickWithError(client.connection, ErrorCode.InvalidMessage);
+            return;
+        }
+
+        gameSetup.changeGameMode.apply(gameSetup, params);
+
+        if (gameSetup.history.length > 0) {
+            this.sendGameSetupChanges(gameData);
+        }
+    }
+
+    onMessageChangePlayerArrangementMode(client: Client, params: any[]) {
+        const gameData = client.gameData;
+        if (gameData === null) {
+            return;
+        }
+
+        const gameSetup = gameData.gameSetup;
+        if (gameSetup === null) {
+            return;
+        }
+
+        if (client.user.id !== gameSetup.hostUserID) {
+            this.kickWithError(client.connection, ErrorCode.InvalidMessage);
+            return;
+        }
+
+        if (params.length !== gameSetup.changePlayerArrangementMode.length) {
+            this.kickWithError(client.connection, ErrorCode.InvalidMessage);
+            return;
+        }
+
+        gameSetup.changePlayerArrangementMode.apply(gameSetup, params);
+
+        if (gameSetup.history.length > 0) {
+            this.sendGameSetupChanges(gameData);
+        }
+    }
+
+    onMessageSwapPositions(client: Client, params: any[]) {
+        const gameData = client.gameData;
+        if (gameData === null) {
+            return;
+        }
+
+        const gameSetup = gameData.gameSetup;
+        if (gameSetup === null) {
+            return;
+        }
+
+        if (client.user.id !== gameSetup.hostUserID) {
+            this.kickWithError(client.connection, ErrorCode.InvalidMessage);
+            return;
+        }
+
+        if (params.length !== gameSetup.swapPositions.length) {
+            this.kickWithError(client.connection, ErrorCode.InvalidMessage);
+            return;
+        }
+
+        gameSetup.swapPositions.apply(gameSetup, params);
+
+        if (gameSetup.history.length > 0) {
+            this.sendGameSetupChanges(gameData);
+        }
+    }
+
+    onMessageKickUser(client: Client, params: any[]) {
+        const gameData = client.gameData;
+        if (gameData === null) {
+            return;
+        }
+
+        const gameSetup = gameData.gameSetup;
+        if (gameSetup === null) {
+            return;
+        }
+
+        if (client.user.id !== gameSetup.hostUserID) {
+            this.kickWithError(client.connection, ErrorCode.InvalidMessage);
+            return;
+        }
+
+        if (params.length !== gameSetup.kickUser.length) {
+            this.kickWithError(client.connection, ErrorCode.InvalidMessage);
+            return;
+        }
+
+        gameSetup.kickUser.apply(gameSetup, params);
+
+        if (gameSetup.history.length > 0) {
+            const user = this.userIDToUser.get(params[0])!;
+            user.numGames--;
+            this.deleteUserIfItDoesNotHaveReferences(user);
+
+            this.sendGameSetupChanges(gameData);
+        }
+    }
+
+    sendGameSetupChanges(gameData: GameData) {
+        const gameSetup = gameData.gameSetup!;
+
+        const message = JSON.stringify(gameSetup.history.map(change => [MessageToClient.GameSetupChanged, gameData.displayNumber, ...change]));
+        this.connectionIDToClient.forEach(aClient => {
+            aClient.connection.write(message);
+        });
+
+        gameSetup.clearHistory();
+    }
+
     getGreetingsMessage(gameDataArray: any[], client: Client) {
         const users: any[] = [];
         this.userIDToUser.forEach(user => {
@@ -359,6 +565,12 @@ export class ServerManager {
     getUsernameForUserID = (userID: number) => {
         return this.userIDToUser.get(userID)!.name;
     };
+
+    deleteUserIfItDoesNotHaveReferences(user: User) {
+        if (user.clients.size === 0 && user.numGames === 0) {
+            this.userIDToUser.delete(user.id);
+        }
+    }
 }
 
 export class Client {

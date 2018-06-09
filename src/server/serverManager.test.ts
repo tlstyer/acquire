@@ -1,5 +1,5 @@
 import { Connection } from 'sockjs';
-import { ErrorCode, GameMode, MessageToClient, MessageToServer, PlayerArrangementMode } from '../common/enums';
+import { ErrorCode, GameMode, GameSetupChange, MessageToClient, MessageToServer, PlayerArrangementMode } from '../common/enums';
 import { Client, ConnectionState, GameData, ServerManager, User } from './serverManager';
 import { TestUserDataProvider } from './userDataProvider';
 
@@ -469,6 +469,512 @@ describe('ServerManager', () => {
             expect(connection2.receivedMessages.length).toBe(0);
             expect(connection1.closed).toBe(false);
             expect(connection2.closed).toBe(false);
+        });
+    });
+
+    describe('join game', () => {
+        it('does nothing when not in a game room', async () => {
+            const { server } = getServerManagerAndStuff();
+
+            const connection = await connectToServer(server, 'user');
+            connection.clearReceivedMessages();
+
+            connection.sendMessage([MessageToServer.JoinGame]);
+
+            expect(connection.receivedMessages.length).toBe(0);
+            expect(connection.closed).toBe(false);
+        });
+
+        it('kicks client due to invalid message', async () => {
+            const { server } = getServerManagerAndStuff();
+
+            const hostConnection = await connectToServer(server, 'host');
+            const otherConnection = await connectToServer(server, 'other');
+            hostConnection.sendMessage([MessageToServer.CreateGame, GameMode.Teams2vs2]);
+            otherConnection.sendMessage([MessageToServer.EnterGame, 1]);
+            hostConnection.clearReceivedMessages();
+            otherConnection.clearReceivedMessages();
+
+            otherConnection.sendMessage([MessageToServer.JoinGame, 1]);
+
+            expect(otherConnection.receivedMessages.length).toBe(1);
+            expect(otherConnection.receivedMessages[0]).toEqual([[MessageToClient.FatalError, ErrorCode.InvalidMessage]]);
+            expect(otherConnection.closed).toBe(true);
+        });
+
+        it('sends MessageToClient.GameSetupChanged when successful', async () => {
+            const { serverManager, server } = getServerManagerAndStuff();
+
+            const hostConnection = await connectToServer(server, 'host');
+            const otherConnection = await connectToServer(server, 'other');
+            hostConnection.sendMessage([MessageToServer.CreateGame, GameMode.Teams2vs2]);
+            otherConnection.sendMessage([MessageToServer.EnterGame, 1]);
+            hostConnection.clearReceivedMessages();
+            otherConnection.clearReceivedMessages();
+
+            expectClientAndUserAndGameData(
+                serverManager,
+                [new UserData(1, 'host', [new ClientData(1, hostConnection, 10)]), new UserData(2, 'other', [new ClientData(2, otherConnection, 10)])],
+                [new GameDataData(10, 1, [1])],
+            );
+
+            otherConnection.sendMessage([MessageToServer.JoinGame]);
+
+            expectClientAndUserAndGameData(
+                serverManager,
+                [new UserData(1, 'host', [new ClientData(1, hostConnection, 10)]), new UserData(2, 'other', [new ClientData(2, otherConnection, 10)])],
+                [new GameDataData(10, 1, [1, 2])],
+            );
+
+            expect(hostConnection.receivedMessages.length).toBe(1);
+            expect(otherConnection.receivedMessages.length).toBe(1);
+
+            const expectedMessage: any[] = [[MessageToClient.GameSetupChanged, 1, GameSetupChange.UserAdded, 2]];
+            expect(hostConnection.receivedMessages[0]).toEqual(expectedMessage);
+            expect(otherConnection.receivedMessages[0]).toEqual(expectedMessage);
+        });
+    });
+
+    describe('unjoin game', () => {
+        it('does nothing when not in a game room', async () => {
+            const { server } = getServerManagerAndStuff();
+
+            const connection = await connectToServer(server, 'user');
+            connection.clearReceivedMessages();
+
+            connection.sendMessage([MessageToServer.UnjoinGame]);
+
+            expect(connection.receivedMessages.length).toBe(0);
+            expect(connection.closed).toBe(false);
+        });
+
+        it('kicks client due to invalid message', async () => {
+            const { server } = getServerManagerAndStuff();
+
+            const hostConnection = await connectToServer(server, 'host');
+            const otherConnection = await connectToServer(server, 'other');
+            hostConnection.sendMessage([MessageToServer.CreateGame, GameMode.Teams2vs2]);
+            otherConnection.sendMessage([MessageToServer.EnterGame, 1]);
+            otherConnection.sendMessage([MessageToServer.JoinGame]);
+            hostConnection.clearReceivedMessages();
+            otherConnection.clearReceivedMessages();
+
+            otherConnection.sendMessage([MessageToServer.UnjoinGame, 1]);
+
+            expect(otherConnection.receivedMessages.length).toBe(1);
+            expect(otherConnection.receivedMessages[0]).toEqual([[MessageToClient.FatalError, ErrorCode.InvalidMessage]]);
+            expect(otherConnection.closed).toBe(true);
+        });
+
+        it('sends MessageToClient.GameSetupChanged when successful', async () => {
+            const { serverManager, server } = getServerManagerAndStuff();
+
+            const hostConnection = await connectToServer(server, 'host');
+            const otherConnection = await connectToServer(server, 'other');
+            hostConnection.sendMessage([MessageToServer.CreateGame, GameMode.Teams2vs2]);
+            otherConnection.sendMessage([MessageToServer.EnterGame, 1]);
+            otherConnection.sendMessage([MessageToServer.JoinGame]);
+            hostConnection.clearReceivedMessages();
+            otherConnection.clearReceivedMessages();
+
+            expectClientAndUserAndGameData(
+                serverManager,
+                [new UserData(1, 'host', [new ClientData(1, hostConnection, 10)]), new UserData(2, 'other', [new ClientData(2, otherConnection, 10)])],
+                [new GameDataData(10, 1, [1, 2])],
+            );
+
+            otherConnection.sendMessage([MessageToServer.UnjoinGame]);
+
+            expectClientAndUserAndGameData(
+                serverManager,
+                [new UserData(1, 'host', [new ClientData(1, hostConnection, 10)]), new UserData(2, 'other', [new ClientData(2, otherConnection, 10)])],
+                [new GameDataData(10, 1, [1])],
+            );
+
+            expect(hostConnection.receivedMessages.length).toBe(1);
+            expect(otherConnection.receivedMessages.length).toBe(1);
+
+            const expectedMessage: any[] = [[MessageToClient.GameSetupChanged, 1, GameSetupChange.UserRemoved, 2]];
+            expect(hostConnection.receivedMessages[0]).toEqual(expectedMessage);
+            expect(otherConnection.receivedMessages[0]).toEqual(expectedMessage);
+        });
+    });
+
+    describe('approve of game setup', () => {
+        it('does nothing when not in a game room', async () => {
+            const { server } = getServerManagerAndStuff();
+
+            const connection = await connectToServer(server, 'user');
+            connection.clearReceivedMessages();
+
+            connection.sendMessage([MessageToServer.ApproveOfGameSetup]);
+
+            expect(connection.receivedMessages.length).toBe(0);
+            expect(connection.closed).toBe(false);
+        });
+
+        it('kicks client due to invalid message', async () => {
+            const { server } = getServerManagerAndStuff();
+
+            const hostConnection = await connectToServer(server, 'host');
+            const otherConnection = await connectToServer(server, 'other');
+            hostConnection.sendMessage([MessageToServer.CreateGame, GameMode.Singles2]);
+            otherConnection.sendMessage([MessageToServer.EnterGame, 1]);
+            hostConnection.clearReceivedMessages();
+            otherConnection.clearReceivedMessages();
+
+            otherConnection.sendMessage([MessageToServer.ApproveOfGameSetup, 1]);
+
+            expect(otherConnection.receivedMessages.length).toBe(1);
+            expect(otherConnection.receivedMessages[0]).toEqual([[MessageToClient.FatalError, ErrorCode.InvalidMessage]]);
+            expect(otherConnection.closed).toBe(true);
+        });
+
+        it('sends MessageToClient.GameSetupChanged when successful', async () => {
+            const { serverManager, server } = getServerManagerAndStuff();
+
+            const hostConnection = await connectToServer(server, 'host');
+            const otherConnection = await connectToServer(server, 'other');
+            hostConnection.sendMessage([MessageToServer.CreateGame, GameMode.Singles2]);
+            otherConnection.sendMessage([MessageToServer.EnterGame, 1]);
+            otherConnection.sendMessage([MessageToServer.JoinGame]);
+            hostConnection.clearReceivedMessages();
+            otherConnection.clearReceivedMessages();
+
+            expectClientAndUserAndGameData(
+                serverManager,
+                [new UserData(1, 'host', [new ClientData(1, hostConnection, 10)]), new UserData(2, 'other', [new ClientData(2, otherConnection, 10)])],
+                [new GameDataData(10, 1, [1, 2])],
+            );
+
+            otherConnection.sendMessage([MessageToServer.ApproveOfGameSetup]);
+
+            expectClientAndUserAndGameData(
+                serverManager,
+                [new UserData(1, 'host', [new ClientData(1, hostConnection, 10)]), new UserData(2, 'other', [new ClientData(2, otherConnection, 10)])],
+                [new GameDataData(10, 1, [1, 2])],
+            );
+
+            expect(hostConnection.receivedMessages.length).toBe(1);
+            expect(otherConnection.receivedMessages.length).toBe(1);
+
+            const expectedMessage: any[] = [[MessageToClient.GameSetupChanged, 1, GameSetupChange.UserApprovedOfGameSetup, 2]];
+            expect(hostConnection.receivedMessages[0]).toEqual(expectedMessage);
+            expect(otherConnection.receivedMessages[0]).toEqual(expectedMessage);
+        });
+    });
+
+    describe('change game mode', () => {
+        it('does nothing when not in a game room', async () => {
+            const { server } = getServerManagerAndStuff();
+
+            const connection = await connectToServer(server, 'user');
+            connection.clearReceivedMessages();
+
+            connection.sendMessage([MessageToServer.ChangeGameMode, GameMode.Singles3]);
+
+            expect(connection.receivedMessages.length).toBe(0);
+            expect(connection.closed).toBe(false);
+        });
+
+        it('kicks client when not the host and trying to change game mode', async () => {
+            const { server } = getServerManagerAndStuff();
+
+            const hostConnection = await connectToServer(server, 'host');
+            const otherConnection = await connectToServer(server, 'other');
+            hostConnection.sendMessage([MessageToServer.CreateGame, GameMode.Singles2]);
+            otherConnection.sendMessage([MessageToServer.EnterGame, 1]);
+            hostConnection.clearReceivedMessages();
+            otherConnection.clearReceivedMessages();
+
+            otherConnection.sendMessage([MessageToServer.ChangeGameMode, GameMode.Singles3]);
+
+            expect(otherConnection.receivedMessages.length).toBe(1);
+            expect(otherConnection.receivedMessages[0]).toEqual([[MessageToClient.FatalError, ErrorCode.InvalidMessage]]);
+            expect(otherConnection.closed).toBe(true);
+        });
+
+        it('kicks client when the host and sending invalid message', async () => {
+            const { server } = getServerManagerAndStuff();
+
+            const hostConnection = await connectToServer(server, 'host');
+            hostConnection.sendMessage([MessageToServer.CreateGame, GameMode.Singles3]);
+            hostConnection.clearReceivedMessages();
+
+            hostConnection.sendMessage([MessageToServer.ChangeGameMode]);
+
+            expect(hostConnection.receivedMessages.length).toBe(1);
+            expect(hostConnection.receivedMessages[0]).toEqual([[MessageToClient.FatalError, ErrorCode.InvalidMessage]]);
+            expect(hostConnection.closed).toBe(true);
+        });
+
+        it('sends MessageToClient.GameSetupChanged when successful', async () => {
+            const { serverManager, server } = getServerManagerAndStuff();
+
+            const hostConnection = await connectToServer(server, 'host');
+            const otherConnection = await connectToServer(server, 'other');
+            hostConnection.sendMessage([MessageToServer.CreateGame, GameMode.Singles2]);
+            otherConnection.sendMessage([MessageToServer.EnterGame, 1]);
+            otherConnection.sendMessage([MessageToServer.JoinGame]);
+            hostConnection.clearReceivedMessages();
+            otherConnection.clearReceivedMessages();
+
+            expectClientAndUserAndGameData(
+                serverManager,
+                [new UserData(1, 'host', [new ClientData(1, hostConnection, 10)]), new UserData(2, 'other', [new ClientData(2, otherConnection, 10)])],
+                [new GameDataData(10, 1, [1, 2])],
+            );
+
+            hostConnection.sendMessage([MessageToServer.ChangeGameMode, GameMode.Singles3]);
+
+            expectClientAndUserAndGameData(
+                serverManager,
+                [new UserData(1, 'host', [new ClientData(1, hostConnection, 10)]), new UserData(2, 'other', [new ClientData(2, otherConnection, 10)])],
+                [new GameDataData(10, 1, [1, 2])],
+            );
+
+            expect(hostConnection.receivedMessages.length).toBe(1);
+            expect(otherConnection.receivedMessages.length).toBe(1);
+
+            const expectedMessage: any[] = [[MessageToClient.GameSetupChanged, 1, GameSetupChange.GameModeChanged, GameMode.Singles3]];
+            expect(hostConnection.receivedMessages[0]).toEqual(expectedMessage);
+            expect(otherConnection.receivedMessages[0]).toEqual(expectedMessage);
+        });
+    });
+
+    describe('change player arrangement mode', () => {
+        it('does nothing when not in a game room', async () => {
+            const { server } = getServerManagerAndStuff();
+
+            const connection = await connectToServer(server, 'user');
+            connection.clearReceivedMessages();
+
+            connection.sendMessage([MessageToServer.ChangePlayerArrangementMode, PlayerArrangementMode.ExactOrder]);
+
+            expect(connection.receivedMessages.length).toBe(0);
+            expect(connection.closed).toBe(false);
+        });
+
+        it('kicks client when not the host and trying to change player arrangement mode', async () => {
+            const { server } = getServerManagerAndStuff();
+
+            const hostConnection = await connectToServer(server, 'host');
+            const otherConnection = await connectToServer(server, 'other');
+            hostConnection.sendMessage([MessageToServer.CreateGame, GameMode.Singles2]);
+            otherConnection.sendMessage([MessageToServer.EnterGame, 1]);
+            hostConnection.clearReceivedMessages();
+            otherConnection.clearReceivedMessages();
+
+            otherConnection.sendMessage([MessageToServer.ChangePlayerArrangementMode, PlayerArrangementMode.ExactOrder]);
+
+            expect(otherConnection.receivedMessages.length).toBe(1);
+            expect(otherConnection.receivedMessages[0]).toEqual([[MessageToClient.FatalError, ErrorCode.InvalidMessage]]);
+            expect(otherConnection.closed).toBe(true);
+        });
+
+        it('kicks client when the host and sending invalid message', async () => {
+            const { server } = getServerManagerAndStuff();
+
+            const hostConnection = await connectToServer(server, 'host');
+            hostConnection.sendMessage([MessageToServer.CreateGame, GameMode.Singles3]);
+            hostConnection.clearReceivedMessages();
+
+            hostConnection.sendMessage([MessageToServer.ChangePlayerArrangementMode]);
+
+            expect(hostConnection.receivedMessages.length).toBe(1);
+            expect(hostConnection.receivedMessages[0]).toEqual([[MessageToClient.FatalError, ErrorCode.InvalidMessage]]);
+            expect(hostConnection.closed).toBe(true);
+        });
+
+        it('sends MessageToClient.GameSetupChanged when successful', async () => {
+            const { serverManager, server } = getServerManagerAndStuff();
+
+            const hostConnection = await connectToServer(server, 'host');
+            const otherConnection = await connectToServer(server, 'other');
+            hostConnection.sendMessage([MessageToServer.CreateGame, GameMode.Singles4]);
+            otherConnection.sendMessage([MessageToServer.EnterGame, 1]);
+            otherConnection.sendMessage([MessageToServer.JoinGame]);
+            hostConnection.clearReceivedMessages();
+            otherConnection.clearReceivedMessages();
+
+            expectClientAndUserAndGameData(
+                serverManager,
+                [new UserData(1, 'host', [new ClientData(1, hostConnection, 10)]), new UserData(2, 'other', [new ClientData(2, otherConnection, 10)])],
+                [new GameDataData(10, 1, [1, 2])],
+            );
+
+            hostConnection.sendMessage([MessageToServer.ChangePlayerArrangementMode, PlayerArrangementMode.ExactOrder]);
+
+            expectClientAndUserAndGameData(
+                serverManager,
+                [new UserData(1, 'host', [new ClientData(1, hostConnection, 10)]), new UserData(2, 'other', [new ClientData(2, otherConnection, 10)])],
+                [new GameDataData(10, 1, [1, 2])],
+            );
+
+            expect(hostConnection.receivedMessages.length).toBe(1);
+            expect(otherConnection.receivedMessages.length).toBe(1);
+
+            const expectedMessage: any[] = [
+                [MessageToClient.GameSetupChanged, 1, GameSetupChange.PlayerArrangementModeChanged, PlayerArrangementMode.ExactOrder],
+            ];
+            expect(hostConnection.receivedMessages[0]).toEqual(expectedMessage);
+            expect(otherConnection.receivedMessages[0]).toEqual(expectedMessage);
+        });
+    });
+
+    describe('swap positions', () => {
+        it('does nothing when not in a game room', async () => {
+            const { server } = getServerManagerAndStuff();
+
+            const connection = await connectToServer(server, 'user');
+            connection.clearReceivedMessages();
+
+            connection.sendMessage([MessageToServer.SwapPositions, 0, 1]);
+
+            expect(connection.receivedMessages.length).toBe(0);
+            expect(connection.closed).toBe(false);
+        });
+
+        it('kicks client when not the host and trying to swap positions', async () => {
+            const { server } = getServerManagerAndStuff();
+
+            const hostConnection = await connectToServer(server, 'host');
+            const otherConnection = await connectToServer(server, 'other');
+            hostConnection.sendMessage([MessageToServer.CreateGame, GameMode.Singles2]);
+            otherConnection.sendMessage([MessageToServer.EnterGame, 1]);
+            hostConnection.clearReceivedMessages();
+            otherConnection.clearReceivedMessages();
+
+            otherConnection.sendMessage([MessageToServer.SwapPositions, 0, 1]);
+
+            expect(otherConnection.receivedMessages.length).toBe(1);
+            expect(otherConnection.receivedMessages[0]).toEqual([[MessageToClient.FatalError, ErrorCode.InvalidMessage]]);
+            expect(otherConnection.closed).toBe(true);
+        });
+
+        it('kicks client when the host and sending invalid message', async () => {
+            const { server } = getServerManagerAndStuff();
+
+            const hostConnection = await connectToServer(server, 'host');
+            hostConnection.sendMessage([MessageToServer.CreateGame, GameMode.Singles3]);
+            hostConnection.clearReceivedMessages();
+
+            hostConnection.sendMessage([MessageToServer.SwapPositions]);
+
+            expect(hostConnection.receivedMessages.length).toBe(1);
+            expect(hostConnection.receivedMessages[0]).toEqual([[MessageToClient.FatalError, ErrorCode.InvalidMessage]]);
+            expect(hostConnection.closed).toBe(true);
+        });
+
+        it('sends MessageToClient.GameSetupChanged when successful', async () => {
+            const { serverManager, server } = getServerManagerAndStuff();
+
+            const hostConnection = await connectToServer(server, 'host');
+            const otherConnection = await connectToServer(server, 'other');
+            hostConnection.sendMessage([MessageToServer.CreateGame, GameMode.Singles4]);
+            otherConnection.sendMessage([MessageToServer.EnterGame, 1]);
+            otherConnection.sendMessage([MessageToServer.JoinGame]);
+            hostConnection.clearReceivedMessages();
+            otherConnection.clearReceivedMessages();
+
+            expectClientAndUserAndGameData(
+                serverManager,
+                [new UserData(1, 'host', [new ClientData(1, hostConnection, 10)]), new UserData(2, 'other', [new ClientData(2, otherConnection, 10)])],
+                [new GameDataData(10, 1, [1, 2])],
+            );
+
+            hostConnection.sendMessage([MessageToServer.SwapPositions, 0, 1]);
+
+            expectClientAndUserAndGameData(
+                serverManager,
+                [new UserData(1, 'host', [new ClientData(1, hostConnection, 10)]), new UserData(2, 'other', [new ClientData(2, otherConnection, 10)])],
+                [new GameDataData(10, 1, [1, 2])],
+            );
+
+            expect(hostConnection.receivedMessages.length).toBe(1);
+            expect(otherConnection.receivedMessages.length).toBe(1);
+
+            const expectedMessage: any[] = [[MessageToClient.GameSetupChanged, 1, GameSetupChange.PositionsSwapped, 0, 1]];
+            expect(hostConnection.receivedMessages[0]).toEqual(expectedMessage);
+            expect(otherConnection.receivedMessages[0]).toEqual(expectedMessage);
+        });
+    });
+
+    describe('kick user', () => {
+        it('does nothing when not in a game room', async () => {
+            const { server } = getServerManagerAndStuff();
+
+            const connection = await connectToServer(server, 'user');
+            connection.clearReceivedMessages();
+
+            connection.sendMessage([MessageToServer.KickUser, 2]);
+
+            expect(connection.receivedMessages.length).toBe(0);
+            expect(connection.closed).toBe(false);
+        });
+
+        it('kicks client when not the host and trying to kick user', async () => {
+            const { server } = getServerManagerAndStuff();
+
+            const hostConnection = await connectToServer(server, 'host');
+            const otherConnection = await connectToServer(server, 'other');
+            hostConnection.sendMessage([MessageToServer.CreateGame, GameMode.Singles2]);
+            otherConnection.sendMessage([MessageToServer.EnterGame, 1]);
+            hostConnection.clearReceivedMessages();
+            otherConnection.clearReceivedMessages();
+
+            otherConnection.sendMessage([MessageToServer.KickUser, 2]);
+
+            expect(otherConnection.receivedMessages.length).toBe(1);
+            expect(otherConnection.receivedMessages[0]).toEqual([[MessageToClient.FatalError, ErrorCode.InvalidMessage]]);
+            expect(otherConnection.closed).toBe(true);
+        });
+
+        it('kicks client when the host and sending invalid message', async () => {
+            const { server } = getServerManagerAndStuff();
+
+            const hostConnection = await connectToServer(server, 'host');
+            hostConnection.sendMessage([MessageToServer.CreateGame, GameMode.Singles3]);
+            hostConnection.clearReceivedMessages();
+
+            hostConnection.sendMessage([MessageToServer.KickUser]);
+
+            expect(hostConnection.receivedMessages.length).toBe(1);
+            expect(hostConnection.receivedMessages[0]).toEqual([[MessageToClient.FatalError, ErrorCode.InvalidMessage]]);
+            expect(hostConnection.closed).toBe(true);
+        });
+
+        it('sends MessageToClient.GameSetupChanged when successful', async () => {
+            const { serverManager, server } = getServerManagerAndStuff();
+
+            const hostConnection = await connectToServer(server, 'host');
+            const otherConnection = await connectToServer(server, 'other');
+            hostConnection.sendMessage([MessageToServer.CreateGame, GameMode.Singles4]);
+            otherConnection.sendMessage([MessageToServer.EnterGame, 1]);
+            otherConnection.sendMessage([MessageToServer.JoinGame]);
+            hostConnection.clearReceivedMessages();
+            otherConnection.clearReceivedMessages();
+
+            expectClientAndUserAndGameData(
+                serverManager,
+                [new UserData(1, 'host', [new ClientData(1, hostConnection, 10)]), new UserData(2, 'other', [new ClientData(2, otherConnection, 10)])],
+                [new GameDataData(10, 1, [1, 2])],
+            );
+
+            hostConnection.sendMessage([MessageToServer.KickUser, 2]);
+
+            expectClientAndUserAndGameData(
+                serverManager,
+                [new UserData(1, 'host', [new ClientData(1, hostConnection, 10)]), new UserData(2, 'other', [new ClientData(2, otherConnection, 10)])],
+                [new GameDataData(10, 1, [1])],
+            );
+
+            expect(hostConnection.receivedMessages.length).toBe(1);
+            expect(otherConnection.receivedMessages.length).toBe(1);
+
+            const expectedMessage: any[] = [[MessageToClient.GameSetupChanged, 1, GameSetupChange.UserKicked, 2]];
+            expect(hostConnection.receivedMessages[0]).toEqual(expectedMessage);
+            expect(otherConnection.receivedMessages[0]).toEqual(expectedMessage);
         });
     });
 });
