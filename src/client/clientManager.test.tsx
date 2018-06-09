@@ -702,6 +702,8 @@ class TestConnection {
     onmessage: ((e: any) => any) | null = null;
     onclose: ((e: any) => any) | null = null;
 
+    readyState = WebSocket.CLOSED;
+
     sentMessages: any[] = [];
 
     send(data: string) {
@@ -710,6 +712,7 @@ class TestConnection {
 
     triggerOpen() {
         if (this.onopen) {
+            this.readyState = WebSocket.OPEN;
             this.onopen({});
         }
     }
@@ -725,6 +728,7 @@ class TestConnection {
 
     triggerClose() {
         if (this.onclose) {
+            this.readyState = WebSocket.CLOSED;
             this.onclose({});
         }
     }

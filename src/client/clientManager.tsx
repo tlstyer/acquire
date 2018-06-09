@@ -117,7 +117,7 @@ export class ClientManager {
     renderLobbyPage = () => {
         return (
             <>
-                <Header username={this.username} isConnected={this.socket !== null} />
+                <Header username={this.username} isConnected={this.isConnected()} />
                 <CreateGame onSubmit={this.onSubmitCreateGame} />
                 {[...this.gameIDToGameData].reverse().map(([gameID, gameData]) => {
                     if (gameData.gameSetup !== null) {
@@ -139,8 +139,8 @@ export class ClientManager {
     };
 
     onSubmitCreateGame = (gameMode: GameMode) => {
-        if (this.socket !== null) {
-            this.socket.send(JSON.stringify([MessageToServer.CreateGame, gameMode]));
+        if (this.isConnected()) {
+            this.socket!.send(JSON.stringify([MessageToServer.CreateGame, gameMode]));
         }
     };
 
@@ -149,7 +149,7 @@ export class ClientManager {
 
         return (
             <>
-                <Header username={this.username} isConnected={this.socket !== null} />
+                <Header username={this.username} isConnected={this.isConnected()} />
 
                 <div>
                     <input type={'button'} value={'Exit Game'} onClick={this.onExitGameClicked} />
@@ -161,8 +161,8 @@ export class ClientManager {
     };
 
     onExitGameClicked = () => {
-        if (this.socket !== null) {
-            this.socket.send(JSON.stringify([MessageToServer.ExitGame]));
+        if (this.isConnected()) {
+            this.socket!.send(JSON.stringify([MessageToServer.ExitGame]));
         }
     };
 
@@ -209,44 +209,44 @@ export class ClientManager {
     }
 
     onJoinGame = () => {
-        if (this.socket !== null) {
-            this.socket.send(JSON.stringify([MessageToServer.JoinGame]));
+        if (this.isConnected()) {
+            this.socket!.send(JSON.stringify([MessageToServer.JoinGame]));
         }
     };
 
     onUnjoinGame = () => {
-        if (this.socket !== null) {
-            this.socket.send(JSON.stringify([MessageToServer.UnjoinGame]));
+        if (this.isConnected()) {
+            this.socket!.send(JSON.stringify([MessageToServer.UnjoinGame]));
         }
     };
 
     onApproveOfGameSetup = () => {
-        if (this.socket !== null) {
-            this.socket.send(JSON.stringify([MessageToServer.ApproveOfGameSetup]));
+        if (this.isConnected()) {
+            this.socket!.send(JSON.stringify([MessageToServer.ApproveOfGameSetup]));
         }
     };
 
     onChangeGameMode = (gameMode: GameMode) => {
-        if (this.socket !== null) {
-            this.socket.send(JSON.stringify([MessageToServer.ChangeGameMode, gameMode]));
+        if (this.isConnected()) {
+            this.socket!.send(JSON.stringify([MessageToServer.ChangeGameMode, gameMode]));
         }
     };
 
     onChangePlayerArrangementMode = (playerArrangementMode: PlayerArrangementMode) => {
-        if (this.socket !== null) {
-            this.socket.send(JSON.stringify([MessageToServer.ChangePlayerArrangementMode, playerArrangementMode]));
+        if (this.isConnected()) {
+            this.socket!.send(JSON.stringify([MessageToServer.ChangePlayerArrangementMode, playerArrangementMode]));
         }
     };
 
     onSwapPositions = (position1: number, position2: number) => {
-        if (this.socket !== null) {
-            this.socket.send(JSON.stringify([MessageToServer.SwapPositions, position1, position2]));
+        if (this.isConnected()) {
+            this.socket!.send(JSON.stringify([MessageToServer.SwapPositions, position1, position2]));
         }
     };
 
     onKickUser = (position: number) => {
-        if (this.socket !== null) {
-            this.socket.send(JSON.stringify([MessageToServer.KickUser, position]));
+        if (this.isConnected()) {
+            this.socket!.send(JSON.stringify([MessageToServer.KickUser, position]));
         }
     };
 
@@ -448,6 +448,10 @@ export class ClientManager {
         this.render();
     };
 
+    isConnected() {
+        return this.socket !== null && this.socket.readyState === WebSocket.OPEN;
+    }
+
     getUsernameForUserID = (userID: number) => {
         return this.userIDToUser.get(userID)!.name;
     };
@@ -481,8 +485,8 @@ export class GameData {
     constructor(public id: number, public displayNumber: number, public clientManager: ClientManager) {}
 
     onEnterClicked = () => {
-        if (this.clientManager.socket !== null) {
-            this.clientManager.socket.send(JSON.stringify([MessageToServer.EnterGame, this.displayNumber]));
+        if (this.clientManager.isConnected()) {
+            this.clientManager.socket!.send(JSON.stringify([MessageToServer.EnterGame, this.displayNumber]));
         }
     };
 }
