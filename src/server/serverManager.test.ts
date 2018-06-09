@@ -376,7 +376,7 @@ describe('ServerManager', () => {
         });
 
         it('disallows entering a game when currently in a game', async () => {
-            const { serverManager, server } = getServerManagerAndStuff();
+            const { server } = getServerManagerAndStuff();
 
             const connection1 = await connectToServer(server, 'user 1');
             const connection2 = await connectToServer(server, 'user 2');

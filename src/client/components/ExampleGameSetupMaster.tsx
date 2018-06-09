@@ -13,8 +13,6 @@ interface ExampleGameSetupMasterState {
     nextUserId: number;
 }
 
-const watcherUsername = '';
-
 export class ExampleGameSetupMaster extends React.Component<ExampleGameSetupMasterProps, ExampleGameSetupMasterState> {
     constructor(props: ExampleGameSetupMasterProps) {
         super(props);
