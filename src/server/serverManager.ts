@@ -2,6 +2,7 @@ import { Connection, Server } from 'sockjs';
 import { ErrorCode, GameMode, MessageToClient, MessageToServer, PlayerArrangementMode } from '../common/enums';
 import { GameSetup } from '../common/gameSetup';
 import { gameModeToNumPlayers, isASCII } from '../common/helpers';
+import { LogMessage } from './enums';
 import { ReuseIDManager } from './reuseIDManager';
 import { UserDataProvider } from './userDataProvider';
 
@@ -26,7 +27,7 @@ export class ServerManager {
 
     onMessageFunctions: Map<MessageToServer, (client: Client, params: any[]) => void>;
 
-    constructor(public server: Server, public userDataProvider: UserDataProvider, public nextGameID: number) {
+    constructor(public server: Server, public userDataProvider: UserDataProvider, public nextGameID: number, public logger: (message: string) => void) {
         this.onMessageFunctions = new Map([
             [MessageToServer.CreateGame, this.onMessageCreateGame],
             [MessageToServer.EnterGame, this.onMessageEnterGame],
@@ -43,6 +44,18 @@ export class ServerManager {
 
     manage() {
         this.server.on('connection', connection => {
+            this.logger(
+                JSON.stringify([
+                    LogMessage.Connected,
+                    connection.id,
+                    connection.headers,
+                    connection.pathname,
+                    connection.protocol,
+                    connection.remoteAddress,
+                    connection.remotePort,
+                ]),
+            );
+
             this.addConnection(connection);
 
             connection.on('data', messageString => {
@@ -50,13 +63,30 @@ export class ServerManager {
                 try {
                     message = JSON.parse(messageString);
                 } catch (error) {
+                    this.logger(JSON.stringify([LogMessage.MessageThatIsNotJSON, connection.id, messageString]));
+
                     this.kickWithError(connection, ErrorCode.InvalidMessageFormat);
                     return;
                 }
 
                 if (!Array.isArray(message)) {
+                    this.logger(JSON.stringify([LogMessage.MessageThatIsNotAnArray, connection.id, message]));
+
                     this.kickWithError(connection, ErrorCode.InvalidMessageFormat);
                     return;
+                }
+
+                const client = this.connectionIDToClient.get(connection.id);
+                if (client !== undefined) {
+                    this.logger(JSON.stringify([LogMessage.MessageWhileLoggedIn, client.id, message]));
+                } else {
+                    let sanitizedMessage = message;
+                    if (message[2] !== '') {
+                        sanitizedMessage = [...message];
+                        sanitizedMessage[2] = '***';
+                    }
+
+                    this.logger(JSON.stringify([LogMessage.MessageWhileNotLoggedIn, connection.id, sanitizedMessage]));
                 }
 
                 const connectionState = this.connectionIDToConnectionState.get(connection.id);
@@ -65,7 +95,6 @@ export class ServerManager {
                     const handler = this.onMessageFunctions.get(message[0]);
 
                     if (handler) {
-                        const client = this.connectionIDToClient.get(connection.id)!;
                         handler.call(this, client, message.slice(1));
                     } else {
                         this.kickWithError(connection, ErrorCode.InvalidMessage);
@@ -79,6 +108,13 @@ export class ServerManager {
             });
 
             connection.on('close', () => {
+                const client = this.connectionIDToClient.get(connection.id);
+                if (client !== undefined) {
+                    this.logger(JSON.stringify([LogMessage.Disconnected, connection.id, client.id, client.user.id, client.user.name]));
+                } else {
+                    this.logger(JSON.stringify([LogMessage.Disconnected, connection.id]));
+                }
+
                 this.removeConnection(connection);
             });
         });
@@ -121,6 +157,8 @@ export class ServerManager {
     }
 
     kickWithError(connection: Connection, errorCode: ErrorCode) {
+        this.logger(JSON.stringify([LogMessage.KickedWithError, connection.id, errorCode]));
+
         connection.write(JSON.stringify([[MessageToClient.FatalError, errorCode]]));
         connection.close();
     }
@@ -222,6 +260,8 @@ export class ServerManager {
                 otherClient.connection.write(messageToOtherClients);
             }
         });
+
+        this.logger(JSON.stringify([LogMessage.LoggedIn, connection.id, client.id, userID, username]));
     }
 
     onMessageCreateGame(client: Client, params: any[]) {

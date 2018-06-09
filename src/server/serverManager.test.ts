@@ -1042,7 +1042,9 @@ function getServerManagerAndStuff() {
     const server = new TestServer();
     const userDataProvider = new TestUserDataProvider();
     // @ts-ignore
-    const serverManager = new ServerManager(server, userDataProvider, 10);
+    const serverManager = new ServerManager(server, userDataProvider, 10, (message: string) => {
+        // do nothing
+    });
     serverManager.manage();
 
     return { serverManager, server, userDataProvider };
