@@ -82,6 +82,166 @@ describe('ClientManager', () => {
         });
     });
 
+    describe('onSubmitCreateGame', () => {
+        it('sends CreateGame message when connected', () => {
+            const { clientManager, testConnection } = getClientManagerAndStuff();
+
+            clientManager.onSubmitLoginForm('me', '');
+            testConnection.triggerOpen();
+            testConnection.triggerMessage([[MessageToClient.Greetings, 2, [[1, 'me', [[2]]]], []]]);
+            testConnection.clearSentMessages();
+
+            clientManager.onSubmitCreateGame(GameMode.Teams2vs2);
+
+            expect(testConnection.sentMessages.length).toBe(1);
+            expect(testConnection.sentMessages[0]).toEqual([MessageToServer.CreateGame, GameMode.Teams2vs2]);
+        });
+
+        it('does not send CreateGame message when not connected', () => {
+            const { clientManager, testConnection } = getClientManagerAndStuff();
+
+            clientManager.onSubmitLoginForm('me', '');
+            testConnection.triggerOpen();
+            testConnection.triggerMessage([[MessageToClient.Greetings, 2, [[1, 'me', [[2]]]], []]]);
+            testConnection.triggerClose();
+            testConnection.clearSentMessages();
+
+            clientManager.onSubmitCreateGame(GameMode.Teams2vs2);
+
+            expect(testConnection.sentMessages.length).toBe(0);
+        });
+    });
+
+    describe('onEnterClicked', () => {
+        it('sends EnterGame message when connected', () => {
+            const { clientManager, testConnection } = getClientManagerAndStuff();
+
+            clientManager.onSubmitLoginForm('me', '');
+            testConnection.triggerOpen();
+            testConnection.triggerMessage([
+                [
+                    MessageToClient.Greetings,
+                    2,
+                    [[1, 'user 1', [[1, 1]]], [2, 'me', [[2]]]],
+                    [[0, 10, 1, GameMode.Teams2vs2, PlayerArrangementMode.RandomOrder, 1, [1, 0, 0, 0], [0, 0, 0, 0]]],
+                ],
+            ]);
+            testConnection.clearSentMessages();
+
+            clientManager.gameDisplayNumberToGameData.get(1)!.onEnterClicked();
+
+            expect(testConnection.sentMessages.length).toBe(1);
+            expect(testConnection.sentMessages[0]).toEqual([MessageToServer.EnterGame, 1]);
+        });
+
+        it('does not send EnterGame message when not connected', () => {
+            const { clientManager, testConnection } = getClientManagerAndStuff();
+
+            clientManager.onSubmitLoginForm('me', '');
+            testConnection.triggerOpen();
+            testConnection.triggerMessage([
+                [
+                    MessageToClient.Greetings,
+                    2,
+                    [[1, 'user 1', [[1, 1]]], [2, 'me', [[2]]]],
+                    [[0, 10, 1, GameMode.Teams2vs2, PlayerArrangementMode.RandomOrder, 1, [1, 0, 0, 0], [0, 0, 0, 0]]],
+                ],
+            ]);
+            testConnection.triggerClose();
+            testConnection.clearSentMessages();
+
+            clientManager.gameDisplayNumberToGameData.get(1)!.onEnterClicked();
+
+            expect(testConnection.sentMessages.length).toBe(0);
+        });
+    });
+
+    describe('onExitGameClicked', () => {
+        it('sends ExitGame message when connected', () => {
+            sendsMessageWhenConnected(clientManager => clientManager.onExitGameClicked(), [MessageToServer.ExitGame]);
+        });
+
+        it('does not send ExitGame message when not connected', () => {
+            doesNotSendMessageWhenNotConnected(clientManager => clientManager.onExitGameClicked());
+        });
+    });
+
+    describe('onJoinGame', () => {
+        it('sends JoinGame message when connected', () => {
+            sendsMessageWhenConnected(clientManager => clientManager.onJoinGame(), [MessageToServer.JoinGame]);
+        });
+
+        it('does not send JoinGame message when not connected', () => {
+            doesNotSendMessageWhenNotConnected(clientManager => clientManager.onJoinGame());
+        });
+    });
+
+    describe('onUnjoinGame', () => {
+        it('sends UnjoinGame message when connected', () => {
+            sendsMessageWhenConnected(clientManager => clientManager.onUnjoinGame(), [MessageToServer.UnjoinGame]);
+        });
+
+        it('does not send UnjoinGame message when not connected', () => {
+            doesNotSendMessageWhenNotConnected(clientManager => clientManager.onUnjoinGame());
+        });
+    });
+
+    describe('onApproveOfGameSetup', () => {
+        it('sends ApproveOfGameSetup message when connected', () => {
+            sendsMessageWhenConnected(clientManager => clientManager.onApproveOfGameSetup(), [MessageToServer.ApproveOfGameSetup]);
+        });
+
+        it('does not send ApproveOfGameSetup message when not connected', () => {
+            doesNotSendMessageWhenNotConnected(clientManager => clientManager.onApproveOfGameSetup());
+        });
+    });
+
+    describe('onChangeGameMode', () => {
+        it('sends ChangeGameMode message when connected', () => {
+            sendsMessageWhenConnected(clientManager => clientManager.onChangeGameMode(GameMode.Teams2vs2), [
+                MessageToServer.ChangeGameMode,
+                GameMode.Teams2vs2,
+            ]);
+        });
+
+        it('does not send ChangeGameMode message when not connected', () => {
+            doesNotSendMessageWhenNotConnected(clientManager => clientManager.onChangeGameMode(GameMode.Teams2vs2));
+        });
+    });
+
+    describe('onChangePlayerArrangementMode', () => {
+        it('sends ChangePlayerArrangementMode message when connected', () => {
+            sendsMessageWhenConnected(clientManager => clientManager.onChangePlayerArrangementMode(PlayerArrangementMode.ExactOrder), [
+                MessageToServer.ChangePlayerArrangementMode,
+                PlayerArrangementMode.ExactOrder,
+            ]);
+        });
+
+        it('does not send ChangePlayerArrangementMode message when not connected', () => {
+            doesNotSendMessageWhenNotConnected(clientManager => clientManager.onChangePlayerArrangementMode(PlayerArrangementMode.ExactOrder));
+        });
+    });
+
+    describe('onSwapPositions', () => {
+        it('sends SwapPositions message when connected', () => {
+            sendsMessageWhenConnected(clientManager => clientManager.onSwapPositions(0, 1), [MessageToServer.SwapPositions, 0, 1]);
+        });
+
+        it('does not send SwapPositions message when not connected', () => {
+            doesNotSendMessageWhenNotConnected(clientManager => clientManager.onSwapPositions(0, 1));
+        });
+    });
+
+    describe('onKickUser', () => {
+        it('sends KickUser message when connected', () => {
+            sendsMessageWhenConnected(clientManager => clientManager.onKickUser(5), [MessageToServer.KickUser, 5]);
+        });
+
+        it('does not send KickUser message when not connected', () => {
+            doesNotSendMessageWhenNotConnected(clientManager => clientManager.onKickUser(5));
+        });
+    });
+
     describe('MessageToClient.Greetings', () => {
         it('message is processed correctly', () => {
             const { clientManager, testConnection } = getClientManagerAndStuff();
@@ -197,36 +357,6 @@ describe('ClientManager', () => {
         });
     });
 
-    describe('onSubmitCreateGame', () => {
-        it('sends CreateGame message when connected', () => {
-            const { clientManager, testConnection } = getClientManagerAndStuff();
-
-            clientManager.onSubmitLoginForm('me', '');
-            testConnection.triggerOpen();
-            testConnection.triggerMessage([[MessageToClient.Greetings, 2, [[1, 'me', [[2]]]], []]]);
-            testConnection.clearSentMessages();
-
-            clientManager.onSubmitCreateGame(GameMode.Teams2vs2);
-
-            expect(testConnection.sentMessages.length).toBe(1);
-            expect(testConnection.sentMessages[0]).toEqual([MessageToServer.CreateGame, GameMode.Teams2vs2]);
-        });
-
-        it('does not send CreateGame message when not connected', () => {
-            const { clientManager, testConnection } = getClientManagerAndStuff();
-
-            clientManager.onSubmitLoginForm('me', '');
-            testConnection.triggerOpen();
-            testConnection.triggerMessage([[MessageToClient.Greetings, 2, [[1, 'me', [[2]]]], []]]);
-            testConnection.triggerClose();
-            testConnection.clearSentMessages();
-
-            clientManager.onSubmitCreateGame(GameMode.Teams2vs2);
-
-            expect(testConnection.sentMessages.length).toBe(0);
-        });
-    });
-
     describe('MessageToClient.GameCreated', () => {
         it('game is added', () => {
             const { clientManager, testConnection } = getClientManagerAndStuff();
@@ -285,60 +415,6 @@ describe('ClientManager', () => {
                 [new UserData(1, 'me', [new ClientData(2)]), new UserData(3, 'user 3', [new ClientData(4, 10)])],
                 [new GameDataData(10, 1, [3])],
             );
-        });
-    });
-
-    describe('onEnterClicked', () => {
-        it('sends EnterGame message when connected', () => {
-            const { clientManager, testConnection } = getClientManagerAndStuff();
-
-            clientManager.onSubmitLoginForm('me', '');
-            testConnection.triggerOpen();
-            testConnection.triggerMessage([
-                [
-                    MessageToClient.Greetings,
-                    2,
-                    [[1, 'user 1', [[1, 1]]], [2, 'me', [[2]]]],
-                    [[0, 10, 1, GameMode.Teams2vs2, PlayerArrangementMode.RandomOrder, 1, [1, 0, 0, 0], [0, 0, 0, 0]]],
-                ],
-            ]);
-            testConnection.clearSentMessages();
-
-            clientManager.gameDisplayNumberToGameData.get(1)!.onEnterClicked();
-
-            expect(testConnection.sentMessages.length).toBe(1);
-            expect(testConnection.sentMessages[0]).toEqual([MessageToServer.EnterGame, 1]);
-        });
-
-        it('does not send EnterGame message when not connected', () => {
-            const { clientManager, testConnection } = getClientManagerAndStuff();
-
-            clientManager.onSubmitLoginForm('me', '');
-            testConnection.triggerOpen();
-            testConnection.triggerMessage([
-                [
-                    MessageToClient.Greetings,
-                    2,
-                    [[1, 'user 1', [[1, 1]]], [2, 'me', [[2]]]],
-                    [[0, 10, 1, GameMode.Teams2vs2, PlayerArrangementMode.RandomOrder, 1, [1, 0, 0, 0], [0, 0, 0, 0]]],
-                ],
-            ]);
-            testConnection.triggerClose();
-            testConnection.clearSentMessages();
-
-            clientManager.gameDisplayNumberToGameData.get(1)!.onEnterClicked();
-
-            expect(testConnection.sentMessages.length).toBe(0);
-        });
-    });
-
-    describe('onExitGameClicked', () => {
-        it('sends ExitGame message when connected', () => {
-            sendsMessageWhenConnected(clientManager => clientManager.onExitGameClicked(), [MessageToServer.ExitGame]);
-        });
-
-        it('does not send ExitGame message when not connected', () => {
-            doesNotSendMessageWhenNotConnected(clientManager => clientManager.onExitGameClicked());
         });
     });
 
@@ -403,82 +479,6 @@ describe('ClientManager', () => {
                 [new UserData(1, 'user 1', [new ClientData(1)]), new UserData(2, 'me', [new ClientData(2, 10)])],
                 [new GameDataData(10, 1, [1, 2])],
             );
-        });
-    });
-
-    describe('onJoinGame', () => {
-        it('sends JoinGame message when connected', () => {
-            sendsMessageWhenConnected(clientManager => clientManager.onJoinGame(), [MessageToServer.JoinGame]);
-        });
-
-        it('does not send JoinGame message when not connected', () => {
-            doesNotSendMessageWhenNotConnected(clientManager => clientManager.onJoinGame());
-        });
-    });
-
-    describe('onUnjoinGame', () => {
-        it('sends UnjoinGame message when connected', () => {
-            sendsMessageWhenConnected(clientManager => clientManager.onUnjoinGame(), [MessageToServer.UnjoinGame]);
-        });
-
-        it('does not send UnjoinGame message when not connected', () => {
-            doesNotSendMessageWhenNotConnected(clientManager => clientManager.onUnjoinGame());
-        });
-    });
-
-    describe('onApproveOfGameSetup', () => {
-        it('sends ApproveOfGameSetup message when connected', () => {
-            sendsMessageWhenConnected(clientManager => clientManager.onApproveOfGameSetup(), [MessageToServer.ApproveOfGameSetup]);
-        });
-
-        it('does not send ApproveOfGameSetup message when not connected', () => {
-            doesNotSendMessageWhenNotConnected(clientManager => clientManager.onApproveOfGameSetup());
-        });
-    });
-
-    describe('onChangeGameMode', () => {
-        it('sends ChangeGameMode message when connected', () => {
-            sendsMessageWhenConnected(clientManager => clientManager.onChangeGameMode(GameMode.Teams2vs2), [
-                MessageToServer.ChangeGameMode,
-                GameMode.Teams2vs2,
-            ]);
-        });
-
-        it('does not send ChangeGameMode message when not connected', () => {
-            doesNotSendMessageWhenNotConnected(clientManager => clientManager.onChangeGameMode(GameMode.Teams2vs2));
-        });
-    });
-
-    describe('onChangePlayerArrangementMode', () => {
-        it('sends ChangePlayerArrangementMode message when connected', () => {
-            sendsMessageWhenConnected(clientManager => clientManager.onChangePlayerArrangementMode(PlayerArrangementMode.ExactOrder), [
-                MessageToServer.ChangePlayerArrangementMode,
-                PlayerArrangementMode.ExactOrder,
-            ]);
-        });
-
-        it('does not send ChangePlayerArrangementMode message when not connected', () => {
-            doesNotSendMessageWhenNotConnected(clientManager => clientManager.onChangePlayerArrangementMode(PlayerArrangementMode.ExactOrder));
-        });
-    });
-
-    describe('onSwapPositions', () => {
-        it('sends SwapPositions message when connected', () => {
-            sendsMessageWhenConnected(clientManager => clientManager.onSwapPositions(0, 1), [MessageToServer.SwapPositions, 0, 1]);
-        });
-
-        it('does not send SwapPositions message when not connected', () => {
-            doesNotSendMessageWhenNotConnected(clientManager => clientManager.onSwapPositions(0, 1));
-        });
-    });
-
-    describe('onKickUser', () => {
-        it('sends KickUser message when connected', () => {
-            sendsMessageWhenConnected(clientManager => clientManager.onKickUser(5), [MessageToServer.KickUser, 5]);
-        });
-
-        it('does not send KickUser message when not connected', () => {
-            doesNotSendMessageWhenNotConnected(clientManager => clientManager.onKickUser(5));
         });
     });
 
