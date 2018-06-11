@@ -65,7 +65,7 @@ export class GameSetup {
     }
 
     addUser(userID: number) {
-        if (this.userIDsSet.size === this.usernames.size) {
+        if (this.userIDsSet.size === this.userIDs.size) {
             return;
         }
 
@@ -113,7 +113,7 @@ export class GameSetup {
             return;
         }
 
-        if (this.userIDsSet.size !== this.usernames.size) {
+        if (this.userIDsSet.size !== this.userIDs.size) {
             return;
         }
 
@@ -210,11 +210,11 @@ export class GameSetup {
     }
 
     swapPositions(position1: number, position2: number) {
-        if (!Number.isInteger(position1) || position1 < 0 || position1 >= this.usernames.size) {
+        if (!Number.isInteger(position1) || position1 < 0 || position1 >= this.userIDs.size) {
             return;
         }
 
-        if (!Number.isInteger(position2) || position2 < 0 || position2 >= this.usernames.size) {
+        if (!Number.isInteger(position2) || position2 < 0 || position2 >= this.userIDs.size) {
             return;
         }
 
@@ -319,7 +319,7 @@ export class GameSetup {
     }
 
     toJSON(): GameSetupJSON {
-        const userIDs: number[] = new Array(this.usernames.size);
+        const userIDs: number[] = new Array(this.userIDs.size);
         this.userIDs.forEach((userID, position) => {
             userIDs[position] = userID || 0;
         });
