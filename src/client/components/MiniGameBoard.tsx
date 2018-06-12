@@ -5,7 +5,7 @@ import { gameBoardTypeToCSSClassName } from '../helpers';
 import * as style from './MiniGameBoard.css';
 
 interface MiniGameBoardProps {
-    gameBoard: List<GameBoardType>;
+    gameBoard: List<List<GameBoardType>>;
     cellSize: number;
 }
 
@@ -18,7 +18,7 @@ export class MiniGameBoard extends React.PureComponent<MiniGameBoardProps> {
             const cells = new Array(12);
             for (let x = 0; x < 12; x++) {
                 const tile = x * 9 + y;
-                const gameBoardType = gameBoard.get(tile, 0);
+                const gameBoardType = gameBoard.get(tile % 9)!.get(tile / 9)!;
 
                 cells[x] = <td key={x} className={gameBoardTypeToCSSClassName.get(gameBoardType)} />;
             }

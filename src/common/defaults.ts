@@ -12,11 +12,31 @@ export const defaultTileRackTypesList = List<List<GameBoardType | null>>([]);
 
 export const defaultTileRackTypes = List<GameBoardType | null>([null, null, null, null, null, null]);
 
-const dgb: GameBoardType[] = new Array(108);
-for (let i = 0; i < 108; i++) {
-    dgb[i] = GameBoardType.Nothing;
-}
-export const defaultGameBoard = List(dgb);
+const defaultGameBoardRow = List([
+    GameBoardType.Nothing,
+    GameBoardType.Nothing,
+    GameBoardType.Nothing,
+    GameBoardType.Nothing,
+    GameBoardType.Nothing,
+    GameBoardType.Nothing,
+    GameBoardType.Nothing,
+    GameBoardType.Nothing,
+    GameBoardType.Nothing,
+    GameBoardType.Nothing,
+    GameBoardType.Nothing,
+    GameBoardType.Nothing,
+]);
+export const defaultGameBoard = List([
+    defaultGameBoardRow,
+    defaultGameBoardRow,
+    defaultGameBoardRow,
+    defaultGameBoardRow,
+    defaultGameBoardRow,
+    defaultGameBoardRow,
+    defaultGameBoardRow,
+    defaultGameBoardRow,
+    defaultGameBoardRow,
+]);
 
 export const defaultScoreBoard = List<List<number>>([]);
 

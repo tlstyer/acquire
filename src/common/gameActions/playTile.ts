@@ -89,7 +89,8 @@ export class ActionPlayTile extends ActionBase {
         const chains: GameBoardType[] = [];
         const neighboringTiles = neighboringTilesLookup[tile];
         for (let i = 0; i < neighboringTiles.length; i++) {
-            const type = this.game.gameBoard.get(neighboringTiles[i], 0);
+            const neighboringTile = neighboringTiles[i];
+            const type = this.game.gameBoard.get(neighboringTile % 9)!.get(neighboringTile / 9)!;
             if (type <= GameBoardType.Imperial && chains.indexOf(type) === -1) {
                 chains.push(type);
             }

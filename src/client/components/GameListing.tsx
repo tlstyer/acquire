@@ -8,7 +8,7 @@ import * as style from './GameListing.css';
 import { MiniGameBoard } from './MiniGameBoard';
 
 export interface GameListingProps {
-    gameBoard: List<GameBoardType>;
+    gameBoard: List<List<GameBoardType>>;
     usernames: List<string | null>;
     gameDisplayNumber: number;
     gameMode: GameMode;

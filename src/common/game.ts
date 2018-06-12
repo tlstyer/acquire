@@ -268,7 +268,7 @@ export class Game {
                 for (let i = 0; i < neighboringTiles.length; i++) {
                     const neighboringTile = neighboringTiles[i];
                     borderTiles.push(neighboringTile);
-                    borderTypes.push(this.gameBoard.get(neighboringTile, 0));
+                    borderTypes.push(this.gameBoard.get(neighboringTile % 9)!.get(neighboringTile / 9)!);
                 }
 
                 borderTypes = borderTypes.filter((type, index) => {
@@ -342,14 +342,14 @@ export class Game {
     }
 
     setGameBoardPosition(tile: number, gameBoardType: GameBoardType) {
-        const previousGameBoardType = this.gameBoard.get(tile, 0);
+        const previousGameBoardType = this.gameBoard.get(tile % 9)!.get(tile / 9)!;
 
         if (previousGameBoardType === GameBoardType.Nothing) {
             this.getCurrentMoveData().addPlayedTile(tile, this.gameActionStack[this.gameActionStack.length - 1].playerID);
         }
 
         this.gameBoardTypeCounts[previousGameBoardType]--;
-        this.gameBoard = this.gameBoard.set(tile, gameBoardType);
+        this.gameBoard = this.gameBoard.setIn([tile % 9, tile / 9], gameBoardType);
         this.gameBoardTypeCounts[gameBoardType]++;
     }
 
@@ -367,7 +367,7 @@ export class Game {
             const neighboringTiles = neighboringTilesLookup[t];
             for (let i = 0; i < neighboringTiles.length; i++) {
                 const neighboringTile = neighboringTiles[i];
-                if (!found.has(neighboringTile) && !excludedTypes.has(this.gameBoard.get(neighboringTile, 0))) {
+                if (!found.has(neighboringTile) && !excludedTypes.has(this.gameBoard.get(neighboringTile % 9)!.get(neighboringTile / 9)!)) {
                     pending.push(neighboringTile);
                     found.add(neighboringTile);
                 }

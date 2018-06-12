@@ -414,12 +414,12 @@ const gameBoardTypeToCharacter = new Map([
     [GameBoardType.WillMergeChains, 'm'],
     [GameBoardType.CantPlayNow, 'c'],
 ]);
-function getGameBoardLines(gameBoard: List<GameBoardType>) {
+function getGameBoardLines(gameBoard: List<List<GameBoardType>>) {
     const lines: string[] = new Array(9);
     const chars: string[] = new Array(12);
     for (let y = 0; y < 9; y++) {
         for (let x = 0; x < 12; x++) {
-            chars[x] = gameBoardTypeToCharacter.get(gameBoard.get(x * 9 + y, 0))!;
+            chars[x] = gameBoardTypeToCharacter.get(gameBoard.get(y)!.get(x)!)!;
         }
         lines[y] = chars.join('');
     }

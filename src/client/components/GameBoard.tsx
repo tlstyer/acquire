@@ -6,7 +6,7 @@ import { gameBoardTypeToCSSClassName, gameBoardTypeToHotelInitial, getTileString
 import * as style from './GameBoard.css';
 
 export interface GameBoardProps {
-    gameBoard: List<GameBoardType>;
+    gameBoard: List<List<GameBoardType>>;
     tileRack?: List<number | null>;
     labelMode: GameBoardLabelMode;
     cellSize: number;
@@ -32,7 +32,7 @@ export class GameBoard extends React.PureComponent<GameBoardProps> {
             const cells = new Array(12);
             for (let x = 0; x < 12; x++) {
                 const tile = x * 9 + y;
-                const gameBoardType = myTiles.has(tile) ? GameBoardType.IHaveThis : gameBoard.get(tile, 0);
+                const gameBoardType = myTiles.has(tile) ? GameBoardType.IHaveThis : gameBoard.get(tile % 9)!.get(tile / 9)!;
 
                 let label;
                 if (labelMode === GameBoardLabelMode.Coordinates) {
