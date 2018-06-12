@@ -243,18 +243,10 @@ export class ClientManager {
     };
 
     onSocketOpen = (e: Event) => {
-        if (this.socket === null) {
-            throw new Error('why is this.socket null?');
-        }
-
-        this.socket.send(JSON.stringify([0, this.username, this.password, []]));
+        this.socket!.send(JSON.stringify([0, this.username, this.password, []]));
     };
 
     onSocketMessage = (e: MessageEvent) => {
-        if (this.socket === null) {
-            throw new Error('why is this.socket null?');
-        }
-
         const messages = JSON.parse(e.data);
 
         for (let i = 0; i < messages.length; i++) {
@@ -416,10 +408,6 @@ export class ClientManager {
     }
 
     onSocketClose = (e: CloseEvent) => {
-        if (this.socket === null) {
-            throw new Error('why is this.socket null?');
-        }
-
         this.socket = null;
 
         if (this.errorCode !== null) {
