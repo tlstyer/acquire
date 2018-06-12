@@ -463,9 +463,7 @@ export class Game {
 
         const netWorths = this.getScoreBoardColumnArray(ScoreBoardIndex.Cash);
 
-        const prices = this.scoreBoardPrice.toArray();
-        for (let chain = 0; chain < prices.length; chain++) {
-            const price = prices[chain];
+        this.scoreBoardPrice.forEach((price, chain) => {
             if (price > 0) {
                 const sharesOwned = this.getScoreBoardColumnArray(chain);
                 for (let playerID = 0; playerID < sharesOwned.length; playerID++) {
@@ -480,7 +478,7 @@ export class Game {
                     }
                 }
             }
-        }
+        });
 
         this.setScoreBoardColumn(ScoreBoardIndex.Net, netWorths);
 
