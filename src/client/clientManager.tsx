@@ -244,9 +244,9 @@ export class ClientManager {
         }
     };
 
-    onKickUser = (position: number) => {
+    onKickUser = (userID: number) => {
         if (this.isConnected()) {
-            this.socket!.send(JSON.stringify([MessageToServer.KickUser, position]));
+            this.socket!.send(JSON.stringify([MessageToServer.KickUser, userID]));
         }
     };
 

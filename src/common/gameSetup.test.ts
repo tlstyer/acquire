@@ -498,7 +498,7 @@ describe('gameSetup', () => {
             expect(gameSetup.usernames.toJS()).toEqual(['user 1', 'user 2', 'user 3', 'user 4']);
 
             // @ts-ignore
-            gameSetup.kickUser('invalid position');
+            gameSetup.kickUser('invalid user');
             // @ts-ignore
             gameSetup.kickUser(null);
             // @ts-ignore

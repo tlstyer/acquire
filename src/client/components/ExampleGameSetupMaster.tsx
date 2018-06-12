@@ -170,13 +170,13 @@ export class ExampleGameSetupMaster extends React.Component<ExampleGameSetupMast
         }, this.state.simulatedNetworkDelay);
     };
 
-    handleKickUser = (position: number) => {
+    handleKickUser = (userID: number) => {
         setTimeout(() => {
             const { gameSetup } = this.state;
 
-            console.log('kickUser', position);
+            console.log('kickUser', userID);
 
-            gameSetup.kickUser(position);
+            gameSetup.kickUser(userID);
             this.setState({ gameSetup });
         }, this.state.simulatedNetworkDelay);
     };

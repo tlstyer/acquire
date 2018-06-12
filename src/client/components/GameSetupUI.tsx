@@ -16,7 +16,7 @@ interface GameSetupUIProps {
     onChangeGameMode?: (gameMode: GameMode) => void;
     onChangePlayerArrangementMode?: (playerArrangementMode: PlayerArrangementMode) => void;
     onSwapPositions?: (position1: number, position2: number) => void;
-    onKickUser?: (position: number) => void;
+    onKickUser?: (userID: number) => void;
     onApprove?: () => void;
 }
 
