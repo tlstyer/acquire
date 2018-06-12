@@ -3,7 +3,15 @@ import { GameBoardType, GameMode, Tile } from '../common/enums';
 import * as common from './common.css';
 import { GameStatus } from './enums';
 
-export const allChains = [0, 1, 2, 3, 4, 5, 6];
+export const allChains = [
+    GameBoardType.Luxor,
+    GameBoardType.Tower,
+    GameBoardType.American,
+    GameBoardType.Festival,
+    GameBoardType.Worldwide,
+    GameBoardType.Continental,
+    GameBoardType.Imperial,
+];
 
 export const gameBoardTypeToCSSClassName = new Map([
     [GameBoardType.Luxor, common.luxor],
