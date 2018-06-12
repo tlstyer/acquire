@@ -3,7 +3,7 @@ export interface UserDataProvider {
     lookupUser(username: string): Promise<UserData | null>;
 }
 
-export interface UserData {
+interface UserData {
     userID: number;
     hasPassword: boolean;
     verifyPassword(password: string): boolean;
@@ -32,7 +32,7 @@ export class TestUserDataProvider implements UserDataProvider {
     }
 }
 
-export class TestUserData implements UserData {
+class TestUserData implements UserData {
     hasPassword: boolean;
 
     constructor(public userID: number, private password: string | null) {

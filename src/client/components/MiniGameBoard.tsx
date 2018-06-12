@@ -4,7 +4,7 @@ import { GameBoardType } from '../../common/enums';
 import { gameBoardTypeToCSSClassName } from '../helpers';
 import * as style from './MiniGameBoard.css';
 
-export interface MiniGameBoardProps {
+interface MiniGameBoardProps {
     gameBoard: List<GameBoardType>;
     cellSize: number;
 }

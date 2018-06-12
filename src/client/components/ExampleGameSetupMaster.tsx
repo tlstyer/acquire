@@ -5,7 +5,7 @@ import { GameSetupUI } from './GameSetupUI';
 
 /* tslint:disable:no-console */
 
-export interface ExampleGameSetupMasterProps {}
+interface ExampleGameSetupMasterProps {}
 
 interface ExampleGameSetupMasterState {
     gameSetup: GameSetup;

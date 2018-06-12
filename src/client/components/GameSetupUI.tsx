@@ -5,7 +5,7 @@ import { gameModeToNumPlayers, gameModeToTeamSize } from '../../common/helpers';
 import { allGameModes, gameModeToString, teamNumberToCSSClassName } from '../helpers';
 import * as style from './GameSetupUI.css';
 
-export interface GameSetupUIProps {
+interface GameSetupUIProps {
     gameMode: GameMode;
     playerArrangementMode: PlayerArrangementMode;
     usernames: List<string | null>;
