@@ -4,7 +4,7 @@ import { List } from 'immutable';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { defaultGameBoard, defaultMoveDataHistory } from '../common/defaults';
-import { GameBoardType, GameMode } from '../common/enums';
+import { ErrorCode, GameBoardType, GameMode } from '../common/enums';
 import { Game } from '../common/game';
 import { CreateGame, CreateGameProps } from './components/CreateGame';
 import { DisposeOfShares, DisposeOfSharesProps } from './components/DisposeOfShares';
@@ -58,7 +58,7 @@ class AllDemoProps {
         const gameJson2 = require('raw-loader!../common/gameTestFiles/other/all tiles played').split('\nGame JSON:\n')[1];
         const game2 = Game.fromJSON(JSON.parse(gameJson2));
 
-        this.loginFormProps = [{ onSubmit: onSubmitLoginForm }, { error: 'error passed as a prop', username: 'tlstyer', onSubmit: onSubmitLoginForm }];
+        this.loginFormProps = [{ onSubmit: onSubmitLoginForm }, { errorCode: ErrorCode.CouldNotConnect, username: 'tlstyer', onSubmit: onSubmitLoginForm }];
 
         this.headerProps = [{ username: 'tlstyer', isConnected: true }, { username: 'Another User', isConnected: false }];
 

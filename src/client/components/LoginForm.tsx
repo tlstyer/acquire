@@ -1,17 +1,30 @@
 import * as React from 'react';
+import { ErrorCode } from '../../common/enums';
 import { isASCII } from '../../common/helpers';
 import * as commonStyle from '../common.css';
 import { hackDoNotInterfereWithKeyboardShortcuts } from '../helpers';
 
+const errorCodeToMessage = new Map([
+    [ErrorCode.NotUsingLatestVersion, 'You are not using the latest version.'],
+    [ErrorCode.InternalServerError, 'An error occurred during the processing of your request.'],
+    [ErrorCode.InvalidMessageFormat, 'An error occurred during the processing of your request.'],
+    [ErrorCode.InvalidUsername, 'Invalid username. Username must have between 1 and 32 ASCII characters.'],
+    [ErrorCode.MissingPassword, 'Password is required.'],
+    [ErrorCode.ProvidedPassword, 'Password is not set for this user.'],
+    [ErrorCode.IncorrectPassword, 'Password is incorrect.'],
+    [ErrorCode.InvalidMessage, 'An error occurred.'],
+    [ErrorCode.CouldNotConnect, 'Could not connect to the server.'],
+]);
+
 export interface LoginFormProps {
-    error?: string;
+    errorCode?: ErrorCode;
     username?: string;
     onSubmit: (username: string, password: string) => void;
 }
 
 interface LoginFormState {
     props: LoginFormProps;
-    error?: string;
+    errorCode?: ErrorCode;
     username: string;
     password: string;
 }
@@ -26,14 +39,14 @@ export class LoginForm extends React.PureComponent<LoginFormProps, LoginFormStat
     static _getDerivedStateFromProps(props: LoginFormProps): LoginFormState {
         return {
             props,
-            error: props.error,
+            errorCode: props.errorCode,
             username: props.username !== undefined ? props.username : '',
             password: '',
         };
     }
 
     static getDerivedStateFromProps(nextProps: LoginFormProps, prevState: LoginFormState) {
-        if (nextProps.username !== prevState.props.username || nextProps.error !== prevState.props.error) {
+        if (nextProps.username !== prevState.props.username || nextProps.errorCode !== prevState.props.errorCode) {
             return LoginForm._getDerivedStateFromProps(nextProps);
         } else if (nextProps.onSubmit !== prevState.props.onSubmit) {
             return { ...prevState, props: nextProps };
@@ -43,11 +56,11 @@ export class LoginForm extends React.PureComponent<LoginFormProps, LoginFormStat
     }
 
     render() {
-        const { error, username, password } = this.state;
+        const { errorCode, username, password } = this.state;
 
         return (
             <form onKeyDown={hackDoNotInterfereWithKeyboardShortcuts} onSubmit={this.handleSubmit}>
-                {error !== undefined ? <div className={commonStyle.errorMessage}>{error}</div> : undefined}
+                {errorCode !== undefined ? <div className={commonStyle.errorMessage}>{errorCodeToMessage.get(errorCode)}</div> : undefined}
                 Username: <input type={'text'} value={username} onChange={this.handleChangeUsername} /> Password:{' '}
                 <input type={'password'} value={password} onChange={this.handleChangePassword} /> <input type={'submit'} value={'Login'} />
             </form>
@@ -68,9 +81,9 @@ export class LoginForm extends React.PureComponent<LoginFormProps, LoginFormStat
         const { username, password } = this.state;
 
         if (username.length === 0 || username.length > 32 || !isASCII(username)) {
-            this.setState({ error: 'Invalid username. Username must have between 1 and 32 ASCII characters.' });
+            this.setState({ errorCode: ErrorCode.InvalidUsername });
         } else {
-            this.setState({ error: undefined });
+            this.setState({ errorCode: undefined });
             this.props.onSubmit(username, password);
         }
     };

@@ -20,18 +20,6 @@ export enum ClientManagerPage {
     Game,
 }
 
-const errorCodeToMessage = new Map([
-    [ErrorCode.NotUsingLatestVersion, 'You are not using the latest version.'],
-    [ErrorCode.InternalServerError, 'An error occurred during the processing of your request.'],
-    [ErrorCode.InvalidMessageFormat, 'An error occurred during the processing of your request.'],
-    [ErrorCode.InvalidUsername, 'Invalid username. Username must have between 1 and 32 ASCII characters.'],
-    [ErrorCode.MissingPassword, 'Password is required.'],
-    [ErrorCode.ProvidedPassword, 'Password is not set for this user.'],
-    [ErrorCode.IncorrectPassword, 'Password is incorrect.'],
-    [ErrorCode.InvalidMessage, 'An error occurred.'],
-    [ErrorCode.CouldNotConnect, 'Could not connect to the server.'],
-]);
-
 export class ClientManager {
     errorCode: ErrorCode | null = null;
     page = ClientManagerPage.Login;
@@ -84,11 +72,7 @@ export class ClientManager {
             <>
                 <h1>Acquire</h1>
                 <h2>Login</h2>
-                <LoginForm
-                    error={this.errorCode !== null ? errorCodeToMessage.get(this.errorCode) : undefined}
-                    username={this.username}
-                    onSubmit={this.onSubmitLoginForm}
-                />
+                <LoginForm errorCode={this.errorCode !== null ? this.errorCode : undefined} username={this.username} onSubmit={this.onSubmitLoginForm} />
             </>
         );
     };
