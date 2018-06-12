@@ -13,7 +13,7 @@ export interface TileRackProps {
     onTileClicked: (tile: number) => void;
 }
 
-const keyboardShortcutToTileIndex = new Map<string, number>([['1', 0], ['2', 1], ['3', 2], ['4', 3], ['5', 4], ['6', 5]]);
+const keyboardShortcutToTileIndex = new Map([['1', 0], ['2', 1], ['3', 2], ['4', 3], ['5', 4], ['6', 5]]);
 
 export class TileRack extends React.Component<TileRackProps> {
     buttonRefs: React.RefObject<HTMLInputElement>[];

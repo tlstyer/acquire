@@ -2,13 +2,13 @@ import { List } from 'immutable';
 import { GameMode, GameSetupChange, PlayerArrangementMode } from './enums';
 import { gameModeToNumPlayers, gameModeToTeamSize, shuffleArray } from './helpers';
 
-const defaultApprovals = new Map<number, List<boolean>>([
-    [1, List<boolean>([false])],
-    [2, List<boolean>([false, false])],
-    [3, List<boolean>([false, false, false])],
-    [4, List<boolean>([false, false, false, false])],
-    [5, List<boolean>([false, false, false, false, false])],
-    [6, List<boolean>([false, false, false, false, false, false])],
+const defaultApprovals = new Map([
+    [1, List([false])],
+    [2, List([false, false])],
+    [3, List([false, false, false])],
+    [4, List([false, false, false, false])],
+    [5, List([false, false, false, false, false])],
+    [6, List([false, false, false, false, false, false])],
 ]);
 
 type GameSetupJSON = [GameMode, PlayerArrangementMode, number, number[], number[]];
@@ -282,7 +282,7 @@ export class GameSetup {
         this.history = [];
     }
 
-    getFinalUserIDsAndUsernames(): [List<number>, List<string>] {
+    getFinalUserIDsAndUsernames() {
         const userIDs: number[] = this.userIDs.toJS();
 
         if (this.playerArrangementMode === PlayerArrangementMode.RandomOrder) {
@@ -368,7 +368,7 @@ export class GameSetup {
             }
         }
 
-        gameSetup.approvals = List<boolean>(approvals);
+        gameSetup.approvals = List(approvals);
         gameSetup.approvedByEverybody = approvedByEverybody;
 
         return gameSetup;

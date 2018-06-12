@@ -223,23 +223,19 @@ export class GameSetupUI extends React.PureComponent<GameSetupUIProps> {
     }
 }
 
-const playerArrangementModeToString = new Map<PlayerArrangementMode, string>([
+const playerArrangementModeToString = new Map([
     [PlayerArrangementMode.RandomOrder, 'Random Order'],
     [PlayerArrangementMode.ExactOrder, 'Exact Order'],
     [PlayerArrangementMode.SpecifyTeams, 'Specify Teams'],
 ]);
 
-const allPlayerArrangementModes: PlayerArrangementMode[] = [
-    PlayerArrangementMode.RandomOrder,
-    PlayerArrangementMode.ExactOrder,
-    PlayerArrangementMode.SpecifyTeams,
-];
+const allPlayerArrangementModes = [PlayerArrangementMode.RandomOrder, PlayerArrangementMode.ExactOrder, PlayerArrangementMode.SpecifyTeams];
 
 class SpecifyTeamsEntry {
     constructor(public index: number, public upIndex: number | null, public downIndex: number | null) {}
 }
 
-const teamGameModeToSpecifyTeamsEntries = new Map<GameMode, (SpecifyTeamsEntry | null)[]>([
+const teamGameModeToSpecifyTeamsEntries = new Map([
     [
         GameMode.Teams2vs2,
         [new SpecifyTeamsEntry(0, null, 2), new SpecifyTeamsEntry(2, 0, 1), null, new SpecifyTeamsEntry(1, 2, 3), new SpecifyTeamsEntry(3, 1, null)],

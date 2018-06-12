@@ -20,7 +20,7 @@ export enum ClientManagerPage {
     Game,
 }
 
-const errorCodeToMessage = new Map<ErrorCode, string>([
+const errorCodeToMessage = new Map([
     [ErrorCode.NotUsingLatestVersion, 'You are not using the latest version.'],
     [ErrorCode.InternalServerError, 'An error occurred during the processing of your request.'],
     [ErrorCode.InvalidMessageFormat, 'An error occurred during the processing of your request.'],

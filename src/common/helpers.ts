@@ -123,7 +123,7 @@ export function isASCII(str: string) {
     return true;
 }
 
-export const gameModeToNumPlayers = new Map<GameMode, number>([
+export const gameModeToNumPlayers = new Map([
     [GameMode.Singles1, 1],
     [GameMode.Singles2, 2],
     [GameMode.Singles3, 3],
@@ -135,7 +135,7 @@ export const gameModeToNumPlayers = new Map<GameMode, number>([
     [GameMode.Teams3vs3, 6],
 ]);
 
-export const gameModeToTeamSize = new Map<GameMode, number>([
+export const gameModeToTeamSize = new Map([
     [GameMode.Singles1, 1],
     [GameMode.Singles2, 1],
     [GameMode.Singles3, 1],

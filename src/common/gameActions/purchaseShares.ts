@@ -87,7 +87,7 @@ export class ActionPurchaseShares extends ActionBase {
             throw new UserInputError('end game parameter is not 0 or 1');
         }
 
-        const chainCounts: number[] = [0, 0, 0, 0, 0, 0, 0];
+        const chainCounts = [0, 0, 0, 0, 0, 0, 0];
         for (let i = 0; i < chains.length; i++) {
             chainCounts[chains[i]]++;
         }

@@ -67,7 +67,7 @@ export class ActionSelectMergerSurvivor extends ActionBase {
         return this.completeAction(controllingChain);
     }
 
-    protected completeAction(controllingChain: GameBoardType): ActionBase[] {
+    protected completeAction(controllingChain: GameBoardType) {
         const moveData = this.game.getCurrentMoveData();
 
         this.game.fillCells(this.tile, controllingChain);

@@ -16,16 +16,16 @@ const dgb: GameBoardType[] = new Array(108);
 for (let i = 0; i < 108; i++) {
     dgb[i] = GameBoardType.Nothing;
 }
-export const defaultGameBoard = List<GameBoardType>(dgb);
+export const defaultGameBoard = List(dgb);
 
 export const defaultScoreBoard = List<List<number>>([]);
 
-export const defaultScoreBoardRow = List<number>([0, 0, 0, 0, 0, 0, 0, 60, 60]);
+export const defaultScoreBoardRow = List([0, 0, 0, 0, 0, 0, 0, 60, 60]);
 
-export const defaultScoreBoardAvailable = List<number>([25, 25, 25, 25, 25, 25, 25]);
+export const defaultScoreBoardAvailable = List([25, 25, 25, 25, 25, 25, 25]);
 
-export const defaultScoreBoardChainSize = List<number>([0, 0, 0, 0, 0, 0, 0]);
+export const defaultScoreBoardChainSize = List([0, 0, 0, 0, 0, 0, 0]);
 
 export const defaultScoreBoardPrice = defaultScoreBoardChainSize;
 
-export const defaultSafeChains = List<boolean>([false, false, false, false, false, false, false]);
+export const defaultSafeChains = List([false, false, false, false, false, false, false]);

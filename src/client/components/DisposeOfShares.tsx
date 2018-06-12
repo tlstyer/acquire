@@ -21,7 +21,7 @@ interface DisposeOfSharesState {
     sellMax: number;
 }
 
-const keyboardShortcutToButtonIndex = new Map<string, number>([
+const keyboardShortcutToButtonIndex = new Map([
     ['1', 0],
     ['k', 0],
     ['2', 1],

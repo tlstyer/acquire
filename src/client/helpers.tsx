@@ -5,7 +5,7 @@ import { GameStatus } from './enums';
 
 export const allChains = [0, 1, 2, 3, 4, 5, 6];
 
-export const gameBoardTypeToCSSClassName = new Map<GameBoardType, string>([
+export const gameBoardTypeToCSSClassName = new Map([
     [GameBoardType.Luxor, common.luxor],
     [GameBoardType.Tower, common.tower],
     [GameBoardType.American, common.american],
@@ -24,7 +24,7 @@ export const gameBoardTypeToCSSClassName = new Map<GameBoardType, string>([
     [GameBoardType.CantPlayNow, common.cantPlayNow],
 ]);
 
-export const gameBoardTypeToHotelInitial = new Map<GameBoardType, string>([
+export const gameBoardTypeToHotelInitial = new Map([
     [GameBoardType.Luxor, 'L'],
     [GameBoardType.Tower, 'T'],
     [GameBoardType.American, 'A'],
@@ -34,7 +34,7 @@ export const gameBoardTypeToHotelInitial = new Map<GameBoardType, string>([
     [GameBoardType.Imperial, 'I'],
 ]);
 
-const gameBoardTypeToHotelName = new Map<GameBoardType, string>([
+const gameBoardTypeToHotelName = new Map([
     [GameBoardType.Luxor, 'Luxor'],
     [GameBoardType.Tower, 'Tower'],
     [GameBoardType.American, 'American'],
@@ -44,7 +44,7 @@ const gameBoardTypeToHotelName = new Map<GameBoardType, string>([
     [GameBoardType.Imperial, 'Imperial'],
 ]);
 
-export const teamNumberToCSSClassName = new Map<number, string>([[1, common.team1], [2, common.team2], [3, common.team3]]);
+export const teamNumberToCSSClassName = new Map([[1, common.team1], [2, common.team2], [3, common.team3]]);
 
 const yTileNames = 'ABCDEFGHI';
 
@@ -72,7 +72,7 @@ export function getHotelNameSpan(chain: GameBoardType) {
     return <span className={gameBoardTypeToCSSClassName.get(chain)}>{gameBoardTypeToHotelName.get(chain)}</span>;
 }
 
-export const gameModeToString = new Map<GameMode, string>([
+export const gameModeToString = new Map([
     [GameMode.Singles1, 'Singles 1'],
     [GameMode.Singles2, 'Singles 2'],
     [GameMode.Singles3, 'Singles 3'],
@@ -84,11 +84,7 @@ export const gameModeToString = new Map<GameMode, string>([
     [GameMode.Teams3vs3, 'Teams 3 vs 3'],
 ]);
 
-export const gameStatusToString = new Map<GameStatus, string>([
-    [GameStatus.SettingUp, 'Setting Up'],
-    [GameStatus.InProgress, 'In Progress'],
-    [GameStatus.Completed, 'Completed'],
-]);
+export const gameStatusToString = new Map([[GameStatus.SettingUp, 'Setting Up'], [GameStatus.InProgress, 'In Progress'], [GameStatus.Completed, 'Completed']]);
 
 export function hackDoNotInterfereWithKeyboardShortcuts(event: React.KeyboardEvent<HTMLElement>) {
     event.stopPropagation();
@@ -107,7 +103,7 @@ export const purchaseSharesKeyboardShortcutsDescription =
     'E or ASTERISK to toggle the End Game checkbox, ' +
     '0 or 8 or O to move to the OK button, ENTER to press it.';
 
-export const allGameModes: GameMode[] = [
+export const allGameModes = [
     GameMode.Singles1,
     GameMode.Singles2,
     GameMode.Singles3,

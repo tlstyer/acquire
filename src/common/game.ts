@@ -351,13 +351,13 @@ export class Game {
     }
 
     fillCells(tile: number, gameBoardType: GameBoardType) {
-        const pending: number[] = [tile];
-        const found = new Set<number>([tile]);
-        const excludedTypes = new Set<GameBoardType>([GameBoardType.Nothing, GameBoardType.CantPlayEver, gameBoardType]);
+        const pending = [tile];
+        const found = new Set([tile]);
+        const excludedTypes = new Set([GameBoardType.Nothing, GameBoardType.CantPlayEver, gameBoardType]);
 
         this.gameBoard = this.gameBoard.asMutable();
 
-        let t: number | undefined = pending.pop();
+        let t = pending.pop();
         while (t !== undefined) {
             this.setGameBoardPosition(t, gameBoardType);
 
@@ -575,7 +575,7 @@ const dummyWatcherMessage: any[] = [];
 
 export class MoveData {
     playerID = -1;
-    gameAction: GameAction = GameAction.StartGame;
+    gameAction = GameAction.StartGame;
     gameActionParameters: any[] = [];
     timestamp: number | null = null;
     revealedTileRackTiles: MoveDataTileRackTile[] = [];
@@ -596,8 +596,8 @@ export class MoveData {
 
     revealedTileBagTilesLookup = new Map<number, MoveDataTileBagTile>();
 
-    playerMessages: any[][] = dummyPlayerMessages;
-    watcherMessage: any[] = dummyWatcherMessage;
+    playerMessages = dummyPlayerMessages;
+    watcherMessage = dummyWatcherMessage;
 
     constructor(public game: Game, public previousMoveData: MoveData | null) {
         // assign something to this.nextGameAction so it gets set in the constructor

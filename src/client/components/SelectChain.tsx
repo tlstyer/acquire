@@ -24,7 +24,7 @@ const typeToInstructions = {
     [SelectChainTitle.SelectChainToDisposeOfNext]: 'Chain to dispose of next',
 };
 
-const keyboardShortcutToChain = new Map<string, number>([
+const keyboardShortcutToChain = new Map([
     ['1', 0],
     ['l', 0],
     ['2', 1],

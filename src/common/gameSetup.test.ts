@@ -780,15 +780,7 @@ describe('gameSetup', () => {
     });
 });
 
-const userIDToUsername: Map<number, string> = new Map([
-    [1, 'user 1'],
-    [2, 'user 2'],
-    [3, 'user 3'],
-    [4, 'user 4'],
-    [5, 'user 5'],
-    [6, 'user 6'],
-    [7, 'user 7'],
-]);
+const userIDToUsername = new Map([[1, 'user 1'], [2, 'user 2'], [3, 'user 3'], [4, 'user 4'], [5, 'user 5'], [6, 'user 6'], [7, 'user 7']]);
 
 function getUsernameForUserID(userID: number) {
     return userIDToUsername.get(userID)!;

@@ -17,11 +17,11 @@ export class ServerManager {
 
     connectionIDToPreLoggedInConnection = new Map<string, Connection>();
 
-    clientIDManager: ReuseIDManager = new ReuseIDManager(60000);
+    clientIDManager = new ReuseIDManager(60000);
     connectionIDToClient = new Map<string, Client>();
     userIDToUser = new Map<number, User>();
 
-    gameDisplayNumberManager: ReuseIDManager = new ReuseIDManager(60000);
+    gameDisplayNumberManager = new ReuseIDManager(60000);
     gameIDToGameData = new Map<number, GameData>();
     gameDisplayNumberToGameData = new Map<number, GameData>();
 

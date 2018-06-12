@@ -313,7 +313,7 @@ describe('ServerManager', () => {
             expect(connection1.receivedMessages.length).toBe(1);
             expect(connection2.receivedMessages.length).toBe(1);
 
-            const expectedMessage: any[] = [[MessageToClient.GameCreated, 10, 1, GameMode.Teams2vs2, 2], [MessageToClient.ClientEnteredGame, 2, 1]];
+            const expectedMessage = [[MessageToClient.GameCreated, 10, 1, GameMode.Teams2vs2, 2], [MessageToClient.ClientEnteredGame, 2, 1]];
             expect(connection1.receivedMessages[0]).toEqual(expectedMessage);
             expect(connection2.receivedMessages[0]).toEqual(expectedMessage);
         });
@@ -370,7 +370,7 @@ describe('ServerManager', () => {
             expect(connection1.receivedMessages.length).toBe(1);
             expect(connection2.receivedMessages.length).toBe(1);
 
-            const expectedMessage: any[] = [[MessageToClient.ClientEnteredGame, 2, 1]];
+            const expectedMessage = [[MessageToClient.ClientEnteredGame, 2, 1]];
             expect(connection1.receivedMessages[0]).toEqual(expectedMessage);
             expect(connection2.receivedMessages[0]).toEqual(expectedMessage);
         });
@@ -437,7 +437,7 @@ describe('ServerManager', () => {
             expect(connection1.receivedMessages.length).toBe(1);
             expect(connection2.receivedMessages.length).toBe(1);
 
-            const expectedMessage: any[] = [[MessageToClient.ClientExitedGame, 2]];
+            const expectedMessage = [[MessageToClient.ClientExitedGame, 2]];
             expect(connection1.receivedMessages[0]).toEqual(expectedMessage);
             expect(connection2.receivedMessages[0]).toEqual(expectedMessage);
         });
@@ -529,7 +529,7 @@ describe('ServerManager', () => {
             expect(hostConnection.receivedMessages.length).toBe(1);
             expect(otherConnection.receivedMessages.length).toBe(1);
 
-            const expectedMessage: any[] = [[MessageToClient.GameSetupChanged, 1, GameSetupChange.UserAdded, 2]];
+            const expectedMessage = [[MessageToClient.GameSetupChanged, 1, GameSetupChange.UserAdded, 2]];
             expect(hostConnection.receivedMessages[0]).toEqual(expectedMessage);
             expect(otherConnection.receivedMessages[0]).toEqual(expectedMessage);
         });
@@ -594,7 +594,7 @@ describe('ServerManager', () => {
             expect(hostConnection.receivedMessages.length).toBe(1);
             expect(otherConnection.receivedMessages.length).toBe(1);
 
-            const expectedMessage: any[] = [[MessageToClient.GameSetupChanged, 1, GameSetupChange.UserRemoved, 2]];
+            const expectedMessage = [[MessageToClient.GameSetupChanged, 1, GameSetupChange.UserRemoved, 2]];
             expect(hostConnection.receivedMessages[0]).toEqual(expectedMessage);
             expect(otherConnection.receivedMessages[0]).toEqual(expectedMessage);
         });
@@ -658,7 +658,7 @@ describe('ServerManager', () => {
             expect(hostConnection.receivedMessages.length).toBe(1);
             expect(otherConnection.receivedMessages.length).toBe(1);
 
-            const expectedMessage: any[] = [[MessageToClient.GameSetupChanged, 1, GameSetupChange.UserApprovedOfGameSetup, 2]];
+            const expectedMessage = [[MessageToClient.GameSetupChanged, 1, GameSetupChange.UserApprovedOfGameSetup, 2]];
             expect(hostConnection.receivedMessages[0]).toEqual(expectedMessage);
             expect(otherConnection.receivedMessages[0]).toEqual(expectedMessage);
         });
@@ -736,7 +736,7 @@ describe('ServerManager', () => {
             expect(hostConnection.receivedMessages.length).toBe(1);
             expect(otherConnection.receivedMessages.length).toBe(1);
 
-            const expectedMessage: any[] = [[MessageToClient.GameSetupChanged, 1, GameSetupChange.GameModeChanged, GameMode.Singles3]];
+            const expectedMessage = [[MessageToClient.GameSetupChanged, 1, GameSetupChange.GameModeChanged, GameMode.Singles3]];
             expect(hostConnection.receivedMessages[0]).toEqual(expectedMessage);
             expect(otherConnection.receivedMessages[0]).toEqual(expectedMessage);
         });
@@ -814,9 +814,7 @@ describe('ServerManager', () => {
             expect(hostConnection.receivedMessages.length).toBe(1);
             expect(otherConnection.receivedMessages.length).toBe(1);
 
-            const expectedMessage: any[] = [
-                [MessageToClient.GameSetupChanged, 1, GameSetupChange.PlayerArrangementModeChanged, PlayerArrangementMode.ExactOrder],
-            ];
+            const expectedMessage = [[MessageToClient.GameSetupChanged, 1, GameSetupChange.PlayerArrangementModeChanged, PlayerArrangementMode.ExactOrder]];
             expect(hostConnection.receivedMessages[0]).toEqual(expectedMessage);
             expect(otherConnection.receivedMessages[0]).toEqual(expectedMessage);
         });
@@ -894,7 +892,7 @@ describe('ServerManager', () => {
             expect(hostConnection.receivedMessages.length).toBe(1);
             expect(otherConnection.receivedMessages.length).toBe(1);
 
-            const expectedMessage: any[] = [[MessageToClient.GameSetupChanged, 1, GameSetupChange.PositionsSwapped, 0, 1]];
+            const expectedMessage = [[MessageToClient.GameSetupChanged, 1, GameSetupChange.PositionsSwapped, 0, 1]];
             expect(hostConnection.receivedMessages[0]).toEqual(expectedMessage);
             expect(otherConnection.receivedMessages[0]).toEqual(expectedMessage);
         });
@@ -972,7 +970,7 @@ describe('ServerManager', () => {
             expect(hostConnection.receivedMessages.length).toBe(1);
             expect(otherConnection.receivedMessages.length).toBe(1);
 
-            const expectedMessage: any[] = [[MessageToClient.GameSetupChanged, 1, GameSetupChange.UserKicked, 2]];
+            const expectedMessage = [[MessageToClient.GameSetupChanged, 1, GameSetupChange.UserKicked, 2]];
             expect(hostConnection.receivedMessages[0]).toEqual(expectedMessage);
             expect(otherConnection.receivedMessages[0]).toEqual(expectedMessage);
         });

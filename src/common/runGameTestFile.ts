@@ -12,8 +12,8 @@ import { ActionSelectNewChain } from './gameActions/selectNewChain';
 
 export function runGameTestFile(inputLines: string[]) {
     let game: Game | null = null;
-    let gameMode: GameMode = GameMode.Singles1;
-    let playerArrangementMode: PlayerArrangementMode = PlayerArrangementMode.Version1;
+    let gameMode = GameMode.Singles1;
+    let playerArrangementMode = PlayerArrangementMode.Version1;
     let tileBag: number[] = [];
     const userIDs: number[] = [];
     const usernames: string[] = [];
@@ -108,8 +108,8 @@ export function runGameTestFile(inputLines: string[]) {
 
                 const playerID = parseInt(actionParts[0], 10);
 
-                const userID: number = game.userIDs.get(playerID, 0);
-                const moveIndex: number = game.moveDataHistory.size;
+                const userID = game.userIDs.get(playerID, 0);
+                const moveIndex = game.moveDataHistory.size;
 
                 const actualGameActionName = game.gameActionStack[game.gameActionStack.length - 1].constructor.name.slice(6);
                 // @ts-ignore actualGameActionName is in GameAction
@@ -194,7 +194,7 @@ function getDuplicatedTiles(tileBag: number[]) {
     return [...duplicatedTiles.values()];
 }
 
-const abbreviationToGameBoardType = new Map<string, GameBoardType>([
+const abbreviationToGameBoardType = new Map([
     ['L', GameBoardType.Luxor],
     ['T', GameBoardType.Tower],
     ['A', GameBoardType.American],
@@ -396,7 +396,7 @@ function getRevealedTileBagTilesStringForPlayer(revealedTileBagTiles: MoveDataTi
     return parts.join(', ');
 }
 
-const gameBoardTypeToCharacter = new Map<GameBoardType, string>([
+const gameBoardTypeToCharacter = new Map([
     [GameBoardType.Luxor, 'L'],
     [GameBoardType.Tower, 'T'],
     [GameBoardType.American, 'A'],
@@ -535,7 +535,7 @@ const ghmshPurchasedShares = (ghmd: GameHistoryMessageData) => {
     ].join(' ');
 };
 
-const gameHistoryMessageStringHandlers = new Map<number, (ghmd: GameHistoryMessageData) => string>([
+const gameHistoryMessageStringHandlers = new Map([
     [GameHistoryMessage.TurnBegan, ghmshPlayerID],
     [GameHistoryMessage.DrewPositionTile, ghmshPlayerIDTile],
     [GameHistoryMessage.StartedGame, ghmshPlayerID],
@@ -564,7 +564,7 @@ function getNextActionString(action: ActionBase) {
     const nextPlayerID = action.playerID;
     const nextActionName = action.constructor.name.slice(6);
 
-    const parts: string[] = [nextPlayerID.toString(), nextActionName];
+    const parts = [nextPlayerID.toString(), nextActionName];
 
     if (action instanceof ActionSelectNewChain) {
         parts.push(action.availableChains.map((x: GameBoardType) => GameBoardType[x][0]).join(','));

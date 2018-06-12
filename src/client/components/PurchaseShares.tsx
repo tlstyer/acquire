@@ -20,7 +20,7 @@ interface PurchaseSharesState {
     endGame: boolean;
 }
 
-const keyboardShortcutToAddedChain = new Map<string, number>([
+const keyboardShortcutToAddedChain = new Map([
     ['1', 0],
     ['l', 0],
     ['2', 1],
@@ -37,7 +37,7 @@ const keyboardShortcutToAddedChain = new Map<string, number>([
     ['i', 6],
 ]);
 
-const keyboardShortcutToRemovedChain = new Map<string, number>([
+const keyboardShortcutToRemovedChain = new Map([
     ['!', 0],
     ['L', 0],
     ['@', 1],
