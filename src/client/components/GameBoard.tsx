@@ -5,9 +5,7 @@ import { GameBoardLabelMode } from '../enums';
 import { gameBoardTypeToCSSClassName, gameBoardTypeToHotelInitial, getTileString } from '../helpers';
 import * as style from './GameBoard.css';
 
-const emptyTileRackSet = new Set();
-let lastTileRack: List<number | null> | undefined;
-let lastTileRackSet: Set<number> = emptyTileRackSet;
+/* tslint:disable:no-bitwise */
 
 export interface GameBoardProps {
     gameBoard: List<List<GameBoardType>>;
@@ -21,28 +19,29 @@ export class GameBoard extends React.PureComponent<GameBoardProps> {
     render() {
         const { gameBoard, tileRack, labelMode, cellSize, onCellClicked } = this.props;
 
-        let tileRackSet: Set<number>;
-        if (tileRack === lastTileRack) {
-            tileRackSet = lastTileRackSet;
-        } else if (tileRack === undefined) {
-            tileRackSet = emptyTileRackSet;
-        } else {
-            tileRackSet = new Set<number>();
+        const tileRackRowBitMasks = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+        if (tileRack) {
             tileRack.forEach(tile => {
                 if (tile !== null) {
-                    tileRackSet.add(tile);
+                    const y = tile % 9;
+                    const x = tile / 9;
+                    tileRackRowBitMasks[y] |= 1 << x;
                 }
             });
         }
-
-        lastTileRack = tileRack;
-        lastTileRackSet = tileRackSet;
 
         return (
             <table className={style.root} style={{ width: cellSize * 12 + 2, height: cellSize * 9 + 2, fontSize: Math.floor(cellSize * 0.4) }}>
                 <tbody>
                     {gameBoard.map((gameBoardRow, y) => (
-                        <GameBoardRow key={y} y={y} gameBoardRow={gameBoardRow} tileRackSet={tileRackSet} labelMode={labelMode} onCellClicked={onCellClicked} />
+                        <GameBoardRow
+                            key={y}
+                            y={y}
+                            gameBoardRow={gameBoardRow}
+                            tileRackRowBitMask={tileRackRowBitMasks[y]}
+                            labelMode={labelMode}
+                            onCellClicked={onCellClicked}
+                        />
                     ))}
                 </tbody>
             </table>
@@ -53,22 +52,23 @@ export class GameBoard extends React.PureComponent<GameBoardProps> {
 interface GameBoardRowProps {
     y: number;
     gameBoardRow: List<GameBoardType>;
-    tileRackSet: Set<number>;
+    tileRackRowBitMask: number;
     labelMode: GameBoardLabelMode;
     onCellClicked?: (tile: number) => void;
 }
 
 class GameBoardRow extends React.PureComponent<GameBoardRowProps> {
     render() {
-        const { y, gameBoardRow, tileRackSet, labelMode, onCellClicked } = this.props;
+        const { y, gameBoardRow, tileRackRowBitMask, labelMode, onCellClicked } = this.props;
 
         return (
             <tr>
                 {gameBoardRow.map((gameBoardType, x) => {
-                    const tile = x * 9 + y;
-                    if (tileRackSet.has(tile)) {
+                    if (((tileRackRowBitMask >> x) & 1) === 1) {
                         gameBoardType = GameBoardType.IHaveThis;
                     }
+
+                    const tile = x * 9 + y;
 
                     let label;
                     if (labelMode === GameBoardLabelMode.Coordinates) {
