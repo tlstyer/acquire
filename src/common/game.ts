@@ -220,17 +220,23 @@ export class Game {
             const tileRackTypes = this.tileRackTypes.get(playerID, defaultTileRackTypes);
             for (let tileIndex = 0; tileIndex < 6; tileIndex++) {
                 const tile = tileRack.get(tileIndex, 0);
-                const type = tileRackTypes.get(tileIndex, 0);
-                if (tile !== null && type === GameBoardType.CantPlayEver) {
-                    this.removeTile(playerID, tileIndex);
-                    this.setGameBoardPosition(tile, GameBoardType.CantPlayEver);
-                    this.getCurrentMoveData().addGameHistoryMessage(GameHistoryMessage.ReplacedDeadTile, playerID, [tile]);
-                    this.drawTiles(playerID);
-                    this.determineTileRackTypesForPlayer(playerID);
-                    replacedADeadTile = true;
-                    // replace one tile at a time
-                    break;
+                if (tile === null) {
+                    continue;
                 }
+
+                const type = tileRackTypes.get(tileIndex, 0);
+                if (type !== GameBoardType.CantPlayEver) {
+                    continue;
+                }
+
+                this.removeTile(playerID, tileIndex);
+                this.setGameBoardPosition(tile, GameBoardType.CantPlayEver);
+                this.getCurrentMoveData().addGameHistoryMessage(GameHistoryMessage.ReplacedDeadTile, playerID, [tile]);
+                this.drawTiles(playerID);
+                this.determineTileRackTypesForPlayer(playerID);
+                replacedADeadTile = true;
+                // replace one tile at a time
+                break;
             }
         } while (replacedADeadTile);
     }
