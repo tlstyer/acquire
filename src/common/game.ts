@@ -166,9 +166,6 @@ export class Game {
             this.gameActionStack.pop();
             this.gameActionStack.push(...newActions.reverse());
             currentAction = this.gameActionStack[this.gameActionStack.length - 1];
-            if (currentAction.gameAction === GameAction.PlayTile) {
-                this.turnPlayerID = currentAction.playerID;
-            }
             newActions = currentAction.prepare();
         }
 

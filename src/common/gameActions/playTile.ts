@@ -15,6 +15,8 @@ export class ActionPlayTile extends ActionBase {
     prepare() {
         const moveData = this.game.getCurrentMoveData();
 
+        this.game.turnPlayerID = this.playerID;
+
         moveData.addGameHistoryMessage(GameHistoryMessage.TurnBegan, this.playerID, []);
 
         let hasAPlayableTile = false;

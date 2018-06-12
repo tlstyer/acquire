@@ -726,6 +726,27 @@ action: 1 PurchaseShares x 0
 action: 0 PlayTile 11B
 
 action: 0 PurchaseShares x 0
+  CCCCC█WWW·WW  P  L  T  A  F  W  C  I Cash  Net
+  CCC██WWWWWWW             13 12 16 13   50  877
+  CC█II██WWWWW  T        2 12 13  9 12   42  695
+  CCC█III██WWW  A 25 25 23  0  0  0  0
+  CCC█IIIII█WW  C  -  -  - 12 26 23 23
+  CCC█III██WWW  P  -  -  -  8  9 10 10
+  CC█III█FF██W
+  C█IIII█FFFF█
+  C█III█FFFFFF
+  tile racks:
+    0: 10A(W) none none none none none
+    1: none none none none none none
+  messages:
+    0: [[[],0]]
+    1: [[[],0]]
+    w: [[[],0]]
+  history messages:
+    0 PurchasedShares x
+    1 TurnBegan
+    1 HasNoPlayableTile
+  next action: 1 PurchaseShares
 
 action: 1 PurchaseShares x 0
 
