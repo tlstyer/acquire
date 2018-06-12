@@ -16,9 +16,9 @@
         width: 1.5em;
     }
     & input {
-        color: black;
+        color: #000000;
         &:disabled {
-            color: grey;
+            color: #808080;
         }
     }
 }

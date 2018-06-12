@@ -9,7 +9,7 @@
     table-layout: fixed;
     vertical-align: top;
     & td {
-        border: 2px solid rgb(246, 244, 242);
+        border: 2px solid #f6f4f2;
         height: 22px;
         max-width: 200px;
         overflow: hidden;
@@ -27,5 +27,5 @@
 }
 
 .player {
-    background-color: white;
+    background-color: #ffffff;
 }

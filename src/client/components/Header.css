@@ -9,9 +9,9 @@
 }
 
 .connected {
-    color: green;
+    color: #008000;
 }
 
 .reconnecting {
-    color: rgb(128, 128, 0);
+    color: #808000;
 }

@@ -3,7 +3,7 @@
     font-weight: bold;
     table-layout: fixed;
     & td {
-        border: 2px solid rgb(246, 244, 242);
+        border: 2px solid #f6f4f2;
         height: 28px;
         overflow: hidden;
         white-space: nowrap;
@@ -17,7 +17,7 @@
 }
 
 .user {
-    background-color: white;
+    background-color: #ffffff;
 }
 
 .versus {
@@ -25,7 +25,7 @@
 }
 
 .ready {
-    color: green;
+    color: #008000;
     font-weight: normal;
 }
 

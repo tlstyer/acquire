@@ -1,10 +1,10 @@
 .root {
-    background-color: white;
+    background-color: #ffffff;
     border-collapse: collapse;
     font-weight: bold;
     table-layout: fixed;
     & td {
-        border: 2px solid rgb(246, 244, 242);
+        border: 2px solid #f6f4f2;
         overflow: hidden;
         white-space: nowrap;
         &:nth-child(1) {
@@ -25,32 +25,32 @@
 }
 
 .playerHeader {
-    background-color: rgb(192, 192, 255);
+    background-color: #c0c0ff;
 }
 .cashAndNetHeader {
-    background-color: rgb(0, 128, 0);
-    color: white;
+    background-color: #008000;
+    color: #ffffff;
 }
 
 .isPlayersTurn {
-    background-color: rgb(255, 192, 192);
+    background-color: #ffc0c0;
 }
 .isPlayersMove {
-    background-color: rgb(255, 224, 224);
+    background-color: #ffe0e0;
 }
 
 .player {
-    background-color: white;
+    background-color: #ffffff;
 }
 
 .availableChainSizeAndPrice {
-    background-color: rgb(192, 255, 255);
+    background-color: #c0ffff;
 }
 
 .safeChain {
-    background-color: rgb(255, 192, 128);
+    background-color: #ffc080;
 }
 
 .bottomRightCells {
-    background-color: rgb(246, 244, 242);
+    background-color: #f6f4f2;
 }

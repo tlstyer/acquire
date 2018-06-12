@@ -14,8 +14,8 @@
         }
     }
     & input:disabled {
-        background-color: lightgrey;
-        color: #555;
+        background-color: #d3d3d3;
+        color: #555555;
     }
     & label {
         margin-right: 4px;
