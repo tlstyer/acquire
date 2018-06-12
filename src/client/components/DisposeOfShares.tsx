@@ -98,7 +98,7 @@ export class DisposeOfShares extends React.Component<DisposeOfSharesProps, Dispo
     }
 
     componentWillUnmount() {
-        document.removeEventListener('keydown', this.onWindowKeydown);
+        window.removeEventListener('keydown', this.onWindowKeydown);
     }
 
     onWindowKeydown = (event: KeyboardEvent) => {

@@ -114,7 +114,7 @@ export class PurchaseShares extends React.Component<PurchaseSharesProps, Purchas
     }
 
     componentWillUnmount() {
-        document.removeEventListener('keydown', this.onWindowKeydown);
+        window.removeEventListener('keydown', this.onWindowKeydown);
     }
 
     onWindowKeydown = (event: KeyboardEvent) => {
