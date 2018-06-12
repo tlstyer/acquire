@@ -2,7 +2,7 @@ import { List } from 'immutable';
 import * as React from 'react';
 import { GameBoardType } from '../../common/enums';
 import * as commonStyle from '../common.css';
-import { allChains, gameBoardTypeToCSSClassName, gameBoardTypeToHotelInitial, getUniqueHtmlID } from '../helpers';
+import { allChains, gameBoardTypeToCSSClassName, gameBoardTypeToHotelInitial, getUniqueDOMElementID } from '../helpers';
 import * as style from './PurchaseShares.css';
 
 export interface PurchaseSharesProps {
@@ -183,7 +183,7 @@ export class PurchaseShares extends React.Component<PurchaseSharesProps, Purchas
         }
         const left = cash - totalPrice;
 
-        const endGameID = getUniqueHtmlID();
+        const endGameID = getUniqueDOMElementID();
 
         const buttonStyle = {
             width: buttonSize,

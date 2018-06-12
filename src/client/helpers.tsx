@@ -58,7 +58,7 @@ export function getTileString(tile: number) {
 
 let nextIDPostfix = 0;
 
-export function getUniqueHtmlID() {
+export function getUniqueDOMElementID() {
     const id = `_${nextIDPostfix.toString(36)}`;
     nextIDPostfix++;
     return id;
