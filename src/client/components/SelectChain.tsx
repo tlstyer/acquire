@@ -18,11 +18,11 @@ export interface SelectChainProps {
     onChainSelected: (chain: GameBoardType) => void;
 }
 
-const typeToInstructions = {
-    [SelectChainTitle.SelectNewChain]: 'New chain',
-    [SelectChainTitle.SelectMergerSurvivor]: 'Merger survivor',
-    [SelectChainTitle.SelectChainToDisposeOfNext]: 'Chain to dispose of next',
-};
+const typeToInstructions = new Map([
+    [SelectChainTitle.SelectNewChain, 'New chain'],
+    [SelectChainTitle.SelectMergerSurvivor, 'Merger survivor'],
+    [SelectChainTitle.SelectChainToDisposeOfNext, 'Chain to dispose of next'],
+]);
 
 const keyboardShortcutToChain = new Map([
     ['1', 0],
@@ -98,7 +98,7 @@ export class SelectChain extends React.Component<SelectChainProps> {
         return (
             <div>
                 <fieldset className={style.root} style={{ fontSize: Math.floor(buttonSize * 0.4) }}>
-                    <legend>{typeToInstructions[type]}</legend>
+                    <legend>{typeToInstructions.get(type)}</legend>
                     {allChains.map(chain => {
                         if (availableChains.indexOf(chain) >= 0) {
                             return (
