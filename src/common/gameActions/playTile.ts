@@ -2,7 +2,7 @@ import { defaultTileRack, defaultTileRackTypes } from '../defaults';
 import { GameAction, GameBoardType, GameHistoryMessage } from '../enums';
 import { UserInputError } from '../error';
 import { Game } from '../game';
-import { getNeighboringTiles } from '../helpers';
+import { neighboringTilesLookup } from '../helpers';
 import { ActionBase } from './base';
 import { ActionSelectMergerSurvivor } from './selectMergerSurvivor';
 import { ActionSelectNewChain } from './selectNewChain';
@@ -85,7 +85,7 @@ export class ActionPlayTile extends ActionBase {
 
     protected getMergedChains(tile: number) {
         const chains: GameBoardType[] = [];
-        const neighboringTiles = getNeighboringTiles(tile);
+        const neighboringTiles = neighboringTilesLookup[tile];
         for (let i = 0; i < neighboringTiles.length; i++) {
             const type = this.game.gameBoard.get(neighboringTiles[i], 0);
             if (type <= GameBoardType.Imperial && chains.indexOf(type) === -1) {

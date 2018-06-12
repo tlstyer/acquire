@@ -19,36 +19,27 @@ export function shuffleArray(a: any[]) {
     }
 }
 
-let neighboringTiles: number[][];
-function initializeNeighboringTiles() {
-    neighboringTiles = new Array(108);
+export const neighboringTilesLookup: number[][] = new Array(108);
+for (let tile = 0; tile < 108; tile++) {
+    const neighboringTiles: number[] = [];
 
-    for (let tile = 0; tile < 108; tile++) {
-        const possibilities: number[] = [];
+    const x = Math.floor(tile / 9);
+    const y = tile % 9;
 
-        const x = Math.floor(tile / 9);
-        const y = tile % 9;
-
-        if (x > 0) {
-            possibilities.push(tile - 9);
-        }
-        if (y > 0) {
-            possibilities.push(tile - 1);
-        }
-        if (y < 8) {
-            possibilities.push(tile + 1);
-        }
-        if (x < 11) {
-            possibilities.push(tile + 9);
-        }
-
-        neighboringTiles[tile] = possibilities;
+    if (x > 0) {
+        neighboringTiles.push(tile - 9);
     }
-}
-initializeNeighboringTiles();
+    if (y > 0) {
+        neighboringTiles.push(tile - 1);
+    }
+    if (y < 8) {
+        neighboringTiles.push(tile + 1);
+    }
+    if (x < 11) {
+        neighboringTiles.push(tile + 9);
+    }
 
-export function getNeighboringTiles(tile: number) {
-    return neighboringTiles[tile];
+    neighboringTilesLookup[tile] = neighboringTiles;
 }
 
 export function calculateBonuses(sharesOwned: number[], sharePrice: number) {

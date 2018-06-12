@@ -1,4 +1,4 @@
-import { calculateBonuses, getNeighboringTiles, getNewTileBag, PlayerIDAndAmount } from './helpers';
+import { calculateBonuses, getNewTileBag, neighboringTilesLookup, PlayerIDAndAmount } from './helpers';
 
 describe('helpers', () => {
     describe('getNewTileBag', () => {
@@ -16,22 +16,22 @@ describe('helpers', () => {
         });
     });
 
-    describe('getNeighboringTiles', () => {
+    describe('neighboringTilesLookup', () => {
         it('returns neighboring tiles', () => {
             // corner tiles
-            expect(getNeighboringTiles(0)).toEqual([1, 9]);
-            expect(getNeighboringTiles(8)).toEqual([7, 17]);
-            expect(getNeighboringTiles(99)).toEqual([90, 100]);
-            expect(getNeighboringTiles(107)).toEqual([98, 106]);
+            expect(neighboringTilesLookup[0]).toEqual([1, 9]);
+            expect(neighboringTilesLookup[8]).toEqual([7, 17]);
+            expect(neighboringTilesLookup[99]).toEqual([90, 100]);
+            expect(neighboringTilesLookup[107]).toEqual([98, 106]);
 
             // some side tiles
-            expect(getNeighboringTiles(4)).toEqual([3, 5, 13]);
-            expect(getNeighboringTiles(54)).toEqual([45, 55, 63]);
-            expect(getNeighboringTiles(62)).toEqual([53, 61, 71]);
-            expect(getNeighboringTiles(103)).toEqual([94, 102, 104]);
+            expect(neighboringTilesLookup[4]).toEqual([3, 5, 13]);
+            expect(neighboringTilesLookup[54]).toEqual([45, 55, 63]);
+            expect(neighboringTilesLookup[62]).toEqual([53, 61, 71]);
+            expect(neighboringTilesLookup[103]).toEqual([94, 102, 104]);
 
             // a middle tile
-            expect(getNeighboringTiles(58)).toEqual([49, 57, 59, 67]);
+            expect(neighboringTilesLookup[58]).toEqual([49, 57, 59, 67]);
         });
     });
 

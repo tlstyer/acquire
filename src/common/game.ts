@@ -17,7 +17,7 @@ import { GameAction, GameBoardType, GameHistoryMessage, GameMode, PlayerArrangem
 import { UserInputError } from './error';
 import { ActionBase } from './gameActions/base';
 import { ActionStartGame } from './gameActions/startGame';
-import { calculateBonuses, getNeighboringTiles } from './helpers';
+import { calculateBonuses, neighboringTilesLookup } from './helpers';
 
 type GameJSON = [GameMode, PlayerArrangementMode, number | null, number, number[], string[], number, number[], ([any] | [any, number])[]];
 
@@ -267,7 +267,7 @@ export class Game {
             if (tile !== null && tile !== Tile.Unknown) {
                 const borderTiles: number[] = [];
                 let borderTypes: GameBoardType[] = [];
-                const neighboringTiles = getNeighboringTiles(tile);
+                const neighboringTiles = neighboringTilesLookup[tile];
                 for (let i = 0; i < neighboringTiles.length; i++) {
                     const neighboringTile = neighboringTiles[i];
                     borderTiles.push(neighboringTile);
@@ -367,7 +367,7 @@ export class Game {
         while (t !== undefined) {
             this.setGameBoardPosition(t, gameBoardType);
 
-            const neighboringTiles = getNeighboringTiles(t);
+            const neighboringTiles = neighboringTilesLookup[t];
             for (let i = 0; i < neighboringTiles.length; i++) {
                 const neighboringTile = neighboringTiles[i];
                 if (!found.has(neighboringTile) && !excludedTypes.has(this.gameBoard.get(neighboringTile, 0))) {
