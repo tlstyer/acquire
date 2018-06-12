@@ -108,7 +108,7 @@ export class DisposeOfShares extends React.Component<DisposeOfSharesProps, Dispo
 
         const keyName = event.key;
 
-        if (keyboardShortcutToButtonIndex.hasOwnProperty(keyName)) {
+        if (keyboardShortcutToButtonIndex.has(keyName)) {
             const buttonIndex = keyboardShortcutToButtonIndex.get(keyName)!;
             const button = this.buttonRefs[buttonIndex].current;
             if (button !== null) {
