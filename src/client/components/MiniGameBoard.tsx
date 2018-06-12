@@ -13,22 +13,28 @@ export class MiniGameBoard extends React.PureComponent<MiniGameBoardProps> {
     render() {
         const { gameBoard, cellSize } = this.props;
 
-        const rows = new Array(9);
-        for (let y = 0; y < 9; y++) {
-            const cells = new Array(12);
-            for (let x = 0; x < 12; x++) {
-                const tile = x * 9 + y;
-                const gameBoardType = gameBoard.get(tile % 9)!.get(tile / 9)!;
-
-                cells[x] = <td key={x} className={gameBoardTypeToCSSClassName.get(gameBoardType)} />;
-            }
-            rows[y] = <tr key={y}>{cells}</tr>;
-        }
-
         return (
             <table className={style.root} style={{ width: cellSize * 12 + 1, height: cellSize * 9 + 1 }}>
-                <tbody>{rows}</tbody>
+                <tbody>{gameBoard.map((gameBoardRow, y) => <MiniGameBoardRow key={y} gameBoardRow={gameBoardRow} />)}</tbody>
             </table>
+        );
+    }
+}
+
+interface MiniGameBoardRowProps {
+    gameBoardRow: List<GameBoardType>;
+}
+
+class MiniGameBoardRow extends React.PureComponent<MiniGameBoardRowProps> {
+    render() {
+        const { gameBoardRow } = this.props;
+
+        return (
+            <tr>
+                {gameBoardRow.map((gameBoardType, x) => {
+                    return <td key={x} className={gameBoardTypeToCSSClassName.get(gameBoardType)!} />;
+                })}
+            </tr>
         );
     }
 }
