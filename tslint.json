@@ -27,7 +27,7 @@
         "prefer-object-spread": true,
         "prefer-template": true,
         "promise-function-async": true,
-        "quotemark": [true, "single", "jsx-single", "avoid-escape", "avoid-template"],
+        "quotemark": [true, "avoid-escape", "avoid-template", "jsx-single", "single"],
         // "restrict-plus-operands": true,
         "semicolon": [true, "always", "ignore-bound-class-methods"],
         "triple-equals": true
