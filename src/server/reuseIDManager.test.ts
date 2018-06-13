@@ -88,17 +88,21 @@ describe('ReuseIDManager', () => {
             expect(reuseIDManager.getID()).toBe(id);
         }
 
-        now = 4;
-        reuseIDManager.returnID(6);
+        now = 2;
         reuseIDManager.returnID(9);
+        now = 3;
+        reuseIDManager.returnID(6);
+        now = 4;
         reuseIDManager.returnID(2);
 
+        now = 5;
+        reuseIDManager.returnID(3);
+        now = 6;
+        reuseIDManager.returnID(1);
         now = 7;
         reuseIDManager.returnID(8);
-        reuseIDManager.returnID(3);
-        reuseIDManager.returnID(1);
 
-        now = 13;
+        now = 11;
         expect(reuseIDManager.getID()).toBe(11);
 
         now = 14;
@@ -107,13 +111,10 @@ describe('ReuseIDManager', () => {
         expect(reuseIDManager.getID()).toBe(9);
         expect(reuseIDManager.getID()).toBe(12);
 
-        now = 16;
-        expect(reuseIDManager.getID()).toBe(13);
-
         now = 17;
         expect(reuseIDManager.getID()).toBe(1);
         expect(reuseIDManager.getID()).toBe(3);
         expect(reuseIDManager.getID()).toBe(8);
-        expect(reuseIDManager.getID()).toBe(14);
+        expect(reuseIDManager.getID()).toBe(13);
     });
 });
