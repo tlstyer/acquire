@@ -148,7 +148,11 @@ export function runGameTestFile(inputLines: string[]) {
                         if (timestamp !== null) {
                             outputLines.push(`timestamp: ${timestamp}`);
                         }
-                        outputLines.push(`action: ${playerID} ${actualGameActionName}${stringParameters}`);
+                        outputLines.push(
+                            `action: ${
+                                game.moveDataHistory.get(game.moveDataHistory.size - 1)!.nextGameAction.playerID
+                            } ${actualGameActionName}${stringParameters}`,
+                        );
                         outputLines.push(`  error: ${error.message}`);
                     } else {
                         outputLines.push(`line with unknown error: ${line}`);
