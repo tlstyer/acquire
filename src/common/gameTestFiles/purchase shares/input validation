@@ -152,9 +152,6 @@ action: 0 PlayTile 11D
     0 FormedChain T
   next action: 0 PurchaseShares
 
-action: 1 PurchaseShares -- []
-  error: player cannot play right now
-
 action: 0 PurchaseShares -- []
   error: did not get exactly 2 parameters
 

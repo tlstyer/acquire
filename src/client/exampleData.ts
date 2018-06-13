@@ -15,7 +15,7 @@ import { allChains } from './helpers';
 
 export function getDummyGameForGetGameHistory() {
     const game = new Game(GameMode.Singles4, PlayerArrangementMode.ExactOrder, getNewTileBag(), List([2, 3, 5, 8]), List(['Tim', 'Rita', 'Dad', 'Mom']), 8, 3);
-    game.doGameAction(8, 0, [], null);
+    game.doGameAction([], null);
     game.moveDataHistory = defaultMoveDataHistory;
 
     let moveData = game.getCurrentMoveData();

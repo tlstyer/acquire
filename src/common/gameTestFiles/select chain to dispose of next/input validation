@@ -91,9 +91,6 @@ action: 0 SelectMergerSurvivor I
     3 ReceivedBonus C 20
   next action: 0 SelectChainToDisposeOfNext L,T,C
 
-action: 1 SelectChainToDisposeOfNext -- []
-  error: player cannot play right now
-
 action: 0 SelectChainToDisposeOfNext -- []
   error: did not get exactly 1 parameter
 

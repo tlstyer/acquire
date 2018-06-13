@@ -35,9 +35,6 @@ action: 1 PlayTile 4H
     1 PlayedTile 4H
   next action: 1 SelectNewChain T,A,F,W,C,I
 
-action: 0 SelectNewChain -- []
-  error: player cannot play right now
-
 action: 1 SelectNewChain -- []
   error: did not get exactly 1 parameter
 

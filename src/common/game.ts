@@ -100,10 +100,7 @@ export class Game {
             this.processPlayerIDWithPlayableTile(message[4]);
         }
 
-        const currentPlayerID = this.gameActionStack[this.gameActionStack.length - 1].playerID;
-        const currentUserID = this.userIDs.get(currentPlayerID, 0);
-
-        this.doGameAction(currentUserID, this.moveDataHistory.size, gameActionParameters, timestamp);
+        this.doGameAction(gameActionParameters, timestamp);
     }
 
     processRevealedTileRackTiles(entries: [number, number][]) {
@@ -148,19 +145,11 @@ export class Game {
         this.playerIDWithPlayableTile = playerIDWithPlayableTile;
     }
 
-    doGameAction(userID: number, moveIndex: number, parameters: any[], timestamp: number | null) {
-        const playerID = this.userIDs.indexOf(userID);
+    doGameAction(parameters: any[], timestamp: number | null) {
         let currentAction = this.gameActionStack[this.gameActionStack.length - 1];
 
-        if (playerID !== currentAction.playerID) {
-            throw new UserInputError('player cannot play right now');
-        }
-        if (moveIndex !== this.moveDataHistory.size) {
-            throw new UserInputError('incorrect move index');
-        }
-
         let newActions: ActionBase[] | null = currentAction.execute(parameters);
-        this.getCurrentMoveData().setGameAction(playerID, currentAction.gameAction, parameters, timestamp);
+        this.getCurrentMoveData().setGameAction(currentAction.playerID, currentAction.gameAction, parameters, timestamp);
 
         while (newActions !== null) {
             this.gameActionStack.pop();
@@ -559,10 +548,7 @@ export class Game {
                 currentTimestamp += lastTimestamp;
             }
 
-            const currentPlayerID = game.gameActionStack[game.gameActionStack.length - 1].playerID;
-            const currentUserID = game.userIDs.get(currentPlayerID, 0);
-
-            game.doGameAction(currentUserID, i, gameActionParameters, currentTimestamp);
+            game.doGameAction(gameActionParameters, currentTimestamp);
 
             lastTimestamp = currentTimestamp;
         }

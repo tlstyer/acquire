@@ -43,9 +43,6 @@ action: 1 StartGame
     0 TurnBegan
   next action: 0 PlayTile
 
-action: 1 PlayTile -- []
-  error: player cannot play right now
-
 action: 0 PlayTile -- []
   error: did not get exactly 1 parameter
 
