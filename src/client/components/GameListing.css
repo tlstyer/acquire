@@ -6,7 +6,6 @@
     border-collapse: collapse;
     display: inline-block;
     font-weight: bold;
-    table-layout: fixed;
     vertical-align: top;
     & td {
         border: 2px solid #f6f4f2;

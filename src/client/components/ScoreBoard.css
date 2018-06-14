@@ -2,7 +2,6 @@
     background-color: #ffffff;
     border-collapse: collapse;
     font-weight: bold;
-    table-layout: fixed;
     & td {
         border: 2px solid #f6f4f2;
         overflow: hidden;

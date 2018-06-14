@@ -3,7 +3,5 @@
     table-layout: fixed;
     & td {
         border: 1px solid #f6f4f2;
-        height: calc(100% / 9);
-        width: calc(100% / 12);
     }
 }

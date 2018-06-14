@@ -5,9 +5,7 @@
     text-align: center;
     & td {
         border: 2px solid #f6f4f2;
-        height: calc(100% / 9);
         overflow: hidden;
-        width: calc(100% / 12);
     }
 }
 
