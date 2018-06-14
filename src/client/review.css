@@ -1,3 +1,14 @@
+.root {
+    display: flex;
+    flex-direction: row;
+    left: -2px;
+    position: absolute;
+    top: -2px;
+    & > :nth-child(2) {
+        flex-grow: 1;
+    }
+}
+
 .rightSide {
     display: flex;
     flex-direction: column;

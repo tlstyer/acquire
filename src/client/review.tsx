@@ -41,29 +41,20 @@ function render() {
     const windowWidth = window.innerWidth;
     const windowHeight = window.innerHeight;
 
-    const gameBoardLeft = -2;
-    const gameBoardTop = -2;
     const gameBoardCellSizeBasedOnWindowWidth = windowWidth / 2 / 12;
     const gameBoardCellSizeBasedOnWindowHeight = (windowHeight - 129) / 9;
     const gameBoardCellSize = Math.floor(Math.min(gameBoardCellSizeBasedOnWindowWidth, gameBoardCellSizeBasedOnWindowHeight));
     const gameBoardWidth = gameBoardCellSize * 12 + 2;
 
-    const rightSideLeft = gameBoardLeft + gameBoardWidth;
-    const rightSideTop = -2;
-    const rightSideWidth = windowWidth - (gameBoardLeft + gameBoardWidth);
-    const rightSideHeight = windowHeight + 2;
-
+    const rightSideWidth = windowWidth - gameBoardWidth - 2;
     const scoreBoardCellWidth = Math.floor(Math.min(rightSideWidth - 2, gameBoardWidth) / 18);
 
     ReactDOM.render(
-        <>
-            <div style={{ position: 'absolute', left: gameBoardLeft, top: gameBoardTop }}>
+        <div className={style.root} style={{ width: windowWidth + 2, height: windowHeight + 2 }}>
+            <div style={{ width: gameBoardWidth }}>
                 <GameBoard gameBoard={moveData.gameBoard} tileRack={gameBoardTileRack} labelMode={GameBoardLabelMode.Nothing} cellSize={gameBoardCellSize} />
             </div>
-            <div
-                className={style.rightSide}
-                style={{ position: 'absolute', left: rightSideLeft, top: rightSideTop, width: rightSideWidth, height: rightSideHeight }}
-            >
+            <div className={style.rightSide}>
                 <ScoreBoard
                     usernames={game.usernames}
                     scoreBoard={moveData.scoreBoard}
@@ -101,7 +92,7 @@ function render() {
                 <GameHistory usernames={game.usernames} moveDataHistory={game.moveDataHistory} selectedMove={selectedMove} onMoveClicked={onMoveClicked} />
                 <GameState usernames={game.usernames} nextGameAction={moveData.nextGameAction} />
             </div>
-        </>,
+        </div>,
         document.getElementById('root'),
     );
 }
