@@ -1,13 +1,13 @@
 .root {
-    text-align: center;
+    border-collapse: collapse;
     font-weight: bold;
     table-layout: fixed;
-    border-collapse: collapse;
+    text-align: center;
     & td {
         border: 2px solid #f6f4f2;
-        width: calc(100% / 12);
         height: calc(100% / 9);
         overflow: hidden;
+        width: calc(100% / 12);
     }
 }
 
