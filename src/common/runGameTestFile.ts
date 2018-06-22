@@ -106,8 +106,6 @@ export function runGameTestFile(inputLines: string[]) {
             } else if (lineParts[0] === 'action') {
                 const actionParts = lineParts[1].split(' ');
 
-                const playerID = parseInt(actionParts[0], 10);
-
                 const actualGameActionName = game.gameActionStack[game.gameActionStack.length - 1].constructor.name.slice(6);
                 // @ts-ignore actualGameActionName is in GameAction
                 const actualGameAction = GameAction[actualGameActionName];

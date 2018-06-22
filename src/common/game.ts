@@ -14,7 +14,6 @@ import {
     defaultTileRackTypesList,
 } from './defaults';
 import { GameAction, GameBoardType, GameHistoryMessage, GameMode, PlayerArrangementMode, ScoreBoardIndex, Tile } from './enums';
-import { UserInputError } from './error';
 import { ActionBase } from './gameActions/base';
 import { ActionStartGame } from './gameActions/startGame';
 import { calculateBonuses, neighboringTilesLookup } from './helpers';
