@@ -1,9 +1,11 @@
 .root {
     display: flex;
     flex-direction: row;
+    height: calc(100vh + 2px);
     left: -2px;
     position: absolute;
     top: -2px;
+    width: calc(100vw + 2px);
     & > :nth-child(2) {
         flex-grow: 1;
     }

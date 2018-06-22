@@ -50,7 +50,7 @@ function render() {
     const scoreBoardCellWidth = Math.floor(Math.min(rightSideWidth - 2, gameBoardWidth) / 18);
 
     ReactDOM.render(
-        <div className={style.root} style={{ width: windowWidth + 2, height: windowHeight + 2 }}>
+        <div className={style.root}>
             <div style={{ width: gameBoardWidth }}>
                 <GameBoard gameBoard={moveData.gameBoard} tileRack={gameBoardTileRack} labelMode={GameBoardLabelMode.Nothing} cellSize={gameBoardCellSize} />
             </div>
