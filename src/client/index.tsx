@@ -1,3 +1,4 @@
+import 'normalize.css';
 import './global.css';
 
 import { ClientManager } from './clientManager';

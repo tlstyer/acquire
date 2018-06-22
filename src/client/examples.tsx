@@ -1,3 +1,4 @@
+import 'normalize.css';
 import './global.css';
 
 import { List } from 'immutable';
