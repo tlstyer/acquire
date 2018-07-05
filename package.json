@@ -61,7 +61,7 @@
         "server": "nodemon -r ts-node/register src/server/main.ts",
         "test": "jest",
         "lint": "tslint --project tsconfig.json --config tslint.json --fix",
-        "format": "find . \\( -path ./.git -o -path ./node_modules \\) -prune -o -print | grep -E '\\.(css|js(on)?|md|tsx?)$' | xargs prettier --write --loglevel warn"
+        "format": "prettier --write '{,!(.git|node_modules)/**/}*.{css,js,json,md,ts,tsx}' --loglevel warn"
     },
     "jest": {
         "transform": {
