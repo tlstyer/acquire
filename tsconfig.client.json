@@ -1,9 +1,9 @@
 {
-    "compilerOptions": {
-        "jsx": "react",
-        "module": "es6",
-        "outDir": "dist",
-        "strict": true,
-        "target": "es6"
-    }
+  "compilerOptions": {
+    "jsx": "react",
+    "module": "es6",
+    "outDir": "dist",
+    "strict": true,
+    "target": "es6"
+  }
 }

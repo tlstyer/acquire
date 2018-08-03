@@ -1,50 +1,50 @@
 import * as Collections from 'typescript-collections';
 
 export class ReuseIDManager {
-    used = new Set<number>();
-    unusedWait = new Collections.PriorityQueue<IDAndTime>(compareIDAndTime);
-    unused = new Collections.PriorityQueue<number>(compareID);
+  used = new Set<number>();
+  unusedWait = new Collections.PriorityQueue<IDAndTime>(compareIDAndTime);
+  unused = new Collections.PriorityQueue<number>(compareID);
 
-    constructor(public waitTime: number) {}
+  constructor(public waitTime: number) {}
 
-    getID() {
-        const now = Date.now();
-        while (true) {
-            const nextUnusedWait = this.unusedWait.peek();
-            if (nextUnusedWait !== undefined && nextUnusedWait.time <= now) {
-                this.unusedWait.dequeue();
-                this.unused.enqueue(nextUnusedWait.id);
-            } else {
-                break;
-            }
-        }
-
-        let nextID = this.unused.dequeue();
-        if (nextID === undefined) {
-            nextID = this.used.size + this.unusedWait.size() + 1;
-        }
-
-        this.used.add(nextID);
-
-        return nextID;
+  getID() {
+    const now = Date.now();
+    while (true) {
+      const nextUnusedWait = this.unusedWait.peek();
+      if (nextUnusedWait !== undefined && nextUnusedWait.time <= now) {
+        this.unusedWait.dequeue();
+        this.unused.enqueue(nextUnusedWait.id);
+      } else {
+        break;
+      }
     }
 
-    returnID(id: number) {
-        const deleted = this.used.delete(id);
-        if (deleted) {
-            this.unusedWait.enqueue(new IDAndTime(id, Date.now() + this.waitTime));
-        }
+    let nextID = this.unused.dequeue();
+    if (nextID === undefined) {
+      nextID = this.used.size + this.unusedWait.size() + 1;
     }
+
+    this.used.add(nextID);
+
+    return nextID;
+  }
+
+  returnID(id: number) {
+    const deleted = this.used.delete(id);
+    if (deleted) {
+      this.unusedWait.enqueue(new IDAndTime(id, Date.now() + this.waitTime));
+    }
+  }
 }
 
 class IDAndTime {
-    constructor(public id: number, public time: number) {}
+  constructor(public id: number, public time: number) {}
 }
 
 function compareIDAndTime(a: IDAndTime, b: IDAndTime) {
-    return b.time - a.time;
+  return b.time - a.time;
 }
 
 function compareID(a: number, b: number) {
-    return b - a;
+  return b - a;
 }

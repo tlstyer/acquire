@@ -9,40 +9,40 @@ import { GameHistory } from './GameHistory';
 configureEnzyme();
 
 class TestDate {
-    constructor(public now: number) {}
+  constructor(public now: number) {}
 
-    toString() {
-        return `new Date(${this.now}).toString()`;
-    }
+  toString() {
+    return `new Date(${this.now}).toString()`;
+  }
 }
 
 describe('GameHistory', () => {
-    const onMoveClicked = jest.fn();
-    const game = getDummyGameForGetGameHistory();
-    const jsx = (
-        <GameHistory usernames={List(['Tim', 'Rita', 'Dad', 'Mom'])} moveDataHistory={game.moveDataHistory} selectedMove={1} onMoveClicked={onMoveClicked} />
-    );
+  const onMoveClicked = jest.fn();
+  const game = getDummyGameForGetGameHistory();
+  const jsx = (
+    <GameHistory usernames={List(['Tim', 'Rita', 'Dad', 'Mom'])} moveDataHistory={game.moveDataHistory} selectedMove={1} onMoveClicked={onMoveClicked} />
+  );
 
-    const now = Date.now;
-    // @ts-ignore
-    Date = TestDate;
-    Date.now = now;
+  const now = Date.now;
+  // @ts-ignore
+  Date = TestDate;
+  Date.now = now;
 
-    it('renders correctly', () => {
-        const component = renderer.create(jsx);
-        const tree = component.toJSON();
-        expect(tree).toMatchSnapshot();
-    });
+  it('renders correctly', () => {
+    const component = renderer.create(jsx);
+    const tree = component.toJSON();
+    expect(tree).toMatchSnapshot();
+  });
 
-    it('works correctly', () => {
-        const gameHistory = mount(jsx);
+  it('works correctly', () => {
+    const gameHistory = mount(jsx);
 
-        gameHistory
-            .find('.move')
-            .at(3)
-            .simulate('click');
+    gameHistory
+      .find('.move')
+      .at(3)
+      .simulate('click');
 
-        expect(onMoveClicked.mock.calls.length).toBe(1);
-        expect(onMoveClicked.mock.calls[0]).toEqual([3]);
-    });
+    expect(onMoveClicked.mock.calls.length).toBe(1);
+    expect(onMoveClicked.mock.calls[0]).toEqual([3]);
+  });
 });

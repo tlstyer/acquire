@@ -1,17 +1,17 @@
 .root {
-    & :first-child {
-        font-weight: bold;
-    }
+  & :first-child {
+    font-weight: bold;
+  }
 
-    & :not(:first-child) {
-        margin-left: 6px;
-    }
+  & :not(:first-child) {
+    margin-left: 6px;
+  }
 }
 
 .connected {
-    color: #008000;
+  color: #008000;
 }
 
 .reconnecting {
-    color: #808000;
+  color: #808000;
 }

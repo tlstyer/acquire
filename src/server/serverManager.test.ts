@@ -4,1076 +4,1076 @@ import { Client, ConnectionState, GameData, ServerManager, User } from './server
 import { TestUserDataProvider } from './userDataProvider';
 
 describe('ServerManager', () => {
-    describe('when not sending first message', () => {
-        it('can open connections and then close them', () => {
-            const { serverManager, server } = getServerManagerAndStuff();
+  describe('when not sending first message', () => {
+    it('can open connections and then close them', () => {
+      const { serverManager, server } = getServerManagerAndStuff();
 
-            const connection1 = new TestConnection('connection ID 1');
-            server.openConnection(connection1);
+      const connection1 = new TestConnection('connection ID 1');
+      server.openConnection(connection1);
 
-            expect(serverManager.connectionIDToConnectionState).toEqual(new Map([[connection1.id, ConnectionState.WaitingForFirstMessage]]));
-            expect(serverManager.connectionIDToPreLoggedInConnection).toEqual(new Map([[connection1.id, connection1]]));
+      expect(serverManager.connectionIDToConnectionState).toEqual(new Map([[connection1.id, ConnectionState.WaitingForFirstMessage]]));
+      expect(serverManager.connectionIDToPreLoggedInConnection).toEqual(new Map([[connection1.id, connection1]]));
 
-            const connection2 = new TestConnection('connection ID 2');
-            server.openConnection(connection2);
+      const connection2 = new TestConnection('connection ID 2');
+      server.openConnection(connection2);
 
-            expect(serverManager.connectionIDToConnectionState).toEqual(
-                new Map([[connection1.id, ConnectionState.WaitingForFirstMessage], [connection2.id, ConnectionState.WaitingForFirstMessage]]),
-            );
-            expect(serverManager.connectionIDToPreLoggedInConnection).toEqual(new Map([[connection1.id, connection1], [connection2.id, connection2]]));
+      expect(serverManager.connectionIDToConnectionState).toEqual(
+        new Map([[connection1.id, ConnectionState.WaitingForFirstMessage], [connection2.id, ConnectionState.WaitingForFirstMessage]]),
+      );
+      expect(serverManager.connectionIDToPreLoggedInConnection).toEqual(new Map([[connection1.id, connection1], [connection2.id, connection2]]));
 
-            connection1.close();
+      connection1.close();
 
-            expect(serverManager.connectionIDToConnectionState).toEqual(new Map([[connection2.id, ConnectionState.WaitingForFirstMessage]]));
-            expect(serverManager.connectionIDToPreLoggedInConnection).toEqual(new Map([[connection2.id, connection2]]));
+      expect(serverManager.connectionIDToConnectionState).toEqual(new Map([[connection2.id, ConnectionState.WaitingForFirstMessage]]));
+      expect(serverManager.connectionIDToPreLoggedInConnection).toEqual(new Map([[connection2.id, connection2]]));
 
-            connection2.close();
+      connection2.close();
 
-            expect(serverManager.connectionIDToConnectionState).toEqual(new Map());
-            expect(serverManager.connectionIDToPreLoggedInConnection).toEqual(new Map());
-        });
-
-        it('closing already closed connection does nothing', () => {
-            const { serverManager, server } = getServerManagerAndStuff();
-
-            const connection1 = new TestConnection('connection ID 1');
-            server.openConnection(connection1);
-
-            expect(serverManager.connectionIDToConnectionState).toEqual(new Map([[connection1.id, ConnectionState.WaitingForFirstMessage]]));
-            expect(serverManager.connectionIDToPreLoggedInConnection).toEqual(new Map([[connection1.id, connection1]]));
-
-            const connection2 = new TestConnection('connection ID 2');
-            server.openConnection(connection2);
-
-            expect(serverManager.connectionIDToConnectionState).toEqual(
-                new Map([[connection1.id, ConnectionState.WaitingForFirstMessage], [connection2.id, ConnectionState.WaitingForFirstMessage]]),
-            );
-            expect(serverManager.connectionIDToPreLoggedInConnection).toEqual(new Map([[connection1.id, connection1], [connection2.id, connection2]]));
-
-            connection1.close();
-
-            expect(serverManager.connectionIDToConnectionState).toEqual(new Map([[connection2.id, ConnectionState.WaitingForFirstMessage]]));
-            expect(serverManager.connectionIDToPreLoggedInConnection).toEqual(new Map([[connection2.id, connection2]]));
-
-            connection1.close();
-
-            expect(serverManager.connectionIDToConnectionState).toEqual(new Map([[connection2.id, ConnectionState.WaitingForFirstMessage]]));
-            expect(serverManager.connectionIDToPreLoggedInConnection).toEqual(new Map([[connection2.id, connection2]]));
-        });
+      expect(serverManager.connectionIDToConnectionState).toEqual(new Map());
+      expect(serverManager.connectionIDToPreLoggedInConnection).toEqual(new Map());
     });
 
-    describe('when sending first message', () => {
-        describe('gets kicked', () => {
-            async function getsKickedWithMessage(inputMessage: any, outputErrorCode: ErrorCode) {
-                const { server, userDataProvider } = getServerManagerAndStuff();
+    it('closing already closed connection does nothing', () => {
+      const { serverManager, server } = getServerManagerAndStuff();
 
-                await userDataProvider.createUser('has password', 'password');
-                await userDataProvider.createUser('does not have password', null);
+      const connection1 = new TestConnection('connection ID 1');
+      server.openConnection(connection1);
 
-                const connection = new TestConnection('connection');
-                server.openConnection(connection);
-                connection.sendMessage(inputMessage);
+      expect(serverManager.connectionIDToConnectionState).toEqual(new Map([[connection1.id, ConnectionState.WaitingForFirstMessage]]));
+      expect(serverManager.connectionIDToPreLoggedInConnection).toEqual(new Map([[connection1.id, connection1]]));
 
-                await new Promise(resolve => setTimeout(resolve, 0));
+      const connection2 = new TestConnection('connection ID 2');
+      server.openConnection(connection2);
 
-                expect(connection.receivedMessages).toEqual([[[MessageToClient.FatalError, outputErrorCode]]]);
-                expect(connection.readyState).toBe(WebSocket.CLOSED);
-            }
+      expect(serverManager.connectionIDToConnectionState).toEqual(
+        new Map([[connection1.id, ConnectionState.WaitingForFirstMessage], [connection2.id, ConnectionState.WaitingForFirstMessage]]),
+      );
+      expect(serverManager.connectionIDToPreLoggedInConnection).toEqual(new Map([[connection1.id, connection1], [connection2.id, connection2]]));
 
-            it('after sending invalid JSON', async () => {
-                await getsKickedWithMessage('', ErrorCode.InvalidMessageFormat);
-                await getsKickedWithMessage('not json', ErrorCode.InvalidMessageFormat);
-            });
+      connection1.close();
 
-            it('after sending a non-array', async () => {
-                await getsKickedWithMessage({}, ErrorCode.InvalidMessageFormat);
-                await getsKickedWithMessage(null, ErrorCode.InvalidMessageFormat);
-            });
+      expect(serverManager.connectionIDToConnectionState).toEqual(new Map([[connection2.id, ConnectionState.WaitingForFirstMessage]]));
+      expect(serverManager.connectionIDToPreLoggedInConnection).toEqual(new Map([[connection2.id, connection2]]));
 
-            it('after sending an array with the wrong length', async () => {
-                await getsKickedWithMessage([1, 2, 3], ErrorCode.InvalidMessageFormat);
-                await getsKickedWithMessage([1, 2, 3, 4, 5], ErrorCode.InvalidMessageFormat);
-            });
+      connection1.close();
 
-            it('after sending wrong version', async () => {
-                await getsKickedWithMessage([-1, 'username', 'password', []], ErrorCode.NotUsingLatestVersion);
-                await getsKickedWithMessage([{}, 'username', 'password', []], ErrorCode.NotUsingLatestVersion);
-            });
+      expect(serverManager.connectionIDToConnectionState).toEqual(new Map([[connection2.id, ConnectionState.WaitingForFirstMessage]]));
+      expect(serverManager.connectionIDToPreLoggedInConnection).toEqual(new Map([[connection2.id, connection2]]));
+    });
+  });
 
-            it('after sending invalid username', async () => {
-                await getsKickedWithMessage([0, '', 'password', []], ErrorCode.InvalidUsername);
-                await getsKickedWithMessage([0, '123456789012345678901234567890123', 'password', []], ErrorCode.InvalidUsername);
-                await getsKickedWithMessage([0, '▲', 'password', []], ErrorCode.InvalidUsername);
-            });
+  describe('when sending first message', () => {
+    describe('gets kicked', () => {
+      async function getsKickedWithMessage(inputMessage: any, outputErrorCode: ErrorCode) {
+        const { server, userDataProvider } = getServerManagerAndStuff();
 
-            it('after sending invalid password', async () => {
-                await getsKickedWithMessage([0, 'username', 0, []], ErrorCode.InvalidMessageFormat);
-                await getsKickedWithMessage([0, 'username', {}, []], ErrorCode.InvalidMessageFormat);
-            });
+        await userDataProvider.createUser('has password', 'password');
+        await userDataProvider.createUser('does not have password', null);
 
-            it('after sending invalid game data array', async () => {
-                await getsKickedWithMessage([0, 'username', '', 0], ErrorCode.InvalidMessageFormat);
-                await getsKickedWithMessage([0, 'username', '', {}], ErrorCode.InvalidMessageFormat);
-            });
+        const connection = new TestConnection('connection');
+        server.openConnection(connection);
+        connection.sendMessage(inputMessage);
 
-            it('after not providing password', async () => {
-                await getsKickedWithMessage([0, 'has password', '', []], ErrorCode.MissingPassword);
-            });
+        await new Promise(resolve => setTimeout(resolve, 0));
 
-            it('after providing incorrect password', async () => {
-                await getsKickedWithMessage([0, 'has password', 'not my password', []], ErrorCode.IncorrectPassword);
-            });
+        expect(connection.receivedMessages).toEqual([[[MessageToClient.FatalError, outputErrorCode]]]);
+        expect(connection.readyState).toBe(WebSocket.CLOSED);
+      }
 
-            it('after providing a password when it is not set', async () => {
-                await getsKickedWithMessage([0, 'does not have password', 'password', []], ErrorCode.ProvidedPassword);
-            });
+      it('after sending invalid JSON', async () => {
+        await getsKickedWithMessage('', ErrorCode.InvalidMessageFormat);
+        await getsKickedWithMessage('not json', ErrorCode.InvalidMessageFormat);
+      });
 
-            it('after providing a password when user data does not exist', async () => {
-                await getsKickedWithMessage([0, 'no user data', 'password', []], ErrorCode.ProvidedPassword);
-            });
+      it('after sending a non-array', async () => {
+        await getsKickedWithMessage({}, ErrorCode.InvalidMessageFormat);
+        await getsKickedWithMessage(null, ErrorCode.InvalidMessageFormat);
+      });
 
-            it("after an error from user data provider's lookupUser()", async () => {
-                await getsKickedWithMessage([0, 'lookupUser error', 'password', []], ErrorCode.InternalServerError);
-            });
+      it('after sending an array with the wrong length', async () => {
+        await getsKickedWithMessage([1, 2, 3], ErrorCode.InvalidMessageFormat);
+        await getsKickedWithMessage([1, 2, 3, 4, 5], ErrorCode.InvalidMessageFormat);
+      });
 
-            it("after an error from user data provider's createUser()", async () => {
-                await getsKickedWithMessage([0, 'createUser error', '', []], ErrorCode.InternalServerError);
-            });
-        });
+      it('after sending wrong version', async () => {
+        await getsKickedWithMessage([-1, 'username', 'password', []], ErrorCode.NotUsingLatestVersion);
+        await getsKickedWithMessage([{}, 'username', 'password', []], ErrorCode.NotUsingLatestVersion);
+      });
 
-        describe('gets logged in', () => {
-            async function getsLoggedIn(username: string, password: string, expectedUserID: number) {
-                const { serverManager, server, userDataProvider } = getServerManagerAndStuff();
+      it('after sending invalid username', async () => {
+        await getsKickedWithMessage([0, '', 'password', []], ErrorCode.InvalidUsername);
+        await getsKickedWithMessage([0, '123456789012345678901234567890123', 'password', []], ErrorCode.InvalidUsername);
+        await getsKickedWithMessage([0, '▲', 'password', []], ErrorCode.InvalidUsername);
+      });
 
-                await userDataProvider.createUser('has password', 'password');
-                await userDataProvider.createUser('does not have password', null);
+      it('after sending invalid password', async () => {
+        await getsKickedWithMessage([0, 'username', 0, []], ErrorCode.InvalidMessageFormat);
+        await getsKickedWithMessage([0, 'username', {}, []], ErrorCode.InvalidMessageFormat);
+      });
 
-                const connection1 = new TestConnection('connection 1');
-                server.openConnection(connection1);
-                connection1.sendMessage([0, username, password, []]);
-                await new Promise(resolve => setTimeout(resolve, 0));
+      it('after sending invalid game data array', async () => {
+        await getsKickedWithMessage([0, 'username', '', 0], ErrorCode.InvalidMessageFormat);
+        await getsKickedWithMessage([0, 'username', '', {}], ErrorCode.InvalidMessageFormat);
+      });
 
-                function expectJustConnection1Data() {
-                    expect(serverManager.connectionIDToConnectionState).toEqual(new Map([[connection1.id, ConnectionState.LoggedIn]]));
-                    expect(serverManager.connectionIDToPreLoggedInConnection).toEqual(new Map());
-                    expect(serverManager.clientIDManager.used).toEqual(new Set([1]));
-                    expectClientAndUserAndGameData(serverManager, [new UserData(expectedUserID, username, [new ClientData(1, connection1)])], []);
-                    expect(connection1.readyState).toBe(WebSocket.OPEN);
-                }
-                expectJustConnection1Data();
-                expect(connection1.receivedMessages.length).toBe(1);
-                expect(connection1.receivedMessages[0]).toEqual([[MessageToClient.Greetings, 1, [[expectedUserID, username, [[1]]]], []]]);
+      it('after not providing password', async () => {
+        await getsKickedWithMessage([0, 'has password', '', []], ErrorCode.MissingPassword);
+      });
 
-                const connection2 = new TestConnection('connection 2');
-                server.openConnection(connection2);
-                connection2.sendMessage([0, username, password, []]);
-                await new Promise(resolve => setTimeout(resolve, 0));
+      it('after providing incorrect password', async () => {
+        await getsKickedWithMessage([0, 'has password', 'not my password', []], ErrorCode.IncorrectPassword);
+      });
 
-                expect(serverManager.connectionIDToConnectionState).toEqual(
-                    new Map([[connection1.id, ConnectionState.LoggedIn], [connection2.id, ConnectionState.LoggedIn]]),
-                );
-                expect(serverManager.connectionIDToPreLoggedInConnection).toEqual(new Map());
-                expect(serverManager.clientIDManager.used).toEqual(new Set([1, 2]));
-                expectClientAndUserAndGameData(
-                    serverManager,
-                    [new UserData(expectedUserID, username, [new ClientData(1, connection1), new ClientData(2, connection2)])],
-                    [],
-                );
-                expect(connection1.readyState).toBe(WebSocket.OPEN);
-                expect(connection2.readyState).toBe(WebSocket.OPEN);
-                expect(connection1.receivedMessages.length).toBe(2);
-                expect(connection1.receivedMessages[1]).toEqual([[MessageToClient.ClientConnected, 2, expectedUserID]]);
-                expect(connection2.receivedMessages.length).toBe(1);
-                expect(connection2.receivedMessages[0]).toEqual([[MessageToClient.Greetings, 2, [[expectedUserID, username, [[1], [2]]]], []]]);
+      it('after providing a password when it is not set', async () => {
+        await getsKickedWithMessage([0, 'does not have password', 'password', []], ErrorCode.ProvidedPassword);
+      });
 
-                connection2.close();
+      it('after providing a password when user data does not exist', async () => {
+        await getsKickedWithMessage([0, 'no user data', 'password', []], ErrorCode.ProvidedPassword);
+      });
 
-                expectJustConnection1Data();
-                expect(connection2.readyState).toBe(WebSocket.CLOSED);
-                expect(connection1.receivedMessages.length).toBe(3);
-                expect(connection1.receivedMessages[2]).toEqual([[MessageToClient.ClientDisconnected, 2]]);
-                expect(connection2.receivedMessages.length).toBe(1);
+      it("after an error from user data provider's lookupUser()", async () => {
+        await getsKickedWithMessage([0, 'lookupUser error', 'password', []], ErrorCode.InternalServerError);
+      });
 
-                connection1.close();
-
-                expect(serverManager.connectionIDToConnectionState).toEqual(new Map([]));
-                expect(serverManager.connectionIDToPreLoggedInConnection).toEqual(new Map());
-                expect(serverManager.clientIDManager.used).toEqual(new Set());
-                expectClientAndUserAndGameData(serverManager, [], []);
-                expect(connection1.readyState).toBe(WebSocket.CLOSED);
-                expect(connection1.receivedMessages.length).toBe(3);
-                expect(connection2.receivedMessages.length).toBe(1);
-            }
-
-            it('after providing correct password', async () => {
-                await getsLoggedIn('has password', 'password', 1);
-            });
-
-            it('after not providing a password when it is not set', async () => {
-                await getsLoggedIn('does not have password', '', 2);
-            });
-
-            it('after not providing a password when user data does not exist', async () => {
-                await getsLoggedIn('no user data', '', 3);
-            });
-
-            it('MessageToClient.Greetings message is correct', async () => {
-                const { serverManager, server } = getServerManagerAndStuff();
-
-                await connectToServer(server, 'user 1');
-                await connectToServer(server, 'user 2');
-                await connectToServer(server, 'user 2');
-                const connection3 = await connectToServer(server, 'user 3');
-                const connection4 = await connectToServer(server, 'user 4');
-                await connectToServer(server, 'user 1');
-                connection3.sendMessage([MessageToServer.CreateGame, GameMode.Singles2]);
-                connection3.close();
-                connection4.sendMessage([MessageToServer.CreateGame, GameMode.Teams3vs3]);
-
-                const connection = await connectToServer(server, 'me');
-
-                expect(connection.receivedMessages.length).toBe(1);
-                expect(connection.receivedMessages[0]).toEqual([
-                    [
-                        MessageToClient.Greetings,
-                        7,
-                        [[1, 'user 1', [[1], [6]]], [2, 'user 2', [[2], [3]]], [3, 'user 3'], [4, 'user 4', [[5, 2]]], [5, 'me', [[7]]]],
-                        [
-                            [0, 10, 1, ...serverManager.gameDisplayNumberToGameData.get(1)!.gameSetup!.toJSON()],
-                            [0, 11, 2, ...serverManager.gameDisplayNumberToGameData.get(2)!.gameSetup!.toJSON()],
-                        ],
-                    ],
-                ]);
-            });
-
-            it('username parameter is excluded if already known in MessageToClient.ClientConnected message', async () => {
-                const { server } = getServerManagerAndStuff();
-
-                const connection = await connectToServer(server, 'user 1');
-                await connectToServer(server, 'user 2');
-
-                expect(connection.receivedMessages.length).toBe(2);
-                expect(connection.receivedMessages[1]).toEqual([[MessageToClient.ClientConnected, 2, 2, 'user 2']]);
-
-                await connectToServer(server, 'user 2');
-
-                expect(connection.receivedMessages.length).toBe(3);
-                expect(connection.receivedMessages[2]).toEqual([[MessageToClient.ClientConnected, 3, 2]]);
-            });
-        });
+      it("after an error from user data provider's createUser()", async () => {
+        await getsKickedWithMessage([0, 'createUser error', '', []], ErrorCode.InternalServerError);
+      });
     });
 
-    describe('after logging in', () => {
-        it('kicks client due to invalid message', async () => {
-            await expectKicksClientDueToInvalidMessage([]);
-            await expectKicksClientDueToInvalidMessage([{}]);
-            await expectKicksClientDueToInvalidMessage([-1, 1, 2, 3]);
-        });
+    describe('gets logged in', () => {
+      async function getsLoggedIn(username: string, password: string, expectedUserID: number) {
+        const { serverManager, server, userDataProvider } = getServerManagerAndStuff();
+
+        await userDataProvider.createUser('has password', 'password');
+        await userDataProvider.createUser('does not have password', null);
+
+        const connection1 = new TestConnection('connection 1');
+        server.openConnection(connection1);
+        connection1.sendMessage([0, username, password, []]);
+        await new Promise(resolve => setTimeout(resolve, 0));
+
+        function expectJustConnection1Data() {
+          expect(serverManager.connectionIDToConnectionState).toEqual(new Map([[connection1.id, ConnectionState.LoggedIn]]));
+          expect(serverManager.connectionIDToPreLoggedInConnection).toEqual(new Map());
+          expect(serverManager.clientIDManager.used).toEqual(new Set([1]));
+          expectClientAndUserAndGameData(serverManager, [new UserData(expectedUserID, username, [new ClientData(1, connection1)])], []);
+          expect(connection1.readyState).toBe(WebSocket.OPEN);
+        }
+        expectJustConnection1Data();
+        expect(connection1.receivedMessages.length).toBe(1);
+        expect(connection1.receivedMessages[0]).toEqual([[MessageToClient.Greetings, 1, [[expectedUserID, username, [[1]]]], []]]);
+
+        const connection2 = new TestConnection('connection 2');
+        server.openConnection(connection2);
+        connection2.sendMessage([0, username, password, []]);
+        await new Promise(resolve => setTimeout(resolve, 0));
+
+        expect(serverManager.connectionIDToConnectionState).toEqual(
+          new Map([[connection1.id, ConnectionState.LoggedIn], [connection2.id, ConnectionState.LoggedIn]]),
+        );
+        expect(serverManager.connectionIDToPreLoggedInConnection).toEqual(new Map());
+        expect(serverManager.clientIDManager.used).toEqual(new Set([1, 2]));
+        expectClientAndUserAndGameData(
+          serverManager,
+          [new UserData(expectedUserID, username, [new ClientData(1, connection1), new ClientData(2, connection2)])],
+          [],
+        );
+        expect(connection1.readyState).toBe(WebSocket.OPEN);
+        expect(connection2.readyState).toBe(WebSocket.OPEN);
+        expect(connection1.receivedMessages.length).toBe(2);
+        expect(connection1.receivedMessages[1]).toEqual([[MessageToClient.ClientConnected, 2, expectedUserID]]);
+        expect(connection2.receivedMessages.length).toBe(1);
+        expect(connection2.receivedMessages[0]).toEqual([[MessageToClient.Greetings, 2, [[expectedUserID, username, [[1], [2]]]], []]]);
+
+        connection2.close();
+
+        expectJustConnection1Data();
+        expect(connection2.readyState).toBe(WebSocket.CLOSED);
+        expect(connection1.receivedMessages.length).toBe(3);
+        expect(connection1.receivedMessages[2]).toEqual([[MessageToClient.ClientDisconnected, 2]]);
+        expect(connection2.receivedMessages.length).toBe(1);
+
+        connection1.close();
+
+        expect(serverManager.connectionIDToConnectionState).toEqual(new Map([]));
+        expect(serverManager.connectionIDToPreLoggedInConnection).toEqual(new Map());
+        expect(serverManager.clientIDManager.used).toEqual(new Set());
+        expectClientAndUserAndGameData(serverManager, [], []);
+        expect(connection1.readyState).toBe(WebSocket.CLOSED);
+        expect(connection1.receivedMessages.length).toBe(3);
+        expect(connection2.receivedMessages.length).toBe(1);
+      }
+
+      it('after providing correct password', async () => {
+        await getsLoggedIn('has password', 'password', 1);
+      });
+
+      it('after not providing a password when it is not set', async () => {
+        await getsLoggedIn('does not have password', '', 2);
+      });
+
+      it('after not providing a password when user data does not exist', async () => {
+        await getsLoggedIn('no user data', '', 3);
+      });
+
+      it('MessageToClient.Greetings message is correct', async () => {
+        const { serverManager, server } = getServerManagerAndStuff();
+
+        await connectToServer(server, 'user 1');
+        await connectToServer(server, 'user 2');
+        await connectToServer(server, 'user 2');
+        const connection3 = await connectToServer(server, 'user 3');
+        const connection4 = await connectToServer(server, 'user 4');
+        await connectToServer(server, 'user 1');
+        connection3.sendMessage([MessageToServer.CreateGame, GameMode.Singles2]);
+        connection3.close();
+        connection4.sendMessage([MessageToServer.CreateGame, GameMode.Teams3vs3]);
+
+        const connection = await connectToServer(server, 'me');
+
+        expect(connection.receivedMessages.length).toBe(1);
+        expect(connection.receivedMessages[0]).toEqual([
+          [
+            MessageToClient.Greetings,
+            7,
+            [[1, 'user 1', [[1], [6]]], [2, 'user 2', [[2], [3]]], [3, 'user 3'], [4, 'user 4', [[5, 2]]], [5, 'me', [[7]]]],
+            [
+              [0, 10, 1, ...serverManager.gameDisplayNumberToGameData.get(1)!.gameSetup!.toJSON()],
+              [0, 11, 2, ...serverManager.gameDisplayNumberToGameData.get(2)!.gameSetup!.toJSON()],
+            ],
+          ],
+        ]);
+      });
+
+      it('username parameter is excluded if already known in MessageToClient.ClientConnected message', async () => {
+        const { server } = getServerManagerAndStuff();
+
+        const connection = await connectToServer(server, 'user 1');
+        await connectToServer(server, 'user 2');
+
+        expect(connection.receivedMessages.length).toBe(2);
+        expect(connection.receivedMessages[1]).toEqual([[MessageToClient.ClientConnected, 2, 2, 'user 2']]);
+
+        await connectToServer(server, 'user 2');
+
+        expect(connection.receivedMessages.length).toBe(3);
+        expect(connection.receivedMessages[2]).toEqual([[MessageToClient.ClientConnected, 3, 2]]);
+      });
+    });
+  });
+
+  describe('after logging in', () => {
+    it('kicks client due to invalid message', async () => {
+      await expectKicksClientDueToInvalidMessage([]);
+      await expectKicksClientDueToInvalidMessage([{}]);
+      await expectKicksClientDueToInvalidMessage([-1, 1, 2, 3]);
+    });
+  });
+
+  describe('create game', () => {
+    it('kicks client due to invalid message', async () => {
+      await expectKicksClientDueToInvalidMessage([MessageToServer.CreateGame]);
+      await expectKicksClientDueToInvalidMessage([MessageToServer.CreateGame, 1, 2]);
+      await expectKicksClientDueToInvalidMessage([MessageToServer.CreateGame, -1]);
+      await expectKicksClientDueToInvalidMessage([MessageToServer.CreateGame, {}]);
     });
 
-    describe('create game', () => {
-        it('kicks client due to invalid message', async () => {
-            await expectKicksClientDueToInvalidMessage([MessageToServer.CreateGame]);
-            await expectKicksClientDueToInvalidMessage([MessageToServer.CreateGame, 1, 2]);
-            await expectKicksClientDueToInvalidMessage([MessageToServer.CreateGame, -1]);
-            await expectKicksClientDueToInvalidMessage([MessageToServer.CreateGame, {}]);
-        });
+    it('sends MessageToClient.GameCreated and MessageToClient.ClientEnteredGame when successful', async () => {
+      const { serverManager, server } = getServerManagerAndStuff();
 
-        it('sends MessageToClient.GameCreated and MessageToClient.ClientEnteredGame when successful', async () => {
-            const { serverManager, server } = getServerManagerAndStuff();
+      const connection1 = await connectToServer(server, 'user 1');
+      const connection2 = await connectToServer(server, 'user 2');
+      connection1.clearReceivedMessages();
+      connection2.clearReceivedMessages();
 
-            const connection1 = await connectToServer(server, 'user 1');
-            const connection2 = await connectToServer(server, 'user 2');
-            connection1.clearReceivedMessages();
-            connection2.clearReceivedMessages();
+      expectClientAndUserAndGameData(
+        serverManager,
+        [new UserData(1, 'user 1', [new ClientData(1, connection1)]), new UserData(2, 'user 2', [new ClientData(2, connection2)])],
+        [],
+      );
 
-            expectClientAndUserAndGameData(
-                serverManager,
-                [new UserData(1, 'user 1', [new ClientData(1, connection1)]), new UserData(2, 'user 2', [new ClientData(2, connection2)])],
-                [],
-            );
+      connection2.sendMessage([MessageToServer.CreateGame, GameMode.Teams2vs2]);
 
-            connection2.sendMessage([MessageToServer.CreateGame, GameMode.Teams2vs2]);
+      expect(serverManager.userIDToUser.get(1)!.numGames).toBe(0);
+      expect(serverManager.userIDToUser.get(2)!.numGames).toBe(1);
 
-            expect(serverManager.userIDToUser.get(1)!.numGames).toBe(0);
-            expect(serverManager.userIDToUser.get(2)!.numGames).toBe(1);
+      expectClientAndUserAndGameData(
+        serverManager,
+        [new UserData(1, 'user 1', [new ClientData(1, connection1)]), new UserData(2, 'user 2', [new ClientData(2, connection2, 10)])],
+        [new GameDataData(10, 1, [2])],
+      );
 
-            expectClientAndUserAndGameData(
-                serverManager,
-                [new UserData(1, 'user 1', [new ClientData(1, connection1)]), new UserData(2, 'user 2', [new ClientData(2, connection2, 10)])],
-                [new GameDataData(10, 1, [2])],
-            );
+      const gameSetup = serverManager.gameIDToGameData.get(10)!.gameSetup!;
+      expect(gameSetup.gameMode).toBe(GameMode.Teams2vs2);
+      expect(gameSetup.playerArrangementMode).toBe(PlayerArrangementMode.RandomOrder);
+      expect(gameSetup.hostUserID).toBe(2);
+      expect(gameSetup.hostUsername).toBe('user 2');
 
-            const gameSetup = serverManager.gameIDToGameData.get(10)!.gameSetup!;
-            expect(gameSetup.gameMode).toBe(GameMode.Teams2vs2);
-            expect(gameSetup.playerArrangementMode).toBe(PlayerArrangementMode.RandomOrder);
-            expect(gameSetup.hostUserID).toBe(2);
-            expect(gameSetup.hostUsername).toBe('user 2');
+      expect(connection1.receivedMessages.length).toBe(1);
+      expect(connection2.receivedMessages.length).toBe(1);
 
-            expect(connection1.receivedMessages.length).toBe(1);
-            expect(connection2.receivedMessages.length).toBe(1);
-
-            const expectedMessage = [[MessageToClient.GameCreated, 10, 1, GameMode.Teams2vs2, 2], [MessageToClient.ClientEnteredGame, 2, 1]];
-            expect(connection1.receivedMessages[0]).toEqual(expectedMessage);
-            expect(connection2.receivedMessages[0]).toEqual(expectedMessage);
-        });
-
-        it('disallows creating a game when currently in a game', async () => {
-            const { serverManager, server } = getServerManagerAndStuff();
-
-            const connection1 = await connectToServer(server, 'user 1');
-            const connection2 = await connectToServer(server, 'user 2');
-            connection2.sendMessage([MessageToServer.CreateGame, GameMode.Teams2vs2]);
-            connection1.clearReceivedMessages();
-            connection2.clearReceivedMessages();
-
-            connection2.sendMessage([MessageToServer.CreateGame, GameMode.Teams2vs2]);
-
-            expect(serverManager.userIDToUser.get(2)!.numGames).toBe(1);
-            expect(serverManager.gameIDToGameData.size).toBe(1);
-            expect(connection1.receivedMessages.length).toBe(0);
-            expect(connection2.receivedMessages.length).toBe(0);
-        });
+      const expectedMessage = [[MessageToClient.GameCreated, 10, 1, GameMode.Teams2vs2, 2], [MessageToClient.ClientEnteredGame, 2, 1]];
+      expect(connection1.receivedMessages[0]).toEqual(expectedMessage);
+      expect(connection2.receivedMessages[0]).toEqual(expectedMessage);
     });
 
-    describe('enter game', () => {
-        it('kicks client due to invalid message', async () => {
-            await expectKicksClientDueToInvalidMessage([MessageToServer.EnterGame]);
-            await expectKicksClientDueToInvalidMessage([MessageToServer.EnterGame, 1, 2]);
-            await expectKicksClientDueToInvalidMessage([MessageToServer.EnterGame, -1]);
-            await expectKicksClientDueToInvalidMessage([MessageToServer.EnterGame, {}]);
-        });
+    it('disallows creating a game when currently in a game', async () => {
+      const { serverManager, server } = getServerManagerAndStuff();
 
-        it('sends MessageToClient.ClientEnteredGame when successful', async () => {
-            const { serverManager, server } = getServerManagerAndStuff();
+      const connection1 = await connectToServer(server, 'user 1');
+      const connection2 = await connectToServer(server, 'user 2');
+      connection2.sendMessage([MessageToServer.CreateGame, GameMode.Teams2vs2]);
+      connection1.clearReceivedMessages();
+      connection2.clearReceivedMessages();
 
-            const connection1 = await connectToServer(server, 'user 1');
-            const connection2 = await connectToServer(server, 'user 2');
-            connection1.sendMessage([MessageToServer.CreateGame, GameMode.Teams2vs2]);
-            connection1.clearReceivedMessages();
-            connection2.clearReceivedMessages();
+      connection2.sendMessage([MessageToServer.CreateGame, GameMode.Teams2vs2]);
 
-            expectClientAndUserAndGameData(
-                serverManager,
-                [new UserData(1, 'user 1', [new ClientData(1, connection1, 10)]), new UserData(2, 'user 2', [new ClientData(2, connection2)])],
-                [new GameDataData(10, 1, [1])],
-            );
+      expect(serverManager.userIDToUser.get(2)!.numGames).toBe(1);
+      expect(serverManager.gameIDToGameData.size).toBe(1);
+      expect(connection1.receivedMessages.length).toBe(0);
+      expect(connection2.receivedMessages.length).toBe(0);
+    });
+  });
 
-            connection2.sendMessage([MessageToServer.EnterGame, 1]);
-
-            expectClientAndUserAndGameData(
-                serverManager,
-                [new UserData(1, 'user 1', [new ClientData(1, connection1, 10)]), new UserData(2, 'user 2', [new ClientData(2, connection2, 10)])],
-                [new GameDataData(10, 1, [1])],
-            );
-
-            expect(connection1.receivedMessages.length).toBe(1);
-            expect(connection2.receivedMessages.length).toBe(1);
-
-            const expectedMessage = [[MessageToClient.ClientEnteredGame, 2, 1]];
-            expect(connection1.receivedMessages[0]).toEqual(expectedMessage);
-            expect(connection2.receivedMessages[0]).toEqual(expectedMessage);
-        });
-
-        it('disallows entering a game when currently in a game', async () => {
-            const { server } = getServerManagerAndStuff();
-
-            const connection1 = await connectToServer(server, 'user 1');
-            const connection2 = await connectToServer(server, 'user 2');
-            const connection3 = await connectToServer(server, 'user 3');
-            connection1.sendMessage([MessageToServer.CreateGame, GameMode.Teams2vs2]);
-            connection2.sendMessage([MessageToServer.CreateGame, GameMode.Singles3]);
-            connection3.sendMessage([MessageToServer.EnterGame, 2]);
-            connection1.clearReceivedMessages();
-            connection2.clearReceivedMessages();
-            connection3.clearReceivedMessages();
-
-            connection1.sendMessage([MessageToServer.EnterGame, 1]);
-            connection1.sendMessage([MessageToServer.EnterGame, 2]);
-            connection2.sendMessage([MessageToServer.EnterGame, 1]);
-            connection2.sendMessage([MessageToServer.EnterGame, 2]);
-            connection3.sendMessage([MessageToServer.EnterGame, 1]);
-            connection3.sendMessage([MessageToServer.EnterGame, 2]);
-
-            expect(connection1.receivedMessages.length).toBe(0);
-            expect(connection2.receivedMessages.length).toBe(0);
-            expect(connection3.receivedMessages.length).toBe(0);
-            expect(connection1.readyState).toBe(WebSocket.OPEN);
-            expect(connection2.readyState).toBe(WebSocket.OPEN);
-            expect(connection3.readyState).toBe(WebSocket.OPEN);
-        });
+  describe('enter game', () => {
+    it('kicks client due to invalid message', async () => {
+      await expectKicksClientDueToInvalidMessage([MessageToServer.EnterGame]);
+      await expectKicksClientDueToInvalidMessage([MessageToServer.EnterGame, 1, 2]);
+      await expectKicksClientDueToInvalidMessage([MessageToServer.EnterGame, -1]);
+      await expectKicksClientDueToInvalidMessage([MessageToServer.EnterGame, {}]);
     });
 
-    describe('exit game', () => {
-        it('kicks client due to invalid message', async () => {
-            await expectKicksClientDueToInvalidMessage([MessageToServer.ExitGame, 1]);
-            await expectKicksClientDueToInvalidMessage([MessageToServer.ExitGame, {}]);
-        });
+    it('sends MessageToClient.ClientEnteredGame when successful', async () => {
+      const { serverManager, server } = getServerManagerAndStuff();
 
-        it('sends MessageToClient.ClientExitedGame when successful', async () => {
-            const { serverManager, server } = getServerManagerAndStuff();
+      const connection1 = await connectToServer(server, 'user 1');
+      const connection2 = await connectToServer(server, 'user 2');
+      connection1.sendMessage([MessageToServer.CreateGame, GameMode.Teams2vs2]);
+      connection1.clearReceivedMessages();
+      connection2.clearReceivedMessages();
 
-            const connection1 = await connectToServer(server, 'user 1');
-            const connection2 = await connectToServer(server, 'user 2');
-            connection1.sendMessage([MessageToServer.CreateGame, GameMode.Teams2vs2]);
-            connection2.sendMessage([MessageToServer.EnterGame, 1]);
-            connection1.clearReceivedMessages();
-            connection2.clearReceivedMessages();
+      expectClientAndUserAndGameData(
+        serverManager,
+        [new UserData(1, 'user 1', [new ClientData(1, connection1, 10)]), new UserData(2, 'user 2', [new ClientData(2, connection2)])],
+        [new GameDataData(10, 1, [1])],
+      );
 
-            expectClientAndUserAndGameData(
-                serverManager,
-                [new UserData(1, 'user 1', [new ClientData(1, connection1, 10)]), new UserData(2, 'user 2', [new ClientData(2, connection2, 10)])],
-                [new GameDataData(10, 1, [1])],
-            );
+      connection2.sendMessage([MessageToServer.EnterGame, 1]);
 
-            connection2.sendMessage([MessageToServer.ExitGame]);
+      expectClientAndUserAndGameData(
+        serverManager,
+        [new UserData(1, 'user 1', [new ClientData(1, connection1, 10)]), new UserData(2, 'user 2', [new ClientData(2, connection2, 10)])],
+        [new GameDataData(10, 1, [1])],
+      );
 
-            expectClientAndUserAndGameData(
-                serverManager,
-                [new UserData(1, 'user 1', [new ClientData(1, connection1, 10)]), new UserData(2, 'user 2', [new ClientData(2, connection2)])],
-                [new GameDataData(10, 1, [1])],
-            );
+      expect(connection1.receivedMessages.length).toBe(1);
+      expect(connection2.receivedMessages.length).toBe(1);
 
-            expect(connection1.receivedMessages.length).toBe(1);
-            expect(connection2.receivedMessages.length).toBe(1);
-
-            const expectedMessage = [[MessageToClient.ClientExitedGame, 2]];
-            expect(connection1.receivedMessages[0]).toEqual(expectedMessage);
-            expect(connection2.receivedMessages[0]).toEqual(expectedMessage);
-        });
-
-        it('disallows exiting a game when not in a game', async () => {
-            const { serverManager, server } = getServerManagerAndStuff();
-
-            const connection1 = await connectToServer(server, 'user 1');
-            const connection2 = await connectToServer(server, 'user 2');
-            connection1.sendMessage([MessageToServer.CreateGame, GameMode.Teams2vs2]);
-            connection1.clearReceivedMessages();
-            connection2.clearReceivedMessages();
-
-            expectClientAndUserAndGameData(
-                serverManager,
-                [new UserData(1, 'user 1', [new ClientData(1, connection1, 10)]), new UserData(2, 'user 2', [new ClientData(2, connection2)])],
-                [new GameDataData(10, 1, [1])],
-            );
-
-            connection2.sendMessage([MessageToServer.ExitGame]);
-
-            expectClientAndUserAndGameData(
-                serverManager,
-                [new UserData(1, 'user 1', [new ClientData(1, connection1, 10)]), new UserData(2, 'user 2', [new ClientData(2, connection2)])],
-                [new GameDataData(10, 1, [1])],
-            );
-
-            expect(connection1.receivedMessages.length).toBe(0);
-            expect(connection2.receivedMessages.length).toBe(0);
-            expect(connection1.readyState).toBe(WebSocket.OPEN);
-            expect(connection2.readyState).toBe(WebSocket.OPEN);
-        });
+      const expectedMessage = [[MessageToClient.ClientEnteredGame, 2, 1]];
+      expect(connection1.receivedMessages[0]).toEqual(expectedMessage);
+      expect(connection2.receivedMessages[0]).toEqual(expectedMessage);
     });
 
-    describe('join game', () => {
-        it('does nothing when not in a game room', async () => {
-            const { server } = getServerManagerAndStuff();
+    it('disallows entering a game when currently in a game', async () => {
+      const { server } = getServerManagerAndStuff();
 
-            const connection = await connectToServer(server, 'user');
-            connection.clearReceivedMessages();
+      const connection1 = await connectToServer(server, 'user 1');
+      const connection2 = await connectToServer(server, 'user 2');
+      const connection3 = await connectToServer(server, 'user 3');
+      connection1.sendMessage([MessageToServer.CreateGame, GameMode.Teams2vs2]);
+      connection2.sendMessage([MessageToServer.CreateGame, GameMode.Singles3]);
+      connection3.sendMessage([MessageToServer.EnterGame, 2]);
+      connection1.clearReceivedMessages();
+      connection2.clearReceivedMessages();
+      connection3.clearReceivedMessages();
 
-            connection.sendMessage([MessageToServer.JoinGame]);
+      connection1.sendMessage([MessageToServer.EnterGame, 1]);
+      connection1.sendMessage([MessageToServer.EnterGame, 2]);
+      connection2.sendMessage([MessageToServer.EnterGame, 1]);
+      connection2.sendMessage([MessageToServer.EnterGame, 2]);
+      connection3.sendMessage([MessageToServer.EnterGame, 1]);
+      connection3.sendMessage([MessageToServer.EnterGame, 2]);
 
-            expect(connection.receivedMessages.length).toBe(0);
-            expect(connection.readyState).toBe(WebSocket.OPEN);
-        });
+      expect(connection1.receivedMessages.length).toBe(0);
+      expect(connection2.receivedMessages.length).toBe(0);
+      expect(connection3.receivedMessages.length).toBe(0);
+      expect(connection1.readyState).toBe(WebSocket.OPEN);
+      expect(connection2.readyState).toBe(WebSocket.OPEN);
+      expect(connection3.readyState).toBe(WebSocket.OPEN);
+    });
+  });
 
-        it('kicks client due to invalid message', async () => {
-            const { server } = getServerManagerAndStuff();
-
-            const hostConnection = await connectToServer(server, 'host');
-            const otherConnection = await connectToServer(server, 'other');
-            hostConnection.sendMessage([MessageToServer.CreateGame, GameMode.Teams2vs2]);
-            otherConnection.sendMessage([MessageToServer.EnterGame, 1]);
-            hostConnection.clearReceivedMessages();
-            otherConnection.clearReceivedMessages();
-
-            otherConnection.sendMessage([MessageToServer.JoinGame, 1]);
-
-            expect(otherConnection.receivedMessages.length).toBe(1);
-            expect(otherConnection.receivedMessages[0]).toEqual([[MessageToClient.FatalError, ErrorCode.InvalidMessage]]);
-            expect(otherConnection.readyState).toBe(WebSocket.CLOSED);
-        });
-
-        it('sends MessageToClient.GameSetupChanged when successful', async () => {
-            const { serverManager, server } = getServerManagerAndStuff();
-
-            const hostConnection = await connectToServer(server, 'host');
-            const otherConnection = await connectToServer(server, 'other');
-            hostConnection.sendMessage([MessageToServer.CreateGame, GameMode.Teams2vs2]);
-            otherConnection.sendMessage([MessageToServer.EnterGame, 1]);
-            hostConnection.clearReceivedMessages();
-            otherConnection.clearReceivedMessages();
-
-            expectClientAndUserAndGameData(
-                serverManager,
-                [new UserData(1, 'host', [new ClientData(1, hostConnection, 10)]), new UserData(2, 'other', [new ClientData(2, otherConnection, 10)])],
-                [new GameDataData(10, 1, [1])],
-            );
-
-            otherConnection.sendMessage([MessageToServer.JoinGame]);
-
-            expectClientAndUserAndGameData(
-                serverManager,
-                [new UserData(1, 'host', [new ClientData(1, hostConnection, 10)]), new UserData(2, 'other', [new ClientData(2, otherConnection, 10)])],
-                [new GameDataData(10, 1, [1, 2])],
-            );
-
-            expect(hostConnection.receivedMessages.length).toBe(1);
-            expect(otherConnection.receivedMessages.length).toBe(1);
-
-            const expectedMessage = [[MessageToClient.GameSetupChanged, 1, GameSetupChange.UserAdded, 2]];
-            expect(hostConnection.receivedMessages[0]).toEqual(expectedMessage);
-            expect(otherConnection.receivedMessages[0]).toEqual(expectedMessage);
-        });
+  describe('exit game', () => {
+    it('kicks client due to invalid message', async () => {
+      await expectKicksClientDueToInvalidMessage([MessageToServer.ExitGame, 1]);
+      await expectKicksClientDueToInvalidMessage([MessageToServer.ExitGame, {}]);
     });
 
-    describe('unjoin game', () => {
-        it('does nothing when not in a game room', async () => {
-            const { server } = getServerManagerAndStuff();
+    it('sends MessageToClient.ClientExitedGame when successful', async () => {
+      const { serverManager, server } = getServerManagerAndStuff();
 
-            const connection = await connectToServer(server, 'user');
-            connection.clearReceivedMessages();
+      const connection1 = await connectToServer(server, 'user 1');
+      const connection2 = await connectToServer(server, 'user 2');
+      connection1.sendMessage([MessageToServer.CreateGame, GameMode.Teams2vs2]);
+      connection2.sendMessage([MessageToServer.EnterGame, 1]);
+      connection1.clearReceivedMessages();
+      connection2.clearReceivedMessages();
 
-            connection.sendMessage([MessageToServer.UnjoinGame]);
+      expectClientAndUserAndGameData(
+        serverManager,
+        [new UserData(1, 'user 1', [new ClientData(1, connection1, 10)]), new UserData(2, 'user 2', [new ClientData(2, connection2, 10)])],
+        [new GameDataData(10, 1, [1])],
+      );
 
-            expect(connection.receivedMessages.length).toBe(0);
-            expect(connection.readyState).toBe(WebSocket.OPEN);
-        });
+      connection2.sendMessage([MessageToServer.ExitGame]);
 
-        it('kicks client due to invalid message', async () => {
-            const { server } = getServerManagerAndStuff();
+      expectClientAndUserAndGameData(
+        serverManager,
+        [new UserData(1, 'user 1', [new ClientData(1, connection1, 10)]), new UserData(2, 'user 2', [new ClientData(2, connection2)])],
+        [new GameDataData(10, 1, [1])],
+      );
 
-            const hostConnection = await connectToServer(server, 'host');
-            const otherConnection = await connectToServer(server, 'other');
-            hostConnection.sendMessage([MessageToServer.CreateGame, GameMode.Teams2vs2]);
-            otherConnection.sendMessage([MessageToServer.EnterGame, 1]);
-            otherConnection.sendMessage([MessageToServer.JoinGame]);
-            hostConnection.clearReceivedMessages();
-            otherConnection.clearReceivedMessages();
+      expect(connection1.receivedMessages.length).toBe(1);
+      expect(connection2.receivedMessages.length).toBe(1);
 
-            otherConnection.sendMessage([MessageToServer.UnjoinGame, 1]);
-
-            expect(otherConnection.receivedMessages.length).toBe(1);
-            expect(otherConnection.receivedMessages[0]).toEqual([[MessageToClient.FatalError, ErrorCode.InvalidMessage]]);
-            expect(otherConnection.readyState).toBe(WebSocket.CLOSED);
-        });
-
-        it('sends MessageToClient.GameSetupChanged when successful', async () => {
-            const { serverManager, server } = getServerManagerAndStuff();
-
-            const hostConnection = await connectToServer(server, 'host');
-            const otherConnection = await connectToServer(server, 'other');
-            hostConnection.sendMessage([MessageToServer.CreateGame, GameMode.Teams2vs2]);
-            otherConnection.sendMessage([MessageToServer.EnterGame, 1]);
-            otherConnection.sendMessage([MessageToServer.JoinGame]);
-            hostConnection.clearReceivedMessages();
-            otherConnection.clearReceivedMessages();
-
-            expectClientAndUserAndGameData(
-                serverManager,
-                [new UserData(1, 'host', [new ClientData(1, hostConnection, 10)]), new UserData(2, 'other', [new ClientData(2, otherConnection, 10)])],
-                [new GameDataData(10, 1, [1, 2])],
-            );
-
-            otherConnection.sendMessage([MessageToServer.UnjoinGame]);
-
-            expectClientAndUserAndGameData(
-                serverManager,
-                [new UserData(1, 'host', [new ClientData(1, hostConnection, 10)]), new UserData(2, 'other', [new ClientData(2, otherConnection, 10)])],
-                [new GameDataData(10, 1, [1])],
-            );
-
-            expect(hostConnection.receivedMessages.length).toBe(1);
-            expect(otherConnection.receivedMessages.length).toBe(1);
-
-            const expectedMessage = [[MessageToClient.GameSetupChanged, 1, GameSetupChange.UserRemoved, 2]];
-            expect(hostConnection.receivedMessages[0]).toEqual(expectedMessage);
-            expect(otherConnection.receivedMessages[0]).toEqual(expectedMessage);
-        });
+      const expectedMessage = [[MessageToClient.ClientExitedGame, 2]];
+      expect(connection1.receivedMessages[0]).toEqual(expectedMessage);
+      expect(connection2.receivedMessages[0]).toEqual(expectedMessage);
     });
 
-    describe('approve of game setup', () => {
-        it('does nothing when not in a game room', async () => {
-            const { server } = getServerManagerAndStuff();
+    it('disallows exiting a game when not in a game', async () => {
+      const { serverManager, server } = getServerManagerAndStuff();
 
-            const connection = await connectToServer(server, 'user');
-            connection.clearReceivedMessages();
+      const connection1 = await connectToServer(server, 'user 1');
+      const connection2 = await connectToServer(server, 'user 2');
+      connection1.sendMessage([MessageToServer.CreateGame, GameMode.Teams2vs2]);
+      connection1.clearReceivedMessages();
+      connection2.clearReceivedMessages();
 
-            connection.sendMessage([MessageToServer.ApproveOfGameSetup]);
+      expectClientAndUserAndGameData(
+        serverManager,
+        [new UserData(1, 'user 1', [new ClientData(1, connection1, 10)]), new UserData(2, 'user 2', [new ClientData(2, connection2)])],
+        [new GameDataData(10, 1, [1])],
+      );
 
-            expect(connection.receivedMessages.length).toBe(0);
-            expect(connection.readyState).toBe(WebSocket.OPEN);
-        });
+      connection2.sendMessage([MessageToServer.ExitGame]);
 
-        it('kicks client due to invalid message', async () => {
-            const { server } = getServerManagerAndStuff();
+      expectClientAndUserAndGameData(
+        serverManager,
+        [new UserData(1, 'user 1', [new ClientData(1, connection1, 10)]), new UserData(2, 'user 2', [new ClientData(2, connection2)])],
+        [new GameDataData(10, 1, [1])],
+      );
 
-            const hostConnection = await connectToServer(server, 'host');
-            const otherConnection = await connectToServer(server, 'other');
-            hostConnection.sendMessage([MessageToServer.CreateGame, GameMode.Singles2]);
-            otherConnection.sendMessage([MessageToServer.EnterGame, 1]);
-            hostConnection.clearReceivedMessages();
-            otherConnection.clearReceivedMessages();
+      expect(connection1.receivedMessages.length).toBe(0);
+      expect(connection2.receivedMessages.length).toBe(0);
+      expect(connection1.readyState).toBe(WebSocket.OPEN);
+      expect(connection2.readyState).toBe(WebSocket.OPEN);
+    });
+  });
 
-            otherConnection.sendMessage([MessageToServer.ApproveOfGameSetup, 1]);
+  describe('join game', () => {
+    it('does nothing when not in a game room', async () => {
+      const { server } = getServerManagerAndStuff();
 
-            expect(otherConnection.receivedMessages.length).toBe(1);
-            expect(otherConnection.receivedMessages[0]).toEqual([[MessageToClient.FatalError, ErrorCode.InvalidMessage]]);
-            expect(otherConnection.readyState).toBe(WebSocket.CLOSED);
-        });
+      const connection = await connectToServer(server, 'user');
+      connection.clearReceivedMessages();
 
-        it('sends MessageToClient.GameSetupChanged when successful', async () => {
-            const { serverManager, server } = getServerManagerAndStuff();
+      connection.sendMessage([MessageToServer.JoinGame]);
 
-            const hostConnection = await connectToServer(server, 'host');
-            const otherConnection = await connectToServer(server, 'other');
-            hostConnection.sendMessage([MessageToServer.CreateGame, GameMode.Singles2]);
-            otherConnection.sendMessage([MessageToServer.EnterGame, 1]);
-            otherConnection.sendMessage([MessageToServer.JoinGame]);
-            hostConnection.clearReceivedMessages();
-            otherConnection.clearReceivedMessages();
-
-            expectClientAndUserAndGameData(
-                serverManager,
-                [new UserData(1, 'host', [new ClientData(1, hostConnection, 10)]), new UserData(2, 'other', [new ClientData(2, otherConnection, 10)])],
-                [new GameDataData(10, 1, [1, 2])],
-            );
-
-            otherConnection.sendMessage([MessageToServer.ApproveOfGameSetup]);
-
-            expectClientAndUserAndGameData(
-                serverManager,
-                [new UserData(1, 'host', [new ClientData(1, hostConnection, 10)]), new UserData(2, 'other', [new ClientData(2, otherConnection, 10)])],
-                [new GameDataData(10, 1, [1, 2])],
-            );
-
-            expect(hostConnection.receivedMessages.length).toBe(1);
-            expect(otherConnection.receivedMessages.length).toBe(1);
-
-            const expectedMessage = [[MessageToClient.GameSetupChanged, 1, GameSetupChange.UserApprovedOfGameSetup, 2]];
-            expect(hostConnection.receivedMessages[0]).toEqual(expectedMessage);
-            expect(otherConnection.receivedMessages[0]).toEqual(expectedMessage);
-        });
+      expect(connection.receivedMessages.length).toBe(0);
+      expect(connection.readyState).toBe(WebSocket.OPEN);
     });
 
-    describe('change game mode', () => {
-        it('does nothing when not in a game room', async () => {
-            const { server } = getServerManagerAndStuff();
+    it('kicks client due to invalid message', async () => {
+      const { server } = getServerManagerAndStuff();
 
-            const connection = await connectToServer(server, 'user');
-            connection.clearReceivedMessages();
+      const hostConnection = await connectToServer(server, 'host');
+      const otherConnection = await connectToServer(server, 'other');
+      hostConnection.sendMessage([MessageToServer.CreateGame, GameMode.Teams2vs2]);
+      otherConnection.sendMessage([MessageToServer.EnterGame, 1]);
+      hostConnection.clearReceivedMessages();
+      otherConnection.clearReceivedMessages();
 
-            connection.sendMessage([MessageToServer.ChangeGameMode, GameMode.Singles3]);
+      otherConnection.sendMessage([MessageToServer.JoinGame, 1]);
 
-            expect(connection.receivedMessages.length).toBe(0);
-            expect(connection.readyState).toBe(WebSocket.OPEN);
-        });
-
-        it('kicks client when not the host and trying to change game mode', async () => {
-            const { server } = getServerManagerAndStuff();
-
-            const hostConnection = await connectToServer(server, 'host');
-            const otherConnection = await connectToServer(server, 'other');
-            hostConnection.sendMessage([MessageToServer.CreateGame, GameMode.Singles2]);
-            otherConnection.sendMessage([MessageToServer.EnterGame, 1]);
-            hostConnection.clearReceivedMessages();
-            otherConnection.clearReceivedMessages();
-
-            otherConnection.sendMessage([MessageToServer.ChangeGameMode, GameMode.Singles3]);
-
-            expect(otherConnection.receivedMessages.length).toBe(1);
-            expect(otherConnection.receivedMessages[0]).toEqual([[MessageToClient.FatalError, ErrorCode.InvalidMessage]]);
-            expect(otherConnection.readyState).toBe(WebSocket.CLOSED);
-        });
-
-        it('kicks client when the host and sending invalid message', async () => {
-            const { server } = getServerManagerAndStuff();
-
-            const hostConnection = await connectToServer(server, 'host');
-            hostConnection.sendMessage([MessageToServer.CreateGame, GameMode.Singles3]);
-            hostConnection.clearReceivedMessages();
-
-            hostConnection.sendMessage([MessageToServer.ChangeGameMode]);
-
-            expect(hostConnection.receivedMessages.length).toBe(1);
-            expect(hostConnection.receivedMessages[0]).toEqual([[MessageToClient.FatalError, ErrorCode.InvalidMessage]]);
-            expect(hostConnection.readyState).toBe(WebSocket.CLOSED);
-        });
-
-        it('sends MessageToClient.GameSetupChanged when successful', async () => {
-            const { serverManager, server } = getServerManagerAndStuff();
-
-            const hostConnection = await connectToServer(server, 'host');
-            const otherConnection = await connectToServer(server, 'other');
-            hostConnection.sendMessage([MessageToServer.CreateGame, GameMode.Singles2]);
-            otherConnection.sendMessage([MessageToServer.EnterGame, 1]);
-            otherConnection.sendMessage([MessageToServer.JoinGame]);
-            hostConnection.clearReceivedMessages();
-            otherConnection.clearReceivedMessages();
-
-            expectClientAndUserAndGameData(
-                serverManager,
-                [new UserData(1, 'host', [new ClientData(1, hostConnection, 10)]), new UserData(2, 'other', [new ClientData(2, otherConnection, 10)])],
-                [new GameDataData(10, 1, [1, 2])],
-            );
-
-            hostConnection.sendMessage([MessageToServer.ChangeGameMode, GameMode.Singles3]);
-
-            expectClientAndUserAndGameData(
-                serverManager,
-                [new UserData(1, 'host', [new ClientData(1, hostConnection, 10)]), new UserData(2, 'other', [new ClientData(2, otherConnection, 10)])],
-                [new GameDataData(10, 1, [1, 2])],
-            );
-
-            expect(hostConnection.receivedMessages.length).toBe(1);
-            expect(otherConnection.receivedMessages.length).toBe(1);
-
-            const expectedMessage = [[MessageToClient.GameSetupChanged, 1, GameSetupChange.GameModeChanged, GameMode.Singles3]];
-            expect(hostConnection.receivedMessages[0]).toEqual(expectedMessage);
-            expect(otherConnection.receivedMessages[0]).toEqual(expectedMessage);
-        });
+      expect(otherConnection.receivedMessages.length).toBe(1);
+      expect(otherConnection.receivedMessages[0]).toEqual([[MessageToClient.FatalError, ErrorCode.InvalidMessage]]);
+      expect(otherConnection.readyState).toBe(WebSocket.CLOSED);
     });
 
-    describe('change player arrangement mode', () => {
-        it('does nothing when not in a game room', async () => {
-            const { server } = getServerManagerAndStuff();
+    it('sends MessageToClient.GameSetupChanged when successful', async () => {
+      const { serverManager, server } = getServerManagerAndStuff();
 
-            const connection = await connectToServer(server, 'user');
-            connection.clearReceivedMessages();
+      const hostConnection = await connectToServer(server, 'host');
+      const otherConnection = await connectToServer(server, 'other');
+      hostConnection.sendMessage([MessageToServer.CreateGame, GameMode.Teams2vs2]);
+      otherConnection.sendMessage([MessageToServer.EnterGame, 1]);
+      hostConnection.clearReceivedMessages();
+      otherConnection.clearReceivedMessages();
 
-            connection.sendMessage([MessageToServer.ChangePlayerArrangementMode, PlayerArrangementMode.ExactOrder]);
+      expectClientAndUserAndGameData(
+        serverManager,
+        [new UserData(1, 'host', [new ClientData(1, hostConnection, 10)]), new UserData(2, 'other', [new ClientData(2, otherConnection, 10)])],
+        [new GameDataData(10, 1, [1])],
+      );
 
-            expect(connection.receivedMessages.length).toBe(0);
-            expect(connection.readyState).toBe(WebSocket.OPEN);
-        });
+      otherConnection.sendMessage([MessageToServer.JoinGame]);
 
-        it('kicks client when not the host and trying to change player arrangement mode', async () => {
-            const { server } = getServerManagerAndStuff();
+      expectClientAndUserAndGameData(
+        serverManager,
+        [new UserData(1, 'host', [new ClientData(1, hostConnection, 10)]), new UserData(2, 'other', [new ClientData(2, otherConnection, 10)])],
+        [new GameDataData(10, 1, [1, 2])],
+      );
 
-            const hostConnection = await connectToServer(server, 'host');
-            const otherConnection = await connectToServer(server, 'other');
-            hostConnection.sendMessage([MessageToServer.CreateGame, GameMode.Singles2]);
-            otherConnection.sendMessage([MessageToServer.EnterGame, 1]);
-            hostConnection.clearReceivedMessages();
-            otherConnection.clearReceivedMessages();
+      expect(hostConnection.receivedMessages.length).toBe(1);
+      expect(otherConnection.receivedMessages.length).toBe(1);
 
-            otherConnection.sendMessage([MessageToServer.ChangePlayerArrangementMode, PlayerArrangementMode.ExactOrder]);
+      const expectedMessage = [[MessageToClient.GameSetupChanged, 1, GameSetupChange.UserAdded, 2]];
+      expect(hostConnection.receivedMessages[0]).toEqual(expectedMessage);
+      expect(otherConnection.receivedMessages[0]).toEqual(expectedMessage);
+    });
+  });
 
-            expect(otherConnection.receivedMessages.length).toBe(1);
-            expect(otherConnection.receivedMessages[0]).toEqual([[MessageToClient.FatalError, ErrorCode.InvalidMessage]]);
-            expect(otherConnection.readyState).toBe(WebSocket.CLOSED);
-        });
+  describe('unjoin game', () => {
+    it('does nothing when not in a game room', async () => {
+      const { server } = getServerManagerAndStuff();
 
-        it('kicks client when the host and sending invalid message', async () => {
-            const { server } = getServerManagerAndStuff();
+      const connection = await connectToServer(server, 'user');
+      connection.clearReceivedMessages();
 
-            const hostConnection = await connectToServer(server, 'host');
-            hostConnection.sendMessage([MessageToServer.CreateGame, GameMode.Singles3]);
-            hostConnection.clearReceivedMessages();
+      connection.sendMessage([MessageToServer.UnjoinGame]);
 
-            hostConnection.sendMessage([MessageToServer.ChangePlayerArrangementMode]);
-
-            expect(hostConnection.receivedMessages.length).toBe(1);
-            expect(hostConnection.receivedMessages[0]).toEqual([[MessageToClient.FatalError, ErrorCode.InvalidMessage]]);
-            expect(hostConnection.readyState).toBe(WebSocket.CLOSED);
-        });
-
-        it('sends MessageToClient.GameSetupChanged when successful', async () => {
-            const { serverManager, server } = getServerManagerAndStuff();
-
-            const hostConnection = await connectToServer(server, 'host');
-            const otherConnection = await connectToServer(server, 'other');
-            hostConnection.sendMessage([MessageToServer.CreateGame, GameMode.Singles4]);
-            otherConnection.sendMessage([MessageToServer.EnterGame, 1]);
-            otherConnection.sendMessage([MessageToServer.JoinGame]);
-            hostConnection.clearReceivedMessages();
-            otherConnection.clearReceivedMessages();
-
-            expectClientAndUserAndGameData(
-                serverManager,
-                [new UserData(1, 'host', [new ClientData(1, hostConnection, 10)]), new UserData(2, 'other', [new ClientData(2, otherConnection, 10)])],
-                [new GameDataData(10, 1, [1, 2])],
-            );
-
-            hostConnection.sendMessage([MessageToServer.ChangePlayerArrangementMode, PlayerArrangementMode.ExactOrder]);
-
-            expectClientAndUserAndGameData(
-                serverManager,
-                [new UserData(1, 'host', [new ClientData(1, hostConnection, 10)]), new UserData(2, 'other', [new ClientData(2, otherConnection, 10)])],
-                [new GameDataData(10, 1, [1, 2])],
-            );
-
-            expect(hostConnection.receivedMessages.length).toBe(1);
-            expect(otherConnection.receivedMessages.length).toBe(1);
-
-            const expectedMessage = [[MessageToClient.GameSetupChanged, 1, GameSetupChange.PlayerArrangementModeChanged, PlayerArrangementMode.ExactOrder]];
-            expect(hostConnection.receivedMessages[0]).toEqual(expectedMessage);
-            expect(otherConnection.receivedMessages[0]).toEqual(expectedMessage);
-        });
+      expect(connection.receivedMessages.length).toBe(0);
+      expect(connection.readyState).toBe(WebSocket.OPEN);
     });
 
-    describe('swap positions', () => {
-        it('does nothing when not in a game room', async () => {
-            const { server } = getServerManagerAndStuff();
+    it('kicks client due to invalid message', async () => {
+      const { server } = getServerManagerAndStuff();
 
-            const connection = await connectToServer(server, 'user');
-            connection.clearReceivedMessages();
+      const hostConnection = await connectToServer(server, 'host');
+      const otherConnection = await connectToServer(server, 'other');
+      hostConnection.sendMessage([MessageToServer.CreateGame, GameMode.Teams2vs2]);
+      otherConnection.sendMessage([MessageToServer.EnterGame, 1]);
+      otherConnection.sendMessage([MessageToServer.JoinGame]);
+      hostConnection.clearReceivedMessages();
+      otherConnection.clearReceivedMessages();
 
-            connection.sendMessage([MessageToServer.SwapPositions, 0, 1]);
+      otherConnection.sendMessage([MessageToServer.UnjoinGame, 1]);
 
-            expect(connection.receivedMessages.length).toBe(0);
-            expect(connection.readyState).toBe(WebSocket.OPEN);
-        });
-
-        it('kicks client when not the host and trying to swap positions', async () => {
-            const { server } = getServerManagerAndStuff();
-
-            const hostConnection = await connectToServer(server, 'host');
-            const otherConnection = await connectToServer(server, 'other');
-            hostConnection.sendMessage([MessageToServer.CreateGame, GameMode.Singles2]);
-            otherConnection.sendMessage([MessageToServer.EnterGame, 1]);
-            hostConnection.clearReceivedMessages();
-            otherConnection.clearReceivedMessages();
-
-            otherConnection.sendMessage([MessageToServer.SwapPositions, 0, 1]);
-
-            expect(otherConnection.receivedMessages.length).toBe(1);
-            expect(otherConnection.receivedMessages[0]).toEqual([[MessageToClient.FatalError, ErrorCode.InvalidMessage]]);
-            expect(otherConnection.readyState).toBe(WebSocket.CLOSED);
-        });
-
-        it('kicks client when the host and sending invalid message', async () => {
-            const { server } = getServerManagerAndStuff();
-
-            const hostConnection = await connectToServer(server, 'host');
-            hostConnection.sendMessage([MessageToServer.CreateGame, GameMode.Singles3]);
-            hostConnection.clearReceivedMessages();
-
-            hostConnection.sendMessage([MessageToServer.SwapPositions]);
-
-            expect(hostConnection.receivedMessages.length).toBe(1);
-            expect(hostConnection.receivedMessages[0]).toEqual([[MessageToClient.FatalError, ErrorCode.InvalidMessage]]);
-            expect(hostConnection.readyState).toBe(WebSocket.CLOSED);
-        });
-
-        it('sends MessageToClient.GameSetupChanged when successful', async () => {
-            const { serverManager, server } = getServerManagerAndStuff();
-
-            const hostConnection = await connectToServer(server, 'host');
-            const otherConnection = await connectToServer(server, 'other');
-            hostConnection.sendMessage([MessageToServer.CreateGame, GameMode.Singles4]);
-            otherConnection.sendMessage([MessageToServer.EnterGame, 1]);
-            otherConnection.sendMessage([MessageToServer.JoinGame]);
-            hostConnection.clearReceivedMessages();
-            otherConnection.clearReceivedMessages();
-
-            expectClientAndUserAndGameData(
-                serverManager,
-                [new UserData(1, 'host', [new ClientData(1, hostConnection, 10)]), new UserData(2, 'other', [new ClientData(2, otherConnection, 10)])],
-                [new GameDataData(10, 1, [1, 2])],
-            );
-
-            hostConnection.sendMessage([MessageToServer.SwapPositions, 0, 1]);
-
-            expectClientAndUserAndGameData(
-                serverManager,
-                [new UserData(1, 'host', [new ClientData(1, hostConnection, 10)]), new UserData(2, 'other', [new ClientData(2, otherConnection, 10)])],
-                [new GameDataData(10, 1, [1, 2])],
-            );
-
-            expect(hostConnection.receivedMessages.length).toBe(1);
-            expect(otherConnection.receivedMessages.length).toBe(1);
-
-            const expectedMessage = [[MessageToClient.GameSetupChanged, 1, GameSetupChange.PositionsSwapped, 0, 1]];
-            expect(hostConnection.receivedMessages[0]).toEqual(expectedMessage);
-            expect(otherConnection.receivedMessages[0]).toEqual(expectedMessage);
-        });
+      expect(otherConnection.receivedMessages.length).toBe(1);
+      expect(otherConnection.receivedMessages[0]).toEqual([[MessageToClient.FatalError, ErrorCode.InvalidMessage]]);
+      expect(otherConnection.readyState).toBe(WebSocket.CLOSED);
     });
 
-    describe('kick user', () => {
-        it('does nothing when not in a game room', async () => {
-            const { server } = getServerManagerAndStuff();
+    it('sends MessageToClient.GameSetupChanged when successful', async () => {
+      const { serverManager, server } = getServerManagerAndStuff();
 
-            const connection = await connectToServer(server, 'user');
-            connection.clearReceivedMessages();
+      const hostConnection = await connectToServer(server, 'host');
+      const otherConnection = await connectToServer(server, 'other');
+      hostConnection.sendMessage([MessageToServer.CreateGame, GameMode.Teams2vs2]);
+      otherConnection.sendMessage([MessageToServer.EnterGame, 1]);
+      otherConnection.sendMessage([MessageToServer.JoinGame]);
+      hostConnection.clearReceivedMessages();
+      otherConnection.clearReceivedMessages();
 
-            connection.sendMessage([MessageToServer.KickUser, 2]);
+      expectClientAndUserAndGameData(
+        serverManager,
+        [new UserData(1, 'host', [new ClientData(1, hostConnection, 10)]), new UserData(2, 'other', [new ClientData(2, otherConnection, 10)])],
+        [new GameDataData(10, 1, [1, 2])],
+      );
 
-            expect(connection.receivedMessages.length).toBe(0);
-            expect(connection.readyState).toBe(WebSocket.OPEN);
-        });
+      otherConnection.sendMessage([MessageToServer.UnjoinGame]);
 
-        it('kicks client when not the host and trying to kick user', async () => {
-            const { server } = getServerManagerAndStuff();
+      expectClientAndUserAndGameData(
+        serverManager,
+        [new UserData(1, 'host', [new ClientData(1, hostConnection, 10)]), new UserData(2, 'other', [new ClientData(2, otherConnection, 10)])],
+        [new GameDataData(10, 1, [1])],
+      );
 
-            const hostConnection = await connectToServer(server, 'host');
-            const otherConnection = await connectToServer(server, 'other');
-            hostConnection.sendMessage([MessageToServer.CreateGame, GameMode.Singles2]);
-            otherConnection.sendMessage([MessageToServer.EnterGame, 1]);
-            hostConnection.clearReceivedMessages();
-            otherConnection.clearReceivedMessages();
+      expect(hostConnection.receivedMessages.length).toBe(1);
+      expect(otherConnection.receivedMessages.length).toBe(1);
 
-            otherConnection.sendMessage([MessageToServer.KickUser, 2]);
-
-            expect(otherConnection.receivedMessages.length).toBe(1);
-            expect(otherConnection.receivedMessages[0]).toEqual([[MessageToClient.FatalError, ErrorCode.InvalidMessage]]);
-            expect(otherConnection.readyState).toBe(WebSocket.CLOSED);
-        });
-
-        it('kicks client when the host and sending invalid message', async () => {
-            const { server } = getServerManagerAndStuff();
-
-            const hostConnection = await connectToServer(server, 'host');
-            hostConnection.sendMessage([MessageToServer.CreateGame, GameMode.Singles3]);
-            hostConnection.clearReceivedMessages();
-
-            hostConnection.sendMessage([MessageToServer.KickUser]);
-
-            expect(hostConnection.receivedMessages.length).toBe(1);
-            expect(hostConnection.receivedMessages[0]).toEqual([[MessageToClient.FatalError, ErrorCode.InvalidMessage]]);
-            expect(hostConnection.readyState).toBe(WebSocket.CLOSED);
-        });
-
-        it('sends MessageToClient.GameSetupChanged when successful', async () => {
-            const { serverManager, server } = getServerManagerAndStuff();
-
-            const hostConnection = await connectToServer(server, 'host');
-            const otherConnection = await connectToServer(server, 'other');
-            hostConnection.sendMessage([MessageToServer.CreateGame, GameMode.Singles4]);
-            otherConnection.sendMessage([MessageToServer.EnterGame, 1]);
-            otherConnection.sendMessage([MessageToServer.JoinGame]);
-            hostConnection.clearReceivedMessages();
-            otherConnection.clearReceivedMessages();
-
-            expectClientAndUserAndGameData(
-                serverManager,
-                [new UserData(1, 'host', [new ClientData(1, hostConnection, 10)]), new UserData(2, 'other', [new ClientData(2, otherConnection, 10)])],
-                [new GameDataData(10, 1, [1, 2])],
-            );
-
-            hostConnection.sendMessage([MessageToServer.KickUser, 2]);
-
-            expectClientAndUserAndGameData(
-                serverManager,
-                [new UserData(1, 'host', [new ClientData(1, hostConnection, 10)]), new UserData(2, 'other', [new ClientData(2, otherConnection, 10)])],
-                [new GameDataData(10, 1, [1])],
-            );
-
-            expect(hostConnection.receivedMessages.length).toBe(1);
-            expect(otherConnection.receivedMessages.length).toBe(1);
-
-            const expectedMessage = [[MessageToClient.GameSetupChanged, 1, GameSetupChange.UserKicked, 2]];
-            expect(hostConnection.receivedMessages[0]).toEqual(expectedMessage);
-            expect(otherConnection.receivedMessages[0]).toEqual(expectedMessage);
-        });
+      const expectedMessage = [[MessageToClient.GameSetupChanged, 1, GameSetupChange.UserRemoved, 2]];
+      expect(hostConnection.receivedMessages[0]).toEqual(expectedMessage);
+      expect(otherConnection.receivedMessages[0]).toEqual(expectedMessage);
     });
+  });
+
+  describe('approve of game setup', () => {
+    it('does nothing when not in a game room', async () => {
+      const { server } = getServerManagerAndStuff();
+
+      const connection = await connectToServer(server, 'user');
+      connection.clearReceivedMessages();
+
+      connection.sendMessage([MessageToServer.ApproveOfGameSetup]);
+
+      expect(connection.receivedMessages.length).toBe(0);
+      expect(connection.readyState).toBe(WebSocket.OPEN);
+    });
+
+    it('kicks client due to invalid message', async () => {
+      const { server } = getServerManagerAndStuff();
+
+      const hostConnection = await connectToServer(server, 'host');
+      const otherConnection = await connectToServer(server, 'other');
+      hostConnection.sendMessage([MessageToServer.CreateGame, GameMode.Singles2]);
+      otherConnection.sendMessage([MessageToServer.EnterGame, 1]);
+      hostConnection.clearReceivedMessages();
+      otherConnection.clearReceivedMessages();
+
+      otherConnection.sendMessage([MessageToServer.ApproveOfGameSetup, 1]);
+
+      expect(otherConnection.receivedMessages.length).toBe(1);
+      expect(otherConnection.receivedMessages[0]).toEqual([[MessageToClient.FatalError, ErrorCode.InvalidMessage]]);
+      expect(otherConnection.readyState).toBe(WebSocket.CLOSED);
+    });
+
+    it('sends MessageToClient.GameSetupChanged when successful', async () => {
+      const { serverManager, server } = getServerManagerAndStuff();
+
+      const hostConnection = await connectToServer(server, 'host');
+      const otherConnection = await connectToServer(server, 'other');
+      hostConnection.sendMessage([MessageToServer.CreateGame, GameMode.Singles2]);
+      otherConnection.sendMessage([MessageToServer.EnterGame, 1]);
+      otherConnection.sendMessage([MessageToServer.JoinGame]);
+      hostConnection.clearReceivedMessages();
+      otherConnection.clearReceivedMessages();
+
+      expectClientAndUserAndGameData(
+        serverManager,
+        [new UserData(1, 'host', [new ClientData(1, hostConnection, 10)]), new UserData(2, 'other', [new ClientData(2, otherConnection, 10)])],
+        [new GameDataData(10, 1, [1, 2])],
+      );
+
+      otherConnection.sendMessage([MessageToServer.ApproveOfGameSetup]);
+
+      expectClientAndUserAndGameData(
+        serverManager,
+        [new UserData(1, 'host', [new ClientData(1, hostConnection, 10)]), new UserData(2, 'other', [new ClientData(2, otherConnection, 10)])],
+        [new GameDataData(10, 1, [1, 2])],
+      );
+
+      expect(hostConnection.receivedMessages.length).toBe(1);
+      expect(otherConnection.receivedMessages.length).toBe(1);
+
+      const expectedMessage = [[MessageToClient.GameSetupChanged, 1, GameSetupChange.UserApprovedOfGameSetup, 2]];
+      expect(hostConnection.receivedMessages[0]).toEqual(expectedMessage);
+      expect(otherConnection.receivedMessages[0]).toEqual(expectedMessage);
+    });
+  });
+
+  describe('change game mode', () => {
+    it('does nothing when not in a game room', async () => {
+      const { server } = getServerManagerAndStuff();
+
+      const connection = await connectToServer(server, 'user');
+      connection.clearReceivedMessages();
+
+      connection.sendMessage([MessageToServer.ChangeGameMode, GameMode.Singles3]);
+
+      expect(connection.receivedMessages.length).toBe(0);
+      expect(connection.readyState).toBe(WebSocket.OPEN);
+    });
+
+    it('kicks client when not the host and trying to change game mode', async () => {
+      const { server } = getServerManagerAndStuff();
+
+      const hostConnection = await connectToServer(server, 'host');
+      const otherConnection = await connectToServer(server, 'other');
+      hostConnection.sendMessage([MessageToServer.CreateGame, GameMode.Singles2]);
+      otherConnection.sendMessage([MessageToServer.EnterGame, 1]);
+      hostConnection.clearReceivedMessages();
+      otherConnection.clearReceivedMessages();
+
+      otherConnection.sendMessage([MessageToServer.ChangeGameMode, GameMode.Singles3]);
+
+      expect(otherConnection.receivedMessages.length).toBe(1);
+      expect(otherConnection.receivedMessages[0]).toEqual([[MessageToClient.FatalError, ErrorCode.InvalidMessage]]);
+      expect(otherConnection.readyState).toBe(WebSocket.CLOSED);
+    });
+
+    it('kicks client when the host and sending invalid message', async () => {
+      const { server } = getServerManagerAndStuff();
+
+      const hostConnection = await connectToServer(server, 'host');
+      hostConnection.sendMessage([MessageToServer.CreateGame, GameMode.Singles3]);
+      hostConnection.clearReceivedMessages();
+
+      hostConnection.sendMessage([MessageToServer.ChangeGameMode]);
+
+      expect(hostConnection.receivedMessages.length).toBe(1);
+      expect(hostConnection.receivedMessages[0]).toEqual([[MessageToClient.FatalError, ErrorCode.InvalidMessage]]);
+      expect(hostConnection.readyState).toBe(WebSocket.CLOSED);
+    });
+
+    it('sends MessageToClient.GameSetupChanged when successful', async () => {
+      const { serverManager, server } = getServerManagerAndStuff();
+
+      const hostConnection = await connectToServer(server, 'host');
+      const otherConnection = await connectToServer(server, 'other');
+      hostConnection.sendMessage([MessageToServer.CreateGame, GameMode.Singles2]);
+      otherConnection.sendMessage([MessageToServer.EnterGame, 1]);
+      otherConnection.sendMessage([MessageToServer.JoinGame]);
+      hostConnection.clearReceivedMessages();
+      otherConnection.clearReceivedMessages();
+
+      expectClientAndUserAndGameData(
+        serverManager,
+        [new UserData(1, 'host', [new ClientData(1, hostConnection, 10)]), new UserData(2, 'other', [new ClientData(2, otherConnection, 10)])],
+        [new GameDataData(10, 1, [1, 2])],
+      );
+
+      hostConnection.sendMessage([MessageToServer.ChangeGameMode, GameMode.Singles3]);
+
+      expectClientAndUserAndGameData(
+        serverManager,
+        [new UserData(1, 'host', [new ClientData(1, hostConnection, 10)]), new UserData(2, 'other', [new ClientData(2, otherConnection, 10)])],
+        [new GameDataData(10, 1, [1, 2])],
+      );
+
+      expect(hostConnection.receivedMessages.length).toBe(1);
+      expect(otherConnection.receivedMessages.length).toBe(1);
+
+      const expectedMessage = [[MessageToClient.GameSetupChanged, 1, GameSetupChange.GameModeChanged, GameMode.Singles3]];
+      expect(hostConnection.receivedMessages[0]).toEqual(expectedMessage);
+      expect(otherConnection.receivedMessages[0]).toEqual(expectedMessage);
+    });
+  });
+
+  describe('change player arrangement mode', () => {
+    it('does nothing when not in a game room', async () => {
+      const { server } = getServerManagerAndStuff();
+
+      const connection = await connectToServer(server, 'user');
+      connection.clearReceivedMessages();
+
+      connection.sendMessage([MessageToServer.ChangePlayerArrangementMode, PlayerArrangementMode.ExactOrder]);
+
+      expect(connection.receivedMessages.length).toBe(0);
+      expect(connection.readyState).toBe(WebSocket.OPEN);
+    });
+
+    it('kicks client when not the host and trying to change player arrangement mode', async () => {
+      const { server } = getServerManagerAndStuff();
+
+      const hostConnection = await connectToServer(server, 'host');
+      const otherConnection = await connectToServer(server, 'other');
+      hostConnection.sendMessage([MessageToServer.CreateGame, GameMode.Singles2]);
+      otherConnection.sendMessage([MessageToServer.EnterGame, 1]);
+      hostConnection.clearReceivedMessages();
+      otherConnection.clearReceivedMessages();
+
+      otherConnection.sendMessage([MessageToServer.ChangePlayerArrangementMode, PlayerArrangementMode.ExactOrder]);
+
+      expect(otherConnection.receivedMessages.length).toBe(1);
+      expect(otherConnection.receivedMessages[0]).toEqual([[MessageToClient.FatalError, ErrorCode.InvalidMessage]]);
+      expect(otherConnection.readyState).toBe(WebSocket.CLOSED);
+    });
+
+    it('kicks client when the host and sending invalid message', async () => {
+      const { server } = getServerManagerAndStuff();
+
+      const hostConnection = await connectToServer(server, 'host');
+      hostConnection.sendMessage([MessageToServer.CreateGame, GameMode.Singles3]);
+      hostConnection.clearReceivedMessages();
+
+      hostConnection.sendMessage([MessageToServer.ChangePlayerArrangementMode]);
+
+      expect(hostConnection.receivedMessages.length).toBe(1);
+      expect(hostConnection.receivedMessages[0]).toEqual([[MessageToClient.FatalError, ErrorCode.InvalidMessage]]);
+      expect(hostConnection.readyState).toBe(WebSocket.CLOSED);
+    });
+
+    it('sends MessageToClient.GameSetupChanged when successful', async () => {
+      const { serverManager, server } = getServerManagerAndStuff();
+
+      const hostConnection = await connectToServer(server, 'host');
+      const otherConnection = await connectToServer(server, 'other');
+      hostConnection.sendMessage([MessageToServer.CreateGame, GameMode.Singles4]);
+      otherConnection.sendMessage([MessageToServer.EnterGame, 1]);
+      otherConnection.sendMessage([MessageToServer.JoinGame]);
+      hostConnection.clearReceivedMessages();
+      otherConnection.clearReceivedMessages();
+
+      expectClientAndUserAndGameData(
+        serverManager,
+        [new UserData(1, 'host', [new ClientData(1, hostConnection, 10)]), new UserData(2, 'other', [new ClientData(2, otherConnection, 10)])],
+        [new GameDataData(10, 1, [1, 2])],
+      );
+
+      hostConnection.sendMessage([MessageToServer.ChangePlayerArrangementMode, PlayerArrangementMode.ExactOrder]);
+
+      expectClientAndUserAndGameData(
+        serverManager,
+        [new UserData(1, 'host', [new ClientData(1, hostConnection, 10)]), new UserData(2, 'other', [new ClientData(2, otherConnection, 10)])],
+        [new GameDataData(10, 1, [1, 2])],
+      );
+
+      expect(hostConnection.receivedMessages.length).toBe(1);
+      expect(otherConnection.receivedMessages.length).toBe(1);
+
+      const expectedMessage = [[MessageToClient.GameSetupChanged, 1, GameSetupChange.PlayerArrangementModeChanged, PlayerArrangementMode.ExactOrder]];
+      expect(hostConnection.receivedMessages[0]).toEqual(expectedMessage);
+      expect(otherConnection.receivedMessages[0]).toEqual(expectedMessage);
+    });
+  });
+
+  describe('swap positions', () => {
+    it('does nothing when not in a game room', async () => {
+      const { server } = getServerManagerAndStuff();
+
+      const connection = await connectToServer(server, 'user');
+      connection.clearReceivedMessages();
+
+      connection.sendMessage([MessageToServer.SwapPositions, 0, 1]);
+
+      expect(connection.receivedMessages.length).toBe(0);
+      expect(connection.readyState).toBe(WebSocket.OPEN);
+    });
+
+    it('kicks client when not the host and trying to swap positions', async () => {
+      const { server } = getServerManagerAndStuff();
+
+      const hostConnection = await connectToServer(server, 'host');
+      const otherConnection = await connectToServer(server, 'other');
+      hostConnection.sendMessage([MessageToServer.CreateGame, GameMode.Singles2]);
+      otherConnection.sendMessage([MessageToServer.EnterGame, 1]);
+      hostConnection.clearReceivedMessages();
+      otherConnection.clearReceivedMessages();
+
+      otherConnection.sendMessage([MessageToServer.SwapPositions, 0, 1]);
+
+      expect(otherConnection.receivedMessages.length).toBe(1);
+      expect(otherConnection.receivedMessages[0]).toEqual([[MessageToClient.FatalError, ErrorCode.InvalidMessage]]);
+      expect(otherConnection.readyState).toBe(WebSocket.CLOSED);
+    });
+
+    it('kicks client when the host and sending invalid message', async () => {
+      const { server } = getServerManagerAndStuff();
+
+      const hostConnection = await connectToServer(server, 'host');
+      hostConnection.sendMessage([MessageToServer.CreateGame, GameMode.Singles3]);
+      hostConnection.clearReceivedMessages();
+
+      hostConnection.sendMessage([MessageToServer.SwapPositions]);
+
+      expect(hostConnection.receivedMessages.length).toBe(1);
+      expect(hostConnection.receivedMessages[0]).toEqual([[MessageToClient.FatalError, ErrorCode.InvalidMessage]]);
+      expect(hostConnection.readyState).toBe(WebSocket.CLOSED);
+    });
+
+    it('sends MessageToClient.GameSetupChanged when successful', async () => {
+      const { serverManager, server } = getServerManagerAndStuff();
+
+      const hostConnection = await connectToServer(server, 'host');
+      const otherConnection = await connectToServer(server, 'other');
+      hostConnection.sendMessage([MessageToServer.CreateGame, GameMode.Singles4]);
+      otherConnection.sendMessage([MessageToServer.EnterGame, 1]);
+      otherConnection.sendMessage([MessageToServer.JoinGame]);
+      hostConnection.clearReceivedMessages();
+      otherConnection.clearReceivedMessages();
+
+      expectClientAndUserAndGameData(
+        serverManager,
+        [new UserData(1, 'host', [new ClientData(1, hostConnection, 10)]), new UserData(2, 'other', [new ClientData(2, otherConnection, 10)])],
+        [new GameDataData(10, 1, [1, 2])],
+      );
+
+      hostConnection.sendMessage([MessageToServer.SwapPositions, 0, 1]);
+
+      expectClientAndUserAndGameData(
+        serverManager,
+        [new UserData(1, 'host', [new ClientData(1, hostConnection, 10)]), new UserData(2, 'other', [new ClientData(2, otherConnection, 10)])],
+        [new GameDataData(10, 1, [1, 2])],
+      );
+
+      expect(hostConnection.receivedMessages.length).toBe(1);
+      expect(otherConnection.receivedMessages.length).toBe(1);
+
+      const expectedMessage = [[MessageToClient.GameSetupChanged, 1, GameSetupChange.PositionsSwapped, 0, 1]];
+      expect(hostConnection.receivedMessages[0]).toEqual(expectedMessage);
+      expect(otherConnection.receivedMessages[0]).toEqual(expectedMessage);
+    });
+  });
+
+  describe('kick user', () => {
+    it('does nothing when not in a game room', async () => {
+      const { server } = getServerManagerAndStuff();
+
+      const connection = await connectToServer(server, 'user');
+      connection.clearReceivedMessages();
+
+      connection.sendMessage([MessageToServer.KickUser, 2]);
+
+      expect(connection.receivedMessages.length).toBe(0);
+      expect(connection.readyState).toBe(WebSocket.OPEN);
+    });
+
+    it('kicks client when not the host and trying to kick user', async () => {
+      const { server } = getServerManagerAndStuff();
+
+      const hostConnection = await connectToServer(server, 'host');
+      const otherConnection = await connectToServer(server, 'other');
+      hostConnection.sendMessage([MessageToServer.CreateGame, GameMode.Singles2]);
+      otherConnection.sendMessage([MessageToServer.EnterGame, 1]);
+      hostConnection.clearReceivedMessages();
+      otherConnection.clearReceivedMessages();
+
+      otherConnection.sendMessage([MessageToServer.KickUser, 2]);
+
+      expect(otherConnection.receivedMessages.length).toBe(1);
+      expect(otherConnection.receivedMessages[0]).toEqual([[MessageToClient.FatalError, ErrorCode.InvalidMessage]]);
+      expect(otherConnection.readyState).toBe(WebSocket.CLOSED);
+    });
+
+    it('kicks client when the host and sending invalid message', async () => {
+      const { server } = getServerManagerAndStuff();
+
+      const hostConnection = await connectToServer(server, 'host');
+      hostConnection.sendMessage([MessageToServer.CreateGame, GameMode.Singles3]);
+      hostConnection.clearReceivedMessages();
+
+      hostConnection.sendMessage([MessageToServer.KickUser]);
+
+      expect(hostConnection.receivedMessages.length).toBe(1);
+      expect(hostConnection.receivedMessages[0]).toEqual([[MessageToClient.FatalError, ErrorCode.InvalidMessage]]);
+      expect(hostConnection.readyState).toBe(WebSocket.CLOSED);
+    });
+
+    it('sends MessageToClient.GameSetupChanged when successful', async () => {
+      const { serverManager, server } = getServerManagerAndStuff();
+
+      const hostConnection = await connectToServer(server, 'host');
+      const otherConnection = await connectToServer(server, 'other');
+      hostConnection.sendMessage([MessageToServer.CreateGame, GameMode.Singles4]);
+      otherConnection.sendMessage([MessageToServer.EnterGame, 1]);
+      otherConnection.sendMessage([MessageToServer.JoinGame]);
+      hostConnection.clearReceivedMessages();
+      otherConnection.clearReceivedMessages();
+
+      expectClientAndUserAndGameData(
+        serverManager,
+        [new UserData(1, 'host', [new ClientData(1, hostConnection, 10)]), new UserData(2, 'other', [new ClientData(2, otherConnection, 10)])],
+        [new GameDataData(10, 1, [1, 2])],
+      );
+
+      hostConnection.sendMessage([MessageToServer.KickUser, 2]);
+
+      expectClientAndUserAndGameData(
+        serverManager,
+        [new UserData(1, 'host', [new ClientData(1, hostConnection, 10)]), new UserData(2, 'other', [new ClientData(2, otherConnection, 10)])],
+        [new GameDataData(10, 1, [1])],
+      );
+
+      expect(hostConnection.receivedMessages.length).toBe(1);
+      expect(otherConnection.receivedMessages.length).toBe(1);
+
+      const expectedMessage = [[MessageToClient.GameSetupChanged, 1, GameSetupChange.UserKicked, 2]];
+      expect(hostConnection.receivedMessages[0]).toEqual(expectedMessage);
+      expect(otherConnection.receivedMessages[0]).toEqual(expectedMessage);
+    });
+  });
 });
 
 class TestServer {
-    connectionListener: ((conn: TestConnection) => any) | null = null;
+  connectionListener: ((conn: TestConnection) => any) | null = null;
 
-    on(event: string, listener: (conn: TestConnection) => any) {
-        if (event === 'connection') {
-            this.connectionListener = listener;
-        }
+  on(event: string, listener: (conn: TestConnection) => any) {
+    if (event === 'connection') {
+      this.connectionListener = listener;
     }
+  }
 
-    openConnection(conn: TestConnection) {
-        if (this.connectionListener) {
-            this.connectionListener(conn);
-        }
+  openConnection(conn: TestConnection) {
+    if (this.connectionListener) {
+      this.connectionListener(conn);
     }
+  }
 }
 
 class TestConnection {
-    dataListener: ((message: string) => any) | null = null;
-    closeListener: (() => void) | null = null;
+  dataListener: ((message: string) => any) | null = null;
+  closeListener: (() => void) | null = null;
 
-    readyState = WebSocket.OPEN;
+  readyState = WebSocket.OPEN;
 
-    receivedMessages: any[] = [];
+  receivedMessages: any[] = [];
 
-    constructor(public id: string) {}
+  constructor(public id: string) {}
 
-    on(event: string, listener: any) {
-        if (event === 'data') {
-            this.dataListener = listener;
-        } else if (event === 'close') {
-            this.closeListener = listener;
-        }
+  on(event: string, listener: any) {
+    if (event === 'data') {
+      this.dataListener = listener;
+    } else if (event === 'close') {
+      this.closeListener = listener;
     }
+  }
 
-    write(message: string) {
-        this.receivedMessages.push(JSON.parse(message));
-    }
+  write(message: string) {
+    this.receivedMessages.push(JSON.parse(message));
+  }
 
-    sendMessage(message: any) {
-        if (this.dataListener) {
-            if (typeof message !== 'string') {
-                message = JSON.stringify(message);
-            }
-            this.dataListener(message);
-        }
+  sendMessage(message: any) {
+    if (this.dataListener) {
+      if (typeof message !== 'string') {
+        message = JSON.stringify(message);
+      }
+      this.dataListener(message);
     }
+  }
 
-    close() {
-        this.readyState = WebSocket.CLOSED;
-        if (this.closeListener) {
-            this.closeListener();
-        }
+  close() {
+    this.readyState = WebSocket.CLOSED;
+    if (this.closeListener) {
+      this.closeListener();
     }
+  }
 
-    clearReceivedMessages() {
-        this.receivedMessages = [];
-    }
+  clearReceivedMessages() {
+    this.receivedMessages = [];
+  }
 }
 
 function getServerManagerAndStuff() {
-    const server = new TestServer();
-    const userDataProvider = new TestUserDataProvider();
-    // @ts-ignore
-    const serverManager = new ServerManager(server, userDataProvider, 10, (message: string) => {
-        // do nothing
-    });
-    serverManager.manage();
+  const server = new TestServer();
+  const userDataProvider = new TestUserDataProvider();
+  // @ts-ignore
+  const serverManager = new ServerManager(server, userDataProvider, 10, (message: string) => {
+    // do nothing
+  });
+  serverManager.manage();
 
-    return { serverManager, server, userDataProvider };
+  return { serverManager, server, userDataProvider };
 }
 
 class ClientData {
-    constructor(public clientID: number, public connection: TestConnection, public gameID?: number) {}
+  constructor(public clientID: number, public connection: TestConnection, public gameID?: number) {}
 }
 
 class UserData {
-    constructor(public userID: number, public username: string, public clientDatas: ClientData[]) {}
+  constructor(public userID: number, public username: string, public clientDatas: ClientData[]) {}
 }
 
 class GameDataData {
-    constructor(public gameID: number, public gameDisplayNumber: number, public userIDs: number[]) {}
+  constructor(public gameID: number, public gameDisplayNumber: number, public userIDs: number[]) {}
 }
 
 // UCR = Un-Circular-Reference-ified
 
 class UCRClient {
-    constructor(public clientID: number, public connection: Connection, public gameID: number | null, public userID: number) {}
+  constructor(public clientID: number, public connection: Connection, public gameID: number | null, public userID: number) {}
 }
 
 class UCRUser {
-    constructor(public userID: number, public username: string, public clientIDs: Set<number>, public numGames: number) {}
+  constructor(public userID: number, public username: string, public clientIDs: Set<number>, public numGames: number) {}
 }
 
 class UCRGameData {
-    clientIDs = new Set<number>();
+  clientIDs = new Set<number>();
 
-    constructor(public gameID: number, public gameDisplayNumber: number, public userIDs: Set<number>) {}
+  constructor(public gameID: number, public gameDisplayNumber: number, public userIDs: Set<number>) {}
 }
 
 type ConnectionIDToUCRClient = Map<string, UCRClient>;
@@ -1081,124 +1081,124 @@ type UserIDToUCRUser = Map<number, UCRUser>;
 type GameIDTOUCRGameData = Map<number, UCRGameData>;
 
 function expectClientAndUserAndGameData(serverManager: ServerManager, userDatas: UserData[], gameDataDatas: GameDataData[]) {
-    const connectionIDToUCRClient: ConnectionIDToUCRClient = new Map();
-    const userIDToUCRUser: UserIDToUCRUser = new Map();
-    const gameIDTOUCRGameData: GameIDTOUCRGameData = new Map();
-    const gameDisplayNumberTOUCRGameData: GameIDTOUCRGameData = new Map();
+  const connectionIDToUCRClient: ConnectionIDToUCRClient = new Map();
+  const userIDToUCRUser: UserIDToUCRUser = new Map();
+  const gameIDTOUCRGameData: GameIDTOUCRGameData = new Map();
+  const gameDisplayNumberTOUCRGameData: GameIDTOUCRGameData = new Map();
 
-    gameDataDatas.forEach(gameDataData => {
-        const ucrGameData = new UCRGameData(gameDataData.gameID, gameDataData.gameDisplayNumber, new Set(gameDataData.userIDs));
+  gameDataDatas.forEach(gameDataData => {
+    const ucrGameData = new UCRGameData(gameDataData.gameID, gameDataData.gameDisplayNumber, new Set(gameDataData.userIDs));
 
-        gameIDTOUCRGameData.set(gameDataData.gameID, ucrGameData);
-        gameDisplayNumberTOUCRGameData.set(gameDataData.gameDisplayNumber, ucrGameData);
+    gameIDTOUCRGameData.set(gameDataData.gameID, ucrGameData);
+    gameDisplayNumberTOUCRGameData.set(gameDataData.gameDisplayNumber, ucrGameData);
+  });
+
+  userDatas.forEach(userData => {
+    const clientIDs = new Set<number>();
+
+    userData.clientDatas.forEach(clientData => {
+      // @ts-ignore
+      const connection: Connection = clientData.connection;
+      const gameID = clientData.gameID !== undefined ? clientData.gameID : null;
+
+      connectionIDToUCRClient.set(clientData.connection.id, new UCRClient(clientData.clientID, connection, gameID, userData.userID));
+      if (clientData.gameID !== undefined) {
+        gameIDTOUCRGameData.get(clientData.gameID)!.clientIDs.add(clientData.clientID);
+      }
+
+      clientIDs.add(clientData.clientID);
     });
 
-    userDatas.forEach(userData => {
-        const clientIDs = new Set<number>();
+    userIDToUCRUser.set(userData.userID, new UCRUser(userData.userID, userData.username, clientIDs, 0));
+  });
 
-        userData.clientDatas.forEach(clientData => {
-            // @ts-ignore
-            const connection: Connection = clientData.connection;
-            const gameID = clientData.gameID !== undefined ? clientData.gameID : null;
+  gameDataDatas.forEach(gameDataData => {
+    gameDataData.userIDs.forEach(userID => {
+      const ucrUser = userIDToUCRUser.get(userID);
 
-            connectionIDToUCRClient.set(clientData.connection.id, new UCRClient(clientData.clientID, connection, gameID, userData.userID));
-            if (clientData.gameID !== undefined) {
-                gameIDTOUCRGameData.get(clientData.gameID)!.clientIDs.add(clientData.clientID);
-            }
-
-            clientIDs.add(clientData.clientID);
-        });
-
-        userIDToUCRUser.set(userData.userID, new UCRUser(userData.userID, userData.username, clientIDs, 0));
+      if (ucrUser !== undefined) {
+        ucrUser.numGames++;
+      } else {
+        fail('user in a game but not in users map');
+      }
     });
+  });
 
-    gameDataDatas.forEach(gameDataData => {
-        gameDataData.userIDs.forEach(userID => {
-            const ucrUser = userIDToUCRUser.get(userID);
-
-            if (ucrUser !== undefined) {
-                ucrUser.numGames++;
-            } else {
-                fail('user in a game but not in users map');
-            }
-        });
-    });
-
-    expect(uncircularreferenceifyConnectionIDToClient(serverManager.connectionIDToClient)).toEqual(connectionIDToUCRClient);
-    expect(uncircularreferenceifyUserIDToUser(serverManager.userIDToUser, serverManager.gameIDToGameData)).toEqual(userIDToUCRUser);
-    expect(uncircularreferenceifyGameIDToGameData(serverManager.gameIDToGameData)).toEqual(gameIDTOUCRGameData);
-    expect(uncircularreferenceifyGameIDToGameData(serverManager.gameDisplayNumberToGameData)).toEqual(gameDisplayNumberTOUCRGameData);
+  expect(uncircularreferenceifyConnectionIDToClient(serverManager.connectionIDToClient)).toEqual(connectionIDToUCRClient);
+  expect(uncircularreferenceifyUserIDToUser(serverManager.userIDToUser, serverManager.gameIDToGameData)).toEqual(userIDToUCRUser);
+  expect(uncircularreferenceifyGameIDToGameData(serverManager.gameIDToGameData)).toEqual(gameIDTOUCRGameData);
+  expect(uncircularreferenceifyGameIDToGameData(serverManager.gameDisplayNumberToGameData)).toEqual(gameDisplayNumberTOUCRGameData);
 }
 
 function uncircularreferenceifyConnectionIDToClient(connectionIDToClient: Map<string, Client>) {
-    const connectionIDToUCRClient: ConnectionIDToUCRClient = new Map();
+  const connectionIDToUCRClient: ConnectionIDToUCRClient = new Map();
 
-    connectionIDToClient.forEach((client, connectionID) => {
-        const gameID = client.gameData !== null ? client.gameData.id : null;
+  connectionIDToClient.forEach((client, connectionID) => {
+    const gameID = client.gameData !== null ? client.gameData.id : null;
 
-        connectionIDToUCRClient.set(connectionID, new UCRClient(client.id, client.connection, gameID, client.user.id));
-    });
+    connectionIDToUCRClient.set(connectionID, new UCRClient(client.id, client.connection, gameID, client.user.id));
+  });
 
-    return connectionIDToUCRClient;
+  return connectionIDToUCRClient;
 }
 
 function uncircularreferenceifyUserIDToUser(userIDToUser: Map<number, User>, gameIDToGameData: Map<number, GameData>) {
-    const userIDToUCRUser: UserIDToUCRUser = new Map();
+  const userIDToUCRUser: UserIDToUCRUser = new Map();
 
-    userIDToUser.forEach((user, userID) => {
-        const clientIDs = new Set<number>();
+  userIDToUser.forEach((user, userID) => {
+    const clientIDs = new Set<number>();
 
-        user.clients.forEach(client => {
-            clientIDs.add(client.id);
-        });
-
-        userIDToUCRUser.set(userID, new UCRUser(user.id, user.name, clientIDs, user.numGames));
+    user.clients.forEach(client => {
+      clientIDs.add(client.id);
     });
 
-    return userIDToUCRUser;
+    userIDToUCRUser.set(userID, new UCRUser(user.id, user.name, clientIDs, user.numGames));
+  });
+
+  return userIDToUCRUser;
 }
 
 function uncircularreferenceifyGameIDToGameData(gameIDToGameData: Map<number, GameData>) {
-    const gameIDTOUCRGameData: GameIDTOUCRGameData = new Map();
+  const gameIDTOUCRGameData: GameIDTOUCRGameData = new Map();
 
-    gameIDToGameData.forEach((gameData, gameID) => {
-        let userIDs: Set<number>;
-        if (gameData.gameSetup !== null) {
-            userIDs = gameData.gameSetup.userIDsSet;
-        } else {
-            userIDs = new Set();
-        }
+  gameIDToGameData.forEach((gameData, gameID) => {
+    let userIDs: Set<number>;
+    if (gameData.gameSetup !== null) {
+      userIDs = gameData.gameSetup.userIDsSet;
+    } else {
+      userIDs = new Set();
+    }
 
-        const ucrGameData = new UCRGameData(gameData.id, gameData.displayNumber, userIDs);
+    const ucrGameData = new UCRGameData(gameData.id, gameData.displayNumber, userIDs);
 
-        gameData.clients.forEach(client => {
-            ucrGameData.clientIDs.add(client.id);
-        });
-
-        gameIDTOUCRGameData.set(gameID, ucrGameData);
+    gameData.clients.forEach(client => {
+      ucrGameData.clientIDs.add(client.id);
     });
 
-    return gameIDTOUCRGameData;
+    gameIDTOUCRGameData.set(gameID, ucrGameData);
+  });
+
+  return gameIDTOUCRGameData;
 }
 
 async function connectToServer(server: TestServer, username: string) {
-    const connection = new TestConnection(username);
-    server.openConnection(connection);
-    connection.sendMessage([0, username, '', []]);
-    await new Promise(resolve => setTimeout(resolve, 0));
+  const connection = new TestConnection(username);
+  server.openConnection(connection);
+  connection.sendMessage([0, username, '', []]);
+  await new Promise(resolve => setTimeout(resolve, 0));
 
-    return connection;
+  return connection;
 }
 
 async function expectKicksClientDueToInvalidMessage(message: any[]) {
-    const { server } = getServerManagerAndStuff();
+  const { server } = getServerManagerAndStuff();
 
-    const connection = await connectToServer(server, 'user 1');
-    connection.clearReceivedMessages();
+  const connection = await connectToServer(server, 'user 1');
+  connection.clearReceivedMessages();
 
-    connection.sendMessage(message);
+  connection.sendMessage(message);
 
-    expect(connection.receivedMessages.length).toBe(1);
-    expect(connection.receivedMessages[0]).toEqual([[MessageToClient.FatalError, ErrorCode.InvalidMessage]]);
-    expect(connection.readyState).toBe(WebSocket.CLOSED);
+  expect(connection.receivedMessages.length).toBe(1);
+  expect(connection.receivedMessages[0]).toEqual([[MessageToClient.FatalError, ErrorCode.InvalidMessage]]);
+  expect(connection.readyState).toBe(WebSocket.CLOSED);
 }

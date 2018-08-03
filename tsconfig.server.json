@@ -1,10 +1,10 @@
 {
-    "compilerOptions": {
-        "jsx": "react",
-        "module": "commonjs",
-        "outDir": "dist/server",
-        "strict": true,
-        "target": "es6"
-    },
-    "include": ["src/**/*"]
+  "compilerOptions": {
+    "jsx": "react",
+    "module": "commonjs",
+    "outDir": "dist/server",
+    "strict": true,
+    "target": "es6"
+  },
+  "include": ["src/**/*"]
 }

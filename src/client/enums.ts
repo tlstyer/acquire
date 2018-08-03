@@ -1,11 +1,11 @@
 export enum GameBoardLabelMode {
-    Coordinates,
-    HotelInitials,
-    Nothing,
+  Coordinates,
+  HotelInitials,
+  Nothing,
 }
 
 export enum GameStatus {
-    SettingUp,
-    InProgress,
-    Completed,
+  SettingUp,
+  InProgress,
+  Completed,
 }

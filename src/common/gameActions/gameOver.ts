@@ -4,15 +4,15 @@ import { Game } from '../game';
 import { ActionBase } from './base';
 
 export class ActionGameOver extends ActionBase {
-    constructor(game: Game, playerID: number) {
-        super(game, playerID, GameAction.GameOver);
-    }
+  constructor(game: Game, playerID: number) {
+    super(game, playerID, GameAction.GameOver);
+  }
 
-    prepare() {
-        return null;
-    }
+  prepare() {
+    return null;
+  }
 
-    execute(parameters: any[]): ActionBase[] {
-        throw new UserInputError('cannot make any more moves');
-    }
+  execute(parameters: any[]): ActionBase[] {
+    throw new UserInputError('cannot make any more moves');
+  }
 }

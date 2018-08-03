@@ -5,40 +5,40 @@ import { gameBoardTypeToCSSClassName } from '../helpers';
 import * as style from './MiniGameBoard.css';
 
 interface MiniGameBoardProps {
-    gameBoard: List<List<GameBoardType>>;
-    cellSize: number;
+  gameBoard: List<List<GameBoardType>>;
+  cellSize: number;
 }
 
 export class MiniGameBoard extends React.PureComponent<MiniGameBoardProps> {
-    render() {
-        const { gameBoard, cellSize } = this.props;
+  render() {
+    const { gameBoard, cellSize } = this.props;
 
-        return (
-            <table className={style.root} style={{ width: cellSize * 12 + 1, height: cellSize * 9 + 1 }}>
-                <tbody>
-                    {gameBoard.map((gameBoardRow, y) => (
-                        <MiniGameBoardRow key={y} gameBoardRow={gameBoardRow} />
-                    ))}
-                </tbody>
-            </table>
-        );
-    }
+    return (
+      <table className={style.root} style={{ width: cellSize * 12 + 1, height: cellSize * 9 + 1 }}>
+        <tbody>
+          {gameBoard.map((gameBoardRow, y) => (
+            <MiniGameBoardRow key={y} gameBoardRow={gameBoardRow} />
+          ))}
+        </tbody>
+      </table>
+    );
+  }
 }
 
 interface MiniGameBoardRowProps {
-    gameBoardRow: List<GameBoardType>;
+  gameBoardRow: List<GameBoardType>;
 }
 
 class MiniGameBoardRow extends React.PureComponent<MiniGameBoardRowProps> {
-    render() {
-        const { gameBoardRow } = this.props;
+  render() {
+    const { gameBoardRow } = this.props;
 
-        return (
-            <tr>
-                {gameBoardRow.map((gameBoardType, x) => {
-                    return <td key={x} className={gameBoardTypeToCSSClassName.get(gameBoardType)!} />;
-                })}
-            </tr>
-        );
-    }
+    return (
+      <tr>
+        {gameBoardRow.map((gameBoardType, x) => {
+          return <td key={x} className={gameBoardTypeToCSSClassName.get(gameBoardType)!} />;
+        })}
+      </tr>
+    );
+  }
 }

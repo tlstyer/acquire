@@ -1,33 +1,33 @@
 .table {
-    border-collapse: collapse;
-    font-weight: bold;
-    & td {
-        border: 2px solid #f6f4f2;
-        height: 28px;
-        overflow: hidden;
-        white-space: nowrap;
-        &:nth-child(1) {
-            max-width: 300px;
-            padding-left: 3px;
-            text-align: left;
-            width: 300px;
-        }
+  border-collapse: collapse;
+  font-weight: bold;
+  & td {
+    border: 2px solid #f6f4f2;
+    height: 28px;
+    overflow: hidden;
+    white-space: nowrap;
+    &:nth-child(1) {
+      max-width: 300px;
+      padding-left: 3px;
+      text-align: left;
+      width: 300px;
     }
+  }
 }
 
 .user {
-    background-color: #ffffff;
+  background-color: #ffffff;
 }
 
 .versus {
-    font-weight: normal;
+  font-weight: normal;
 }
 
 .ready {
-    color: #008000;
-    font-weight: normal;
+  color: #008000;
+  font-weight: normal;
 }
 
 .waiting {
-    font-weight: normal;
+  font-weight: normal;
 }

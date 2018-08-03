@@ -1,14 +1,14 @@
 .root {
-    border-collapse: collapse;
-    font-weight: bold;
-    table-layout: fixed;
-    text-align: center;
-    & td {
-        border: 2px solid #f6f4f2;
-        overflow: hidden;
-    }
+  border-collapse: collapse;
+  font-weight: bold;
+  table-layout: fixed;
+  text-align: center;
+  & td {
+    border: 2px solid #f6f4f2;
+    overflow: hidden;
+  }
 }
 
 .clickable {
-    cursor: pointer;
+  cursor: pointer;
 }
