@@ -43,7 +43,8 @@ const gshl: [GameAction, any][] = [
         GameAction.SelectNewChain,
         (usernames: List<string>, action: ActionSelectNewChain) => (
             <div className={style.root}>
-                Waiting for {getUsernameSpan(usernames.get(action.playerID, ''))} to select new chain ({getHotelInitialsList(action.availableChains)}).
+                Waiting for {getUsernameSpan(usernames.get(action.playerID, ''))} to select new chain ({getHotelInitialsList(action.availableChains)}
+                ).
             </div>
         ),
     ],
@@ -51,7 +52,8 @@ const gshl: [GameAction, any][] = [
         GameAction.SelectMergerSurvivor,
         (usernames: List<string>, action: ActionSelectMergerSurvivor) => (
             <div className={style.root}>
-                Waiting for {getUsernameSpan(usernames.get(action.playerID, ''))} to select merger survivor ({getHotelInitialsList(action.chainsBySize[0])}).
+                Waiting for {getUsernameSpan(usernames.get(action.playerID, ''))} to select merger survivor ({getHotelInitialsList(action.chainsBySize[0])}
+                ).
             </div>
         ),
     ],
@@ -59,9 +61,9 @@ const gshl: [GameAction, any][] = [
         GameAction.SelectChainToDisposeOfNext,
         (usernames: List<string>, action: ActionSelectChainToDisposeOfNext) => (
             <div className={style.root}>
-                Waiting for {getUsernameSpan(usernames.get(action.playerID, ''))} to select chain to dispose of next ({getHotelInitialsList(
-                    action.defunctChains,
-                )}).
+                Waiting for {getUsernameSpan(usernames.get(action.playerID, ''))} to select chain to dispose of next (
+                {getHotelInitialsList(action.defunctChains)}
+                ).
             </div>
         ),
     ],

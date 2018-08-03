@@ -67,7 +67,10 @@ export class ExampleGameSetupMaster extends React.Component<ExampleGameSetupMast
                     const username = getUsernameForUserID(userID);
                     return userID !== gameSetup.hostUserID ? (
                         <div key={username}>
-                            <h2>{username}'s view</h2>
+                            <h2>
+                                {username}
+                                's view
+                            </h2>
                             <input
                                 type={'button'}
                                 value={'Leave game'}

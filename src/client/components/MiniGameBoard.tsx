@@ -15,7 +15,11 @@ export class MiniGameBoard extends React.PureComponent<MiniGameBoardProps> {
 
         return (
             <table className={style.root} style={{ width: cellSize * 12 + 1, height: cellSize * 9 + 1 }}>
-                <tbody>{gameBoard.map((gameBoardRow, y) => <MiniGameBoardRow key={y} gameBoardRow={gameBoardRow} />)}</tbody>
+                <tbody>
+                    {gameBoard.map((gameBoardRow, y) => (
+                        <MiniGameBoardRow key={y} gameBoardRow={gameBoardRow} />
+                    ))}
+                </tbody>
             </table>
         );
     }
