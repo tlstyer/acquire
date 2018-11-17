@@ -20,7 +20,6 @@
     "no-inferrable-types": true,
     "no-return-await": true,
     "no-sparse-arrays": true,
-    "no-unused-variable": true,
     "object-literal-key-quotes": [true, "as-needed"],
     "object-literal-sort-keys": false,
     "prefer-for-of": false,

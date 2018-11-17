@@ -60,15 +60,14 @@ export class GameSetupUI extends React.PureComponent<GameSetupUIProps> {
             defaultValue={playerArrangementMode.toString()}
             onChange={(event: React.FormEvent<HTMLSelectElement>) => onChangePlayerArrangementMode(parseInt(event.currentTarget.value, 10))}
           >
-            {allPlayerArrangementModes.map(
-              pam =>
-                pam !== PlayerArrangementMode.SpecifyTeams || isTeamGame ? (
-                  <option key={pam} value={pam}>
-                    {playerArrangementModeToString.get(pam)}
-                  </option>
-                ) : (
-                  undefined
-                ),
+            {allPlayerArrangementModes.map(pam =>
+              pam !== PlayerArrangementMode.SpecifyTeams || isTeamGame ? (
+                <option key={pam} value={pam}>
+                  {playerArrangementModeToString.get(pam)}
+                </option>
+              ) : (
+                undefined
+              ),
             )}
           </select>
         ) : (
@@ -78,8 +77,8 @@ export class GameSetupUI extends React.PureComponent<GameSetupUIProps> {
         {playerArrangementMode === PlayerArrangementMode.RandomOrder
           ? this.renderRandomOrder(gameIsFull)
           : playerArrangementMode === PlayerArrangementMode.ExactOrder
-            ? this.renderExactOrder(gameIsFull)
-            : this.renderSpecifyTeams(gameIsFull)}
+          ? this.renderExactOrder(gameIsFull)
+          : this.renderSpecifyTeams(gameIsFull)}
       </div>
     );
   }

@@ -90,24 +90,24 @@ function getProductionConfig(APP) {
     {
       module: 'immutable',
       global: 'Immutable',
-      entry: 'https://cdnjs.cloudflare.com/ajax/libs/immutable/4.0.0-rc.9/immutable.min.js',
+      entry: 'https://cdnjs.cloudflare.com/ajax/libs/immutable/4.0.0-rc.12/immutable.min.js',
     },
     {
       module: 'react',
       global: 'React',
-      entry: 'https://cdnjs.cloudflare.com/ajax/libs/react/16.4.2/umd/react.production.min.js',
+      entry: 'https://cdnjs.cloudflare.com/ajax/libs/react/16.6.3/umd/react.production.min.js',
     },
     {
       module: 'react-dom',
       global: 'ReactDOM',
-      entry: 'https://cdnjs.cloudflare.com/ajax/libs/react-dom/16.4.2/umd/react-dom.production.min.js',
+      entry: 'https://cdnjs.cloudflare.com/ajax/libs/react-dom/16.6.3/umd/react-dom.production.min.js',
     },
   ];
   if (APP === 'index') {
     externals.push({
       module: 'sockjs-client',
       global: 'SockJS',
-      entry: 'https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.5/sockjs.min.js',
+      entry: 'https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.3.0/sockjs.min.js',
     });
   }
 
