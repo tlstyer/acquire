@@ -91,7 +91,7 @@ export class ServerManager {
 
         const connectionState = this.connectionIDToConnectionState.get(connection.id);
 
-        if (connectionState === ConnectionState.LoggedIn) {
+        if (connectionState === ConnectionState.LoggedIn && client !== undefined) {
           const handler = this.onMessageFunctions.get(message[0]);
 
           if (handler) {
@@ -439,7 +439,7 @@ export class ServerManager {
       return;
     }
 
-    gameSetup.changeGameMode.apply(gameSetup, params);
+    gameSetup.changeGameMode(params[0]);
 
     if (gameSetup.history.length > 0) {
       this.sendGameSetupChanges(gameData);
@@ -467,7 +467,7 @@ export class ServerManager {
       return;
     }
 
-    gameSetup.changePlayerArrangementMode.apply(gameSetup, params);
+    gameSetup.changePlayerArrangementMode(params[0]);
 
     if (gameSetup.history.length > 0) {
       this.sendGameSetupChanges(gameData);
@@ -495,7 +495,7 @@ export class ServerManager {
       return;
     }
 
-    gameSetup.swapPositions.apply(gameSetup, params);
+    gameSetup.swapPositions(params[0], params[1]);
 
     if (gameSetup.history.length > 0) {
       this.sendGameSetupChanges(gameData);
@@ -523,7 +523,7 @@ export class ServerManager {
       return;
     }
 
-    gameSetup.kickUser.apply(gameSetup, params);
+    gameSetup.kickUser(params[0]);
 
     if (gameSetup.history.length > 0) {
       const user = this.userIDToUser.get(params[0])!;

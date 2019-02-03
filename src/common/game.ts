@@ -542,7 +542,7 @@ export class Game {
       const gameAction = gameActions[i];
       const gameActionParameters = gameAction[0];
 
-      let currentTimestamp: number | null = gameAction.length >= 2 ? gameAction[1] : null;
+      let currentTimestamp: number | null = gameAction.length >= 2 ? gameAction[1]! : null;
       if (currentTimestamp !== null && lastTimestamp !== null) {
         currentTimestamp += lastTimestamp;
       }
