@@ -67,11 +67,7 @@ function getDevelopmentConfig(APP) {
               loader: 'postcss-loader',
               options: {
                 ident: 'postcss',
-                plugins: loader => [
-                  require('postcss-import')({ root: loader.resourcePath }),
-                  require('postcss-url')({ url: 'inline' }),
-                  require('postcss-cssnext')(),
-                ],
+                plugins: loader => [require('postcss-url')({ url: 'inline' }), require('postcss-cssnext')()],
                 sourceMap: true,
               },
             },
@@ -178,12 +174,7 @@ function getProductionConfig(APP) {
               loader: 'postcss-loader',
               options: {
                 ident: 'postcss',
-                plugins: loader => [
-                  require('postcss-import')({ root: loader.resourcePath }),
-                  require('postcss-url')({ url: 'inline' }),
-                  require('postcss-cssnext')(),
-                  require('cssnano')(),
-                ],
+                plugins: loader => [require('postcss-url')({ url: 'inline' }), require('postcss-cssnext')(), require('cssnano')()],
               },
             },
           ],
