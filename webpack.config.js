@@ -95,12 +95,12 @@ function getProductionConfig(APP) {
     {
       module: 'react',
       global: 'React',
-      entry: 'https://cdnjs.cloudflare.com/ajax/libs/react/16.6.3/umd/react.production.min.js',
+      entry: 'https://cdnjs.cloudflare.com/ajax/libs/react/16.7.0/umd/react.production.min.js',
     },
     {
       module: 'react-dom',
       global: 'ReactDOM',
-      entry: 'https://cdnjs.cloudflare.com/ajax/libs/react-dom/16.6.3/umd/react-dom.production.min.js',
+      entry: 'https://cdnjs.cloudflare.com/ajax/libs/react-dom/16.7.0/umd/react-dom.production.min.js',
     },
   ];
   if (APP === 'index') {
