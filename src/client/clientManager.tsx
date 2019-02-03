@@ -159,20 +159,14 @@ export class ClientManager {
 
     return (
       <>
-        {!isHost && !isJoined ? (
+        {!isHost && (
           <div>
-            <input type={'button'} value={'Sit Down'} onClick={this.onJoinGame} />
+            {isJoined ? (
+              <input type={'button'} value={'Stand Up'} onClick={this.onUnjoinGame} />
+            ) : (
+              <input type={'button'} value={'Sit Down'} onClick={this.onJoinGame} />
+            )}
           </div>
-        ) : (
-          undefined
-        )}
-
-        {!isHost && isJoined ? (
-          <div>
-            <input type={'button'} value={'Stand Up'} onClick={this.onUnjoinGame} />
-          </div>
-        ) : (
-          undefined
         )}
 
         <GameSetupUI
