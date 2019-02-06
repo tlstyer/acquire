@@ -21,6 +21,7 @@ import { LoginForm } from './components/LoginForm';
 import { ScoreBoard } from './components/ScoreBoard';
 import { TileRack } from './components/TileRack';
 import { GameBoardLabelMode, GameStatus } from './enums';
+import * as style from './clientManager.css';
 
 export enum ClientManagerPage {
   Login,
@@ -72,6 +73,21 @@ export class ClientManager {
 
   manage() {
     this.render();
+
+    let resizeTimeout = 0;
+    window.addEventListener(
+      'resize',
+      () => {
+        if (!resizeTimeout) {
+          // @ts-ignore
+          resizeTimeout = setTimeout(() => {
+            resizeTimeout = 0;
+            this.render();
+          }, 66);
+        }
+      },
+      false,
+    );
   }
 
   render() {
@@ -226,61 +242,55 @@ export class ClientManager {
     const windowWidth = window.innerWidth;
     const windowHeight = window.innerHeight;
 
-    const gameBoardLeft = -2;
-    const gameBoardTop = -2;
     const gameBoardCellSizeBasedOnWindowWidth = windowWidth / 2 / 12;
     const gameBoardCellSizeBasedOnWindowHeight = (windowHeight - 129) / 9;
     const gameBoardCellSize = Math.floor(Math.min(gameBoardCellSizeBasedOnWindowWidth, gameBoardCellSizeBasedOnWindowHeight));
     const gameBoardWidth = gameBoardCellSize * 12 + 2;
 
-    const rightSideLeft = gameBoardLeft + gameBoardWidth;
-    const rightSideTop = -2;
-    const rightSideWidth = windowWidth - (gameBoardLeft + gameBoardWidth);
-    const rightSideHeight = windowHeight + 2;
-
-    const scoreBoardCellWidth = Math.floor(Math.min(rightSideWidth - 2, gameBoardWidth) / 18);
+    const scoreBoardCellWidth = Math.floor(Math.min(windowWidth - gameBoardWidth, gameBoardWidth) / 18);
 
     return (
-      <>
-        <div style={{ position: 'absolute', left: gameBoardLeft, top: gameBoardTop }}>
-          <GameBoard
-            gameBoard={moveData.gameBoard}
-            tileRack={moveData.tileRacks.get(playerID)}
-            labelMode={GameBoardLabelMode.Nothing}
-            cellSize={gameBoardCellSize}
-          />
-        </div>
-        <div
-          // className={style.rightSide}
-          style={{ position: 'absolute', left: rightSideLeft, top: rightSideTop, width: rightSideWidth, height: rightSideHeight }}
-        >
-          <ScoreBoard
-            usernames={game.usernames}
-            scoreBoard={moveData.scoreBoard}
-            scoreBoardAvailable={moveData.scoreBoardAvailable}
-            scoreBoardChainSize={moveData.scoreBoardChainSize}
-            scoreBoardPrice={moveData.scoreBoardPrice}
-            safeChains={moveData.safeChains}
-            turnPlayerID={turnPlayerID}
-            movePlayerID={movePlayerID}
-            gameMode={game.gameMode}
-            cellWidth={scoreBoardCellWidth}
-          />
-          {tileRack !== undefined && tileRackTypes !== undefined ? (
-            <TileRack
-              tiles={tileRack}
-              types={tileRackTypes}
-              buttonSize={gameBoardCellSize}
-              keyboardShortcutsEnabled={false}
-              onTileClicked={this.onTileClicked}
+      <div className={style.root}>
+        <Header username={this.username} isConnected={this.isConnected()} />
+
+        <div className={style.main}>
+          <div className={style.leftSide}>
+            <GameBoard
+              gameBoard={moveData.gameBoard}
+              tileRack={moveData.tileRacks.get(playerID)}
+              labelMode={GameBoardLabelMode.Nothing}
+              cellSize={gameBoardCellSize}
             />
-          ) : (
-            undefined
-          )}
-          <GameHistory usernames={game.usernames} moveDataHistory={game.moveDataHistory} onMoveClicked={this.onMoveClicked} />
-          <GameState usernames={game.usernames} nextGameAction={moveData.nextGameAction} />
+          </div>
+          <div className={style.rightSide}>
+            <ScoreBoard
+              usernames={game.usernames}
+              scoreBoard={moveData.scoreBoard}
+              scoreBoardAvailable={moveData.scoreBoardAvailable}
+              scoreBoardChainSize={moveData.scoreBoardChainSize}
+              scoreBoardPrice={moveData.scoreBoardPrice}
+              safeChains={moveData.safeChains}
+              turnPlayerID={turnPlayerID}
+              movePlayerID={movePlayerID}
+              gameMode={game.gameMode}
+              cellWidth={scoreBoardCellWidth}
+            />
+            {tileRack !== undefined && tileRackTypes !== undefined ? (
+              <TileRack
+                tiles={tileRack}
+                types={tileRackTypes}
+                buttonSize={gameBoardCellSize}
+                keyboardShortcutsEnabled={false}
+                onTileClicked={this.onTileClicked}
+              />
+            ) : (
+              undefined
+            )}
+            <GameHistory usernames={game.usernames} moveDataHistory={game.moveDataHistory} onMoveClicked={this.onMoveClicked} />
+            <GameState usernames={game.usernames} nextGameAction={moveData.nextGameAction} />
+          </div>
         </div>
-      </>
+      </div>
     );
   }
 
