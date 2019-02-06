@@ -62,6 +62,7 @@ export class ScoreBoard extends React.PureComponent<ScoreBoardProps> {
           {usernames.map((username, playerID) => (
             <ScoreBoardRow
               key={playerID}
+              isPlayerRow={true}
               title={username}
               isPlayersTurn={playerID === turnPlayerID}
               isPlayersMove={playerID === movePlayerID}
@@ -72,6 +73,7 @@ export class ScoreBoard extends React.PureComponent<ScoreBoardProps> {
             />
           ))}
           <ScoreBoardRow
+            isPlayerRow={false}
             title={'Available'}
             isPlayersTurn={false}
             isPlayersMove={false}
@@ -83,6 +85,7 @@ export class ScoreBoard extends React.PureComponent<ScoreBoardProps> {
             teamTotal={teamTotals[0]}
           />
           <ScoreBoardRow
+            isPlayerRow={false}
             title={'Chain Size'}
             isPlayersTurn={false}
             isPlayersMove={false}
@@ -94,6 +97,7 @@ export class ScoreBoard extends React.PureComponent<ScoreBoardProps> {
             teamTotal={teamTotals[1]}
           />
           <ScoreBoardRow
+            isPlayerRow={false}
             title={'Price ($00)'}
             isPlayersTurn={false}
             isPlayersMove={false}
@@ -136,6 +140,7 @@ class ScoreBoardHeader extends React.PureComponent {
 }
 
 interface ScoreBoardRowProps {
+  isPlayerRow: boolean;
   title: string;
   isPlayersTurn: boolean;
   isPlayersMove: boolean;
@@ -149,7 +154,18 @@ interface ScoreBoardRowProps {
 
 class ScoreBoardRow extends React.PureComponent<ScoreBoardRowProps> {
   render() {
-    const { title, isPlayersTurn, isPlayersMove, scoreBoardRow, safeChains, defaultClassName, zeroValueReplacement, teamNumber, teamTotal } = this.props;
+    const {
+      isPlayerRow,
+      title,
+      isPlayersTurn,
+      isPlayersMove,
+      scoreBoardRow,
+      safeChains,
+      defaultClassName,
+      zeroValueReplacement,
+      teamNumber,
+      teamTotal,
+    } = this.props;
 
     let nameCellClassName: string;
     if (isPlayersTurn) {
@@ -162,7 +178,9 @@ class ScoreBoardRow extends React.PureComponent<ScoreBoardRowProps> {
 
     return (
       <tr>
-        <td className={nameCellClassName}>{title}</td>
+        <td className={nameCellClassName} title={isPlayerRow ? title : undefined}>
+          {title}
+        </td>
         {safeChains.map((isSafe, chain) => {
           const value = scoreBoardRow.get(chain, 0);
           return (
