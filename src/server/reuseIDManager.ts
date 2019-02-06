@@ -1,9 +1,9 @@
-import * as Collections from 'typescript-collections';
+import { PriorityQueue } from 'typescript-collections';
 
 export class ReuseIDManager {
   used = new Set<number>();
-  unusedWait = new Collections.PriorityQueue<IDAndTime>(compareIDAndTime);
-  unused = new Collections.PriorityQueue<number>(compareID);
+  unusedWait = new PriorityQueue<IDAndTime>(compareIDAndTime);
+  unused = new PriorityQueue<number>(compareID);
 
   constructor(public waitTime: number) {}
 
