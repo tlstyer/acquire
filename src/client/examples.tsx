@@ -80,7 +80,7 @@ class AllDemoProps {
       },
       {
         gameBoard: game1 !== null ? game1.gameBoard : defaultGameBoard,
-        usernames: List(['Tim', 'Rita', 'Dad', 'Mom', 'REALLY, REALLY LONG NAME', 'pgyqj,;']),
+        usernames: List(['Tim', 'Rita', 'Dad', 'Mom', 'REALLY, REALLY, REALLY, REALLY, REALLY LONG NAME', 'pgyqj,;']),
         gameDisplayNumber: 2,
         gameMode: GameMode.Teams2vs2vs2,
         gameStatus: GameStatus.InProgress,
@@ -133,7 +133,7 @@ class AllDemoProps {
         cellWidth: 30,
       },
       {
-        usernames: List(['tlstyer', 'REALLY LONG NAME', 'Somebody Else', 'hi!']),
+        usernames: List(['tlstyer', 'REALLY, REALLY, REALLY, REALLY, REALLY LONG NAME', 'Somebody Else', 'hi!']),
         scoreBoard: List([
           List([4, 0, 0, 0, 0, 0, 0, 74, 82]),
           List([0, 4, 0, 0, 0, 0, 0, 74, 82]),
