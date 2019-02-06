@@ -975,6 +975,61 @@ describe('ServerManager', () => {
       expect(otherConnection.receivedMessages[0]).toEqual(expectedMessage);
     });
   });
+
+  describe('all approve of game setup', () => {
+    it('sends MessageToClient.GameStarted and MessageToClient.GameActionDone', async () => {
+      const { serverManager, server } = getServerManagerAndStuff();
+      Date.now = () => 1234567890;
+      Math.random = () => 0.1;
+
+      const hostConnection = await connectToServer(server, 'host');
+      const opponentConnection = await connectToServer(server, 'opponent');
+      const anotherConnection = await connectToServer(server, 'another');
+      hostConnection.sendMessage([MessageToServer.CreateGame, GameMode.Singles2]);
+      opponentConnection.sendMessage([MessageToServer.EnterGame, 1]);
+      opponentConnection.sendMessage([MessageToServer.JoinGame]);
+
+      hostConnection.sendMessage([MessageToServer.ApproveOfGameSetup]);
+
+      hostConnection.clearReceivedMessages();
+      opponentConnection.clearReceivedMessages();
+      anotherConnection.clearReceivedMessages();
+      opponentConnection.sendMessage([MessageToServer.ApproveOfGameSetup]);
+
+      expect(hostConnection.receivedMessages.length).toBe(2);
+      expect(opponentConnection.receivedMessages.length).toBe(2);
+      expect(anotherConnection.receivedMessages.length).toBe(2);
+
+      expectClientAndUserAndGameData(
+        serverManager,
+        [
+          new UserData(1, 'host', [new ClientData(1, hostConnection, 10)]),
+          new UserData(2, 'opponent', [new ClientData(2, opponentConnection, 10)]),
+          new UserData(3, 'another', [new ClientData(3, anotherConnection)]),
+        ],
+        [new GameDataData(10, 1, [1, 2])],
+      );
+
+      const expectedMessage = [[MessageToClient.GameStarted, 1, [2, 1]]];
+      expect(hostConnection.receivedMessages[0]).toEqual(expectedMessage);
+      expect(opponentConnection.receivedMessages[0]).toEqual(expectedMessage);
+      expect(anotherConnection.receivedMessages[0]).toEqual(expectedMessage);
+
+      expect(hostConnection.receivedMessages[1]).toEqual([
+        [MessageToClient.GameActionDone, 1, [], Date.now(), [], [89, 19, -1, -1, -1, -1, -1, -1, 0, 99, 11, 12, 13, 14], 0],
+      ]);
+      expect(opponentConnection.receivedMessages[1]).toEqual([
+        [MessageToClient.GameActionDone, 1, [], Date.now(), [], [89, 19, 29, 39, 49, 59, 69, 79, -1, -1, -1, -1, -1, -1], 0],
+      ]);
+      expect(anotherConnection.receivedMessages[1]).toEqual([
+        [MessageToClient.GameActionDone, 1, [], Date.now(), [], [89, 19, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], 0],
+      ]);
+
+      const gameData = serverManager.gameDisplayNumberToGameData.get(1)!;
+      expect(gameData.gameSetup).toBe(null);
+      expect(gameData.game).not.toBe(null);
+    });
+  });
 });
 
 class TestServer {
@@ -1166,7 +1221,7 @@ function uncircularreferenceifyGameIDToGameData(gameIDToGameData: Map<number, Ga
     if (gameData.gameSetup !== null) {
       userIDs = gameData.gameSetup.userIDsSet;
     } else {
-      userIDs = new Set();
+      userIDs = new Set(gameData.game!.userIDs);
     }
 
     const ucrGameData = new UCRGameData(gameData.id, gameData.displayNumber, userIDs);

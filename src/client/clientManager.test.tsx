@@ -690,6 +690,37 @@ describe('ClientManager', () => {
       expect(clientManager.gameIDToGameData.get(10)!.gameSetup!.userIDs.toJS()).toEqual([1, null, null, null]);
     });
   });
+
+  describe('MessageToClient.GameStarted and MessageToClient.GameActionDone', () => {
+    it('messages are processed correctly', () => {
+      const { clientManager, testConnection } = getClientManagerAndStuff();
+
+      clientManager.onSubmitLoginForm('me', '');
+      testConnection.triggerOpen();
+      testConnection.triggerMessage([
+        [
+          MessageToClient.Greetings,
+          3,
+          [[1, 'host', [[1, 1]]], [2, 'opponent', [[2, 1]]], [3, 'me', [[3]]]],
+          [[0, 10, 1, GameMode.Singles2, PlayerArrangementMode.RandomOrder, 1, [1, 2], [1, 0]]],
+        ],
+      ]);
+      testConnection.triggerMessage([[MessageToClient.GameStarted, 1, [2, 1]]]);
+      testConnection.triggerMessage([[MessageToClient.GameActionDone, 1, [], 123456789, [], [89, 19, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], 0]]);
+
+      expectClientAndUserAndGameData(
+        clientManager,
+        [new UserData(1, 'host', [new ClientData(1, 10)]), new UserData(2, 'opponent', [new ClientData(2, 10)]), new UserData(3, 'me', [new ClientData(3)])],
+        [new GameDataData(10, 1, [1, 2])],
+      );
+
+      expect(clientManager.userIDToUser.get(1)!.numGames).toBe(1);
+      const game = clientManager.gameIDToGameData.get(10)!.game!;
+      expect(game.gameMode).toBe(GameMode.Singles2);
+      expect(game.playerArrangementMode).toBe(PlayerArrangementMode.RandomOrder);
+      expect(game.hostUserID).toBe(1);
+    });
+  });
 });
 
 class TestConnection {
@@ -864,7 +895,7 @@ function uncircularreferenceifyGameIDToGameData(gameIDToGameData: Map<number, Ga
     if (gameData.gameSetup !== null) {
       userIDs = gameData.gameSetup.userIDsSet;
     } else {
-      userIDs = new Set();
+      userIDs = new Set(gameData.game!.userIDs);
     }
 
     const ucrGameData = new UCRGameData(gameData.id, gameData.displayNumber, userIDs);

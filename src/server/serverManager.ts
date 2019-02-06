@@ -1,7 +1,8 @@
 import { Connection, Server } from 'sockjs';
 import { ErrorCode, GameMode, MessageToClient, MessageToServer, PlayerArrangementMode } from '../common/enums';
+import { Game, MoveData } from '../common/game';
 import { GameSetup } from '../common/gameSetup';
-import { gameModeToNumPlayers, isASCII } from '../common/helpers';
+import { gameModeToNumPlayers, getNewTileBag, isASCII } from '../common/helpers';
 import { LogMessage } from './enums';
 import { ReuseIDManager } from './reuseIDManager';
 import { UserDataProvider } from './userDataProvider';
@@ -413,7 +414,21 @@ export class ServerManager {
 
     gameSetup.approve(client.user.id);
 
-    if (gameSetup.history.length > 0) {
+    if (gameSetup.approvedByEverybody) {
+      const [userIDs, usernames] = gameSetup.getFinalUserIDsAndUsernames();
+
+      const game = new Game(gameSetup.gameMode, gameSetup.playerArrangementMode, getNewTileBag(), userIDs, usernames, gameSetup.hostUserID, null);
+      gameData.gameSetup = null;
+      gameData.game = game;
+
+      const message = JSON.stringify([[MessageToClient.GameStarted, gameData.displayNumber, userIDs.toJS()]]);
+      this.connectionIDToClient.forEach(aClient => {
+        aClient.connection.write(message);
+      });
+
+      game.doGameAction([], Date.now());
+      this.sendLastGameMoveDataMessage(gameData);
+    } else if (gameSetup.history.length > 0) {
       this.sendGameSetupChanges(gameData);
     }
   }
@@ -545,6 +560,36 @@ export class ServerManager {
     gameSetup.clearHistory();
   }
 
+  sendLastGameMoveDataMessage(gameData: GameData) {
+    const game = gameData.game!;
+    const moveData = game.moveDataHistory.get(game.moveDataHistory.size - 1)!;
+
+    moveData.createPlayerAndWatcherMessages();
+
+    const playerUserIDs = new Set<number>();
+
+    // send player messages
+    game.userIDs.forEach((userID, playerID) => {
+      const user = this.userIDToUser.get(userID)!;
+      if (user.clients.size > 0) {
+        const message = JSON.stringify([[MessageToClient.GameActionDone, gameData.displayNumber, ...moveData.playerMessages[playerID]]]);
+        user.clients.forEach(aClient => {
+          aClient.connection.write(message);
+        });
+      }
+
+      playerUserIDs.add(userID);
+    });
+
+    // send watcher messages to everybody else
+    const watcherMessage = JSON.stringify([[MessageToClient.GameActionDone, gameData.displayNumber, ...moveData.watcherMessage]]);
+    this.connectionIDToClient.forEach(aClient => {
+      if (!playerUserIDs.has(aClient.user.id)) {
+        aClient.connection.write(watcherMessage);
+      }
+    });
+  }
+
   getGreetingsMessage(gameDataArray: any[], client: Client) {
     const users: any[] = [];
     this.userIDToUser.forEach(user => {
@@ -629,6 +674,7 @@ export class User {
 
 export class GameData {
   gameSetup: GameSetup | null = null;
+  game: Game | null = null;
 
   clients = new Set<Client>();
 

@@ -1,18 +1,26 @@
 import 'normalize.css';
 import './global.css';
 
+import { List } from 'immutable';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import * as SockJS from 'sockjs-client';
 import { defaultGameBoard } from '../common/defaults';
 import { ErrorCode, GameMode, GameSetupChange, MessageToClient, MessageToServer, PlayerArrangementMode } from '../common/enums';
+import { Game } from '../common/game';
+import { ActionGameOver } from '../common/gameActions/gameOver';
 import { GameSetup } from '../common/gameSetup';
 import { CreateGame } from './components/CreateGame';
+import { GameBoard } from './components/GameBoard';
+import { GameHistory } from './components/GameHistory';
 import { GameListing } from './components/GameListing';
 import { GameSetupUI } from './components/GameSetupUI';
+import { GameState } from './components/GameState';
 import { Header } from './components/Header';
 import { LoginForm } from './components/LoginForm';
-import { GameStatus } from './enums';
+import { ScoreBoard } from './components/ScoreBoard';
+import { TileRack } from './components/TileRack';
+import { GameBoardLabelMode, GameStatus } from './enums';
 
 export enum ClientManagerPage {
   Login,
@@ -56,6 +64,8 @@ export class ClientManager {
       [MessageToClient.ClientEnteredGame, this.onMessageClientEnteredGame],
       [MessageToClient.ClientExitedGame, this.onMessageClientExitedGame],
       [MessageToClient.GameSetupChanged, this.onMessageGameSetupChanged],
+      [MessageToClient.GameStarted, this.onMessageGameStarted],
+      [MessageToClient.GameActionDone, this.onMessageGameActionDone],
     ];
     this.onMessageFunctions = new Map(mf);
   }
@@ -132,17 +142,11 @@ export class ClientManager {
   renderGamePage = () => {
     const gameData = this.myClient!.gameData!;
 
-    return (
-      <>
-        <Header username={this.username} isConnected={this.isConnected()} />
-
-        <div>
-          <input type={'button'} value={'Exit Game'} onClick={this.onExitGameClicked} />
-        </div>
-
-        {gameData.gameSetup !== null ? this.renderGamePageGameSetup() : undefined}
-      </>
-    );
+    if (gameData.game !== null) {
+      return this.renderGamePageGame();
+    } else {
+      return this.renderGamePageGameSetup();
+    }
   };
 
   onExitGameClicked = () => {
@@ -159,6 +163,12 @@ export class ClientManager {
 
     return (
       <>
+        <Header username={this.username} isConnected={this.isConnected()} />
+
+        <div>
+          <input type={'button'} value={'Exit Game'} onClick={this.onExitGameClicked} />
+        </div>
+
         {!isHost && (
           <div>
             {isJoined ? (
@@ -183,6 +193,93 @@ export class ClientManager {
           onKickUser={isHost ? this.onKickUser : undefined}
           onApprove={this.onApproveOfGameSetup}
         />
+      </>
+    );
+  }
+
+  onTileClicked = (tile: number) => {
+    // empty
+  };
+
+  onMoveClicked = (index: number) => {
+    // empty
+  };
+
+  renderGamePageGame() {
+    const game = this.myClient!.gameData!.game!;
+    const selectedMove = game.moveDataHistory.size - 1;
+
+    const playerID = game.userIDs.indexOf(game.myUserID || -1);
+
+    const moveData = game.moveDataHistory.get(selectedMove)!;
+
+    let turnPlayerID = moveData.turnPlayerID;
+    let movePlayerID = moveData.nextGameAction.playerID;
+    if (moveData.nextGameAction instanceof ActionGameOver) {
+      turnPlayerID = -1;
+      movePlayerID = -1;
+    }
+
+    const tileRack = moveData.tileRacks.get(playerID);
+    const tileRackTypes = moveData.tileRackTypes.get(playerID);
+
+    const windowWidth = window.innerWidth;
+    const windowHeight = window.innerHeight;
+
+    const gameBoardLeft = -2;
+    const gameBoardTop = -2;
+    const gameBoardCellSizeBasedOnWindowWidth = windowWidth / 2 / 12;
+    const gameBoardCellSizeBasedOnWindowHeight = (windowHeight - 129) / 9;
+    const gameBoardCellSize = Math.floor(Math.min(gameBoardCellSizeBasedOnWindowWidth, gameBoardCellSizeBasedOnWindowHeight));
+    const gameBoardWidth = gameBoardCellSize * 12 + 2;
+
+    const rightSideLeft = gameBoardLeft + gameBoardWidth;
+    const rightSideTop = -2;
+    const rightSideWidth = windowWidth - (gameBoardLeft + gameBoardWidth);
+    const rightSideHeight = windowHeight + 2;
+
+    const scoreBoardCellWidth = Math.floor(Math.min(rightSideWidth - 2, gameBoardWidth) / 18);
+
+    return (
+      <>
+        <div style={{ position: 'absolute', left: gameBoardLeft, top: gameBoardTop }}>
+          <GameBoard
+            gameBoard={moveData.gameBoard}
+            tileRack={moveData.tileRacks.get(playerID)}
+            labelMode={GameBoardLabelMode.Nothing}
+            cellSize={gameBoardCellSize}
+          />
+        </div>
+        <div
+          // className={style.rightSide}
+          style={{ position: 'absolute', left: rightSideLeft, top: rightSideTop, width: rightSideWidth, height: rightSideHeight }}
+        >
+          <ScoreBoard
+            usernames={game.usernames}
+            scoreBoard={moveData.scoreBoard}
+            scoreBoardAvailable={moveData.scoreBoardAvailable}
+            scoreBoardChainSize={moveData.scoreBoardChainSize}
+            scoreBoardPrice={moveData.scoreBoardPrice}
+            safeChains={moveData.safeChains}
+            turnPlayerID={turnPlayerID}
+            movePlayerID={movePlayerID}
+            gameMode={game.gameMode}
+            cellWidth={scoreBoardCellWidth}
+          />
+          {tileRack !== undefined && tileRackTypes !== undefined ? (
+            <TileRack
+              tiles={tileRack}
+              types={tileRackTypes}
+              buttonSize={gameBoardCellSize}
+              keyboardShortcutsEnabled={false}
+              onTileClicked={this.onTileClicked}
+            />
+          ) : (
+            undefined
+          )}
+          <GameHistory usernames={game.usernames} moveDataHistory={game.moveDataHistory} onMoveClicked={this.onMoveClicked} />
+          <GameState usernames={game.usernames} nextGameAction={moveData.nextGameAction} />
+        </div>
       </>
     );
   }
@@ -402,6 +499,30 @@ export class ClientManager {
     }
   }
 
+  onMessageGameStarted(gameDisplayNumber: number, userIDs: number[]) {
+    const gameData = this.gameDisplayNumberToGameData.get(gameDisplayNumber)!;
+    const gameSetup = gameData.gameSetup!;
+
+    const game = new Game(
+      gameSetup.gameMode,
+      gameSetup.playerArrangementMode,
+      [],
+      List(userIDs),
+      List(userIDs.map(this.getUsernameForUserID)),
+      gameSetup.hostUserID,
+      this.myClient!.user.id,
+    );
+
+    gameData.gameSetup = null;
+    gameData.game = game;
+  }
+
+  onMessageGameActionDone(gameDisplayNumber: number, ...moveDataMessage: any[]) {
+    const game = this.gameDisplayNumberToGameData.get(gameDisplayNumber)!.game!;
+
+    game.processMoveDataMessage(moveDataMessage);
+  }
+
   onSocketClose = (e: CloseEvent) => {
     this.socket = null;
 
@@ -446,6 +567,7 @@ export class User {
 
 export class GameData {
   gameSetup: GameSetup | null = null;
+  game: Game | null = null;
 
   clients = new Set<Client>();
 

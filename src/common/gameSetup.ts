@@ -282,7 +282,7 @@ export class GameSetup {
     this.history = [];
   }
 
-  getFinalUserIDsAndUsernames() {
+  getFinalUserIDsAndUsernames(): [List<number>, List<string>] {
     const userIDs: number[] = this.userIDs.toJS();
 
     if (this.playerArrangementMode === PlayerArrangementMode.RandomOrder) {

@@ -142,6 +142,32 @@ Server sends all clients:
 - Game display number
 - GameSetup change message
 
+## All users in a game approve of the game setup
+
+Server sends all clients:
+
+- MessageToClient.GameStarted
+- Game display number
+- User IDs in player order
+
+Server starts game
+
+Server sends MessageToClient.GameActionDone to all clients
+
+## Do game action
+
+Client sends:
+
+- MessageToServer.DoGameAction
+- Move history size
+- Game action parameters
+
+Server sends all clients:
+
+- MessageToClient.GameActionDone
+- Game display number
+- Move data message
+
 # Game review data
 
 Array of:
