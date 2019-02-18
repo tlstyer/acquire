@@ -27,7 +27,7 @@ export class ActionSelectMergerSurvivor extends ActionBase {
       chainsOfThisSize.push(chain);
     }
 
-    sizes.sort((a, b) => (a < b ? 1 : -1));
+    sizes.sort((a, b) => b - a);
 
     const chainsBySize: GameBoardType[][] = new Array(sizes.length);
     for (let i = 0; i < sizes.length; i++) {

@@ -34,7 +34,7 @@ export class ExampleGameSetupMaster extends React.Component<ExampleGameSetupMast
     const numUsersInGame = gameSetup.userIDsSet.size;
     const maxUsers = gameSetup.userIDs.size;
 
-    const userIDs = [...gameSetup.userIDsSet].sort((a, b) => (a < b ? -1 : 1));
+    const userIDs = [...gameSetup.userIDsSet].sort((a, b) => a - b);
 
     return (
       <div>

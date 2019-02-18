@@ -21,11 +21,11 @@ export class ActionStartGame extends ActionBase {
     for (let tileBagIndex = 0; tileBagIndex < positionTiles.length; tileBagIndex++) {
       positionTiles[tileBagIndex] = new PositionTileData(this.game.tileBag[tileBagIndex], tileBagIndex);
     }
-    positionTiles.sort((a, b) => (a.tile < b.tile ? -1 : 1));
+    positionTiles.sort((a, b) => a.tile - b.tile);
     for (let playerID = 0; playerID < positionTiles.length; playerID++) {
       positionTiles[playerID].playerID = playerID;
     }
-    positionTiles.sort((a, b) => (a.tileBagIndex < b.tileBagIndex ? -1 : 1));
+    positionTiles.sort((a, b) => a.tileBagIndex - b.tileBagIndex);
     for (let i = 0; i < positionTiles.length; i++) {
       const positionTile = positionTiles[i];
       moveData.addTileBagTile(positionTile.tile, null);

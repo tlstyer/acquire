@@ -96,7 +96,7 @@ export class ActionPlayTile extends ActionBase {
       }
     }
 
-    chains.sort((a, b) => (a < b ? -1 : 1));
+    chains.sort((a, b) => a - b);
 
     return chains;
   }

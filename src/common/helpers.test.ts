@@ -10,7 +10,7 @@ describe('getNewTileBag', () => {
     const tileBag = getNewTileBag();
     expect(tileBag).not.toEqual(tileBagInOrder);
 
-    tileBag.sort((a, b) => (a < b ? -1 : 1));
+    tileBag.sort((a, b) => a - b);
     expect(tileBag).toEqual(tileBagInOrder);
   });
 });
