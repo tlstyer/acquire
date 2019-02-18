@@ -1,9 +1,9 @@
 .root {
-  & :first-child {
+  :first-child {
     font-weight: bold;
   }
 
-  & :not(:first-child) {
+  :not(:first-child) {
     margin-left: 6px;
   }
 }

@@ -6,7 +6,7 @@
   position: absolute;
   top: -2px;
   width: calc(100vw + 2px);
-  & > :nth-child(2) {
+  > :nth-child(2) {
     flex-grow: 1;
   }
 }
@@ -14,19 +14,19 @@
 .rightSide {
   display: flex;
   flex-direction: column;
-  & > :nth-child(1) {
+  > :nth-child(1) {
     margin-bottom: 2px;
   }
-  & > :nth-child(n + 2):nth-last-child(n + 3) {
+  > :nth-child(n + 2):nth-last-child(n + 3) {
     margin-bottom: 4px;
     margin-left: 2px;
   }
-  & > :nth-last-child(2) {
+  > :nth-last-child(2) {
     flex-grow: 1;
     margin-bottom: 2px;
     margin-left: 2px;
   }
-  & > :nth-last-child(1) {
+  > :nth-last-child(1) {
     margin-left: 2px;
   }
 }
@@ -40,7 +40,7 @@
   display: inline-block;
   margin-left: 4px;
   vertical-align: top;
-  & > input {
+  > input {
     position: relative;
     top: 50%;
     transform: translateY(-50%);

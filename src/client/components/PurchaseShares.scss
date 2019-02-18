@@ -1,23 +1,23 @@
 .root {
-  & fieldset {
+  fieldset {
     display: inline-block;
     margin: 0;
     padding: 0 3px 3px;
-    & legend {
+    legend {
       padding: 0 5px;
     }
-    & input:not(:last-child) {
+    input:not(:last-child) {
       margin-right: 4px;
     }
     &:first-child {
       margin-right: 4px;
     }
   }
-  & input:disabled {
+  input:disabled {
     background-color: #d3d3d3;
     color: #555555;
   }
-  & label {
+  label {
     margin-right: 4px;
   }
 }
@@ -29,11 +29,11 @@
 .costTable {
   border-collapse: collapse;
   border-spacing: 0;
-  & tr {
-    & :nth-child(1) {
+  tr {
+    :nth-child(1) {
       text-align: left;
     }
-    & :nth-child(2) {
+    :nth-child(2) {
       text-align: right;
       width: 4em;
     }

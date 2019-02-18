@@ -6,7 +6,7 @@
   display: inline-block;
   font-weight: bold;
   text-align: center;
-  & > div {
+  > div {
     position: relative;
     top: 50%;
     transform: translateY(-50%);
