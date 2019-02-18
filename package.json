@@ -28,9 +28,9 @@
     "identity-obj-proxy": "^3.0.0",
     "jest": "^23.6.0",
     "mini-css-extract-plugin": "^0.5.0",
+    "node-sass": "^4.11.0",
     "nodemon": "^1.18.10",
     "normalize.css": "^8.0.1",
-    "postcss-cssnext": "^3.1.0",
     "postcss-loader": "^3.0.0",
     "postcss-url": "^8.0.0",
     "prettier": "^1.16.4",
@@ -38,6 +38,7 @@
     "react": "^16.8.2",
     "react-dom": "^16.8.2",
     "react-test-renderer": "^16.8.2",
+    "sass-loader": "^7.1.0",
     "seedrandom": "^2.4.4",
     "sockjs-client": "^1.3.0",
     "source-map-loader": "^0.2.4",
@@ -62,7 +63,7 @@
     "server": "nodemon -r ts-node/register src/server/main.ts",
     "test": "jest",
     "lint": "tslint --project tsconfig.json --config tslint.json --fix",
-    "format": "prettier --write '{,!(.git|node_modules)/**/}*.{css,js,json,md,ts,tsx}' --loglevel warn"
+    "format": "prettier --write '{,!(.git|node_modules)/**/}*.{css,js,json,md,scss,ts,tsx}' --loglevel warn"
   },
   "jest": {
     "transform": {
@@ -76,7 +77,7 @@
       "tsx"
     ],
     "moduleNameMapper": {
-      "\\.css$": "identity-obj-proxy"
+      "\\.s?css$": "identity-obj-proxy"
     }
   },
   "prettier": {

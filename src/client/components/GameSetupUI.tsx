@@ -3,7 +3,7 @@ import * as React from 'react';
 import { GameMode, PlayerArrangementMode } from '../../common/enums';
 import { gameModeToNumPlayers, gameModeToTeamSize } from '../../common/helpers';
 import { allGameModes, gameModeToString, teamNumberToCSSClassName } from '../helpers';
-import * as style from './GameSetupUI.css';
+import * as style from './GameSetupUI.scss';
 
 interface GameSetupUIProps {
   gameMode: GameMode;

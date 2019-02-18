@@ -4,7 +4,7 @@ import { defaultScoreBoardRow } from '../../common/defaults';
 import { GameMode, ScoreBoardIndex } from '../../common/enums';
 import { gameModeToNumPlayers, gameModeToTeamSize } from '../../common/helpers';
 import { allChains, gameBoardTypeToCSSClassName, gameBoardTypeToHotelInitial, teamNumberToCSSClassName } from '../helpers';
-import * as style from './ScoreBoard.css';
+import * as style from './ScoreBoard.scss';
 
 export interface ScoreBoardProps {
   usernames: List<string>;

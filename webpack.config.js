@@ -46,7 +46,7 @@ function getDevelopmentConfig(APP) {
           enforce: 'pre',
         },
         {
-          test: /\.css$/,
+          test: /\.s?css$/,
           use: [
             {
               loader: 'style-loader',
@@ -72,7 +72,13 @@ function getDevelopmentConfig(APP) {
               loader: 'postcss-loader',
               options: {
                 ident: 'postcss',
-                plugins: loader => [require('postcss-url')({ url: 'inline' }), require('postcss-cssnext')()],
+                plugins: loader => [require('postcss-url')({ url: 'inline' })],
+                sourceMap: true,
+              },
+            },
+            {
+              loader: 'sass-loader',
+              options: {
                 sourceMap: true,
               },
             },
@@ -157,7 +163,7 @@ function getProductionConfig(APP) {
           ],
         },
         {
-          test: /\.css$/,
+          test: /\.s?css$/,
           use: [
             MiniCssExtractPlugin.loader,
             {
@@ -178,7 +184,13 @@ function getProductionConfig(APP) {
               loader: 'postcss-loader',
               options: {
                 ident: 'postcss',
-                plugins: loader => [require('postcss-url')({ url: 'inline' }), require('postcss-cssnext')(), require('cssnano')()],
+                plugins: loader => [require('postcss-url')({ url: 'inline' }), require('cssnano')()],
+              },
+            },
+            {
+              loader: 'sass-loader',
+              options: {
+                sourceMap: true,
               },
             },
           ],
@@ -214,7 +226,7 @@ function getShortCSSNameLookup() {
       if (stats.isDirectory()) {
         processDirectory(filePath);
       } else if (stats.isFile()) {
-        if (file.endsWith('.css.d.ts')) {
+        if (file.endsWith('.scss.d.ts')) {
           const lines = fs
             .readFileSync(filePath)
             .toString()

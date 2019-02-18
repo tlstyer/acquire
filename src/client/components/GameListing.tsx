@@ -4,7 +4,7 @@ import { GameBoardType, GameMode } from '../../common/enums';
 import { gameModeToNumPlayers, gameModeToTeamSize } from '../../common/helpers';
 import { GameStatus } from '../enums';
 import { gameModeToString, gameStatusToString, teamNumberToCSSClassName } from '../helpers';
-import * as style from './GameListing.css';
+import * as style from './GameListing.scss';
 import { MiniGameBoard } from './MiniGameBoard';
 
 export interface GameListingProps {

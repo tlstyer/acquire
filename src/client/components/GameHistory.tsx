@@ -3,7 +3,7 @@ import * as React from 'react';
 import { GameBoardType, GameHistoryMessage } from '../../common/enums';
 import { GameHistoryMessageData, MoveData } from '../../common/game';
 import { getHotelNameSpan, getTileString, getUsernameSpan } from '../helpers';
-import * as style from './GameHistory.css';
+import * as style from './GameHistory.scss';
 
 export interface GameHistoryProps {
   usernames: List<string>;

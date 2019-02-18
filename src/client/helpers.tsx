@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { GameBoardType, GameMode, Tile } from '../common/enums';
-import * as common from './common.css';
+import * as common from './common.scss';
 import { GameStatus } from './enums';
 
 export const allChains = [

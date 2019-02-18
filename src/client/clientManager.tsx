@@ -1,5 +1,5 @@
 import 'normalize.css';
-import './global.css';
+import './global.scss';
 
 import { List } from 'immutable';
 import * as React from 'react';
@@ -21,7 +21,7 @@ import { LoginForm } from './components/LoginForm';
 import { ScoreBoard } from './components/ScoreBoard';
 import { TileRack } from './components/TileRack';
 import { GameBoardLabelMode, GameStatus } from './enums';
-import * as style from './clientManager.css';
+import * as style from './clientManager.scss';
 
 export enum ClientManagerPage {
   Login,

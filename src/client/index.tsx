@@ -1,5 +1,5 @@
 import 'normalize.css';
-import './global.css';
+import './global.scss';
 
 import { ClientManager } from './clientManager';
 

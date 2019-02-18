@@ -3,7 +3,7 @@ import * as React from 'react';
 import { GameBoardType } from '../../common/enums';
 import { GameBoardLabelMode } from '../enums';
 import { gameBoardTypeToCSSClassName, gameBoardTypeToHotelInitial, getTileString } from '../helpers';
-import * as style from './GameBoard.css';
+import * as style from './GameBoard.scss';
 
 /* tslint:disable:no-bitwise */
 

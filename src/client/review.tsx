@@ -1,5 +1,5 @@
 import 'normalize.css';
-import './global.css';
+import './global.scss';
 
 import { List } from 'immutable';
 import * as React from 'react';
@@ -14,7 +14,7 @@ import { GameState } from './components/GameState';
 import { ScoreBoard } from './components/ScoreBoard';
 import { TileRackReadOnly } from './components/TileRackReadOnly';
 import { GameBoardLabelMode } from './enums';
-import * as style from './review.css';
+import * as style from './review.scss';
 
 const dummyMoveData = new MoveData(new Game(GameMode.Singles1, PlayerArrangementMode.RandomOrder, [], List(), List(), 0, null), null);
 
