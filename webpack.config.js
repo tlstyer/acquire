@@ -197,17 +197,6 @@ function getProductionConfig(APP) {
         },
       ],
     },
-    optimization: {
-      splitChunks: {
-        cacheGroups: {
-          styles: {
-            name: 'styles',
-            test: /\.css$/,
-            enforce: true,
-          },
-        },
-      },
-    },
     mode: 'production',
   };
 }
