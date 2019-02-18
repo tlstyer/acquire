@@ -122,10 +122,14 @@ export class ClientManager {
     );
   };
 
+  renderHeader = () => {
+    return <Header username={this.username} isConnected={this.isConnected()} />;
+  };
+
   renderLobbyPage = () => {
     return (
       <>
-        <Header username={this.username} isConnected={this.isConnected()} />
+        {this.renderHeader()}
         <CreateGame onSubmit={this.onSubmitCreateGame} />
         {[...this.gameIDToGameData].reverse().map(([gameID, gameData]) => {
           if (gameData.gameSetup !== null) {
@@ -176,7 +180,7 @@ export class ClientManager {
 
     return (
       <>
-        <Header username={this.username} isConnected={this.isConnected()} />
+        {this.renderHeader()}
 
         <div>
           <input type={'button'} value={'Exit Game'} onClick={this.onExitGameClicked} />
@@ -248,7 +252,7 @@ export class ClientManager {
 
     return (
       <div className={style.root}>
-        <Header username={this.username} isConnected={this.isConnected()} />
+        {this.renderHeader()}
 
         <div className={style.main}>
           <div className={style.leftSide}>
