@@ -3,7 +3,7 @@ import * as renderer from 'react-test-renderer';
 import { getExampleNextGameActionsArray } from '../exampleData';
 import { GameState } from './GameState';
 
-it('renders correctly', () => {
+test('renders correctly', () => {
   const nextGameActionsArray = getExampleNextGameActionsArray();
 
   const component = renderer.create(

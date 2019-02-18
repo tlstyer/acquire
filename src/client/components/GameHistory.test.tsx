@@ -27,13 +27,13 @@ const dateNow = Date.now;
 Date = TestDate;
 Date.now = dateNow;
 
-it('renders correctly', () => {
+test('renders correctly', () => {
   const component = renderer.create(jsx);
   const tree = component.toJSON();
   expect(tree).toMatchSnapshot();
 });
 
-it('works correctly', () => {
+test('works correctly', () => {
   const gameHistory = mount(jsx);
 
   gameHistory

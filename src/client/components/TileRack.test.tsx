@@ -8,7 +8,7 @@ import { TileRack } from './TileRack';
 
 configureEnzyme();
 
-it('renders correctly', () => {
+test('renders correctly', () => {
   // tslint:disable-next-line:no-empty
   const onTileClicked = (tile: number) => {};
 
@@ -40,7 +40,7 @@ it('renders correctly', () => {
   expect(tree).toMatchSnapshot();
 });
 
-it('calls onTileClicked with tile', () => {
+test('calls onTileClicked with tile', () => {
   const onTileClicked = jest.fn();
   const tileRack = shallow(
     <TileRack tiles={List([74])} types={List([GameBoardType.Luxor])} buttonSize={40} keyboardShortcutsEnabled={false} onTileClicked={onTileClicked} />,

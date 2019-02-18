@@ -1,7 +1,7 @@
 import { calculateBonuses, getNewTileBag, neighboringTilesLookup, PlayerIDAndAmount } from './helpers';
 
 describe('getNewTileBag', () => {
-  it('should return a shuffled array containing all integers between 0 and 107 inclusive', () => {
+  test('should return a shuffled array containing all integers between 0 and 107 inclusive', () => {
     const tileBagInOrder: number[] = new Array(108);
     for (let i = 0; i < 108; i++) {
       tileBagInOrder[i] = i;
@@ -16,7 +16,7 @@ describe('getNewTileBag', () => {
 });
 
 describe('neighboringTilesLookup', () => {
-  it('returns neighboring tiles', () => {
+  test('returns neighboring tiles', () => {
     // corner tiles
     expect(neighboringTilesLookup[0]).toEqual([1, 9]);
     expect(neighboringTilesLookup[8]).toEqual([7, 17]);
@@ -35,17 +35,17 @@ describe('neighboringTilesLookup', () => {
 });
 
 describe('calculateBonuses', () => {
-  it('nobody owns any shares', () => {
+  test('nobody owns any shares', () => {
     expect(calculateBonuses([0, 0, 0], 2)).toEqual([]);
   });
 
-  it('only one player owns any shares', () => {
+  test('only one player owns any shares', () => {
     expect(calculateBonuses([4, 0, 0], 2)).toEqual([new PlayerIDAndAmount(0, 30)]);
     expect(calculateBonuses([0, 5, 0, 0], 5)).toEqual([new PlayerIDAndAmount(1, 75)]);
     expect(calculateBonuses([0, 0, 1], 8)).toEqual([new PlayerIDAndAmount(2, 120)]);
   });
 
-  it('tie for largest shareholder', () => {
+  test('tie for largest shareholder', () => {
     expect(calculateBonuses([1, 1, 0], 2)).toEqual([new PlayerIDAndAmount(0, 15), new PlayerIDAndAmount(1, 15)]);
     expect(calculateBonuses([0, 12, 0, 12], 7)).toEqual([new PlayerIDAndAmount(1, 53), new PlayerIDAndAmount(3, 53)]);
     expect(calculateBonuses([2, 1, 2, 2], 3)).toEqual([new PlayerIDAndAmount(0, 15), new PlayerIDAndAmount(2, 15), new PlayerIDAndAmount(3, 15)]);
@@ -65,13 +65,13 @@ describe('calculateBonuses', () => {
     ]);
   });
 
-  it('one largest shareholder, one second largest shareholder', () => {
+  test('one largest shareholder, one second largest shareholder', () => {
     expect(calculateBonuses([4, 3, 0], 2)).toEqual([new PlayerIDAndAmount(0, 20), new PlayerIDAndAmount(1, 10)]);
     expect(calculateBonuses([0, 0, 3, 4], 4)).toEqual([new PlayerIDAndAmount(3, 40), new PlayerIDAndAmount(2, 20)]);
     expect(calculateBonuses([2, 4, 6, 1, 5, 3], 7)).toEqual([new PlayerIDAndAmount(2, 70), new PlayerIDAndAmount(4, 35)]);
   });
 
-  it('one largest shareholder, multiple second largest shareholders', () => {
+  test('one largest shareholder, multiple second largest shareholders', () => {
     expect(calculateBonuses([3, 3, 4], 4)).toEqual([new PlayerIDAndAmount(2, 40), new PlayerIDAndAmount(0, 10), new PlayerIDAndAmount(1, 10)]);
     expect(calculateBonuses([3, 3, 4, 3], 4)).toEqual([
       new PlayerIDAndAmount(2, 40),

@@ -18,7 +18,7 @@ enum inputIndex {
   ok,
 }
 
-it('renders correctly', () => {
+test('renders correctly', () => {
   // tslint:disable-next-line:no-empty
   const onSharesDisposed = (traded: number, sold: number) => {};
 
@@ -36,7 +36,7 @@ it('renders correctly', () => {
   expect(tree).toMatchSnapshot();
 });
 
-it('works correctly', () => {
+test('works correctly', () => {
   const onSharesDisposed = jest.fn();
   const component = getNewComponent(7, 2, onSharesDisposed);
 

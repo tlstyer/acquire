@@ -27,7 +27,7 @@ function processDirectory(base: string, dir: string) {
         processDirectory(dirPath, file);
       });
     } else if (stats.isFile()) {
-      it(file, () => {
+      test(file, () => {
         const inputLines = fs
           .readFileSync(filePath)
           .toString()

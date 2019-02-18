@@ -4,7 +4,7 @@ import { Client, ConnectionState, GameData, ServerManager, User } from './server
 import { TestUserDataProvider } from './userDataProvider';
 
 describe('when not sending first message', () => {
-  it('can open connections and then close them', () => {
+  test('can open connections and then close them', () => {
     const { serverManager, server } = getServerManagerAndStuff();
 
     const connection1 = new TestConnection('connection ID 1');
@@ -32,7 +32,7 @@ describe('when not sending first message', () => {
     expect(serverManager.connectionIDToPreLoggedInConnection).toEqual(new Map());
   });
 
-  it('closing already closed connection does nothing', () => {
+  test('closing already closed connection does nothing', () => {
     const { serverManager, server } = getServerManagerAndStuff();
 
     const connection1 = new TestConnection('connection ID 1');
@@ -79,63 +79,63 @@ describe('when sending first message', () => {
       expect(connection.readyState).toBe(WebSocket.CLOSED);
     }
 
-    it('after sending invalid JSON', async () => {
+    test('after sending invalid JSON', async () => {
       await getsKickedWithMessage('', ErrorCode.InvalidMessageFormat);
       await getsKickedWithMessage('not json', ErrorCode.InvalidMessageFormat);
     });
 
-    it('after sending a non-array', async () => {
+    test('after sending a non-array', async () => {
       await getsKickedWithMessage({}, ErrorCode.InvalidMessageFormat);
       await getsKickedWithMessage(null, ErrorCode.InvalidMessageFormat);
     });
 
-    it('after sending an array with the wrong length', async () => {
+    test('after sending an array with the wrong length', async () => {
       await getsKickedWithMessage([1, 2, 3], ErrorCode.InvalidMessageFormat);
       await getsKickedWithMessage([1, 2, 3, 4, 5], ErrorCode.InvalidMessageFormat);
     });
 
-    it('after sending wrong version', async () => {
+    test('after sending wrong version', async () => {
       await getsKickedWithMessage([-1, 'username', 'password', []], ErrorCode.NotUsingLatestVersion);
       await getsKickedWithMessage([{}, 'username', 'password', []], ErrorCode.NotUsingLatestVersion);
     });
 
-    it('after sending invalid username', async () => {
+    test('after sending invalid username', async () => {
       await getsKickedWithMessage([0, '', 'password', []], ErrorCode.InvalidUsername);
       await getsKickedWithMessage([0, '123456789012345678901234567890123', 'password', []], ErrorCode.InvalidUsername);
       await getsKickedWithMessage([0, '▲', 'password', []], ErrorCode.InvalidUsername);
     });
 
-    it('after sending invalid password', async () => {
+    test('after sending invalid password', async () => {
       await getsKickedWithMessage([0, 'username', 0, []], ErrorCode.InvalidMessageFormat);
       await getsKickedWithMessage([0, 'username', {}, []], ErrorCode.InvalidMessageFormat);
     });
 
-    it('after sending invalid game data array', async () => {
+    test('after sending invalid game data array', async () => {
       await getsKickedWithMessage([0, 'username', '', 0], ErrorCode.InvalidMessageFormat);
       await getsKickedWithMessage([0, 'username', '', {}], ErrorCode.InvalidMessageFormat);
     });
 
-    it('after not providing password', async () => {
+    test('after not providing password', async () => {
       await getsKickedWithMessage([0, 'has password', '', []], ErrorCode.MissingPassword);
     });
 
-    it('after providing incorrect password', async () => {
+    test('after providing incorrect password', async () => {
       await getsKickedWithMessage([0, 'has password', 'not my password', []], ErrorCode.IncorrectPassword);
     });
 
-    it('after providing a password when it is not set', async () => {
+    test('after providing a password when test is not set', async () => {
       await getsKickedWithMessage([0, 'does not have password', 'password', []], ErrorCode.ProvidedPassword);
     });
 
-    it('after providing a password when user data does not exist', async () => {
+    test('after providing a password when user data does not exist', async () => {
       await getsKickedWithMessage([0, 'no user data', 'password', []], ErrorCode.ProvidedPassword);
     });
 
-    it("after an error from user data provider's lookupUser()", async () => {
+    test("after an error from user data provider's lookupUser()", async () => {
       await getsKickedWithMessage([0, 'lookupUser error', 'password', []], ErrorCode.InternalServerError);
     });
 
-    it("after an error from user data provider's createUser()", async () => {
+    test("after an error from user data provider's createUser()", async () => {
       await getsKickedWithMessage([0, 'createUser error', '', []], ErrorCode.InternalServerError);
     });
   });
@@ -204,19 +204,19 @@ describe('when sending first message', () => {
       expect(connection2.receivedMessages.length).toBe(1);
     }
 
-    it('after providing correct password', async () => {
+    test('after providing correct password', async () => {
       await getsLoggedIn('has password', 'password', 1);
     });
 
-    it('after not providing a password when it is not set', async () => {
+    test('after not providing a password when test is not set', async () => {
       await getsLoggedIn('does not have password', '', 2);
     });
 
-    it('after not providing a password when user data does not exist', async () => {
+    test('after not providing a password when user data does not exist', async () => {
       await getsLoggedIn('no user data', '', 3);
     });
 
-    it('MessageToClient.Greetings message is correct', async () => {
+    test('MessageToClient.Greetings message is correct', async () => {
       const { serverManager, server } = getServerManagerAndStuff();
 
       await connectToServer(server, 'user 1');
@@ -245,7 +245,7 @@ describe('when sending first message', () => {
       ]);
     });
 
-    it('username parameter is excluded if already known in MessageToClient.ClientConnected message', async () => {
+    test('username parameter is excluded if already known in MessageToClient.ClientConnected message', async () => {
       const { server } = getServerManagerAndStuff();
 
       const connection = await connectToServer(server, 'user 1');
@@ -263,7 +263,7 @@ describe('when sending first message', () => {
 });
 
 describe('after logging in', () => {
-  it('kicks client due to invalid message', async () => {
+  test('kicks client due to invalid message', async () => {
     await expectKicksClientDueToInvalidMessage([]);
     await expectKicksClientDueToInvalidMessage([{}]);
     await expectKicksClientDueToInvalidMessage([-1, 1, 2, 3]);
@@ -271,14 +271,14 @@ describe('after logging in', () => {
 });
 
 describe('create game', () => {
-  it('kicks client due to invalid message', async () => {
+  test('kicks client due to invalid message', async () => {
     await expectKicksClientDueToInvalidMessage([MessageToServer.CreateGame]);
     await expectKicksClientDueToInvalidMessage([MessageToServer.CreateGame, 1, 2]);
     await expectKicksClientDueToInvalidMessage([MessageToServer.CreateGame, -1]);
     await expectKicksClientDueToInvalidMessage([MessageToServer.CreateGame, {}]);
   });
 
-  it('sends MessageToClient.GameCreated and MessageToClient.ClientEnteredGame when successful', async () => {
+  test('sends MessageToClient.GameCreated and MessageToClient.ClientEnteredGame when successful', async () => {
     const { serverManager, server } = getServerManagerAndStuff();
 
     const connection1 = await connectToServer(server, 'user 1');
@@ -317,7 +317,7 @@ describe('create game', () => {
     expect(connection2.receivedMessages[0]).toEqual(expectedMessage);
   });
 
-  it('disallows creating a game when currently in a game', async () => {
+  test('disallows creating a game when currently in a game', async () => {
     const { serverManager, server } = getServerManagerAndStuff();
 
     const connection1 = await connectToServer(server, 'user 1');
@@ -336,14 +336,14 @@ describe('create game', () => {
 });
 
 describe('enter game', () => {
-  it('kicks client due to invalid message', async () => {
+  test('kicks client due to invalid message', async () => {
     await expectKicksClientDueToInvalidMessage([MessageToServer.EnterGame]);
     await expectKicksClientDueToInvalidMessage([MessageToServer.EnterGame, 1, 2]);
     await expectKicksClientDueToInvalidMessage([MessageToServer.EnterGame, -1]);
     await expectKicksClientDueToInvalidMessage([MessageToServer.EnterGame, {}]);
   });
 
-  it('sends MessageToClient.ClientEnteredGame when successful', async () => {
+  test('sends MessageToClient.ClientEnteredGame when successful', async () => {
     const { serverManager, server } = getServerManagerAndStuff();
 
     const connection1 = await connectToServer(server, 'user 1');
@@ -374,7 +374,7 @@ describe('enter game', () => {
     expect(connection2.receivedMessages[0]).toEqual(expectedMessage);
   });
 
-  it('disallows entering a game when currently in a game', async () => {
+  test('disallows entering a game when currently in a game', async () => {
     const { server } = getServerManagerAndStuff();
 
     const connection1 = await connectToServer(server, 'user 1');
@@ -404,12 +404,12 @@ describe('enter game', () => {
 });
 
 describe('exit game', () => {
-  it('kicks client due to invalid message', async () => {
+  test('kicks client due to invalid message', async () => {
     await expectKicksClientDueToInvalidMessage([MessageToServer.ExitGame, 1]);
     await expectKicksClientDueToInvalidMessage([MessageToServer.ExitGame, {}]);
   });
 
-  it('sends MessageToClient.ClientExitedGame when successful', async () => {
+  test('sends MessageToClient.ClientExitedGame when successful', async () => {
     const { serverManager, server } = getServerManagerAndStuff();
 
     const connection1 = await connectToServer(server, 'user 1');
@@ -441,7 +441,7 @@ describe('exit game', () => {
     expect(connection2.receivedMessages[0]).toEqual(expectedMessage);
   });
 
-  it('disallows exiting a game when not in a game', async () => {
+  test('disallows exiting a game when not in a game', async () => {
     const { serverManager, server } = getServerManagerAndStuff();
 
     const connection1 = await connectToServer(server, 'user 1');
@@ -472,7 +472,7 @@ describe('exit game', () => {
 });
 
 describe('join game', () => {
-  it('does nothing when not in a game room', async () => {
+  test('does nothing when not in a game room', async () => {
     const { server } = getServerManagerAndStuff();
 
     const connection = await connectToServer(server, 'user');
@@ -484,7 +484,7 @@ describe('join game', () => {
     expect(connection.readyState).toBe(WebSocket.OPEN);
   });
 
-  it('kicks client due to invalid message', async () => {
+  test('kicks client due to invalid message', async () => {
     const { server } = getServerManagerAndStuff();
 
     const hostConnection = await connectToServer(server, 'host');
@@ -501,7 +501,7 @@ describe('join game', () => {
     expect(otherConnection.readyState).toBe(WebSocket.CLOSED);
   });
 
-  it('sends MessageToClient.GameSetupChanged when successful', async () => {
+  test('sends MessageToClient.GameSetupChanged when successful', async () => {
     const { serverManager, server } = getServerManagerAndStuff();
 
     const hostConnection = await connectToServer(server, 'host');
@@ -535,7 +535,7 @@ describe('join game', () => {
 });
 
 describe('unjoin game', () => {
-  it('does nothing when not in a game room', async () => {
+  test('does nothing when not in a game room', async () => {
     const { server } = getServerManagerAndStuff();
 
     const connection = await connectToServer(server, 'user');
@@ -547,7 +547,7 @@ describe('unjoin game', () => {
     expect(connection.readyState).toBe(WebSocket.OPEN);
   });
 
-  it('kicks client due to invalid message', async () => {
+  test('kicks client due to invalid message', async () => {
     const { server } = getServerManagerAndStuff();
 
     const hostConnection = await connectToServer(server, 'host');
@@ -565,7 +565,7 @@ describe('unjoin game', () => {
     expect(otherConnection.readyState).toBe(WebSocket.CLOSED);
   });
 
-  it('sends MessageToClient.GameSetupChanged when successful', async () => {
+  test('sends MessageToClient.GameSetupChanged when successful', async () => {
     const { serverManager, server } = getServerManagerAndStuff();
 
     const hostConnection = await connectToServer(server, 'host');
@@ -600,7 +600,7 @@ describe('unjoin game', () => {
 });
 
 describe('approve of game setup', () => {
-  it('does nothing when not in a game room', async () => {
+  test('does nothing when not in a game room', async () => {
     const { server } = getServerManagerAndStuff();
 
     const connection = await connectToServer(server, 'user');
@@ -612,7 +612,7 @@ describe('approve of game setup', () => {
     expect(connection.readyState).toBe(WebSocket.OPEN);
   });
 
-  it('kicks client due to invalid message', async () => {
+  test('kicks client due to invalid message', async () => {
     const { server } = getServerManagerAndStuff();
 
     const hostConnection = await connectToServer(server, 'host');
@@ -629,7 +629,7 @@ describe('approve of game setup', () => {
     expect(otherConnection.readyState).toBe(WebSocket.CLOSED);
   });
 
-  it('sends MessageToClient.GameSetupChanged when successful', async () => {
+  test('sends MessageToClient.GameSetupChanged when successful', async () => {
     const { serverManager, server } = getServerManagerAndStuff();
 
     const hostConnection = await connectToServer(server, 'host');
@@ -664,7 +664,7 @@ describe('approve of game setup', () => {
 });
 
 describe('change game mode', () => {
-  it('does nothing when not in a game room', async () => {
+  test('does nothing when not in a game room', async () => {
     const { server } = getServerManagerAndStuff();
 
     const connection = await connectToServer(server, 'user');
@@ -676,7 +676,7 @@ describe('change game mode', () => {
     expect(connection.readyState).toBe(WebSocket.OPEN);
   });
 
-  it('kicks client when not the host and trying to change game mode', async () => {
+  test('kicks client when not the host and trying to change game mode', async () => {
     const { server } = getServerManagerAndStuff();
 
     const hostConnection = await connectToServer(server, 'host');
@@ -693,7 +693,7 @@ describe('change game mode', () => {
     expect(otherConnection.readyState).toBe(WebSocket.CLOSED);
   });
 
-  it('kicks client when the host and sending invalid message', async () => {
+  test('kicks client when the host and sending invalid message', async () => {
     const { server } = getServerManagerAndStuff();
 
     const hostConnection = await connectToServer(server, 'host');
@@ -707,7 +707,7 @@ describe('change game mode', () => {
     expect(hostConnection.readyState).toBe(WebSocket.CLOSED);
   });
 
-  it('sends MessageToClient.GameSetupChanged when successful', async () => {
+  test('sends MessageToClient.GameSetupChanged when successful', async () => {
     const { serverManager, server } = getServerManagerAndStuff();
 
     const hostConnection = await connectToServer(server, 'host');
@@ -742,7 +742,7 @@ describe('change game mode', () => {
 });
 
 describe('change player arrangement mode', () => {
-  it('does nothing when not in a game room', async () => {
+  test('does nothing when not in a game room', async () => {
     const { server } = getServerManagerAndStuff();
 
     const connection = await connectToServer(server, 'user');
@@ -754,7 +754,7 @@ describe('change player arrangement mode', () => {
     expect(connection.readyState).toBe(WebSocket.OPEN);
   });
 
-  it('kicks client when not the host and trying to change player arrangement mode', async () => {
+  test('kicks client when not the host and trying to change player arrangement mode', async () => {
     const { server } = getServerManagerAndStuff();
 
     const hostConnection = await connectToServer(server, 'host');
@@ -771,7 +771,7 @@ describe('change player arrangement mode', () => {
     expect(otherConnection.readyState).toBe(WebSocket.CLOSED);
   });
 
-  it('kicks client when the host and sending invalid message', async () => {
+  test('kicks client when the host and sending invalid message', async () => {
     const { server } = getServerManagerAndStuff();
 
     const hostConnection = await connectToServer(server, 'host');
@@ -785,7 +785,7 @@ describe('change player arrangement mode', () => {
     expect(hostConnection.readyState).toBe(WebSocket.CLOSED);
   });
 
-  it('sends MessageToClient.GameSetupChanged when successful', async () => {
+  test('sends MessageToClient.GameSetupChanged when successful', async () => {
     const { serverManager, server } = getServerManagerAndStuff();
 
     const hostConnection = await connectToServer(server, 'host');
@@ -820,7 +820,7 @@ describe('change player arrangement mode', () => {
 });
 
 describe('swap positions', () => {
-  it('does nothing when not in a game room', async () => {
+  test('does nothing when not in a game room', async () => {
     const { server } = getServerManagerAndStuff();
 
     const connection = await connectToServer(server, 'user');
@@ -832,7 +832,7 @@ describe('swap positions', () => {
     expect(connection.readyState).toBe(WebSocket.OPEN);
   });
 
-  it('kicks client when not the host and trying to swap positions', async () => {
+  test('kicks client when not the host and trying to swap positions', async () => {
     const { server } = getServerManagerAndStuff();
 
     const hostConnection = await connectToServer(server, 'host');
@@ -849,7 +849,7 @@ describe('swap positions', () => {
     expect(otherConnection.readyState).toBe(WebSocket.CLOSED);
   });
 
-  it('kicks client when the host and sending invalid message', async () => {
+  test('kicks client when the host and sending invalid message', async () => {
     const { server } = getServerManagerAndStuff();
 
     const hostConnection = await connectToServer(server, 'host');
@@ -863,7 +863,7 @@ describe('swap positions', () => {
     expect(hostConnection.readyState).toBe(WebSocket.CLOSED);
   });
 
-  it('sends MessageToClient.GameSetupChanged when successful', async () => {
+  test('sends MessageToClient.GameSetupChanged when successful', async () => {
     const { serverManager, server } = getServerManagerAndStuff();
 
     const hostConnection = await connectToServer(server, 'host');
@@ -898,7 +898,7 @@ describe('swap positions', () => {
 });
 
 describe('kick user', () => {
-  it('does nothing when not in a game room', async () => {
+  test('does nothing when not in a game room', async () => {
     const { server } = getServerManagerAndStuff();
 
     const connection = await connectToServer(server, 'user');
@@ -910,7 +910,7 @@ describe('kick user', () => {
     expect(connection.readyState).toBe(WebSocket.OPEN);
   });
 
-  it('kicks client when not the host and trying to kick user', async () => {
+  test('kicks client when not the host and trying to kick user', async () => {
     const { server } = getServerManagerAndStuff();
 
     const hostConnection = await connectToServer(server, 'host');
@@ -927,7 +927,7 @@ describe('kick user', () => {
     expect(otherConnection.readyState).toBe(WebSocket.CLOSED);
   });
 
-  it('kicks client when the host and sending invalid message', async () => {
+  test('kicks client when the host and sending invalid message', async () => {
     const { server } = getServerManagerAndStuff();
 
     const hostConnection = await connectToServer(server, 'host');
@@ -941,7 +941,7 @@ describe('kick user', () => {
     expect(hostConnection.readyState).toBe(WebSocket.CLOSED);
   });
 
-  it('sends MessageToClient.GameSetupChanged when successful', async () => {
+  test('sends MessageToClient.GameSetupChanged when successful', async () => {
     const { serverManager, server } = getServerManagerAndStuff();
 
     const hostConnection = await connectToServer(server, 'host');
@@ -976,7 +976,7 @@ describe('kick user', () => {
 });
 
 describe('all approve of game setup', () => {
-  it('sends MessageToClient.GameStarted and MessageToClient.GameActionDone', async () => {
+  test('sends MessageToClient.GameStarted and MessageToClient.GameActionDone', async () => {
     const { serverManager, server } = getServerManagerAndStuff();
     Date.now = () => 1234567890;
     Math.random = () => 0.1;

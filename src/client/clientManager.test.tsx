@@ -8,7 +8,7 @@ jest.mock('sockjs-client');
 const mockSockJS: jest.Mock = SockJS;
 
 describe('onSubmitLoginForm', () => {
-  it('connection is instantiated and first message is sent', () => {
+  test('connection is instantiated and first message is sent', () => {
     const { clientManager, testConnection, renderMock } = getClientManagerAndStuff();
 
     expect(clientManager.page).toBe(ClientManagerPage.Login);
@@ -32,7 +32,7 @@ describe('onSubmitLoginForm', () => {
     expect(testConnection.sentMessages).toEqual([[0, 'username', 'password', []]]);
   });
 
-  it('goes back to login page upon fatal error followed by a closed connection', () => {
+  test('goes back to login page upon fatal error followed by a closed connection', () => {
     const { clientManager, testConnection, renderMock } = getClientManagerAndStuff();
 
     clientManager.onSubmitLoginForm('username', 'password');
@@ -52,7 +52,7 @@ describe('onSubmitLoginForm', () => {
     expect(renderMock.mock.calls.length).toBe(4);
   });
 
-  it('goes back to login page upon closed connection before receiving a message', () => {
+  test('goes back to login page upon closed connection before receiving a message', () => {
     const { clientManager, testConnection, renderMock } = getClientManagerAndStuff();
 
     clientManager.onSubmitLoginForm('username', 'password');
@@ -64,7 +64,7 @@ describe('onSubmitLoginForm', () => {
     expect(renderMock.mock.calls.length).toBe(3);
   });
 
-  it('goes to the lobby page upon receiving the Greeting message', () => {
+  test('goes to the lobby page upon receiving the Greeting message', () => {
     const { clientManager, testConnection, renderMock } = getClientManagerAndStuff();
 
     clientManager.onSubmitLoginForm('user', '');
@@ -82,7 +82,7 @@ describe('onSubmitLoginForm', () => {
 });
 
 describe('onSubmitCreateGame', () => {
-  it('sends CreateGame message when connected', () => {
+  test('sends CreateGame message when connected', () => {
     const { clientManager, testConnection } = getClientManagerAndStuff();
 
     clientManager.onSubmitLoginForm('me', '');
@@ -96,7 +96,7 @@ describe('onSubmitCreateGame', () => {
     expect(testConnection.sentMessages[0]).toEqual([MessageToServer.CreateGame, GameMode.Teams2vs2]);
   });
 
-  it('does not send CreateGame message when not connected', () => {
+  test('does not send CreateGame message when not connected', () => {
     const { clientManager, testConnection } = getClientManagerAndStuff();
 
     clientManager.onSubmitLoginForm('me', '');
@@ -112,7 +112,7 @@ describe('onSubmitCreateGame', () => {
 });
 
 describe('onEnterClicked', () => {
-  it('sends EnterGame message when connected', () => {
+  test('sends EnterGame message when connected', () => {
     const { clientManager, testConnection } = getClientManagerAndStuff();
 
     clientManager.onSubmitLoginForm('me', '');
@@ -133,7 +133,7 @@ describe('onEnterClicked', () => {
     expect(testConnection.sentMessages[0]).toEqual([MessageToServer.EnterGame, 1]);
   });
 
-  it('does not send EnterGame message when not connected', () => {
+  test('does not send EnterGame message when not connected', () => {
     const { clientManager, testConnection } = getClientManagerAndStuff();
 
     clientManager.onSubmitLoginForm('me', '');
@@ -156,90 +156,90 @@ describe('onEnterClicked', () => {
 });
 
 describe('onExitGameClicked', () => {
-  it('sends ExitGame message when connected', () => {
+  test('sends ExitGame message when connected', () => {
     sendsMessageWhenConnected(clientManager => clientManager.onExitGameClicked(), [MessageToServer.ExitGame]);
   });
 
-  it('does not send ExitGame message when not connected', () => {
+  test('does not send ExitGame message when not connected', () => {
     doesNotSendMessageWhenNotConnected(clientManager => clientManager.onExitGameClicked());
   });
 });
 
 describe('onJoinGame', () => {
-  it('sends JoinGame message when connected', () => {
+  test('sends JoinGame message when connected', () => {
     sendsMessageWhenConnected(clientManager => clientManager.onJoinGame(), [MessageToServer.JoinGame]);
   });
 
-  it('does not send JoinGame message when not connected', () => {
+  test('does not send JoinGame message when not connected', () => {
     doesNotSendMessageWhenNotConnected(clientManager => clientManager.onJoinGame());
   });
 });
 
 describe('onUnjoinGame', () => {
-  it('sends UnjoinGame message when connected', () => {
+  test('sends UnjoinGame message when connected', () => {
     sendsMessageWhenConnected(clientManager => clientManager.onUnjoinGame(), [MessageToServer.UnjoinGame]);
   });
 
-  it('does not send UnjoinGame message when not connected', () => {
+  test('does not send UnjoinGame message when not connected', () => {
     doesNotSendMessageWhenNotConnected(clientManager => clientManager.onUnjoinGame());
   });
 });
 
 describe('onApproveOfGameSetup', () => {
-  it('sends ApproveOfGameSetup message when connected', () => {
+  test('sends ApproveOfGameSetup message when connected', () => {
     sendsMessageWhenConnected(clientManager => clientManager.onApproveOfGameSetup(), [MessageToServer.ApproveOfGameSetup]);
   });
 
-  it('does not send ApproveOfGameSetup message when not connected', () => {
+  test('does not send ApproveOfGameSetup message when not connected', () => {
     doesNotSendMessageWhenNotConnected(clientManager => clientManager.onApproveOfGameSetup());
   });
 });
 
 describe('onChangeGameMode', () => {
-  it('sends ChangeGameMode message when connected', () => {
+  test('sends ChangeGameMode message when connected', () => {
     sendsMessageWhenConnected(clientManager => clientManager.onChangeGameMode(GameMode.Teams2vs2), [MessageToServer.ChangeGameMode, GameMode.Teams2vs2]);
   });
 
-  it('does not send ChangeGameMode message when not connected', () => {
+  test('does not send ChangeGameMode message when not connected', () => {
     doesNotSendMessageWhenNotConnected(clientManager => clientManager.onChangeGameMode(GameMode.Teams2vs2));
   });
 });
 
 describe('onChangePlayerArrangementMode', () => {
-  it('sends ChangePlayerArrangementMode message when connected', () => {
+  test('sends ChangePlayerArrangementMode message when connected', () => {
     sendsMessageWhenConnected(clientManager => clientManager.onChangePlayerArrangementMode(PlayerArrangementMode.ExactOrder), [
       MessageToServer.ChangePlayerArrangementMode,
       PlayerArrangementMode.ExactOrder,
     ]);
   });
 
-  it('does not send ChangePlayerArrangementMode message when not connected', () => {
+  test('does not send ChangePlayerArrangementMode message when not connected', () => {
     doesNotSendMessageWhenNotConnected(clientManager => clientManager.onChangePlayerArrangementMode(PlayerArrangementMode.ExactOrder));
   });
 });
 
 describe('onSwapPositions', () => {
-  it('sends SwapPositions message when connected', () => {
+  test('sends SwapPositions message when connected', () => {
     sendsMessageWhenConnected(clientManager => clientManager.onSwapPositions(0, 1), [MessageToServer.SwapPositions, 0, 1]);
   });
 
-  it('does not send SwapPositions message when not connected', () => {
+  test('does not send SwapPositions message when not connected', () => {
     doesNotSendMessageWhenNotConnected(clientManager => clientManager.onSwapPositions(0, 1));
   });
 });
 
 describe('onKickUser', () => {
-  it('sends KickUser message when connected', () => {
+  test('sends KickUser message when connected', () => {
     sendsMessageWhenConnected(clientManager => clientManager.onKickUser(5), [MessageToServer.KickUser, 5]);
   });
 
-  it('does not send KickUser message when not connected', () => {
+  test('does not send KickUser message when not connected', () => {
     doesNotSendMessageWhenNotConnected(clientManager => clientManager.onKickUser(5));
   });
 });
 
 describe('MessageToClient.Greetings', () => {
-  it('message is processed correctly', () => {
+  test('message is processed correctly', () => {
     const { clientManager, testConnection } = getClientManagerAndStuff();
 
     clientManager.onSubmitLoginForm('me', '');
@@ -280,7 +280,7 @@ describe('MessageToClient.Greetings', () => {
 });
 
 describe('MessageToClient.ClientConnected', () => {
-  it('new user and client added', () => {
+  test('new user and client added', () => {
     const { clientManager, testConnection } = getClientManagerAndStuff();
 
     clientManager.onSubmitLoginForm('me', '');
@@ -291,7 +291,7 @@ describe('MessageToClient.ClientConnected', () => {
     expectClientAndUserAndGameData(clientManager, [new UserData(1, 'me', [new ClientData(2)]), new UserData(3, 'user 3', [new ClientData(4)])], []);
   });
 
-  it('client added for existing user', () => {
+  test('client added for existing user', () => {
     const { clientManager, testConnection } = getClientManagerAndStuff();
 
     clientManager.onSubmitLoginForm('me', '');
@@ -309,7 +309,7 @@ describe('MessageToClient.ClientConnected', () => {
 });
 
 describe('MessageToClient.ClientDisconnected', () => {
-  it('sole client of a user disconnects', () => {
+  test('sole client of a user disconnects', () => {
     const { clientManager, testConnection } = getClientManagerAndStuff();
 
     clientManager.onSubmitLoginForm('me', '');
@@ -321,7 +321,7 @@ describe('MessageToClient.ClientDisconnected', () => {
     expectClientAndUserAndGameData(clientManager, [new UserData(1, 'me', [new ClientData(2)])], []);
   });
 
-  it('a client of a user disconnects, leaving another client still connected', () => {
+  test('a client of a user disconnects, leaving another client still connected', () => {
     const { clientManager, testConnection } = getClientManagerAndStuff();
 
     clientManager.onSubmitLoginForm('me', '');
@@ -334,7 +334,7 @@ describe('MessageToClient.ClientDisconnected', () => {
     expectClientAndUserAndGameData(clientManager, [new UserData(1, 'me', [new ClientData(2)]), new UserData(3, 'user 3', [new ClientData(5)])], []);
   });
 
-  it('user is not deleted if they are in a game', () => {
+  test('user is not deleted if they are in a game', () => {
     const { clientManager, testConnection } = getClientManagerAndStuff();
 
     clientManager.onSubmitLoginForm('me', '');
@@ -350,7 +350,7 @@ describe('MessageToClient.ClientDisconnected', () => {
 });
 
 describe('MessageToClient.GameCreated', () => {
-  it('game is added', () => {
+  test('game is added', () => {
     const { clientManager, testConnection } = getClientManagerAndStuff();
 
     clientManager.onSubmitLoginForm('me', '');
@@ -375,7 +375,7 @@ describe('MessageToClient.GameCreated', () => {
 });
 
 describe('MessageToClient.ClientEnteredGame', () => {
-  it('own client enters game', () => {
+  test('own client enters game', () => {
     const { clientManager, testConnection } = getClientManagerAndStuff();
 
     clientManager.onSubmitLoginForm('me', '');
@@ -392,7 +392,7 @@ describe('MessageToClient.ClientEnteredGame', () => {
     );
   });
 
-  it('other client enters game', () => {
+  test('other client enters game', () => {
     const { clientManager, testConnection } = getClientManagerAndStuff();
 
     clientManager.onSubmitLoginForm('me', '');
@@ -411,7 +411,7 @@ describe('MessageToClient.ClientEnteredGame', () => {
 });
 
 describe('MessageToClient.ClientExitedGame', () => {
-  it('own client exits game', () => {
+  test('own client exits game', () => {
     const { clientManager, testConnection } = getClientManagerAndStuff();
 
     clientManager.onSubmitLoginForm('me', '');
@@ -442,7 +442,7 @@ describe('MessageToClient.ClientExitedGame', () => {
     );
   });
 
-  it('other client exits game', () => {
+  test('other client exits game', () => {
     const { clientManager, testConnection } = getClientManagerAndStuff();
 
     clientManager.onSubmitLoginForm('me', '');
@@ -475,7 +475,7 @@ describe('MessageToClient.ClientExitedGame', () => {
 });
 
 describe('MessageToClient.GameSetupChanged', () => {
-  it('UserAdded message is processed correctly', () => {
+  test('UserAdded message is processed correctly', () => {
     const { clientManager, testConnection } = getClientManagerAndStuff();
 
     clientManager.onSubmitLoginForm('me', '');
@@ -505,7 +505,7 @@ describe('MessageToClient.GameSetupChanged', () => {
     expect(clientManager.gameIDToGameData.get(10)!.gameSetup!.userIDs.toJS()).toEqual([1, 2, null, null]);
   });
 
-  it('UserRemoved message is processed correctly', () => {
+  test('UserRemoved message is processed correctly', () => {
     const { clientManager, testConnection } = getClientManagerAndStuff();
 
     clientManager.onSubmitLoginForm('me', '');
@@ -535,7 +535,7 @@ describe('MessageToClient.GameSetupChanged', () => {
     expect(clientManager.gameIDToGameData.get(10)!.gameSetup!.userIDs.toJS()).toEqual([1, null, null, null]);
   });
 
-  it('UserApprovedOfGameSetup message is processed correctly', () => {
+  test('UserApprovedOfGameSetup message is processed correctly', () => {
     const { clientManager, testConnection } = getClientManagerAndStuff();
 
     clientManager.onSubmitLoginForm('me', '');
@@ -565,7 +565,7 @@ describe('MessageToClient.GameSetupChanged', () => {
     expect(clientManager.gameIDToGameData.get(10)!.gameSetup!.approvals.toJS()).toEqual([false, true]);
   });
 
-  it('GameModeChanged message is processed correctly', () => {
+  test('GameModeChanged message is processed correctly', () => {
     const { clientManager, testConnection } = getClientManagerAndStuff();
 
     clientManager.onSubmitLoginForm('me', '');
@@ -595,7 +595,7 @@ describe('MessageToClient.GameSetupChanged', () => {
     expect(clientManager.gameIDToGameData.get(10)!.gameSetup!.gameMode).toEqual(GameMode.Singles3);
   });
 
-  it('PlayerArrangementModeChanged message is processed correctly', () => {
+  test('PlayerArrangementModeChanged message is processed correctly', () => {
     const { clientManager, testConnection } = getClientManagerAndStuff();
 
     clientManager.onSubmitLoginForm('me', '');
@@ -625,7 +625,7 @@ describe('MessageToClient.GameSetupChanged', () => {
     expect(clientManager.gameIDToGameData.get(10)!.gameSetup!.playerArrangementMode).toEqual(PlayerArrangementMode.ExactOrder);
   });
 
-  it('PositionsSwapped message is processed correctly', () => {
+  test('PositionsSwapped message is processed correctly', () => {
     const { clientManager, testConnection } = getClientManagerAndStuff();
 
     clientManager.onSubmitLoginForm('me', '');
@@ -655,7 +655,7 @@ describe('MessageToClient.GameSetupChanged', () => {
     expect(clientManager.gameIDToGameData.get(10)!.gameSetup!.userIDs.toJS()).toEqual([2, 1, null, null]);
   });
 
-  it('UserKicked message is processed correctly', () => {
+  test('UserKicked message is processed correctly', () => {
     const { clientManager, testConnection } = getClientManagerAndStuff();
 
     clientManager.onSubmitLoginForm('me', '');
@@ -687,7 +687,7 @@ describe('MessageToClient.GameSetupChanged', () => {
 });
 
 describe('MessageToClient.GameStarted and MessageToClient.GameActionDone', () => {
-  it('messages are processed correctly', () => {
+  test('messages are processed correctly', () => {
     const { clientManager, testConnection } = getClientManagerAndStuff();
 
     clientManager.onSubmitLoginForm('me', '');

@@ -1,6 +1,6 @@
 import { ReuseIDManager } from './reuseIDManager';
 
-it('new IDs are sequential starting with 1', () => {
+test('new IDs are sequential starting with 1', () => {
   const reuseIDManager = new ReuseIDManager(60000);
 
   expect(reuseIDManager.getID()).toBe(1);
@@ -8,7 +8,7 @@ it('new IDs are sequential starting with 1', () => {
   expect(reuseIDManager.getID()).toBe(3);
 });
 
-it('nothing bad happens when returning an ID that was not being used', () => {
+test('nothing bad happens when returning an ID that was not being used', () => {
   const reuseIDManager = new ReuseIDManager(60000);
 
   expect(reuseIDManager.getID()).toBe(1);
@@ -18,7 +18,7 @@ it('nothing bad happens when returning an ID that was not being used', () => {
   reuseIDManager.returnID(99);
 });
 
-it('IDs are not reused when in their waiting period', () => {
+test('IDs are not reused when in their waiting period', () => {
   const reuseIDManager = new ReuseIDManager(1);
 
   Date.now = () => 0;
@@ -32,7 +32,7 @@ it('IDs are not reused when in their waiting period', () => {
   expect(reuseIDManager.getID()).toBe(5);
 });
 
-it('IDs are reused right away when they do not have a waiting period', () => {
+test('IDs are reused right away when they do not have a waiting period', () => {
   const reuseIDManager = new ReuseIDManager(0);
 
   Date.now = () => 0;
@@ -47,7 +47,7 @@ it('IDs are reused right away when they do not have a waiting period', () => {
   expect(reuseIDManager.getID()).toBe(3);
 });
 
-it('IDs are reused after their waiting periods complete', () => {
+test('IDs are reused after their waiting periods complete', () => {
   const reuseIDManager = new ReuseIDManager(100);
 
   let now = 0;
@@ -77,7 +77,7 @@ it('IDs are reused after their waiting periods complete', () => {
   expect(reuseIDManager.getID()).toBe(1);
 });
 
-it('IDs are reused in numerical order after their waiting periods complete', () => {
+test('IDs are reused in numerical order after their waiting periods complete', () => {
   const reuseIDManager = new ReuseIDManager(10);
 
   let now = 0;
