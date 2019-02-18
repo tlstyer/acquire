@@ -1,6 +1,3 @@
-import 'normalize.css';
-import './global.scss';
-
 import { List } from 'immutable';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
