@@ -55,12 +55,17 @@ function getDevelopmentConfig(APP) {
               },
             },
             {
-              loader: 'typings-for-css-modules-loader',
+              loader: 'dts-css-modules-loader',
+              options: {
+                namedExport: true,
+              },
+            },
+            {
+              loader: 'css-loader',
               options: {
                 modules: true,
                 localIdentName: '[name]-[local]',
                 sourceMap: true,
-                namedExport: true,
               },
             },
             {
@@ -156,7 +161,7 @@ function getProductionConfig(APP) {
           use: [
             MiniCssExtractPlugin.loader,
             {
-              loader: 'typings-for-css-modules-loader',
+              loader: 'css-loader',
               options: {
                 modules: true,
                 getLocalIdent: (context, localIdentName, localName, options) => {
@@ -167,7 +172,6 @@ function getProductionConfig(APP) {
                   }
                   return shortCSSName;
                 },
-                namedExport: true,
               },
             },
             {
