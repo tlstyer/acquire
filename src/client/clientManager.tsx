@@ -10,6 +10,7 @@ import { ErrorCode, GameMode, GameSetupChange, MessageToClient, MessageToServer,
 import { Game } from '../common/game';
 import { ActionGameOver } from '../common/gameActions/gameOver';
 import { GameSetup } from '../common/gameSetup';
+import * as style from './clientManager.scss';
 import { CreateGame } from './components/CreateGame';
 import { GameBoard } from './components/GameBoard';
 import { GameHistory } from './components/GameHistory';
@@ -21,7 +22,6 @@ import { LoginForm } from './components/LoginForm';
 import { ScoreBoard } from './components/ScoreBoard';
 import { TileRack } from './components/TileRack';
 import { GameBoardLabelMode, GameStatus } from './enums';
-import * as style from './clientManager.scss';
 
 export enum ClientManagerPage {
   Login,
