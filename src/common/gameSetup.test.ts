@@ -5,6 +5,19 @@ import { GameSetup } from './gameSetup';
 
 const dummyApprovals = List([true]);
 
+const userIDToUsername = new Map([[1, 'user 1'], [2, 'user 2'], [3, 'user 3'], [4, 'user 4'], [5, 'user 5'], [6, 'user 6'], [7, 'user 7']]);
+
+function getUsernameForUserID(userID: number) {
+  return userIDToUsername.get(userID)!;
+}
+
+function expectEqualGameSetups(gameSetup1: GameSetup, gameSetup2: GameSetup) {
+  gameSetup1.changeFunctions.clear();
+  gameSetup2.changeFunctions.clear();
+  expect(gameSetup2).toEqual(gameSetup1);
+  expect(gameSetup2.toJSON()).toEqual(gameSetup1.toJSON());
+}
+
 test('can construct', () => {
   const gameSetup = new GameSetup(GameMode.Singles4, PlayerArrangementMode.RandomOrder, 1, getUsernameForUserID);
 
@@ -777,16 +790,3 @@ describe('toJSON and fromJSON', () => {
     expectEqualGameSetups(gameSetup, gameSetup2);
   });
 });
-
-const userIDToUsername = new Map([[1, 'user 1'], [2, 'user 2'], [3, 'user 3'], [4, 'user 4'], [5, 'user 5'], [6, 'user 6'], [7, 'user 7']]);
-
-function getUsernameForUserID(userID: number) {
-  return userIDToUsername.get(userID)!;
-}
-
-function expectEqualGameSetups(gameSetup1: GameSetup, gameSetup2: GameSetup) {
-  gameSetup1.changeFunctions.clear();
-  gameSetup2.changeFunctions.clear();
-  expect(gameSetup2).toEqual(gameSetup1);
-  expect(gameSetup2.toJSON()).toEqual(gameSetup1.toJSON());
-}

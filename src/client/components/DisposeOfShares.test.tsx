@@ -18,6 +18,37 @@ enum inputIndex {
   ok,
 }
 
+function getNewComponent(
+  sharesOwnedInDefunctChain: number,
+  sharesAvailableInControllingChain: number,
+  onSharesDisposed: (traded: number, sold: number) => void,
+) {
+  return shallow(
+    <DisposeOfShares
+      defunctChain={GameBoardType.Imperial}
+      controllingChain={GameBoardType.Tower}
+      sharesOwnedInDefunctChain={sharesOwnedInDefunctChain}
+      sharesAvailableInControllingChain={sharesAvailableInControllingChain}
+      keyboardShortcutsEnabled={false}
+      onSharesDisposed={onSharesDisposed}
+    />,
+  );
+}
+
+function clickInput(component: any, index: inputIndex) {
+  component
+    .find('input')
+    .at(index)
+    .simulate('click');
+}
+
+function expectValues(component: any, keepValue: number, tradeValue: number, sellValue: number) {
+  const fieldsets = component.find('fieldset');
+  expect(fieldsets.at(0).text()).toBe(`Keep${keepValue}`);
+  expect(fieldsets.at(1).text()).toBe(`Trade${tradeValue}`);
+  expect(fieldsets.at(2).text()).toBe(`Sell${sellValue}`);
+}
+
 test('renders correctly', () => {
   const onSharesDisposed = () => {
     // do nothing
@@ -98,34 +129,3 @@ test('works correctly', () => {
   expect(onSharesDisposed.mock.calls.length).toBe(5);
   expect(onSharesDisposed.mock.calls[4]).toEqual([0, 0]);
 });
-
-function getNewComponent(
-  sharesOwnedInDefunctChain: number,
-  sharesAvailableInControllingChain: number,
-  onSharesDisposed: (traded: number, sold: number) => void,
-) {
-  return shallow(
-    <DisposeOfShares
-      defunctChain={GameBoardType.Imperial}
-      controllingChain={GameBoardType.Tower}
-      sharesOwnedInDefunctChain={sharesOwnedInDefunctChain}
-      sharesAvailableInControllingChain={sharesAvailableInControllingChain}
-      keyboardShortcutsEnabled={false}
-      onSharesDisposed={onSharesDisposed}
-    />,
-  );
-}
-
-function clickInput(component: any, index: inputIndex) {
-  component
-    .find('input')
-    .at(index)
-    .simulate('click');
-}
-
-function expectValues(component: any, keepValue: number, tradeValue: number, sellValue: number) {
-  const fieldsets = component.find('fieldset');
-  expect(fieldsets.at(0).text()).toBe(`Keep${keepValue}`);
-  expect(fieldsets.at(1).text()).toBe(`Trade${tradeValue}`);
-  expect(fieldsets.at(2).text()).toBe(`Sell${sellValue}`);
-}

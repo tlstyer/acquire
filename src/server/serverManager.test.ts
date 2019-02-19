@@ -3,6 +3,232 @@ import { ErrorCode, GameMode, GameSetupChange, MessageToClient, MessageToServer,
 import { Client, ConnectionState, GameData, ServerManager, User } from './serverManager';
 import { TestUserDataProvider } from './userDataProvider';
 
+class TestServer {
+  connectionListener: ((conn: TestConnection) => any) | null = null;
+
+  on(event: string, listener: (conn: TestConnection) => any) {
+    if (event === 'connection') {
+      this.connectionListener = listener;
+    }
+  }
+
+  openConnection(conn: TestConnection) {
+    if (this.connectionListener) {
+      this.connectionListener(conn);
+    }
+  }
+}
+
+class TestConnection {
+  dataListener: ((message: string) => any) | null = null;
+  closeListener: (() => void) | null = null;
+
+  readyState = WebSocket.OPEN;
+
+  receivedMessages: any[] = [];
+
+  constructor(public id: string) {}
+
+  on(event: string, listener: any) {
+    if (event === 'data') {
+      this.dataListener = listener;
+    } else if (event === 'close') {
+      this.closeListener = listener;
+    }
+  }
+
+  write(message: string) {
+    this.receivedMessages.push(JSON.parse(message));
+  }
+
+  sendMessage(message: any) {
+    if (this.dataListener) {
+      if (typeof message !== 'string') {
+        message = JSON.stringify(message);
+      }
+      this.dataListener(message);
+    }
+  }
+
+  close() {
+    this.readyState = WebSocket.CLOSED;
+    if (this.closeListener) {
+      this.closeListener();
+    }
+  }
+
+  clearReceivedMessages() {
+    this.receivedMessages = [];
+  }
+}
+
+function getServerManagerAndStuff() {
+  const server = new TestServer();
+  const userDataProvider = new TestUserDataProvider();
+  // @ts-ignore
+  const serverManager = new ServerManager(server, userDataProvider, 10, (message: string) => {
+    // do nothing
+  });
+  serverManager.manage();
+
+  return { serverManager, server, userDataProvider };
+}
+
+class ClientData {
+  constructor(public clientID: number, public connection: TestConnection, public gameID?: number) {}
+}
+
+class UserData {
+  constructor(public userID: number, public username: string, public clientDatas: ClientData[]) {}
+}
+
+class GameDataData {
+  constructor(public gameID: number, public gameDisplayNumber: number, public userIDs: number[]) {}
+}
+
+// UCR = Un-Circular-Reference-ified
+
+class UCRClient {
+  constructor(public clientID: number, public connection: Connection, public gameID: number | null, public userID: number) {}
+}
+
+class UCRUser {
+  constructor(public userID: number, public username: string, public clientIDs: Set<number>, public numGames: number) {}
+}
+
+class UCRGameData {
+  clientIDs = new Set<number>();
+
+  constructor(public gameID: number, public gameDisplayNumber: number, public userIDs: Set<number>) {}
+}
+
+type ConnectionIDToUCRClient = Map<string, UCRClient>;
+type UserIDToUCRUser = Map<number, UCRUser>;
+type GameIDTOUCRGameData = Map<number, UCRGameData>;
+
+function expectClientAndUserAndGameData(serverManager: ServerManager, userDatas: UserData[], gameDataDatas: GameDataData[]) {
+  const connectionIDToUCRClient: ConnectionIDToUCRClient = new Map();
+  const userIDToUCRUser: UserIDToUCRUser = new Map();
+  const gameIDTOUCRGameData: GameIDTOUCRGameData = new Map();
+  const gameDisplayNumberTOUCRGameData: GameIDTOUCRGameData = new Map();
+
+  gameDataDatas.forEach(gameDataData => {
+    const ucrGameData = new UCRGameData(gameDataData.gameID, gameDataData.gameDisplayNumber, new Set(gameDataData.userIDs));
+
+    gameIDTOUCRGameData.set(gameDataData.gameID, ucrGameData);
+    gameDisplayNumberTOUCRGameData.set(gameDataData.gameDisplayNumber, ucrGameData);
+  });
+
+  userDatas.forEach(userData => {
+    const clientIDs = new Set<number>();
+
+    userData.clientDatas.forEach(clientData => {
+      // @ts-ignore
+      const connection: Connection = clientData.connection;
+      const gameID = clientData.gameID !== undefined ? clientData.gameID : null;
+
+      connectionIDToUCRClient.set(clientData.connection.id, new UCRClient(clientData.clientID, connection, gameID, userData.userID));
+      if (clientData.gameID !== undefined) {
+        gameIDTOUCRGameData.get(clientData.gameID)!.clientIDs.add(clientData.clientID);
+      }
+
+      clientIDs.add(clientData.clientID);
+    });
+
+    userIDToUCRUser.set(userData.userID, new UCRUser(userData.userID, userData.username, clientIDs, 0));
+  });
+
+  gameDataDatas.forEach(gameDataData => {
+    gameDataData.userIDs.forEach(userID => {
+      const ucrUser = userIDToUCRUser.get(userID);
+
+      if (ucrUser !== undefined) {
+        ucrUser.numGames++;
+      } else {
+        fail('user in a game but not in users map');
+      }
+    });
+  });
+
+  expect(uncircularreferenceifyConnectionIDToClient(serverManager.connectionIDToClient)).toEqual(connectionIDToUCRClient);
+  expect(uncircularreferenceifyUserIDToUser(serverManager.userIDToUser)).toEqual(userIDToUCRUser);
+  expect(uncircularreferenceifyGameIDToGameData(serverManager.gameIDToGameData)).toEqual(gameIDTOUCRGameData);
+  expect(uncircularreferenceifyGameIDToGameData(serverManager.gameDisplayNumberToGameData)).toEqual(gameDisplayNumberTOUCRGameData);
+}
+
+function uncircularreferenceifyConnectionIDToClient(connectionIDToClient: Map<string, Client>) {
+  const connectionIDToUCRClient: ConnectionIDToUCRClient = new Map();
+
+  connectionIDToClient.forEach((client, connectionID) => {
+    const gameID = client.gameData !== null ? client.gameData.id : null;
+
+    connectionIDToUCRClient.set(connectionID, new UCRClient(client.id, client.connection, gameID, client.user.id));
+  });
+
+  return connectionIDToUCRClient;
+}
+
+function uncircularreferenceifyUserIDToUser(userIDToUser: Map<number, User>) {
+  const userIDToUCRUser: UserIDToUCRUser = new Map();
+
+  userIDToUser.forEach((user, userID) => {
+    const clientIDs = new Set<number>();
+
+    user.clients.forEach(client => {
+      clientIDs.add(client.id);
+    });
+
+    userIDToUCRUser.set(userID, new UCRUser(user.id, user.name, clientIDs, user.numGames));
+  });
+
+  return userIDToUCRUser;
+}
+
+function uncircularreferenceifyGameIDToGameData(gameIDToGameData: Map<number, GameData>) {
+  const gameIDTOUCRGameData: GameIDTOUCRGameData = new Map();
+
+  gameIDToGameData.forEach((gameData, gameID) => {
+    let userIDs: Set<number>;
+    if (gameData.gameSetup !== null) {
+      userIDs = gameData.gameSetup.userIDsSet;
+    } else {
+      userIDs = new Set(gameData.game!.userIDs);
+    }
+
+    const ucrGameData = new UCRGameData(gameData.id, gameData.displayNumber, userIDs);
+
+    gameData.clients.forEach(client => {
+      ucrGameData.clientIDs.add(client.id);
+    });
+
+    gameIDTOUCRGameData.set(gameID, ucrGameData);
+  });
+
+  return gameIDTOUCRGameData;
+}
+
+async function connectToServer(server: TestServer, username: string) {
+  const connection = new TestConnection(username);
+  server.openConnection(connection);
+  connection.sendMessage([0, username, '', []]);
+  await new Promise(resolve => setTimeout(resolve, 0));
+
+  return connection;
+}
+
+async function expectKicksClientDueToInvalidMessage(message: any[]) {
+  const { server } = getServerManagerAndStuff();
+
+  const connection = await connectToServer(server, 'user 1');
+  connection.clearReceivedMessages();
+
+  connection.sendMessage(message);
+
+  expect(connection.receivedMessages.length).toBe(1);
+  expect(connection.receivedMessages[0]).toEqual([[MessageToClient.FatalError, ErrorCode.InvalidMessage]]);
+  expect(connection.readyState).toBe(WebSocket.CLOSED);
+}
+
 describe('when not sending first message', () => {
   test('can open connections and then close them', () => {
     const { serverManager, server } = getServerManagerAndStuff();
@@ -1029,229 +1255,3 @@ describe('all approve of game setup', () => {
     expect(gameData.game).not.toBe(null);
   });
 });
-
-class TestServer {
-  connectionListener: ((conn: TestConnection) => any) | null = null;
-
-  on(event: string, listener: (conn: TestConnection) => any) {
-    if (event === 'connection') {
-      this.connectionListener = listener;
-    }
-  }
-
-  openConnection(conn: TestConnection) {
-    if (this.connectionListener) {
-      this.connectionListener(conn);
-    }
-  }
-}
-
-class TestConnection {
-  dataListener: ((message: string) => any) | null = null;
-  closeListener: (() => void) | null = null;
-
-  readyState = WebSocket.OPEN;
-
-  receivedMessages: any[] = [];
-
-  constructor(public id: string) {}
-
-  on(event: string, listener: any) {
-    if (event === 'data') {
-      this.dataListener = listener;
-    } else if (event === 'close') {
-      this.closeListener = listener;
-    }
-  }
-
-  write(message: string) {
-    this.receivedMessages.push(JSON.parse(message));
-  }
-
-  sendMessage(message: any) {
-    if (this.dataListener) {
-      if (typeof message !== 'string') {
-        message = JSON.stringify(message);
-      }
-      this.dataListener(message);
-    }
-  }
-
-  close() {
-    this.readyState = WebSocket.CLOSED;
-    if (this.closeListener) {
-      this.closeListener();
-    }
-  }
-
-  clearReceivedMessages() {
-    this.receivedMessages = [];
-  }
-}
-
-function getServerManagerAndStuff() {
-  const server = new TestServer();
-  const userDataProvider = new TestUserDataProvider();
-  // @ts-ignore
-  const serverManager = new ServerManager(server, userDataProvider, 10, (message: string) => {
-    // do nothing
-  });
-  serverManager.manage();
-
-  return { serverManager, server, userDataProvider };
-}
-
-class ClientData {
-  constructor(public clientID: number, public connection: TestConnection, public gameID?: number) {}
-}
-
-class UserData {
-  constructor(public userID: number, public username: string, public clientDatas: ClientData[]) {}
-}
-
-class GameDataData {
-  constructor(public gameID: number, public gameDisplayNumber: number, public userIDs: number[]) {}
-}
-
-// UCR = Un-Circular-Reference-ified
-
-class UCRClient {
-  constructor(public clientID: number, public connection: Connection, public gameID: number | null, public userID: number) {}
-}
-
-class UCRUser {
-  constructor(public userID: number, public username: string, public clientIDs: Set<number>, public numGames: number) {}
-}
-
-class UCRGameData {
-  clientIDs = new Set<number>();
-
-  constructor(public gameID: number, public gameDisplayNumber: number, public userIDs: Set<number>) {}
-}
-
-type ConnectionIDToUCRClient = Map<string, UCRClient>;
-type UserIDToUCRUser = Map<number, UCRUser>;
-type GameIDTOUCRGameData = Map<number, UCRGameData>;
-
-function expectClientAndUserAndGameData(serverManager: ServerManager, userDatas: UserData[], gameDataDatas: GameDataData[]) {
-  const connectionIDToUCRClient: ConnectionIDToUCRClient = new Map();
-  const userIDToUCRUser: UserIDToUCRUser = new Map();
-  const gameIDTOUCRGameData: GameIDTOUCRGameData = new Map();
-  const gameDisplayNumberTOUCRGameData: GameIDTOUCRGameData = new Map();
-
-  gameDataDatas.forEach(gameDataData => {
-    const ucrGameData = new UCRGameData(gameDataData.gameID, gameDataData.gameDisplayNumber, new Set(gameDataData.userIDs));
-
-    gameIDTOUCRGameData.set(gameDataData.gameID, ucrGameData);
-    gameDisplayNumberTOUCRGameData.set(gameDataData.gameDisplayNumber, ucrGameData);
-  });
-
-  userDatas.forEach(userData => {
-    const clientIDs = new Set<number>();
-
-    userData.clientDatas.forEach(clientData => {
-      // @ts-ignore
-      const connection: Connection = clientData.connection;
-      const gameID = clientData.gameID !== undefined ? clientData.gameID : null;
-
-      connectionIDToUCRClient.set(clientData.connection.id, new UCRClient(clientData.clientID, connection, gameID, userData.userID));
-      if (clientData.gameID !== undefined) {
-        gameIDTOUCRGameData.get(clientData.gameID)!.clientIDs.add(clientData.clientID);
-      }
-
-      clientIDs.add(clientData.clientID);
-    });
-
-    userIDToUCRUser.set(userData.userID, new UCRUser(userData.userID, userData.username, clientIDs, 0));
-  });
-
-  gameDataDatas.forEach(gameDataData => {
-    gameDataData.userIDs.forEach(userID => {
-      const ucrUser = userIDToUCRUser.get(userID);
-
-      if (ucrUser !== undefined) {
-        ucrUser.numGames++;
-      } else {
-        fail('user in a game but not in users map');
-      }
-    });
-  });
-
-  expect(uncircularreferenceifyConnectionIDToClient(serverManager.connectionIDToClient)).toEqual(connectionIDToUCRClient);
-  expect(uncircularreferenceifyUserIDToUser(serverManager.userIDToUser)).toEqual(userIDToUCRUser);
-  expect(uncircularreferenceifyGameIDToGameData(serverManager.gameIDToGameData)).toEqual(gameIDTOUCRGameData);
-  expect(uncircularreferenceifyGameIDToGameData(serverManager.gameDisplayNumberToGameData)).toEqual(gameDisplayNumberTOUCRGameData);
-}
-
-function uncircularreferenceifyConnectionIDToClient(connectionIDToClient: Map<string, Client>) {
-  const connectionIDToUCRClient: ConnectionIDToUCRClient = new Map();
-
-  connectionIDToClient.forEach((client, connectionID) => {
-    const gameID = client.gameData !== null ? client.gameData.id : null;
-
-    connectionIDToUCRClient.set(connectionID, new UCRClient(client.id, client.connection, gameID, client.user.id));
-  });
-
-  return connectionIDToUCRClient;
-}
-
-function uncircularreferenceifyUserIDToUser(userIDToUser: Map<number, User>) {
-  const userIDToUCRUser: UserIDToUCRUser = new Map();
-
-  userIDToUser.forEach((user, userID) => {
-    const clientIDs = new Set<number>();
-
-    user.clients.forEach(client => {
-      clientIDs.add(client.id);
-    });
-
-    userIDToUCRUser.set(userID, new UCRUser(user.id, user.name, clientIDs, user.numGames));
-  });
-
-  return userIDToUCRUser;
-}
-
-function uncircularreferenceifyGameIDToGameData(gameIDToGameData: Map<number, GameData>) {
-  const gameIDTOUCRGameData: GameIDTOUCRGameData = new Map();
-
-  gameIDToGameData.forEach((gameData, gameID) => {
-    let userIDs: Set<number>;
-    if (gameData.gameSetup !== null) {
-      userIDs = gameData.gameSetup.userIDsSet;
-    } else {
-      userIDs = new Set(gameData.game!.userIDs);
-    }
-
-    const ucrGameData = new UCRGameData(gameData.id, gameData.displayNumber, userIDs);
-
-    gameData.clients.forEach(client => {
-      ucrGameData.clientIDs.add(client.id);
-    });
-
-    gameIDTOUCRGameData.set(gameID, ucrGameData);
-  });
-
-  return gameIDTOUCRGameData;
-}
-
-async function connectToServer(server: TestServer, username: string) {
-  const connection = new TestConnection(username);
-  server.openConnection(connection);
-  connection.sendMessage([0, username, '', []]);
-  await new Promise(resolve => setTimeout(resolve, 0));
-
-  return connection;
-}
-
-async function expectKicksClientDueToInvalidMessage(message: any[]) {
-  const { server } = getServerManagerAndStuff();
-
-  const connection = await connectToServer(server, 'user 1');
-  connection.clearReceivedMessages();
-
-  connection.sendMessage(message);
-
-  expect(connection.receivedMessages.length).toBe(1);
-  expect(connection.receivedMessages[0]).toEqual([[MessageToClient.FatalError, ErrorCode.InvalidMessage]]);
-  expect(connection.readyState).toBe(WebSocket.CLOSED);
-}
