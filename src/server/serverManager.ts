@@ -1,6 +1,6 @@
 import { Connection, Server } from 'sockjs';
 import { ErrorCode, GameMode, MessageToClient, MessageToServer, PlayerArrangementMode } from '../common/enums';
-import { Game, MoveData } from '../common/game';
+import { Game } from '../common/game';
 import { GameSetup } from '../common/gameSetup';
 import { gameModeToNumPlayers, getNewTileBag, isASCII } from '../common/helpers';
 import { LogMessage } from './enums';
@@ -590,7 +590,7 @@ export class ServerManager {
     });
   }
 
-  getGreetingsMessage(gameDataArray: any[], client: Client) {
+  getGreetingsMessage(_gameDataArray: any[], client: Client) {
     const users: any[] = [];
     this.userIDToUser.forEach(user => {
       const clients: any[] = [];

@@ -3,7 +3,6 @@ import * as React from 'react';
 import { GameAction, GameBoardType } from '../../common/enums';
 import { ActionBase } from '../../common/gameActions/base';
 import { ActionDisposeOfShares } from '../../common/gameActions/disposeOfShares';
-import { ActionGameOver } from '../../common/gameActions/gameOver';
 import { ActionPlayTile } from '../../common/gameActions/playTile';
 import { ActionPurchaseShares } from '../../common/gameActions/purchaseShares';
 import { ActionSelectChainToDisposeOfNext } from '../../common/gameActions/selectChainToDisposeOfNext';
@@ -80,7 +79,7 @@ const gshl: [GameAction, any][] = [
       <div className={style.root}>Waiting for {getUsernameSpan(usernames.get(action.playerID, ''))} to purchase shares.</div>
     ),
   ],
-  [GameAction.GameOver, (usernames: List<string>, action: ActionGameOver) => <div className={style.root}>Game over.</div>],
+  [GameAction.GameOver, () => <div className={style.root}>Game over.</div>],
 ];
 const gameStateHandlerLookup = new Map<GameAction, (usernames: List<string>, action: ActionBase) => JSX.Element>(gshl);
 

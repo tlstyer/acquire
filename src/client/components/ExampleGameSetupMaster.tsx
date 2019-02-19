@@ -24,7 +24,7 @@ export class ExampleGameSetupMaster extends React.Component<ExampleGameSetupMast
     };
   }
 
-  static getDerivedStateFromProps(nextProps: ExampleGameSetupMasterProps, prevState: ExampleGameSetupMasterState) {
+  static getDerivedStateFromProps() {
     return null;
   }
 

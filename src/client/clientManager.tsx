@@ -214,12 +214,12 @@ export class ClientManager {
     );
   }
 
-  onTileClicked = (tile: number) => {
-    // empty
+  onTileClicked = (_tile: number) => {
+    // do nothing
   };
 
-  onMoveClicked = (index: number) => {
-    // empty
+  onMoveClicked = (_index: number) => {
+    // do nothing
   };
 
   renderGamePageGame() {
@@ -345,7 +345,7 @@ export class ClientManager {
     this.socket.onclose = this.onSocketClose;
   };
 
-  onSocketOpen = (e: Event) => {
+  onSocketOpen = () => {
     this.socket!.send(JSON.stringify([0, this.username, this.password, []]));
   };
 
@@ -534,7 +534,7 @@ export class ClientManager {
     game.processMoveDataMessage(moveDataMessage);
   }
 
-  onSocketClose = (e: CloseEvent) => {
+  onSocketClose = () => {
     this.socket = null;
 
     if (this.errorCode !== null) {

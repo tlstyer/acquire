@@ -13,7 +13,7 @@ export class ActionStartGame extends ActionBase {
     return null;
   }
 
-  execute(parameters: any[]) {
+  execute() {
     const moveData = this.game.getCurrentMoveData();
 
     // draw position tiles

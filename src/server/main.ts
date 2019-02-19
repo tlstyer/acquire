@@ -7,7 +7,7 @@ import { TestUserDataProvider } from './userDataProvider';
 
 const sockjsServer = sockjs.createServer({
   sockjs_url: 'https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.5/sockjs.min.js',
-  log: (severity: string, message: string) => {
+  log: () => {
     // do nothing
   },
 });

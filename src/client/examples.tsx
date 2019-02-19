@@ -401,6 +401,7 @@ function render(props: AllDemoProps) {
   );
 }
 
+// tslint:disable-next-line:variable-name
 function renderComponentForEachProps(Component: any, propsArray: any[], descriptionFunc?: any) {
   const lastIndex = propsArray.length - 1;
 

@@ -9,8 +9,9 @@ import { TileRack } from './TileRack';
 configureEnzyme();
 
 test('renders correctly', () => {
-  // tslint:disable-next-line:no-empty
-  const onTileClicked = (tile: number) => {};
+  const onTileClicked = () => {
+    // do nothing
+  };
 
   const component = renderer.create(
     <TileRack

@@ -1178,7 +1178,7 @@ function expectClientAndUserAndGameData(serverManager: ServerManager, userDatas:
   });
 
   expect(uncircularreferenceifyConnectionIDToClient(serverManager.connectionIDToClient)).toEqual(connectionIDToUCRClient);
-  expect(uncircularreferenceifyUserIDToUser(serverManager.userIDToUser, serverManager.gameIDToGameData)).toEqual(userIDToUCRUser);
+  expect(uncircularreferenceifyUserIDToUser(serverManager.userIDToUser)).toEqual(userIDToUCRUser);
   expect(uncircularreferenceifyGameIDToGameData(serverManager.gameIDToGameData)).toEqual(gameIDTOUCRGameData);
   expect(uncircularreferenceifyGameIDToGameData(serverManager.gameDisplayNumberToGameData)).toEqual(gameDisplayNumberTOUCRGameData);
 }
@@ -1195,7 +1195,7 @@ function uncircularreferenceifyConnectionIDToClient(connectionIDToClient: Map<st
   return connectionIDToUCRClient;
 }
 
-function uncircularreferenceifyUserIDToUser(userIDToUser: Map<number, User>, gameIDToGameData: Map<number, GameData>) {
+function uncircularreferenceifyUserIDToUser(userIDToUser: Map<number, User>) {
   const userIDToUCRUser: UserIDToUCRUser = new Map();
 
   userIDToUser.forEach((user, userID) => {

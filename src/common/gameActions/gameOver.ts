@@ -12,7 +12,7 @@ export class ActionGameOver extends ActionBase {
     return null;
   }
 
-  execute(parameters: any[]): ActionBase[] {
+  execute(): ActionBase[] {
     throw new UserInputError('cannot make any more moves');
   }
 }

@@ -104,7 +104,7 @@ class MoveHistory extends React.PureComponent<MoveHistoryProps> {
 const gameHistoryMessageHandlerLookup = new Map<GameHistoryMessage, (ghmd: GameHistoryMessageData, username: string, key: number) => JSX.Element>([
   [
     GameHistoryMessage.TurnBegan,
-    (ghmd, username, key) => (
+    (_ghmd, username, key) => (
       <div key={key}>
         <fieldset className={style.turnBegan}>
           <legend>{getUsernameSpan(username)}</legend>
@@ -120,7 +120,7 @@ const gameHistoryMessageHandlerLookup = new Map<GameHistoryMessage, (ghmd: GameH
       </div>
     ),
   ],
-  [GameHistoryMessage.StartedGame, (ghmd, username, key) => <div key={key}>{getUsernameSpan(username)} started the game.</div>],
+  [GameHistoryMessage.StartedGame, (_ghmd, username, key) => <div key={key}>{getUsernameSpan(username)} started the game.</div>],
   [
     GameHistoryMessage.DrewTile,
     (ghmd, username, key) => (
@@ -129,7 +129,7 @@ const gameHistoryMessageHandlerLookup = new Map<GameHistoryMessage, (ghmd: GameH
       </div>
     ),
   ],
-  [GameHistoryMessage.HasNoPlayableTile, (ghmd, username, key) => <div key={key}>{getUsernameSpan(username)} has no playable tile.</div>],
+  [GameHistoryMessage.HasNoPlayableTile, (_ghmd, username, key) => <div key={key}>{getUsernameSpan(username)} has no playable tile.</div>],
   [
     GameHistoryMessage.PlayedTile,
     (ghmd, username, key) => (
@@ -204,7 +204,7 @@ const gameHistoryMessageHandlerLookup = new Map<GameHistoryMessage, (ghmd: GameH
       </div>
     ),
   ],
-  [GameHistoryMessage.CouldNotAffordAnyShares, (ghmd, username, key) => <div key={key}>{getUsernameSpan(username)} could not afford any shares.</div>],
+  [GameHistoryMessage.CouldNotAffordAnyShares, (_ghmd, username, key) => <div key={key}>{getUsernameSpan(username)} could not afford any shares.</div>],
   [
     GameHistoryMessage.PurchasedShares,
     (ghmd, username, key) => {
@@ -234,7 +234,7 @@ const gameHistoryMessageHandlerLookup = new Map<GameHistoryMessage, (ghmd: GameH
       }
     },
   ],
-  [GameHistoryMessage.DrewLastTile, (ghmd, username, key) => <div key={key}>{getUsernameSpan(username)} drew the last tile from the tile bag.</div>],
+  [GameHistoryMessage.DrewLastTile, (_ghmd, username, key) => <div key={key}>{getUsernameSpan(username)} drew the last tile from the tile bag.</div>],
   [
     GameHistoryMessage.ReplacedDeadTile,
     (ghmd, username, key) => (
@@ -243,7 +243,7 @@ const gameHistoryMessageHandlerLookup = new Map<GameHistoryMessage, (ghmd: GameH
       </div>
     ),
   ],
-  [GameHistoryMessage.EndedGame, (ghmd, username, key) => <div key={key}>{getUsernameSpan(username)} ended the game.</div>],
-  [GameHistoryMessage.NoTilesPlayedForEntireRound, (ghmd, username, key) => <div key={key}>No tiles played for an entire round. Game end forced.</div>],
-  [GameHistoryMessage.AllTilesPlayed, (ghmd, username, key) => <div key={key}>All tiles have been played. Game end forced.</div>],
+  [GameHistoryMessage.EndedGame, (_ghmd, username, key) => <div key={key}>{getUsernameSpan(username)} ended the game.</div>],
+  [GameHistoryMessage.NoTilesPlayedForEntireRound, (_ghmd, _username, key) => <div key={key}>No tiles played for an entire round. Game end forced.</div>],
+  [GameHistoryMessage.AllTilesPlayed, (_ghmd, _username, key) => <div key={key}>All tiles have been played. Game end forced.</div>],
 ]);
