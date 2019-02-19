@@ -768,9 +768,7 @@ describe('join game', () => {
 
     otherConnection.sendMessage([MessageToServer.JoinGame, 1]);
 
-    expect(otherConnection.receivedMessages.length).toBe(1);
-    expect(otherConnection.receivedMessages[0]).toEqual([[MessageToClient.FatalError, ErrorCode.InvalidMessage]]);
-    expect(otherConnection.readyState).toBe(WebSocket.CLOSED);
+    expectClientKickedDueToInvalidMessage(otherConnection);
   });
 
   test('sends MessageToClient.GameSetupChanged when successful', async () => {
@@ -832,9 +830,7 @@ describe('unjoin game', () => {
 
     otherConnection.sendMessage([MessageToServer.UnjoinGame, 1]);
 
-    expect(otherConnection.receivedMessages.length).toBe(1);
-    expect(otherConnection.receivedMessages[0]).toEqual([[MessageToClient.FatalError, ErrorCode.InvalidMessage]]);
-    expect(otherConnection.readyState).toBe(WebSocket.CLOSED);
+    expectClientKickedDueToInvalidMessage(otherConnection);
   });
 
   test('sends MessageToClient.GameSetupChanged when successful', async () => {
@@ -896,9 +892,7 @@ describe('approve of game setup', () => {
 
     otherConnection.sendMessage([MessageToServer.ApproveOfGameSetup, 1]);
 
-    expect(otherConnection.receivedMessages.length).toBe(1);
-    expect(otherConnection.receivedMessages[0]).toEqual([[MessageToClient.FatalError, ErrorCode.InvalidMessage]]);
-    expect(otherConnection.readyState).toBe(WebSocket.CLOSED);
+    expectClientKickedDueToInvalidMessage(otherConnection);
   });
 
   test('sends MessageToClient.GameSetupChanged when successful', async () => {
@@ -960,9 +954,7 @@ describe('change game mode', () => {
 
     otherConnection.sendMessage([MessageToServer.ChangeGameMode, GameMode.Singles3]);
 
-    expect(otherConnection.receivedMessages.length).toBe(1);
-    expect(otherConnection.receivedMessages[0]).toEqual([[MessageToClient.FatalError, ErrorCode.InvalidMessage]]);
-    expect(otherConnection.readyState).toBe(WebSocket.CLOSED);
+    expectClientKickedDueToInvalidMessage(otherConnection);
   });
 
   test('kicks client when the host and sending invalid message', async () => {
@@ -974,9 +966,7 @@ describe('change game mode', () => {
 
     hostConnection.sendMessage([MessageToServer.ChangeGameMode]);
 
-    expect(hostConnection.receivedMessages.length).toBe(1);
-    expect(hostConnection.receivedMessages[0]).toEqual([[MessageToClient.FatalError, ErrorCode.InvalidMessage]]);
-    expect(hostConnection.readyState).toBe(WebSocket.CLOSED);
+    expectClientKickedDueToInvalidMessage(hostConnection);
   });
 
   test('sends MessageToClient.GameSetupChanged when successful', async () => {
@@ -1038,9 +1028,7 @@ describe('change player arrangement mode', () => {
 
     otherConnection.sendMessage([MessageToServer.ChangePlayerArrangementMode, PlayerArrangementMode.ExactOrder]);
 
-    expect(otherConnection.receivedMessages.length).toBe(1);
-    expect(otherConnection.receivedMessages[0]).toEqual([[MessageToClient.FatalError, ErrorCode.InvalidMessage]]);
-    expect(otherConnection.readyState).toBe(WebSocket.CLOSED);
+    expectClientKickedDueToInvalidMessage(otherConnection);
   });
 
   test('kicks client when the host and sending invalid message', async () => {
@@ -1052,9 +1040,7 @@ describe('change player arrangement mode', () => {
 
     hostConnection.sendMessage([MessageToServer.ChangePlayerArrangementMode]);
 
-    expect(hostConnection.receivedMessages.length).toBe(1);
-    expect(hostConnection.receivedMessages[0]).toEqual([[MessageToClient.FatalError, ErrorCode.InvalidMessage]]);
-    expect(hostConnection.readyState).toBe(WebSocket.CLOSED);
+    expectClientKickedDueToInvalidMessage(hostConnection);
   });
 
   test('sends MessageToClient.GameSetupChanged when successful', async () => {
@@ -1116,9 +1102,7 @@ describe('swap positions', () => {
 
     otherConnection.sendMessage([MessageToServer.SwapPositions, 0, 1]);
 
-    expect(otherConnection.receivedMessages.length).toBe(1);
-    expect(otherConnection.receivedMessages[0]).toEqual([[MessageToClient.FatalError, ErrorCode.InvalidMessage]]);
-    expect(otherConnection.readyState).toBe(WebSocket.CLOSED);
+    expectClientKickedDueToInvalidMessage(otherConnection);
   });
 
   test('kicks client when the host and sending invalid message', async () => {
@@ -1130,9 +1114,7 @@ describe('swap positions', () => {
 
     hostConnection.sendMessage([MessageToServer.SwapPositions]);
 
-    expect(hostConnection.receivedMessages.length).toBe(1);
-    expect(hostConnection.receivedMessages[0]).toEqual([[MessageToClient.FatalError, ErrorCode.InvalidMessage]]);
-    expect(hostConnection.readyState).toBe(WebSocket.CLOSED);
+    expectClientKickedDueToInvalidMessage(hostConnection);
   });
 
   test('sends MessageToClient.GameSetupChanged when successful', async () => {
@@ -1194,9 +1176,7 @@ describe('kick user', () => {
 
     otherConnection.sendMessage([MessageToServer.KickUser, 2]);
 
-    expect(otherConnection.receivedMessages.length).toBe(1);
-    expect(otherConnection.receivedMessages[0]).toEqual([[MessageToClient.FatalError, ErrorCode.InvalidMessage]]);
-    expect(otherConnection.readyState).toBe(WebSocket.CLOSED);
+    expectClientKickedDueToInvalidMessage(otherConnection);
   });
 
   test('kicks client when the host and sending invalid message', async () => {
@@ -1208,9 +1188,7 @@ describe('kick user', () => {
 
     hostConnection.sendMessage([MessageToServer.KickUser]);
 
-    expect(hostConnection.receivedMessages.length).toBe(1);
-    expect(hostConnection.receivedMessages[0]).toEqual([[MessageToClient.FatalError, ErrorCode.InvalidMessage]]);
-    expect(hostConnection.readyState).toBe(WebSocket.CLOSED);
+    expectClientKickedDueToInvalidMessage(hostConnection);
   });
 
   test('sends MessageToClient.GameSetupChanged when successful', async () => {
