@@ -160,7 +160,7 @@ Client sends:
 
 - MessageToServer.DoGameAction
 - Move history size
-- Game action parameters
+- Include game action parameters
 
 Server sends all clients:
 

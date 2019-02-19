@@ -74,6 +74,48 @@ function getServerManagerAndStuff() {
   return { serverManager, server, userDataProvider };
 }
 
+async function getServerManagerAndStuffAfterAllApprovedOfGameSetup() {
+  const { serverManager, server } = getServerManagerAndStuff();
+  Date.now = () => 1234567890;
+  Math.random = () => 0.1;
+
+  const hostConnection = await connectToServer(server, 'host');
+  const opponentConnection = await connectToServer(server, 'opponent');
+  const anotherConnection = await connectToServer(server, 'another');
+  hostConnection.sendMessage([MessageToServer.CreateGame, GameMode.Singles2]);
+  opponentConnection.sendMessage([MessageToServer.EnterGame, 1]);
+  opponentConnection.sendMessage([MessageToServer.JoinGame]);
+
+  hostConnection.sendMessage([MessageToServer.ApproveOfGameSetup]);
+
+  hostConnection.clearReceivedMessages();
+  opponentConnection.clearReceivedMessages();
+  anotherConnection.clearReceivedMessages();
+  opponentConnection.sendMessage([MessageToServer.ApproveOfGameSetup]);
+
+  return {
+    serverManager,
+    hostConnection,
+    opponentConnection,
+    anotherConnection,
+  };
+}
+
+async function getServerManagerAndStuffAfterGameStarted() {
+  const { serverManager, hostConnection, opponentConnection, anotherConnection } = await getServerManagerAndStuffAfterAllApprovedOfGameSetup();
+
+  hostConnection.clearReceivedMessages();
+  opponentConnection.clearReceivedMessages();
+  anotherConnection.clearReceivedMessages();
+
+  return {
+    serverManager,
+    hostConnection,
+    opponentConnection,
+    anotherConnection,
+  };
+}
+
 class ClientData {
   constructor(public clientID: number, public connection: TestConnection, public gameID?: number) {}
 }
@@ -216,6 +258,12 @@ async function connectToServer(server: TestServer, username: string) {
   return connection;
 }
 
+function expectClientKickedDueToInvalidMessage(connection: TestConnection) {
+  expect(connection.receivedMessages.length).toBe(1);
+  expect(connection.receivedMessages[0]).toEqual([[MessageToClient.FatalError, ErrorCode.InvalidMessage]]);
+  expect(connection.readyState).toBe(WebSocket.CLOSED);
+}
+
 async function expectKicksClientDueToInvalidMessage(message: any[]) {
   const { server } = getServerManagerAndStuff();
 
@@ -224,9 +272,7 @@ async function expectKicksClientDueToInvalidMessage(message: any[]) {
 
   connection.sendMessage(message);
 
-  expect(connection.receivedMessages.length).toBe(1);
-  expect(connection.receivedMessages[0]).toEqual([[MessageToClient.FatalError, ErrorCode.InvalidMessage]]);
-  expect(connection.readyState).toBe(WebSocket.CLOSED);
+  expectClientKickedDueToInvalidMessage(connection);
 }
 
 describe('when not sending first message', () => {
@@ -1203,23 +1249,7 @@ describe('kick user', () => {
 
 describe('all approve of game setup', () => {
   test('sends MessageToClient.GameStarted and MessageToClient.GameActionDone', async () => {
-    const { serverManager, server } = getServerManagerAndStuff();
-    Date.now = () => 1234567890;
-    Math.random = () => 0.1;
-
-    const hostConnection = await connectToServer(server, 'host');
-    const opponentConnection = await connectToServer(server, 'opponent');
-    const anotherConnection = await connectToServer(server, 'another');
-    hostConnection.sendMessage([MessageToServer.CreateGame, GameMode.Singles2]);
-    opponentConnection.sendMessage([MessageToServer.EnterGame, 1]);
-    opponentConnection.sendMessage([MessageToServer.JoinGame]);
-
-    hostConnection.sendMessage([MessageToServer.ApproveOfGameSetup]);
-
-    hostConnection.clearReceivedMessages();
-    opponentConnection.clearReceivedMessages();
-    anotherConnection.clearReceivedMessages();
-    opponentConnection.sendMessage([MessageToServer.ApproveOfGameSetup]);
+    const { serverManager, hostConnection, opponentConnection, anotherConnection } = await getServerManagerAndStuffAfterAllApprovedOfGameSetup();
 
     expect(hostConnection.receivedMessages.length).toBe(2);
     expect(opponentConnection.receivedMessages.length).toBe(2);
@@ -1253,5 +1283,107 @@ describe('all approve of game setup', () => {
     const gameData = serverManager.gameDisplayNumberToGameData.get(1)!;
     expect(gameData.gameSetup).toBe(null);
     expect(gameData.game).not.toBe(null);
+  });
+});
+
+describe('do game action', () => {
+  test('does nothing when not in a game room', async () => {
+    const { server } = getServerManagerAndStuff();
+
+    const connection = await connectToServer(server, 'user');
+    connection.clearReceivedMessages();
+
+    connection.sendMessage([MessageToServer.DoGameAction, 2, []]);
+
+    expect(connection.receivedMessages.length).toBe(0);
+    expect(connection.readyState).toBe(WebSocket.OPEN);
+  });
+
+  test('does nothing when in game setup', async () => {
+    const { server } = getServerManagerAndStuff();
+
+    const connection = await connectToServer(server, 'user');
+    connection.sendMessage([MessageToServer.CreateGame, GameMode.Singles2]);
+    connection.clearReceivedMessages();
+
+    connection.sendMessage([MessageToServer.DoGameAction, 2, []]);
+
+    expect(connection.receivedMessages.length).toBe(0);
+    expect(connection.readyState).toBe(WebSocket.OPEN);
+  });
+
+  test('kicks client due to invalid message when parameters array is too short', async () => {
+    const { hostConnection } = await getServerManagerAndStuffAfterGameStarted();
+
+    hostConnection.sendMessage([MessageToServer.DoGameAction]);
+
+    expectClientKickedDueToInvalidMessage(hostConnection);
+  });
+
+  test('kicks client due to invalid message when move history size is not an integer', async () => {
+    const { hostConnection } = await getServerManagerAndStuffAfterGameStarted();
+
+    hostConnection.sendMessage([MessageToServer.DoGameAction, null]);
+
+    expectClientKickedDueToInvalidMessage(hostConnection);
+  });
+
+  test('kicks client due to invalid message when move history size is negative', async () => {
+    const { hostConnection } = await getServerManagerAndStuffAfterGameStarted();
+
+    hostConnection.sendMessage([MessageToServer.DoGameAction, -1]);
+
+    expectClientKickedDueToInvalidMessage(hostConnection);
+  });
+
+  test('does nothing when move history size is less than the move history size of the game', async () => {
+    const { hostConnection } = await getServerManagerAndStuffAfterGameStarted();
+
+    hostConnection.sendMessage([MessageToServer.DoGameAction, 0]);
+
+    expect(hostConnection.receivedMessages.length).toBe(0);
+    expect(hostConnection.readyState).toBe(WebSocket.OPEN);
+  });
+
+  test('does nothing when move history size is greater than the move history size of the game', async () => {
+    const { hostConnection } = await getServerManagerAndStuffAfterGameStarted();
+
+    hostConnection.sendMessage([MessageToServer.DoGameAction, 2]);
+
+    expect(hostConnection.receivedMessages.length).toBe(0);
+    expect(hostConnection.readyState).toBe(WebSocket.OPEN);
+  });
+
+  test("does nothing when not player's turn", async () => {
+    const { hostConnection } = await getServerManagerAndStuffAfterGameStarted();
+
+    hostConnection.sendMessage([MessageToServer.DoGameAction, 1]);
+
+    expect(hostConnection.receivedMessages.length).toBe(0);
+    expect(hostConnection.readyState).toBe(WebSocket.OPEN);
+  });
+
+  test('kicks client due to invalid message when providing invalid game action parameters', async () => {
+    const { opponentConnection } = await getServerManagerAndStuffAfterGameStarted();
+
+    opponentConnection.sendMessage([MessageToServer.DoGameAction, 1, 108]);
+
+    expectClientKickedDueToInvalidMessage(opponentConnection);
+  });
+
+  test('does game action when providing valid game action parameters', async () => {
+    const { hostConnection, opponentConnection, anotherConnection } = await getServerManagerAndStuffAfterGameStarted();
+
+    Date.now = () => 1234567890 + 1000;
+
+    opponentConnection.sendMessage([MessageToServer.DoGameAction, 1, 29]);
+
+    expect(hostConnection.receivedMessages.length).toBe(1);
+    expect(opponentConnection.receivedMessages.length).toBe(1);
+    expect(anotherConnection.receivedMessages.length).toBe(1);
+
+    expect(hostConnection.receivedMessages[0]).toEqual([[MessageToClient.GameActionDone, 1, [29], 1000, [[29, 0]], [-1], 1]]);
+    expect(opponentConnection.receivedMessages[0]).toEqual([[MessageToClient.GameActionDone, 1, [29], 1000, [], [15], 1]]);
+    expect(anotherConnection.receivedMessages[0]).toEqual([[MessageToClient.GameActionDone, 1, [29], 1000, [[29, 0]], [-1], 1]]);
   });
 });

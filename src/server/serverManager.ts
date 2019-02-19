@@ -40,6 +40,7 @@ export class ServerManager {
       [MessageToServer.ChangePlayerArrangementMode, this.onMessageChangePlayerArrangementMode],
       [MessageToServer.SwapPositions, this.onMessageSwapPositions],
       [MessageToServer.KickUser, this.onMessageKickUser],
+      [MessageToServer.DoGameAction, this.onMessageDoGameAction],
     ]);
   }
 
@@ -547,6 +548,49 @@ export class ServerManager {
 
       this.sendGameSetupChanges(gameData);
     }
+  }
+
+  onMessageDoGameAction(client: Client, params: any[]) {
+    const gameData = client.gameData;
+    if (gameData === null) {
+      return;
+    }
+
+    const game = gameData.game;
+    if (game === null) {
+      return;
+    }
+
+    if (params.length === 0) {
+      this.kickWithError(client.connection, ErrorCode.InvalidMessage);
+      return;
+    }
+
+    const moveHistorySize: number = params[0];
+    if (!Number.isInteger(moveHistorySize) || moveHistorySize < 0) {
+      this.kickWithError(client.connection, ErrorCode.InvalidMessage);
+      return;
+    }
+
+    if (moveHistorySize !== game.moveDataHistory.size) {
+      return;
+    }
+
+    const playerID = game.userIDs.indexOf(client.user.id);
+    const currentAction = game.gameActionStack[game.gameActionStack.length - 1];
+    if (playerID !== currentAction.playerID) {
+      return;
+    }
+
+    const gameActionParameters = params.slice(1);
+    try {
+      game.doGameAction(gameActionParameters, Date.now());
+    } catch (e) {
+      this.kickWithError(client.connection, ErrorCode.InvalidMessage);
+      return;
+    }
+
+    this.sendLastGameMoveDataMessage(gameData);
   }
 
   sendGameSetupChanges(gameData: GameData) {
