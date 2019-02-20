@@ -65,14 +65,18 @@ On successful connection request, server sends:
   - 0 for game being set up or 1 for game
   - Game ID
   - Game display number
-  - If game being set up, include:
-    - JSON parameters from GameSetup
+  - If game being set up, include JSON parameters from GameSetup:
+    - Game mode
+    - Player arrangement mode
+    - Host user ID
+    - User IDs
+    - Approvals
   - If game, include:
     - Array of move history messages (skipping the messages the client already knows)
     - Game mode (excluded if client knows about this game)
     - Player arrangement mode (excluded if client knows about this game)
-    - User IDs (excluded if client knows about this game)
     - Host user ID (excluded if client knows about this game)
+    - User IDs (excluded if client knows about this game)
 
 On successful connection request, server sends other clients:
 
@@ -140,7 +144,9 @@ Server sends all clients:
 
 - MessageToClient.GameSetupChanged
 - Game display number
-- GameSetup change message
+- Include GameSetup change message:
+  - GameSetupChange.UserAdded or GameSetupChange.UserRemoved or GameSetupChange.UserApprovedOfGameSetup or GameSetupChange.GameModeChanged or GameSetupChange.PlayerArrangementModeChanged or GameSetupChange.PositionsSwapped or GameSetupChange.UserKicked
+  - Include game setup change specific parameters
 
 ## All users in a game approve of the game setup
 
