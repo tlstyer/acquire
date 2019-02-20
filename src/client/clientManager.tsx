@@ -103,7 +103,7 @@ export class ClientManager {
 
   onSubmitLoginForm = (username: string, password: string) => {
     this.errorCode = null;
-    this.page = ClientManagerPage.Connecting;
+    this.setPage(ClientManagerPage.Connecting);
 
     this.username = username;
     this.password = password;
@@ -430,7 +430,7 @@ export class ClientManager {
 
     this.myClient = this.clientIDToClient.get(myClientID)!;
 
-    this.page = this.myClient.gameData !== null ? ClientManagerPage.Game : ClientManagerPage.Lobby;
+    this.setPage(this.myClient.gameData !== null ? ClientManagerPage.Game : ClientManagerPage.Lobby);
   }
 
   onMessageClientConnected(clientID: number, userID: number, username?: string) {
@@ -476,7 +476,7 @@ export class ClientManager {
     gameData.clients.add(client);
 
     if (client === this.myClient) {
-      this.page = ClientManagerPage.Game;
+      this.setPage(ClientManagerPage.Game);
     }
   }
 
@@ -488,7 +488,7 @@ export class ClientManager {
     gameData.clients.delete(client);
 
     if (client === this.myClient) {
-      this.page = ClientManagerPage.Lobby;
+      this.setPage(ClientManagerPage.Lobby);
     }
   }
 
@@ -538,14 +538,18 @@ export class ClientManager {
     this.socket = null;
 
     if (this.errorCode !== null) {
-      this.page = ClientManagerPage.Login;
+      this.setPage(ClientManagerPage.Login);
     } else if (this.page === ClientManagerPage.Connecting) {
       this.errorCode = ErrorCode.CouldNotConnect;
-      this.page = ClientManagerPage.Login;
+      this.setPage(ClientManagerPage.Login);
     }
 
     this.render();
   };
+
+  setPage(page: ClientManagerPage) {
+    this.page = page;
+  }
 
   isConnected() {
     return this.socket !== null && this.socket.readyState === WebSocket.OPEN;
