@@ -597,7 +597,7 @@ describe('MessageToClient.ClientEnteredGame', () => {
     testConnection.triggerMessage([[MessageToClient.ClientConnected, 4, 3, 'user 3']]);
     testConnection.triggerMessage([[MessageToClient.GameCreated, 10, 1, GameMode.Teams2vs2, 2], [MessageToClient.ClientEnteredGame, 2, 1]]);
 
-    expect(clientManager.page).toBe(ClientManagerPage.Game);
+    expect(clientManager.page).toBe(ClientManagerPage.GameSetup);
     expectClientAndUserAndGameData(
       clientManager,
       [new UserData(1, 'me', [new ClientData(2, 10)]), new UserData(3, 'user 3', [new ClientData(4)])],
@@ -638,7 +638,7 @@ describe('MessageToClient.ClientExitedGame', () => {
       ],
     ]);
 
-    expect(clientManager.page).toBe(ClientManagerPage.Game);
+    expect(clientManager.page).toBe(ClientManagerPage.GameSetup);
     expectClientAndUserAndGameData(
       clientManager,
       [new UserData(1, 'user 1', [new ClientData(1, 10)]), new UserData(2, 'me', [new ClientData(2, 10)])],
@@ -669,7 +669,7 @@ describe('MessageToClient.ClientExitedGame', () => {
       ],
     ]);
 
-    expect(clientManager.page).toBe(ClientManagerPage.Game);
+    expect(clientManager.page).toBe(ClientManagerPage.GameSetup);
     expectClientAndUserAndGameData(
       clientManager,
       [new UserData(1, 'user 1', [new ClientData(1, 10)]), new UserData(2, 'me', [new ClientData(2, 10)])],
@@ -678,7 +678,7 @@ describe('MessageToClient.ClientExitedGame', () => {
 
     testConnection.triggerMessage([[MessageToClient.ClientExitedGame, 1]]);
 
-    expect(clientManager.page).toBe(ClientManagerPage.Game);
+    expect(clientManager.page).toBe(ClientManagerPage.GameSetup);
     expectClientAndUserAndGameData(
       clientManager,
       [new UserData(1, 'user 1', [new ClientData(1)]), new UserData(2, 'me', [new ClientData(2, 10)])],

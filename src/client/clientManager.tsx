@@ -24,6 +24,7 @@ export enum ClientManagerPage {
   Login,
   Connecting,
   Lobby,
+  GameSetup,
   Game,
 }
 
@@ -50,6 +51,7 @@ export class ClientManager {
       [ClientManagerPage.Login, this.renderLoginPage],
       [ClientManagerPage.Connecting, this.renderConnectingPage],
       [ClientManagerPage.Lobby, this.renderLobbyPage],
+      [ClientManagerPage.GameSetup, this.renderGameSetupPage],
       [ClientManagerPage.Game, this.renderGamePage],
     ]);
 
@@ -156,23 +158,13 @@ export class ClientManager {
     }
   };
 
-  renderGamePage = () => {
-    const gameData = this.myClient!.gameData!;
-
-    if (gameData.game !== null) {
-      return this.renderGamePageGame();
-    } else {
-      return this.renderGamePageGameSetup();
-    }
-  };
-
   onExitGameClicked = () => {
     if (this.isConnected()) {
       this.socket!.send(JSON.stringify([MessageToServer.ExitGame]));
     }
   };
 
-  renderGamePageGameSetup() {
+  renderGameSetupPage = () => {
     const gameSetup = this.myClient!.gameData!.gameSetup!;
     const myUserID = this.myClient!.user.id;
     const isHost = myUserID === gameSetup.hostUserID;
@@ -212,7 +204,7 @@ export class ClientManager {
         />
       </>
     );
-  }
+  };
 
   onTileClicked = (_tile: number) => {
     // do nothing
@@ -222,7 +214,7 @@ export class ClientManager {
     // do nothing
   };
 
-  renderGamePageGame() {
+  renderGamePage = () => {
     const game = this.myClient!.gameData!.game!;
     const selectedMove = game.moveDataHistory.size - 1;
 
@@ -293,7 +285,7 @@ export class ClientManager {
         </div>
       </div>
     );
-  }
+  };
 
   onJoinGame = () => {
     if (this.isConnected()) {
@@ -430,7 +422,9 @@ export class ClientManager {
 
     this.myClient = this.clientIDToClient.get(myClientID)!;
 
-    this.setPage(this.myClient.gameData !== null ? ClientManagerPage.Game : ClientManagerPage.Lobby);
+    this.setPage(
+      this.myClient.gameData !== null ? (this.myClient.gameData.gameSetup ? ClientManagerPage.GameSetup : ClientManagerPage.Game) : ClientManagerPage.Lobby,
+    );
   }
 
   onMessageClientConnected(clientID: number, userID: number, username?: string) {
@@ -476,7 +470,7 @@ export class ClientManager {
     gameData.clients.add(client);
 
     if (client === this.myClient) {
-      this.setPage(ClientManagerPage.Game);
+      this.setPage(gameData.gameSetup ? ClientManagerPage.GameSetup : ClientManagerPage.Game);
     }
   }
 
@@ -526,6 +520,10 @@ export class ClientManager {
 
     gameData.gameSetup = null;
     gameData.game = game;
+
+    if (this.myClient!.gameData === gameData) {
+      this.setPage(ClientManagerPage.Game);
+    }
   }
 
   onMessageGameActionDone(gameDisplayNumber: number, ...moveDataMessage: any[]) {
