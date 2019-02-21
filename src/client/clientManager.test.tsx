@@ -913,8 +913,10 @@ describe('MessageToClient.GameStarted and MessageToClient.GameActionDone', () =>
         [[0, 10, 1, GameMode.Singles2, PlayerArrangementMode.RandomOrder, 1, [1, 2], [1, 0]]],
       ],
     ]);
-    testConnection.triggerMessage([[MessageToClient.GameStarted, 1, [2, 1]]]);
-    testConnection.triggerMessage([[MessageToClient.GameActionDone, 1, [], 123456789, [], [89, 19, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], 0]]);
+    testConnection.triggerMessage([
+      [MessageToClient.GameStarted, 1, [2, 1]],
+      [MessageToClient.GameActionDone, 1, [], 123456789, [], [89, 19, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], 0],
+    ]);
 
     expectClientAndUserAndGameData(
       clientManager,

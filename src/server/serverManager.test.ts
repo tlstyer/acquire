@@ -1229,9 +1229,9 @@ describe('all approve of game setup', () => {
   test('sends MessageToClient.GameStarted and MessageToClient.GameActionDone', async () => {
     const { serverManager, hostConnection, opponentConnection, anotherConnection } = await getServerManagerAndStuffAfterAllApprovedOfGameSetup();
 
-    expect(hostConnection.receivedMessages.length).toBe(2);
-    expect(opponentConnection.receivedMessages.length).toBe(2);
-    expect(anotherConnection.receivedMessages.length).toBe(2);
+    expect(hostConnection.receivedMessages.length).toBe(1);
+    expect(opponentConnection.receivedMessages.length).toBe(1);
+    expect(anotherConnection.receivedMessages.length).toBe(1);
 
     expectClientAndUserAndGameData(
       serverManager,
@@ -1243,18 +1243,17 @@ describe('all approve of game setup', () => {
       [new GameDataData(10, 1, [1, 2])],
     );
 
-    const expectedMessage = [[MessageToClient.GameStarted, 1, [2, 1]]];
-    expect(hostConnection.receivedMessages[0]).toEqual(expectedMessage);
-    expect(opponentConnection.receivedMessages[0]).toEqual(expectedMessage);
-    expect(anotherConnection.receivedMessages[0]).toEqual(expectedMessage);
-
-    expect(hostConnection.receivedMessages[1]).toEqual([
+    const expectedGameStartedMessage = [MessageToClient.GameStarted, 1, [2, 1]];
+    expect(hostConnection.receivedMessages[0]).toEqual([
+      expectedGameStartedMessage,
       [MessageToClient.GameActionDone, 1, [], Date.now(), [], [89, 19, -1, -1, -1, -1, -1, -1, 0, 99, 11, 12, 13, 14], 0],
     ]);
-    expect(opponentConnection.receivedMessages[1]).toEqual([
+    expect(opponentConnection.receivedMessages[0]).toEqual([
+      expectedGameStartedMessage,
       [MessageToClient.GameActionDone, 1, [], Date.now(), [], [89, 19, 29, 39, 49, 59, 69, 79, -1, -1, -1, -1, -1, -1], 0],
     ]);
-    expect(anotherConnection.receivedMessages[1]).toEqual([
+    expect(anotherConnection.receivedMessages[0]).toEqual([
+      expectedGameStartedMessage,
       [MessageToClient.GameActionDone, 1, [], Date.now(), [], [89, 19, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], 0],
     ]);
 
