@@ -3,12 +3,28 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import * as SockJS from 'sockjs-client';
 import { defaultGameBoard } from '../common/defaults';
-import { ErrorCode, GameAction, GameMode, GameSetupChange, MessageToClient, MessageToServer, PlayerArrangementMode } from '../common/enums';
+import {
+  ErrorCode,
+  GameAction,
+  GameBoardType,
+  GameMode,
+  GameSetupChange,
+  MessageToClient,
+  MessageToServer,
+  PlayerArrangementMode,
+  ScoreBoardIndex,
+} from '../common/enums';
 import { Game } from '../common/game';
+import { ActionDisposeOfShares } from '../common/gameActions/disposeOfShares';
 import { ActionGameOver } from '../common/gameActions/gameOver';
+import { ActionPurchaseShares } from '../common/gameActions/purchaseShares';
+import { ActionSelectChainToDisposeOfNext } from '../common/gameActions/selectChainToDisposeOfNext';
+import { ActionSelectMergerSurvivor } from '../common/gameActions/selectMergerSurvivor';
+import { ActionSelectNewChain } from '../common/gameActions/selectNewChain';
 import { GameSetup } from '../common/gameSetup';
 import * as style from './clientManager.scss';
 import { CreateGame } from './components/CreateGame';
+import { DisposeOfShares } from './components/DisposeOfShares';
 import { GameBoard } from './components/GameBoard';
 import { GameHistory } from './components/GameHistory';
 import { GameListing } from './components/GameListing';
@@ -16,7 +32,9 @@ import { GameSetupUI } from './components/GameSetupUI';
 import { GameState } from './components/GameState';
 import { Header } from './components/Header';
 import { LoginForm } from './components/LoginForm';
+import { PurchaseShares } from './components/PurchaseShares';
 import { ScoreBoard } from './components/ScoreBoard';
+import { SelectChain, SelectChainTitle } from './components/SelectChain';
 import { TileRack } from './components/TileRack';
 import { GameBoardLabelMode, GameStatus } from './enums';
 
@@ -257,10 +275,11 @@ export class ClientManager {
     const playerID = game.userIDs.indexOf(game.myUserID || -1);
 
     const moveData = game.moveDataHistory.get(selectedMove)!;
+    const nextGameAction = moveData.nextGameAction;
 
     let turnPlayerID = moveData.turnPlayerID;
-    let movePlayerID = moveData.nextGameAction.playerID;
-    if (moveData.nextGameAction instanceof ActionGameOver) {
+    let movePlayerID = nextGameAction.playerID;
+    if (nextGameAction instanceof ActionGameOver) {
       turnPlayerID = -1;
       movePlayerID = -1;
     }
@@ -310,14 +329,61 @@ export class ClientManager {
                 tiles={tileRack}
                 types={tileRackTypes}
                 buttonSize={gameBoardCellSize}
-                keyboardShortcutsEnabled={false}
+                keyboardShortcutsEnabled={!!this.myRequiredGameAction}
                 onTileClicked={this.onTileClicked}
               />
             ) : (
               undefined
             )}
+            {this.myRequiredGameAction &&
+              (nextGameAction instanceof ActionSelectNewChain ? (
+                <SelectChain
+                  type={SelectChainTitle.SelectNewChain}
+                  availableChains={nextGameAction.availableChains}
+                  buttonSize={gameBoardCellSize}
+                  keyboardShortcutsEnabled={true}
+                  onChainSelected={this.onChainSelected}
+                />
+              ) : nextGameAction instanceof ActionSelectMergerSurvivor ? (
+                <SelectChain
+                  type={SelectChainTitle.SelectMergerSurvivor}
+                  availableChains={nextGameAction.chainsBySize[0]}
+                  buttonSize={gameBoardCellSize}
+                  keyboardShortcutsEnabled={true}
+                  onChainSelected={this.onChainSelected}
+                />
+              ) : nextGameAction instanceof ActionSelectChainToDisposeOfNext ? (
+                <SelectChain
+                  type={SelectChainTitle.SelectChainToDisposeOfNext}
+                  availableChains={nextGameAction.defunctChains}
+                  buttonSize={gameBoardCellSize}
+                  keyboardShortcutsEnabled={true}
+                  onChainSelected={this.onChainSelected}
+                />
+              ) : nextGameAction instanceof ActionDisposeOfShares ? (
+                <DisposeOfShares
+                  defunctChain={nextGameAction.defunctChain}
+                  controllingChain={nextGameAction.controllingChain}
+                  sharesOwnedInDefunctChain={nextGameAction.sharesOwnedInDefunctChain}
+                  sharesAvailableInControllingChain={nextGameAction.sharesAvailableInControllingChain}
+                  buttonSize={gameBoardCellSize}
+                  keyboardShortcutsEnabled={true}
+                  onSharesDisposed={this.onSharesDisposed}
+                />
+              ) : nextGameAction instanceof ActionPurchaseShares ? (
+                <PurchaseShares
+                  scoreBoardAvailable={game.scoreBoardAvailable}
+                  scoreBoardPrice={game.scoreBoardPrice}
+                  cash={game.scoreBoard.get(playerID)!.get(ScoreBoardIndex.Cash)!}
+                  buttonSize={gameBoardCellSize}
+                  keyboardShortcutsEnabled={true}
+                  onSharesPurchased={this.onSharesPurchased}
+                />
+              ) : (
+                undefined
+              ))}
             <GameHistory usernames={game.usernames} moveDataHistory={game.moveDataHistory} onMoveClicked={this.onMoveClicked} />
-            <GameState usernames={game.usernames} nextGameAction={moveData.nextGameAction} />
+            <GameState usernames={game.usernames} nextGameAction={nextGameAction} />
           </div>
         </div>
       </div>
@@ -327,6 +393,27 @@ export class ClientManager {
   onTileClicked = (tile: number) => {
     if (this.isConnected() && this.myRequiredGameAction === GameAction.PlayTile) {
       this.socket!.send(JSON.stringify([MessageToServer.DoGameAction, this.myClient!.gameData!.game!.moveDataHistory.size, tile]));
+      this.myRequiredGameAction = null;
+    }
+  };
+
+  onChainSelected = (chain: GameBoardType) => {
+    if (this.isConnected()) {
+      this.socket!.send(JSON.stringify([MessageToServer.DoGameAction, this.myClient!.gameData!.game!.moveDataHistory.size, chain]));
+      this.myRequiredGameAction = null;
+    }
+  };
+
+  onSharesDisposed = (traded: number, sold: number) => {
+    if (this.isConnected()) {
+      this.socket!.send(JSON.stringify([MessageToServer.DoGameAction, this.myClient!.gameData!.game!.moveDataHistory.size, traded, sold]));
+      this.myRequiredGameAction = null;
+    }
+  };
+
+  onSharesPurchased = (chains: GameBoardType[], endGame: boolean) => {
+    if (this.isConnected()) {
+      this.socket!.send(JSON.stringify([MessageToServer.DoGameAction, this.myClient!.gameData!.game!.moveDataHistory.size, chains, endGame ? 1 : 0]));
       this.myRequiredGameAction = null;
     }
   };
