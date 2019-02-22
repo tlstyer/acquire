@@ -158,12 +158,6 @@ export class ClientManager {
     }
   };
 
-  onExitGameClicked = () => {
-    if (this.isConnected()) {
-      this.socket!.send(JSON.stringify([MessageToServer.ExitGame]));
-    }
-  };
-
   renderGameSetupPage = () => {
     const gameSetup = this.myClient!.gameData!.gameSetup!;
     const myUserID = this.myClient!.user.id;
@@ -206,12 +200,52 @@ export class ClientManager {
     );
   };
 
-  onTileClicked = (_tile: number) => {
-    // do nothing
+  onExitGameClicked = () => {
+    if (this.isConnected()) {
+      this.socket!.send(JSON.stringify([MessageToServer.ExitGame]));
+    }
   };
 
-  onMoveClicked = (_index: number) => {
-    // do nothing
+  onJoinGame = () => {
+    if (this.isConnected()) {
+      this.socket!.send(JSON.stringify([MessageToServer.JoinGame]));
+    }
+  };
+
+  onUnjoinGame = () => {
+    if (this.isConnected()) {
+      this.socket!.send(JSON.stringify([MessageToServer.UnjoinGame]));
+    }
+  };
+
+  onApproveOfGameSetup = () => {
+    if (this.isConnected()) {
+      this.socket!.send(JSON.stringify([MessageToServer.ApproveOfGameSetup]));
+    }
+  };
+
+  onChangeGameMode = (gameMode: GameMode) => {
+    if (this.isConnected()) {
+      this.socket!.send(JSON.stringify([MessageToServer.ChangeGameMode, gameMode]));
+    }
+  };
+
+  onChangePlayerArrangementMode = (playerArrangementMode: PlayerArrangementMode) => {
+    if (this.isConnected()) {
+      this.socket!.send(JSON.stringify([MessageToServer.ChangePlayerArrangementMode, playerArrangementMode]));
+    }
+  };
+
+  onSwapPositions = (position1: number, position2: number) => {
+    if (this.isConnected()) {
+      this.socket!.send(JSON.stringify([MessageToServer.SwapPositions, position1, position2]));
+    }
+  };
+
+  onKickUser = (userID: number) => {
+    if (this.isConnected()) {
+      this.socket!.send(JSON.stringify([MessageToServer.KickUser, userID]));
+    }
   };
 
   renderGamePage = () => {
@@ -287,46 +321,12 @@ export class ClientManager {
     );
   };
 
-  onJoinGame = () => {
-    if (this.isConnected()) {
-      this.socket!.send(JSON.stringify([MessageToServer.JoinGame]));
-    }
+  onTileClicked = (_tile: number) => {
+    // do nothing
   };
 
-  onUnjoinGame = () => {
-    if (this.isConnected()) {
-      this.socket!.send(JSON.stringify([MessageToServer.UnjoinGame]));
-    }
-  };
-
-  onApproveOfGameSetup = () => {
-    if (this.isConnected()) {
-      this.socket!.send(JSON.stringify([MessageToServer.ApproveOfGameSetup]));
-    }
-  };
-
-  onChangeGameMode = (gameMode: GameMode) => {
-    if (this.isConnected()) {
-      this.socket!.send(JSON.stringify([MessageToServer.ChangeGameMode, gameMode]));
-    }
-  };
-
-  onChangePlayerArrangementMode = (playerArrangementMode: PlayerArrangementMode) => {
-    if (this.isConnected()) {
-      this.socket!.send(JSON.stringify([MessageToServer.ChangePlayerArrangementMode, playerArrangementMode]));
-    }
-  };
-
-  onSwapPositions = (position1: number, position2: number) => {
-    if (this.isConnected()) {
-      this.socket!.send(JSON.stringify([MessageToServer.SwapPositions, position1, position2]));
-    }
-  };
-
-  onKickUser = (userID: number) => {
-    if (this.isConnected()) {
-      this.socket!.send(JSON.stringify([MessageToServer.KickUser, userID]));
-    }
+  onMoveClicked = (_index: number) => {
+    // do nothing
   };
 
   connect = () => {
