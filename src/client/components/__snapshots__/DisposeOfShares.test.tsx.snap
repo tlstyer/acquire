@@ -3,6 +3,11 @@
 exports[`renders correctly 1`] = `
 <div
   className="root"
+  style={
+    Object {
+      "fontSize": 16,
+    }
+  }
 >
   <fieldset
     className="imperial"

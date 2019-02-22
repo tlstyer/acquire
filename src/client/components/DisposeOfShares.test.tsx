@@ -29,6 +29,7 @@ function getNewComponent(
       controllingChain={GameBoardType.Tower}
       sharesOwnedInDefunctChain={sharesOwnedInDefunctChain}
       sharesAvailableInControllingChain={sharesAvailableInControllingChain}
+      buttonSize={40}
       keyboardShortcutsEnabled={false}
       onSharesDisposed={onSharesDisposed}
     />,
@@ -60,6 +61,7 @@ test('renders correctly', () => {
       controllingChain={GameBoardType.Tower}
       sharesOwnedInDefunctChain={7}
       sharesAvailableInControllingChain={2}
+      buttonSize={40}
       keyboardShortcutsEnabled={false}
       onSharesDisposed={onSharesDisposed}
     />,

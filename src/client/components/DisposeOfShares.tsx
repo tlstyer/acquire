@@ -8,6 +8,7 @@ export interface DisposeOfSharesProps {
   controllingChain: GameBoardType;
   sharesOwnedInDefunctChain: number;
   sharesAvailableInControllingChain: number;
+  buttonSize: number;
   keyboardShortcutsEnabled: boolean;
   onSharesDisposed: (traded: number, sold: number) => void;
 }
@@ -121,7 +122,7 @@ export class DisposeOfShares extends React.Component<DisposeOfSharesProps, Dispo
   };
 
   render() {
-    const { defunctChain, controllingChain, sharesOwnedInDefunctChain } = this.props;
+    const { defunctChain, controllingChain, sharesOwnedInDefunctChain, buttonSize } = this.props;
     const { keep, trade, tradeMax, sell, sellMax } = this.state;
 
     const keepAllDisabled = keep === sharesOwnedInDefunctChain;
@@ -131,7 +132,7 @@ export class DisposeOfShares extends React.Component<DisposeOfSharesProps, Dispo
     const sellDecrementDisabled = sell === 0;
 
     return (
-      <div className={style.root}>
+      <div className={style.root} style={{ fontSize: Math.floor(buttonSize * 0.4) }}>
         <fieldset className={gameBoardTypeToCSSClassName.get(defunctChain)}>
           <legend className={gameBoardTypeToCSSClassName.get(defunctChain)}>Keep</legend>
           <span>{keep}</span>
