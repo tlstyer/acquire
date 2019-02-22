@@ -488,7 +488,7 @@ describe('when sending first message', () => {
       await getsLoggedIn('no user data', '', 3);
     });
 
-    test('MessageToClient.Greetings message is correct', async () => {
+    test('MessageToClient.Greetings message is correct (1)', async () => {
       const { serverManager, server } = getServerManagerAndStuff();
 
       await connectToServer(server, 'user 1');
@@ -512,6 +512,87 @@ describe('when sending first message', () => {
           [
             [0, 10, 1, ...serverManager.gameDisplayNumberToGameData.get(1)!.gameSetup!.toJSON()],
             [0, 11, 2, ...serverManager.gameDisplayNumberToGameData.get(2)!.gameSetup!.toJSON()],
+          ],
+        ],
+      ]);
+    });
+
+    test('MessageToClient.Greetings message is correct (2)', async () => {
+      const { server } = getServerManagerAndStuff();
+
+      let now = 1234567890;
+      Date.now = () => now++;
+      Math.random = () => 0.1;
+
+      const connection1 = await connectToServer(server, '1');
+      connection1.sendMessage([MessageToServer.CreateGame, GameMode.Singles4]);
+
+      const connection2 = await connectToServer(server, '2');
+      expect(connection2.receivedMessages).toEqual([
+        [
+          [
+            MessageToClient.Greetings,
+            2,
+            [[1, '1', [[1, 1]]], [2, '2', [[2]]]],
+            [[0, 10, 1, GameMode.Singles4, PlayerArrangementMode.RandomOrder, 1, [1, 0, 0, 0], [0, 0, 0, 0]]],
+          ],
+        ],
+      ]);
+      connection2.sendMessage([MessageToServer.CreateGame, GameMode.Singles1]);
+      connection2.sendMessage([MessageToServer.ApproveOfGameSetup]);
+      connection2.sendMessage([MessageToServer.DoGameAction, 1, 19]);
+      connection2.sendMessage([MessageToServer.DoGameAction, 2, 29]);
+      connection2.sendMessage([MessageToServer.DoGameAction, 3, 39]);
+
+      const connection3 = await connectToServer(server, '3');
+      expect(connection3.receivedMessages).toEqual([
+        [
+          [
+            MessageToClient.Greetings,
+            3,
+            [[1, '1', [[1, 1]]], [2, '2', [[2, 2]]], [3, '3', [[3]]]],
+            [
+              [0, 10, 1, GameMode.Singles4, PlayerArrangementMode.RandomOrder, 1, [1, 0, 0, 0], [0, 0, 0, 0]],
+              [
+                1,
+                11,
+                2,
+                [
+                  [[], 1234567894, [], [89, -1, -1, -1, -1, -1, -1], 0],
+                  [[19], 1, [[19, 0]], [-1], 0],
+                  [[29], 1, [[29, 0]], [-1], 0],
+                  [[39], 1, [[39, 0]], [-1], 0],
+                ],
+                GameMode.Singles1,
+                PlayerArrangementMode.RandomOrder,
+                2,
+                [2],
+              ],
+            ],
+          ],
+        ],
+      ]);
+
+      const connection2b = await connectToServer(server, '2');
+      expect(connection2b.receivedMessages).toEqual([
+        [
+          [
+            MessageToClient.Greetings,
+            4,
+            [[1, '1', [[1, 1]]], [2, '2', [[2, 2], [4]]], [3, '3', [[3]]]],
+            [
+              [0, 10, 1, GameMode.Singles4, PlayerArrangementMode.RandomOrder, 1, [1, 0, 0, 0], [0, 0, 0, 0]],
+              [
+                1,
+                11,
+                2,
+                [[[], 1234567894, [], [89, 19, 29, 39, 49, 59, 69], 0], [[19], 1, [], [79], 0], [[29], 1, [], [0], 0], [[39], 1, [], [99], 0]],
+                GameMode.Singles1,
+                PlayerArrangementMode.RandomOrder,
+                2,
+                [2],
+              ],
+            ],
           ],
         ],
       ]);

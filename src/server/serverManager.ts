@@ -678,9 +678,26 @@ export class ServerManager {
     const games: any[] = [];
     this.gameIDToGameData.forEach(gameData => {
       const message: any[] = [gameData.gameSetup !== null ? 0 : 1, gameData.id, gameData.displayNumber];
+
       if (gameData.gameSetup !== null) {
         message.push(...gameData.gameSetup.toJSON());
+      } else {
+        const game = gameData.game!;
+        const playerID = game.userIDs.indexOf(client.user.id);
+
+        const moveHistoryMessages: any[][] = [];
+        game.moveDataHistory.forEach(moveData => {
+          if (playerID >= 0) {
+            moveHistoryMessages.push(moveData.playerMessages[playerID]);
+          } else {
+            moveHistoryMessages.push(moveData.watcherMessage);
+          }
+        });
+        message.push(moveHistoryMessages);
+
+        message.push(game.gameMode, game.playerArrangementMode, game.hostUserID, game.userIDs);
       }
+
       games.push(message);
     });
 
