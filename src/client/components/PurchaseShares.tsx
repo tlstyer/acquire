@@ -202,10 +202,11 @@ export class PurchaseShares extends React.Component<PurchaseSharesProps, Purchas
             <legend>Available</legend>
             {allChains.map(chain => {
               const numAvailable = scoreBoardAvailable.get(chain, 0);
+              const price = scoreBoardPrice.get(chain, 0);
 
-              if (numAvailable > 0) {
+              if (price > 0 && numAvailable > 0) {
                 const numRemaining = numAvailable - (chainToNumSharesInCart.get(chain) || 0);
-                const canAddThis = numItemsInCart < 3 && numRemaining > 0 && scoreBoardPrice.get(chain, 0) <= left;
+                const canAddThis = numItemsInCart < 3 && numRemaining > 0 && price <= left;
 
                 if (canAddThis) {
                   return (

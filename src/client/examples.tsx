@@ -308,7 +308,7 @@ class AllDemoProps {
         onSharesPurchased,
       },
       {
-        scoreBoardAvailable: List([1, 0, 0, 1, 1, 0, 0]),
+        scoreBoardAvailable: List([1, 23, 6, 1, 1, 4, 1]),
         scoreBoardPrice: List([2, 0, 0, 5, 6, 0, 0]),
         cash: 5,
         buttonSize: 40,
