@@ -392,8 +392,15 @@ export class ClientManager {
 
   onTileClicked = (tile: number) => {
     if (this.isConnected() && this.myRequiredGameAction === GameAction.PlayTile) {
-      this.socket!.send(JSON.stringify([MessageToServer.DoGameAction, this.myClient!.gameData!.game!.moveDataHistory.size, tile]));
-      this.myRequiredGameAction = null;
+      const game = this.myClient!.gameData!.game!;
+      const playerID = game.userIDs.indexOf(game.myUserID || -1);
+      const tileRackIndex = game.tileRacks.get(playerID)!.indexOf(tile);
+      const tileType = game.tileRackTypes.get(playerID)!.get(tileRackIndex)!;
+
+      if (tileType !== GameBoardType.CantPlayEver && tileType !== GameBoardType.CantPlayNow) {
+        this.socket!.send(JSON.stringify([MessageToServer.DoGameAction, game.moveDataHistory.size, tile]));
+        this.myRequiredGameAction = null;
+      }
     }
   };
 
