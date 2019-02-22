@@ -3,7 +3,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import * as SockJS from 'sockjs-client';
 import { defaultGameBoard } from '../common/defaults';
-import { ErrorCode, GameMode, GameSetupChange, MessageToClient, MessageToServer, PlayerArrangementMode } from '../common/enums';
+import { ErrorCode, GameAction, GameMode, GameSetupChange, MessageToClient, MessageToServer, PlayerArrangementMode } from '../common/enums';
 import { Game } from '../common/game';
 import { ActionGameOver } from '../common/gameActions/gameOver';
 import { GameSetup } from '../common/gameSetup';
@@ -45,6 +45,8 @@ export class ClientManager {
 
   renderPageFunctions: Map<ClientManagerPage, () => JSX.Element>;
   onMessageFunctions: Map<MessageToClient, (...params: any[]) => void>;
+
+  myRequiredGameAction: GameAction | null = null;
 
   constructor() {
     this.renderPageFunctions = new Map([
@@ -287,6 +289,7 @@ export class ClientManager {
               tileRack={moveData.tileRacks.get(playerID)}
               labelMode={GameBoardLabelMode.Nothing}
               cellSize={gameBoardCellSize}
+              onCellClicked={this.onTileClicked}
             />
           </div>
           <div className={style.rightSide}>
@@ -321,8 +324,11 @@ export class ClientManager {
     );
   };
 
-  onTileClicked = (_tile: number) => {
-    // do nothing
+  onTileClicked = (tile: number) => {
+    if (this.isConnected() && this.myRequiredGameAction === GameAction.PlayTile) {
+      this.socket!.send(JSON.stringify([MessageToServer.DoGameAction, this.myClient!.gameData!.game!.moveDataHistory.size, tile]));
+      this.myRequiredGameAction = null;
+    }
   };
 
   onMoveClicked = (_index: number) => {
@@ -527,9 +533,14 @@ export class ClientManager {
   }
 
   onMessageGameActionDone(gameDisplayNumber: number, ...moveDataMessage: any[]) {
-    const game = this.gameDisplayNumberToGameData.get(gameDisplayNumber)!.game!;
+    const gameData = this.gameDisplayNumberToGameData.get(gameDisplayNumber)!;
+    const game = gameData.game!;
 
     game.processMoveDataMessage(moveDataMessage);
+
+    if (this.myClient!.gameData === gameData) {
+      this.updateMyRequiredGameAction();
+    }
   }
 
   onSocketClose = () => {
@@ -547,6 +558,20 @@ export class ClientManager {
 
   setPage(page: ClientManagerPage) {
     this.page = page;
+
+    if (page === ClientManagerPage.Game) {
+      this.updateMyRequiredGameAction();
+    } else {
+      this.myRequiredGameAction = null;
+    }
+  }
+
+  updateMyRequiredGameAction() {
+    const game = this.myClient!.gameData!.game!;
+    const playerID = game.userIDs.indexOf(this.myClient!.user.id);
+    const currentAction = game.gameActionStack[game.gameActionStack.length - 1];
+
+    this.myRequiredGameAction = playerID === currentAction.playerID ? currentAction.gameAction : null;
   }
 
   isConnected() {

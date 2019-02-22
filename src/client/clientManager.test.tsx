@@ -1,5 +1,5 @@
 import * as SockJS from 'sockjs-client';
-import { ErrorCode, GameMode, GameSetupChange, MessageToClient, MessageToServer, PlayerArrangementMode } from '../common/enums';
+import { ErrorCode, GameAction, GameMode, GameSetupChange, MessageToClient, MessageToServer, PlayerArrangementMode } from '../common/enums';
 import { Client, ClientManager, ClientManagerPage, GameData, User } from './clientManager';
 
 jest.mock('sockjs-client');
@@ -900,7 +900,7 @@ describe('MessageToClient.GameSetupChanged', () => {
 });
 
 describe('MessageToClient.GameStarted and MessageToClient.GameActionDone', () => {
-  test('messages are processed correctly', () => {
+  test('messages are processed correctly when not in the game', () => {
     const { clientManager, testConnection } = getClientManagerAndStuff();
 
     clientManager.onSubmitLoginForm('me', '');
@@ -918,6 +918,9 @@ describe('MessageToClient.GameStarted and MessageToClient.GameActionDone', () =>
       [MessageToClient.GameActionDone, 1, [], 123456789, [], [89, 19, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], 0],
     ]);
 
+    expect(clientManager.page).toBe(ClientManagerPage.Lobby);
+    expect(clientManager.myRequiredGameAction).toBeNull();
+
     expectClientAndUserAndGameData(
       clientManager,
       [new UserData(1, 'host', [new ClientData(1, 10)]), new UserData(2, 'opponent', [new ClientData(2, 10)]), new UserData(3, 'me', [new ClientData(3)])],
@@ -927,6 +930,32 @@ describe('MessageToClient.GameStarted and MessageToClient.GameActionDone', () =>
     expect(clientManager.userIDToUser.get(1)!.numGames).toBe(1);
     const game = clientManager.gameIDToGameData.get(10)!.game!;
     expect(game.gameMode).toBe(GameMode.Singles2);
+    expect(game.playerArrangementMode).toBe(PlayerArrangementMode.RandomOrder);
+    expect(game.hostUserID).toBe(1);
+  });
+
+  test('messages are processed correctly when in the game', () => {
+    const { clientManager, testConnection } = getClientManagerAndStuff();
+
+    clientManager.onSubmitLoginForm('user', '');
+    testConnection.triggerOpen();
+    testConnection.triggerMessage([
+      [MessageToClient.Greetings, 2, [[1, 'user', [[2]]]], [[0, 1, 1, GameMode.Singles1, PlayerArrangementMode.RandomOrder, 1, [1], [0]]]],
+    ]);
+    testConnection.triggerMessage([[MessageToClient.ClientEnteredGame, 2, 1]]);
+    testConnection.triggerMessage([
+      [MessageToClient.GameStarted, 1, [1]],
+      [MessageToClient.GameActionDone, 1, [], 1550799393696, [], [65, 3, 34, 6, 46, 10, 78], 0],
+    ]);
+
+    expect(clientManager.page).toBe(ClientManagerPage.Game);
+    expect(clientManager.myRequiredGameAction).toBe(GameAction.PlayTile);
+
+    expectClientAndUserAndGameData(clientManager, [new UserData(1, 'user', [new ClientData(2, 1)])], [new GameDataData(1, 1, [1])]);
+
+    expect(clientManager.userIDToUser.get(1)!.numGames).toBe(1);
+    const game = clientManager.gameIDToGameData.get(1)!.game!;
+    expect(game.gameMode).toBe(GameMode.Singles1);
     expect(game.playerArrangementMode).toBe(PlayerArrangementMode.RandomOrder);
     expect(game.hostUserID).toBe(1);
   });
