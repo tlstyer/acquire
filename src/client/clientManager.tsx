@@ -155,14 +155,28 @@ export class ClientManager {
         <CreateGame onSubmit={this.onSubmitCreateGame} />
         {[...this.gameIDToGameData].reverse().map(([gameID, gameData]) => {
           if (gameData.gameSetup !== null) {
+            const gameSetup = gameData.gameSetup;
             return (
               <GameListing
                 key={gameID}
                 gameBoard={defaultGameBoard}
-                usernames={gameData.gameSetup.usernames}
+                usernames={gameSetup.usernames}
                 gameDisplayNumber={gameData.displayNumber}
-                gameMode={gameData.gameSetup.gameMode}
+                gameMode={gameSetup.gameMode}
                 gameStatus={GameStatus.SettingUp}
+                onEnterClicked={gameData.onEnterClicked}
+              />
+            );
+          } else {
+            const game = gameData.game!;
+            return (
+              <GameListing
+                key={gameID}
+                gameBoard={game.gameBoard}
+                usernames={game.usernames}
+                gameDisplayNumber={gameData.displayNumber}
+                gameMode={game.gameMode}
+                gameStatus={game.gameActionStack[0] instanceof ActionGameOver ? GameStatus.Completed : GameStatus.InProgress}
                 onEnterClicked={gameData.onEnterClicked}
               />
             );
@@ -498,6 +512,9 @@ export class ClientManager {
       }
     }
 
+    this.myClient = this.clientIDToClient.get(myClientID)!;
+    const myUserID = this.myClient!.user.id;
+
     for (let i = 0; i < games.length; i++) {
       const gameParams = games[i];
       const isGameSetup = gameParams[0] === 0;
@@ -517,10 +534,28 @@ export class ClientManager {
             this.userIDToUser.get(userID)!.numGames++;
           }
         }
+      } else {
+        const moveDataMessages: any[] = gameParams[3];
+        const gameMode: GameMode = gameParams[4];
+        const playerArrangementMode: PlayerArrangementMode = gameParams[5];
+        const hostUserID: number = gameParams[6];
+        const userIDs: number[] = gameParams[7];
+
+        const usernames: string[] = [];
+        for (let j = 0; j < userIDs.length; j++) {
+          const userID = userIDs[j];
+          this.userIDToUser.get(userID)!.numGames++;
+          usernames.push(this.getUsernameForUserID(userID));
+        }
+
+        gameData.game = new Game(gameMode, playerArrangementMode, [], List(userIDs), List(usernames), hostUserID, myUserID);
+
+        for (let j = 0; j < moveDataMessages.length; j++) {
+          const moveDataMessage = moveDataMessages[j];
+          gameData.game.processMoveDataMessage(moveDataMessage);
+        }
       }
     }
-
-    this.myClient = this.clientIDToClient.get(myClientID)!;
 
     this.setPage(
       this.myClient.gameData !== null ? (this.myClient.gameData.gameSetup ? ClientManagerPage.GameSetup : ClientManagerPage.Game) : ClientManagerPage.Lobby,

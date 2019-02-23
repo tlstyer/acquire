@@ -72,7 +72,7 @@ On successful connection request, server sends:
     - User IDs
     - Approvals
   - If game, include:
-    - Array of move history messages (skipping the messages the client already knows)
+    - Array of move data messages (skipping the messages the client already knows)
     - Game mode (excluded if client knows about this game)
     - Player arrangement mode (excluded if client knows about this game)
     - Host user ID (excluded if client knows about this game)

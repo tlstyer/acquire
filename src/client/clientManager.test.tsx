@@ -1,3 +1,4 @@
+import { List } from 'immutable';
 import * as SockJS from 'sockjs-client';
 import { ErrorCode, GameAction, GameMode, GameSetupChange, MessageToClient, MessageToServer, PlayerArrangementMode } from '../common/enums';
 import { Client, ClientManager, ClientManagerPage, GameData, User } from './clientManager';
@@ -452,7 +453,7 @@ describe('onKickUser', () => {
 });
 
 describe('MessageToClient.Greetings', () => {
-  test('message is processed correctly', () => {
+  test('message is processed correctly (1)', () => {
     const { clientManager, testConnection } = getClientManagerAndStuff();
 
     clientManager.onSubmitLoginForm('me', '');
@@ -488,6 +489,56 @@ describe('MessageToClient.Greetings', () => {
         new UserData(9, 'user 9', []),
       ],
       [new GameDataData(1, 1, [4]), new GameDataData(2, 3, [5, 9])],
+    );
+  });
+
+  test('message is processed correctly (2)', () => {
+    const { clientManager, testConnection } = getClientManagerAndStuff();
+
+    clientManager.onSubmitLoginForm('2', '');
+    testConnection.triggerOpen();
+    testConnection.triggerMessage([
+      [
+        MessageToClient.Greetings,
+        4,
+        [[1, '1', [[1, 1]]], [2, '2', [[2, 2], [4]]], [3, '3', [[3]]]],
+        [
+          [0, 10, 1, GameMode.Singles4, PlayerArrangementMode.RandomOrder, 1, [1, 0, 0, 0], [0, 0, 0, 0]],
+          [
+            1,
+            11,
+            2,
+            [[[], 1234567894, [], [89, 19, 29, 39, 49, 59, 69], 0], [[19], 1, [], [79], 0], [[29], 1, [], [0], 0], [[39], 1, [], [99], 0]],
+            GameMode.Singles1,
+            PlayerArrangementMode.RandomOrder,
+            2,
+            [2],
+          ],
+        ],
+      ],
+    ]);
+
+    expect(clientManager.userIDToUser.get(1)!.numGames).toBe(1);
+    expect(clientManager.userIDToUser.get(2)!.numGames).toBe(1);
+    expect(clientManager.userIDToUser.get(3)!.numGames).toBe(0);
+    expect(clientManager.myClient).toBe(clientManager.clientIDToClient.get(4));
+    const game = clientManager.gameIDToGameData.get(11)!.game!;
+    expect(game).toBeDefined();
+    expect(game.gameMode).toBe(GameMode.Singles1);
+    expect(game.hostUserID).toBe(2);
+    expect(game.moveDataHistory.size).toBe(4);
+    expect(game.myUserID).toBe(2);
+    expect(game.playerArrangementMode).toBe(PlayerArrangementMode.RandomOrder);
+    expect(game.userIDs).toEqual(List([2]));
+    expect(game.usernames).toEqual(List(['2']));
+    expectClientAndUserAndGameData(
+      clientManager,
+      [
+        new UserData(1, '1', [new ClientData(1, 10)]),
+        new UserData(2, '2', [new ClientData(2, 11), new ClientData(4)]),
+        new UserData(3, '3', [new ClientData(3)]),
+      ],
+      [new GameDataData(10, 1, [1]), new GameDataData(11, 2, [2])],
     );
   });
 });
