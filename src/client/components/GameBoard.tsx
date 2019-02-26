@@ -79,13 +79,13 @@ class GameBoardRow extends React.PureComponent<GameBoardRowProps> {
             } else if (gameBoardType <= GameBoardType.Imperial) {
               label = gameBoardTypeToHotelInitial.get(gameBoardType);
             } else {
-              label = '';
+              label = '\u00a0';
             }
           } else if (labelMode === GameBoardLabelMode.Nothing) {
             if (gameBoardType === GameBoardType.Nothing || gameBoardType === GameBoardType.IHaveThis) {
               label = getTileString(tile);
             } else {
-              label = '';
+              label = '\u00a0';
             }
           }
 
