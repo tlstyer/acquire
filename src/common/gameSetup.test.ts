@@ -1,5 +1,5 @@
 import { List } from 'immutable';
-import 'seedrandom';
+import * as seedrandom from 'seedrandom';
 import { GameMode, GameSetupChange, PlayerArrangementMode } from './enums';
 import { GameSetup } from './gameSetup';
 
@@ -652,8 +652,7 @@ describe('getFinalUserIDsAndUsernames', () => {
 
       expect(gameSetup.usernames.toJS()).toEqual(['user 1', 'user 2', 'user 3', 'user 4']);
 
-      // @ts-ignore
-      Math.seedrandom('random');
+      Math.random = seedrandom('random');
 
       const [userIDs, usernames] = gameSetup.getFinalUserIDsAndUsernames();
 
@@ -689,8 +688,7 @@ describe('getFinalUserIDsAndUsernames', () => {
 
       expect(gameSetup.usernames.toJS()).toEqual(['user 1', 'user 2', 'user 3', 'user 4']);
 
-      // @ts-ignore
-      Math.seedrandom('random');
+      Math.random = seedrandom('random');
 
       const [userIDs, usernames] = gameSetup.getFinalUserIDsAndUsernames();
 
@@ -709,8 +707,7 @@ describe('getFinalUserIDsAndUsernames', () => {
 
       expect(gameSetup.usernames.toJS()).toEqual(['user 1', 'user 2', 'user 3', 'user 4', 'user 5', 'user 6']);
 
-      // @ts-ignore
-      Math.seedrandom('random');
+      Math.random = seedrandom('random');
 
       const [userIDs, usernames] = gameSetup.getFinalUserIDsAndUsernames();
 
@@ -729,8 +726,7 @@ describe('getFinalUserIDsAndUsernames', () => {
 
       expect(gameSetup.usernames.toJS()).toEqual(['user 1', 'user 2', 'user 3', 'user 4', 'user 5', 'user 6']);
 
-      // @ts-ignore
-      Math.seedrandom('random!!!!');
+      Math.random = seedrandom('random!!!!');
 
       const [userIDs, usernames] = gameSetup.getFinalUserIDsAndUsernames();
 
