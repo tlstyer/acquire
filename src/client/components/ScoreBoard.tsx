@@ -189,12 +189,12 @@ class ScoreBoardRow extends React.PureComponent<ScoreBoardRowProps> {
           );
         })}
         {scoreBoardRow.size === ScoreBoardIndex.Max ? (
-          <td className={defaultClassName}>{scoreBoardRow.get(7)! * 100}</td>
+          <td className={defaultClassName}>{scoreBoardRow.get(ScoreBoardIndex.Cash)! * 100}</td>
         ) : (
           <td className={style.bottomRightCells}>{teamNumber !== undefined ? `Team ${teamNumber}` : undefined}</td>
         )}
         {scoreBoardRow.size === ScoreBoardIndex.Max ? (
-          <td className={defaultClassName}>{scoreBoardRow.get(8)! * 100}</td>
+          <td className={defaultClassName}>{scoreBoardRow.get(ScoreBoardIndex.Net)! * 100}</td>
         ) : (
           <td className={teamNumber !== undefined ? teamNumberToCSSClassName.get(teamNumber) : style.bottomRightCells}>
             {teamTotal !== undefined ? teamTotal * 100 : undefined}
