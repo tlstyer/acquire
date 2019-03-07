@@ -1,4 +1,3 @@
-import { defaultScoreBoardRow } from '../defaults';
 import { GameAction, GameBoardType, GameHistoryMessage, ScoreBoardIndex } from '../enums';
 import { UserInputError } from '../error';
 import { Game } from '../game';
@@ -17,7 +16,7 @@ export class ActionPurchaseShares extends ActionBase {
   prepare() {
     // set corresponding score board chain size to 0 if the game board doesn't have any cells of a given type
     for (let type = 0; type <= GameBoardType.Imperial; type++) {
-      if (this.game.gameBoardTypeCounts[type] === 0 && this.game.scoreBoardChainSize.get(type, 0) > 0) {
+      if (this.game.gameBoardTypeCounts[type] === 0 && this.game.scoreBoardChainSize.get(type)! > 0) {
         this.game.setChainSize(type, 0);
       }
     }
@@ -29,9 +28,9 @@ export class ActionPurchaseShares extends ActionBase {
     let hasChainSizeGreaterThan40 = false;
     let sharesAvailable = false;
     let canPurchaseShares = false;
-    const cash = this.game.scoreBoard.get(this.playerID, defaultScoreBoardRow).get(ScoreBoardIndex.Cash, 0);
+    const cash = this.game.scoreBoard.get(this.playerID)!.get(ScoreBoardIndex.Cash)!;
     for (let type = 0; type <= GameBoardType.Imperial; type++) {
-      const chainSize = this.game.scoreBoardChainSize.get(type, 0);
+      const chainSize = this.game.scoreBoardChainSize.get(type)!;
       if (chainSize > 0) {
         hasChainSize = true;
         if (chainSize < 11) {
@@ -41,11 +40,11 @@ export class ActionPurchaseShares extends ActionBase {
           hasChainSizeGreaterThan40 = true;
         }
 
-        const available = this.game.scoreBoardAvailable.get(type, 0);
+        const available = this.game.scoreBoardAvailable.get(type)!;
         if (available > 0) {
           sharesAvailable = true;
 
-          const price = this.game.scoreBoardPrice.get(type, 0);
+          const price = this.game.scoreBoardPrice.get(type)!;
           if (price <= cash) {
             canPurchaseShares = true;
           }
@@ -103,16 +102,16 @@ export class ActionPurchaseShares extends ActionBase {
     for (let i = 0; i < chainsAndCounts.length; i++) {
       const [chain, count] = chainsAndCounts[i];
 
-      if (this.game.scoreBoardChainSize.get(chain, 0) === 0) {
+      if (this.game.scoreBoardChainSize.get(chain)! === 0) {
         throw new UserInputError('a requested chain does not exist on the board');
       }
-      if (count > this.game.scoreBoardAvailable.get(chain, 0)) {
+      if (count > this.game.scoreBoardAvailable.get(chain)!) {
         throw new UserInputError('more shares requested for a chain than are available');
       }
 
-      cost += this.game.scoreBoardPrice.get(chain, 0) * count;
+      cost += this.game.scoreBoardPrice.get(chain)! * count;
     }
-    if (cost > this.game.scoreBoard.get(this.playerID, defaultScoreBoardRow).get(ScoreBoardIndex.Cash, 0)) {
+    if (cost > this.game.scoreBoard.get(this.playerID)!.get(ScoreBoardIndex.Cash)!) {
       throw new UserInputError('not enough cash to pay for requested shares');
     }
 

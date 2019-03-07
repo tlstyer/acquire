@@ -1,6 +1,5 @@
 import { List } from 'immutable';
 import * as React from 'react';
-import { defaultScoreBoardRow } from '../../common/defaults';
 import { GameMode, ScoreBoardIndex } from '../../common/enums';
 import { gameModeToNumPlayers, gameModeToTeamSize } from '../../common/helpers';
 import { allChains, gameBoardTypeToCSSClassName, gameBoardTypeToHotelInitial, teamNumberToCSSClassName } from '../helpers';
@@ -66,7 +65,7 @@ export class ScoreBoard extends React.PureComponent<ScoreBoardProps> {
               title={username}
               isPlayersTurn={playerID === turnPlayerID}
               isPlayersMove={playerID === movePlayerID}
-              scoreBoardRow={scoreBoard.get(playerID, defaultScoreBoardRow)}
+              scoreBoardRow={scoreBoard.get(playerID)!}
               safeChains={safeChains}
               defaultClassName={isTeamGame ? teamNumberToCSSClassName.get((playerID % numTeams) + 1)! : style.player}
               zeroValueReplacement={''}
@@ -117,7 +116,7 @@ export class ScoreBoard extends React.PureComponent<ScoreBoardProps> {
 function getTeamTotal(scoreBoard: List<List<number>>, numTeams: number, teamNumber: number) {
   let teamTotal = 0;
   for (let playerID = teamNumber - 1; playerID < scoreBoard.size; playerID += numTeams) {
-    teamTotal += scoreBoard.get(playerID, defaultScoreBoardRow).get(ScoreBoardIndex.Net, 0);
+    teamTotal += scoreBoard.get(playerID)!.get(ScoreBoardIndex.Net)!;
   }
   return teamTotal;
 }
@@ -182,7 +181,7 @@ class ScoreBoardRow extends React.PureComponent<ScoreBoardRowProps> {
           {title}
         </td>
         {safeChains.map((isSafe, chain) => {
-          const value = scoreBoardRow.get(chain, 0);
+          const value = scoreBoardRow.get(chain)!;
           return (
             <td key={chain} className={isSafe ? style.safeChain : defaultClassName}>
               {value === 0 ? zeroValueReplacement : value}
@@ -190,12 +189,12 @@ class ScoreBoardRow extends React.PureComponent<ScoreBoardRowProps> {
           );
         })}
         {scoreBoardRow.size === ScoreBoardIndex.Max ? (
-          <td className={defaultClassName}>{scoreBoardRow.get(7, 0) * 100}</td>
+          <td className={defaultClassName}>{scoreBoardRow.get(7)! * 100}</td>
         ) : (
           <td className={style.bottomRightCells}>{teamNumber !== undefined ? `Team ${teamNumber}` : undefined}</td>
         )}
         {scoreBoardRow.size === ScoreBoardIndex.Max ? (
-          <td className={defaultClassName}>{scoreBoardRow.get(8, 0) * 100}</td>
+          <td className={defaultClassName}>{scoreBoardRow.get(8)! * 100}</td>
         ) : (
           <td className={teamNumber !== undefined ? teamNumberToCSSClassName.get(teamNumber) : style.bottomRightCells}>
             {teamTotal !== undefined ? teamTotal * 100 : undefined}

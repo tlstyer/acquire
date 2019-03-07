@@ -38,7 +38,7 @@ export class ActionSelectNewChain extends ActionBase {
   protected createNewChain(chain: GameBoardType) {
     this.game.fillCells(this.tile, chain);
     this.game.setChainSize(chain, this.game.gameBoardTypeCounts[chain]);
-    if (this.game.scoreBoardAvailable.get(chain, 0) > 0) {
+    if (this.game.scoreBoardAvailable.get(chain)! > 0) {
       this.game.adjustPlayerScoreBoardRow(this.playerID, [[chain, 1]]);
     }
 

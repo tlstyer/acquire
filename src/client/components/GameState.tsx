@@ -29,20 +29,20 @@ const gshl: [GameAction, any][] = [
   [
     GameAction.StartGame,
     (usernames: List<string>, action: ActionStartGame) => (
-      <div className={style.root}>Waiting for {getUsernameSpan(usernames.get(action.playerID, ''))} to start the game.</div>
+      <div className={style.root}>Waiting for {getUsernameSpan(usernames.get(action.playerID)!)} to start the game.</div>
     ),
   ],
   [
     GameAction.PlayTile,
     (usernames: List<string>, action: ActionPlayTile) => (
-      <div className={style.root}>Waiting for {getUsernameSpan(usernames.get(action.playerID, ''))} to play a tile.</div>
+      <div className={style.root}>Waiting for {getUsernameSpan(usernames.get(action.playerID)!)} to play a tile.</div>
     ),
   ],
   [
     GameAction.SelectNewChain,
     (usernames: List<string>, action: ActionSelectNewChain) => (
       <div className={style.root}>
-        Waiting for {getUsernameSpan(usernames.get(action.playerID, ''))} to select new chain ({getHotelInitialsList(action.availableChains)}
+        Waiting for {getUsernameSpan(usernames.get(action.playerID)!)} to select new chain ({getHotelInitialsList(action.availableChains)}
         ).
       </div>
     ),
@@ -51,7 +51,7 @@ const gshl: [GameAction, any][] = [
     GameAction.SelectMergerSurvivor,
     (usernames: List<string>, action: ActionSelectMergerSurvivor) => (
       <div className={style.root}>
-        Waiting for {getUsernameSpan(usernames.get(action.playerID, ''))} to select merger survivor ({getHotelInitialsList(action.chainsBySize[0])}
+        Waiting for {getUsernameSpan(usernames.get(action.playerID)!)} to select merger survivor ({getHotelInitialsList(action.chainsBySize[0])}
         ).
       </div>
     ),
@@ -60,7 +60,7 @@ const gshl: [GameAction, any][] = [
     GameAction.SelectChainToDisposeOfNext,
     (usernames: List<string>, action: ActionSelectChainToDisposeOfNext) => (
       <div className={style.root}>
-        Waiting for {getUsernameSpan(usernames.get(action.playerID, ''))} to select chain to dispose of next ({getHotelInitialsList(action.defunctChains)}
+        Waiting for {getUsernameSpan(usernames.get(action.playerID)!)} to select chain to dispose of next ({getHotelInitialsList(action.defunctChains)}
         ).
       </div>
     ),
@@ -69,14 +69,14 @@ const gshl: [GameAction, any][] = [
     GameAction.DisposeOfShares,
     (usernames: List<string>, action: ActionDisposeOfShares) => (
       <div className={style.root}>
-        Waiting for {getUsernameSpan(usernames.get(action.playerID, ''))} to dispose of {getHotelNameSpan(action.defunctChain)} shares.
+        Waiting for {getUsernameSpan(usernames.get(action.playerID)!)} to dispose of {getHotelNameSpan(action.defunctChain)} shares.
       </div>
     ),
   ],
   [
     GameAction.PurchaseShares,
     (usernames: List<string>, action: ActionPurchaseShares) => (
-      <div className={style.root}>Waiting for {getUsernameSpan(usernames.get(action.playerID, ''))} to purchase shares.</div>
+      <div className={style.root}>Waiting for {getUsernameSpan(usernames.get(action.playerID)!)} to purchase shares.</div>
     ),
   ],
   [GameAction.GameOver, () => <div className={style.root}>Game over.</div>],

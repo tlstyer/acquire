@@ -83,7 +83,7 @@ export class ActionSelectMergerSurvivor extends ActionBase {
     for (let i = 0; i < this.chains.length; i++) {
       const chain = this.chains[i];
       if (chain !== controllingChain) {
-        const chainBonuses = calculateBonuses(this.game.getScoreBoardColumnArray(chain), this.game.scoreBoardPrice.get(chain, 0));
+        const chainBonuses = calculateBonuses(this.game.getScoreBoardColumnArray(chain), this.game.scoreBoardPrice.get(chain)!);
         for (let j = 0; j < chainBonuses.length; j++) {
           const chainBonus = chainBonuses[j];
           bonuses[chainBonus.playerID] += chainBonus.amount;

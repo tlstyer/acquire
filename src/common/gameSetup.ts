@@ -119,7 +119,7 @@ export class GameSetup {
 
     for (let position = 0; position < this.userIDs.size; position++) {
       if (this.userIDs.get(position) === userID) {
-        if (this.approvals.get(position, false) === false) {
+        if (this.approvals.get(position)! === false) {
           this.approvals = this.approvals.set(position, true);
           this.history.push([GameSetupChange.UserApprovedOfGameSetup, userID]);
         }

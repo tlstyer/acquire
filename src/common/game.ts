@@ -116,7 +116,7 @@ export class Game {
       }
 
       for (let tileIndex = 0; tileIndex < 6; tileIndex++) {
-        if (this.tileRacks.get(playerID, defaultTileRack).get(tileIndex, 0) === Tile.Unknown) {
+        if (this.tileRacks.get(playerID)!.get(tileIndex, null) === Tile.Unknown) {
           this.tileRacks.setIn([playerID, tileIndex], tile);
           setTile = true;
           break;
@@ -163,10 +163,10 @@ export class Game {
   }
 
   drawTiles(playerID: number) {
-    const addDrewTileMessage = this.myUserID === null || this.myUserID === this.userIDs.get(playerID, 0);
+    const addDrewTileMessage = this.myUserID === null || this.myUserID === this.userIDs.get(playerID)!;
 
     for (let i = 0; i < 6; i++) {
-      if (this.tileRacks.get(playerID, defaultTileRack).get(i, 0) !== null) {
+      if (this.tileRacks.get(playerID)!.get(i, null) !== null) {
         continue;
       }
 
@@ -201,15 +201,15 @@ export class Game {
     let replacedADeadTile = false;
     do {
       replacedADeadTile = false;
-      const tileRack = this.tileRacks.get(playerID, defaultTileRack);
-      const tileRackTypes = this.tileRackTypes.get(playerID, defaultTileRackTypes);
+      const tileRack = this.tileRacks.get(playerID)!;
+      const tileRackTypes = this.tileRackTypes.get(playerID)!;
       for (let tileIndex = 0; tileIndex < 6; tileIndex++) {
-        const tile = tileRack.get(tileIndex, 0);
+        const tile = tileRack.get(tileIndex, null);
         if (tile === null) {
           continue;
         }
 
-        const type = tileRackTypes.get(tileIndex, 0);
+        const type = tileRackTypes.get(tileIndex, null);
         if (type !== GameBoardType.CantPlayEver) {
           continue;
         }
@@ -246,7 +246,7 @@ export class Game {
     }
 
     for (let tileIndex = 0; tileIndex < 6; tileIndex++) {
-      const tile = this.tileRacks.get(playerID, defaultTileRack).get(tileIndex, 0);
+      const tile = this.tileRacks.get(playerID)!.get(tileIndex, null);
       let tileType = null;
 
       if (tile !== null && tile !== Tile.Unknown) {
@@ -314,7 +314,7 @@ export class Game {
 
         const tileType = tileTypes[tileIndex];
         if (tileType === GameBoardType.WillPutLonelyTileDown) {
-          const tile = this.tileRacks.get(playerID, defaultTileRack).get(tileIndex, 0);
+          const tile = this.tileRacks.get(playerID)!.get(tileIndex, null);
           if (tile !== null && lonelyTileBorderTiles.has(tile)) {
             tileTypes[tileIndex] = GameBoardType.HaveNeighboringTileToo;
           }
@@ -370,7 +370,7 @@ export class Game {
   getScoreBoardColumnArray(scoreBoardIndex: GameBoardType | ScoreBoardIndex) {
     const column: number[] = new Array(this.userIDs.size);
     for (let playerID = 0; playerID < this.userIDs.size; playerID++) {
-      column[playerID] = this.scoreBoard.get(playerID, defaultScoreBoardRow).get(scoreBoardIndex, 0);
+      column[playerID] = this.scoreBoard.get(playerID)!.get(scoreBoardIndex)!;
     }
     return column;
   }
@@ -382,11 +382,11 @@ export class Game {
     for (let i = 0; i < adjustments.length; i++) {
       const [scoreBoardIndex, change] = adjustments[i];
 
-      const value = scoreBoard.get(playerID, defaultScoreBoardRow).get(scoreBoardIndex, 0);
+      const value = scoreBoard.get(playerID)!.get(scoreBoardIndex)!;
       scoreBoard = scoreBoard.setIn([playerID, scoreBoardIndex], value + change);
 
       if (scoreBoardIndex <= ScoreBoardIndex.Imperial) {
-        const available = scoreBoardAvailable.get(scoreBoardIndex, 0);
+        const available = scoreBoardAvailable.get(scoreBoardIndex)!;
         scoreBoardAvailable = scoreBoardAvailable.set(scoreBoardIndex, available - change);
       }
     }
@@ -401,7 +401,7 @@ export class Game {
     for (let playerID = 0; playerID < adjustments.length; playerID++) {
       const change = adjustments[playerID];
       if (change !== 0) {
-        const value = scoreBoard.get(playerID, defaultScoreBoardRow).get(scoreBoardIndex, 0);
+        const value = scoreBoard.get(playerID)!.get(scoreBoardIndex)!;
         scoreBoard = scoreBoard.setIn([playerID, scoreBoardIndex], value + change);
       }
     }

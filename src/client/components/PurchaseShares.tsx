@@ -177,7 +177,7 @@ export class PurchaseShares extends React.Component<PurchaseSharesProps, Purchas
         const numSharesInCart = chainToNumSharesInCart.get(chain) || 0;
 
         chainToNumSharesInCart.set(chain, numSharesInCart + 1);
-        totalPrice += scoreBoardPrice.get(chain, 0);
+        totalPrice += scoreBoardPrice.get(chain)!;
         numItemsInCart++;
       }
     }
@@ -201,8 +201,8 @@ export class PurchaseShares extends React.Component<PurchaseSharesProps, Purchas
           <fieldset>
             <legend>Available</legend>
             {allChains.map(chain => {
-              const numAvailable = scoreBoardAvailable.get(chain, 0);
-              const price = scoreBoardPrice.get(chain, 0);
+              const numAvailable = scoreBoardAvailable.get(chain)!;
+              const price = scoreBoardPrice.get(chain)!;
 
               if (price > 0 && numAvailable > 0) {
                 const numRemaining = numAvailable - (chainToNumSharesInCart.get(chain) || 0);
@@ -276,7 +276,7 @@ export class PurchaseShares extends React.Component<PurchaseSharesProps, Purchas
                     type={'button'}
                     className={`${commonStyle.hotelButton} ${gameBoardTypeToCSSClassName.get(chain)}`}
                     style={cartButtonStyle}
-                    value={scoreBoardPrice.get(chain, 0) * 100}
+                    value={scoreBoardPrice.get(chain)! * 100}
                     onClick={() => {
                       const cartCopy = [...cart];
                       cartCopy[i] = null;

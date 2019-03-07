@@ -1,4 +1,3 @@
-import { defaultScoreBoardRow } from '../defaults';
 import { GameAction, GameBoardType, GameHistoryMessage, ScoreBoardIndex } from '../enums';
 import { UserInputError } from '../error';
 import { Game } from '../game';
@@ -11,11 +10,11 @@ export class ActionDisposeOfShares extends ActionBase {
   constructor(game: Game, playerID: number, public defunctChain: GameBoardType, public controllingChain: GameBoardType) {
     super(game, playerID, GameAction.DisposeOfShares);
 
-    this.sharesOwnedInDefunctChain = this.game.scoreBoard.get(playerID, defaultScoreBoardRow).get(defunctChain, 0);
+    this.sharesOwnedInDefunctChain = this.game.scoreBoard.get(playerID)!.get(defunctChain)!;
   }
 
   prepare() {
-    this.sharesAvailableInControllingChain = this.game.scoreBoardAvailable.get(this.controllingChain, 0);
+    this.sharesAvailableInControllingChain = this.game.scoreBoardAvailable.get(this.controllingChain)!;
 
     return null;
   }
@@ -48,7 +47,7 @@ export class ActionDisposeOfShares extends ActionBase {
         adjustments.push([this.controllingChain, tradeAmount / 2]);
       }
       if (sellAmount > 0) {
-        adjustments.push([ScoreBoardIndex.Cash, sellAmount * this.game.scoreBoardPrice.get(this.defunctChain, 0)]);
+        adjustments.push([ScoreBoardIndex.Cash, sellAmount * this.game.scoreBoardPrice.get(this.defunctChain)!]);
       }
       this.game.adjustPlayerScoreBoardRow(this.playerID, adjustments);
     }

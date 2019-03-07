@@ -451,9 +451,9 @@ function getPurchaseSharesDescription(props: PurchaseSharesProps) {
   const parts: string[] = [];
 
   for (let chain = 0; chain < 7; chain++) {
-    const numAvailable = props.scoreBoardAvailable.get(chain, 0);
+    const numAvailable = props.scoreBoardAvailable.get(chain)!;
     if (numAvailable !== 0) {
-      parts.push(`${numAvailable}${gameBoardTypeToHotelInitial.get(chain)}@$${props.scoreBoardPrice.get(chain, 0) * 100}`);
+      parts.push(`${numAvailable}${gameBoardTypeToHotelInitial.get(chain)}@$${props.scoreBoardPrice.get(chain)! * 100}`);
     }
   }
 

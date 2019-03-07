@@ -148,7 +148,7 @@ export class GameSetupUI extends React.PureComponent<GameSetupUIProps> {
 
               return (
                 <tr key={i}>
-                  <td className={style.user}>{usernames.get(index, null)}</td>
+                  <td className={style.user}>{usernames.get(index)}</td>
                   {onSwapPositions !== undefined ? (
                     <td>{upIndex !== null ? <input type={'button'} value={'▲'} onClick={() => onSwapPositions(index, upIndex)} /> : undefined}</td>
                   ) : (
@@ -189,7 +189,7 @@ export class GameSetupUI extends React.PureComponent<GameSetupUIProps> {
   renderApproveCell(index: number) {
     const { userIDs, approvals, myUserID, onApprove } = this.props;
 
-    const approved = approvals.get(index, false);
+    const approved = approvals.get(index)!;
 
     if (approved) {
       return <td className={style.ready}>Ready</td>;

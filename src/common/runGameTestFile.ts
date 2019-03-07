@@ -1,5 +1,4 @@
 import { List } from 'immutable';
-import { defaultTileRackTypes } from './defaults';
 import { GameAction, GameBoardType, GameHistoryMessage, GameMode, PlayerArrangementMode, ScoreBoardIndex, Tile } from './enums';
 import { UserInputError } from './error';
 import { Game, GameHistoryMessageData, MoveData, MoveDataTileBagTile, MoveDataTileRackTile } from './game';
@@ -312,7 +311,7 @@ function getMoveDataLines(moveData: MoveData, revealedTilesPlayerID: number | nu
 
     lines.push('  tile racks:');
     moveData.tileRacks.forEach((tileRack, playerID) => {
-      const tileTypes = moveData.tileRackTypes.get(playerID, defaultTileRackTypes);
+      const tileTypes = moveData.tileRackTypes.get(playerID)!;
       lines.push(`    ${playerID}: ${getTileRackString(tileRack, tileTypes)}`);
     });
 
@@ -469,7 +468,7 @@ function getTileRackString(tiles: List<number | null>, tileTypes: List<GameBoard
         return '?';
       }
 
-      const tileType = tileTypes.get(tileIndex, 0);
+      const tileType = tileTypes.get(tileIndex, null);
       if (tile !== null && tileType !== null) {
         return `${toTileString(tile)}(${gameBoardTypeToCharacter.get(tileType)})`;
       } else {

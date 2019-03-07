@@ -4,9 +4,7 @@ import './global.scss';
 import { List } from 'immutable';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { defaultTileRack, defaultTileRackTypes } from '../common/defaults';
-import { GameMode, PlayerArrangementMode } from '../common/enums';
-import { Game, MoveData } from '../common/game';
+import { Game } from '../common/game';
 import { ActionGameOver } from '../common/gameActions/gameOver';
 import { GameBoard } from './components/GameBoard';
 import { GameHistory } from './components/GameHistory';
@@ -16,10 +14,8 @@ import { TileRackReadOnly } from './components/TileRackReadOnly';
 import { GameBoardLabelMode } from './enums';
 import * as style from './review.scss';
 
-const dummyMoveData = new MoveData(new Game(GameMode.Singles1, PlayerArrangementMode.RandomOrder, [], List(), List(), 0, null), null);
-
 function render() {
-  const moveData = game.moveDataHistory.get(selectedMove, dummyMoveData);
+  const moveData = game.moveDataHistory.get(selectedMove)!;
 
   let turnPlayerID = moveData.turnPlayerID;
   let movePlayerID = moveData.nextGameAction.playerID;
@@ -31,12 +27,12 @@ function render() {
   let gameBoardTileRack: List<number | null> | undefined;
   if (game.userIDs.size > 1) {
     if (followedPlayerID !== null) {
-      gameBoardTileRack = moveData.tileRacks.get(followedPlayerID, defaultTileRack);
+      gameBoardTileRack = moveData.tileRacks.get(followedPlayerID)!;
     } else if (movePlayerID !== -1) {
-      gameBoardTileRack = moveData.tileRacks.get(movePlayerID, defaultTileRack);
+      gameBoardTileRack = moveData.tileRacks.get(movePlayerID)!;
     }
   } else {
-    gameBoardTileRack = moveData.tileRacks.get(0, defaultTileRack);
+    gameBoardTileRack = moveData.tileRacks.get(0)!;
   }
 
   const windowWidth = window.innerWidth;
@@ -69,8 +65,8 @@ function render() {
           cellWidth={scoreBoardCellWidth}
         />
         {game.userIDs.map((_, playerID) => {
-          const tileRack = moveData.tileRacks.get(playerID, defaultTileRack);
-          const tileRackTypes = moveData.tileRackTypes.get(playerID, defaultTileRackTypes);
+          const tileRack = moveData.tileRacks.get(playerID)!;
+          const tileRackTypes = moveData.tileRackTypes.get(playerID)!;
           return (
             <div key={playerID}>
               <div className={style.tileRackWrapper}>

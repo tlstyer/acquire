@@ -25,7 +25,7 @@ export class TileRackReadOnly extends React.PureComponent<TileRackReadOnlyProps>
     return (
       <div className={style.root} style={{ fontSize: Math.floor(buttonSize * 0.4) }}>
         {tiles.map((tile, i) => {
-          const type = types.get(i, 0);
+          const type = types.get(i, null);
 
           if (tile !== null && type !== null) {
             return (

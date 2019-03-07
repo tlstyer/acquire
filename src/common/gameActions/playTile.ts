@@ -1,4 +1,3 @@
-import { defaultTileRack, defaultTileRackTypes } from '../defaults';
 import { GameAction, GameBoardType, GameHistoryMessage } from '../enums';
 import { UserInputError } from '../error';
 import { Game } from '../game';
@@ -23,9 +22,9 @@ export class ActionPlayTile extends ActionBase {
     if (this.playerID === this.game.playerIDWithPlayableTile) {
       hasAPlayableTile = true;
     } else {
-      const tileRackTypes = this.game.tileRackTypes.get(this.playerID, defaultTileRackTypes);
+      const tileRackTypes = this.game.tileRackTypes.get(this.playerID)!;
       for (let i = 0; i < 6; i++) {
-        const tileType = tileRackTypes.get(i, 0);
+        const tileType = tileRackTypes.get(i, null);
         if (tileType !== null && tileType !== GameBoardType.CantPlayNow && tileType !== GameBoardType.CantPlayEver) {
           hasAPlayableTile = true;
           break;
@@ -51,11 +50,11 @@ export class ActionPlayTile extends ActionBase {
     if (!Number.isInteger(tile) || tile < 0 || tile >= 108) {
       throw new UserInputError('parameter is not a valid tile');
     }
-    const tileRackIndex = this.game.tileRacks.get(this.playerID, defaultTileRack).indexOf(tile);
+    const tileRackIndex = this.game.tileRacks.get(this.playerID)!.indexOf(tile);
     if (tileRackIndex === -1) {
       throw new UserInputError('player does not have given tile');
     }
-    const tileType = this.game.tileRackTypes.get(this.playerID, defaultTileRackTypes).get(tileRackIndex, GameBoardType.Luxor);
+    const tileType = this.game.tileRackTypes.get(this.playerID)!.get(tileRackIndex, null);
 
     let response: ActionBase[] = [];
     if (tileType !== null && tileType <= GameBoardType.Imperial) {
@@ -67,7 +66,7 @@ export class ActionPlayTile extends ActionBase {
       const availableChains: GameBoardType[] = [];
       const scoreBoardChainSize = this.game.scoreBoardChainSize;
       for (let type = 0; type < scoreBoardChainSize.size; type++) {
-        if (scoreBoardChainSize.get(type, 0) === 0) {
+        if (scoreBoardChainSize.get(type)! === 0) {
           availableChains.push(type);
         }
       }
