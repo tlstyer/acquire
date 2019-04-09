@@ -53,10 +53,10 @@ class AllDemoProps {
   possibleKeyboardShortcutsEnabledProps: { keyboardShortcutsEnabled: boolean }[];
 
   constructor() {
-    const gameJson1 = require('raw-loader!../common/gameTestFiles/other/no tiles played for entire round').split('\nGame JSON:\n')[1];
+    const gameJson1 = require('raw-loader!../common/gameTestFiles/other/no tiles played for entire round').default.split('\nGame JSON:\n')[1];
     const game1 = Game.fromJSON(JSON.parse(gameJson1));
 
-    const gameJson2 = require('raw-loader!../common/gameTestFiles/other/all tiles played').split('\nGame JSON:\n')[1];
+    const gameJson2 = require('raw-loader!../common/gameTestFiles/other/all tiles played').default.split('\nGame JSON:\n')[1];
     const game2 = Game.fromJSON(JSON.parse(gameJson2));
 
     this.loginFormProps = [{ onSubmit: onSubmitLoginForm }, { errorCode: ErrorCode.CouldNotConnect, username: 'tlstyer', onSubmit: onSubmitLoginForm }];

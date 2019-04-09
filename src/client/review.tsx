@@ -153,7 +153,7 @@ let selectedMove: number;
 let followedPlayerID: number | null = null;
 
 function main() {
-  const gameJson = require('raw-loader!../common/gameTestFiles/other/no tiles played for entire round').split('\nGame JSON:\n')[1];
+  const gameJson = require('raw-loader!../common/gameTestFiles/other/no tiles played for entire round').default.split('\nGame JSON:\n')[1];
 
   game = Game.fromJSON(JSON.parse(gameJson));
   selectedMove = game.moveDataHistory.size - 1;
