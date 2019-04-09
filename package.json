@@ -50,7 +50,7 @@
     "typescript": "^3.4.1",
     "webpack": "^4.29.6",
     "webpack-cli": "^3.3.0",
-    "webpack-serve": "^3.0.0"
+    "webpack-dev-server": "^3.3.1"
   },
   "scripts": {
     "build": "yarn build-client ; yarn build-examples ; yarn build-review ; yarn build-server",
@@ -58,9 +58,9 @@
     "build-examples": "APP=examples MODE=production webpack",
     "build-review": "APP=review MODE=production webpack",
     "build-server": "tsc --project tsconfig.server.json",
-    "client": "APP=index yarn webpack-serve",
-    "examples": "APP=examples yarn webpack-serve",
-    "review": "APP=review yarn webpack-serve",
+    "client": "APP=index yarn webpack-dev-server",
+    "examples": "APP=examples yarn webpack-dev-server",
+    "review": "APP=review yarn webpack-dev-server",
     "server": "nodemon -r ts-node/register src/server/main.ts",
     "test": "jest",
     "lint": "tslint --project tsconfig.json --config tslint.json --fix",
