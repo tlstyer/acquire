@@ -28,6 +28,8 @@ export class ServerManager {
 
   onMessageFunctions: Map<MessageToServer, (client: Client, params: any[]) => void>;
 
+  lastLogMessageTime = 0;
+
   constructor(public server: Server, public userDataProvider: UserDataProvider, public nextGameID: number, public logger: (message: string) => void) {
     this.onMessageFunctions = new Map([
       [MessageToServer.CreateGame, this.onMessageCreateGame],
@@ -722,7 +724,12 @@ export class ServerManager {
   }
 
   logMessage(logMessage: LogMessage, ...parameters: any[]) {
-    this.logger(JSON.stringify([Date.now(), logMessage, ...parameters]));
+    const time = Date.now();
+    const offset = time - this.lastLogMessageTime;
+
+    this.logger(JSON.stringify([offset, logMessage, ...parameters]));
+
+    this.lastLogMessageTime = time;
   }
 }
 
