@@ -2,9 +2,11 @@
   display: inline-block;
   margin: 0;
   padding: 0 3px 3px;
+
   legend {
     padding: 0 5px;
   }
+
   :not(:last-child) {
     margin-right: 4px;
   }

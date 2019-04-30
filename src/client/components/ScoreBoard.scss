@@ -3,19 +3,23 @@
   border-collapse: collapse;
   font-weight: bold;
   table-layout: fixed;
+
   td {
     border: 2px solid #f6f4f2;
     overflow: hidden;
     white-space: nowrap;
+
     &:nth-child(1) {
       padding-left: 3px;
       text-align: left;
       width: calc(100% * 5 / 18);
     }
+
     &:nth-child(n + 2):nth-child(-n + 8) {
       text-align: center;
       width: calc(100% / 18);
     }
+
     &:nth-child(n + 9) {
       padding-right: 3px;
       text-align: right;
@@ -27,6 +31,7 @@
 .playerHeader {
   background-color: #c0c0ff;
 }
+
 .cashAndNetHeader {
   background-color: #008000;
   color: #ffffff;
@@ -35,6 +40,7 @@
 .isPlayersTurn {
   background-color: #ffc0c0;
 }
+
 .isPlayersMove {
   background-color: #ffe0e0;
 }

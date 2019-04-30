@@ -3,20 +3,25 @@
     display: inline-block;
     margin: 0 4px 0 0;
     padding: 0 3px 3px;
+
     legend {
       padding: 0 5px;
     }
+
     :not(:last-child) {
       margin-right: 4px;
     }
   }
+
   span {
     display: inline-block;
     text-align: right;
     width: 1.5em;
   }
+
   input {
     color: #000000;
+
     &:disabled {
       color: #808080;
     }

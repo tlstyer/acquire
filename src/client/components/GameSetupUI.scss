@@ -1,11 +1,13 @@
 .table {
   border-collapse: collapse;
   font-weight: bold;
+
   td {
     border: 2px solid #f6f4f2;
     height: 28px;
     overflow: hidden;
     white-space: nowrap;
+
     &:nth-child(1) {
       max-width: 300px;
       padding-left: 3px;
