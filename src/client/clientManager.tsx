@@ -1,3 +1,5 @@
+import * as style from './clientManager.scss';
+
 import { List } from 'immutable';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
@@ -22,7 +24,6 @@ import { ActionSelectChainToDisposeOfNext } from '../common/gameActions/selectCh
 import { ActionSelectMergerSurvivor } from '../common/gameActions/selectMergerSurvivor';
 import { ActionSelectNewChain } from '../common/gameActions/selectNewChain';
 import { GameSetup } from '../common/gameSetup';
-import * as style from './clientManager.scss';
 import { CreateGame } from './components/CreateGame';
 import { DisposeOfShares } from './components/DisposeOfShares';
 import { GameBoard } from './components/GameBoard';

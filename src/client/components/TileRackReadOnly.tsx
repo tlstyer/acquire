@@ -1,9 +1,10 @@
+import * as commonStyle from '../common.scss';
+import * as style from './TileRackReadOnly.scss';
+
 import { List } from 'immutable';
 import * as React from 'react';
 import { GameBoardType } from '../../common/enums';
-import * as commonStyle from '../common.scss';
 import { gameBoardTypeToCSSClassName, getTileString } from '../helpers';
-import * as style from './TileRackReadOnly.scss';
 
 export interface TileRackReadOnlyProps {
   tiles: List<number | null>;

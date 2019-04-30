@@ -1,8 +1,9 @@
+import * as commonStyle from '../common.scss';
+import * as style from './SelectChain.scss';
+
 import * as React from 'react';
 import { GameBoardType } from '../../common/enums';
-import * as commonStyle from '../common.scss';
 import { allChains, gameBoardTypeToCSSClassName, gameBoardTypeToHotelInitial } from '../helpers';
-import * as style from './SelectChain.scss';
 
 export enum SelectChainTitle {
   SelectNewChain,

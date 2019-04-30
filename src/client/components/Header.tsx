@@ -1,5 +1,6 @@
-import * as React from 'react';
 import * as style from './Header.scss';
+
+import * as React from 'react';
 
 export interface HeaderProps {
   username: string;

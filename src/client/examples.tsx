@@ -1,6 +1,8 @@
 import 'normalize.css';
 import './global.scss';
 
+import * as style from './examples.scss';
+
 import { List } from 'immutable';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
@@ -23,7 +25,6 @@ import { TileRack, TileRackProps } from './components/TileRack';
 import { TileRackReadOnly, TileRackReadOnlyProps } from './components/TileRackReadOnly';
 import { GameBoardLabelMode, GameStatus } from './enums';
 import { getDummyGameForGetGameHistory, getExampleNextGameActionsArray } from './exampleData';
-import * as style from './examples.scss';
 import {
   disposeOfSharesKeyboardShortcutsDescription,
   gameBoardTypeToHotelInitial,

@@ -1,9 +1,10 @@
+import * as commonStyle from '../common.scss';
+import * as style from './PurchaseShares.scss';
+
 import { List } from 'immutable';
 import * as React from 'react';
 import { GameBoardType } from '../../common/enums';
-import * as commonStyle from '../common.scss';
 import { allChains, gameBoardTypeToCSSClassName, gameBoardTypeToHotelInitial, getUniqueDOMElementID } from '../helpers';
-import * as style from './PurchaseShares.scss';
 
 export interface PurchaseSharesProps {
   scoreBoardAvailable: List<number>;

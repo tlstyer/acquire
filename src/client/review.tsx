@@ -1,6 +1,8 @@
 import 'normalize.css';
 import './global.scss';
 
+import * as style from './review.scss';
+
 import { List } from 'immutable';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
@@ -12,7 +14,6 @@ import { GameState } from './components/GameState';
 import { ScoreBoard } from './components/ScoreBoard';
 import { TileRackReadOnly } from './components/TileRackReadOnly';
 import { GameBoardLabelMode } from './enums';
-import * as style from './review.scss';
 
 function render() {
   const moveData = game.moveDataHistory.get(selectedMove)!;

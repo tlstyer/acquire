@@ -1,7 +1,8 @@
+import * as commonStyle from '../common.scss';
+
 import * as React from 'react';
 import { ErrorCode } from '../../common/enums';
 import { isASCII } from '../../common/helpers';
-import * as commonStyle from '../common.scss';
 import { hackDoNotInterfereWithKeyboardShortcuts } from '../helpers';
 
 const errorCodeToMessage = new Map([

@@ -1,7 +1,8 @@
+import * as style from './DisposeOfShares.scss';
+
 import * as React from 'react';
 import { GameBoardType } from '../../common/enums';
 import { gameBoardTypeToCSSClassName } from '../helpers';
-import * as style from './DisposeOfShares.scss';
 
 export interface DisposeOfSharesProps {
   defunctChain: GameBoardType;
