@@ -86,6 +86,7 @@ export class DisposeOfShares extends React.Component<DisposeOfSharesProps, Dispo
       nextProps.controllingChain !== this.props.controllingChain ||
       nextProps.sharesOwnedInDefunctChain !== this.props.sharesOwnedInDefunctChain ||
       nextProps.sharesAvailableInControllingChain !== this.props.sharesAvailableInControllingChain ||
+      nextProps.buttonSize !== this.props.buttonSize ||
       nextProps.onSharesDisposed !== this.props.onSharesDisposed ||
       nextState.keep !== this.state.keep ||
       nextState.trade !== this.state.trade ||
