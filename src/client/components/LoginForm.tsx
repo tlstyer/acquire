@@ -1,4 +1,4 @@
-import * as commonStyle from '../common.scss';
+import * as style from './LoginForm.scss';
 
 import * as React from 'react';
 import { ErrorCode } from '../../common/enums';
@@ -61,7 +61,7 @@ export class LoginForm extends React.PureComponent<LoginFormProps, LoginFormStat
 
     return (
       <form onKeyDown={hackDoNotInterfereWithKeyboardShortcuts} onSubmit={this.handleSubmit}>
-        {errorCode !== undefined ? <div className={commonStyle.errorMessage}>{errorCodeToMessage.get(errorCode)}</div> : undefined}
+        {errorCode !== undefined ? <div className={style.errorMessage}>{errorCodeToMessage.get(errorCode)}</div> : undefined}
         Username: <input type={'text'} value={username} onChange={this.handleChangeUsername} /> Password:{' '}
         <input type={'password'} value={password} onChange={this.handleChangePassword} /> <input type={'submit'} value={'Login'} />
       </form>
