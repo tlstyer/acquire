@@ -46,17 +46,14 @@ export class ServerManager {
 
   manage() {
     this.server.on('connection', connection => {
-      this.logger(
-        JSON.stringify([
-          Date.now(),
-          LogMessage.Connected,
-          connection.id,
-          connection.headers,
-          connection.pathname,
-          connection.protocol,
-          connection.remoteAddress,
-          connection.remotePort,
-        ]),
+      this.logMessage(
+        LogMessage.Connected,
+        connection.id,
+        connection.headers,
+        connection.pathname,
+        connection.protocol,
+        connection.remoteAddress,
+        connection.remotePort,
       );
 
       this.addConnection(connection);
@@ -66,14 +63,14 @@ export class ServerManager {
         try {
           message = JSON.parse(messageString);
         } catch (error) {
-          this.logger(JSON.stringify([Date.now(), LogMessage.MessageThatIsNotJSON, connection.id, messageString]));
+          this.logMessage(LogMessage.MessageThatIsNotJSON, connection.id, messageString);
 
           this.kickWithError(connection, ErrorCode.InvalidMessageFormat);
           return;
         }
 
         if (!Array.isArray(message)) {
-          this.logger(JSON.stringify([Date.now(), LogMessage.MessageThatIsNotAnArray, connection.id, message]));
+          this.logMessage(LogMessage.MessageThatIsNotAnArray, connection.id, message);
 
           this.kickWithError(connection, ErrorCode.InvalidMessageFormat);
           return;
@@ -81,7 +78,7 @@ export class ServerManager {
 
         const client = this.connectionIDToClient.get(connection.id);
         if (client !== undefined) {
-          this.logger(JSON.stringify([Date.now(), LogMessage.MessageWhileLoggedIn, client.id, message]));
+          this.logMessage(LogMessage.MessageWhileLoggedIn, client.id, message);
         } else {
           let sanitizedMessage = message;
           if (message[2] !== '') {
@@ -89,7 +86,7 @@ export class ServerManager {
             sanitizedMessage[2] = '***';
           }
 
-          this.logger(JSON.stringify([Date.now(), LogMessage.MessageWhileNotLoggedIn, connection.id, sanitizedMessage]));
+          this.logMessage(LogMessage.MessageWhileNotLoggedIn, connection.id, sanitizedMessage);
         }
 
         const connectionState = this.connectionIDToConnectionState.get(connection.id);
@@ -115,9 +112,9 @@ export class ServerManager {
       connection.on('close', () => {
         const client = this.connectionIDToClient.get(connection.id);
         if (client !== undefined) {
-          this.logger(JSON.stringify([Date.now(), LogMessage.Disconnected, connection.id, client.id, client.user.id, client.user.name]));
+          this.logMessage(LogMessage.Disconnected, connection.id, client.id, client.user.id, client.user.name);
         } else {
-          this.logger(JSON.stringify([Date.now(), LogMessage.Disconnected, connection.id]));
+          this.logMessage(LogMessage.Disconnected, connection.id);
         }
 
         this.removeConnection(connection);
@@ -170,7 +167,7 @@ export class ServerManager {
   }
 
   kickWithError(connection: Connection, errorCode: ErrorCode) {
-    this.logger(JSON.stringify([Date.now(), LogMessage.KickedWithError, connection.id, errorCode]));
+    this.logMessage(LogMessage.KickedWithError, connection.id, errorCode);
 
     connection.write(JSON.stringify([[MessageToClient.FatalError, errorCode]]));
     connection.close();
@@ -281,7 +278,7 @@ export class ServerManager {
 
     this.sendAllQueuedMessages();
 
-    this.logger(JSON.stringify([Date.now(), LogMessage.LoggedIn, connection.id, client.id, userID, username]));
+    this.logMessage(LogMessage.LoggedIn, connection.id, client.id, userID, username);
   }
 
   onMessageCreateGame(client: Client, params: any[]) {
@@ -722,6 +719,10 @@ export class ServerManager {
     if (user.clients.size === 0 && user.numGames === 0) {
       this.userIDToUser.delete(user.id);
     }
+  }
+
+  logMessage(logMessage: LogMessage, ...parameters: any[]) {
+    this.logger(JSON.stringify([Date.now(), logMessage, ...parameters]));
   }
 }
 
