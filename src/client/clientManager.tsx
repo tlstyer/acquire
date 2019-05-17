@@ -67,6 +67,8 @@ export class ClientManager {
 
   myRequiredGameAction: GameAction | null = null;
 
+  requestAnimationFrameID: number | null = null;
+
   constructor() {
     this.renderPageFunctions = new Map([
       [ClientManagerPage.Login, this.renderLoginPage],
@@ -94,24 +96,16 @@ export class ClientManager {
   manage() {
     this.render();
 
-    let resizeTimeout = 0;
-    window.addEventListener(
-      'resize',
-      () => {
-        if (!resizeTimeout) {
-          // @ts-ignore
-          resizeTimeout = setTimeout(() => {
-            resizeTimeout = 0;
-            this.render();
-          }, 66);
-        }
-      },
-      false,
-    );
+    window.addEventListener('resize', this.render, false);
   }
 
   render() {
-    ReactDOM.render(this.renderPageFunctions.get(this.page)!(), document.getElementById('root'));
+    if (this.requestAnimationFrameID === null) {
+      this.requestAnimationFrameID = requestAnimationFrame(() => {
+        this.requestAnimationFrameID = null;
+        ReactDOM.render(this.renderPageFunctions.get(this.page)!(), document.getElementById('root'));
+      });
+    }
   }
 
   renderLoginPage = () => {
