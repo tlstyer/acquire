@@ -3,8 +3,6 @@ import { GameMode, PlayerArrangementMode } from '../../common/enums';
 import { GameSetup } from '../../common/gameSetup';
 import { GameSetupUI } from './GameSetupUI';
 
-/* tslint:disable:no-console */
-
 interface ExampleGameSetupMasterProps {}
 
 interface ExampleGameSetupMasterState {

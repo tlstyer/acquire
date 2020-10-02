@@ -1,7 +1,5 @@
 import { ErrorCode, GameMode, GameSetupChange, MessageToClient, MessageToServer, PlayerArrangementMode } from './enums';
 
-/* tslint:disable:no-console */
-
 function constructEnum(name: string, value: string) {
   return `{[<(${name}.${value})>]}`;
 }

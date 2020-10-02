@@ -152,6 +152,7 @@ let selectedMove: number;
 let followedPlayerID: number | null = null;
 
 function main() {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
   const gameJson = require('raw-loader!../common/gameTestFiles/other/no tiles played for entire round').default.split('\nGame JSON:\n')[1];
 
   game = Game.fromJSON(JSON.parse(gameJson));

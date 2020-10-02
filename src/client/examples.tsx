@@ -34,8 +34,6 @@ import {
   tileRackKeyboardShortcutsDescription,
 } from './helpers';
 
-/* tslint:disable:no-console */
-
 class AllDemoProps {
   loginFormProps: LoginFormProps[];
   headerProps: HeaderProps[];
@@ -54,9 +52,11 @@ class AllDemoProps {
   possibleKeyboardShortcutsEnabledProps: { keyboardShortcutsEnabled: boolean }[];
 
   constructor() {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
     const gameJson1 = require('raw-loader!../common/gameTestFiles/other/no tiles played for entire round').default.split('\nGame JSON:\n')[1];
     const game1 = Game.fromJSON(JSON.parse(gameJson1));
 
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
     const gameJson2 = require('raw-loader!../common/gameTestFiles/other/all tiles played').default.split('\nGame JSON:\n')[1];
     const game2 = Game.fromJSON(JSON.parse(gameJson2));
 
@@ -409,7 +409,6 @@ function render(props: AllDemoProps) {
   );
 }
 
-// tslint:disable-next-line:variable-name
 function renderComponentForEachProps(Component: any, propsArray: any[], descriptionFunc?: any) {
   const lastIndex = propsArray.length - 1;
 

@@ -9,7 +9,7 @@ export class ReuseIDManager {
 
   getID() {
     const now = Date.now();
-    while (true) {
+    for (;;) {
       const nextUnusedWait = this.unusedWait.peek();
       if (nextUnusedWait !== undefined && nextUnusedWait.time <= now) {
         this.unusedWait.dequeue();

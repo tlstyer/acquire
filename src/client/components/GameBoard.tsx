@@ -6,8 +6,6 @@ import { GameBoardType } from '../../common/enums';
 import { GameBoardLabelMode } from '../enums';
 import { gameBoardTypeToCSSClassName, gameBoardTypeToHotelInitial, getTileString } from '../helpers';
 
-/* tslint:disable:no-bitwise */
-
 export interface GameBoardProps {
   gameBoard: List<List<GameBoardType>>;
   tileRack?: List<number | null>;

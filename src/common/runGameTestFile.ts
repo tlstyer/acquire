@@ -41,7 +41,7 @@ export function runGameTestFile(inputLines: string[]) {
             // @ts-ignore
             playerArrangementMode = PlayerArrangementMode[value];
             break;
-          case 'tile bag':
+          case 'tile bag': {
             tileBag = fromTilesString(value);
 
             const duplicatedTiles = getDuplicatedTiles(tileBag);
@@ -49,11 +49,13 @@ export function runGameTestFile(inputLines: string[]) {
               outputLines.push(`duplicated tiles in tile bag: ${toTilesString(duplicatedTiles)}`);
             }
             break;
-          case 'user':
+          }
+          case 'user': {
             const userParts = value.split(' ');
             userIDs.push(parseInt(userParts[0], 10));
             usernames.push(userParts.slice(1).join(' '));
             break;
+          }
           case 'host':
             hostUserID = parseInt(value, 10);
             break;

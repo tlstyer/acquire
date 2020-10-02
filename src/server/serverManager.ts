@@ -106,7 +106,7 @@ export class ServerManager {
         } else if (connectionState === ConnectionState.WaitingForFirstMessage) {
           this.connectionIDToConnectionState.set(connection.id, ConnectionState.ProcessingFirstMessage);
 
-          // tslint:disable-next-line:no-floating-promises
+          // eslint-disable-next-line @typescript-eslint/no-floating-promises
           this.processFirstMessage(connection, message);
         }
       });

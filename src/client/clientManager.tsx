@@ -430,6 +430,7 @@ export class ClientManager {
     }
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onMoveClicked = (_index: number) => {
     // do nothing
   };
@@ -622,11 +623,12 @@ export class ClientManager {
         this.userIDToUser.get(params[1])!.numGames++;
         break;
       case GameSetupChange.UserRemoved:
-      case GameSetupChange.UserKicked:
+      case GameSetupChange.UserKicked: {
         const user = this.userIDToUser.get(params[1])!;
         user.numGames--;
         this.deleteUserIfItDoesNotHaveReferences(user);
         break;
+      }
     }
   }
 

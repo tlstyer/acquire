@@ -24,6 +24,7 @@ const jsx = (
 
 const dateNow = Date.now;
 // @ts-ignore
+// eslint-disable-next-line no-global-assign
 Date = TestDate;
 Date.now = dateNow;
 

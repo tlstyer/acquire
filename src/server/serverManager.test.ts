@@ -66,6 +66,7 @@ function getServerManagerAndStuff() {
   const server = new TestServer();
   const userDataProvider = new TestUserDataProvider();
   // @ts-ignore
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const serverManager = new ServerManager(server, userDataProvider, 10, (message: string) => {
     // do nothing
   });
