@@ -154,17 +154,17 @@ function expectClientAndUserAndGameData(serverManager: ServerManager, userDatas:
   const gameIDTOUCRGameData: GameIDTOUCRGameData = new Map();
   const gameDisplayNumberTOUCRGameData: GameIDTOUCRGameData = new Map();
 
-  gameDataDatas.forEach(gameDataData => {
+  gameDataDatas.forEach((gameDataData) => {
     const ucrGameData = new UCRGameData(gameDataData.gameID, gameDataData.gameDisplayNumber, new Set(gameDataData.userIDs));
 
     gameIDTOUCRGameData.set(gameDataData.gameID, ucrGameData);
     gameDisplayNumberTOUCRGameData.set(gameDataData.gameDisplayNumber, ucrGameData);
   });
 
-  userDatas.forEach(userData => {
+  userDatas.forEach((userData) => {
     const clientIDs = new Set<number>();
 
-    userData.clientDatas.forEach(clientData => {
+    userData.clientDatas.forEach((clientData) => {
       // @ts-ignore
       const connection: Connection = clientData.connection;
       const gameID = clientData.gameID !== undefined ? clientData.gameID : null;
@@ -180,8 +180,8 @@ function expectClientAndUserAndGameData(serverManager: ServerManager, userDatas:
     userIDToUCRUser.set(userData.userID, new UCRUser(userData.userID, userData.username, clientIDs, 0));
   });
 
-  gameDataDatas.forEach(gameDataData => {
-    gameDataData.userIDs.forEach(userID => {
+  gameDataDatas.forEach((gameDataData) => {
+    gameDataData.userIDs.forEach((userID) => {
       const ucrUser = userIDToUCRUser.get(userID);
 
       if (ucrUser !== undefined) {
@@ -216,7 +216,7 @@ function uncircularreferenceifyUserIDToUser(userIDToUser: Map<number, User>) {
   userIDToUser.forEach((user, userID) => {
     const clientIDs = new Set<number>();
 
-    user.clients.forEach(client => {
+    user.clients.forEach((client) => {
       clientIDs.add(client.id);
     });
 
@@ -239,7 +239,7 @@ function uncircularreferenceifyGameIDToGameData(gameIDToGameData: Map<number, Ga
 
     const ucrGameData = new UCRGameData(gameData.id, gameData.displayNumber, userIDs);
 
-    gameData.clients.forEach(client => {
+    gameData.clients.forEach((client) => {
       ucrGameData.clientIDs.add(client.id);
     });
 
@@ -253,7 +253,7 @@ async function connectToServer(server: TestServer, username: string) {
   const connection = new TestConnection(username);
   server.openConnection(connection);
   connection.sendMessage([0, username, '', []]);
-  await new Promise(resolve => setTimeout(resolve, 0));
+  await new Promise((resolve) => setTimeout(resolve, 0));
 
   return connection;
 }
@@ -289,9 +289,17 @@ describe('when not sending first message', () => {
     server.openConnection(connection2);
 
     expect(serverManager.connectionIDToConnectionState).toEqual(
-      new Map([[connection1.id, ConnectionState.WaitingForFirstMessage], [connection2.id, ConnectionState.WaitingForFirstMessage]]),
+      new Map([
+        [connection1.id, ConnectionState.WaitingForFirstMessage],
+        [connection2.id, ConnectionState.WaitingForFirstMessage],
+      ]),
     );
-    expect(serverManager.connectionIDToPreLoggedInConnection).toEqual(new Map([[connection1.id, connection1], [connection2.id, connection2]]));
+    expect(serverManager.connectionIDToPreLoggedInConnection).toEqual(
+      new Map([
+        [connection1.id, connection1],
+        [connection2.id, connection2],
+      ]),
+    );
 
     connection1.close();
 
@@ -317,9 +325,17 @@ describe('when not sending first message', () => {
     server.openConnection(connection2);
 
     expect(serverManager.connectionIDToConnectionState).toEqual(
-      new Map([[connection1.id, ConnectionState.WaitingForFirstMessage], [connection2.id, ConnectionState.WaitingForFirstMessage]]),
+      new Map([
+        [connection1.id, ConnectionState.WaitingForFirstMessage],
+        [connection2.id, ConnectionState.WaitingForFirstMessage],
+      ]),
     );
-    expect(serverManager.connectionIDToPreLoggedInConnection).toEqual(new Map([[connection1.id, connection1], [connection2.id, connection2]]));
+    expect(serverManager.connectionIDToPreLoggedInConnection).toEqual(
+      new Map([
+        [connection1.id, connection1],
+        [connection2.id, connection2],
+      ]),
+    );
 
     connection1.close();
 
@@ -345,7 +361,7 @@ describe('when sending first message', () => {
       server.openConnection(connection);
       connection.sendMessage(inputMessage);
 
-      await new Promise(resolve => setTimeout(resolve, 0));
+      await new Promise((resolve) => setTimeout(resolve, 0));
 
       expect(connection.receivedMessages).toEqual([[[MessageToClient.FatalError, outputErrorCode]]]);
       expect(connection.readyState).toBe(WebSocket.CLOSED);
@@ -422,7 +438,7 @@ describe('when sending first message', () => {
       const connection1 = new TestConnection('connection 1');
       server.openConnection(connection1);
       connection1.sendMessage([0, username, password, []]);
-      await new Promise(resolve => setTimeout(resolve, 0));
+      await new Promise((resolve) => setTimeout(resolve, 0));
 
       function expectJustConnection1Data() {
         expect(serverManager.connectionIDToConnectionState).toEqual(new Map([[connection1.id, ConnectionState.LoggedIn]]));
@@ -438,10 +454,13 @@ describe('when sending first message', () => {
       const connection2 = new TestConnection('connection 2');
       server.openConnection(connection2);
       connection2.sendMessage([0, username, password, []]);
-      await new Promise(resolve => setTimeout(resolve, 0));
+      await new Promise((resolve) => setTimeout(resolve, 0));
 
       expect(serverManager.connectionIDToConnectionState).toEqual(
-        new Map([[connection1.id, ConnectionState.LoggedIn], [connection2.id, ConnectionState.LoggedIn]]),
+        new Map([
+          [connection1.id, ConnectionState.LoggedIn],
+          [connection2.id, ConnectionState.LoggedIn],
+        ]),
       );
       expect(serverManager.connectionIDToPreLoggedInConnection).toEqual(new Map());
       expect(serverManager.clientIDManager.used).toEqual(new Set([1, 2]));
@@ -508,7 +527,13 @@ describe('when sending first message', () => {
         [
           MessageToClient.Greetings,
           7,
-          [[1, 'user 1', [[1], [6]]], [2, 'user 2', [[2], [3]]], [3, 'user 3'], [4, 'user 4', [[5, 2]]], [5, 'me', [[7]]]],
+          [
+            [1, 'user 1', [[1], [6]]],
+            [2, 'user 2', [[2], [3]]],
+            [3, 'user 3'],
+            [4, 'user 4', [[5, 2]]],
+            [5, 'me', [[7]]],
+          ],
           [
             [0, 10, 1, ...serverManager.gameDisplayNumberToGameData.get(1)!.gameSetup!.toJSON()],
             [0, 11, 2, ...serverManager.gameDisplayNumberToGameData.get(2)!.gameSetup!.toJSON()],
@@ -533,7 +558,10 @@ describe('when sending first message', () => {
           [
             MessageToClient.Greetings,
             2,
-            [[1, '1', [[1, 1]]], [2, '2', [[2]]]],
+            [
+              [1, '1', [[1, 1]]],
+              [2, '2', [[2]]],
+            ],
             [[0, 10, 1, GameMode.Singles4, PlayerArrangementMode.RandomOrder, 1, [1, 0, 0, 0], [0, 0, 0, 0]]],
           ],
         ],
@@ -550,7 +578,11 @@ describe('when sending first message', () => {
           [
             MessageToClient.Greetings,
             3,
-            [[1, '1', [[1, 1]]], [2, '2', [[2, 2]]], [3, '3', [[3]]]],
+            [
+              [1, '1', [[1, 1]]],
+              [2, '2', [[2, 2]]],
+              [3, '3', [[3]]],
+            ],
             [
               [0, 10, 1, GameMode.Singles4, PlayerArrangementMode.RandomOrder, 1, [1, 0, 0, 0], [0, 0, 0, 0]],
               [
@@ -579,14 +611,23 @@ describe('when sending first message', () => {
           [
             MessageToClient.Greetings,
             4,
-            [[1, '1', [[1, 1]]], [2, '2', [[2, 2], [4]]], [3, '3', [[3]]]],
+            [
+              [1, '1', [[1, 1]]],
+              [2, '2', [[2, 2], [4]]],
+              [3, '3', [[3]]],
+            ],
             [
               [0, 10, 1, GameMode.Singles4, PlayerArrangementMode.RandomOrder, 1, [1, 0, 0, 0], [0, 0, 0, 0]],
               [
                 1,
                 11,
                 2,
-                [[[], 1234567903, [], [89, 19, 29, 39, 49, 59, 69], 0], [[19], 2, [], [79], 0], [[29], 2, [], [0], 0], [[39], 2, [], [99], 0]],
+                [
+                  [[], 1234567903, [], [89, 19, 29, 39, 49, 59, 69], 0],
+                  [[19], 2, [], [79], 0],
+                  [[29], 2, [], [0], 0],
+                  [[39], 2, [], [99], 0],
+                ],
                 GameMode.Singles1,
                 PlayerArrangementMode.RandomOrder,
                 2,
@@ -665,7 +706,10 @@ describe('create game', () => {
     expect(connection1.receivedMessages.length).toBe(1);
     expect(connection2.receivedMessages.length).toBe(1);
 
-    const expectedMessage = [[MessageToClient.GameCreated, 10, 1, GameMode.Teams2vs2, 2], [MessageToClient.ClientEnteredGame, 2, 1]];
+    const expectedMessage = [
+      [MessageToClient.GameCreated, 10, 1, GameMode.Teams2vs2, 2],
+      [MessageToClient.ClientEnteredGame, 2, 1],
+    ];
     expect(connection1.receivedMessages[0]).toEqual(expectedMessage);
     expect(connection2.receivedMessages[0]).toEqual(expectedMessage);
   });

@@ -245,6 +245,6 @@ const gameHistoryMessageHandlerLookup = new Map<GameHistoryMessage, (key: number
     ),
   ],
   [GameHistoryMessage.EndedGame, (key, username) => <div key={key}>{getUsernameSpan(username)} ended the game.</div>],
-  [GameHistoryMessage.NoTilesPlayedForEntireRound, key => <div key={key}>No tiles played for an entire round. Game end forced.</div>],
-  [GameHistoryMessage.AllTilesPlayed, key => <div key={key}>All tiles have been played. Game end forced.</div>],
+  [GameHistoryMessage.NoTilesPlayedForEntireRound, (key) => <div key={key}>No tiles played for an entire round. Game end forced.</div>],
+  [GameHistoryMessage.AllTilesPlayed, (key) => <div key={key}>All tiles have been played. Game end forced.</div>],
 ]);

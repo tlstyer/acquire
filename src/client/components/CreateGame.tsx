@@ -43,7 +43,7 @@ export class CreateGame extends React.PureComponent<CreateGameProps, CreateGameS
       <div>
         Mode:{' '}
         <select value={gameMode.toString()} onChange={this.onChangeGameMode}>
-          {allGameModes.map(gm => (
+          {allGameModes.map((gm) => (
             <option key={gm} value={gm}>
               {gameModeToString.get(gm)}
             </option>

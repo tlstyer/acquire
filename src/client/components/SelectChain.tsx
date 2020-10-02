@@ -100,7 +100,7 @@ export class SelectChain extends React.Component<SelectChainProps> {
       <div>
         <fieldset className={style.root} style={{ fontSize: Math.floor(buttonSize * 0.4) }}>
           <legend>{typeToInstructions.get(type)}</legend>
-          {allChains.map(chain => {
+          {allChains.map((chain) => {
             if (availableChains.indexOf(chain) >= 0) {
               return (
                 <input

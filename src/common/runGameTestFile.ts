@@ -213,13 +213,13 @@ function fromParameterStrings(gameAction: GameAction, strings: string[]) {
       parameters.push(abbreviationToGameBoardType.get(strings[0])!);
       break;
     case GameAction.DisposeOfShares:
-      parameters.push(...strings.map(s => parseInt(s, 10)));
+      parameters.push(...strings.map((s) => parseInt(s, 10)));
       break;
     case GameAction.PurchaseShares:
       if (strings[0] === 'x') {
         parameters.push([]);
       } else {
-        parameters.push(strings[0].split(',').map(s => abbreviationToGameBoardType.get(s)));
+        parameters.push(strings[0].split(',').map((s) => abbreviationToGameBoardType.get(s)));
       }
       parameters.push(parseInt(strings[1], 10));
       break;
@@ -241,7 +241,7 @@ function toParameterStrings(gameAction: GameAction, parameters: any[]) {
       strings.push(gameBoardTypeToCharacter.get(parameters[0])!);
       break;
     case GameAction.DisposeOfShares:
-      strings.push(...parameters.map(p => p.toString()));
+      strings.push(...parameters.map((p) => p.toString()));
       break;
     case GameAction.PurchaseShares:
       if (parameters[0].length === 0) {
@@ -317,7 +317,7 @@ function getMoveDataLines(moveData: MoveData, revealedTilesPlayerID: number | nu
 
     if (moveData.revealedTileRackTiles.length > 0) {
       const str = moveData.revealedTileRackTiles
-        .map(trt => {
+        .map((trt) => {
           return `${toTileString(trt.tile)}:${trt.playerIDBelongsTo.toString()}`;
         })
         .join(', ');
@@ -326,7 +326,7 @@ function getMoveDataLines(moveData: MoveData, revealedTilesPlayerID: number | nu
 
     if (moveData.revealedTileBagTiles.length > 0) {
       const str = moveData.revealedTileBagTiles
-        .map(tbt => {
+        .map((tbt) => {
           return `${toTileString(tbt.tile)}:${tbt.playerIDWithPermission === null ? 'all' : tbt.playerIDWithPermission.toString()}`;
         })
         .join(', ');
@@ -345,7 +345,7 @@ function getMoveDataLines(moveData: MoveData, revealedTilesPlayerID: number | nu
     lines.push(`    w: ${JSON.stringify(moveData.watcherMessage)}`);
 
     lines.push('  history messages:');
-    moveData.gameHistoryMessages.forEach(ghm => {
+    moveData.gameHistoryMessages.forEach((ghm) => {
       lines.push(`    ${getGameHistoryMessageString(ghm)}`);
     });
 
@@ -443,9 +443,9 @@ function getScoreBoardLines(
     }
     lines.push(formatScoreBoardLine([name, ...row.toArray().map((val, index) => (index <= ScoreBoardIndex.Imperial && val === 0 ? '' : val.toString()))]));
   });
-  lines.push(formatScoreBoardLine(['A', ...scoreBoardAvailable.toArray().map(val => val.toString())]));
-  lines.push(formatScoreBoardLine(['C', ...scoreBoardChainSize.toArray().map(val => (val === 0 ? '-' : val.toString()))]));
-  lines.push(formatScoreBoardLine(['P', ...scoreBoardPrice.toArray().map(val => (val === 0 ? '-' : val.toString()))]));
+  lines.push(formatScoreBoardLine(['A', ...scoreBoardAvailable.toArray().map((val) => val.toString())]));
+  lines.push(formatScoreBoardLine(['C', ...scoreBoardChainSize.toArray().map((val) => (val === 0 ? '-' : val.toString()))]));
+  lines.push(formatScoreBoardLine(['P', ...scoreBoardPrice.toArray().map((val) => (val === 0 ? '-' : val.toString()))]));
   return lines;
 }
 

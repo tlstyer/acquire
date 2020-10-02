@@ -76,8 +76,19 @@ export function getDummyGameForGetGameHistory() {
   moveData = game.getCurrentMoveData();
   moveData.addGameHistoryMessage(GameHistoryMessage.PurchasedShares, 3, [[]]);
   moveData.addGameHistoryMessage(GameHistoryMessage.PurchasedShares, 0, [[[0, 3]]]);
-  moveData.addGameHistoryMessage(GameHistoryMessage.PurchasedShares, 1, [[[1, 2], [2, 1]]]);
-  moveData.addGameHistoryMessage(GameHistoryMessage.PurchasedShares, 2, [[[3, 1], [4, 1], [5, 1]]]);
+  moveData.addGameHistoryMessage(GameHistoryMessage.PurchasedShares, 1, [
+    [
+      [1, 2],
+      [2, 1],
+    ],
+  ]);
+  moveData.addGameHistoryMessage(GameHistoryMessage.PurchasedShares, 2, [
+    [
+      [3, 1],
+      [4, 1],
+      [5, 1],
+    ],
+  ]);
   game.endCurrentMove();
 
   moveData = game.getCurrentMoveData();

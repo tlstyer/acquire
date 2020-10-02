@@ -62,7 +62,10 @@ class AllDemoProps {
 
     this.loginFormProps = [{ onSubmit: onSubmitLoginForm }, { errorCode: ErrorCode.CouldNotConnect, username: 'tlstyer', onSubmit: onSubmitLoginForm }];
 
-    this.headerProps = [{ username: 'tlstyer', isConnected: true }, { username: 'Another User', isConnected: false }];
+    this.headerProps = [
+      { username: 'tlstyer', isConnected: true },
+      { username: 'Another User', isConnected: false },
+    ];
 
     this.createGameProps = [
       { onSubmit: onSubmitCreateGame },
@@ -342,7 +345,7 @@ class AllDemoProps {
     ];
 
     const nextGameActionsArray = getExampleNextGameActionsArray();
-    this.gameStateProps = nextGameActionsArray.map(nextGameAction => ({
+    this.gameStateProps = nextGameActionsArray.map((nextGameAction) => ({
       usernames: nextGameAction.game.usernames,
       nextGameAction,
       width: 500,
@@ -425,9 +428,7 @@ function renderComponentForEachProps(Component: any, propsArray: any[], descript
           <br />
           <br />
         </>
-      ) : (
-        undefined
-      )}
+      ) : undefined}
       <Component {...props} />
       {!descriptionFunc && i !== lastIndex ? <br /> : undefined}
     </React.Fragment>
@@ -499,7 +500,7 @@ function onSharesPurchased(chains: GameBoardType[], endGame: boolean) {
   console.log('onSharesPurchased', chains, endGame);
 }
 
-window.addEventListener('keydown', event => {
+window.addEventListener('keydown', (event) => {
   const keyName = event.key;
 
   if (keyName === 'ArrowLeft' || keyName === 'ArrowRight') {

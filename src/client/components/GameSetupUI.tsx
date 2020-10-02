@@ -45,7 +45,7 @@ export class GameSetupUI extends React.PureComponent<GameSetupUIProps> {
             defaultValue={gameMode.toString()}
             onChange={(event: React.FormEvent<HTMLSelectElement>) => onChangeGameMode(parseInt(event.currentTarget.value, 10))}
           >
-            {allGameModes.map(gm => (
+            {allGameModes.map((gm) => (
               <option key={gm} value={gm} disabled={gameModeToNumPlayers.get(gm)! < numUsersInGame}>
                 {gameModeToString.get(gm)}
               </option>
@@ -61,14 +61,12 @@ export class GameSetupUI extends React.PureComponent<GameSetupUIProps> {
             defaultValue={playerArrangementMode.toString()}
             onChange={(event: React.FormEvent<HTMLSelectElement>) => onChangePlayerArrangementMode(parseInt(event.currentTarget.value, 10))}
           >
-            {allPlayerArrangementModes.map(pam =>
+            {allPlayerArrangementModes.map((pam) =>
               pam !== PlayerArrangementMode.SpecifyTeams || isTeamGame ? (
                 <option key={pam} value={pam}>
                   {playerArrangementModeToString.get(pam)}
                 </option>
-              ) : (
-                undefined
-              ),
+              ) : undefined,
             )}
           </select>
         ) : (
@@ -118,14 +116,10 @@ export class GameSetupUI extends React.PureComponent<GameSetupUIProps> {
               <td className={isTeamGame ? teamNumberToCSSClassName.get((i % numTeams) + 1) : style.user}>{username}</td>
               {onSwapPositions !== undefined ? (
                 <td>{i > 0 ? <input type={'button'} value={'▲'} onClick={() => onSwapPositions(i, i - 1)} /> : undefined}</td>
-              ) : (
-                undefined
-              )}
+              ) : undefined}
               {onSwapPositions !== undefined ? (
                 <td>{i < lastIndex ? <input type={'button'} value={'▼'} onClick={() => onSwapPositions(i, i + 1)} /> : undefined}</td>
-              ) : (
-                undefined
-              )}
+              ) : undefined}
               {this.renderKickUserCell(i)}
               {showApprovals ? this.renderApproveCell(i) : undefined}
             </tr>
@@ -152,14 +146,10 @@ export class GameSetupUI extends React.PureComponent<GameSetupUIProps> {
                   <td className={style.user}>{usernames.get(index)}</td>
                   {onSwapPositions !== undefined ? (
                     <td>{upIndex !== null ? <input type={'button'} value={'▲'} onClick={() => onSwapPositions(index, upIndex)} /> : undefined}</td>
-                  ) : (
-                    undefined
-                  )}
+                  ) : undefined}
                   {onSwapPositions !== undefined ? (
                     <td>{downIndex !== null ? <input type={'button'} value={'▼'} onClick={() => onSwapPositions(index, downIndex)} /> : undefined}</td>
-                  ) : (
-                    undefined
-                  )}
+                  ) : undefined}
                   {this.renderKickUserCell(index)}
                   {showApprovals ? this.renderApproveCell(index) : undefined}
                 </tr>

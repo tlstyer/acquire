@@ -97,7 +97,7 @@ export class ActionSelectMergerSurvivor extends ActionBase {
     for (let i = 0; i < this.chainsBySize.length; i++) {
       let chains = this.chainsBySize[i];
       if (i === 0) {
-        chains = chains.filter(c => c !== controllingChain);
+        chains = chains.filter((c) => c !== controllingChain);
       }
 
       if (chains.length > 0) {

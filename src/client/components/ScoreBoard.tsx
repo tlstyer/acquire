@@ -127,7 +127,7 @@ class ScoreBoardHeader extends React.PureComponent {
     return (
       <tr>
         <td className={style.playerHeader}>Player</td>
-        {allChains.map(chain => (
+        {allChains.map((chain) => (
           <td key={chain} className={gameBoardTypeToCSSClassName.get(chain)}>
             {gameBoardTypeToHotelInitial.get(chain)}
           </td>

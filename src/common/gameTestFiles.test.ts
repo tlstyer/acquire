@@ -28,10 +28,7 @@ function processDirectory(base: string, dir: string) {
       });
     } else if (stats.isFile()) {
       test(file, () => {
-        const inputLines = fs
-          .readFileSync(filePath)
-          .toString()
-          .split('\n');
+        const inputLines = fs.readFileSync(filePath).toString().split('\n');
         const result = runGameTestFile(inputLines);
         const outputLines = result.outputLines;
         const game = result.game!;
@@ -47,7 +44,7 @@ function processDirectory(base: string, dir: string) {
           const playerID = game.userIDs.indexOf(game.myUserID || -1);
           const game2 = new Game(game.gameMode, game.playerArrangementMode, [], game.userIDs, game.usernames, game.hostUserID, game.myUserID);
 
-          game.moveDataHistory.forEach(moveData => {
+          game.moveDataHistory.forEach((moveData) => {
             moveData.createPlayerAndWatcherMessages();
             const gameMessage = playerID !== -1 ? moveData.playerMessages[playerID] : moveData.watcherMessage;
             game2.processMoveDataMessage(gameMessage);

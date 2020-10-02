@@ -81,9 +81,7 @@ function render() {
                     <input type={'button'} value={'Lock'} onClick={followPlayer.bind(null, playerID)} />
                   )}
                 </div>
-              ) : (
-                undefined
-              )}
+              ) : undefined}
             </div>
           );
         })}
@@ -112,7 +110,7 @@ function unfollowPlayer() {
   render();
 }
 
-window.addEventListener('keydown', event => {
+window.addEventListener('keydown', (event) => {
   const keyName = event.key;
 
   if (keyName === 'ArrowLeft' || keyName === 'ArrowRight') {

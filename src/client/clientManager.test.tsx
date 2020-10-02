@@ -102,17 +102,17 @@ function expectClientAndUserAndGameData(clientManager: ClientManager, userDatas:
   const gameIDTOUCRGameData: GameIDTOUCRGameData = new Map();
   const gameDisplayNumberTOUCRGameData: GameIDTOUCRGameData = new Map();
 
-  gameDataDatas.forEach(gameDataData => {
+  gameDataDatas.forEach((gameDataData) => {
     const ucrGameData = new UCRGameData(gameDataData.gameID, gameDataData.gameDisplayNumber, new Set(gameDataData.userIDs));
 
     gameIDTOUCRGameData.set(gameDataData.gameID, ucrGameData);
     gameDisplayNumberTOUCRGameData.set(gameDataData.gameDisplayNumber, ucrGameData);
   });
 
-  userDatas.forEach(userData => {
+  userDatas.forEach((userData) => {
     const clientIDs = new Set<number>();
 
-    userData.clientDatas.forEach(clientData => {
+    userData.clientDatas.forEach((clientData) => {
       const gameID = clientData.gameID !== undefined ? clientData.gameID : null;
 
       clientIDToUCRClient.set(clientData.clientID, new UCRClient(clientData.clientID, gameID, userData.userID));
@@ -126,8 +126,8 @@ function expectClientAndUserAndGameData(clientManager: ClientManager, userDatas:
     userIDToUCRUser.set(userData.userID, new UCRUser(userData.userID, userData.username, clientIDs, 0));
   });
 
-  gameDataDatas.forEach(gameDataData => {
-    gameDataData.userIDs.forEach(userID => {
+  gameDataDatas.forEach((gameDataData) => {
+    gameDataData.userIDs.forEach((userID) => {
       const ucrUser = userIDToUCRUser.get(userID);
 
       if (ucrUser !== undefined) {
@@ -162,7 +162,7 @@ function uncircularreferenceifyUserIDToUser(userIDToUser: Map<number, User>) {
   userIDToUser.forEach((user, userID) => {
     const clientIDs = new Set<number>();
 
-    user.clients.forEach(client => {
+    user.clients.forEach((client) => {
       clientIDs.add(client.id);
     });
 
@@ -185,7 +185,7 @@ function uncircularreferenceifyGameIDToGameData(gameIDToGameData: Map<number, Ga
 
     const ucrGameData = new UCRGameData(gameData.id, gameData.displayNumber, userIDs);
 
-    gameData.clients.forEach(client => {
+    gameData.clients.forEach((client) => {
       ucrGameData.clientIDs.add(client.id);
     });
 
@@ -335,7 +335,10 @@ describe('onEnterClicked', () => {
       [
         MessageToClient.Greetings,
         2,
-        [[1, 'user 1', [[1, 1]]], [2, 'me', [[2]]]],
+        [
+          [1, 'user 1', [[1, 1]]],
+          [2, 'me', [[2]]],
+        ],
         [[0, 10, 1, GameMode.Teams2vs2, PlayerArrangementMode.RandomOrder, 1, [1, 0, 0, 0], [0, 0, 0, 0]]],
       ],
     ]);
@@ -356,7 +359,10 @@ describe('onEnterClicked', () => {
       [
         MessageToClient.Greetings,
         2,
-        [[1, 'user 1', [[1, 1]]], [2, 'me', [[2]]]],
+        [
+          [1, 'user 1', [[1, 1]]],
+          [2, 'me', [[2]]],
+        ],
         [[0, 10, 1, GameMode.Teams2vs2, PlayerArrangementMode.RandomOrder, 1, [1, 0, 0, 0], [0, 0, 0, 0]]],
       ],
     ]);
@@ -371,84 +377,84 @@ describe('onEnterClicked', () => {
 
 describe('onExitGameClicked', () => {
   test('sends ExitGame message when connected', () => {
-    sendsMessageWhenConnected(clientManager => clientManager.onExitGameClicked(), [MessageToServer.ExitGame]);
+    sendsMessageWhenConnected((clientManager) => clientManager.onExitGameClicked(), [MessageToServer.ExitGame]);
   });
 
   test('does not send ExitGame message when not connected', () => {
-    doesNotSendMessageWhenNotConnected(clientManager => clientManager.onExitGameClicked());
+    doesNotSendMessageWhenNotConnected((clientManager) => clientManager.onExitGameClicked());
   });
 });
 
 describe('onJoinGame', () => {
   test('sends JoinGame message when connected', () => {
-    sendsMessageWhenConnected(clientManager => clientManager.onJoinGame(), [MessageToServer.JoinGame]);
+    sendsMessageWhenConnected((clientManager) => clientManager.onJoinGame(), [MessageToServer.JoinGame]);
   });
 
   test('does not send JoinGame message when not connected', () => {
-    doesNotSendMessageWhenNotConnected(clientManager => clientManager.onJoinGame());
+    doesNotSendMessageWhenNotConnected((clientManager) => clientManager.onJoinGame());
   });
 });
 
 describe('onUnjoinGame', () => {
   test('sends UnjoinGame message when connected', () => {
-    sendsMessageWhenConnected(clientManager => clientManager.onUnjoinGame(), [MessageToServer.UnjoinGame]);
+    sendsMessageWhenConnected((clientManager) => clientManager.onUnjoinGame(), [MessageToServer.UnjoinGame]);
   });
 
   test('does not send UnjoinGame message when not connected', () => {
-    doesNotSendMessageWhenNotConnected(clientManager => clientManager.onUnjoinGame());
+    doesNotSendMessageWhenNotConnected((clientManager) => clientManager.onUnjoinGame());
   });
 });
 
 describe('onApproveOfGameSetup', () => {
   test('sends ApproveOfGameSetup message when connected', () => {
-    sendsMessageWhenConnected(clientManager => clientManager.onApproveOfGameSetup(), [MessageToServer.ApproveOfGameSetup]);
+    sendsMessageWhenConnected((clientManager) => clientManager.onApproveOfGameSetup(), [MessageToServer.ApproveOfGameSetup]);
   });
 
   test('does not send ApproveOfGameSetup message when not connected', () => {
-    doesNotSendMessageWhenNotConnected(clientManager => clientManager.onApproveOfGameSetup());
+    doesNotSendMessageWhenNotConnected((clientManager) => clientManager.onApproveOfGameSetup());
   });
 });
 
 describe('onChangeGameMode', () => {
   test('sends ChangeGameMode message when connected', () => {
-    sendsMessageWhenConnected(clientManager => clientManager.onChangeGameMode(GameMode.Teams2vs2), [MessageToServer.ChangeGameMode, GameMode.Teams2vs2]);
+    sendsMessageWhenConnected((clientManager) => clientManager.onChangeGameMode(GameMode.Teams2vs2), [MessageToServer.ChangeGameMode, GameMode.Teams2vs2]);
   });
 
   test('does not send ChangeGameMode message when not connected', () => {
-    doesNotSendMessageWhenNotConnected(clientManager => clientManager.onChangeGameMode(GameMode.Teams2vs2));
+    doesNotSendMessageWhenNotConnected((clientManager) => clientManager.onChangeGameMode(GameMode.Teams2vs2));
   });
 });
 
 describe('onChangePlayerArrangementMode', () => {
   test('sends ChangePlayerArrangementMode message when connected', () => {
-    sendsMessageWhenConnected(clientManager => clientManager.onChangePlayerArrangementMode(PlayerArrangementMode.ExactOrder), [
+    sendsMessageWhenConnected((clientManager) => clientManager.onChangePlayerArrangementMode(PlayerArrangementMode.ExactOrder), [
       MessageToServer.ChangePlayerArrangementMode,
       PlayerArrangementMode.ExactOrder,
     ]);
   });
 
   test('does not send ChangePlayerArrangementMode message when not connected', () => {
-    doesNotSendMessageWhenNotConnected(clientManager => clientManager.onChangePlayerArrangementMode(PlayerArrangementMode.ExactOrder));
+    doesNotSendMessageWhenNotConnected((clientManager) => clientManager.onChangePlayerArrangementMode(PlayerArrangementMode.ExactOrder));
   });
 });
 
 describe('onSwapPositions', () => {
   test('sends SwapPositions message when connected', () => {
-    sendsMessageWhenConnected(clientManager => clientManager.onSwapPositions(0, 1), [MessageToServer.SwapPositions, 0, 1]);
+    sendsMessageWhenConnected((clientManager) => clientManager.onSwapPositions(0, 1), [MessageToServer.SwapPositions, 0, 1]);
   });
 
   test('does not send SwapPositions message when not connected', () => {
-    doesNotSendMessageWhenNotConnected(clientManager => clientManager.onSwapPositions(0, 1));
+    doesNotSendMessageWhenNotConnected((clientManager) => clientManager.onSwapPositions(0, 1));
   });
 });
 
 describe('onKickUser', () => {
   test('sends KickUser message when connected', () => {
-    sendsMessageWhenConnected(clientManager => clientManager.onKickUser(5), [MessageToServer.KickUser, 5]);
+    sendsMessageWhenConnected((clientManager) => clientManager.onKickUser(5), [MessageToServer.KickUser, 5]);
   });
 
   test('does not send KickUser message when not connected', () => {
-    doesNotSendMessageWhenNotConnected(clientManager => clientManager.onKickUser(5));
+    doesNotSendMessageWhenNotConnected((clientManager) => clientManager.onKickUser(5));
   });
 });
 
@@ -464,8 +470,18 @@ describe('MessageToClient.Greetings', () => {
       [
         MessageToClient.Greetings,
         7,
-        [[1, 'user 1', [[1], [6]]], [2, 'user 2', [[2], [3]]], [3, 'user 3', [[4]]], [4, 'user 4', [[5, 1]]], [5, 'me', [[7]]], [9, 'user 9']],
-        [[0, 1, 1, ...gameSetupJSON1], [0, 2, 3, ...gameSetupJSON2]],
+        [
+          [1, 'user 1', [[1], [6]]],
+          [2, 'user 2', [[2], [3]]],
+          [3, 'user 3', [[4]]],
+          [4, 'user 4', [[5, 1]]],
+          [5, 'me', [[7]]],
+          [9, 'user 9'],
+        ],
+        [
+          [0, 1, 1, ...gameSetupJSON1],
+          [0, 2, 3, ...gameSetupJSON2],
+        ],
       ],
     ]);
 
@@ -501,14 +517,23 @@ describe('MessageToClient.Greetings', () => {
       [
         MessageToClient.Greetings,
         4,
-        [[1, '1', [[1, 1]]], [2, '2', [[2, 2], [4]]], [3, '3', [[3]]]],
+        [
+          [1, '1', [[1, 1]]],
+          [2, '2', [[2, 2], [4]]],
+          [3, '3', [[3]]],
+        ],
         [
           [0, 10, 1, GameMode.Singles4, PlayerArrangementMode.RandomOrder, 1, [1, 0, 0, 0], [0, 0, 0, 0]],
           [
             1,
             11,
             2,
-            [[[], 1234567894, [], [89, 19, 29, 39, 49, 59, 69], 0], [[19], 1, [], [79], 0], [[29], 1, [], [0], 0], [[39], 1, [], [99], 0]],
+            [
+              [[], 1234567894, [], [89, 19, 29, 39, 49, 59, 69], 0],
+              [[19], 1, [], [79], 0],
+              [[29], 1, [], [0], 0],
+              [[39], 1, [], [99], 0],
+            ],
             GameMode.Singles1,
             PlayerArrangementMode.RandomOrder,
             2,
@@ -646,7 +671,10 @@ describe('MessageToClient.ClientEnteredGame', () => {
     testConnection.triggerOpen();
     testConnection.triggerMessage([[MessageToClient.Greetings, 2, [[1, 'me', [[2]]]], []]]);
     testConnection.triggerMessage([[MessageToClient.ClientConnected, 4, 3, 'user 3']]);
-    testConnection.triggerMessage([[MessageToClient.GameCreated, 10, 1, GameMode.Teams2vs2, 2], [MessageToClient.ClientEnteredGame, 2, 1]]);
+    testConnection.triggerMessage([
+      [MessageToClient.GameCreated, 10, 1, GameMode.Teams2vs2, 2],
+      [MessageToClient.ClientEnteredGame, 2, 1],
+    ]);
 
     expect(clientManager.page).toBe(ClientManagerPage.GameSetup);
     expectClientAndUserAndGameData(
@@ -663,7 +691,10 @@ describe('MessageToClient.ClientEnteredGame', () => {
     testConnection.triggerOpen();
     testConnection.triggerMessage([[MessageToClient.Greetings, 2, [[1, 'me', [[2]]]], []]]);
     testConnection.triggerMessage([[MessageToClient.ClientConnected, 4, 3, 'user 3']]);
-    testConnection.triggerMessage([[MessageToClient.GameCreated, 10, 1, GameMode.Teams2vs2, 4], [MessageToClient.ClientEnteredGame, 4, 1]]);
+    testConnection.triggerMessage([
+      [MessageToClient.GameCreated, 10, 1, GameMode.Teams2vs2, 4],
+      [MessageToClient.ClientEnteredGame, 4, 1],
+    ]);
 
     expect(clientManager.page).toBe(ClientManagerPage.Lobby);
     expectClientAndUserAndGameData(
@@ -684,7 +715,10 @@ describe('MessageToClient.ClientExitedGame', () => {
       [
         MessageToClient.Greetings,
         2,
-        [[1, 'user 1', [[1, 1]]], [2, 'me', [[2, 1]]]],
+        [
+          [1, 'user 1', [[1, 1]]],
+          [2, 'me', [[2, 1]]],
+        ],
         [[0, 10, 1, GameMode.Teams2vs2, PlayerArrangementMode.RandomOrder, 1, [1, 2, 0, 0], [0, 0, 0, 0]]],
       ],
     ]);
@@ -715,7 +749,10 @@ describe('MessageToClient.ClientExitedGame', () => {
       [
         MessageToClient.Greetings,
         2,
-        [[1, 'user 1', [[1, 1]]], [2, 'me', [[2, 1]]]],
+        [
+          [1, 'user 1', [[1, 1]]],
+          [2, 'me', [[2, 1]]],
+        ],
         [[0, 10, 1, GameMode.Teams2vs2, PlayerArrangementMode.RandomOrder, 1, [1, 2, 0, 0], [0, 0, 0, 0]]],
       ],
     ]);
@@ -748,7 +785,10 @@ describe('MessageToClient.GameSetupChanged', () => {
       [
         MessageToClient.Greetings,
         2,
-        [[1, 'user 1', [[1, 1]]], [2, 'me', [[2, 1]]]],
+        [
+          [1, 'user 1', [[1, 1]]],
+          [2, 'me', [[2, 1]]],
+        ],
         [[0, 10, 1, GameMode.Teams2vs2, PlayerArrangementMode.RandomOrder, 1, [1, 0, 0, 0], [0, 0, 0, 0]]],
       ],
     ]);
@@ -778,7 +818,10 @@ describe('MessageToClient.GameSetupChanged', () => {
       [
         MessageToClient.Greetings,
         2,
-        [[1, 'user 1', [[1, 1]]], [2, 'me', [[2, 1]]]],
+        [
+          [1, 'user 1', [[1, 1]]],
+          [2, 'me', [[2, 1]]],
+        ],
         [[0, 10, 1, GameMode.Teams2vs2, PlayerArrangementMode.RandomOrder, 1, [1, 2, 0, 0], [0, 0, 0, 0]]],
       ],
     ]);
@@ -808,7 +851,10 @@ describe('MessageToClient.GameSetupChanged', () => {
       [
         MessageToClient.Greetings,
         2,
-        [[1, 'user 1', [[1, 1]]], [2, 'me', [[2, 1]]]],
+        [
+          [1, 'user 1', [[1, 1]]],
+          [2, 'me', [[2, 1]]],
+        ],
         [[0, 10, 1, GameMode.Singles2, PlayerArrangementMode.RandomOrder, 1, [1, 2], [0, 0]]],
       ],
     ]);
@@ -838,7 +884,10 @@ describe('MessageToClient.GameSetupChanged', () => {
       [
         MessageToClient.Greetings,
         2,
-        [[1, 'user 1', [[1, 1]]], [2, 'me', [[2, 1]]]],
+        [
+          [1, 'user 1', [[1, 1]]],
+          [2, 'me', [[2, 1]]],
+        ],
         [[0, 10, 1, GameMode.Singles2, PlayerArrangementMode.RandomOrder, 1, [1, 2], [0, 0]]],
       ],
     ]);
@@ -868,7 +917,10 @@ describe('MessageToClient.GameSetupChanged', () => {
       [
         MessageToClient.Greetings,
         2,
-        [[1, 'user 1', [[1, 1]]], [2, 'me', [[2, 1]]]],
+        [
+          [1, 'user 1', [[1, 1]]],
+          [2, 'me', [[2, 1]]],
+        ],
         [[0, 10, 1, GameMode.Singles2, PlayerArrangementMode.RandomOrder, 1, [1, 2], [0, 0]]],
       ],
     ]);
@@ -898,7 +950,10 @@ describe('MessageToClient.GameSetupChanged', () => {
       [
         MessageToClient.Greetings,
         2,
-        [[1, 'user 1', [[1, 1]]], [2, 'me', [[2, 1]]]],
+        [
+          [1, 'user 1', [[1, 1]]],
+          [2, 'me', [[2, 1]]],
+        ],
         [[0, 10, 1, GameMode.Teams2vs2, PlayerArrangementMode.RandomOrder, 1, [1, 2, 0, 0], [0, 0, 0, 0]]],
       ],
     ]);
@@ -928,7 +983,10 @@ describe('MessageToClient.GameSetupChanged', () => {
       [
         MessageToClient.Greetings,
         2,
-        [[1, 'user 1', [[1, 1]]], [2, 'me', [[2, 1]]]],
+        [
+          [1, 'user 1', [[1, 1]]],
+          [2, 'me', [[2, 1]]],
+        ],
         [[0, 10, 1, GameMode.Teams2vs2, PlayerArrangementMode.RandomOrder, 1, [1, 2, 0, 0], [0, 0, 0, 0]]],
       ],
     ]);
@@ -960,7 +1018,11 @@ describe('MessageToClient.GameStarted and MessageToClient.GameActionDone', () =>
       [
         MessageToClient.Greetings,
         3,
-        [[1, 'host', [[1, 1]]], [2, 'opponent', [[2, 1]]], [3, 'me', [[3]]]],
+        [
+          [1, 'host', [[1, 1]]],
+          [2, 'opponent', [[2, 1]]],
+          [3, 'me', [[3]]],
+        ],
         [[0, 10, 1, GameMode.Singles2, PlayerArrangementMode.RandomOrder, 1, [1, 2], [1, 0]]],
       ],
     ]);

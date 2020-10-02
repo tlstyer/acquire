@@ -63,7 +63,7 @@ export class ExampleGameSetupMaster extends React.Component<ExampleGameSetupMast
             }, this.state.simulatedNetworkDelay);
           }}
         />
-        {userIDs.map(userID => {
+        {userIDs.map((userID) => {
           const username = getUsernameForUserID(userID);
           return userID !== gameSetup.hostUserID ? (
             <div key={username}>
@@ -103,9 +103,7 @@ export class ExampleGameSetupMaster extends React.Component<ExampleGameSetupMast
                 }}
               />
             </div>
-          ) : (
-            undefined
-          );
+          ) : undefined;
         })}
         <h2>Watcher view</h2>
         <GameSetupUI

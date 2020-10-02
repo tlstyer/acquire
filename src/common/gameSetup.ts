@@ -290,11 +290,21 @@ export class GameSetup {
     } else if (this.playerArrangementMode === PlayerArrangementMode.SpecifyTeams) {
       let teams: number[][];
       if (this.gameMode === GameMode.Teams2vs2) {
-        teams = [[userIDs[0], userIDs[2]], [userIDs[1], userIDs[3]]];
+        teams = [
+          [userIDs[0], userIDs[2]],
+          [userIDs[1], userIDs[3]],
+        ];
       } else if (this.gameMode === GameMode.Teams2vs2vs2) {
-        teams = [[userIDs[0], userIDs[3]], [userIDs[1], userIDs[4]], [userIDs[2], userIDs[5]]];
+        teams = [
+          [userIDs[0], userIDs[3]],
+          [userIDs[1], userIDs[4]],
+          [userIDs[2], userIDs[5]],
+        ];
       } else {
-        teams = [[userIDs[0], userIDs[2], userIDs[4]], [userIDs[1], userIDs[3], userIDs[5]]];
+        teams = [
+          [userIDs[0], userIDs[2], userIDs[4]],
+          [userIDs[1], userIDs[3], userIDs[5]],
+        ];
       }
 
       shuffleArray(teams);
@@ -313,7 +323,7 @@ export class GameSetup {
       }
     }
 
-    const usernames = userIDs.map(userID => this.getUsernameForUserID(userID));
+    const usernames = userIDs.map((userID) => this.getUsernameForUserID(userID));
 
     return [List(userIDs), List(usernames)];
   }

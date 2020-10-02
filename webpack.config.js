@@ -217,10 +217,7 @@ function getShortCSSNameLookup() {
         processDirectory(filePath);
       } else if (stats.isFile()) {
         if (file.endsWith('.scss.d.ts')) {
-          const lines = fs
-            .readFileSync(filePath)
-            .toString()
-            .split('\n');
+          const lines = fs.readFileSync(filePath).toString().split('\n');
           const cssFilePath = filePath.slice(0, filePath.length - 5);
 
           for (let j = 0; j < lines.length; j++) {

@@ -11,7 +11,7 @@ function removeDelimiters(input: string) {
 }
 
 export function prettyPrintMessagesToClient(messages: any[]) {
-  messages = messages.map(message => {
+  messages = messages.map((message) => {
     message = [...message];
 
     switch (message[0]) {

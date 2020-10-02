@@ -36,10 +36,7 @@ test('renders correctly', () => {
 test('works correctly', () => {
   const gameHistory = mount(jsx);
 
-  gameHistory
-    .find('.move')
-    .at(3)
-    .simulate('click');
+  gameHistory.find('.move').at(3).simulate('click');
 
   expect(onMoveClicked.mock.calls.length).toBe(1);
   expect(onMoveClicked.mock.calls[0]).toEqual([3]);

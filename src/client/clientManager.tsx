@@ -341,9 +341,7 @@ export class ClientManager {
                 keyboardShortcutsEnabled={!!this.myRequiredGameAction}
                 onTileClicked={this.onTileClicked}
               />
-            ) : (
-              undefined
-            )}
+            ) : undefined}
             {this.myRequiredGameAction &&
               (nextGameAction instanceof ActionSelectNewChain ? (
                 <SelectChain
@@ -388,9 +386,7 @@ export class ClientManager {
                   keyboardShortcutsEnabled={true}
                   onSharesPurchased={this.onSharesPurchased}
                 />
-              ) : (
-                undefined
-              ))}
+              ) : undefined)}
             <GameHistory usernames={game.usernames} moveDataHistory={game.moveDataHistory} onMoveClicked={this.onMoveClicked} />
             <GameState usernames={game.usernames} nextGameAction={nextGameAction} />
           </div>

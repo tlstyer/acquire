@@ -47,7 +47,7 @@ export class ServerManager {
   }
 
   manage() {
-    this.server.on('connection', connection => {
+    this.server.on('connection', (connection) => {
       this.logMessage(
         LogMessage.Connected,
         connection.id,
@@ -60,7 +60,7 @@ export class ServerManager {
 
       this.addConnection(connection);
 
-      connection.on('data', messageString => {
+      connection.on('data', (messageString) => {
         let message: any[];
         try {
           message = JSON.parse(messageString);
@@ -127,7 +127,7 @@ export class ServerManager {
   }
 
   sendAllQueuedMessages() {
-    this.connectionIDToClient.forEach(aClient => {
+    this.connectionIDToClient.forEach((aClient) => {
       aClient.sendQueuedMessages();
     });
   }
@@ -160,7 +160,7 @@ export class ServerManager {
       this.deleteUserIfItDoesNotHaveReferences(user);
 
       const messageToOtherClients = JSON.stringify([MessageToClient.ClientDisconnected, client.id]);
-      this.connectionIDToClient.forEach(otherClient => {
+      this.connectionIDToClient.forEach((otherClient) => {
         otherClient.queueMessage(messageToOtherClients);
       });
     } else {
@@ -272,7 +272,7 @@ export class ServerManager {
     }
     const messageToOtherClients = JSON.stringify(outgoingMessageParts);
 
-    this.connectionIDToClient.forEach(otherClient => {
+    this.connectionIDToClient.forEach((otherClient) => {
       if (otherClient !== client) {
         otherClient.queueMessage(messageToOtherClients);
       }
@@ -311,7 +311,7 @@ export class ServerManager {
 
     const gameCreatedMessage = JSON.stringify([MessageToClient.GameCreated, gameData.id, gameData.displayNumber, gameData.gameSetup!.gameMode, client.id]);
     const clientEnteredGameMessage = JSON.stringify([MessageToClient.ClientEnteredGame, client.id, gameData.displayNumber]);
-    this.connectionIDToClient.forEach(aClient => {
+    this.connectionIDToClient.forEach((aClient) => {
       aClient.queueMessage(gameCreatedMessage);
       aClient.queueMessage(clientEnteredGameMessage);
     });
@@ -339,7 +339,7 @@ export class ServerManager {
     client.gameData = gameData;
 
     const message = JSON.stringify([MessageToClient.ClientEnteredGame, client.id, gameData.displayNumber]);
-    this.connectionIDToClient.forEach(aClient => {
+    this.connectionIDToClient.forEach((aClient) => {
       aClient.queueMessage(message);
     });
   }
@@ -360,7 +360,7 @@ export class ServerManager {
     client.gameData = null;
 
     const message = JSON.stringify([MessageToClient.ClientExitedGame, client.id]);
-    this.connectionIDToClient.forEach(aClient => {
+    this.connectionIDToClient.forEach((aClient) => {
       aClient.queueMessage(message);
     });
   }
@@ -442,7 +442,7 @@ export class ServerManager {
       gameData.game = game;
 
       const message = JSON.stringify([MessageToClient.GameStarted, gameData.displayNumber, userIDs.toJS()]);
-      this.connectionIDToClient.forEach(aClient => {
+      this.connectionIDToClient.forEach((aClient) => {
         aClient.queueMessage(message);
       });
 
@@ -615,9 +615,9 @@ export class ServerManager {
   sendGameSetupChanges(gameData: GameData) {
     const gameSetup = gameData.gameSetup!;
 
-    gameSetup.history.forEach(change => {
+    gameSetup.history.forEach((change) => {
       const message = JSON.stringify([MessageToClient.GameSetupChanged, gameData.displayNumber, ...change]);
-      this.connectionIDToClient.forEach(aClient => {
+      this.connectionIDToClient.forEach((aClient) => {
         aClient.queueMessage(message);
       });
     });
@@ -638,7 +638,7 @@ export class ServerManager {
       const user = this.userIDToUser.get(userID)!;
       if (user.clients.size > 0) {
         const message = JSON.stringify([MessageToClient.GameActionDone, gameData.displayNumber, ...moveData.playerMessages[playerID]]);
-        user.clients.forEach(aClient => {
+        user.clients.forEach((aClient) => {
           aClient.queueMessage(message);
         });
       }
@@ -648,7 +648,7 @@ export class ServerManager {
 
     // send watcher messages to everybody else
     const watcherMessage = JSON.stringify([MessageToClient.GameActionDone, gameData.displayNumber, ...moveData.watcherMessage]);
-    this.connectionIDToClient.forEach(aClient => {
+    this.connectionIDToClient.forEach((aClient) => {
       if (!playerUserIDs.has(aClient.user.id)) {
         aClient.queueMessage(watcherMessage);
       }
@@ -657,9 +657,9 @@ export class ServerManager {
 
   getGreetingsMessage(_gameDataArray: any[], client: Client) {
     const users: any[] = [];
-    this.userIDToUser.forEach(user => {
+    this.userIDToUser.forEach((user) => {
       const clients: any[] = [];
-      user.clients.forEach(aClient => {
+      user.clients.forEach((aClient) => {
         const clientData = [aClient.id];
         if (aClient.gameData !== null) {
           clientData.push(aClient.gameData.displayNumber);
@@ -676,7 +676,7 @@ export class ServerManager {
     });
 
     const games: any[] = [];
-    this.gameIDToGameData.forEach(gameData => {
+    this.gameIDToGameData.forEach((gameData) => {
       const message: any[] = [gameData.gameSetup !== null ? 0 : 1, gameData.id, gameData.displayNumber];
 
       if (gameData.gameSetup !== null) {
@@ -686,7 +686,7 @@ export class ServerManager {
         const playerID = game.userIDs.indexOf(client.user.id);
 
         const moveHistoryMessages: any[][] = [];
-        game.moveDataHistory.forEach(moveData => {
+        game.moveDataHistory.forEach((moveData) => {
           if (playerID >= 0) {
             moveHistoryMessages.push(moveData.playerMessages[playerID]);
           } else {

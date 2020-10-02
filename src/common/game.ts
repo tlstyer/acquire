@@ -270,7 +270,7 @@ export class Game {
           return true;
         });
         if (borderTypes.length > 1) {
-          borderTypes = borderTypes.filter(type => type !== GameBoardType.NothingYet);
+          borderTypes = borderTypes.filter((type) => type !== GameBoardType.NothingYet);
         }
 
         if (borderTypes.length === 0) {

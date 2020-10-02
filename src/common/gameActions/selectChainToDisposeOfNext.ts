@@ -46,7 +46,7 @@ export class ActionSelectChainToDisposeOfNext extends ActionBase {
       playerID = (playerID + 1) % this.game.userIDs.size;
     } while (playerID !== this.playerID);
 
-    const remainingDefunctChains = this.defunctChains.filter(c => c !== nextChain);
+    const remainingDefunctChains = this.defunctChains.filter((c) => c !== nextChain);
     if (remainingDefunctChains.length > 0) {
       actions.push(new ActionSelectChainToDisposeOfNext(this.game, this.playerID, remainingDefunctChains, this.controllingChain));
     }

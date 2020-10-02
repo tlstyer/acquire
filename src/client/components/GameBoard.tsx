@@ -22,7 +22,7 @@ export class GameBoard extends React.PureComponent<GameBoardProps> {
 
     const tileRackRowBitMasks = [0, 0, 0, 0, 0, 0, 0, 0, 0];
     if (tileRack) {
-      tileRack.forEach(tile => {
+      tileRack.forEach((tile) => {
         if (tile !== null) {
           const y = tile % 9;
           const x = tile / 9;

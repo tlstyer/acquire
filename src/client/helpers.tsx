@@ -53,7 +53,11 @@ const gameBoardTypeToHotelName = new Map([
   [GameBoardType.Imperial, 'Imperial'],
 ]);
 
-export const teamNumberToCSSClassName = new Map([[1, common.team1], [2, common.team2], [3, common.team3]]);
+export const teamNumberToCSSClassName = new Map([
+  [1, common.team1],
+  [2, common.team2],
+  [3, common.team3],
+]);
 
 const yTileNames = 'ABCDEFGHI';
 
@@ -93,7 +97,11 @@ export const gameModeToString = new Map([
   [GameMode.Teams3vs3, 'Teams 3 vs 3'],
 ]);
 
-export const gameStatusToString = new Map([[GameStatus.SettingUp, 'Setting Up'], [GameStatus.InProgress, 'In Progress'], [GameStatus.Completed, 'Completed']]);
+export const gameStatusToString = new Map([
+  [GameStatus.SettingUp, 'Setting Up'],
+  [GameStatus.InProgress, 'In Progress'],
+  [GameStatus.Completed, 'Completed'],
+]);
 
 export function hackDoNotInterfereWithKeyboardShortcuts(event: React.KeyboardEvent<HTMLElement>) {
   event.stopPropagation();

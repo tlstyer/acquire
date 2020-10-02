@@ -201,7 +201,7 @@ export class PurchaseShares extends React.Component<PurchaseSharesProps, Purchas
         <div className={style.topRow}>
           <fieldset>
             <legend>Available</legend>
-            {allChains.map(chain => {
+            {allChains.map((chain) => {
               const numAvailable = scoreBoardAvailable.get(chain)!;
               const price = scoreBoardPrice.get(chain)!;
 

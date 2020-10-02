@@ -5,7 +5,15 @@ import { GameSetup } from './gameSetup';
 
 const dummyApprovals = List([true]);
 
-const userIDToUsername = new Map([[1, 'user 1'], [2, 'user 2'], [3, 'user 3'], [4, 'user 4'], [5, 'user 5'], [6, 'user 6'], [7, 'user 7']]);
+const userIDToUsername = new Map([
+  [1, 'user 1'],
+  [2, 'user 2'],
+  [3, 'user 3'],
+  [4, 'user 4'],
+  [5, 'user 5'],
+  [6, 'user 6'],
+  [7, 'user 7'],
+]);
 
 function getUsernameForUserID(userID: number) {
   return userIDToUsername.get(userID)!;
@@ -46,7 +54,10 @@ describe('addUser', () => {
     expect(gameSetup.usernames.toJS()).toEqual(['user 1', 'user 3', 'user 4']);
     expect(gameSetup.userIDs.toJS()).toEqual([1, 3, 4]);
     expect(gameSetup.userIDsSet).toEqual(new Set([1, 3, 4]));
-    expect(gameSetup.history).toEqual([[GameSetupChange.UserAdded, 3], [GameSetupChange.UserAdded, 4]]);
+    expect(gameSetup.history).toEqual([
+      [GameSetupChange.UserAdded, 3],
+      [GameSetupChange.UserAdded, 4],
+    ]);
   });
 
   test('duplicate users are rejected', () => {
@@ -92,7 +103,10 @@ describe('removeUser', () => {
     expect(gameSetup.usernames.toJS()).toEqual(['user 1', null, null]);
     expect(gameSetup.userIDs.toJS()).toEqual([1, null, null]);
     expect(gameSetup.userIDsSet).toEqual(new Set([1]));
-    expect(gameSetup.history).toEqual([[GameSetupChange.UserRemoved, 7], [GameSetupChange.UserRemoved, 2]]);
+    expect(gameSetup.history).toEqual([
+      [GameSetupChange.UserRemoved, 7],
+      [GameSetupChange.UserRemoved, 2],
+    ]);
   });
 
   test('cannot remove host', () => {

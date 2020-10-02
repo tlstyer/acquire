@@ -37,10 +37,7 @@ function getNewComponent(
 }
 
 function clickInput(component: any, index: inputIndex) {
-  component
-    .find('input')
-    .at(index)
-    .simulate('click');
+  component.find('input').at(index).simulate('click');
 }
 
 function expectValues(component: any, keepValue: number, tradeValue: number, sellValue: number) {
