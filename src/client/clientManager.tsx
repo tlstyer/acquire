@@ -148,7 +148,7 @@ export class ClientManager {
       <>
         {this.renderHeader()}
         <CreateGame onSubmit={this.onSubmitCreateGame} />
-        {[...this.gameIDToGameData].reverse().map(([gameID, gameData]) => {
+        {[...this.gameIDToGameData.entries()].reverse().map(([gameID, gameData]) => {
           if (gameData.gameSetup !== null) {
             const gameSetup = gameData.gameSetup;
             return (

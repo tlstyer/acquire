@@ -50,9 +50,6 @@ function getDevelopmentConfig(APP) {
           use: [
             {
               loader: 'style-loader',
-              options: {
-                sourceMap: true,
-              },
             },
             {
               loader: 'dts-css-modules-loader',
@@ -63,17 +60,19 @@ function getDevelopmentConfig(APP) {
             {
               loader: 'css-loader',
               options: {
-                modules: true,
-                localIdentName: '[name]-[local]',
+                modules: {
+                  localIdentName: '[name]-[local]',
+                },
                 sourceMap: true,
               },
             },
             {
               loader: 'postcss-loader',
               options: {
-                ident: 'postcss',
-                plugins: loader => [require('postcss-url')({ url: 'inline' })],
-                sourceMap: true,
+                postcssOptions: {
+                  plugins: [['postcss-url', { url: 'inline' }]],
+                  sourceMap: true,
+                },
               },
             },
             {
@@ -102,19 +101,19 @@ function getProductionConfig(APP) {
     {
       module: 'react',
       global: 'React',
-      entry: 'https://cdnjs.cloudflare.com/ajax/libs/react/16.8.6/umd/react.production.min.js',
+      entry: 'https://cdnjs.cloudflare.com/ajax/libs/react/16.13.1/umd/react.production.min.js',
     },
     {
       module: 'react-dom',
       global: 'ReactDOM',
-      entry: 'https://cdnjs.cloudflare.com/ajax/libs/react-dom/16.8.6/umd/react-dom.production.min.js',
+      entry: 'https://cdnjs.cloudflare.com/ajax/libs/react-dom/16.13.1/umd/react-dom.production.min.js',
     },
   ];
   if (APP === 'index') {
     externals.push({
       module: 'sockjs-client',
       global: 'SockJS',
-      entry: 'https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.3.0/sockjs.min.js',
+      entry: 'https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.0/sockjs.min.js',
     });
   }
 
@@ -169,22 +168,24 @@ function getProductionConfig(APP) {
             {
               loader: 'css-loader',
               options: {
-                modules: true,
-                getLocalIdent: (context, localIdentName, localName, options) => {
-                  const key = context.resourcePath + '-' + localName;
-                  const shortCSSName = shortCSSNameLookup[key];
-                  if (shortCSSName === undefined) {
-                    throw new Error(`short CSS name not specified for "${key}"`);
-                  }
-                  return shortCSSName;
+                modules: {
+                  getLocalIdent: (context, localIdentName, localName, options) => {
+                    const key = context.resourcePath + '-' + localName;
+                    const shortCSSName = shortCSSNameLookup[key];
+                    if (shortCSSName === undefined) {
+                      throw new Error(`short CSS name not specified for "${key}"`);
+                    }
+                    return shortCSSName;
+                  },
                 },
               },
             },
             {
               loader: 'postcss-loader',
               options: {
-                ident: 'postcss',
-                plugins: loader => [require('postcss-url')({ url: 'inline' }), require('cssnano')()],
+                postcssOptions: {
+                  plugins: [['postcss-url', { url: 'inline' }], ['cssnano']],
+                },
               },
             },
             {
