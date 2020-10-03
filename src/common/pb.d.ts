@@ -11,3 +11,11 @@ export enum GameMode {
     TEAMS_2_VS_2_VS_2 = 8,
     TEAMS_3_VS_3 = 9
 }
+
+/** PlayerArrangementMode enum. */
+export enum PlayerArrangementMode {
+    VERSION_1 = 0,
+    RANDOM_ORDER = 1,
+    EXACT_ORDER = 2,
+    SPECIFY_TEAMS = 3
+}

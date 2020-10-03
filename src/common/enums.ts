@@ -100,13 +100,6 @@ export enum GameSetupChange {
   UserKicked,
 }
 
-export enum PlayerArrangementMode {
-  Version1,
-  RandomOrder,
-  ExactOrder,
-  SpecifyTeams,
-}
-
 export enum ScoreBoardIndex {
   Luxor,
   Tower,

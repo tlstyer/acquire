@@ -5,16 +5,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import * as SockJS from 'sockjs-client';
 import { defaultGameBoard } from '../common/defaults';
-import {
-  ErrorCode,
-  GameAction,
-  GameBoardType,
-  GameSetupChange,
-  MessageToClient,
-  MessageToServer,
-  PlayerArrangementMode,
-  ScoreBoardIndex,
-} from '../common/enums';
+import { ErrorCode, GameAction, GameBoardType, GameSetupChange, MessageToClient, MessageToServer, ScoreBoardIndex } from '../common/enums';
 import { Game } from '../common/game';
 import { ActionDisposeOfShares } from '../common/gameActions/disposeOfShares';
 import { ActionGameOver } from '../common/gameActions/gameOver';
@@ -37,7 +28,7 @@ import { ScoreBoard } from './components/ScoreBoard';
 import { SelectChain, SelectChainTitle } from './components/SelectChain';
 import { TileRack } from './components/TileRack';
 import { GameBoardLabelMode, GameStatus } from './enums';
-import { GameMode } from '../common/pb';
+import { GameMode, PlayerArrangementMode } from '../common/pb';
 
 export enum ClientManagerPage {
   Login,
@@ -581,7 +572,7 @@ export class ClientManager {
     const hostClient = this.clientIDToClient.get(hostClientID)!;
 
     const gameData = new GameData(gameID, gameDisplayNumber, this);
-    gameData.gameSetup = new GameSetup(gameMode, PlayerArrangementMode.RandomOrder, hostClient.user.id, this.getUsernameForUserID);
+    gameData.gameSetup = new GameSetup(gameMode, PlayerArrangementMode.RANDOM_ORDER, hostClient.user.id, this.getUsernameForUserID);
 
     hostClient.user.numGames++;
 

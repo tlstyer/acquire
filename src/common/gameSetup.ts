@@ -1,7 +1,7 @@
 import { List } from 'immutable';
-import { GameSetupChange, PlayerArrangementMode } from './enums';
+import { GameSetupChange } from './enums';
 import { gameModeToNumPlayers, gameModeToTeamSize, shuffleArray } from './helpers';
-import { GameMode } from './pb';
+import { GameMode, PlayerArrangementMode } from './pb';
 
 const defaultApprovals = new Map([
   [1, List([false])],
@@ -178,8 +178,8 @@ export class GameSetup {
     this.approvedByEverybody = false;
 
     const isTeamGame = gameModeToTeamSize.get(gameMode)! > 1;
-    if (!isTeamGame && this.playerArrangementMode === PlayerArrangementMode.SpecifyTeams) {
-      this.playerArrangementMode = PlayerArrangementMode.RandomOrder;
+    if (!isTeamGame && this.playerArrangementMode === PlayerArrangementMode.SPECIFY_TEAMS) {
+      this.playerArrangementMode = PlayerArrangementMode.RANDOM_ORDER;
     }
 
     this.gameMode = gameMode;
@@ -188,9 +188,9 @@ export class GameSetup {
 
   changePlayerArrangementMode(playerArrangementMode: PlayerArrangementMode) {
     if (
-      playerArrangementMode !== PlayerArrangementMode.RandomOrder &&
-      playerArrangementMode !== PlayerArrangementMode.ExactOrder &&
-      playerArrangementMode !== PlayerArrangementMode.SpecifyTeams
+      playerArrangementMode !== PlayerArrangementMode.RANDOM_ORDER &&
+      playerArrangementMode !== PlayerArrangementMode.EXACT_ORDER &&
+      playerArrangementMode !== PlayerArrangementMode.SPECIFY_TEAMS
     ) {
       return;
     }
@@ -200,7 +200,7 @@ export class GameSetup {
     }
 
     const isTeamGame = gameModeToTeamSize.get(this.gameMode)! > 1;
-    if (!isTeamGame && playerArrangementMode === PlayerArrangementMode.SpecifyTeams) {
+    if (!isTeamGame && playerArrangementMode === PlayerArrangementMode.SPECIFY_TEAMS) {
       return;
     }
 
@@ -286,9 +286,9 @@ export class GameSetup {
   getFinalUserIDsAndUsernames(): [List<number>, List<string>] {
     const userIDs: number[] = this.userIDs.toJS();
 
-    if (this.playerArrangementMode === PlayerArrangementMode.RandomOrder) {
+    if (this.playerArrangementMode === PlayerArrangementMode.RANDOM_ORDER) {
       shuffleArray(userIDs);
-    } else if (this.playerArrangementMode === PlayerArrangementMode.SpecifyTeams) {
+    } else if (this.playerArrangementMode === PlayerArrangementMode.SPECIFY_TEAMS) {
       let teams: number[][];
       if (this.gameMode === GameMode.TEAMS_2_VS_2) {
         teams = [

@@ -1,9 +1,9 @@
 import { Connection, Server } from 'sockjs';
-import { ErrorCode, MessageToClient, MessageToServer, PlayerArrangementMode } from '../common/enums';
+import { ErrorCode, MessageToClient, MessageToServer } from '../common/enums';
 import { Game } from '../common/game';
 import { GameSetup } from '../common/gameSetup';
 import { gameModeToNumPlayers, getNewTileBag, isASCII } from '../common/helpers';
-import { GameMode } from '../common/pb';
+import { GameMode, PlayerArrangementMode } from '../common/pb';
 import { LogMessage } from './enums';
 import { ReuseIDManager } from './reuseIDManager';
 import { UserDataProvider } from './userDataProvider';
@@ -301,7 +301,7 @@ export class ServerManager {
     }
 
     const gameData = new GameData(this.nextGameID++, this.gameDisplayNumberManager.getID());
-    gameData.gameSetup = new GameSetup(gameMode, PlayerArrangementMode.RandomOrder, client.user.id, this.getUsernameForUserID);
+    gameData.gameSetup = new GameSetup(gameMode, PlayerArrangementMode.RANDOM_ORDER, client.user.id, this.getUsernameForUserID);
     gameData.clients.add(client);
 
     client.gameData = gameData;

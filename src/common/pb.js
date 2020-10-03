@@ -37,4 +37,22 @@ $root.GameMode = (function() {
     return values;
 })();
 
+/**
+ * PlayerArrangementMode enum.
+ * @exports PlayerArrangementMode
+ * @enum {number}
+ * @property {number} VERSION_1=0 VERSION_1 value
+ * @property {number} RANDOM_ORDER=1 RANDOM_ORDER value
+ * @property {number} EXACT_ORDER=2 EXACT_ORDER value
+ * @property {number} SPECIFY_TEAMS=3 SPECIFY_TEAMS value
+ */
+$root.PlayerArrangementMode = (function() {
+    var valuesById = {}, values = Object.create(valuesById);
+    values[valuesById[0] = "VERSION_1"] = 0;
+    values[valuesById[1] = "RANDOM_ORDER"] = 1;
+    values[valuesById[2] = "EXACT_ORDER"] = 2;
+    values[valuesById[3] = "SPECIFY_TEAMS"] = 3;
+    return values;
+})();
+
 module.exports = $root;

@@ -2,10 +2,9 @@ import * as style from './GameSetupUI.scss';
 
 import { List } from 'immutable';
 import * as React from 'react';
-import { PlayerArrangementMode } from '../../common/enums';
 import { gameModeToNumPlayers, gameModeToTeamSize } from '../../common/helpers';
 import { allGameModes, gameModeToString, teamNumberToCSSClassName } from '../helpers';
-import { GameMode } from '../../common/pb';
+import { GameMode, PlayerArrangementMode } from '../../common/pb';
 
 interface GameSetupUIProps {
   gameMode: GameMode;
@@ -63,7 +62,7 @@ export class GameSetupUI extends React.PureComponent<GameSetupUIProps> {
             onChange={(event: React.FormEvent<HTMLSelectElement>) => onChangePlayerArrangementMode(parseInt(event.currentTarget.value, 10))}
           >
             {allPlayerArrangementModes.map((pam) =>
-              pam !== PlayerArrangementMode.SpecifyTeams || isTeamGame ? (
+              pam !== PlayerArrangementMode.SPECIFY_TEAMS || isTeamGame ? (
                 <option key={pam} value={pam}>
                   {playerArrangementModeToString.get(pam)}
                 </option>
@@ -74,9 +73,9 @@ export class GameSetupUI extends React.PureComponent<GameSetupUIProps> {
           playerArrangementModeToString.get(playerArrangementMode)
         )}
         <br />
-        {playerArrangementMode === PlayerArrangementMode.RandomOrder
+        {playerArrangementMode === PlayerArrangementMode.RANDOM_ORDER
           ? this.renderRandomOrder(gameIsFull)
-          : playerArrangementMode === PlayerArrangementMode.ExactOrder
+          : playerArrangementMode === PlayerArrangementMode.EXACT_ORDER
           ? this.renderExactOrder(gameIsFull)
           : this.renderSpecifyTeams(gameIsFull)}
       </div>
@@ -201,12 +200,12 @@ export class GameSetupUI extends React.PureComponent<GameSetupUIProps> {
 }
 
 const playerArrangementModeToString = new Map([
-  [PlayerArrangementMode.RandomOrder, 'Random Order'],
-  [PlayerArrangementMode.ExactOrder, 'Exact Order'],
-  [PlayerArrangementMode.SpecifyTeams, 'Specify Teams'],
+  [PlayerArrangementMode.RANDOM_ORDER, 'Random Order'],
+  [PlayerArrangementMode.EXACT_ORDER, 'Exact Order'],
+  [PlayerArrangementMode.SPECIFY_TEAMS, 'Specify Teams'],
 ]);
 
-const allPlayerArrangementModes = [PlayerArrangementMode.RandomOrder, PlayerArrangementMode.ExactOrder, PlayerArrangementMode.SpecifyTeams];
+const allPlayerArrangementModes = [PlayerArrangementMode.RANDOM_ORDER, PlayerArrangementMode.EXACT_ORDER, PlayerArrangementMode.SPECIFY_TEAMS];
 
 class SpecifyTeamsEntry {
   constructor(public index: number, public upIndex: number | null, public downIndex: number | null) {}

@@ -1,6 +1,6 @@
 import { Connection } from 'sockjs';
-import { ErrorCode, GameSetupChange, MessageToClient, MessageToServer, PlayerArrangementMode } from '../common/enums';
-import { GameMode } from '../common/pb';
+import { ErrorCode, GameSetupChange, MessageToClient, MessageToServer } from '../common/enums';
+import { GameMode, PlayerArrangementMode } from '../common/pb';
 import { Client, ConnectionState, GameData, ServerManager, User } from './serverManager';
 import { TestUserDataProvider } from './userDataProvider';
 
@@ -564,7 +564,7 @@ describe('when sending first message', () => {
               [1, '1', [[1, 1]]],
               [2, '2', [[2]]],
             ],
-            [[0, 10, 1, GameMode.SINGLES_4, PlayerArrangementMode.RandomOrder, 1, [1, 0, 0, 0], [0, 0, 0, 0]]],
+            [[0, 10, 1, GameMode.SINGLES_4, PlayerArrangementMode.RANDOM_ORDER, 1, [1, 0, 0, 0], [0, 0, 0, 0]]],
           ],
         ],
       ]);
@@ -586,7 +586,7 @@ describe('when sending first message', () => {
               [3, '3', [[3]]],
             ],
             [
-              [0, 10, 1, GameMode.SINGLES_4, PlayerArrangementMode.RandomOrder, 1, [1, 0, 0, 0], [0, 0, 0, 0]],
+              [0, 10, 1, GameMode.SINGLES_4, PlayerArrangementMode.RANDOM_ORDER, 1, [1, 0, 0, 0], [0, 0, 0, 0]],
               [
                 1,
                 11,
@@ -598,7 +598,7 @@ describe('when sending first message', () => {
                   [[39], 2, [[39, 0]], [-1], 0],
                 ],
                 GameMode.SINGLES_1,
-                PlayerArrangementMode.RandomOrder,
+                PlayerArrangementMode.RANDOM_ORDER,
                 2,
                 [2],
               ],
@@ -619,7 +619,7 @@ describe('when sending first message', () => {
               [3, '3', [[3]]],
             ],
             [
-              [0, 10, 1, GameMode.SINGLES_4, PlayerArrangementMode.RandomOrder, 1, [1, 0, 0, 0], [0, 0, 0, 0]],
+              [0, 10, 1, GameMode.SINGLES_4, PlayerArrangementMode.RANDOM_ORDER, 1, [1, 0, 0, 0], [0, 0, 0, 0]],
               [
                 1,
                 11,
@@ -631,7 +631,7 @@ describe('when sending first message', () => {
                   [[39], 2, [], [99], 0],
                 ],
                 GameMode.SINGLES_1,
-                PlayerArrangementMode.RandomOrder,
+                PlayerArrangementMode.RANDOM_ORDER,
                 2,
                 [2],
               ],
@@ -701,7 +701,7 @@ describe('create game', () => {
 
     const gameSetup = serverManager.gameIDToGameData.get(10)!.gameSetup!;
     expect(gameSetup.gameMode).toBe(GameMode.TEAMS_2_VS_2);
-    expect(gameSetup.playerArrangementMode).toBe(PlayerArrangementMode.RandomOrder);
+    expect(gameSetup.playerArrangementMode).toBe(PlayerArrangementMode.RANDOM_ORDER);
     expect(gameSetup.hostUserID).toBe(2);
     expect(gameSetup.hostUsername).toBe('user 2');
 
@@ -1137,7 +1137,7 @@ describe('change player arrangement mode', () => {
     const connection = await connectToServer(server, 'user');
     connection.clearReceivedMessages();
 
-    connection.sendMessage([MessageToServer.ChangePlayerArrangementMode, PlayerArrangementMode.ExactOrder]);
+    connection.sendMessage([MessageToServer.ChangePlayerArrangementMode, PlayerArrangementMode.EXACT_ORDER]);
 
     expect(connection.receivedMessages.length).toBe(0);
     expect(connection.readyState).toBe(WebSocket.OPEN);
@@ -1153,7 +1153,7 @@ describe('change player arrangement mode', () => {
     hostConnection.clearReceivedMessages();
     otherConnection.clearReceivedMessages();
 
-    otherConnection.sendMessage([MessageToServer.ChangePlayerArrangementMode, PlayerArrangementMode.ExactOrder]);
+    otherConnection.sendMessage([MessageToServer.ChangePlayerArrangementMode, PlayerArrangementMode.EXACT_ORDER]);
 
     expectClientKickedDueToInvalidMessage(otherConnection);
   });
@@ -1187,7 +1187,7 @@ describe('change player arrangement mode', () => {
       [new GameDataData(10, 1, [1, 2])],
     );
 
-    hostConnection.sendMessage([MessageToServer.ChangePlayerArrangementMode, PlayerArrangementMode.ExactOrder]);
+    hostConnection.sendMessage([MessageToServer.ChangePlayerArrangementMode, PlayerArrangementMode.EXACT_ORDER]);
 
     expectClientAndUserAndGameData(
       serverManager,
@@ -1198,7 +1198,7 @@ describe('change player arrangement mode', () => {
     expect(hostConnection.receivedMessages.length).toBe(1);
     expect(otherConnection.receivedMessages.length).toBe(1);
 
-    const expectedMessage = [[MessageToClient.GameSetupChanged, 1, GameSetupChange.PlayerArrangementModeChanged, PlayerArrangementMode.ExactOrder]];
+    const expectedMessage = [[MessageToClient.GameSetupChanged, 1, GameSetupChange.PlayerArrangementModeChanged, PlayerArrangementMode.EXACT_ORDER]];
     expect(hostConnection.receivedMessages[0]).toEqual(expectedMessage);
     expect(otherConnection.receivedMessages[0]).toEqual(expectedMessage);
   });
