@@ -1,8 +1,9 @@
 import { Connection, Server } from 'sockjs';
-import { ErrorCode, GameMode, MessageToClient, MessageToServer, PlayerArrangementMode } from '../common/enums';
+import { ErrorCode, MessageToClient, MessageToServer, PlayerArrangementMode } from '../common/enums';
 import { Game } from '../common/game';
 import { GameSetup } from '../common/gameSetup';
 import { gameModeToNumPlayers, getNewTileBag, isASCII } from '../common/helpers';
+import { GameMode } from '../common/pb';
 import { LogMessage } from './enums';
 import { ReuseIDManager } from './reuseIDManager';
 import { UserDataProvider } from './userDataProvider';

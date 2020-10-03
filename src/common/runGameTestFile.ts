@@ -1,5 +1,5 @@
 import { List } from 'immutable';
-import { GameAction, GameBoardType, GameHistoryMessage, GameMode, PlayerArrangementMode, ScoreBoardIndex, Tile } from './enums';
+import { GameAction, GameBoardType, GameHistoryMessage, PlayerArrangementMode, ScoreBoardIndex, Tile } from './enums';
 import { UserInputError } from './error';
 import { Game, GameHistoryMessageData, MoveData, MoveDataTileBagTile, MoveDataTileRackTile } from './game';
 import { ActionBase } from './gameActions/base';
@@ -8,10 +8,11 @@ import { ActionGameOver } from './gameActions/gameOver';
 import { ActionSelectChainToDisposeOfNext } from './gameActions/selectChainToDisposeOfNext';
 import { ActionSelectMergerSurvivor } from './gameActions/selectMergerSurvivor';
 import { ActionSelectNewChain } from './gameActions/selectNewChain';
+import { GameMode } from './pb';
 
 export function runGameTestFile(inputLines: string[]) {
   let game: Game | null = null;
-  let gameMode = GameMode.Singles1;
+  let gameMode = GameMode.SINGLES_1;
   let playerArrangementMode = PlayerArrangementMode.Version1;
   let tileBag: number[] = [];
   const userIDs: number[] = [];

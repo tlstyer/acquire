@@ -1,6 +1,7 @@
 import * as React from 'react';
-import { GameMode, PlayerArrangementMode } from '../../common/enums';
+import { PlayerArrangementMode } from '../../common/enums';
 import { GameSetup } from '../../common/gameSetup';
+import { GameMode } from '../../common/pb';
 import { GameSetupUI } from './GameSetupUI';
 
 interface ExampleGameSetupMasterProps {}
@@ -16,7 +17,7 @@ export class ExampleGameSetupMaster extends React.Component<ExampleGameSetupMast
     super(props);
 
     this.state = {
-      gameSetup: new GameSetup(GameMode.Singles4, PlayerArrangementMode.RandomOrder, 1, getUsernameForUserID),
+      gameSetup: new GameSetup(GameMode.SINGLES_4, PlayerArrangementMode.RandomOrder, 1, getUsernameForUserID),
       simulatedNetworkDelay: 250,
       nextUserId: 2,
     };

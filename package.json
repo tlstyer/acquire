@@ -40,6 +40,7 @@
     "postcss-loader": "^4.0.2",
     "postcss-url": "^8.0.0",
     "prettier": "^2.1.2",
+    "protobufjs": "^6.10.1",
     "raw-loader": "^4.0.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
@@ -66,6 +67,7 @@
     "examples": "APP=examples yarn webpack-dev-server",
     "review": "APP=review yarn webpack-dev-server",
     "server": "nodemon --exec ts-node src/server/main.ts",
+    "protobuf": "pbjs -t static-module -w commonjs -o src/common/pb.js src/common/pb.proto ; pbts -o src/common/pb.d.ts src/common/pb.js",
     "test": "jest",
     "lint": "eslint . --fix --ext .ts,.tsx",
     "format": "prettier --write '{,!(.git|node_modules)/**/}*.{css,js,json,md,scss,ts,tsx}' --loglevel warn"

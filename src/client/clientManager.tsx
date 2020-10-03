@@ -9,7 +9,6 @@ import {
   ErrorCode,
   GameAction,
   GameBoardType,
-  GameMode,
   GameSetupChange,
   MessageToClient,
   MessageToServer,
@@ -38,6 +37,7 @@ import { ScoreBoard } from './components/ScoreBoard';
 import { SelectChain, SelectChainTitle } from './components/SelectChain';
 import { TileRack } from './components/TileRack';
 import { GameBoardLabelMode, GameStatus } from './enums';
+import { GameMode } from '../common/pb';
 
 export enum ClientManagerPage {
   Login,

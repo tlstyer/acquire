@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { GameMode } from '../../common/enums';
+import { GameMode } from '../../common/pb';
 import { allGameModes, gameModeToString } from '../helpers';
 
 export interface CreateGameProps {
@@ -22,7 +22,7 @@ export class CreateGame extends React.PureComponent<CreateGameProps, CreateGameS
   static _getDerivedStateFromProps(props: CreateGameProps): CreateGameState {
     return {
       props,
-      gameMode: props.gameMode !== undefined ? props.gameMode : GameMode.Singles4,
+      gameMode: props.gameMode !== undefined ? props.gameMode : GameMode.SINGLES_4,
     };
   }
 

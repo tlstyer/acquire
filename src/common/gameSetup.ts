@@ -1,6 +1,7 @@
 import { List } from 'immutable';
-import { GameMode, GameSetupChange, PlayerArrangementMode } from './enums';
+import { GameSetupChange, PlayerArrangementMode } from './enums';
 import { gameModeToNumPlayers, gameModeToTeamSize, shuffleArray } from './helpers';
+import { GameMode } from './pb';
 
 const defaultApprovals = new Map([
   [1, List([false])],
@@ -289,12 +290,12 @@ export class GameSetup {
       shuffleArray(userIDs);
     } else if (this.playerArrangementMode === PlayerArrangementMode.SpecifyTeams) {
       let teams: number[][];
-      if (this.gameMode === GameMode.Teams2vs2) {
+      if (this.gameMode === GameMode.TEAMS_2_VS_2) {
         teams = [
           [userIDs[0], userIDs[2]],
           [userIDs[1], userIDs[3]],
         ];
-      } else if (this.gameMode === GameMode.Teams2vs2vs2) {
+      } else if (this.gameMode === GameMode.TEAMS_2_VS_2_VS_2) {
         teams = [
           [userIDs[0], userIDs[3]],
           [userIDs[1], userIDs[4]],

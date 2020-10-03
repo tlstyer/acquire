@@ -7,7 +7,7 @@ import { List } from 'immutable';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { defaultGameBoard, defaultMoveDataHistory } from '../common/defaults';
-import { ErrorCode, GameBoardType, GameMode } from '../common/enums';
+import { ErrorCode, GameBoardType } from '../common/enums';
 import { Game } from '../common/game';
 import { CreateGame, CreateGameProps } from './components/CreateGame';
 import { DisposeOfShares, DisposeOfSharesProps } from './components/DisposeOfShares';
@@ -33,6 +33,7 @@ import {
   selectChainKeyboardShortcutsDescription,
   tileRackKeyboardShortcutsDescription,
 } from './helpers';
+import { GameMode } from '../common/pb';
 
 class AllDemoProps {
   loginFormProps: LoginFormProps[];
@@ -69,8 +70,8 @@ class AllDemoProps {
 
     this.createGameProps = [
       { onSubmit: onSubmitCreateGame },
-      { gameMode: GameMode.Teams2vs2vs2, onSubmit: onSubmitCreateGame },
-      { gameMode: GameMode.Singles1, onSubmit: onSubmitCreateGame },
+      { gameMode: GameMode.TEAMS_2_VS_2_VS_2, onSubmit: onSubmitCreateGame },
+      { gameMode: GameMode.SINGLES_1, onSubmit: onSubmitCreateGame },
     ];
 
     this.gameListingProps = [
@@ -78,7 +79,7 @@ class AllDemoProps {
         gameBoard: defaultGameBoard,
         usernames: List(['Host', null, 'User 2', null]),
         gameDisplayNumber: 1,
-        gameMode: GameMode.Singles4,
+        gameMode: GameMode.SINGLES_4,
         gameStatus: GameStatus.SettingUp,
         onEnterClicked,
       },
@@ -86,7 +87,7 @@ class AllDemoProps {
         gameBoard: game1 !== null ? game1.gameBoard : defaultGameBoard,
         usernames: List(['Tim', 'Rita', 'Dad', 'Mom', 'REALLY, REALLY, REALLY, REALLY, REALLY LONG NAME', 'pgyqj,;']),
         gameDisplayNumber: 2,
-        gameMode: GameMode.Teams2vs2vs2,
+        gameMode: GameMode.TEAMS_2_VS_2_VS_2,
         gameStatus: GameStatus.InProgress,
         onEnterClicked,
       },
@@ -94,7 +95,7 @@ class AllDemoProps {
         gameBoard: game2 !== null ? game2.gameBoard : defaultGameBoard,
         usernames: List(['player 1', 'player 2', 'player 3', 'player 4']),
         gameDisplayNumber: 3,
-        gameMode: GameMode.Teams2vs2,
+        gameMode: GameMode.TEAMS_2_VS_2,
         gameStatus: GameStatus.Completed,
         onEnterClicked,
       },
@@ -133,7 +134,7 @@ class AllDemoProps {
         safeChains: List([false, false, true, false, false, false, true]),
         turnPlayerID: 1,
         movePlayerID: 0,
-        gameMode: GameMode.Singles2,
+        gameMode: GameMode.SINGLES_2,
         cellWidth: 30,
       },
       {
@@ -150,7 +151,7 @@ class AllDemoProps {
         safeChains: List([false, false, false, false, false, false, false]),
         turnPlayerID: 0,
         movePlayerID: 0,
-        gameMode: GameMode.Singles4,
+        gameMode: GameMode.SINGLES_4,
         cellWidth: 30,
       },
       {
@@ -167,7 +168,7 @@ class AllDemoProps {
         safeChains: List([false, false, false, true, false, true, false]),
         turnPlayerID: -1,
         movePlayerID: -1,
-        gameMode: GameMode.Teams2vs2,
+        gameMode: GameMode.TEAMS_2_VS_2,
         cellWidth: 30,
       },
       {
@@ -186,13 +187,13 @@ class AllDemoProps {
         safeChains: List([false, false, true, true, false, true, false]),
         turnPlayerID: -1,
         movePlayerID: -1,
-        gameMode: GameMode.Teams2vs2vs2,
+        gameMode: GameMode.TEAMS_2_VS_2_VS_2,
         cellWidth: 30,
       },
     ];
     this.scoreBoardProps.push({
       ...this.scoreBoardProps[3],
-      gameMode: GameMode.Teams3vs3,
+      gameMode: GameMode.TEAMS_3_VS_3,
     });
 
     this.tileRackProps = [

@@ -1,6 +1,6 @@
 import { List } from 'immutable';
 import { defaultMoveDataHistory } from '../common/defaults';
-import { GameBoardType, GameHistoryMessage, GameMode, PlayerArrangementMode } from '../common/enums';
+import { GameBoardType, GameHistoryMessage, PlayerArrangementMode } from '../common/enums';
 import { Game } from '../common/game';
 import { ActionDisposeOfShares } from '../common/gameActions/disposeOfShares';
 import { ActionGameOver } from '../common/gameActions/gameOver';
@@ -11,10 +11,11 @@ import { ActionSelectMergerSurvivor } from '../common/gameActions/selectMergerSu
 import { ActionSelectNewChain } from '../common/gameActions/selectNewChain';
 import { ActionStartGame } from '../common/gameActions/startGame';
 import { getNewTileBag } from '../common/helpers';
+import { GameMode } from '../common/pb';
 import { allChains } from './helpers';
 
 export function getDummyGameForGetGameHistory() {
-  const game = new Game(GameMode.Singles4, PlayerArrangementMode.ExactOrder, getNewTileBag(), List([2, 3, 5, 8]), List(['Tim', 'Rita', 'Dad', 'Mom']), 8, 3);
+  const game = new Game(GameMode.SINGLES_4, PlayerArrangementMode.ExactOrder, getNewTileBag(), List([2, 3, 5, 8]), List(['Tim', 'Rita', 'Dad', 'Mom']), 8, 3);
   game.doGameAction([], null);
   game.moveDataHistory = defaultMoveDataHistory;
 
@@ -116,7 +117,7 @@ export function getDummyGameForGetGameHistory() {
 
 export function getExampleNextGameActionsArray() {
   const game = new Game(
-    GameMode.Singles5,
+    GameMode.SINGLES_5,
     PlayerArrangementMode.RandomOrder,
     [],
     List([1, 2, 3, 4, 5]),

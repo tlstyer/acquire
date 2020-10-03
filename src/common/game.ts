@@ -13,10 +13,11 @@ import {
   defaultTileRackTypes,
   defaultTileRackTypesList,
 } from './defaults';
-import { GameAction, GameBoardType, GameHistoryMessage, GameMode, PlayerArrangementMode, ScoreBoardIndex, Tile } from './enums';
+import { GameAction, GameBoardType, GameHistoryMessage, PlayerArrangementMode, ScoreBoardIndex, Tile } from './enums';
 import { ActionBase } from './gameActions/base';
 import { ActionStartGame } from './gameActions/startGame';
 import { calculateBonuses, neighboringTilesLookup } from './helpers';
+import { GameMode } from './pb';
 
 type GameJSON = [GameMode, PlayerArrangementMode, number | null, number, number[], string[], number, number[], ([any] | [any, number])[]];
 

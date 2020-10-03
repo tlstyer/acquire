@@ -2,9 +2,10 @@ import * as style from './GameSetupUI.scss';
 
 import { List } from 'immutable';
 import * as React from 'react';
-import { GameMode, PlayerArrangementMode } from '../../common/enums';
+import { PlayerArrangementMode } from '../../common/enums';
 import { gameModeToNumPlayers, gameModeToTeamSize } from '../../common/helpers';
 import { allGameModes, gameModeToString, teamNumberToCSSClassName } from '../helpers';
+import { GameMode } from '../../common/pb';
 
 interface GameSetupUIProps {
   gameMode: GameMode;
@@ -213,11 +214,11 @@ class SpecifyTeamsEntry {
 
 const teamGameModeToSpecifyTeamsEntries = new Map([
   [
-    GameMode.Teams2vs2,
+    GameMode.TEAMS_2_VS_2,
     [new SpecifyTeamsEntry(0, null, 2), new SpecifyTeamsEntry(2, 0, 1), null, new SpecifyTeamsEntry(1, 2, 3), new SpecifyTeamsEntry(3, 1, null)],
   ],
   [
-    GameMode.Teams2vs2vs2,
+    GameMode.TEAMS_2_VS_2_VS_2,
     [
       new SpecifyTeamsEntry(0, null, 3),
       new SpecifyTeamsEntry(3, 0, 1),
@@ -230,7 +231,7 @@ const teamGameModeToSpecifyTeamsEntries = new Map([
     ],
   ],
   [
-    GameMode.Teams3vs3,
+    GameMode.TEAMS_3_VS_3,
     [
       new SpecifyTeamsEntry(0, null, 2),
       new SpecifyTeamsEntry(2, 0, 4),

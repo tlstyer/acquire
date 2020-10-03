@@ -1,5 +1,6 @@
 import { Connection } from 'sockjs';
-import { ErrorCode, GameMode, GameSetupChange, MessageToClient, MessageToServer, PlayerArrangementMode } from '../common/enums';
+import { ErrorCode, GameSetupChange, MessageToClient, MessageToServer, PlayerArrangementMode } from '../common/enums';
+import { GameMode } from '../common/pb';
 import { Client, ConnectionState, GameData, ServerManager, User } from './serverManager';
 import { TestUserDataProvider } from './userDataProvider';
 
@@ -83,7 +84,7 @@ async function getServerManagerAndStuffAfterAllApprovedOfGameSetup() {
   const hostConnection = await connectToServer(server, 'host');
   const opponentConnection = await connectToServer(server, 'opponent');
   const anotherConnection = await connectToServer(server, 'another');
-  hostConnection.sendMessage([MessageToServer.CreateGame, GameMode.Singles2]);
+  hostConnection.sendMessage([MessageToServer.CreateGame, GameMode.SINGLES_2]);
   opponentConnection.sendMessage([MessageToServer.EnterGame, 1]);
   opponentConnection.sendMessage([MessageToServer.JoinGame]);
 
@@ -517,9 +518,9 @@ describe('when sending first message', () => {
       const connection3 = await connectToServer(server, 'user 3');
       const connection4 = await connectToServer(server, 'user 4');
       await connectToServer(server, 'user 1');
-      connection3.sendMessage([MessageToServer.CreateGame, GameMode.Singles2]);
+      connection3.sendMessage([MessageToServer.CreateGame, GameMode.SINGLES_2]);
       connection3.close();
-      connection4.sendMessage([MessageToServer.CreateGame, GameMode.Teams3vs3]);
+      connection4.sendMessage([MessageToServer.CreateGame, GameMode.TEAMS_3_VS_3]);
 
       const connection = await connectToServer(server, 'me');
 
@@ -551,7 +552,7 @@ describe('when sending first message', () => {
       Math.random = () => 0.1;
 
       const connection1 = await connectToServer(server, '1');
-      connection1.sendMessage([MessageToServer.CreateGame, GameMode.Singles4]);
+      connection1.sendMessage([MessageToServer.CreateGame, GameMode.SINGLES_4]);
 
       const connection2 = await connectToServer(server, '2');
       expect(connection2.receivedMessages).toEqual([
@@ -563,11 +564,11 @@ describe('when sending first message', () => {
               [1, '1', [[1, 1]]],
               [2, '2', [[2]]],
             ],
-            [[0, 10, 1, GameMode.Singles4, PlayerArrangementMode.RandomOrder, 1, [1, 0, 0, 0], [0, 0, 0, 0]]],
+            [[0, 10, 1, GameMode.SINGLES_4, PlayerArrangementMode.RandomOrder, 1, [1, 0, 0, 0], [0, 0, 0, 0]]],
           ],
         ],
       ]);
-      connection2.sendMessage([MessageToServer.CreateGame, GameMode.Singles1]);
+      connection2.sendMessage([MessageToServer.CreateGame, GameMode.SINGLES_1]);
       connection2.sendMessage([MessageToServer.ApproveOfGameSetup]);
       connection2.sendMessage([MessageToServer.DoGameAction, 1, 19]);
       connection2.sendMessage([MessageToServer.DoGameAction, 2, 29]);
@@ -585,7 +586,7 @@ describe('when sending first message', () => {
               [3, '3', [[3]]],
             ],
             [
-              [0, 10, 1, GameMode.Singles4, PlayerArrangementMode.RandomOrder, 1, [1, 0, 0, 0], [0, 0, 0, 0]],
+              [0, 10, 1, GameMode.SINGLES_4, PlayerArrangementMode.RandomOrder, 1, [1, 0, 0, 0], [0, 0, 0, 0]],
               [
                 1,
                 11,
@@ -596,7 +597,7 @@ describe('when sending first message', () => {
                   [[29], 2, [[29, 0]], [-1], 0],
                   [[39], 2, [[39, 0]], [-1], 0],
                 ],
-                GameMode.Singles1,
+                GameMode.SINGLES_1,
                 PlayerArrangementMode.RandomOrder,
                 2,
                 [2],
@@ -618,7 +619,7 @@ describe('when sending first message', () => {
               [3, '3', [[3]]],
             ],
             [
-              [0, 10, 1, GameMode.Singles4, PlayerArrangementMode.RandomOrder, 1, [1, 0, 0, 0], [0, 0, 0, 0]],
+              [0, 10, 1, GameMode.SINGLES_4, PlayerArrangementMode.RandomOrder, 1, [1, 0, 0, 0], [0, 0, 0, 0]],
               [
                 1,
                 11,
@@ -629,7 +630,7 @@ describe('when sending first message', () => {
                   [[29], 2, [], [0], 0],
                   [[39], 2, [], [99], 0],
                 ],
-                GameMode.Singles1,
+                GameMode.SINGLES_1,
                 PlayerArrangementMode.RandomOrder,
                 2,
                 [2],
@@ -687,7 +688,7 @@ describe('create game', () => {
       [],
     );
 
-    connection2.sendMessage([MessageToServer.CreateGame, GameMode.Teams2vs2]);
+    connection2.sendMessage([MessageToServer.CreateGame, GameMode.TEAMS_2_VS_2]);
 
     expect(serverManager.userIDToUser.get(1)!.numGames).toBe(0);
     expect(serverManager.userIDToUser.get(2)!.numGames).toBe(1);
@@ -699,7 +700,7 @@ describe('create game', () => {
     );
 
     const gameSetup = serverManager.gameIDToGameData.get(10)!.gameSetup!;
-    expect(gameSetup.gameMode).toBe(GameMode.Teams2vs2);
+    expect(gameSetup.gameMode).toBe(GameMode.TEAMS_2_VS_2);
     expect(gameSetup.playerArrangementMode).toBe(PlayerArrangementMode.RandomOrder);
     expect(gameSetup.hostUserID).toBe(2);
     expect(gameSetup.hostUsername).toBe('user 2');
@@ -708,7 +709,7 @@ describe('create game', () => {
     expect(connection2.receivedMessages.length).toBe(1);
 
     const expectedMessage = [
-      [MessageToClient.GameCreated, 10, 1, GameMode.Teams2vs2, 2],
+      [MessageToClient.GameCreated, 10, 1, GameMode.TEAMS_2_VS_2, 2],
       [MessageToClient.ClientEnteredGame, 2, 1],
     ];
     expect(connection1.receivedMessages[0]).toEqual(expectedMessage);
@@ -720,11 +721,11 @@ describe('create game', () => {
 
     const connection1 = await connectToServer(server, 'user 1');
     const connection2 = await connectToServer(server, 'user 2');
-    connection2.sendMessage([MessageToServer.CreateGame, GameMode.Teams2vs2]);
+    connection2.sendMessage([MessageToServer.CreateGame, GameMode.TEAMS_2_VS_2]);
     connection1.clearReceivedMessages();
     connection2.clearReceivedMessages();
 
-    connection2.sendMessage([MessageToServer.CreateGame, GameMode.Teams2vs2]);
+    connection2.sendMessage([MessageToServer.CreateGame, GameMode.TEAMS_2_VS_2]);
 
     expect(serverManager.userIDToUser.get(2)!.numGames).toBe(1);
     expect(serverManager.gameIDToGameData.size).toBe(1);
@@ -746,7 +747,7 @@ describe('enter game', () => {
 
     const connection1 = await connectToServer(server, 'user 1');
     const connection2 = await connectToServer(server, 'user 2');
-    connection1.sendMessage([MessageToServer.CreateGame, GameMode.Teams2vs2]);
+    connection1.sendMessage([MessageToServer.CreateGame, GameMode.TEAMS_2_VS_2]);
     connection1.clearReceivedMessages();
     connection2.clearReceivedMessages();
 
@@ -778,8 +779,8 @@ describe('enter game', () => {
     const connection1 = await connectToServer(server, 'user 1');
     const connection2 = await connectToServer(server, 'user 2');
     const connection3 = await connectToServer(server, 'user 3');
-    connection1.sendMessage([MessageToServer.CreateGame, GameMode.Teams2vs2]);
-    connection2.sendMessage([MessageToServer.CreateGame, GameMode.Singles3]);
+    connection1.sendMessage([MessageToServer.CreateGame, GameMode.TEAMS_2_VS_2]);
+    connection2.sendMessage([MessageToServer.CreateGame, GameMode.SINGLES_3]);
     connection3.sendMessage([MessageToServer.EnterGame, 2]);
     connection1.clearReceivedMessages();
     connection2.clearReceivedMessages();
@@ -812,7 +813,7 @@ describe('exit game', () => {
 
     const connection1 = await connectToServer(server, 'user 1');
     const connection2 = await connectToServer(server, 'user 2');
-    connection1.sendMessage([MessageToServer.CreateGame, GameMode.Teams2vs2]);
+    connection1.sendMessage([MessageToServer.CreateGame, GameMode.TEAMS_2_VS_2]);
     connection2.sendMessage([MessageToServer.EnterGame, 1]);
     connection1.clearReceivedMessages();
     connection2.clearReceivedMessages();
@@ -844,7 +845,7 @@ describe('exit game', () => {
 
     const connection1 = await connectToServer(server, 'user 1');
     const connection2 = await connectToServer(server, 'user 2');
-    connection1.sendMessage([MessageToServer.CreateGame, GameMode.Teams2vs2]);
+    connection1.sendMessage([MessageToServer.CreateGame, GameMode.TEAMS_2_VS_2]);
     connection1.clearReceivedMessages();
     connection2.clearReceivedMessages();
 
@@ -887,7 +888,7 @@ describe('join game', () => {
 
     const hostConnection = await connectToServer(server, 'host');
     const otherConnection = await connectToServer(server, 'other');
-    hostConnection.sendMessage([MessageToServer.CreateGame, GameMode.Teams2vs2]);
+    hostConnection.sendMessage([MessageToServer.CreateGame, GameMode.TEAMS_2_VS_2]);
     otherConnection.sendMessage([MessageToServer.EnterGame, 1]);
     hostConnection.clearReceivedMessages();
     otherConnection.clearReceivedMessages();
@@ -902,7 +903,7 @@ describe('join game', () => {
 
     const hostConnection = await connectToServer(server, 'host');
     const otherConnection = await connectToServer(server, 'other');
-    hostConnection.sendMessage([MessageToServer.CreateGame, GameMode.Teams2vs2]);
+    hostConnection.sendMessage([MessageToServer.CreateGame, GameMode.TEAMS_2_VS_2]);
     otherConnection.sendMessage([MessageToServer.EnterGame, 1]);
     hostConnection.clearReceivedMessages();
     otherConnection.clearReceivedMessages();
@@ -948,7 +949,7 @@ describe('unjoin game', () => {
 
     const hostConnection = await connectToServer(server, 'host');
     const otherConnection = await connectToServer(server, 'other');
-    hostConnection.sendMessage([MessageToServer.CreateGame, GameMode.Teams2vs2]);
+    hostConnection.sendMessage([MessageToServer.CreateGame, GameMode.TEAMS_2_VS_2]);
     otherConnection.sendMessage([MessageToServer.EnterGame, 1]);
     otherConnection.sendMessage([MessageToServer.JoinGame]);
     hostConnection.clearReceivedMessages();
@@ -964,7 +965,7 @@ describe('unjoin game', () => {
 
     const hostConnection = await connectToServer(server, 'host');
     const otherConnection = await connectToServer(server, 'other');
-    hostConnection.sendMessage([MessageToServer.CreateGame, GameMode.Teams2vs2]);
+    hostConnection.sendMessage([MessageToServer.CreateGame, GameMode.TEAMS_2_VS_2]);
     otherConnection.sendMessage([MessageToServer.EnterGame, 1]);
     otherConnection.sendMessage([MessageToServer.JoinGame]);
     hostConnection.clearReceivedMessages();
@@ -1011,7 +1012,7 @@ describe('approve of game setup', () => {
 
     const hostConnection = await connectToServer(server, 'host');
     const otherConnection = await connectToServer(server, 'other');
-    hostConnection.sendMessage([MessageToServer.CreateGame, GameMode.Singles2]);
+    hostConnection.sendMessage([MessageToServer.CreateGame, GameMode.SINGLES_2]);
     otherConnection.sendMessage([MessageToServer.EnterGame, 1]);
     hostConnection.clearReceivedMessages();
     otherConnection.clearReceivedMessages();
@@ -1026,7 +1027,7 @@ describe('approve of game setup', () => {
 
     const hostConnection = await connectToServer(server, 'host');
     const otherConnection = await connectToServer(server, 'other');
-    hostConnection.sendMessage([MessageToServer.CreateGame, GameMode.Singles2]);
+    hostConnection.sendMessage([MessageToServer.CreateGame, GameMode.SINGLES_2]);
     otherConnection.sendMessage([MessageToServer.EnterGame, 1]);
     otherConnection.sendMessage([MessageToServer.JoinGame]);
     hostConnection.clearReceivedMessages();
@@ -1062,7 +1063,7 @@ describe('change game mode', () => {
     const connection = await connectToServer(server, 'user');
     connection.clearReceivedMessages();
 
-    connection.sendMessage([MessageToServer.ChangeGameMode, GameMode.Singles3]);
+    connection.sendMessage([MessageToServer.ChangeGameMode, GameMode.SINGLES_3]);
 
     expect(connection.receivedMessages.length).toBe(0);
     expect(connection.readyState).toBe(WebSocket.OPEN);
@@ -1073,12 +1074,12 @@ describe('change game mode', () => {
 
     const hostConnection = await connectToServer(server, 'host');
     const otherConnection = await connectToServer(server, 'other');
-    hostConnection.sendMessage([MessageToServer.CreateGame, GameMode.Singles2]);
+    hostConnection.sendMessage([MessageToServer.CreateGame, GameMode.SINGLES_2]);
     otherConnection.sendMessage([MessageToServer.EnterGame, 1]);
     hostConnection.clearReceivedMessages();
     otherConnection.clearReceivedMessages();
 
-    otherConnection.sendMessage([MessageToServer.ChangeGameMode, GameMode.Singles3]);
+    otherConnection.sendMessage([MessageToServer.ChangeGameMode, GameMode.SINGLES_3]);
 
     expectClientKickedDueToInvalidMessage(otherConnection);
   });
@@ -1087,7 +1088,7 @@ describe('change game mode', () => {
     const { server } = getServerManagerAndStuff();
 
     const hostConnection = await connectToServer(server, 'host');
-    hostConnection.sendMessage([MessageToServer.CreateGame, GameMode.Singles3]);
+    hostConnection.sendMessage([MessageToServer.CreateGame, GameMode.SINGLES_3]);
     hostConnection.clearReceivedMessages();
 
     hostConnection.sendMessage([MessageToServer.ChangeGameMode]);
@@ -1100,7 +1101,7 @@ describe('change game mode', () => {
 
     const hostConnection = await connectToServer(server, 'host');
     const otherConnection = await connectToServer(server, 'other');
-    hostConnection.sendMessage([MessageToServer.CreateGame, GameMode.Singles2]);
+    hostConnection.sendMessage([MessageToServer.CreateGame, GameMode.SINGLES_2]);
     otherConnection.sendMessage([MessageToServer.EnterGame, 1]);
     otherConnection.sendMessage([MessageToServer.JoinGame]);
     hostConnection.clearReceivedMessages();
@@ -1112,7 +1113,7 @@ describe('change game mode', () => {
       [new GameDataData(10, 1, [1, 2])],
     );
 
-    hostConnection.sendMessage([MessageToServer.ChangeGameMode, GameMode.Singles3]);
+    hostConnection.sendMessage([MessageToServer.ChangeGameMode, GameMode.SINGLES_3]);
 
     expectClientAndUserAndGameData(
       serverManager,
@@ -1123,7 +1124,7 @@ describe('change game mode', () => {
     expect(hostConnection.receivedMessages.length).toBe(1);
     expect(otherConnection.receivedMessages.length).toBe(1);
 
-    const expectedMessage = [[MessageToClient.GameSetupChanged, 1, GameSetupChange.GameModeChanged, GameMode.Singles3]];
+    const expectedMessage = [[MessageToClient.GameSetupChanged, 1, GameSetupChange.GameModeChanged, GameMode.SINGLES_3]];
     expect(hostConnection.receivedMessages[0]).toEqual(expectedMessage);
     expect(otherConnection.receivedMessages[0]).toEqual(expectedMessage);
   });
@@ -1147,7 +1148,7 @@ describe('change player arrangement mode', () => {
 
     const hostConnection = await connectToServer(server, 'host');
     const otherConnection = await connectToServer(server, 'other');
-    hostConnection.sendMessage([MessageToServer.CreateGame, GameMode.Singles2]);
+    hostConnection.sendMessage([MessageToServer.CreateGame, GameMode.SINGLES_2]);
     otherConnection.sendMessage([MessageToServer.EnterGame, 1]);
     hostConnection.clearReceivedMessages();
     otherConnection.clearReceivedMessages();
@@ -1161,7 +1162,7 @@ describe('change player arrangement mode', () => {
     const { server } = getServerManagerAndStuff();
 
     const hostConnection = await connectToServer(server, 'host');
-    hostConnection.sendMessage([MessageToServer.CreateGame, GameMode.Singles3]);
+    hostConnection.sendMessage([MessageToServer.CreateGame, GameMode.SINGLES_3]);
     hostConnection.clearReceivedMessages();
 
     hostConnection.sendMessage([MessageToServer.ChangePlayerArrangementMode]);
@@ -1174,7 +1175,7 @@ describe('change player arrangement mode', () => {
 
     const hostConnection = await connectToServer(server, 'host');
     const otherConnection = await connectToServer(server, 'other');
-    hostConnection.sendMessage([MessageToServer.CreateGame, GameMode.Singles4]);
+    hostConnection.sendMessage([MessageToServer.CreateGame, GameMode.SINGLES_4]);
     otherConnection.sendMessage([MessageToServer.EnterGame, 1]);
     otherConnection.sendMessage([MessageToServer.JoinGame]);
     hostConnection.clearReceivedMessages();
@@ -1221,7 +1222,7 @@ describe('swap positions', () => {
 
     const hostConnection = await connectToServer(server, 'host');
     const otherConnection = await connectToServer(server, 'other');
-    hostConnection.sendMessage([MessageToServer.CreateGame, GameMode.Singles2]);
+    hostConnection.sendMessage([MessageToServer.CreateGame, GameMode.SINGLES_2]);
     otherConnection.sendMessage([MessageToServer.EnterGame, 1]);
     hostConnection.clearReceivedMessages();
     otherConnection.clearReceivedMessages();
@@ -1235,7 +1236,7 @@ describe('swap positions', () => {
     const { server } = getServerManagerAndStuff();
 
     const hostConnection = await connectToServer(server, 'host');
-    hostConnection.sendMessage([MessageToServer.CreateGame, GameMode.Singles3]);
+    hostConnection.sendMessage([MessageToServer.CreateGame, GameMode.SINGLES_3]);
     hostConnection.clearReceivedMessages();
 
     hostConnection.sendMessage([MessageToServer.SwapPositions]);
@@ -1248,7 +1249,7 @@ describe('swap positions', () => {
 
     const hostConnection = await connectToServer(server, 'host');
     const otherConnection = await connectToServer(server, 'other');
-    hostConnection.sendMessage([MessageToServer.CreateGame, GameMode.Singles4]);
+    hostConnection.sendMessage([MessageToServer.CreateGame, GameMode.SINGLES_4]);
     otherConnection.sendMessage([MessageToServer.EnterGame, 1]);
     otherConnection.sendMessage([MessageToServer.JoinGame]);
     hostConnection.clearReceivedMessages();
@@ -1295,7 +1296,7 @@ describe('kick user', () => {
 
     const hostConnection = await connectToServer(server, 'host');
     const otherConnection = await connectToServer(server, 'other');
-    hostConnection.sendMessage([MessageToServer.CreateGame, GameMode.Singles2]);
+    hostConnection.sendMessage([MessageToServer.CreateGame, GameMode.SINGLES_2]);
     otherConnection.sendMessage([MessageToServer.EnterGame, 1]);
     hostConnection.clearReceivedMessages();
     otherConnection.clearReceivedMessages();
@@ -1309,7 +1310,7 @@ describe('kick user', () => {
     const { server } = getServerManagerAndStuff();
 
     const hostConnection = await connectToServer(server, 'host');
-    hostConnection.sendMessage([MessageToServer.CreateGame, GameMode.Singles3]);
+    hostConnection.sendMessage([MessageToServer.CreateGame, GameMode.SINGLES_3]);
     hostConnection.clearReceivedMessages();
 
     hostConnection.sendMessage([MessageToServer.KickUser]);
@@ -1322,7 +1323,7 @@ describe('kick user', () => {
 
     const hostConnection = await connectToServer(server, 'host');
     const otherConnection = await connectToServer(server, 'other');
-    hostConnection.sendMessage([MessageToServer.CreateGame, GameMode.Singles4]);
+    hostConnection.sendMessage([MessageToServer.CreateGame, GameMode.SINGLES_4]);
     otherConnection.sendMessage([MessageToServer.EnterGame, 1]);
     otherConnection.sendMessage([MessageToServer.JoinGame]);
     hostConnection.clearReceivedMessages();
@@ -1406,7 +1407,7 @@ describe('do game action', () => {
     const { server } = getServerManagerAndStuff();
 
     const connection = await connectToServer(server, 'user');
-    connection.sendMessage([MessageToServer.CreateGame, GameMode.Singles2]);
+    connection.sendMessage([MessageToServer.CreateGame, GameMode.SINGLES_2]);
     connection.clearReceivedMessages();
 
     connection.sendMessage([MessageToServer.DoGameAction, 2, []]);

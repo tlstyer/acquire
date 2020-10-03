@@ -1,4 +1,4 @@
-import { GameMode } from './enums';
+import { GameMode } from './pb';
 
 export function getNewTileBag() {
   const tileBag: number[] = new Array(108);
@@ -115,25 +115,25 @@ export function isASCII(str: string) {
 }
 
 export const gameModeToNumPlayers = new Map([
-  [GameMode.Singles1, 1],
-  [GameMode.Singles2, 2],
-  [GameMode.Singles3, 3],
-  [GameMode.Singles4, 4],
-  [GameMode.Singles5, 5],
-  [GameMode.Singles6, 6],
-  [GameMode.Teams2vs2, 4],
-  [GameMode.Teams2vs2vs2, 6],
-  [GameMode.Teams3vs3, 6],
+  [GameMode.SINGLES_1, 1],
+  [GameMode.SINGLES_2, 2],
+  [GameMode.SINGLES_3, 3],
+  [GameMode.SINGLES_4, 4],
+  [GameMode.SINGLES_5, 5],
+  [GameMode.SINGLES_6, 6],
+  [GameMode.TEAMS_2_VS_2, 4],
+  [GameMode.TEAMS_2_VS_2_VS_2, 6],
+  [GameMode.TEAMS_3_VS_3, 6],
 ]);
 
 export const gameModeToTeamSize = new Map([
-  [GameMode.Singles1, 1],
-  [GameMode.Singles2, 1],
-  [GameMode.Singles3, 1],
-  [GameMode.Singles4, 1],
-  [GameMode.Singles5, 1],
-  [GameMode.Singles6, 1],
-  [GameMode.Teams2vs2, 2],
-  [GameMode.Teams2vs2vs2, 2],
-  [GameMode.Teams3vs3, 3],
+  [GameMode.SINGLES_1, 1],
+  [GameMode.SINGLES_2, 1],
+  [GameMode.SINGLES_3, 1],
+  [GameMode.SINGLES_4, 1],
+  [GameMode.SINGLES_5, 1],
+  [GameMode.SINGLES_6, 1],
+  [GameMode.TEAMS_2_VS_2, 2],
+  [GameMode.TEAMS_2_VS_2_VS_2, 2],
+  [GameMode.TEAMS_3_VS_3, 3],
 ]);

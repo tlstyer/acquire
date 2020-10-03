@@ -1,6 +1,7 @@
 import { List } from 'immutable';
 import * as SockJS from 'sockjs-client';
-import { ErrorCode, GameAction, GameMode, GameSetupChange, MessageToClient, MessageToServer, PlayerArrangementMode } from '../common/enums';
+import { ErrorCode, GameAction, GameSetupChange, MessageToClient, MessageToServer, PlayerArrangementMode } from '../common/enums';
+import { GameMode } from '../common/pb';
 import { Client, ClientManager, ClientManagerPage, GameData, User } from './clientManager';
 
 jest.mock('sockjs-client');
@@ -304,10 +305,10 @@ describe('onSubmitCreateGame', () => {
     testConnection.triggerMessage([[MessageToClient.Greetings, 2, [[1, 'me', [[2]]]], []]]);
     testConnection.clearSentMessages();
 
-    clientManager.onSubmitCreateGame(GameMode.Teams2vs2);
+    clientManager.onSubmitCreateGame(GameMode.TEAMS_2_VS_2);
 
     expect(testConnection.sentMessages.length).toBe(1);
-    expect(testConnection.sentMessages[0]).toEqual([MessageToServer.CreateGame, GameMode.Teams2vs2]);
+    expect(testConnection.sentMessages[0]).toEqual([MessageToServer.CreateGame, GameMode.TEAMS_2_VS_2]);
   });
 
   test('does not send CreateGame message when not connected', () => {
@@ -319,7 +320,7 @@ describe('onSubmitCreateGame', () => {
     testConnection.triggerClose();
     testConnection.clearSentMessages();
 
-    clientManager.onSubmitCreateGame(GameMode.Teams2vs2);
+    clientManager.onSubmitCreateGame(GameMode.TEAMS_2_VS_2);
 
     expect(testConnection.sentMessages.length).toBe(0);
   });
@@ -339,7 +340,7 @@ describe('onEnterClicked', () => {
           [1, 'user 1', [[1, 1]]],
           [2, 'me', [[2]]],
         ],
-        [[0, 10, 1, GameMode.Teams2vs2, PlayerArrangementMode.RandomOrder, 1, [1, 0, 0, 0], [0, 0, 0, 0]]],
+        [[0, 10, 1, GameMode.TEAMS_2_VS_2, PlayerArrangementMode.RandomOrder, 1, [1, 0, 0, 0], [0, 0, 0, 0]]],
       ],
     ]);
     testConnection.clearSentMessages();
@@ -363,7 +364,7 @@ describe('onEnterClicked', () => {
           [1, 'user 1', [[1, 1]]],
           [2, 'me', [[2]]],
         ],
-        [[0, 10, 1, GameMode.Teams2vs2, PlayerArrangementMode.RandomOrder, 1, [1, 0, 0, 0], [0, 0, 0, 0]]],
+        [[0, 10, 1, GameMode.TEAMS_2_VS_2, PlayerArrangementMode.RandomOrder, 1, [1, 0, 0, 0], [0, 0, 0, 0]]],
       ],
     ]);
     testConnection.triggerClose();
@@ -417,11 +418,14 @@ describe('onApproveOfGameSetup', () => {
 
 describe('onChangeGameMode', () => {
   test('sends ChangeGameMode message when connected', () => {
-    sendsMessageWhenConnected((clientManager) => clientManager.onChangeGameMode(GameMode.Teams2vs2), [MessageToServer.ChangeGameMode, GameMode.Teams2vs2]);
+    sendsMessageWhenConnected((clientManager) => clientManager.onChangeGameMode(GameMode.TEAMS_2_VS_2), [
+      MessageToServer.ChangeGameMode,
+      GameMode.TEAMS_2_VS_2,
+    ]);
   });
 
   test('does not send ChangeGameMode message when not connected', () => {
-    doesNotSendMessageWhenNotConnected((clientManager) => clientManager.onChangeGameMode(GameMode.Teams2vs2));
+    doesNotSendMessageWhenNotConnected((clientManager) => clientManager.onChangeGameMode(GameMode.TEAMS_2_VS_2));
   });
 });
 
@@ -464,8 +468,8 @@ describe('MessageToClient.Greetings', () => {
 
     clientManager.onSubmitLoginForm('me', '');
     testConnection.triggerOpen();
-    const gameSetupJSON1 = [GameMode.Teams3vs3, PlayerArrangementMode.RandomOrder, 4, [4, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0]];
-    const gameSetupJSON2 = [GameMode.Singles2, PlayerArrangementMode.ExactOrder, 5, [9, 5], [0, 1]];
+    const gameSetupJSON1 = [GameMode.TEAMS_3_VS_3, PlayerArrangementMode.RandomOrder, 4, [4, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0]];
+    const gameSetupJSON2 = [GameMode.SINGLES_2, PlayerArrangementMode.ExactOrder, 5, [9, 5], [0, 1]];
     testConnection.triggerMessage([
       [
         MessageToClient.Greetings,
@@ -523,7 +527,7 @@ describe('MessageToClient.Greetings', () => {
           [3, '3', [[3]]],
         ],
         [
-          [0, 10, 1, GameMode.Singles4, PlayerArrangementMode.RandomOrder, 1, [1, 0, 0, 0], [0, 0, 0, 0]],
+          [0, 10, 1, GameMode.SINGLES_4, PlayerArrangementMode.RandomOrder, 1, [1, 0, 0, 0], [0, 0, 0, 0]],
           [
             1,
             11,
@@ -534,7 +538,7 @@ describe('MessageToClient.Greetings', () => {
               [[29], 1, [], [0], 0],
               [[39], 1, [], [99], 0],
             ],
-            GameMode.Singles1,
+            GameMode.SINGLES_1,
             PlayerArrangementMode.RandomOrder,
             2,
             [2],
@@ -549,7 +553,7 @@ describe('MessageToClient.Greetings', () => {
     expect(clientManager.myClient).toBe(clientManager.clientIDToClient.get(4));
     const game = clientManager.gameIDToGameData.get(11)!.game!;
     expect(game).toBeDefined();
-    expect(game.gameMode).toBe(GameMode.Singles1);
+    expect(game.gameMode).toBe(GameMode.SINGLES_1);
     expect(game.hostUserID).toBe(2);
     expect(game.moveDataHistory.size).toBe(4);
     expect(game.myUserID).toBe(2);
@@ -630,7 +634,7 @@ describe('MessageToClient.ClientDisconnected', () => {
     testConnection.triggerOpen();
     testConnection.triggerMessage([[MessageToClient.Greetings, 2, [[1, 'me', [[2]]]], []]]);
     testConnection.triggerMessage([[MessageToClient.ClientConnected, 4, 3, 'user 3']]);
-    testConnection.triggerMessage([[MessageToClient.GameCreated, 10, 1, GameMode.Teams2vs2, 4]]);
+    testConnection.triggerMessage([[MessageToClient.GameCreated, 10, 1, GameMode.TEAMS_2_VS_2, 4]]);
     testConnection.triggerMessage([[MessageToClient.ClientDisconnected, 4]]);
 
     expect(clientManager.userIDToUser.get(3)!.numGames).toBe(1);
@@ -646,7 +650,7 @@ describe('MessageToClient.GameCreated', () => {
     testConnection.triggerOpen();
     testConnection.triggerMessage([[MessageToClient.Greetings, 2, [[1, 'me', [[2]]]], []]]);
     testConnection.triggerMessage([[MessageToClient.ClientConnected, 4, 3, 'user 3']]);
-    testConnection.triggerMessage([[MessageToClient.GameCreated, 10, 1, GameMode.Teams2vs2, 2]]);
+    testConnection.triggerMessage([[MessageToClient.GameCreated, 10, 1, GameMode.TEAMS_2_VS_2, 2]]);
 
     expectClientAndUserAndGameData(
       clientManager,
@@ -656,7 +660,7 @@ describe('MessageToClient.GameCreated', () => {
 
     expect(clientManager.userIDToUser.get(1)!.numGames).toBe(1);
     const gameSetup = clientManager.gameIDToGameData.get(10)!.gameSetup!;
-    expect(gameSetup.gameMode).toBe(GameMode.Teams2vs2);
+    expect(gameSetup.gameMode).toBe(GameMode.TEAMS_2_VS_2);
     expect(gameSetup.playerArrangementMode).toBe(PlayerArrangementMode.RandomOrder);
     expect(gameSetup.hostUserID).toBe(1);
     expect(gameSetup.hostUsername).toBe('me');
@@ -672,7 +676,7 @@ describe('MessageToClient.ClientEnteredGame', () => {
     testConnection.triggerMessage([[MessageToClient.Greetings, 2, [[1, 'me', [[2]]]], []]]);
     testConnection.triggerMessage([[MessageToClient.ClientConnected, 4, 3, 'user 3']]);
     testConnection.triggerMessage([
-      [MessageToClient.GameCreated, 10, 1, GameMode.Teams2vs2, 2],
+      [MessageToClient.GameCreated, 10, 1, GameMode.TEAMS_2_VS_2, 2],
       [MessageToClient.ClientEnteredGame, 2, 1],
     ]);
 
@@ -692,7 +696,7 @@ describe('MessageToClient.ClientEnteredGame', () => {
     testConnection.triggerMessage([[MessageToClient.Greetings, 2, [[1, 'me', [[2]]]], []]]);
     testConnection.triggerMessage([[MessageToClient.ClientConnected, 4, 3, 'user 3']]);
     testConnection.triggerMessage([
-      [MessageToClient.GameCreated, 10, 1, GameMode.Teams2vs2, 4],
+      [MessageToClient.GameCreated, 10, 1, GameMode.TEAMS_2_VS_2, 4],
       [MessageToClient.ClientEnteredGame, 4, 1],
     ]);
 
@@ -719,7 +723,7 @@ describe('MessageToClient.ClientExitedGame', () => {
           [1, 'user 1', [[1, 1]]],
           [2, 'me', [[2, 1]]],
         ],
-        [[0, 10, 1, GameMode.Teams2vs2, PlayerArrangementMode.RandomOrder, 1, [1, 2, 0, 0], [0, 0, 0, 0]]],
+        [[0, 10, 1, GameMode.TEAMS_2_VS_2, PlayerArrangementMode.RandomOrder, 1, [1, 2, 0, 0], [0, 0, 0, 0]]],
       ],
     ]);
 
@@ -753,7 +757,7 @@ describe('MessageToClient.ClientExitedGame', () => {
           [1, 'user 1', [[1, 1]]],
           [2, 'me', [[2, 1]]],
         ],
-        [[0, 10, 1, GameMode.Teams2vs2, PlayerArrangementMode.RandomOrder, 1, [1, 2, 0, 0], [0, 0, 0, 0]]],
+        [[0, 10, 1, GameMode.TEAMS_2_VS_2, PlayerArrangementMode.RandomOrder, 1, [1, 2, 0, 0], [0, 0, 0, 0]]],
       ],
     ]);
 
@@ -789,7 +793,7 @@ describe('MessageToClient.GameSetupChanged', () => {
           [1, 'user 1', [[1, 1]]],
           [2, 'me', [[2, 1]]],
         ],
-        [[0, 10, 1, GameMode.Teams2vs2, PlayerArrangementMode.RandomOrder, 1, [1, 0, 0, 0], [0, 0, 0, 0]]],
+        [[0, 10, 1, GameMode.TEAMS_2_VS_2, PlayerArrangementMode.RandomOrder, 1, [1, 0, 0, 0], [0, 0, 0, 0]]],
       ],
     ]);
 
@@ -822,7 +826,7 @@ describe('MessageToClient.GameSetupChanged', () => {
           [1, 'user 1', [[1, 1]]],
           [2, 'me', [[2, 1]]],
         ],
-        [[0, 10, 1, GameMode.Teams2vs2, PlayerArrangementMode.RandomOrder, 1, [1, 2, 0, 0], [0, 0, 0, 0]]],
+        [[0, 10, 1, GameMode.TEAMS_2_VS_2, PlayerArrangementMode.RandomOrder, 1, [1, 2, 0, 0], [0, 0, 0, 0]]],
       ],
     ]);
 
@@ -855,7 +859,7 @@ describe('MessageToClient.GameSetupChanged', () => {
           [1, 'user 1', [[1, 1]]],
           [2, 'me', [[2, 1]]],
         ],
-        [[0, 10, 1, GameMode.Singles2, PlayerArrangementMode.RandomOrder, 1, [1, 2], [0, 0]]],
+        [[0, 10, 1, GameMode.SINGLES_2, PlayerArrangementMode.RandomOrder, 1, [1, 2], [0, 0]]],
       ],
     ]);
 
@@ -888,7 +892,7 @@ describe('MessageToClient.GameSetupChanged', () => {
           [1, 'user 1', [[1, 1]]],
           [2, 'me', [[2, 1]]],
         ],
-        [[0, 10, 1, GameMode.Singles2, PlayerArrangementMode.RandomOrder, 1, [1, 2], [0, 0]]],
+        [[0, 10, 1, GameMode.SINGLES_2, PlayerArrangementMode.RandomOrder, 1, [1, 2], [0, 0]]],
       ],
     ]);
 
@@ -898,14 +902,14 @@ describe('MessageToClient.GameSetupChanged', () => {
       [new GameDataData(10, 1, [1, 2])],
     );
 
-    testConnection.triggerMessage([[MessageToClient.GameSetupChanged, 1, GameSetupChange.GameModeChanged, GameMode.Singles3]]);
+    testConnection.triggerMessage([[MessageToClient.GameSetupChanged, 1, GameSetupChange.GameModeChanged, GameMode.SINGLES_3]]);
 
     expectClientAndUserAndGameData(
       clientManager,
       [new UserData(1, 'user 1', [new ClientData(1, 10)]), new UserData(2, 'me', [new ClientData(2, 10)])],
       [new GameDataData(10, 1, [1, 2])],
     );
-    expect(clientManager.gameIDToGameData.get(10)!.gameSetup!.gameMode).toEqual(GameMode.Singles3);
+    expect(clientManager.gameIDToGameData.get(10)!.gameSetup!.gameMode).toEqual(GameMode.SINGLES_3);
   });
 
   test('PlayerArrangementModeChanged message is processed correctly', () => {
@@ -921,7 +925,7 @@ describe('MessageToClient.GameSetupChanged', () => {
           [1, 'user 1', [[1, 1]]],
           [2, 'me', [[2, 1]]],
         ],
-        [[0, 10, 1, GameMode.Singles2, PlayerArrangementMode.RandomOrder, 1, [1, 2], [0, 0]]],
+        [[0, 10, 1, GameMode.SINGLES_2, PlayerArrangementMode.RandomOrder, 1, [1, 2], [0, 0]]],
       ],
     ]);
 
@@ -954,7 +958,7 @@ describe('MessageToClient.GameSetupChanged', () => {
           [1, 'user 1', [[1, 1]]],
           [2, 'me', [[2, 1]]],
         ],
-        [[0, 10, 1, GameMode.Teams2vs2, PlayerArrangementMode.RandomOrder, 1, [1, 2, 0, 0], [0, 0, 0, 0]]],
+        [[0, 10, 1, GameMode.TEAMS_2_VS_2, PlayerArrangementMode.RandomOrder, 1, [1, 2, 0, 0], [0, 0, 0, 0]]],
       ],
     ]);
 
@@ -987,7 +991,7 @@ describe('MessageToClient.GameSetupChanged', () => {
           [1, 'user 1', [[1, 1]]],
           [2, 'me', [[2, 1]]],
         ],
-        [[0, 10, 1, GameMode.Teams2vs2, PlayerArrangementMode.RandomOrder, 1, [1, 2, 0, 0], [0, 0, 0, 0]]],
+        [[0, 10, 1, GameMode.TEAMS_2_VS_2, PlayerArrangementMode.RandomOrder, 1, [1, 2, 0, 0], [0, 0, 0, 0]]],
       ],
     ]);
 
@@ -1023,7 +1027,7 @@ describe('MessageToClient.GameStarted and MessageToClient.GameActionDone', () =>
           [2, 'opponent', [[2, 1]]],
           [3, 'me', [[3]]],
         ],
-        [[0, 10, 1, GameMode.Singles2, PlayerArrangementMode.RandomOrder, 1, [1, 2], [1, 0]]],
+        [[0, 10, 1, GameMode.SINGLES_2, PlayerArrangementMode.RandomOrder, 1, [1, 2], [1, 0]]],
       ],
     ]);
     testConnection.triggerMessage([
@@ -1042,7 +1046,7 @@ describe('MessageToClient.GameStarted and MessageToClient.GameActionDone', () =>
 
     expect(clientManager.userIDToUser.get(1)!.numGames).toBe(1);
     const game = clientManager.gameIDToGameData.get(10)!.game!;
-    expect(game.gameMode).toBe(GameMode.Singles2);
+    expect(game.gameMode).toBe(GameMode.SINGLES_2);
     expect(game.playerArrangementMode).toBe(PlayerArrangementMode.RandomOrder);
     expect(game.hostUserID).toBe(1);
   });
@@ -1053,7 +1057,7 @@ describe('MessageToClient.GameStarted and MessageToClient.GameActionDone', () =>
     clientManager.onSubmitLoginForm('user', '');
     testConnection.triggerOpen();
     testConnection.triggerMessage([
-      [MessageToClient.Greetings, 2, [[1, 'user', [[2]]]], [[0, 1, 1, GameMode.Singles1, PlayerArrangementMode.RandomOrder, 1, [1], [0]]]],
+      [MessageToClient.Greetings, 2, [[1, 'user', [[2]]]], [[0, 1, 1, GameMode.SINGLES_1, PlayerArrangementMode.RandomOrder, 1, [1], [0]]]],
     ]);
     testConnection.triggerMessage([[MessageToClient.ClientEnteredGame, 2, 1]]);
     testConnection.triggerMessage([
@@ -1068,7 +1072,7 @@ describe('MessageToClient.GameStarted and MessageToClient.GameActionDone', () =>
 
     expect(clientManager.userIDToUser.get(1)!.numGames).toBe(1);
     const game = clientManager.gameIDToGameData.get(1)!.game!;
-    expect(game.gameMode).toBe(GameMode.Singles1);
+    expect(game.gameMode).toBe(GameMode.SINGLES_1);
     expect(game.playerArrangementMode).toBe(PlayerArrangementMode.RandomOrder);
     expect(game.hostUserID).toBe(1);
   });

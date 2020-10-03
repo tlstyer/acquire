@@ -2,9 +2,10 @@ import * as style from './ScoreBoard.scss';
 
 import { List } from 'immutable';
 import * as React from 'react';
-import { GameMode, ScoreBoardIndex } from '../../common/enums';
+import { ScoreBoardIndex } from '../../common/enums';
 import { gameModeToNumPlayers, gameModeToTeamSize } from '../../common/helpers';
 import { allChains, gameBoardTypeToCSSClassName, gameBoardTypeToHotelInitial, teamNumberToCSSClassName } from '../helpers';
+import { GameMode } from '../../common/pb';
 
 export interface ScoreBoardProps {
   usernames: List<string>;
