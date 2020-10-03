@@ -10,6 +10,34 @@ var $Reader = $protobuf.Reader, $Writer = $protobuf.Writer, $util = $protobuf.ut
 var $root = $protobuf.roots["default"] || ($protobuf.roots["default"] = {});
 
 /**
+ * ErrorCode enum.
+ * @exports ErrorCode
+ * @enum {number}
+ * @property {number} NOT_USING_LATEST_VERSION=0 NOT_USING_LATEST_VERSION value
+ * @property {number} INTERNAL_SERVER_ERROR=1 INTERNAL_SERVER_ERROR value
+ * @property {number} INVALID_MESSAGE_FORMAT=2 INVALID_MESSAGE_FORMAT value
+ * @property {number} INVALID_USERNAME=3 INVALID_USERNAME value
+ * @property {number} MISSING_PASSWORD=4 MISSING_PASSWORD value
+ * @property {number} PROVIDED_PASSWORD=5 PROVIDED_PASSWORD value
+ * @property {number} INCORRECT_PASSWORD=6 INCORRECT_PASSWORD value
+ * @property {number} INVALID_MESSAGE=7 INVALID_MESSAGE value
+ * @property {number} COULD_NOT_CONNECT=8 COULD_NOT_CONNECT value
+ */
+$root.ErrorCode = (function() {
+    var valuesById = {}, values = Object.create(valuesById);
+    values[valuesById[0] = "NOT_USING_LATEST_VERSION"] = 0;
+    values[valuesById[1] = "INTERNAL_SERVER_ERROR"] = 1;
+    values[valuesById[2] = "INVALID_MESSAGE_FORMAT"] = 2;
+    values[valuesById[3] = "INVALID_USERNAME"] = 3;
+    values[valuesById[4] = "MISSING_PASSWORD"] = 4;
+    values[valuesById[5] = "PROVIDED_PASSWORD"] = 5;
+    values[valuesById[6] = "INCORRECT_PASSWORD"] = 6;
+    values[valuesById[7] = "INVALID_MESSAGE"] = 7;
+    values[valuesById[8] = "COULD_NOT_CONNECT"] = 8;
+    return values;
+})();
+
+/**
  * GameMode enum.
  * @exports GameMode
  * @enum {number}

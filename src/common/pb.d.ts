@@ -1,4 +1,17 @@
 import * as $protobuf from "protobufjs";
+/** ErrorCode enum. */
+export enum ErrorCode {
+    NOT_USING_LATEST_VERSION = 0,
+    INTERNAL_SERVER_ERROR = 1,
+    INVALID_MESSAGE_FORMAT = 2,
+    INVALID_USERNAME = 3,
+    MISSING_PASSWORD = 4,
+    PROVIDED_PASSWORD = 5,
+    INCORRECT_PASSWORD = 6,
+    INVALID_MESSAGE = 7,
+    COULD_NOT_CONNECT = 8
+}
+
 /** GameMode enum. */
 export enum GameMode {
     SINGLES_1 = 1,

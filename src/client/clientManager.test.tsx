@@ -1,7 +1,7 @@
 import { List } from 'immutable';
 import * as SockJS from 'sockjs-client';
-import { ErrorCode, GameAction, GameSetupChange, MessageToClient, MessageToServer } from '../common/enums';
-import { GameMode, PlayerArrangementMode } from '../common/pb';
+import { GameAction, GameSetupChange, MessageToClient, MessageToServer } from '../common/enums';
+import { ErrorCode, GameMode, PlayerArrangementMode } from '../common/pb';
 import { Client, ClientManager, ClientManagerPage, GameData, User } from './clientManager';
 
 jest.mock('sockjs-client');
@@ -254,15 +254,15 @@ describe('onSubmitLoginForm', () => {
 
     testConnection.triggerOpen();
 
-    testConnection.triggerMessage([[MessageToClient.FatalError, ErrorCode.IncorrectPassword]]);
+    testConnection.triggerMessage([[MessageToClient.FatalError, ErrorCode.INCORRECT_PASSWORD]]);
 
-    expect(clientManager.errorCode).toBe(ErrorCode.IncorrectPassword);
+    expect(clientManager.errorCode).toBe(ErrorCode.INCORRECT_PASSWORD);
     expect(clientManager.page).toBe(ClientManagerPage.Connecting);
     expect(renderMock.mock.calls.length).toBe(3);
 
     testConnection.triggerClose();
 
-    expect(clientManager.errorCode).toBe(ErrorCode.IncorrectPassword);
+    expect(clientManager.errorCode).toBe(ErrorCode.INCORRECT_PASSWORD);
     expect(clientManager.page).toBe(ClientManagerPage.Login);
     expect(renderMock.mock.calls.length).toBe(4);
   });
@@ -274,7 +274,7 @@ describe('onSubmitLoginForm', () => {
 
     testConnection.triggerClose();
 
-    expect(clientManager.errorCode).toBe(ErrorCode.CouldNotConnect);
+    expect(clientManager.errorCode).toBe(ErrorCode.COULD_NOT_CONNECT);
     expect(clientManager.page).toBe(ClientManagerPage.Login);
     expect(renderMock.mock.calls.length).toBe(3);
   });

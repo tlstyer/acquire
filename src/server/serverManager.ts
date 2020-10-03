@@ -1,9 +1,9 @@
 import { Connection, Server } from 'sockjs';
-import { ErrorCode, MessageToClient, MessageToServer } from '../common/enums';
+import { MessageToClient, MessageToServer } from '../common/enums';
 import { Game } from '../common/game';
 import { GameSetup } from '../common/gameSetup';
 import { gameModeToNumPlayers, getNewTileBag, isASCII } from '../common/helpers';
-import { GameMode, PlayerArrangementMode } from '../common/pb';
+import { ErrorCode, GameMode, PlayerArrangementMode } from '../common/pb';
 import { LogMessage } from './enums';
 import { ReuseIDManager } from './reuseIDManager';
 import { UserDataProvider } from './userDataProvider';
@@ -68,14 +68,14 @@ export class ServerManager {
         } catch (error) {
           this.logMessage(LogMessage.MessageThatIsNotJSON, connection.id, messageString);
 
-          this.kickWithError(connection, ErrorCode.InvalidMessageFormat);
+          this.kickWithError(connection, ErrorCode.INVALID_MESSAGE_FORMAT);
           return;
         }
 
         if (!Array.isArray(message)) {
           this.logMessage(LogMessage.MessageThatIsNotAnArray, connection.id, message);
 
-          this.kickWithError(connection, ErrorCode.InvalidMessageFormat);
+          this.kickWithError(connection, ErrorCode.INVALID_MESSAGE_FORMAT);
           return;
         }
 
@@ -102,7 +102,7 @@ export class ServerManager {
 
             this.sendAllQueuedMessages();
           } else {
-            this.kickWithError(connection, ErrorCode.InvalidMessage);
+            this.kickWithError(connection, ErrorCode.INVALID_MESSAGE);
           }
         } else if (connectionState === ConnectionState.WaitingForFirstMessage) {
           this.connectionIDToConnectionState.set(connection.id, ConnectionState.ProcessingFirstMessage);
@@ -178,31 +178,31 @@ export class ServerManager {
 
   async processFirstMessage(connection: Connection, message: any[]) {
     if (message.length !== 4) {
-      this.kickWithError(connection, ErrorCode.InvalidMessageFormat);
+      this.kickWithError(connection, ErrorCode.INVALID_MESSAGE_FORMAT);
       return;
     }
 
     const version: number = message[0];
     if (version !== 0) {
-      this.kickWithError(connection, ErrorCode.NotUsingLatestVersion);
+      this.kickWithError(connection, ErrorCode.NOT_USING_LATEST_VERSION);
       return;
     }
 
     const username: string = message[1];
     if (username.length === 0 || username.length > 32 || !isASCII(username)) {
-      this.kickWithError(connection, ErrorCode.InvalidUsername);
+      this.kickWithError(connection, ErrorCode.INVALID_USERNAME);
       return;
     }
 
     const password: string = message[2];
     if (typeof password !== 'string') {
-      this.kickWithError(connection, ErrorCode.InvalidMessageFormat);
+      this.kickWithError(connection, ErrorCode.INVALID_MESSAGE_FORMAT);
       return;
     }
 
     const gameDataArray: any[] = message[3];
     if (!Array.isArray(gameDataArray)) {
-      this.kickWithError(connection, ErrorCode.InvalidMessageFormat);
+      this.kickWithError(connection, ErrorCode.INVALID_MESSAGE_FORMAT);
       return;
     }
 
@@ -210,7 +210,7 @@ export class ServerManager {
     try {
       userData = await this.userDataProvider.lookupUser(username);
     } catch (error) {
-      this.kickWithError(connection, ErrorCode.InternalServerError);
+      this.kickWithError(connection, ErrorCode.INTERNAL_SERVER_ERROR);
       return;
     }
 
@@ -219,17 +219,17 @@ export class ServerManager {
     if (userData !== null) {
       if (userData.hasPassword) {
         if (password.length === 0) {
-          this.kickWithError(connection, ErrorCode.MissingPassword);
+          this.kickWithError(connection, ErrorCode.MISSING_PASSWORD);
           return;
         } else if (!userData.verifyPassword(password)) {
-          this.kickWithError(connection, ErrorCode.IncorrectPassword);
+          this.kickWithError(connection, ErrorCode.INCORRECT_PASSWORD);
           return;
         } else {
           userID = userData.userID;
         }
       } else {
         if (password.length > 0) {
-          this.kickWithError(connection, ErrorCode.ProvidedPassword);
+          this.kickWithError(connection, ErrorCode.PROVIDED_PASSWORD);
           return;
         } else {
           userID = userData.userID;
@@ -237,13 +237,13 @@ export class ServerManager {
       }
     } else {
       if (password.length > 0) {
-        this.kickWithError(connection, ErrorCode.ProvidedPassword);
+        this.kickWithError(connection, ErrorCode.PROVIDED_PASSWORD);
         return;
       } else {
         try {
           userID = await this.userDataProvider.createUser(username, null);
         } catch (error) {
-          this.kickWithError(connection, ErrorCode.InternalServerError);
+          this.kickWithError(connection, ErrorCode.INTERNAL_SERVER_ERROR);
           return;
         }
       }
@@ -286,13 +286,13 @@ export class ServerManager {
 
   onMessageCreateGame(client: Client, params: any[]) {
     if (params.length !== 1) {
-      this.kickWithError(client.connection, ErrorCode.InvalidMessage);
+      this.kickWithError(client.connection, ErrorCode.INVALID_MESSAGE);
       return;
     }
 
     const gameMode: GameMode = params[0];
     if (!gameModeToNumPlayers.has(gameMode)) {
-      this.kickWithError(client.connection, ErrorCode.InvalidMessage);
+      this.kickWithError(client.connection, ErrorCode.INVALID_MESSAGE);
       return;
     }
 
@@ -320,14 +320,14 @@ export class ServerManager {
 
   onMessageEnterGame(client: Client, params: any[]) {
     if (params.length !== 1) {
-      this.kickWithError(client.connection, ErrorCode.InvalidMessage);
+      this.kickWithError(client.connection, ErrorCode.INVALID_MESSAGE);
       return;
     }
 
     const gameDisplayNumber: number = params[0];
     const gameData = this.gameDisplayNumberToGameData.get(gameDisplayNumber);
     if (gameData === undefined) {
-      this.kickWithError(client.connection, ErrorCode.InvalidMessage);
+      this.kickWithError(client.connection, ErrorCode.INVALID_MESSAGE);
       return;
     }
 
@@ -347,7 +347,7 @@ export class ServerManager {
 
   onMessageExitGame(client: Client, params: any[]) {
     if (params.length !== 0) {
-      this.kickWithError(client.connection, ErrorCode.InvalidMessage);
+      this.kickWithError(client.connection, ErrorCode.INVALID_MESSAGE);
       return;
     }
 
@@ -378,7 +378,7 @@ export class ServerManager {
     }
 
     if (params.length !== 0) {
-      this.kickWithError(client.connection, ErrorCode.InvalidMessage);
+      this.kickWithError(client.connection, ErrorCode.INVALID_MESSAGE);
       return;
     }
 
@@ -403,7 +403,7 @@ export class ServerManager {
     }
 
     if (params.length !== 0) {
-      this.kickWithError(client.connection, ErrorCode.InvalidMessage);
+      this.kickWithError(client.connection, ErrorCode.INVALID_MESSAGE);
       return;
     }
 
@@ -429,7 +429,7 @@ export class ServerManager {
     }
 
     if (params.length !== 0) {
-      this.kickWithError(client.connection, ErrorCode.InvalidMessage);
+      this.kickWithError(client.connection, ErrorCode.INVALID_MESSAGE);
       return;
     }
 
@@ -466,12 +466,12 @@ export class ServerManager {
     }
 
     if (client.user.id !== gameSetup.hostUserID) {
-      this.kickWithError(client.connection, ErrorCode.InvalidMessage);
+      this.kickWithError(client.connection, ErrorCode.INVALID_MESSAGE);
       return;
     }
 
     if (params.length !== gameSetup.changeGameMode.length) {
-      this.kickWithError(client.connection, ErrorCode.InvalidMessage);
+      this.kickWithError(client.connection, ErrorCode.INVALID_MESSAGE);
       return;
     }
 
@@ -494,12 +494,12 @@ export class ServerManager {
     }
 
     if (client.user.id !== gameSetup.hostUserID) {
-      this.kickWithError(client.connection, ErrorCode.InvalidMessage);
+      this.kickWithError(client.connection, ErrorCode.INVALID_MESSAGE);
       return;
     }
 
     if (params.length !== gameSetup.changePlayerArrangementMode.length) {
-      this.kickWithError(client.connection, ErrorCode.InvalidMessage);
+      this.kickWithError(client.connection, ErrorCode.INVALID_MESSAGE);
       return;
     }
 
@@ -522,12 +522,12 @@ export class ServerManager {
     }
 
     if (client.user.id !== gameSetup.hostUserID) {
-      this.kickWithError(client.connection, ErrorCode.InvalidMessage);
+      this.kickWithError(client.connection, ErrorCode.INVALID_MESSAGE);
       return;
     }
 
     if (params.length !== gameSetup.swapPositions.length) {
-      this.kickWithError(client.connection, ErrorCode.InvalidMessage);
+      this.kickWithError(client.connection, ErrorCode.INVALID_MESSAGE);
       return;
     }
 
@@ -550,12 +550,12 @@ export class ServerManager {
     }
 
     if (client.user.id !== gameSetup.hostUserID) {
-      this.kickWithError(client.connection, ErrorCode.InvalidMessage);
+      this.kickWithError(client.connection, ErrorCode.INVALID_MESSAGE);
       return;
     }
 
     if (params.length !== gameSetup.kickUser.length) {
-      this.kickWithError(client.connection, ErrorCode.InvalidMessage);
+      this.kickWithError(client.connection, ErrorCode.INVALID_MESSAGE);
       return;
     }
 
@@ -582,13 +582,13 @@ export class ServerManager {
     }
 
     if (params.length === 0) {
-      this.kickWithError(client.connection, ErrorCode.InvalidMessage);
+      this.kickWithError(client.connection, ErrorCode.INVALID_MESSAGE);
       return;
     }
 
     const moveHistorySize: number = params[0];
     if (!Number.isInteger(moveHistorySize) || moveHistorySize < 0) {
-      this.kickWithError(client.connection, ErrorCode.InvalidMessage);
+      this.kickWithError(client.connection, ErrorCode.INVALID_MESSAGE);
       return;
     }
 
@@ -606,7 +606,7 @@ export class ServerManager {
     try {
       game.doGameAction(gameActionParameters, Date.now());
     } catch (e) {
-      this.kickWithError(client.connection, ErrorCode.InvalidMessage);
+      this.kickWithError(client.connection, ErrorCode.INVALID_MESSAGE);
       return;
     }
 

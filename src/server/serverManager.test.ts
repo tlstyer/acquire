@@ -1,6 +1,6 @@
 import { Connection } from 'sockjs';
-import { ErrorCode, GameSetupChange, MessageToClient, MessageToServer } from '../common/enums';
-import { GameMode, PlayerArrangementMode } from '../common/pb';
+import { GameSetupChange, MessageToClient, MessageToServer } from '../common/enums';
+import { ErrorCode, GameMode, PlayerArrangementMode } from '../common/pb';
 import { Client, ConnectionState, GameData, ServerManager, User } from './serverManager';
 import { TestUserDataProvider } from './userDataProvider';
 
@@ -262,7 +262,7 @@ async function connectToServer(server: TestServer, username: string) {
 
 function expectClientKickedDueToInvalidMessage(connection: TestConnection) {
   expect(connection.receivedMessages.length).toBe(1);
-  expect(connection.receivedMessages[0]).toEqual([[MessageToClient.FatalError, ErrorCode.InvalidMessage]]);
+  expect(connection.receivedMessages[0]).toEqual([[MessageToClient.FatalError, ErrorCode.INVALID_MESSAGE]]);
   expect(connection.readyState).toBe(WebSocket.CLOSED);
 }
 
@@ -370,63 +370,63 @@ describe('when sending first message', () => {
     }
 
     test('after sending invalid JSON', async () => {
-      await getsKickedWithMessage('', ErrorCode.InvalidMessageFormat);
-      await getsKickedWithMessage('not json', ErrorCode.InvalidMessageFormat);
+      await getsKickedWithMessage('', ErrorCode.INVALID_MESSAGE_FORMAT);
+      await getsKickedWithMessage('not json', ErrorCode.INVALID_MESSAGE_FORMAT);
     });
 
     test('after sending a non-array', async () => {
-      await getsKickedWithMessage({}, ErrorCode.InvalidMessageFormat);
-      await getsKickedWithMessage(null, ErrorCode.InvalidMessageFormat);
+      await getsKickedWithMessage({}, ErrorCode.INVALID_MESSAGE_FORMAT);
+      await getsKickedWithMessage(null, ErrorCode.INVALID_MESSAGE_FORMAT);
     });
 
     test('after sending an array with the wrong length', async () => {
-      await getsKickedWithMessage([1, 2, 3], ErrorCode.InvalidMessageFormat);
-      await getsKickedWithMessage([1, 2, 3, 4, 5], ErrorCode.InvalidMessageFormat);
+      await getsKickedWithMessage([1, 2, 3], ErrorCode.INVALID_MESSAGE_FORMAT);
+      await getsKickedWithMessage([1, 2, 3, 4, 5], ErrorCode.INVALID_MESSAGE_FORMAT);
     });
 
     test('after sending wrong version', async () => {
-      await getsKickedWithMessage([-1, 'username', 'password', []], ErrorCode.NotUsingLatestVersion);
-      await getsKickedWithMessage([{}, 'username', 'password', []], ErrorCode.NotUsingLatestVersion);
+      await getsKickedWithMessage([-1, 'username', 'password', []], ErrorCode.NOT_USING_LATEST_VERSION);
+      await getsKickedWithMessage([{}, 'username', 'password', []], ErrorCode.NOT_USING_LATEST_VERSION);
     });
 
     test('after sending invalid username', async () => {
-      await getsKickedWithMessage([0, '', 'password', []], ErrorCode.InvalidUsername);
-      await getsKickedWithMessage([0, '123456789012345678901234567890123', 'password', []], ErrorCode.InvalidUsername);
-      await getsKickedWithMessage([0, '▲', 'password', []], ErrorCode.InvalidUsername);
+      await getsKickedWithMessage([0, '', 'password', []], ErrorCode.INVALID_USERNAME);
+      await getsKickedWithMessage([0, '123456789012345678901234567890123', 'password', []], ErrorCode.INVALID_USERNAME);
+      await getsKickedWithMessage([0, '▲', 'password', []], ErrorCode.INVALID_USERNAME);
     });
 
     test('after sending invalid password', async () => {
-      await getsKickedWithMessage([0, 'username', 0, []], ErrorCode.InvalidMessageFormat);
-      await getsKickedWithMessage([0, 'username', {}, []], ErrorCode.InvalidMessageFormat);
+      await getsKickedWithMessage([0, 'username', 0, []], ErrorCode.INVALID_MESSAGE_FORMAT);
+      await getsKickedWithMessage([0, 'username', {}, []], ErrorCode.INVALID_MESSAGE_FORMAT);
     });
 
     test('after sending invalid game data array', async () => {
-      await getsKickedWithMessage([0, 'username', '', 0], ErrorCode.InvalidMessageFormat);
-      await getsKickedWithMessage([0, 'username', '', {}], ErrorCode.InvalidMessageFormat);
+      await getsKickedWithMessage([0, 'username', '', 0], ErrorCode.INVALID_MESSAGE_FORMAT);
+      await getsKickedWithMessage([0, 'username', '', {}], ErrorCode.INVALID_MESSAGE_FORMAT);
     });
 
     test('after not providing password', async () => {
-      await getsKickedWithMessage([0, 'has password', '', []], ErrorCode.MissingPassword);
+      await getsKickedWithMessage([0, 'has password', '', []], ErrorCode.MISSING_PASSWORD);
     });
 
     test('after providing incorrect password', async () => {
-      await getsKickedWithMessage([0, 'has password', 'not my password', []], ErrorCode.IncorrectPassword);
+      await getsKickedWithMessage([0, 'has password', 'not my password', []], ErrorCode.INCORRECT_PASSWORD);
     });
 
     test('after providing a password when test is not set', async () => {
-      await getsKickedWithMessage([0, 'does not have password', 'password', []], ErrorCode.ProvidedPassword);
+      await getsKickedWithMessage([0, 'does not have password', 'password', []], ErrorCode.PROVIDED_PASSWORD);
     });
 
     test('after providing a password when user data does not exist', async () => {
-      await getsKickedWithMessage([0, 'no user data', 'password', []], ErrorCode.ProvidedPassword);
+      await getsKickedWithMessage([0, 'no user data', 'password', []], ErrorCode.PROVIDED_PASSWORD);
     });
 
     test("after an error from user data provider's lookupUser()", async () => {
-      await getsKickedWithMessage([0, 'lookupUser error', 'password', []], ErrorCode.InternalServerError);
+      await getsKickedWithMessage([0, 'lookupUser error', 'password', []], ErrorCode.INTERNAL_SERVER_ERROR);
     });
 
     test("after an error from user data provider's createUser()", async () => {
-      await getsKickedWithMessage([0, 'createUser error', '', []], ErrorCode.InternalServerError);
+      await getsKickedWithMessage([0, 'createUser error', '', []], ErrorCode.INTERNAL_SERVER_ERROR);
     });
   });
 

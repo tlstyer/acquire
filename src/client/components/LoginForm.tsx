@@ -1,20 +1,20 @@
 import * as style from './LoginForm.scss';
 
 import * as React from 'react';
-import { ErrorCode } from '../../common/enums';
 import { isASCII } from '../../common/helpers';
 import { hackDoNotInterfereWithKeyboardShortcuts } from '../helpers';
+import { ErrorCode } from '../../common/pb';
 
 const errorCodeToMessage = new Map([
-  [ErrorCode.NotUsingLatestVersion, 'You are not using the latest version.'],
-  [ErrorCode.InternalServerError, 'An error occurred during the processing of your request.'],
-  [ErrorCode.InvalidMessageFormat, 'An error occurred during the processing of your request.'],
-  [ErrorCode.InvalidUsername, 'Invalid username. Username must have between 1 and 32 ASCII characters.'],
-  [ErrorCode.MissingPassword, 'Password is required.'],
-  [ErrorCode.ProvidedPassword, 'Password is not set for this user.'],
-  [ErrorCode.IncorrectPassword, 'Password is incorrect.'],
-  [ErrorCode.InvalidMessage, 'An error occurred.'],
-  [ErrorCode.CouldNotConnect, 'Could not connect to the server.'],
+  [ErrorCode.NOT_USING_LATEST_VERSION, 'You are not using the latest version.'],
+  [ErrorCode.INTERNAL_SERVER_ERROR, 'An error occurred during the processing of your request.'],
+  [ErrorCode.INVALID_MESSAGE_FORMAT, 'An error occurred during the processing of your request.'],
+  [ErrorCode.INVALID_USERNAME, 'Invalid username. Username must have between 1 and 32 ASCII characters.'],
+  [ErrorCode.MISSING_PASSWORD, 'Password is required.'],
+  [ErrorCode.PROVIDED_PASSWORD, 'Password is not set for this user.'],
+  [ErrorCode.INCORRECT_PASSWORD, 'Password is incorrect.'],
+  [ErrorCode.INVALID_MESSAGE, 'An error occurred.'],
+  [ErrorCode.COULD_NOT_CONNECT, 'Could not connect to the server.'],
 ]);
 
 export interface LoginFormProps {
@@ -82,7 +82,7 @@ export class LoginForm extends React.PureComponent<LoginFormProps, LoginFormStat
     const { username, password } = this.state;
 
     if (username.length === 0 || username.length > 32 || !isASCII(username)) {
-      this.setState({ errorCode: ErrorCode.InvalidUsername });
+      this.setState({ errorCode: ErrorCode.INVALID_USERNAME });
     } else {
       this.setState({ errorCode: undefined });
       this.props.onSubmit(username, password);

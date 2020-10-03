@@ -5,7 +5,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import * as SockJS from 'sockjs-client';
 import { defaultGameBoard } from '../common/defaults';
-import { ErrorCode, GameAction, GameBoardType, GameSetupChange, MessageToClient, MessageToServer, ScoreBoardIndex } from '../common/enums';
+import { GameAction, GameBoardType, GameSetupChange, MessageToClient, MessageToServer, ScoreBoardIndex } from '../common/enums';
 import { Game } from '../common/game';
 import { ActionDisposeOfShares } from '../common/gameActions/disposeOfShares';
 import { ActionGameOver } from '../common/gameActions/gameOver';
@@ -28,7 +28,7 @@ import { ScoreBoard } from './components/ScoreBoard';
 import { SelectChain, SelectChainTitle } from './components/SelectChain';
 import { TileRack } from './components/TileRack';
 import { GameBoardLabelMode, GameStatus } from './enums';
-import { GameMode, PlayerArrangementMode } from '../common/pb';
+import { ErrorCode, GameMode, PlayerArrangementMode } from '../common/pb';
 
 export enum ClientManagerPage {
   Login,
@@ -662,7 +662,7 @@ export class ClientManager {
     if (this.errorCode !== null) {
       this.setPage(ClientManagerPage.Login);
     } else if (this.page === ClientManagerPage.Connecting) {
-      this.errorCode = ErrorCode.CouldNotConnect;
+      this.errorCode = ErrorCode.COULD_NOT_CONNECT;
       this.setPage(ClientManagerPage.Login);
     }
 

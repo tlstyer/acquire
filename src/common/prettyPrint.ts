@@ -1,5 +1,5 @@
-import { ErrorCode, GameSetupChange, MessageToClient, MessageToServer } from './enums';
-import { GameMode, PlayerArrangementMode } from './pb';
+import { GameSetupChange, MessageToClient, MessageToServer } from './enums';
+import { ErrorCode, GameMode, PlayerArrangementMode } from './pb';
 
 function constructEnum(name: string, value: string) {
   return `{[<(${name}.${value})>]}`;

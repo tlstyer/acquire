@@ -25,18 +25,6 @@ export enum MessageToServer {
   DoGameAction,
 }
 
-export enum ErrorCode {
-  NotUsingLatestVersion,
-  InternalServerError,
-  InvalidMessageFormat,
-  InvalidUsername,
-  MissingPassword,
-  ProvidedPassword,
-  IncorrectPassword,
-  InvalidMessage,
-  CouldNotConnect,
-}
-
 export enum GameAction {
   StartGame,
   PlayTile,
