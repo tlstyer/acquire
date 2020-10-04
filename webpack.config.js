@@ -93,35 +93,36 @@ function getDevelopmentConfig(APP) {
 }
 
 function getProductionConfig(APP) {
+  const packageVersionLookup = getPackageVersionLookup();
   const shortCSSNameLookup = getShortCSSNameLookup();
 
   const externals = [
     {
       module: 'immutable',
       global: 'Immutable',
-      entry: 'https://unpkg.com/immutable@4.0.0-rc.12/dist/immutable.min.js',
+      entry: `https://unpkg.com/immutable@${packageVersionLookup['immutable']}/dist/immutable.min.js`,
     },
     {
       module: 'protobufjs/minimal',
       global: 'protobuf',
-      entry: 'https://unpkg.com/protobufjs@6.10.1/dist/minimal/protobuf.min.js',
+      entry: `https://unpkg.com/protobufjs@${packageVersionLookup['protobufjs']}/dist/minimal/protobuf.min.js`,
     },
     {
       module: 'react',
       global: 'React',
-      entry: 'https://unpkg.com/react@16.13.1/umd/react.production.min.js',
+      entry: `https://unpkg.com/react@${packageVersionLookup['react']}/umd/react.production.min.js`,
     },
     {
       module: 'react-dom',
       global: 'ReactDOM',
-      entry: 'https://unpkg.com/react-dom@16.13.1/umd/react-dom.production.min.js',
+      entry: `https://unpkg.com/react-dom@${packageVersionLookup['react-dom']}/umd/react-dom.production.min.js`,
     },
   ];
   if (APP === 'index') {
     externals.push({
       module: 'sockjs-client',
       global: 'SockJS',
-      entry: 'https://unpkg.com/sockjs-client@1.5.0/dist/sockjs.min.js',
+      entry: `https://unpkg.com/sockjs-client@${packageVersionLookup['sockjs-client']}/dist/sockjs.min.js`,
     });
   }
 
@@ -214,6 +215,21 @@ function getProductionConfig(APP) {
     },
     mode: 'production',
   };
+}
+
+function getPackageVersionLookup() {
+  const packageJson = JSON.parse(fs.readFileSync('package.json').toString());
+  const dependencies = { ...packageJson.dependencies, ...packageJson.devDependencies };
+
+  const lookup = {};
+  for (const key in dependencies) {
+    if (dependencies.hasOwnProperty(key)) {
+      const value = dependencies[key];
+      lookup[key] = value.replace(/^\^/, '');
+    }
+  }
+
+  return lookup;
 }
 
 function getShortCSSNameLookup() {
