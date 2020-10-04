@@ -1,4 +1,4 @@
-import { GameAction, GameHistoryMessage, ScoreBoardIndex } from '../enums';
+import { GameActionEnum, GameHistoryMessageEnum, ScoreBoardIndexEnum } from '../enums';
 import { UserInputError } from '../error';
 import { Game } from '../game';
 import { GameBoardType } from '../pb';
@@ -11,7 +11,7 @@ export class ActionPurchaseShares extends ActionBase {
   canEndGame = false;
 
   constructor(game: Game, playerID: number) {
-    super(game, playerID, GameAction.PurchaseShares);
+    super(game, playerID, GameActionEnum.PurchaseShares);
   }
 
   prepare() {
@@ -29,7 +29,7 @@ export class ActionPurchaseShares extends ActionBase {
     let hasChainSizeGreaterThan40 = false;
     let sharesAvailable = false;
     let canPurchaseShares = false;
-    const cash = this.game.scoreBoard.get(this.playerID)!.get(ScoreBoardIndex.Cash)!;
+    const cash = this.game.scoreBoard.get(this.playerID)!.get(ScoreBoardIndexEnum.Cash)!;
     for (let type = 0; type <= GameBoardType.IMPERIAL; type++) {
       const chainSize = this.game.scoreBoardChainSize.get(type)!;
       if (chainSize > 0) {
@@ -57,7 +57,7 @@ export class ActionPurchaseShares extends ActionBase {
 
     if (!canPurchaseShares && !this.canEndGame) {
       if (this.cannotAffordAnyShares) {
-        this.game.getCurrentMoveData().addGameHistoryMessage(GameHistoryMessage.CouldNotAffordAnyShares, this.playerID, []);
+        this.game.getCurrentMoveData().addGameHistoryMessage(GameHistoryMessageEnum.CouldNotAffordAnyShares, this.playerID, []);
       }
       return this.completeAction(false);
     } else {
@@ -91,7 +91,7 @@ export class ActionPurchaseShares extends ActionBase {
     for (let i = 0; i < chains.length; i++) {
       chainCounts[chains[i]]++;
     }
-    const chainsAndCounts: [ScoreBoardIndex, number][] = [];
+    const chainsAndCounts: [ScoreBoardIndexEnum, number][] = [];
     for (let chain = 0; chain < chainCounts.length; chain++) {
       const count = chainCounts[chain];
       if (count > 0) {
@@ -112,18 +112,18 @@ export class ActionPurchaseShares extends ActionBase {
 
       cost += this.game.scoreBoardPrice.get(chain)! * count;
     }
-    if (cost > this.game.scoreBoard.get(this.playerID)!.get(ScoreBoardIndex.Cash)!) {
+    if (cost > this.game.scoreBoard.get(this.playerID)!.get(ScoreBoardIndexEnum.Cash)!) {
       throw new UserInputError('not enough cash to pay for requested shares');
     }
 
     if (cost > 0) {
-      this.game.adjustPlayerScoreBoardRow(this.playerID, [...chainsAndCounts, [ScoreBoardIndex.Cash, -cost]]);
+      this.game.adjustPlayerScoreBoardRow(this.playerID, [...chainsAndCounts, [ScoreBoardIndexEnum.Cash, -cost]]);
     }
 
     if (this.cannotAffordAnyShares) {
-      this.game.getCurrentMoveData().addGameHistoryMessage(GameHistoryMessage.CouldNotAffordAnyShares, this.playerID, []);
+      this.game.getCurrentMoveData().addGameHistoryMessage(GameHistoryMessageEnum.CouldNotAffordAnyShares, this.playerID, []);
     } else {
-      this.game.getCurrentMoveData().addGameHistoryMessage(GameHistoryMessage.PurchasedShares, this.playerID, [chainsAndCounts]);
+      this.game.getCurrentMoveData().addGameHistoryMessage(GameHistoryMessageEnum.PurchasedShares, this.playerID, [chainsAndCounts]);
     }
 
     return this.completeAction(endGame === 1 && this.canEndGame);
@@ -135,11 +135,11 @@ export class ActionPurchaseShares extends ActionBase {
 
     if (endGame || allTilesPlayed || noTilesPlayedForEntireRound) {
       if (endGame) {
-        this.game.getCurrentMoveData().addGameHistoryMessage(GameHistoryMessage.EndedGame, this.playerID, []);
+        this.game.getCurrentMoveData().addGameHistoryMessage(GameHistoryMessageEnum.EndedGame, this.playerID, []);
       } else if (allTilesPlayed) {
-        this.game.getCurrentMoveData().addGameHistoryMessage(GameHistoryMessage.AllTilesPlayed, null, []);
+        this.game.getCurrentMoveData().addGameHistoryMessage(GameHistoryMessageEnum.AllTilesPlayed, null, []);
       } else {
-        this.game.getCurrentMoveData().addGameHistoryMessage(GameHistoryMessage.NoTilesPlayedForEntireRound, null, []);
+        this.game.getCurrentMoveData().addGameHistoryMessage(GameHistoryMessageEnum.NoTilesPlayedForEntireRound, null, []);
       }
 
       return [new ActionGameOver(this.game, this.playerID)];
@@ -150,7 +150,7 @@ export class ActionPurchaseShares extends ActionBase {
 
       allTilesPlayed = this.game.gameBoardTypeCounts[GameBoardType.NOTHING] === 0;
       if (allTilesPlayed) {
-        this.game.getCurrentMoveData().addGameHistoryMessage(GameHistoryMessage.AllTilesPlayed, null, []);
+        this.game.getCurrentMoveData().addGameHistoryMessage(GameHistoryMessageEnum.AllTilesPlayed, null, []);
         return [new ActionGameOver(this.game, this.playerID)];
       }
 

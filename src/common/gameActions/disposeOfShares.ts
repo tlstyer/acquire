@@ -1,4 +1,4 @@
-import { GameAction, GameHistoryMessage, ScoreBoardIndex } from '../enums';
+import { GameActionEnum, GameHistoryMessageEnum, ScoreBoardIndexEnum } from '../enums';
 import { UserInputError } from '../error';
 import { Game } from '../game';
 import { GameBoardType } from '../pb';
@@ -9,7 +9,7 @@ export class ActionDisposeOfShares extends ActionBase {
   sharesAvailableInControllingChain = 0;
 
   constructor(game: Game, playerID: number, public defunctChain: GameBoardType, public controllingChain: GameBoardType) {
-    super(game, playerID, GameAction.DisposeOfShares);
+    super(game, playerID, GameActionEnum.DisposeOfShares);
 
     this.sharesOwnedInDefunctChain = this.game.scoreBoard.get(playerID)!.get(defunctChain)!;
   }
@@ -43,17 +43,17 @@ export class ActionDisposeOfShares extends ActionBase {
     }
 
     if (tradeAmount > 0 || sellAmount > 0) {
-      const adjustments: [GameBoardType | ScoreBoardIndex, number][] = [[this.defunctChain, -tradeAmount - sellAmount]];
+      const adjustments: [GameBoardType | ScoreBoardIndexEnum, number][] = [[this.defunctChain, -tradeAmount - sellAmount]];
       if (tradeAmount > 0) {
         adjustments.push([this.controllingChain, tradeAmount / 2]);
       }
       if (sellAmount > 0) {
-        adjustments.push([ScoreBoardIndex.Cash, sellAmount * this.game.scoreBoardPrice.get(this.defunctChain)!]);
+        adjustments.push([ScoreBoardIndexEnum.Cash, sellAmount * this.game.scoreBoardPrice.get(this.defunctChain)!]);
       }
       this.game.adjustPlayerScoreBoardRow(this.playerID, adjustments);
     }
 
-    this.game.getCurrentMoveData().addGameHistoryMessage(GameHistoryMessage.DisposedOfShares, this.playerID, [this.defunctChain, tradeAmount, sellAmount]);
+    this.game.getCurrentMoveData().addGameHistoryMessage(GameHistoryMessageEnum.DisposedOfShares, this.playerID, [this.defunctChain, tradeAmount, sellAmount]);
 
     return [];
   }

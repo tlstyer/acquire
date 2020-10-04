@@ -1,4 +1,4 @@
-import { GameAction, GameHistoryMessage } from '../enums';
+import { GameActionEnum, GameHistoryMessageEnum } from '../enums';
 import { UserInputError } from '../error';
 import { Game } from '../game';
 import { GameBoardType } from '../pb';
@@ -7,7 +7,7 @@ import { ActionDisposeOfShares } from './disposeOfShares';
 
 export class ActionSelectChainToDisposeOfNext extends ActionBase {
   constructor(game: Game, playerID: number, public defunctChains: GameBoardType[], public controllingChain: GameBoardType) {
-    super(game, playerID, GameAction.SelectChainToDisposeOfNext);
+    super(game, playerID, GameActionEnum.SelectChainToDisposeOfNext);
   }
 
   prepare() {
@@ -30,7 +30,7 @@ export class ActionSelectChainToDisposeOfNext extends ActionBase {
       throw new UserInputError('cannot select chain as the next chain');
     }
 
-    this.game.getCurrentMoveData().addGameHistoryMessage(GameHistoryMessage.SelectedChainToDisposeOfNext, this.playerID, [nextChain]);
+    this.game.getCurrentMoveData().addGameHistoryMessage(GameHistoryMessageEnum.SelectedChainToDisposeOfNext, this.playerID, [nextChain]);
 
     return this.completeAction(nextChain);
   }

@@ -13,7 +13,7 @@ import {
   defaultTileRackTypes,
   defaultTileRackTypesList,
 } from './defaults';
-import { GameAction, GameHistoryMessage, ScoreBoardIndex, Tile } from './enums';
+import { GameActionEnum, GameHistoryMessageEnum, ScoreBoardIndexEnum, TileEnum } from './enums';
 import { ActionBase } from './gameActions/base';
 import { ActionStartGame } from './gameActions/startGame';
 import { calculateBonuses, neighboringTilesLookup } from './helpers';
@@ -117,7 +117,7 @@ export class Game {
       }
 
       for (let tileIndex = 0; tileIndex < 6; tileIndex++) {
-        if (this.tileRacks.get(playerID)!.get(tileIndex, null) === Tile.Unknown) {
+        if (this.tileRacks.get(playerID)!.get(tileIndex, null) === TileEnum.Unknown) {
           this.tileRacks.setIn([playerID, tileIndex], tile);
           setTile = true;
           break;
@@ -184,11 +184,11 @@ export class Game {
       this.getCurrentMoveData().addTileBagTile(tile, playerID);
 
       if (addDrewTileMessage) {
-        this.getCurrentMoveData().addGameHistoryMessage(GameHistoryMessage.DrewTile, playerID, [tile]);
+        this.getCurrentMoveData().addGameHistoryMessage(GameHistoryMessageEnum.DrewTile, playerID, [tile]);
       }
 
       if (this.nextTileBagIndex === 108) {
-        this.getCurrentMoveData().addGameHistoryMessage(GameHistoryMessage.DrewLastTile, playerID, []);
+        this.getCurrentMoveData().addGameHistoryMessage(GameHistoryMessageEnum.DrewLastTile, playerID, []);
       }
     }
   }
@@ -217,7 +217,7 @@ export class Game {
 
         this.removeTile(playerID, tileIndex);
         this.setGameBoardPosition(tile, GameBoardType.CANT_PLAY_EVER);
-        this.getCurrentMoveData().addGameHistoryMessage(GameHistoryMessage.ReplacedDeadTile, playerID, [tile]);
+        this.getCurrentMoveData().addGameHistoryMessage(GameHistoryMessageEnum.ReplacedDeadTile, playerID, [tile]);
         this.drawTiles(playerID);
         this.determineTileRackTypesForPlayer(playerID);
         replacedADeadTile = true;
@@ -250,7 +250,7 @@ export class Game {
       const tile = this.tileRacks.get(playerID)!.get(tileIndex, null);
       let tileType = null;
 
-      if (tile !== null && tile !== Tile.Unknown) {
+      if (tile !== null && tile !== TileEnum.Unknown) {
         const borderTiles: number[] = [];
         let borderTypes: GameBoardType[] = [];
         const neighboringTiles = neighboringTilesLookup[tile];
@@ -368,7 +368,7 @@ export class Game {
     this.gameBoard = this.gameBoard.asImmutable();
   }
 
-  getScoreBoardColumnArray(scoreBoardIndex: GameBoardType | ScoreBoardIndex) {
+  getScoreBoardColumnArray(scoreBoardIndex: GameBoardType | ScoreBoardIndexEnum) {
     const column: number[] = new Array(this.userIDs.size);
     for (let playerID = 0; playerID < this.userIDs.size; playerID++) {
       column[playerID] = this.scoreBoard.get(playerID)!.get(scoreBoardIndex)!;
@@ -376,7 +376,7 @@ export class Game {
     return column;
   }
 
-  adjustPlayerScoreBoardRow(playerID: number, adjustments: [GameBoardType | ScoreBoardIndex, number][]) {
+  adjustPlayerScoreBoardRow(playerID: number, adjustments: [GameBoardType | ScoreBoardIndexEnum, number][]) {
     let scoreBoard = this.scoreBoard.asMutable();
     let scoreBoardAvailable = this.scoreBoardAvailable.asMutable();
 
@@ -386,7 +386,7 @@ export class Game {
       const value = scoreBoard.get(playerID)!.get(scoreBoardIndex)!;
       scoreBoard = scoreBoard.setIn([playerID, scoreBoardIndex], value + change);
 
-      if (scoreBoardIndex <= ScoreBoardIndex.Imperial) {
+      if (scoreBoardIndex <= ScoreBoardIndexEnum.Imperial) {
         const available = scoreBoardAvailable.get(scoreBoardIndex)!;
         scoreBoardAvailable = scoreBoardAvailable.set(scoreBoardIndex, available - change);
       }
@@ -396,7 +396,7 @@ export class Game {
     this.scoreBoardAvailable = scoreBoardAvailable.asImmutable();
   }
 
-  adjustScoreBoardColumn(scoreBoardIndex: ScoreBoardIndex, adjustments: number[]) {
+  adjustScoreBoardColumn(scoreBoardIndex: ScoreBoardIndexEnum, adjustments: number[]) {
     let scoreBoard = this.scoreBoard.asMutable();
 
     for (let playerID = 0; playerID < adjustments.length; playerID++) {
@@ -410,7 +410,7 @@ export class Game {
     this.scoreBoard = scoreBoard.asImmutable();
   }
 
-  setScoreBoardColumn(scoreBoardIndex: ScoreBoardIndex, values: number[]) {
+  setScoreBoardColumn(scoreBoardIndex: ScoreBoardIndexEnum, values: number[]) {
     let scoreBoard = this.scoreBoard.asMutable();
 
     for (let playerID = 0; playerID < values.length; playerID++) {
@@ -420,7 +420,7 @@ export class Game {
     this.scoreBoard = scoreBoard.asImmutable();
   }
 
-  setChainSize(scoreBoardIndex: GameBoardType | ScoreBoardIndex, size: number) {
+  setChainSize(scoreBoardIndex: GameBoardType | ScoreBoardIndexEnum, size: number) {
     this.scoreBoardChainSize = this.scoreBoardChainSize.set(scoreBoardIndex, size);
 
     if (size >= 11) {
@@ -434,10 +434,10 @@ export class Game {
       } else {
         price = Math.min(Math.floor((size - 1) / 10) + 6, 10);
       }
-      if (scoreBoardIndex >= ScoreBoardIndex.American) {
+      if (scoreBoardIndex >= ScoreBoardIndexEnum.American) {
         price++;
       }
-      if (scoreBoardIndex >= ScoreBoardIndex.Continental) {
+      if (scoreBoardIndex >= ScoreBoardIndexEnum.Continental) {
         price++;
       }
     }
@@ -450,7 +450,7 @@ export class Game {
       return;
     }
 
-    const netWorths = this.getScoreBoardColumnArray(ScoreBoardIndex.Cash);
+    const netWorths = this.getScoreBoardColumnArray(ScoreBoardIndexEnum.Cash);
 
     this.scoreBoardPrice.forEach((price, chain) => {
       if (price > 0) {
@@ -469,7 +469,7 @@ export class Game {
       }
     });
 
-    this.setScoreBoardColumn(ScoreBoardIndex.Net, netWorths);
+    this.setScoreBoardColumn(ScoreBoardIndexEnum.Net, netWorths);
 
     this.scoreBoardAtLastNetWorthsUpdate = this.scoreBoard;
     this.scoreBoardPriceAtLastNetWorthsUpdate = this.scoreBoardPrice;
@@ -562,7 +562,7 @@ const dummyWatcherMessage: any[] = [];
 
 export class MoveData {
   playerID = -1;
-  gameAction = GameAction.StartGame;
+  gameAction = GameActionEnum.StartGame;
   gameActionParameters: any[] = [];
   timestamp: number | null = null;
   revealedTileRackTiles: MoveDataTileRackTile[] = [];
@@ -591,7 +591,7 @@ export class MoveData {
     this.nextGameAction = game.gameActionStack[game.gameActionStack.length - 1];
   }
 
-  setGameAction(playerID: number, gameAction: GameAction, parameters: any[], timestamp: number | null) {
+  setGameAction(playerID: number, gameAction: GameActionEnum, parameters: any[], timestamp: number | null) {
     this.playerID = playerID;
     this.gameAction = gameAction;
     this.gameActionParameters = parameters;
@@ -615,7 +615,7 @@ export class MoveData {
     }
   }
 
-  addGameHistoryMessage(gameHistoryMessage: GameHistoryMessage, playerID: number | null, parameters: any[]) {
+  addGameHistoryMessage(gameHistoryMessage: GameHistoryMessageEnum, playerID: number | null, parameters: any[]) {
     this.gameHistoryMessages.push(new GameHistoryMessageData(gameHistoryMessage, playerID, parameters));
   }
 
@@ -631,7 +631,7 @@ export class MoveData {
     this.safeChains = this.game.safeChains;
     this.nextGameAction = this.game.gameActionStack[this.game.gameActionStack.length - 1];
 
-    if (this.nextGameAction.gameAction === GameAction.PlayTile) {
+    if (this.nextGameAction.gameAction === GameActionEnum.PlayTile) {
       this.playerIDWithPlayableTile = this.nextGameAction.playerID;
     }
 
@@ -670,7 +670,7 @@ export class MoveData {
       revealedTileBagTiles.push(
         moveDataTileBagTile.playerIDWithPermission === null || moveDataTileBagTile.playerIDWithPermission === playerID
           ? moveDataTileBagTile.tile
-          : Tile.Unknown,
+          : TileEnum.Unknown,
       );
     }
 
@@ -689,7 +689,7 @@ export class MoveData {
 }
 
 export class GameHistoryMessageData {
-  constructor(public gameHistoryMessage: GameHistoryMessage, public playerID: number | null, public parameters: any[]) {}
+  constructor(public gameHistoryMessage: GameHistoryMessageEnum, public playerID: number | null, public parameters: any[]) {}
 }
 
 export class MoveDataTileRackTile {

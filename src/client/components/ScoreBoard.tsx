@@ -2,7 +2,7 @@ import * as style from './ScoreBoard.scss';
 
 import { List } from 'immutable';
 import * as React from 'react';
-import { ScoreBoardIndex } from '../../common/enums';
+import { ScoreBoardIndexEnum } from '../../common/enums';
 import { gameModeToNumPlayers, gameModeToTeamSize } from '../../common/helpers';
 import { allChains, gameBoardTypeToCSSClassName, gameBoardTypeToHotelInitial, teamNumberToCSSClassName } from '../helpers';
 import { GameMode } from '../../common/pb';
@@ -118,7 +118,7 @@ export class ScoreBoard extends React.PureComponent<ScoreBoardProps> {
 function getTeamTotal(scoreBoard: List<List<number>>, numTeams: number, teamNumber: number) {
   let teamTotal = 0;
   for (let playerID = teamNumber - 1; playerID < scoreBoard.size; playerID += numTeams) {
-    teamTotal += scoreBoard.get(playerID)!.get(ScoreBoardIndex.Net)!;
+    teamTotal += scoreBoard.get(playerID)!.get(ScoreBoardIndexEnum.Net)!;
   }
   return teamTotal;
 }
@@ -190,13 +190,13 @@ class ScoreBoardRow extends React.PureComponent<ScoreBoardRowProps> {
             </td>
           );
         })}
-        {scoreBoardRow.size === ScoreBoardIndex.Max ? (
-          <td className={defaultClassName}>{scoreBoardRow.get(ScoreBoardIndex.Cash)! * 100}</td>
+        {scoreBoardRow.size === ScoreBoardIndexEnum.Max ? (
+          <td className={defaultClassName}>{scoreBoardRow.get(ScoreBoardIndexEnum.Cash)! * 100}</td>
         ) : (
           <td className={style.bottomRightCells}>{teamNumber !== undefined ? `Team ${teamNumber}` : undefined}</td>
         )}
-        {scoreBoardRow.size === ScoreBoardIndex.Max ? (
-          <td className={defaultClassName}>{scoreBoardRow.get(ScoreBoardIndex.Net)! * 100}</td>
+        {scoreBoardRow.size === ScoreBoardIndexEnum.Max ? (
+          <td className={defaultClassName}>{scoreBoardRow.get(ScoreBoardIndexEnum.Net)! * 100}</td>
         ) : (
           <td className={teamNumber !== undefined ? teamNumberToCSSClassName.get(teamNumber) : style.bottomRightCells}>
             {teamTotal !== undefined ? teamTotal * 100 : undefined}

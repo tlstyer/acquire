@@ -1,4 +1,4 @@
-import { GameAction, GameHistoryMessage, ScoreBoardIndex } from '../enums';
+import { GameActionEnum, GameHistoryMessageEnum, ScoreBoardIndexEnum } from '../enums';
 import { UserInputError } from '../error';
 import { Game } from '../game';
 import { calculateBonuses } from '../helpers';
@@ -10,7 +10,7 @@ export class ActionSelectMergerSurvivor extends ActionBase {
   chainsBySize: GameBoardType[][];
 
   constructor(game: Game, playerID: number, public chains: GameBoardType[], public tile: number) {
-    super(game, playerID, GameAction.SelectMergerSurvivor);
+    super(game, playerID, GameActionEnum.SelectMergerSurvivor);
 
     const sizeToChains = new Map<number, GameBoardType[]>();
     const sizes: number[] = [];
@@ -40,7 +40,7 @@ export class ActionSelectMergerSurvivor extends ActionBase {
   }
 
   prepare() {
-    this.game.getCurrentMoveData().addGameHistoryMessage(GameHistoryMessage.MergedChains, this.playerID, [this.chains]);
+    this.game.getCurrentMoveData().addGameHistoryMessage(GameHistoryMessageEnum.MergedChains, this.playerID, [this.chains]);
 
     if (this.chainsBySize[0].length === 1) {
       return this.completeAction(this.chainsBySize[0][0]);
@@ -63,7 +63,7 @@ export class ActionSelectMergerSurvivor extends ActionBase {
       throw new UserInputError('cannot select chain as the controlling chain');
     }
 
-    this.game.getCurrentMoveData().addGameHistoryMessage(GameHistoryMessage.SelectedMergerSurvivor, this.playerID, [controllingChain]);
+    this.game.getCurrentMoveData().addGameHistoryMessage(GameHistoryMessageEnum.SelectedMergerSurvivor, this.playerID, [controllingChain]);
 
     return this.completeAction(controllingChain);
   }
@@ -88,11 +88,11 @@ export class ActionSelectMergerSurvivor extends ActionBase {
         for (let j = 0; j < chainBonuses.length; j++) {
           const chainBonus = chainBonuses[j];
           bonuses[chainBonus.playerID] += chainBonus.amount;
-          moveData.addGameHistoryMessage(GameHistoryMessage.ReceivedBonus, chainBonus.playerID, [chain, chainBonus.amount]);
+          moveData.addGameHistoryMessage(GameHistoryMessageEnum.ReceivedBonus, chainBonus.playerID, [chain, chainBonus.amount]);
         }
       }
     }
-    this.game.adjustScoreBoardColumn(ScoreBoardIndex.Cash, bonuses);
+    this.game.adjustScoreBoardColumn(ScoreBoardIndexEnum.Cash, bonuses);
 
     const actions: ActionBase[] = [];
     for (let i = 0; i < this.chainsBySize.length; i++) {

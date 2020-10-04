@@ -1,7 +1,7 @@
 import * as common from './common.scss';
 
 import * as React from 'react';
-import { Tile } from '../common/enums';
+import { TileEnum } from '../common/enums';
 import { GameStatus } from './enums';
 import { GameBoardType, GameMode } from '../common/pb';
 
@@ -63,7 +63,7 @@ export const teamNumberToCSSClassName = new Map([
 const yTileNames = 'ABCDEFGHI';
 
 export function getTileString(tile: number) {
-  if (tile === Tile.Unknown) {
+  if (tile === TileEnum.Unknown) {
     return '?';
   } else {
     return `${Math.floor(tile / 9) + 1}${yTileNames[tile % 9]}`;

@@ -1,4 +1,4 @@
-import { GameAction, GameHistoryMessage } from '../enums';
+import { GameActionEnum, GameHistoryMessageEnum } from '../enums';
 import { UserInputError } from '../error';
 import { Game } from '../game';
 import { GameBoardType } from '../pb';
@@ -6,7 +6,7 @@ import { ActionBase } from './base';
 
 export class ActionSelectNewChain extends ActionBase {
   constructor(game: Game, playerID: number, public availableChains: GameBoardType[], public tile: number) {
-    super(game, playerID, GameAction.SelectNewChain);
+    super(game, playerID, GameActionEnum.SelectNewChain);
   }
 
   prepare() {
@@ -43,6 +43,6 @@ export class ActionSelectNewChain extends ActionBase {
       this.game.adjustPlayerScoreBoardRow(this.playerID, [[chain, 1]]);
     }
 
-    this.game.getCurrentMoveData().addGameHistoryMessage(GameHistoryMessage.FormedChain, this.playerID, [chain]);
+    this.game.getCurrentMoveData().addGameHistoryMessage(GameHistoryMessageEnum.FormedChain, this.playerID, [chain]);
   }
 }

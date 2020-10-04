@@ -1,4 +1,4 @@
-export enum MessageToClient {
+export enum MessageToClientEnum {
   FatalError,
   Greetings,
   ClientConnected,
@@ -11,7 +11,7 @@ export enum MessageToClient {
   GameActionDone,
 }
 
-export enum MessageToServer {
+export enum MessageToServerEnum {
   CreateGame,
   EnterGame,
   ExitGame,
@@ -25,7 +25,7 @@ export enum MessageToServer {
   DoGameAction,
 }
 
-export enum GameAction {
+export enum GameActionEnum {
   StartGame,
   PlayTile,
   SelectNewChain,
@@ -36,7 +36,7 @@ export enum GameAction {
   GameOver,
 }
 
-export enum GameHistoryMessage {
+export enum GameHistoryMessageEnum {
   TurnBegan,
   DrewPositionTile,
   StartedGame,
@@ -58,7 +58,7 @@ export enum GameHistoryMessage {
   AllTilesPlayed,
 }
 
-export enum GameSetupChange {
+export enum GameSetupChangeEnum {
   UserAdded,
   UserRemoved,
   UserApprovedOfGameSetup,
@@ -68,7 +68,7 @@ export enum GameSetupChange {
   UserKicked,
 }
 
-export enum ScoreBoardIndex {
+export enum ScoreBoardIndexEnum {
   Luxor,
   Tower,
   American,
@@ -81,6 +81,6 @@ export enum ScoreBoardIndex {
   Max,
 }
 
-export enum Tile {
+export enum TileEnum {
   Unknown = -1,
 }

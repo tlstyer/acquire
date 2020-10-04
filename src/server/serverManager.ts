@@ -1,5 +1,5 @@
 import { Connection, Server } from 'sockjs';
-import { MessageToClient, MessageToServer } from '../common/enums';
+import { MessageToClientEnum, MessageToServerEnum } from '../common/enums';
 import { Game } from '../common/game';
 import { GameSetup } from '../common/gameSetup';
 import { gameModeToNumPlayers, getNewTileBag, isASCII } from '../common/helpers';
@@ -27,23 +27,23 @@ export class ServerManager {
   gameIDToGameData = new Map<number, GameData>();
   gameDisplayNumberToGameData = new Map<number, GameData>();
 
-  onMessageFunctions: Map<MessageToServer, (client: Client, params: any[]) => void>;
+  onMessageFunctions: Map<MessageToServerEnum, (client: Client, params: any[]) => void>;
 
   lastLogMessageTime = 0;
 
   constructor(public server: Server, public userDataProvider: UserDataProvider, public nextGameID: number, public logger: (message: string) => void) {
     this.onMessageFunctions = new Map([
-      [MessageToServer.CreateGame, this.onMessageCreateGame],
-      [MessageToServer.EnterGame, this.onMessageEnterGame],
-      [MessageToServer.ExitGame, this.onMessageExitGame],
-      [MessageToServer.JoinGame, this.onMessageJoinGame],
-      [MessageToServer.UnjoinGame, this.onMessageUnjoinGame],
-      [MessageToServer.ApproveOfGameSetup, this.onMessageApproveOfGameSetup],
-      [MessageToServer.ChangeGameMode, this.onMessageChangeGameMode],
-      [MessageToServer.ChangePlayerArrangementMode, this.onMessageChangePlayerArrangementMode],
-      [MessageToServer.SwapPositions, this.onMessageSwapPositions],
-      [MessageToServer.KickUser, this.onMessageKickUser],
-      [MessageToServer.DoGameAction, this.onMessageDoGameAction],
+      [MessageToServerEnum.CreateGame, this.onMessageCreateGame],
+      [MessageToServerEnum.EnterGame, this.onMessageEnterGame],
+      [MessageToServerEnum.ExitGame, this.onMessageExitGame],
+      [MessageToServerEnum.JoinGame, this.onMessageJoinGame],
+      [MessageToServerEnum.UnjoinGame, this.onMessageUnjoinGame],
+      [MessageToServerEnum.ApproveOfGameSetup, this.onMessageApproveOfGameSetup],
+      [MessageToServerEnum.ChangeGameMode, this.onMessageChangeGameMode],
+      [MessageToServerEnum.ChangePlayerArrangementMode, this.onMessageChangePlayerArrangementMode],
+      [MessageToServerEnum.SwapPositions, this.onMessageSwapPositions],
+      [MessageToServerEnum.KickUser, this.onMessageKickUser],
+      [MessageToServerEnum.DoGameAction, this.onMessageDoGameAction],
     ]);
   }
 
@@ -160,7 +160,7 @@ export class ServerManager {
       user.clients.delete(client);
       this.deleteUserIfItDoesNotHaveReferences(user);
 
-      const messageToOtherClients = JSON.stringify([MessageToClient.ClientDisconnected, client.id]);
+      const messageToOtherClients = JSON.stringify([MessageToClientEnum.ClientDisconnected, client.id]);
       this.connectionIDToClient.forEach((otherClient) => {
         otherClient.queueMessage(messageToOtherClients);
       });
@@ -172,7 +172,7 @@ export class ServerManager {
   kickWithError(connection: Connection, errorCode: ErrorCode) {
     this.logMessage(LogMessage.KickedWithError, connection.id, errorCode);
 
-    connection.write(JSON.stringify([[MessageToClient.FatalError, errorCode]]));
+    connection.write(JSON.stringify([[MessageToClientEnum.FatalError, errorCode]]));
     connection.close();
   }
 
@@ -267,7 +267,7 @@ export class ServerManager {
 
     client.queueMessage(this.getGreetingsMessage(gameDataArray, client));
 
-    const outgoingMessageParts: any[] = [MessageToClient.ClientConnected, client.id, client.user.id];
+    const outgoingMessageParts: any[] = [MessageToClientEnum.ClientConnected, client.id, client.user.id];
     if (isNewUser) {
       outgoingMessageParts.push(client.user.name);
     }
@@ -310,8 +310,8 @@ export class ServerManager {
     this.gameIDToGameData.set(gameData.id, gameData);
     this.gameDisplayNumberToGameData.set(gameData.displayNumber, gameData);
 
-    const gameCreatedMessage = JSON.stringify([MessageToClient.GameCreated, gameData.id, gameData.displayNumber, gameData.gameSetup!.gameMode, client.id]);
-    const clientEnteredGameMessage = JSON.stringify([MessageToClient.ClientEnteredGame, client.id, gameData.displayNumber]);
+    const gameCreatedMessage = JSON.stringify([MessageToClientEnum.GameCreated, gameData.id, gameData.displayNumber, gameData.gameSetup!.gameMode, client.id]);
+    const clientEnteredGameMessage = JSON.stringify([MessageToClientEnum.ClientEnteredGame, client.id, gameData.displayNumber]);
     this.connectionIDToClient.forEach((aClient) => {
       aClient.queueMessage(gameCreatedMessage);
       aClient.queueMessage(clientEnteredGameMessage);
@@ -339,7 +339,7 @@ export class ServerManager {
 
     client.gameData = gameData;
 
-    const message = JSON.stringify([MessageToClient.ClientEnteredGame, client.id, gameData.displayNumber]);
+    const message = JSON.stringify([MessageToClientEnum.ClientEnteredGame, client.id, gameData.displayNumber]);
     this.connectionIDToClient.forEach((aClient) => {
       aClient.queueMessage(message);
     });
@@ -360,7 +360,7 @@ export class ServerManager {
 
     client.gameData = null;
 
-    const message = JSON.stringify([MessageToClient.ClientExitedGame, client.id]);
+    const message = JSON.stringify([MessageToClientEnum.ClientExitedGame, client.id]);
     this.connectionIDToClient.forEach((aClient) => {
       aClient.queueMessage(message);
     });
@@ -442,7 +442,7 @@ export class ServerManager {
       gameData.gameSetup = null;
       gameData.game = game;
 
-      const message = JSON.stringify([MessageToClient.GameStarted, gameData.displayNumber, userIDs.toJS()]);
+      const message = JSON.stringify([MessageToClientEnum.GameStarted, gameData.displayNumber, userIDs.toJS()]);
       this.connectionIDToClient.forEach((aClient) => {
         aClient.queueMessage(message);
       });
@@ -617,7 +617,7 @@ export class ServerManager {
     const gameSetup = gameData.gameSetup!;
 
     gameSetup.history.forEach((change) => {
-      const message = JSON.stringify([MessageToClient.GameSetupChanged, gameData.displayNumber, ...change]);
+      const message = JSON.stringify([MessageToClientEnum.GameSetupChanged, gameData.displayNumber, ...change]);
       this.connectionIDToClient.forEach((aClient) => {
         aClient.queueMessage(message);
       });
@@ -638,7 +638,7 @@ export class ServerManager {
     game.userIDs.forEach((userID, playerID) => {
       const user = this.userIDToUser.get(userID)!;
       if (user.clients.size > 0) {
-        const message = JSON.stringify([MessageToClient.GameActionDone, gameData.displayNumber, ...moveData.playerMessages[playerID]]);
+        const message = JSON.stringify([MessageToClientEnum.GameActionDone, gameData.displayNumber, ...moveData.playerMessages[playerID]]);
         user.clients.forEach((aClient) => {
           aClient.queueMessage(message);
         });
@@ -648,7 +648,7 @@ export class ServerManager {
     });
 
     // send watcher messages to everybody else
-    const watcherMessage = JSON.stringify([MessageToClient.GameActionDone, gameData.displayNumber, ...moveData.watcherMessage]);
+    const watcherMessage = JSON.stringify([MessageToClientEnum.GameActionDone, gameData.displayNumber, ...moveData.watcherMessage]);
     this.connectionIDToClient.forEach((aClient) => {
       if (!playerUserIDs.has(aClient.user.id)) {
         aClient.queueMessage(watcherMessage);
@@ -702,11 +702,11 @@ export class ServerManager {
       games.push(message);
     });
 
-    return JSON.stringify([MessageToClient.Greetings, client.id, users, games]);
+    return JSON.stringify([MessageToClientEnum.Greetings, client.id, users, games]);
   }
 
   getClientConnectedMessage(client: Client, isNewUser: boolean) {
-    const message: any[] = [MessageToClient.ClientConnected, client.id, client.user.id];
+    const message: any[] = [MessageToClientEnum.ClientConnected, client.id, client.user.id];
     if (isNewUser) {
       message.push(client.user.name);
     }

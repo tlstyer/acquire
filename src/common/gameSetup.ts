@@ -1,5 +1,5 @@
 import { List } from 'immutable';
-import { GameSetupChange } from './enums';
+import { GameSetupChangeEnum } from './enums';
 import { gameModeToNumPlayers, gameModeToTeamSize, shuffleArray } from './helpers';
 import { GameMode, PlayerArrangementMode } from './pb';
 
@@ -22,7 +22,7 @@ export class GameSetup {
   approvals: List<boolean>;
   approvedByEverybody: boolean;
   history: any[] = [];
-  changeFunctions: Map<GameSetupChange, (...params: any[]) => void>;
+  changeFunctions: Map<GameSetupChangeEnum, (...params: any[]) => void>;
 
   constructor(
     public gameMode: GameMode,
@@ -53,14 +53,14 @@ export class GameSetup {
 
     this.approvedByEverybody = false;
 
-    const cf: [GameSetupChange, (...params: any[]) => void][] = [
-      [GameSetupChange.UserAdded, this.addUser],
-      [GameSetupChange.UserRemoved, this.removeUser],
-      [GameSetupChange.UserApprovedOfGameSetup, this.approve],
-      [GameSetupChange.GameModeChanged, this.changeGameMode],
-      [GameSetupChange.PlayerArrangementModeChanged, this.changePlayerArrangementMode],
-      [GameSetupChange.PositionsSwapped, this.swapPositions],
-      [GameSetupChange.UserKicked, this.kickUser],
+    const cf: [GameSetupChangeEnum, (...params: any[]) => void][] = [
+      [GameSetupChangeEnum.UserAdded, this.addUser],
+      [GameSetupChangeEnum.UserRemoved, this.removeUser],
+      [GameSetupChangeEnum.UserApprovedOfGameSetup, this.approve],
+      [GameSetupChangeEnum.GameModeChanged, this.changeGameMode],
+      [GameSetupChangeEnum.PlayerArrangementModeChanged, this.changePlayerArrangementMode],
+      [GameSetupChangeEnum.PositionsSwapped, this.swapPositions],
+      [GameSetupChangeEnum.UserKicked, this.kickUser],
     ];
     this.changeFunctions = new Map(cf);
   }
@@ -81,7 +81,7 @@ export class GameSetup {
         this.userIDsSet.add(userID);
         this.approvals = defaultApprovals.get(gameModeToNumPlayers.get(this.gameMode)!)!;
         this.approvedByEverybody = false;
-        this.history.push([GameSetupChange.UserAdded, userID]);
+        this.history.push([GameSetupChangeEnum.UserAdded, userID]);
         break;
       }
     }
@@ -103,7 +103,7 @@ export class GameSetup {
         this.userIDsSet.delete(userID);
         this.approvals = defaultApprovals.get(gameModeToNumPlayers.get(this.gameMode)!)!;
         this.approvedByEverybody = false;
-        this.history.push([GameSetupChange.UserRemoved, userID]);
+        this.history.push([GameSetupChangeEnum.UserRemoved, userID]);
         break;
       }
     }
@@ -122,7 +122,7 @@ export class GameSetup {
       if (this.userIDs.get(position) === userID) {
         if (this.approvals.get(position)! === false) {
           this.approvals = this.approvals.set(position, true);
-          this.history.push([GameSetupChange.UserApprovedOfGameSetup, userID]);
+          this.history.push([GameSetupChangeEnum.UserApprovedOfGameSetup, userID]);
         }
         break;
       }
@@ -183,7 +183,7 @@ export class GameSetup {
     }
 
     this.gameMode = gameMode;
-    this.history.push([GameSetupChange.GameModeChanged, gameMode]);
+    this.history.push([GameSetupChangeEnum.GameModeChanged, gameMode]);
   }
 
   changePlayerArrangementMode(playerArrangementMode: PlayerArrangementMode) {
@@ -207,7 +207,7 @@ export class GameSetup {
     this.playerArrangementMode = playerArrangementMode;
     this.approvals = defaultApprovals.get(gameModeToNumPlayers.get(this.gameMode)!)!;
     this.approvedByEverybody = false;
-    this.history.push([GameSetupChange.PlayerArrangementModeChanged, playerArrangementMode]);
+    this.history.push([GameSetupChangeEnum.PlayerArrangementModeChanged, playerArrangementMode]);
   }
 
   swapPositions(position1: number, position2: number) {
@@ -236,7 +236,7 @@ export class GameSetup {
     this.approvals = defaultApprovals.get(gameModeToNumPlayers.get(this.gameMode)!)!;
     this.approvedByEverybody = false;
 
-    this.history.push([GameSetupChange.PositionsSwapped, position1, position2]);
+    this.history.push([GameSetupChangeEnum.PositionsSwapped, position1, position2]);
   }
 
   kickUser(userID: number) {
@@ -255,7 +255,7 @@ export class GameSetup {
         this.userIDsSet.delete(userID);
         this.approvals = defaultApprovals.get(gameModeToNumPlayers.get(this.gameMode)!)!;
         this.approvedByEverybody = false;
-        this.history.push([GameSetupChange.UserKicked, userID]);
+        this.history.push([GameSetupChangeEnum.UserKicked, userID]);
         break;
       }
     }

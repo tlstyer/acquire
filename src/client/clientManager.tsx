@@ -5,7 +5,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import * as SockJS from 'sockjs-client';
 import { defaultGameBoard } from '../common/defaults';
-import { GameAction, GameSetupChange, MessageToClient, MessageToServer, ScoreBoardIndex } from '../common/enums';
+import { GameActionEnum, GameSetupChangeEnum, MessageToClientEnum, MessageToServerEnum, ScoreBoardIndexEnum } from '../common/enums';
 import { Game } from '../common/game';
 import { ActionDisposeOfShares } from '../common/gameActions/disposeOfShares';
 import { ActionGameOver } from '../common/gameActions/gameOver';
@@ -54,9 +54,9 @@ export class ClientManager {
   password = '';
 
   renderPageFunctions: Map<ClientManagerPage, () => JSX.Element>;
-  onMessageFunctions: Map<MessageToClient, (...params: any[]) => void>;
+  onMessageFunctions: Map<MessageToClientEnum, (...params: any[]) => void>;
 
-  myRequiredGameAction: GameAction | null = null;
+  myRequiredGameAction: GameActionEnum | null = null;
 
   requestAnimationFrameID: number | null = null;
 
@@ -70,16 +70,16 @@ export class ClientManager {
     ]);
 
     const mf: [number, (...params: any[]) => void][] = [
-      [MessageToClient.FatalError, this.onMessageFatalError],
-      [MessageToClient.Greetings, this.onMessageGreetings],
-      [MessageToClient.ClientConnected, this.onMessageClientConnected],
-      [MessageToClient.ClientDisconnected, this.onMessageClientDisconnected],
-      [MessageToClient.GameCreated, this.onMessageGameCreated],
-      [MessageToClient.ClientEnteredGame, this.onMessageClientEnteredGame],
-      [MessageToClient.ClientExitedGame, this.onMessageClientExitedGame],
-      [MessageToClient.GameSetupChanged, this.onMessageGameSetupChanged],
-      [MessageToClient.GameStarted, this.onMessageGameStarted],
-      [MessageToClient.GameActionDone, this.onMessageGameActionDone],
+      [MessageToClientEnum.FatalError, this.onMessageFatalError],
+      [MessageToClientEnum.Greetings, this.onMessageGreetings],
+      [MessageToClientEnum.ClientConnected, this.onMessageClientConnected],
+      [MessageToClientEnum.ClientDisconnected, this.onMessageClientDisconnected],
+      [MessageToClientEnum.GameCreated, this.onMessageGameCreated],
+      [MessageToClientEnum.ClientEnteredGame, this.onMessageClientEnteredGame],
+      [MessageToClientEnum.ClientExitedGame, this.onMessageClientExitedGame],
+      [MessageToClientEnum.GameSetupChanged, this.onMessageGameSetupChanged],
+      [MessageToClientEnum.GameStarted, this.onMessageGameStarted],
+      [MessageToClientEnum.GameActionDone, this.onMessageGameActionDone],
     ];
     this.onMessageFunctions = new Map(mf);
   }
@@ -174,7 +174,7 @@ export class ClientManager {
 
   onSubmitCreateGame = (gameMode: GameMode) => {
     if (this.isConnected()) {
-      this.socket!.send(JSON.stringify([MessageToServer.CreateGame, gameMode]));
+      this.socket!.send(JSON.stringify([MessageToServerEnum.CreateGame, gameMode]));
     }
   };
 
@@ -222,49 +222,49 @@ export class ClientManager {
 
   onExitGameClicked = () => {
     if (this.isConnected()) {
-      this.socket!.send(JSON.stringify([MessageToServer.ExitGame]));
+      this.socket!.send(JSON.stringify([MessageToServerEnum.ExitGame]));
     }
   };
 
   onJoinGame = () => {
     if (this.isConnected()) {
-      this.socket!.send(JSON.stringify([MessageToServer.JoinGame]));
+      this.socket!.send(JSON.stringify([MessageToServerEnum.JoinGame]));
     }
   };
 
   onUnjoinGame = () => {
     if (this.isConnected()) {
-      this.socket!.send(JSON.stringify([MessageToServer.UnjoinGame]));
+      this.socket!.send(JSON.stringify([MessageToServerEnum.UnjoinGame]));
     }
   };
 
   onApproveOfGameSetup = () => {
     if (this.isConnected()) {
-      this.socket!.send(JSON.stringify([MessageToServer.ApproveOfGameSetup]));
+      this.socket!.send(JSON.stringify([MessageToServerEnum.ApproveOfGameSetup]));
     }
   };
 
   onChangeGameMode = (gameMode: GameMode) => {
     if (this.isConnected()) {
-      this.socket!.send(JSON.stringify([MessageToServer.ChangeGameMode, gameMode]));
+      this.socket!.send(JSON.stringify([MessageToServerEnum.ChangeGameMode, gameMode]));
     }
   };
 
   onChangePlayerArrangementMode = (playerArrangementMode: PlayerArrangementMode) => {
     if (this.isConnected()) {
-      this.socket!.send(JSON.stringify([MessageToServer.ChangePlayerArrangementMode, playerArrangementMode]));
+      this.socket!.send(JSON.stringify([MessageToServerEnum.ChangePlayerArrangementMode, playerArrangementMode]));
     }
   };
 
   onSwapPositions = (position1: number, position2: number) => {
     if (this.isConnected()) {
-      this.socket!.send(JSON.stringify([MessageToServer.SwapPositions, position1, position2]));
+      this.socket!.send(JSON.stringify([MessageToServerEnum.SwapPositions, position1, position2]));
     }
   };
 
   onKickUser = (userID: number) => {
     if (this.isConnected()) {
-      this.socket!.send(JSON.stringify([MessageToServer.KickUser, userID]));
+      this.socket!.send(JSON.stringify([MessageToServerEnum.KickUser, userID]));
     }
   };
 
@@ -372,7 +372,7 @@ export class ClientManager {
                 <PurchaseShares
                   scoreBoardAvailable={game.scoreBoardAvailable}
                   scoreBoardPrice={game.scoreBoardPrice}
-                  cash={game.scoreBoard.get(playerID)!.get(ScoreBoardIndex.Cash)!}
+                  cash={game.scoreBoard.get(playerID)!.get(ScoreBoardIndexEnum.Cash)!}
                   buttonSize={gameBoardCellSize}
                   keyboardShortcutsEnabled={true}
                   onSharesPurchased={this.onSharesPurchased}
@@ -387,14 +387,14 @@ export class ClientManager {
   };
 
   onTileClicked = (tile: number) => {
-    if (this.isConnected() && this.myRequiredGameAction === GameAction.PlayTile) {
+    if (this.isConnected() && this.myRequiredGameAction === GameActionEnum.PlayTile) {
       const game = this.myClient!.gameData!.game!;
       const playerID = game.userIDs.indexOf(game.myUserID || -1);
       const tileRackIndex = game.tileRacks.get(playerID)!.indexOf(tile);
       const tileType = game.tileRackTypes.get(playerID)!.get(tileRackIndex)!;
 
       if (tileType !== GameBoardType.CANT_PLAY_EVER && tileType !== GameBoardType.CANT_PLAY_NOW) {
-        this.socket!.send(JSON.stringify([MessageToServer.DoGameAction, game.moveDataHistory.size, tile]));
+        this.socket!.send(JSON.stringify([MessageToServerEnum.DoGameAction, game.moveDataHistory.size, tile]));
         this.myRequiredGameAction = null;
       }
     }
@@ -402,21 +402,21 @@ export class ClientManager {
 
   onChainSelected = (chain: GameBoardType) => {
     if (this.isConnected()) {
-      this.socket!.send(JSON.stringify([MessageToServer.DoGameAction, this.myClient!.gameData!.game!.moveDataHistory.size, chain]));
+      this.socket!.send(JSON.stringify([MessageToServerEnum.DoGameAction, this.myClient!.gameData!.game!.moveDataHistory.size, chain]));
       this.myRequiredGameAction = null;
     }
   };
 
   onSharesDisposed = (traded: number, sold: number) => {
     if (this.isConnected()) {
-      this.socket!.send(JSON.stringify([MessageToServer.DoGameAction, this.myClient!.gameData!.game!.moveDataHistory.size, traded, sold]));
+      this.socket!.send(JSON.stringify([MessageToServerEnum.DoGameAction, this.myClient!.gameData!.game!.moveDataHistory.size, traded, sold]));
       this.myRequiredGameAction = null;
     }
   };
 
   onSharesPurchased = (chains: GameBoardType[], endGame: boolean) => {
     if (this.isConnected()) {
-      this.socket!.send(JSON.stringify([MessageToServer.DoGameAction, this.myClient!.gameData!.game!.moveDataHistory.size, chains, endGame ? 1 : 0]));
+      this.socket!.send(JSON.stringify([MessageToServerEnum.DoGameAction, this.myClient!.gameData!.game!.moveDataHistory.size, chains, endGame ? 1 : 0]));
       this.myRequiredGameAction = null;
     }
   };
@@ -610,11 +610,11 @@ export class ClientManager {
     gameSetup.processChange(params);
 
     switch (params[0]) {
-      case GameSetupChange.UserAdded:
+      case GameSetupChangeEnum.UserAdded:
         this.userIDToUser.get(params[1])!.numGames++;
         break;
-      case GameSetupChange.UserRemoved:
-      case GameSetupChange.UserKicked: {
+      case GameSetupChangeEnum.UserRemoved:
+      case GameSetupChangeEnum.UserKicked: {
         const user = this.userIDToUser.get(params[1])!;
         user.numGames--;
         this.deleteUserIfItDoesNotHaveReferences(user);
@@ -726,7 +726,7 @@ export class GameData {
 
   onEnterClicked = () => {
     if (this.clientManager.isConnected()) {
-      this.clientManager.socket!.send(JSON.stringify([MessageToServer.EnterGame, this.displayNumber]));
+      this.clientManager.socket!.send(JSON.stringify([MessageToServerEnum.EnterGame, this.displayNumber]));
     }
   };
 }

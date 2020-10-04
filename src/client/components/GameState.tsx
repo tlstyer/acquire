@@ -2,7 +2,7 @@ import * as style from './GameState.scss';
 
 import { List } from 'immutable';
 import * as React from 'react';
-import { GameAction } from '../../common/enums';
+import { GameActionEnum } from '../../common/enums';
 import { ActionBase } from '../../common/gameActions/base';
 import { ActionDisposeOfShares } from '../../common/gameActions/disposeOfShares';
 import { ActionPlayTile } from '../../common/gameActions/playTile';
@@ -27,21 +27,21 @@ export class GameState extends React.PureComponent<GameStateProps> {
   }
 }
 
-const gshl: [GameAction, any][] = [
+const gshl: [GameActionEnum, any][] = [
   [
-    GameAction.StartGame,
+    GameActionEnum.StartGame,
     (usernames: List<string>, action: ActionStartGame) => (
       <div className={style.root}>Waiting for {getUsernameSpan(usernames.get(action.playerID)!)} to start the game.</div>
     ),
   ],
   [
-    GameAction.PlayTile,
+    GameActionEnum.PlayTile,
     (usernames: List<string>, action: ActionPlayTile) => (
       <div className={style.root}>Waiting for {getUsernameSpan(usernames.get(action.playerID)!)} to play a tile.</div>
     ),
   ],
   [
-    GameAction.SelectNewChain,
+    GameActionEnum.SelectNewChain,
     (usernames: List<string>, action: ActionSelectNewChain) => (
       <div className={style.root}>
         Waiting for {getUsernameSpan(usernames.get(action.playerID)!)} to select new chain ({getHotelInitialsList(action.availableChains)}
@@ -50,7 +50,7 @@ const gshl: [GameAction, any][] = [
     ),
   ],
   [
-    GameAction.SelectMergerSurvivor,
+    GameActionEnum.SelectMergerSurvivor,
     (usernames: List<string>, action: ActionSelectMergerSurvivor) => (
       <div className={style.root}>
         Waiting for {getUsernameSpan(usernames.get(action.playerID)!)} to select merger survivor ({getHotelInitialsList(action.chainsBySize[0])}
@@ -59,7 +59,7 @@ const gshl: [GameAction, any][] = [
     ),
   ],
   [
-    GameAction.SelectChainToDisposeOfNext,
+    GameActionEnum.SelectChainToDisposeOfNext,
     (usernames: List<string>, action: ActionSelectChainToDisposeOfNext) => (
       <div className={style.root}>
         Waiting for {getUsernameSpan(usernames.get(action.playerID)!)} to select chain to dispose of next ({getHotelInitialsList(action.defunctChains)}
@@ -68,7 +68,7 @@ const gshl: [GameAction, any][] = [
     ),
   ],
   [
-    GameAction.DisposeOfShares,
+    GameActionEnum.DisposeOfShares,
     (usernames: List<string>, action: ActionDisposeOfShares) => (
       <div className={style.root}>
         Waiting for {getUsernameSpan(usernames.get(action.playerID)!)} to dispose of {getHotelNameSpan(action.defunctChain)} shares.
@@ -76,14 +76,14 @@ const gshl: [GameAction, any][] = [
     ),
   ],
   [
-    GameAction.PurchaseShares,
+    GameActionEnum.PurchaseShares,
     (usernames: List<string>, action: ActionPurchaseShares) => (
       <div className={style.root}>Waiting for {getUsernameSpan(usernames.get(action.playerID)!)} to purchase shares.</div>
     ),
   ],
-  [GameAction.GameOver, () => <div className={style.root}>Game over.</div>],
+  [GameActionEnum.GameOver, () => <div className={style.root}>Game over.</div>],
 ];
-const gameStateHandlerLookup = new Map<GameAction, (usernames: List<string>, action: ActionBase) => JSX.Element>(gshl);
+const gameStateHandlerLookup = new Map<GameActionEnum, (usernames: List<string>, action: ActionBase) => JSX.Element>(gshl);
 
 function getHotelInitialsList(chains: GameBoardType[]) {
   const entries: (JSX.Element | string)[] = new Array(chains.length * 2 - 1);

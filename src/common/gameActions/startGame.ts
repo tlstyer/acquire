@@ -1,4 +1,4 @@
-import { GameAction, GameHistoryMessage } from '../enums';
+import { GameActionEnum, GameHistoryMessageEnum } from '../enums';
 import { Game } from '../game';
 import { GameBoardType } from '../pb';
 import { ActionBase } from './base';
@@ -7,7 +7,7 @@ import { ActionPurchaseShares } from './purchaseShares';
 
 export class ActionStartGame extends ActionBase {
   constructor(game: Game, playerID: number) {
-    super(game, playerID, GameAction.StartGame);
+    super(game, playerID, GameActionEnum.StartGame);
   }
 
   prepare() {
@@ -31,13 +31,13 @@ export class ActionStartGame extends ActionBase {
       const positionTile = positionTiles[i];
       moveData.addTileBagTile(positionTile.tile, null);
       this.game.setGameBoardPosition(positionTile.tile, GameBoardType.NOTHING_YET);
-      moveData.addGameHistoryMessage(GameHistoryMessage.DrewPositionTile, positionTile.playerID, [positionTile.tile]);
+      moveData.addGameHistoryMessage(GameHistoryMessageEnum.DrewPositionTile, positionTile.playerID, [positionTile.tile]);
     }
 
     this.game.nextTileBagIndex = this.game.userIDs.size;
 
     // start game
-    moveData.addGameHistoryMessage(GameHistoryMessage.StartedGame, this.playerID, []);
+    moveData.addGameHistoryMessage(GameHistoryMessageEnum.StartedGame, this.playerID, []);
     for (let playerID = 0; playerID < this.game.userIDs.size; playerID++) {
       this.game.drawTiles(playerID);
     }

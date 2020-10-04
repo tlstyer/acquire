@@ -1,6 +1,6 @@
 import { List } from 'immutable';
 import * as SockJS from 'sockjs-client';
-import { GameAction, GameSetupChange, MessageToClient, MessageToServer } from '../common/enums';
+import { GameActionEnum, GameSetupChangeEnum, MessageToClientEnum, MessageToServerEnum } from '../common/enums';
 import { ErrorCode, GameMode, PlayerArrangementMode } from '../common/pb';
 import { Client, ClientManager, ClientManagerPage, GameData, User } from './clientManager';
 
@@ -254,7 +254,7 @@ describe('onSubmitLoginForm', () => {
 
     testConnection.triggerOpen();
 
-    testConnection.triggerMessage([[MessageToClient.FatalError, ErrorCode.INCORRECT_PASSWORD]]);
+    testConnection.triggerMessage([[MessageToClientEnum.FatalError, ErrorCode.INCORRECT_PASSWORD]]);
 
     expect(clientManager.errorCode).toBe(ErrorCode.INCORRECT_PASSWORD);
     expect(clientManager.page).toBe(ClientManagerPage.Connecting);
@@ -286,7 +286,7 @@ describe('onSubmitLoginForm', () => {
 
     testConnection.triggerOpen();
 
-    testConnection.triggerMessage([[MessageToClient.Greetings, 1, [[1, 'user', [[1]]]], []]]);
+    testConnection.triggerMessage([[MessageToClientEnum.Greetings, 1, [[1, 'user', [[1]]]], []]]);
 
     expect(clientManager.errorCode).toBe(null);
     expect(clientManager.page).toBe(ClientManagerPage.Lobby);
@@ -302,13 +302,13 @@ describe('onSubmitCreateGame', () => {
 
     clientManager.onSubmitLoginForm('me', '');
     testConnection.triggerOpen();
-    testConnection.triggerMessage([[MessageToClient.Greetings, 2, [[1, 'me', [[2]]]], []]]);
+    testConnection.triggerMessage([[MessageToClientEnum.Greetings, 2, [[1, 'me', [[2]]]], []]]);
     testConnection.clearSentMessages();
 
     clientManager.onSubmitCreateGame(GameMode.TEAMS_2_VS_2);
 
     expect(testConnection.sentMessages.length).toBe(1);
-    expect(testConnection.sentMessages[0]).toEqual([MessageToServer.CreateGame, GameMode.TEAMS_2_VS_2]);
+    expect(testConnection.sentMessages[0]).toEqual([MessageToServerEnum.CreateGame, GameMode.TEAMS_2_VS_2]);
   });
 
   test('does not send CreateGame message when not connected', () => {
@@ -316,7 +316,7 @@ describe('onSubmitCreateGame', () => {
 
     clientManager.onSubmitLoginForm('me', '');
     testConnection.triggerOpen();
-    testConnection.triggerMessage([[MessageToClient.Greetings, 2, [[1, 'me', [[2]]]], []]]);
+    testConnection.triggerMessage([[MessageToClientEnum.Greetings, 2, [[1, 'me', [[2]]]], []]]);
     testConnection.triggerClose();
     testConnection.clearSentMessages();
 
@@ -334,7 +334,7 @@ describe('onEnterClicked', () => {
     testConnection.triggerOpen();
     testConnection.triggerMessage([
       [
-        MessageToClient.Greetings,
+        MessageToClientEnum.Greetings,
         2,
         [
           [1, 'user 1', [[1, 1]]],
@@ -348,7 +348,7 @@ describe('onEnterClicked', () => {
     clientManager.gameDisplayNumberToGameData.get(1)!.onEnterClicked();
 
     expect(testConnection.sentMessages.length).toBe(1);
-    expect(testConnection.sentMessages[0]).toEqual([MessageToServer.EnterGame, 1]);
+    expect(testConnection.sentMessages[0]).toEqual([MessageToServerEnum.EnterGame, 1]);
   });
 
   test('does not send EnterGame message when not connected', () => {
@@ -358,7 +358,7 @@ describe('onEnterClicked', () => {
     testConnection.triggerOpen();
     testConnection.triggerMessage([
       [
-        MessageToClient.Greetings,
+        MessageToClientEnum.Greetings,
         2,
         [
           [1, 'user 1', [[1, 1]]],
@@ -378,7 +378,7 @@ describe('onEnterClicked', () => {
 
 describe('onExitGameClicked', () => {
   test('sends ExitGame message when connected', () => {
-    sendsMessageWhenConnected((clientManager) => clientManager.onExitGameClicked(), [MessageToServer.ExitGame]);
+    sendsMessageWhenConnected((clientManager) => clientManager.onExitGameClicked(), [MessageToServerEnum.ExitGame]);
   });
 
   test('does not send ExitGame message when not connected', () => {
@@ -388,7 +388,7 @@ describe('onExitGameClicked', () => {
 
 describe('onJoinGame', () => {
   test('sends JoinGame message when connected', () => {
-    sendsMessageWhenConnected((clientManager) => clientManager.onJoinGame(), [MessageToServer.JoinGame]);
+    sendsMessageWhenConnected((clientManager) => clientManager.onJoinGame(), [MessageToServerEnum.JoinGame]);
   });
 
   test('does not send JoinGame message when not connected', () => {
@@ -398,7 +398,7 @@ describe('onJoinGame', () => {
 
 describe('onUnjoinGame', () => {
   test('sends UnjoinGame message when connected', () => {
-    sendsMessageWhenConnected((clientManager) => clientManager.onUnjoinGame(), [MessageToServer.UnjoinGame]);
+    sendsMessageWhenConnected((clientManager) => clientManager.onUnjoinGame(), [MessageToServerEnum.UnjoinGame]);
   });
 
   test('does not send UnjoinGame message when not connected', () => {
@@ -408,7 +408,7 @@ describe('onUnjoinGame', () => {
 
 describe('onApproveOfGameSetup', () => {
   test('sends ApproveOfGameSetup message when connected', () => {
-    sendsMessageWhenConnected((clientManager) => clientManager.onApproveOfGameSetup(), [MessageToServer.ApproveOfGameSetup]);
+    sendsMessageWhenConnected((clientManager) => clientManager.onApproveOfGameSetup(), [MessageToServerEnum.ApproveOfGameSetup]);
   });
 
   test('does not send ApproveOfGameSetup message when not connected', () => {
@@ -419,7 +419,7 @@ describe('onApproveOfGameSetup', () => {
 describe('onChangeGameMode', () => {
   test('sends ChangeGameMode message when connected', () => {
     sendsMessageWhenConnected((clientManager) => clientManager.onChangeGameMode(GameMode.TEAMS_2_VS_2), [
-      MessageToServer.ChangeGameMode,
+      MessageToServerEnum.ChangeGameMode,
       GameMode.TEAMS_2_VS_2,
     ]);
   });
@@ -432,7 +432,7 @@ describe('onChangeGameMode', () => {
 describe('onChangePlayerArrangementMode', () => {
   test('sends ChangePlayerArrangementMode message when connected', () => {
     sendsMessageWhenConnected((clientManager) => clientManager.onChangePlayerArrangementMode(PlayerArrangementMode.EXACT_ORDER), [
-      MessageToServer.ChangePlayerArrangementMode,
+      MessageToServerEnum.ChangePlayerArrangementMode,
       PlayerArrangementMode.EXACT_ORDER,
     ]);
   });
@@ -444,7 +444,7 @@ describe('onChangePlayerArrangementMode', () => {
 
 describe('onSwapPositions', () => {
   test('sends SwapPositions message when connected', () => {
-    sendsMessageWhenConnected((clientManager) => clientManager.onSwapPositions(0, 1), [MessageToServer.SwapPositions, 0, 1]);
+    sendsMessageWhenConnected((clientManager) => clientManager.onSwapPositions(0, 1), [MessageToServerEnum.SwapPositions, 0, 1]);
   });
 
   test('does not send SwapPositions message when not connected', () => {
@@ -454,7 +454,7 @@ describe('onSwapPositions', () => {
 
 describe('onKickUser', () => {
   test('sends KickUser message when connected', () => {
-    sendsMessageWhenConnected((clientManager) => clientManager.onKickUser(5), [MessageToServer.KickUser, 5]);
+    sendsMessageWhenConnected((clientManager) => clientManager.onKickUser(5), [MessageToServerEnum.KickUser, 5]);
   });
 
   test('does not send KickUser message when not connected', () => {
@@ -472,7 +472,7 @@ describe('MessageToClient.Greetings', () => {
     const gameSetupJSON2 = [GameMode.SINGLES_2, PlayerArrangementMode.EXACT_ORDER, 5, [9, 5], [0, 1]];
     testConnection.triggerMessage([
       [
-        MessageToClient.Greetings,
+        MessageToClientEnum.Greetings,
         7,
         [
           [1, 'user 1', [[1], [6]]],
@@ -519,7 +519,7 @@ describe('MessageToClient.Greetings', () => {
     testConnection.triggerOpen();
     testConnection.triggerMessage([
       [
-        MessageToClient.Greetings,
+        MessageToClientEnum.Greetings,
         4,
         [
           [1, '1', [[1, 1]]],
@@ -578,8 +578,8 @@ describe('MessageToClient.ClientConnected', () => {
 
     clientManager.onSubmitLoginForm('me', '');
     testConnection.triggerOpen();
-    testConnection.triggerMessage([[MessageToClient.Greetings, 2, [[1, 'me', [[2]]]], []]]);
-    testConnection.triggerMessage([[MessageToClient.ClientConnected, 4, 3, 'user 3']]);
+    testConnection.triggerMessage([[MessageToClientEnum.Greetings, 2, [[1, 'me', [[2]]]], []]]);
+    testConnection.triggerMessage([[MessageToClientEnum.ClientConnected, 4, 3, 'user 3']]);
 
     expectClientAndUserAndGameData(clientManager, [new UserData(1, 'me', [new ClientData(2)]), new UserData(3, 'user 3', [new ClientData(4)])], []);
   });
@@ -589,9 +589,9 @@ describe('MessageToClient.ClientConnected', () => {
 
     clientManager.onSubmitLoginForm('me', '');
     testConnection.triggerOpen();
-    testConnection.triggerMessage([[MessageToClient.Greetings, 2, [[1, 'me', [[2]]]], []]]);
-    testConnection.triggerMessage([[MessageToClient.ClientConnected, 4, 3, 'user 3']]);
-    testConnection.triggerMessage([[MessageToClient.ClientConnected, 5, 3]]);
+    testConnection.triggerMessage([[MessageToClientEnum.Greetings, 2, [[1, 'me', [[2]]]], []]]);
+    testConnection.triggerMessage([[MessageToClientEnum.ClientConnected, 4, 3, 'user 3']]);
+    testConnection.triggerMessage([[MessageToClientEnum.ClientConnected, 5, 3]]);
 
     expectClientAndUserAndGameData(
       clientManager,
@@ -607,9 +607,9 @@ describe('MessageToClient.ClientDisconnected', () => {
 
     clientManager.onSubmitLoginForm('me', '');
     testConnection.triggerOpen();
-    testConnection.triggerMessage([[MessageToClient.Greetings, 2, [[1, 'me', [[2]]]], []]]);
-    testConnection.triggerMessage([[MessageToClient.ClientConnected, 4, 3, 'user 3']]);
-    testConnection.triggerMessage([[MessageToClient.ClientDisconnected, 4]]);
+    testConnection.triggerMessage([[MessageToClientEnum.Greetings, 2, [[1, 'me', [[2]]]], []]]);
+    testConnection.triggerMessage([[MessageToClientEnum.ClientConnected, 4, 3, 'user 3']]);
+    testConnection.triggerMessage([[MessageToClientEnum.ClientDisconnected, 4]]);
 
     expectClientAndUserAndGameData(clientManager, [new UserData(1, 'me', [new ClientData(2)])], []);
   });
@@ -619,10 +619,10 @@ describe('MessageToClient.ClientDisconnected', () => {
 
     clientManager.onSubmitLoginForm('me', '');
     testConnection.triggerOpen();
-    testConnection.triggerMessage([[MessageToClient.Greetings, 2, [[1, 'me', [[2]]]], []]]);
-    testConnection.triggerMessage([[MessageToClient.ClientConnected, 4, 3, 'user 3']]);
-    testConnection.triggerMessage([[MessageToClient.ClientConnected, 5, 3]]);
-    testConnection.triggerMessage([[MessageToClient.ClientDisconnected, 4]]);
+    testConnection.triggerMessage([[MessageToClientEnum.Greetings, 2, [[1, 'me', [[2]]]], []]]);
+    testConnection.triggerMessage([[MessageToClientEnum.ClientConnected, 4, 3, 'user 3']]);
+    testConnection.triggerMessage([[MessageToClientEnum.ClientConnected, 5, 3]]);
+    testConnection.triggerMessage([[MessageToClientEnum.ClientDisconnected, 4]]);
 
     expectClientAndUserAndGameData(clientManager, [new UserData(1, 'me', [new ClientData(2)]), new UserData(3, 'user 3', [new ClientData(5)])], []);
   });
@@ -632,10 +632,10 @@ describe('MessageToClient.ClientDisconnected', () => {
 
     clientManager.onSubmitLoginForm('me', '');
     testConnection.triggerOpen();
-    testConnection.triggerMessage([[MessageToClient.Greetings, 2, [[1, 'me', [[2]]]], []]]);
-    testConnection.triggerMessage([[MessageToClient.ClientConnected, 4, 3, 'user 3']]);
-    testConnection.triggerMessage([[MessageToClient.GameCreated, 10, 1, GameMode.TEAMS_2_VS_2, 4]]);
-    testConnection.triggerMessage([[MessageToClient.ClientDisconnected, 4]]);
+    testConnection.triggerMessage([[MessageToClientEnum.Greetings, 2, [[1, 'me', [[2]]]], []]]);
+    testConnection.triggerMessage([[MessageToClientEnum.ClientConnected, 4, 3, 'user 3']]);
+    testConnection.triggerMessage([[MessageToClientEnum.GameCreated, 10, 1, GameMode.TEAMS_2_VS_2, 4]]);
+    testConnection.triggerMessage([[MessageToClientEnum.ClientDisconnected, 4]]);
 
     expect(clientManager.userIDToUser.get(3)!.numGames).toBe(1);
     expectClientAndUserAndGameData(clientManager, [new UserData(1, 'me', [new ClientData(2)]), new UserData(3, 'user 3', [])], [new GameDataData(10, 1, [3])]);
@@ -648,9 +648,9 @@ describe('MessageToClient.GameCreated', () => {
 
     clientManager.onSubmitLoginForm('me', '');
     testConnection.triggerOpen();
-    testConnection.triggerMessage([[MessageToClient.Greetings, 2, [[1, 'me', [[2]]]], []]]);
-    testConnection.triggerMessage([[MessageToClient.ClientConnected, 4, 3, 'user 3']]);
-    testConnection.triggerMessage([[MessageToClient.GameCreated, 10, 1, GameMode.TEAMS_2_VS_2, 2]]);
+    testConnection.triggerMessage([[MessageToClientEnum.Greetings, 2, [[1, 'me', [[2]]]], []]]);
+    testConnection.triggerMessage([[MessageToClientEnum.ClientConnected, 4, 3, 'user 3']]);
+    testConnection.triggerMessage([[MessageToClientEnum.GameCreated, 10, 1, GameMode.TEAMS_2_VS_2, 2]]);
 
     expectClientAndUserAndGameData(
       clientManager,
@@ -673,11 +673,11 @@ describe('MessageToClient.ClientEnteredGame', () => {
 
     clientManager.onSubmitLoginForm('me', '');
     testConnection.triggerOpen();
-    testConnection.triggerMessage([[MessageToClient.Greetings, 2, [[1, 'me', [[2]]]], []]]);
-    testConnection.triggerMessage([[MessageToClient.ClientConnected, 4, 3, 'user 3']]);
+    testConnection.triggerMessage([[MessageToClientEnum.Greetings, 2, [[1, 'me', [[2]]]], []]]);
+    testConnection.triggerMessage([[MessageToClientEnum.ClientConnected, 4, 3, 'user 3']]);
     testConnection.triggerMessage([
-      [MessageToClient.GameCreated, 10, 1, GameMode.TEAMS_2_VS_2, 2],
-      [MessageToClient.ClientEnteredGame, 2, 1],
+      [MessageToClientEnum.GameCreated, 10, 1, GameMode.TEAMS_2_VS_2, 2],
+      [MessageToClientEnum.ClientEnteredGame, 2, 1],
     ]);
 
     expect(clientManager.page).toBe(ClientManagerPage.GameSetup);
@@ -693,11 +693,11 @@ describe('MessageToClient.ClientEnteredGame', () => {
 
     clientManager.onSubmitLoginForm('me', '');
     testConnection.triggerOpen();
-    testConnection.triggerMessage([[MessageToClient.Greetings, 2, [[1, 'me', [[2]]]], []]]);
-    testConnection.triggerMessage([[MessageToClient.ClientConnected, 4, 3, 'user 3']]);
+    testConnection.triggerMessage([[MessageToClientEnum.Greetings, 2, [[1, 'me', [[2]]]], []]]);
+    testConnection.triggerMessage([[MessageToClientEnum.ClientConnected, 4, 3, 'user 3']]);
     testConnection.triggerMessage([
-      [MessageToClient.GameCreated, 10, 1, GameMode.TEAMS_2_VS_2, 4],
-      [MessageToClient.ClientEnteredGame, 4, 1],
+      [MessageToClientEnum.GameCreated, 10, 1, GameMode.TEAMS_2_VS_2, 4],
+      [MessageToClientEnum.ClientEnteredGame, 4, 1],
     ]);
 
     expect(clientManager.page).toBe(ClientManagerPage.Lobby);
@@ -717,7 +717,7 @@ describe('MessageToClient.ClientExitedGame', () => {
     testConnection.triggerOpen();
     testConnection.triggerMessage([
       [
-        MessageToClient.Greetings,
+        MessageToClientEnum.Greetings,
         2,
         [
           [1, 'user 1', [[1, 1]]],
@@ -734,7 +734,7 @@ describe('MessageToClient.ClientExitedGame', () => {
       [new GameDataData(10, 1, [1, 2])],
     );
 
-    testConnection.triggerMessage([[MessageToClient.ClientExitedGame, 2]]);
+    testConnection.triggerMessage([[MessageToClientEnum.ClientExitedGame, 2]]);
 
     expect(clientManager.page).toBe(ClientManagerPage.Lobby);
     expectClientAndUserAndGameData(
@@ -751,7 +751,7 @@ describe('MessageToClient.ClientExitedGame', () => {
     testConnection.triggerOpen();
     testConnection.triggerMessage([
       [
-        MessageToClient.Greetings,
+        MessageToClientEnum.Greetings,
         2,
         [
           [1, 'user 1', [[1, 1]]],
@@ -768,7 +768,7 @@ describe('MessageToClient.ClientExitedGame', () => {
       [new GameDataData(10, 1, [1, 2])],
     );
 
-    testConnection.triggerMessage([[MessageToClient.ClientExitedGame, 1]]);
+    testConnection.triggerMessage([[MessageToClientEnum.ClientExitedGame, 1]]);
 
     expect(clientManager.page).toBe(ClientManagerPage.GameSetup);
     expectClientAndUserAndGameData(
@@ -787,7 +787,7 @@ describe('MessageToClient.GameSetupChanged', () => {
     testConnection.triggerOpen();
     testConnection.triggerMessage([
       [
-        MessageToClient.Greetings,
+        MessageToClientEnum.Greetings,
         2,
         [
           [1, 'user 1', [[1, 1]]],
@@ -803,7 +803,7 @@ describe('MessageToClient.GameSetupChanged', () => {
       [new GameDataData(10, 1, [1])],
     );
 
-    testConnection.triggerMessage([[MessageToClient.GameSetupChanged, 1, GameSetupChange.UserAdded, 2]]);
+    testConnection.triggerMessage([[MessageToClientEnum.GameSetupChanged, 1, GameSetupChangeEnum.UserAdded, 2]]);
 
     expectClientAndUserAndGameData(
       clientManager,
@@ -820,7 +820,7 @@ describe('MessageToClient.GameSetupChanged', () => {
     testConnection.triggerOpen();
     testConnection.triggerMessage([
       [
-        MessageToClient.Greetings,
+        MessageToClientEnum.Greetings,
         2,
         [
           [1, 'user 1', [[1, 1]]],
@@ -836,7 +836,7 @@ describe('MessageToClient.GameSetupChanged', () => {
       [new GameDataData(10, 1, [1, 2])],
     );
 
-    testConnection.triggerMessage([[MessageToClient.GameSetupChanged, 1, GameSetupChange.UserRemoved, 2]]);
+    testConnection.triggerMessage([[MessageToClientEnum.GameSetupChanged, 1, GameSetupChangeEnum.UserRemoved, 2]]);
 
     expectClientAndUserAndGameData(
       clientManager,
@@ -853,7 +853,7 @@ describe('MessageToClient.GameSetupChanged', () => {
     testConnection.triggerOpen();
     testConnection.triggerMessage([
       [
-        MessageToClient.Greetings,
+        MessageToClientEnum.Greetings,
         2,
         [
           [1, 'user 1', [[1, 1]]],
@@ -869,7 +869,7 @@ describe('MessageToClient.GameSetupChanged', () => {
       [new GameDataData(10, 1, [1, 2])],
     );
 
-    testConnection.triggerMessage([[MessageToClient.GameSetupChanged, 1, GameSetupChange.UserApprovedOfGameSetup, 2]]);
+    testConnection.triggerMessage([[MessageToClientEnum.GameSetupChanged, 1, GameSetupChangeEnum.UserApprovedOfGameSetup, 2]]);
 
     expectClientAndUserAndGameData(
       clientManager,
@@ -886,7 +886,7 @@ describe('MessageToClient.GameSetupChanged', () => {
     testConnection.triggerOpen();
     testConnection.triggerMessage([
       [
-        MessageToClient.Greetings,
+        MessageToClientEnum.Greetings,
         2,
         [
           [1, 'user 1', [[1, 1]]],
@@ -902,7 +902,7 @@ describe('MessageToClient.GameSetupChanged', () => {
       [new GameDataData(10, 1, [1, 2])],
     );
 
-    testConnection.triggerMessage([[MessageToClient.GameSetupChanged, 1, GameSetupChange.GameModeChanged, GameMode.SINGLES_3]]);
+    testConnection.triggerMessage([[MessageToClientEnum.GameSetupChanged, 1, GameSetupChangeEnum.GameModeChanged, GameMode.SINGLES_3]]);
 
     expectClientAndUserAndGameData(
       clientManager,
@@ -919,7 +919,7 @@ describe('MessageToClient.GameSetupChanged', () => {
     testConnection.triggerOpen();
     testConnection.triggerMessage([
       [
-        MessageToClient.Greetings,
+        MessageToClientEnum.Greetings,
         2,
         [
           [1, 'user 1', [[1, 1]]],
@@ -935,7 +935,9 @@ describe('MessageToClient.GameSetupChanged', () => {
       [new GameDataData(10, 1, [1, 2])],
     );
 
-    testConnection.triggerMessage([[MessageToClient.GameSetupChanged, 1, GameSetupChange.PlayerArrangementModeChanged, PlayerArrangementMode.EXACT_ORDER]]);
+    testConnection.triggerMessage([
+      [MessageToClientEnum.GameSetupChanged, 1, GameSetupChangeEnum.PlayerArrangementModeChanged, PlayerArrangementMode.EXACT_ORDER],
+    ]);
 
     expectClientAndUserAndGameData(
       clientManager,
@@ -952,7 +954,7 @@ describe('MessageToClient.GameSetupChanged', () => {
     testConnection.triggerOpen();
     testConnection.triggerMessage([
       [
-        MessageToClient.Greetings,
+        MessageToClientEnum.Greetings,
         2,
         [
           [1, 'user 1', [[1, 1]]],
@@ -968,7 +970,7 @@ describe('MessageToClient.GameSetupChanged', () => {
       [new GameDataData(10, 1, [1, 2])],
     );
 
-    testConnection.triggerMessage([[MessageToClient.GameSetupChanged, 1, GameSetupChange.PositionsSwapped, 0, 1]]);
+    testConnection.triggerMessage([[MessageToClientEnum.GameSetupChanged, 1, GameSetupChangeEnum.PositionsSwapped, 0, 1]]);
 
     expectClientAndUserAndGameData(
       clientManager,
@@ -985,7 +987,7 @@ describe('MessageToClient.GameSetupChanged', () => {
     testConnection.triggerOpen();
     testConnection.triggerMessage([
       [
-        MessageToClient.Greetings,
+        MessageToClientEnum.Greetings,
         2,
         [
           [1, 'user 1', [[1, 1]]],
@@ -1001,7 +1003,7 @@ describe('MessageToClient.GameSetupChanged', () => {
       [new GameDataData(10, 1, [1, 2])],
     );
 
-    testConnection.triggerMessage([[MessageToClient.GameSetupChanged, 1, GameSetupChange.UserKicked, 2]]);
+    testConnection.triggerMessage([[MessageToClientEnum.GameSetupChanged, 1, GameSetupChangeEnum.UserKicked, 2]]);
 
     expectClientAndUserAndGameData(
       clientManager,
@@ -1020,7 +1022,7 @@ describe('MessageToClient.GameStarted and MessageToClient.GameActionDone', () =>
     testConnection.triggerOpen();
     testConnection.triggerMessage([
       [
-        MessageToClient.Greetings,
+        MessageToClientEnum.Greetings,
         3,
         [
           [1, 'host', [[1, 1]]],
@@ -1031,8 +1033,8 @@ describe('MessageToClient.GameStarted and MessageToClient.GameActionDone', () =>
       ],
     ]);
     testConnection.triggerMessage([
-      [MessageToClient.GameStarted, 1, [2, 1]],
-      [MessageToClient.GameActionDone, 1, [], 123456789, [], [89, 19, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], 0],
+      [MessageToClientEnum.GameStarted, 1, [2, 1]],
+      [MessageToClientEnum.GameActionDone, 1, [], 123456789, [], [89, 19, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], 0],
     ]);
 
     expect(clientManager.page).toBe(ClientManagerPage.Lobby);
@@ -1057,16 +1059,16 @@ describe('MessageToClient.GameStarted and MessageToClient.GameActionDone', () =>
     clientManager.onSubmitLoginForm('user', '');
     testConnection.triggerOpen();
     testConnection.triggerMessage([
-      [MessageToClient.Greetings, 2, [[1, 'user', [[2]]]], [[0, 1, 1, GameMode.SINGLES_1, PlayerArrangementMode.RANDOM_ORDER, 1, [1], [0]]]],
+      [MessageToClientEnum.Greetings, 2, [[1, 'user', [[2]]]], [[0, 1, 1, GameMode.SINGLES_1, PlayerArrangementMode.RANDOM_ORDER, 1, [1], [0]]]],
     ]);
-    testConnection.triggerMessage([[MessageToClient.ClientEnteredGame, 2, 1]]);
+    testConnection.triggerMessage([[MessageToClientEnum.ClientEnteredGame, 2, 1]]);
     testConnection.triggerMessage([
-      [MessageToClient.GameStarted, 1, [1]],
-      [MessageToClient.GameActionDone, 1, [], 1550799393696, [], [65, 3, 34, 6, 46, 10, 78], 0],
+      [MessageToClientEnum.GameStarted, 1, [1]],
+      [MessageToClientEnum.GameActionDone, 1, [], 1550799393696, [], [65, 3, 34, 6, 46, 10, 78], 0],
     ]);
 
     expect(clientManager.page).toBe(ClientManagerPage.Game);
-    expect(clientManager.myRequiredGameAction).toBe(GameAction.PlayTile);
+    expect(clientManager.myRequiredGameAction).toBe(GameActionEnum.PlayTile);
 
     expectClientAndUserAndGameData(clientManager, [new UserData(1, 'user', [new ClientData(2, 1)])], [new GameDataData(1, 1, [1])]);
 
