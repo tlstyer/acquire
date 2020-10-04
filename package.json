@@ -63,7 +63,7 @@
     "build-client": "APP=index MODE=production webpack",
     "build-examples": "APP=examples MODE=production webpack",
     "build-review": "APP=review MODE=production webpack",
-    "build-server": "tsc --project tsconfig.server.json",
+    "build-server": "tsc --project tsconfig.server.json ; rsync -ptvi src/common/pb.js dist/server/common/pb.js",
     "client": "APP=index yarn webpack-dev-server",
     "examples": "APP=examples yarn webpack-dev-server",
     "review": "APP=review yarn webpack-dev-server",
