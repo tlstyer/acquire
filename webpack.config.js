@@ -99,7 +99,7 @@ function getProductionConfig(APP) {
     {
       module: 'immutable',
       global: 'Immutable',
-      entry: 'https://cdnjs.cloudflare.com/ajax/libs/immutable/4.0.0-rc.12/immutable.min.js',
+      entry: 'https://unpkg.com/immutable@4.0.0-rc.12/dist/immutable.min.js',
     },
     {
       module: 'protobufjs/minimal',
@@ -109,19 +109,19 @@ function getProductionConfig(APP) {
     {
       module: 'react',
       global: 'React',
-      entry: 'https://cdnjs.cloudflare.com/ajax/libs/react/16.13.1/umd/react.production.min.js',
+      entry: 'https://unpkg.com/react@16.13.1/umd/react.production.min.js',
     },
     {
       module: 'react-dom',
       global: 'ReactDOM',
-      entry: 'https://cdnjs.cloudflare.com/ajax/libs/react-dom/16.13.1/umd/react-dom.production.min.js',
+      entry: 'https://unpkg.com/react-dom@16.13.1/umd/react-dom.production.min.js',
     },
   ];
   if (APP === 'index') {
     externals.push({
       module: 'sockjs-client',
       global: 'SockJS',
-      entry: 'https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.0/sockjs.min.js',
+      entry: 'https://unpkg.com/sockjs-client@1.5.0/dist/sockjs.min.js',
     });
   }
 
