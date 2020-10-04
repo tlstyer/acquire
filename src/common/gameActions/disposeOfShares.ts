@@ -1,6 +1,7 @@
-import { GameAction, GameBoardType, GameHistoryMessage, ScoreBoardIndex } from '../enums';
+import { GameAction, GameHistoryMessage, ScoreBoardIndex } from '../enums';
 import { UserInputError } from '../error';
 import { Game } from '../game';
+import { GameBoardType } from '../pb';
 import { ActionBase } from './base';
 
 export class ActionDisposeOfShares extends ActionBase {

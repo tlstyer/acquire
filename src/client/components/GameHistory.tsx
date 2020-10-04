@@ -2,9 +2,10 @@ import * as style from './GameHistory.scss';
 
 import { List } from 'immutable';
 import * as React from 'react';
-import { GameBoardType, GameHistoryMessage } from '../../common/enums';
+import { GameHistoryMessage } from '../../common/enums';
 import { GameHistoryMessageData, MoveData } from '../../common/game';
 import { getHotelNameSpan, getTileString, getUsernameSpan } from '../helpers';
+import { GameBoardType } from '../../common/pb';
 
 export interface GameHistoryProps {
   usernames: List<string>;

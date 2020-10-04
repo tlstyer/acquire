@@ -13,11 +13,11 @@ import {
   defaultTileRackTypes,
   defaultTileRackTypesList,
 } from './defaults';
-import { GameAction, GameBoardType, GameHistoryMessage, ScoreBoardIndex, Tile } from './enums';
+import { GameAction, GameHistoryMessage, ScoreBoardIndex, Tile } from './enums';
 import { ActionBase } from './gameActions/base';
 import { ActionStartGame } from './gameActions/startGame';
 import { calculateBonuses, neighboringTilesLookup } from './helpers';
-import { GameMode, PlayerArrangementMode } from './pb';
+import { GameBoardType, GameMode, PlayerArrangementMode } from './pb';
 
 type GameJSON = [GameMode, PlayerArrangementMode, number | null, number, number[], string[], number, number[], ([any] | [any, number])[]];
 
@@ -54,11 +54,11 @@ export class Game {
     public myUserID: number | null,
   ) {
     // initialize this.gameBoardTypeCounts
-    this.gameBoardTypeCounts = new Array(GameBoardType.Max);
-    for (let i = 0; i < GameBoardType.Max; i++) {
+    this.gameBoardTypeCounts = new Array(GameBoardType.MAX);
+    for (let i = 0; i < GameBoardType.MAX; i++) {
       this.gameBoardTypeCounts[i] = 0;
     }
-    this.gameBoardTypeCounts[GameBoardType.Nothing] = 108;
+    this.gameBoardTypeCounts[GameBoardType.NOTHING] = 108;
 
     // initialize this.gameActionStack
     this.gameActionStack.push(new ActionStartGame(this, userIDs.indexOf(hostUserID)));
@@ -211,12 +211,12 @@ export class Game {
         }
 
         const type = tileRackTypes.get(tileIndex, null);
-        if (type !== GameBoardType.CantPlayEver) {
+        if (type !== GameBoardType.CANT_PLAY_EVER) {
           continue;
         }
 
         this.removeTile(playerID, tileIndex);
-        this.setGameBoardPosition(tile, GameBoardType.CantPlayEver);
+        this.setGameBoardPosition(tile, GameBoardType.CANT_PLAY_EVER);
         this.getCurrentMoveData().addGameHistoryMessage(GameHistoryMessage.ReplacedDeadTile, playerID, [tile]);
         this.drawTiles(playerID);
         this.determineTileRackTypesForPlayer(playerID);
@@ -239,7 +239,7 @@ export class Game {
     const lonelyTileBorderTiles = new Set<number>();
 
     let canStartNewChain = false;
-    for (let i = 0; i <= GameBoardType.Imperial; i++) {
+    for (let i = 0; i <= GameBoardType.IMPERIAL; i++) {
       if (this.gameBoardTypeCounts[i] === 0) {
         canStartNewChain = true;
         break;
@@ -261,7 +261,7 @@ export class Game {
         }
 
         borderTypes = borderTypes.filter((type, index) => {
-          if (type === GameBoardType.Nothing || type === GameBoardType.CantPlayEver) {
+          if (type === GameBoardType.NOTHING || type === GameBoardType.CANT_PLAY_EVER) {
             return false;
           }
           if (borderTypes.indexOf(type) !== index) {
@@ -271,21 +271,21 @@ export class Game {
           return true;
         });
         if (borderTypes.length > 1) {
-          borderTypes = borderTypes.filter((type) => type !== GameBoardType.NothingYet);
+          borderTypes = borderTypes.filter((type) => type !== GameBoardType.NOTHING_YET);
         }
 
         if (borderTypes.length === 0) {
-          tileType = GameBoardType.WillPutLonelyTileDown;
+          tileType = GameBoardType.WILL_PUT_LONELY_TILE_DOWN;
           lonelyTileIndexes.push(tileIndex);
           for (let i = 0; i < borderTiles.length; i++) {
             lonelyTileBorderTiles.add(borderTiles[i]);
           }
         } else if (borderTypes.length === 1) {
-          if (borderTypes.indexOf(GameBoardType.NothingYet) !== -1) {
+          if (borderTypes.indexOf(GameBoardType.NOTHING_YET) !== -1) {
             if (canStartNewChain) {
-              tileType = GameBoardType.WillFormNewChain;
+              tileType = GameBoardType.WILL_FORM_NEW_CHAIN;
             } else {
-              tileType = GameBoardType.CantPlayNow;
+              tileType = GameBoardType.CANT_PLAY_NOW;
             }
           } else {
             tileType = borderTypes[0];
@@ -299,9 +299,9 @@ export class Game {
           }
 
           if (safeCount >= 2) {
-            tileType = GameBoardType.CantPlayEver;
+            tileType = GameBoardType.CANT_PLAY_EVER;
           } else {
-            tileType = GameBoardType.WillMergeChains;
+            tileType = GameBoardType.WILL_MERGE_CHAINS;
           }
         }
       }
@@ -314,10 +314,10 @@ export class Game {
         const tileIndex = lonelyTileIndexes[i];
 
         const tileType = tileTypes[tileIndex];
-        if (tileType === GameBoardType.WillPutLonelyTileDown) {
+        if (tileType === GameBoardType.WILL_PUT_LONELY_TILE_DOWN) {
           const tile = this.tileRacks.get(playerID)!.get(tileIndex, null);
           if (tile !== null && lonelyTileBorderTiles.has(tile)) {
-            tileTypes[tileIndex] = GameBoardType.HaveNeighboringTileToo;
+            tileTypes[tileIndex] = GameBoardType.HAVE_NEIGHBORING_TILE_TOO;
           }
         }
       }
@@ -333,7 +333,7 @@ export class Game {
   setGameBoardPosition(tile: number, gameBoardType: GameBoardType) {
     const previousGameBoardType = this.gameBoard.get(tile % 9)!.get(tile / 9)!;
 
-    if (previousGameBoardType === GameBoardType.Nothing) {
+    if (previousGameBoardType === GameBoardType.NOTHING) {
       this.getCurrentMoveData().addPlayedTile(tile, this.gameActionStack[this.gameActionStack.length - 1].playerID);
     }
 
@@ -345,7 +345,7 @@ export class Game {
   fillCells(tile: number, gameBoardType: GameBoardType) {
     const pending = [tile];
     const found = new Set([tile]);
-    const excludedTypes = new Set([GameBoardType.Nothing, GameBoardType.CantPlayEver, gameBoardType]);
+    const excludedTypes = new Set([GameBoardType.NOTHING, GameBoardType.CANT_PLAY_EVER, gameBoardType]);
 
     this.gameBoard = this.gameBoard.asMutable();
 

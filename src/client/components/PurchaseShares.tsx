@@ -3,8 +3,8 @@ import * as style from './PurchaseShares.scss';
 
 import { List } from 'immutable';
 import * as React from 'react';
-import { GameBoardType } from '../../common/enums';
 import { allChains, gameBoardTypeToCSSClassName, gameBoardTypeToHotelInitial, getUniqueDOMElementID } from '../helpers';
+import { GameBoardType } from '../../common/pb';
 
 export interface PurchaseSharesProps {
   scoreBoardAvailable: List<number>;

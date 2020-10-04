@@ -1,57 +1,57 @@
 import * as common from './common.scss';
 
 import * as React from 'react';
-import { GameBoardType, Tile } from '../common/enums';
+import { Tile } from '../common/enums';
 import { GameStatus } from './enums';
-import { GameMode } from '../common/pb';
+import { GameBoardType, GameMode } from '../common/pb';
 
 export const allChains = [
-  GameBoardType.Luxor,
-  GameBoardType.Tower,
-  GameBoardType.American,
-  GameBoardType.Festival,
-  GameBoardType.Worldwide,
-  GameBoardType.Continental,
-  GameBoardType.Imperial,
+  GameBoardType.LUXOR,
+  GameBoardType.TOWER,
+  GameBoardType.AMERICAN,
+  GameBoardType.FESTIVAL,
+  GameBoardType.WORLDWIDE,
+  GameBoardType.CONTINENTAL,
+  GameBoardType.IMPERIAL,
 ];
 
 export const gameBoardTypeToCSSClassName = new Map([
-  [GameBoardType.Luxor, common.luxor],
-  [GameBoardType.Tower, common.tower],
-  [GameBoardType.American, common.american],
-  [GameBoardType.Festival, common.festival],
-  [GameBoardType.Worldwide, common.worldwide],
-  [GameBoardType.Continental, common.continental],
-  [GameBoardType.Imperial, common.imperial],
-  [GameBoardType.Nothing, common.nothing],
-  [GameBoardType.NothingYet, common.nothingYet],
-  [GameBoardType.CantPlayEver, common.cantPlayEver],
-  [GameBoardType.IHaveThis, common.iHaveThis],
-  [GameBoardType.WillPutLonelyTileDown, common.willPutLonelyTileDown],
-  [GameBoardType.HaveNeighboringTileToo, common.haveNeighboringTileToo],
-  [GameBoardType.WillFormNewChain, common.willFormNewChain],
-  [GameBoardType.WillMergeChains, common.willMergeChains],
-  [GameBoardType.CantPlayNow, common.cantPlayNow],
+  [GameBoardType.LUXOR, common.luxor],
+  [GameBoardType.TOWER, common.tower],
+  [GameBoardType.AMERICAN, common.american],
+  [GameBoardType.FESTIVAL, common.festival],
+  [GameBoardType.WORLDWIDE, common.worldwide],
+  [GameBoardType.CONTINENTAL, common.continental],
+  [GameBoardType.IMPERIAL, common.imperial],
+  [GameBoardType.NOTHING, common.nothing],
+  [GameBoardType.NOTHING_YET, common.nothingYet],
+  [GameBoardType.CANT_PLAY_EVER, common.cantPlayEver],
+  [GameBoardType.I_HAVE_THIS, common.iHaveThis],
+  [GameBoardType.WILL_PUT_LONELY_TILE_DOWN, common.willPutLonelyTileDown],
+  [GameBoardType.HAVE_NEIGHBORING_TILE_TOO, common.haveNeighboringTileToo],
+  [GameBoardType.WILL_FORM_NEW_CHAIN, common.willFormNewChain],
+  [GameBoardType.WILL_MERGE_CHAINS, common.willMergeChains],
+  [GameBoardType.CANT_PLAY_NOW, common.cantPlayNow],
 ]);
 
 export const gameBoardTypeToHotelInitial = new Map([
-  [GameBoardType.Luxor, 'L'],
-  [GameBoardType.Tower, 'T'],
-  [GameBoardType.American, 'A'],
-  [GameBoardType.Festival, 'F'],
-  [GameBoardType.Worldwide, 'W'],
-  [GameBoardType.Continental, 'C'],
-  [GameBoardType.Imperial, 'I'],
+  [GameBoardType.LUXOR, 'L'],
+  [GameBoardType.TOWER, 'T'],
+  [GameBoardType.AMERICAN, 'A'],
+  [GameBoardType.FESTIVAL, 'F'],
+  [GameBoardType.WORLDWIDE, 'W'],
+  [GameBoardType.CONTINENTAL, 'C'],
+  [GameBoardType.IMPERIAL, 'I'],
 ]);
 
 const gameBoardTypeToHotelName = new Map([
-  [GameBoardType.Luxor, 'Luxor'],
-  [GameBoardType.Tower, 'Tower'],
-  [GameBoardType.American, 'American'],
-  [GameBoardType.Festival, 'Festival'],
-  [GameBoardType.Worldwide, 'Worldwide'],
-  [GameBoardType.Continental, 'Continental'],
-  [GameBoardType.Imperial, 'Imperial'],
+  [GameBoardType.LUXOR, 'Luxor'],
+  [GameBoardType.TOWER, 'Tower'],
+  [GameBoardType.AMERICAN, 'American'],
+  [GameBoardType.FESTIVAL, 'Festival'],
+  [GameBoardType.WORLDWIDE, 'Worldwide'],
+  [GameBoardType.CONTINENTAL, 'Continental'],
+  [GameBoardType.IMPERIAL, 'Imperial'],
 ]);
 
 export const teamNumberToCSSClassName = new Map([

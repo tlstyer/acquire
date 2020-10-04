@@ -3,8 +3,8 @@ import * as style from './TileRackReadOnly.scss';
 
 import { List } from 'immutable';
 import * as React from 'react';
-import { GameBoardType } from '../../common/enums';
 import { gameBoardTypeToCSSClassName, getTileString } from '../helpers';
+import { GameBoardType } from '../../common/pb';
 
 export interface TileRackReadOnlyProps {
   tiles: List<number | null>;

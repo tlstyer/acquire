@@ -2,9 +2,9 @@ import * as style from './GameBoard.scss';
 
 import { List } from 'immutable';
 import * as React from 'react';
-import { GameBoardType } from '../../common/enums';
 import { GameBoardLabelMode } from '../enums';
 import { gameBoardTypeToCSSClassName, gameBoardTypeToHotelInitial, getTileString } from '../helpers';
+import { GameBoardType } from '../../common/pb';
 
 export interface GameBoardProps {
   gameBoard: List<List<GameBoardType>>;
@@ -64,7 +64,7 @@ class GameBoardRow extends React.PureComponent<GameBoardRowProps> {
       <tr>
         {gameBoardRow.map((gameBoardType, x) => {
           if (((tileRackRowBitMask >> x) & 1) === 1) {
-            gameBoardType = GameBoardType.IHaveThis;
+            gameBoardType = GameBoardType.I_HAVE_THIS;
           }
 
           const tile = x * 9 + y;
@@ -73,15 +73,15 @@ class GameBoardRow extends React.PureComponent<GameBoardRowProps> {
           if (labelMode === GameBoardLabelMode.Coordinates) {
             label = getTileString(tile);
           } else if (labelMode === GameBoardLabelMode.HotelInitials) {
-            if (gameBoardType === GameBoardType.Nothing || gameBoardType === GameBoardType.IHaveThis) {
+            if (gameBoardType === GameBoardType.NOTHING || gameBoardType === GameBoardType.I_HAVE_THIS) {
               label = getTileString(tile);
-            } else if (gameBoardType <= GameBoardType.Imperial) {
+            } else if (gameBoardType <= GameBoardType.IMPERIAL) {
               label = gameBoardTypeToHotelInitial.get(gameBoardType);
             } else {
               label = '\u00a0';
             }
           } else if (labelMode === GameBoardLabelMode.Nothing) {
-            if (gameBoardType === GameBoardType.Nothing || gameBoardType === GameBoardType.IHaveThis) {
+            if (gameBoardType === GameBoardType.NOTHING || gameBoardType === GameBoardType.I_HAVE_THIS) {
               label = getTileString(tile);
             } else {
               label = '\u00a0';
@@ -91,7 +91,7 @@ class GameBoardRow extends React.PureComponent<GameBoardRowProps> {
           let className = gameBoardTypeToCSSClassName.get(gameBoardType)!;
 
           const optionalProps: { [key: string]: any } = {};
-          if (gameBoardType === GameBoardType.IHaveThis && onCellClicked) {
+          if (gameBoardType === GameBoardType.I_HAVE_THIS && onCellClicked) {
             optionalProps.onClick = () => onCellClicked(tile);
             className = `${className} ${style.clickable}`;
           }

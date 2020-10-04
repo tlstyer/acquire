@@ -2,7 +2,7 @@ import * as style from './GameState.scss';
 
 import { List } from 'immutable';
 import * as React from 'react';
-import { GameAction, GameBoardType } from '../../common/enums';
+import { GameAction } from '../../common/enums';
 import { ActionBase } from '../../common/gameActions/base';
 import { ActionDisposeOfShares } from '../../common/gameActions/disposeOfShares';
 import { ActionPlayTile } from '../../common/gameActions/playTile';
@@ -12,6 +12,7 @@ import { ActionSelectMergerSurvivor } from '../../common/gameActions/selectMerge
 import { ActionSelectNewChain } from '../../common/gameActions/selectNewChain';
 import { ActionStartGame } from '../../common/gameActions/startGame';
 import { gameBoardTypeToCSSClassName, gameBoardTypeToHotelInitial, getHotelNameSpan, getUsernameSpan } from '../helpers';
+import { GameBoardType } from '../../common/pb';
 
 export interface GameStateProps {
   usernames: List<string>;

@@ -1,7 +1,8 @@
-import { GameAction, GameBoardType, GameHistoryMessage } from '../enums';
+import { GameAction, GameHistoryMessage } from '../enums';
 import { UserInputError } from '../error';
 import { Game } from '../game';
 import { neighboringTilesLookup } from '../helpers';
+import { GameBoardType } from '../pb';
 import { ActionBase } from './base';
 import { ActionSelectMergerSurvivor } from './selectMergerSurvivor';
 import { ActionSelectNewChain } from './selectNewChain';
@@ -25,7 +26,7 @@ export class ActionPlayTile extends ActionBase {
       const tileRackTypes = this.game.tileRackTypes.get(this.playerID)!;
       for (let i = 0; i < 6; i++) {
         const tileType = tileRackTypes.get(i, null);
-        if (tileType !== null && tileType !== GameBoardType.CantPlayNow && tileType !== GameBoardType.CantPlayEver) {
+        if (tileType !== null && tileType !== GameBoardType.CANT_PLAY_NOW && tileType !== GameBoardType.CANT_PLAY_EVER) {
           hasAPlayableTile = true;
           break;
         }
@@ -57,12 +58,12 @@ export class ActionPlayTile extends ActionBase {
     const tileType = this.game.tileRackTypes.get(this.playerID)!.get(tileRackIndex, null);
 
     let response: ActionBase[] = [];
-    if (tileType !== null && tileType <= GameBoardType.Imperial) {
+    if (tileType !== null && tileType <= GameBoardType.IMPERIAL) {
       this.game.fillCells(tile, tileType);
       this.game.setChainSize(tileType, this.game.gameBoardTypeCounts[tileType]);
-    } else if (tileType === GameBoardType.WillPutLonelyTileDown || tileType === GameBoardType.HaveNeighboringTileToo) {
-      this.game.setGameBoardPosition(tile, GameBoardType.NothingYet);
-    } else if (tileType === GameBoardType.WillFormNewChain) {
+    } else if (tileType === GameBoardType.WILL_PUT_LONELY_TILE_DOWN || tileType === GameBoardType.HAVE_NEIGHBORING_TILE_TOO) {
+      this.game.setGameBoardPosition(tile, GameBoardType.NOTHING_YET);
+    } else if (tileType === GameBoardType.WILL_FORM_NEW_CHAIN) {
       const availableChains: GameBoardType[] = [];
       const scoreBoardChainSize = this.game.scoreBoardChainSize;
       for (let type = 0; type < scoreBoardChainSize.size; type++) {
@@ -71,7 +72,7 @@ export class ActionPlayTile extends ActionBase {
         }
       }
       response = [new ActionSelectNewChain(this.game, this.playerID, availableChains, tile)];
-    } else if (tileType === GameBoardType.WillMergeChains) {
+    } else if (tileType === GameBoardType.WILL_MERGE_CHAINS) {
       response = [new ActionSelectMergerSurvivor(this.game, this.playerID, this.getMergedChains(tile), tile)];
     } else {
       throw new UserInputError('cannot play given tile');
@@ -90,7 +91,7 @@ export class ActionPlayTile extends ActionBase {
     for (let i = 0; i < neighboringTiles.length; i++) {
       const neighboringTile = neighboringTiles[i];
       const type = this.game.gameBoard.get(neighboringTile % 9)!.get(neighboringTile / 9)!;
-      if (type <= GameBoardType.Imperial && chains.indexOf(type) === -1) {
+      if (type <= GameBoardType.IMPERIAL && chains.indexOf(type) === -1) {
         chains.push(type);
       }
     }

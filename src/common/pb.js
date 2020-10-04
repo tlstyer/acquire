@@ -38,6 +38,50 @@ $root.ErrorCode = (function() {
 })();
 
 /**
+ * GameBoardType enum.
+ * @exports GameBoardType
+ * @enum {number}
+ * @property {number} LUXOR=0 LUXOR value
+ * @property {number} TOWER=1 TOWER value
+ * @property {number} AMERICAN=2 AMERICAN value
+ * @property {number} FESTIVAL=3 FESTIVAL value
+ * @property {number} WORLDWIDE=4 WORLDWIDE value
+ * @property {number} CONTINENTAL=5 CONTINENTAL value
+ * @property {number} IMPERIAL=6 IMPERIAL value
+ * @property {number} NOTHING=7 NOTHING value
+ * @property {number} NOTHING_YET=8 NOTHING_YET value
+ * @property {number} CANT_PLAY_EVER=9 CANT_PLAY_EVER value
+ * @property {number} I_HAVE_THIS=10 I_HAVE_THIS value
+ * @property {number} WILL_PUT_LONELY_TILE_DOWN=11 WILL_PUT_LONELY_TILE_DOWN value
+ * @property {number} HAVE_NEIGHBORING_TILE_TOO=12 HAVE_NEIGHBORING_TILE_TOO value
+ * @property {number} WILL_FORM_NEW_CHAIN=13 WILL_FORM_NEW_CHAIN value
+ * @property {number} WILL_MERGE_CHAINS=14 WILL_MERGE_CHAINS value
+ * @property {number} CANT_PLAY_NOW=15 CANT_PLAY_NOW value
+ * @property {number} MAX=16 MAX value
+ */
+$root.GameBoardType = (function() {
+    var valuesById = {}, values = Object.create(valuesById);
+    values[valuesById[0] = "LUXOR"] = 0;
+    values[valuesById[1] = "TOWER"] = 1;
+    values[valuesById[2] = "AMERICAN"] = 2;
+    values[valuesById[3] = "FESTIVAL"] = 3;
+    values[valuesById[4] = "WORLDWIDE"] = 4;
+    values[valuesById[5] = "CONTINENTAL"] = 5;
+    values[valuesById[6] = "IMPERIAL"] = 6;
+    values[valuesById[7] = "NOTHING"] = 7;
+    values[valuesById[8] = "NOTHING_YET"] = 8;
+    values[valuesById[9] = "CANT_PLAY_EVER"] = 9;
+    values[valuesById[10] = "I_HAVE_THIS"] = 10;
+    values[valuesById[11] = "WILL_PUT_LONELY_TILE_DOWN"] = 11;
+    values[valuesById[12] = "HAVE_NEIGHBORING_TILE_TOO"] = 12;
+    values[valuesById[13] = "WILL_FORM_NEW_CHAIN"] = 13;
+    values[valuesById[14] = "WILL_MERGE_CHAINS"] = 14;
+    values[valuesById[15] = "CANT_PLAY_NOW"] = 15;
+    values[valuesById[16] = "MAX"] = 16;
+    return values;
+})();
+
+/**
  * GameMode enum.
  * @exports GameMode
  * @enum {number}

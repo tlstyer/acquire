@@ -1,7 +1,7 @@
 import { shallow } from 'enzyme';
 import * as React from 'react';
 import * as renderer from 'react-test-renderer';
-import { GameBoardType } from '../../common/enums';
+import { GameBoardType } from '../../common/pb';
 import { configureEnzyme } from '../configureEnzyme';
 import { DisposeOfShares } from './DisposeOfShares';
 
@@ -25,8 +25,8 @@ function getNewComponent(
 ) {
   return shallow(
     <DisposeOfShares
-      defunctChain={GameBoardType.Imperial}
-      controllingChain={GameBoardType.Tower}
+      defunctChain={GameBoardType.IMPERIAL}
+      controllingChain={GameBoardType.TOWER}
       sharesOwnedInDefunctChain={sharesOwnedInDefunctChain}
       sharesAvailableInControllingChain={sharesAvailableInControllingChain}
       buttonSize={40}
@@ -54,8 +54,8 @@ test('renders correctly', () => {
 
   const component = renderer.create(
     <DisposeOfShares
-      defunctChain={GameBoardType.Imperial}
-      controllingChain={GameBoardType.Tower}
+      defunctChain={GameBoardType.IMPERIAL}
+      controllingChain={GameBoardType.TOWER}
       sharesOwnedInDefunctChain={7}
       sharesAvailableInControllingChain={2}
       buttonSize={40}

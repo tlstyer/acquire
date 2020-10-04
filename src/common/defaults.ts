@@ -1,6 +1,6 @@
 import { List } from 'immutable';
-import { GameBoardType } from './enums';
 import { MoveData } from './game';
+import { GameBoardType } from './pb';
 
 export const defaultMoveDataHistory = List<MoveData>([]);
 
@@ -13,18 +13,18 @@ export const defaultTileRackTypesList = List<List<GameBoardType | null>>([]);
 export const defaultTileRackTypes = List<GameBoardType | null>([null, null, null, null, null, null]);
 
 const defaultGameBoardRow = List([
-  GameBoardType.Nothing,
-  GameBoardType.Nothing,
-  GameBoardType.Nothing,
-  GameBoardType.Nothing,
-  GameBoardType.Nothing,
-  GameBoardType.Nothing,
-  GameBoardType.Nothing,
-  GameBoardType.Nothing,
-  GameBoardType.Nothing,
-  GameBoardType.Nothing,
-  GameBoardType.Nothing,
-  GameBoardType.Nothing,
+  GameBoardType.NOTHING,
+  GameBoardType.NOTHING,
+  GameBoardType.NOTHING,
+  GameBoardType.NOTHING,
+  GameBoardType.NOTHING,
+  GameBoardType.NOTHING,
+  GameBoardType.NOTHING,
+  GameBoardType.NOTHING,
+  GameBoardType.NOTHING,
+  GameBoardType.NOTHING,
+  GameBoardType.NOTHING,
+  GameBoardType.NOTHING,
 ]);
 export const defaultGameBoard = List([
   defaultGameBoardRow,

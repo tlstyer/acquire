@@ -3,8 +3,8 @@ import * as style from './TileRack.scss';
 
 import { List } from 'immutable';
 import * as React from 'react';
-import { GameBoardType } from '../../common/enums';
 import { gameBoardTypeToCSSClassName, getTileString } from '../helpers';
+import { GameBoardType } from '../../common/pb';
 
 export interface TileRackProps {
   tiles: List<number | null>;
@@ -83,7 +83,7 @@ export class TileRack extends React.Component<TileRackProps> {
           const type = types.get(i, null);
 
           if (tile !== null && type !== null) {
-            const disabled = type === GameBoardType.CantPlayEver || type === GameBoardType.CantPlayNow;
+            const disabled = type === GameBoardType.CANT_PLAY_EVER || type === GameBoardType.CANT_PLAY_NOW;
             return (
               <input
                 key={i}

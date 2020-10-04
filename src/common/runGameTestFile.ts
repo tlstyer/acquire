@@ -1,5 +1,5 @@
 import { List } from 'immutable';
-import { GameAction, GameBoardType, GameHistoryMessage, ScoreBoardIndex, Tile } from './enums';
+import { GameAction, GameHistoryMessage, ScoreBoardIndex, Tile } from './enums';
 import { UserInputError } from './error';
 import { Game, GameHistoryMessageData, MoveData, MoveDataTileBagTile, MoveDataTileRackTile } from './game';
 import { ActionBase } from './gameActions/base';
@@ -8,7 +8,7 @@ import { ActionGameOver } from './gameActions/gameOver';
 import { ActionSelectChainToDisposeOfNext } from './gameActions/selectChainToDisposeOfNext';
 import { ActionSelectMergerSurvivor } from './gameActions/selectMergerSurvivor';
 import { ActionSelectNewChain } from './gameActions/selectNewChain';
-import { GameMode, PlayerArrangementMode } from './pb';
+import { GameBoardType, GameMode, PlayerArrangementMode } from './pb';
 
 export function runGameTestFile(inputLines: string[]) {
   let game: Game | null = null;
@@ -194,13 +194,13 @@ function getDuplicatedTiles(tileBag: number[]) {
 }
 
 const abbreviationToGameBoardType = new Map([
-  ['L', GameBoardType.Luxor],
-  ['T', GameBoardType.Tower],
-  ['A', GameBoardType.American],
-  ['F', GameBoardType.Festival],
-  ['W', GameBoardType.Worldwide],
-  ['C', GameBoardType.Continental],
-  ['I', GameBoardType.Imperial],
+  ['L', GameBoardType.LUXOR],
+  ['T', GameBoardType.TOWER],
+  ['A', GameBoardType.AMERICAN],
+  ['F', GameBoardType.FESTIVAL],
+  ['W', GameBoardType.WORLDWIDE],
+  ['C', GameBoardType.CONTINENTAL],
+  ['I', GameBoardType.IMPERIAL],
 ]);
 
 function fromParameterStrings(gameAction: GameAction, strings: string[]) {
@@ -396,22 +396,22 @@ function getRevealedTileBagTilesStringForPlayer(revealedTileBagTiles: MoveDataTi
 }
 
 const gameBoardTypeToCharacter = new Map([
-  [GameBoardType.Luxor, 'L'],
-  [GameBoardType.Tower, 'T'],
-  [GameBoardType.American, 'A'],
-  [GameBoardType.Festival, 'F'],
-  [GameBoardType.Worldwide, 'W'],
-  [GameBoardType.Continental, 'C'],
-  [GameBoardType.Imperial, 'I'],
-  [GameBoardType.Nothing, '·'],
-  [GameBoardType.NothingYet, 'O'],
-  [GameBoardType.CantPlayEver, '█'],
-  [GameBoardType.IHaveThis, 'i'],
-  [GameBoardType.WillPutLonelyTileDown, 'l'],
-  [GameBoardType.HaveNeighboringTileToo, 'h'],
-  [GameBoardType.WillFormNewChain, 'n'],
-  [GameBoardType.WillMergeChains, 'm'],
-  [GameBoardType.CantPlayNow, 'c'],
+  [GameBoardType.LUXOR, 'L'],
+  [GameBoardType.TOWER, 'T'],
+  [GameBoardType.AMERICAN, 'A'],
+  [GameBoardType.FESTIVAL, 'F'],
+  [GameBoardType.WORLDWIDE, 'W'],
+  [GameBoardType.CONTINENTAL, 'C'],
+  [GameBoardType.IMPERIAL, 'I'],
+  [GameBoardType.NOTHING, '·'],
+  [GameBoardType.NOTHING_YET, 'O'],
+  [GameBoardType.CANT_PLAY_EVER, '█'],
+  [GameBoardType.I_HAVE_THIS, 'i'],
+  [GameBoardType.WILL_PUT_LONELY_TILE_DOWN, 'l'],
+  [GameBoardType.HAVE_NEIGHBORING_TILE_TOO, 'h'],
+  [GameBoardType.WILL_FORM_NEW_CHAIN, 'n'],
+  [GameBoardType.WILL_MERGE_CHAINS, 'm'],
+  [GameBoardType.CANT_PLAY_NOW, 'c'],
 ]);
 function getGameBoardLines(gameBoard: List<List<GameBoardType>>) {
   const lines: string[] = new Array(9);

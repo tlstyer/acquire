@@ -1,6 +1,7 @@
-import { GameAction, GameBoardType, GameHistoryMessage } from '../enums';
+import { GameAction, GameHistoryMessage } from '../enums';
 import { UserInputError } from '../error';
 import { Game } from '../game';
+import { GameBoardType } from '../pb';
 import { ActionBase } from './base';
 
 export class ActionSelectNewChain extends ActionBase {
@@ -13,7 +14,7 @@ export class ActionSelectNewChain extends ActionBase {
       this.createNewChain(this.availableChains[0]);
       return [];
     } else {
-      this.game.setGameBoardPosition(this.tile, GameBoardType.NothingYet);
+      this.game.setGameBoardPosition(this.tile, GameBoardType.NOTHING_YET);
       this.game.determineTileRackTypesForEverybody();
       return null;
     }
@@ -24,7 +25,7 @@ export class ActionSelectNewChain extends ActionBase {
       throw new UserInputError('did not get exactly 1 parameter');
     }
     const chain: number = parameters[0];
-    if (!Number.isInteger(chain) || chain < GameBoardType.Luxor || chain > GameBoardType.Imperial) {
+    if (!Number.isInteger(chain) || chain < GameBoardType.LUXOR || chain > GameBoardType.IMPERIAL) {
       throw new UserInputError('parameter is not a valid chain');
     }
     if (this.availableChains.indexOf(chain) === -1) {

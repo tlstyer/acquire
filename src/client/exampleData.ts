@@ -1,6 +1,6 @@
 import { List } from 'immutable';
 import { defaultMoveDataHistory } from '../common/defaults';
-import { GameBoardType, GameHistoryMessage } from '../common/enums';
+import { GameHistoryMessage } from '../common/enums';
 import { Game } from '../common/game';
 import { ActionDisposeOfShares } from '../common/gameActions/disposeOfShares';
 import { ActionGameOver } from '../common/gameActions/gameOver';
@@ -11,7 +11,7 @@ import { ActionSelectMergerSurvivor } from '../common/gameActions/selectMergerSu
 import { ActionSelectNewChain } from '../common/gameActions/selectNewChain';
 import { ActionStartGame } from '../common/gameActions/startGame';
 import { getNewTileBag } from '../common/helpers';
-import { GameMode, PlayerArrangementMode } from '../common/pb';
+import { GameBoardType, GameMode, PlayerArrangementMode } from '../common/pb';
 import { allChains } from './helpers';
 
 export function getDummyGameForGetGameHistory() {
@@ -130,9 +130,9 @@ export function getExampleNextGameActionsArray() {
     new ActionStartGame(game, 0),
     new ActionPlayTile(game, 1),
     new ActionSelectNewChain(game, 2, allChains, 107),
-    new ActionSelectMergerSurvivor(game, 3, [GameBoardType.Luxor, GameBoardType.Festival, GameBoardType.Continental], 107),
-    new ActionSelectChainToDisposeOfNext(game, 0, [GameBoardType.Tower, GameBoardType.American], GameBoardType.Continental),
-    new ActionDisposeOfShares(game, 1, GameBoardType.Imperial, GameBoardType.Luxor),
+    new ActionSelectMergerSurvivor(game, 3, [GameBoardType.LUXOR, GameBoardType.FESTIVAL, GameBoardType.CONTINENTAL], 107),
+    new ActionSelectChainToDisposeOfNext(game, 0, [GameBoardType.TOWER, GameBoardType.AMERICAN], GameBoardType.CONTINENTAL),
+    new ActionDisposeOfShares(game, 1, GameBoardType.IMPERIAL, GameBoardType.LUXOR),
     new ActionPurchaseShares(game, 2),
     new ActionGameOver(game, 3),
   ];

@@ -12,6 +12,27 @@ export enum ErrorCode {
     COULD_NOT_CONNECT = 8
 }
 
+/** GameBoardType enum. */
+export enum GameBoardType {
+    LUXOR = 0,
+    TOWER = 1,
+    AMERICAN = 2,
+    FESTIVAL = 3,
+    WORLDWIDE = 4,
+    CONTINENTAL = 5,
+    IMPERIAL = 6,
+    NOTHING = 7,
+    NOTHING_YET = 8,
+    CANT_PLAY_EVER = 9,
+    I_HAVE_THIS = 10,
+    WILL_PUT_LONELY_TILE_DOWN = 11,
+    HAVE_NEIGHBORING_TILE_TOO = 12,
+    WILL_FORM_NEW_CHAIN = 13,
+    WILL_MERGE_CHAINS = 14,
+    CANT_PLAY_NOW = 15,
+    MAX = 16
+}
+
 /** GameMode enum. */
 export enum GameMode {
     SINGLES_1 = 1,

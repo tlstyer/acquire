@@ -36,26 +36,6 @@ export enum GameAction {
   GameOver,
 }
 
-export enum GameBoardType {
-  Luxor,
-  Tower,
-  American,
-  Festival,
-  Worldwide,
-  Continental,
-  Imperial,
-  Nothing,
-  NothingYet,
-  CantPlayEver,
-  IHaveThis,
-  WillPutLonelyTileDown,
-  HaveNeighboringTileToo,
-  WillFormNewChain,
-  WillMergeChains,
-  CantPlayNow,
-  Max,
-}
-
 export enum GameHistoryMessage {
   TurnBegan,
   DrewPositionTile,

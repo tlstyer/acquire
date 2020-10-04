@@ -1,6 +1,7 @@
-import { GameAction, GameBoardType, GameHistoryMessage } from '../enums';
+import { GameAction, GameHistoryMessage } from '../enums';
 import { UserInputError } from '../error';
 import { Game } from '../game';
+import { GameBoardType } from '../pb';
 import { ActionBase } from './base';
 import { ActionDisposeOfShares } from './disposeOfShares';
 
@@ -22,7 +23,7 @@ export class ActionSelectChainToDisposeOfNext extends ActionBase {
       throw new UserInputError('did not get exactly 1 parameter');
     }
     const nextChain: GameBoardType = parameters[0];
-    if (!Number.isInteger(nextChain) || nextChain < GameBoardType.Luxor || nextChain > GameBoardType.Imperial) {
+    if (!Number.isInteger(nextChain) || nextChain < GameBoardType.LUXOR || nextChain > GameBoardType.IMPERIAL) {
       throw new UserInputError('parameter is not a valid chain');
     }
     if (this.defunctChains.indexOf(nextChain) === -1) {

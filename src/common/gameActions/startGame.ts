@@ -1,5 +1,6 @@
-import { GameAction, GameBoardType, GameHistoryMessage } from '../enums';
+import { GameAction, GameHistoryMessage } from '../enums';
 import { Game } from '../game';
+import { GameBoardType } from '../pb';
 import { ActionBase } from './base';
 import { ActionPlayTile } from './playTile';
 import { ActionPurchaseShares } from './purchaseShares';
@@ -29,7 +30,7 @@ export class ActionStartGame extends ActionBase {
     for (let i = 0; i < positionTiles.length; i++) {
       const positionTile = positionTiles[i];
       moveData.addTileBagTile(positionTile.tile, null);
-      this.game.setGameBoardPosition(positionTile.tile, GameBoardType.NothingYet);
+      this.game.setGameBoardPosition(positionTile.tile, GameBoardType.NOTHING_YET);
       moveData.addGameHistoryMessage(GameHistoryMessage.DrewPositionTile, positionTile.playerID, [positionTile.tile]);
     }
 

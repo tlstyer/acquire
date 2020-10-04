@@ -7,7 +7,6 @@ import { List } from 'immutable';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { defaultGameBoard, defaultMoveDataHistory } from '../common/defaults';
-import { GameBoardType } from '../common/enums';
 import { Game } from '../common/game';
 import { CreateGame, CreateGameProps } from './components/CreateGame';
 import { DisposeOfShares, DisposeOfSharesProps } from './components/DisposeOfShares';
@@ -33,7 +32,7 @@ import {
   selectChainKeyboardShortcutsDescription,
   tileRackKeyboardShortcutsDescription,
 } from './helpers';
-import { ErrorCode, GameMode } from '../common/pb';
+import { ErrorCode, GameBoardType, GameMode } from '../common/pb';
 
 class AllDemoProps {
   loginFormProps: LoginFormProps[];
@@ -200,12 +199,12 @@ class AllDemoProps {
       {
         tiles: List([1, 28, 55, 82, 92, 40]),
         types: List([
-          GameBoardType.Luxor,
-          GameBoardType.Tower,
-          GameBoardType.American,
-          GameBoardType.Festival,
-          GameBoardType.Worldwide,
-          GameBoardType.Continental,
+          GameBoardType.LUXOR,
+          GameBoardType.TOWER,
+          GameBoardType.AMERICAN,
+          GameBoardType.FESTIVAL,
+          GameBoardType.WORLDWIDE,
+          GameBoardType.CONTINENTAL,
         ]),
         buttonSize: 40,
         keyboardShortcutsEnabled: false,
@@ -214,12 +213,12 @@ class AllDemoProps {
       {
         tiles: List([71, null, 99, 12, 8, 17]),
         types: List([
-          GameBoardType.Imperial,
+          GameBoardType.IMPERIAL,
           null,
-          GameBoardType.WillMergeChains,
-          GameBoardType.WillPutLonelyTileDown,
-          GameBoardType.HaveNeighboringTileToo,
-          GameBoardType.HaveNeighboringTileToo,
+          GameBoardType.WILL_MERGE_CHAINS,
+          GameBoardType.WILL_PUT_LONELY_TILE_DOWN,
+          GameBoardType.HAVE_NEIGHBORING_TILE_TOO,
+          GameBoardType.HAVE_NEIGHBORING_TILE_TOO,
         ]),
         buttonSize: 40,
         keyboardShortcutsEnabled: false,
@@ -227,7 +226,7 @@ class AllDemoProps {
       },
       {
         tiles: List([null, 86, null, 38, null, 74]),
-        types: List([null, GameBoardType.CantPlayEver, null, GameBoardType.WillFormNewChain, null, GameBoardType.CantPlayNow]),
+        types: List([null, GameBoardType.CANT_PLAY_EVER, null, GameBoardType.WILL_FORM_NEW_CHAIN, null, GameBoardType.CANT_PLAY_NOW]),
         buttonSize: 40,
         keyboardShortcutsEnabled: false,
         onTileClicked,
@@ -262,8 +261,8 @@ class AllDemoProps {
 
     this.disposeOfSharesProps = [
       {
-        defunctChain: GameBoardType.American,
-        controllingChain: GameBoardType.Festival,
+        defunctChain: GameBoardType.AMERICAN,
+        controllingChain: GameBoardType.FESTIVAL,
         sharesOwnedInDefunctChain: 10,
         sharesAvailableInControllingChain: 22,
         buttonSize: 40,
@@ -271,8 +270,8 @@ class AllDemoProps {
         onSharesDisposed,
       },
       {
-        defunctChain: GameBoardType.Imperial,
-        controllingChain: GameBoardType.Tower,
+        defunctChain: GameBoardType.IMPERIAL,
+        controllingChain: GameBoardType.TOWER,
         sharesOwnedInDefunctChain: 7,
         sharesAvailableInControllingChain: 2,
         buttonSize: 40,
@@ -280,8 +279,8 @@ class AllDemoProps {
         onSharesDisposed,
       },
       {
-        defunctChain: GameBoardType.Continental,
-        controllingChain: GameBoardType.Worldwide,
+        defunctChain: GameBoardType.CONTINENTAL,
+        controllingChain: GameBoardType.WORLDWIDE,
         sharesOwnedInDefunctChain: 1,
         sharesAvailableInControllingChain: 3,
         buttonSize: 40,
@@ -289,8 +288,8 @@ class AllDemoProps {
         onSharesDisposed,
       },
       {
-        defunctChain: GameBoardType.Luxor,
-        controllingChain: GameBoardType.Imperial,
+        defunctChain: GameBoardType.LUXOR,
+        controllingChain: GameBoardType.IMPERIAL,
         sharesOwnedInDefunctChain: 25,
         sharesAvailableInControllingChain: 10,
         buttonSize: 40,
