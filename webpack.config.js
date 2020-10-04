@@ -133,6 +133,8 @@ function getProductionConfig(APP) {
     output: {
       filename: `${APP}.[contenthash].js`,
       path: path.resolve(__dirname, 'dist', 'client'),
+      hashFunction: 'sha256',
+      hashDigestLength: 64,
     },
     resolve: {
       extensions: ['.ts', '.tsx', '.js', '.json'],
