@@ -1,8 +1,11 @@
 const fs = require('fs');
 const path = require('path');
 const HtmlWebpackExternalsPlugin = require('html-webpack-externals-plugin');
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+
+const openWebpackBundleAnalyzerReportInBrowser = false;
 
 function getDevelopmentConfig(APP) {
   return {
@@ -134,6 +137,12 @@ function getProductionConfig(APP) {
       extensions: ['.ts', '.tsx', '.js', '.json'],
     },
     plugins: [
+      new BundleAnalyzerPlugin({
+        analyzerMode: 'static',
+        reportFilename: `${APP}-report.html`,
+        defaultSizes: 'gzip',
+        openAnalyzer: openWebpackBundleAnalyzerReportInBrowser,
+      }),
       new HtmlWebpackPlugin({
         title: 'Acquire',
         template: './src/client/index.html',
