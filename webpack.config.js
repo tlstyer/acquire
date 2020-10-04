@@ -99,6 +99,11 @@ function getProductionConfig(APP) {
       entry: 'https://cdnjs.cloudflare.com/ajax/libs/immutable/4.0.0-rc.12/immutable.min.js',
     },
     {
+      module: 'protobufjs/minimal',
+      global: 'protobuf',
+      entry: 'https://unpkg.com/protobufjs@6.10.1/dist/minimal/protobuf.min.js',
+    },
+    {
       module: 'react',
       global: 'React',
       entry: 'https://cdnjs.cloudflare.com/ajax/libs/react/16.13.1/umd/react.production.min.js',
