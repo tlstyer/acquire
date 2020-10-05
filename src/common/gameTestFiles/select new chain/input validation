@@ -28,30 +28,21 @@ action: 1 PlayTile 4H
     1: 8G(h) 8H(h) 10H(l) 2G(l) none 11D(l)
   revealed tile rack tiles: 4H:1
   messages:
-    0: [[34],null,[[34,1]]]
-    1: [[34]]
-    w: [[34],null,[[34,1]]]
+    0: [{"playTile":{"tile":34}},null,[[34,1]]]
+    1: [{"playTile":{"tile":34}}]
+    w: [{"playTile":{"tile":34}},null,[[34,1]]]
   history messages:
     1 PlayedTile 4H
   next action: 1 SelectNewChain T,A,F,W,C,I
 
-action: 1 SelectNewChain -- []
-  error: did not get exactly 1 parameter
+action: 1 SelectNewChain -- {}
+  error: chain is not a valid chain
 
-action: 1 SelectNewChain -- ["hello","world!"]
-  error: did not get exactly 1 parameter
+action: 1 SelectNewChain -- {"chain":-1}
+  error: chain is not a valid chain
 
-action: 1 SelectNewChain -- ["hello!"]
-  error: parameter is not a valid chain
-
-action: 1 SelectNewChain -- [true]
-  error: parameter is not a valid chain
-
-action: 1 SelectNewChain -- [-1]
-  error: parameter is not a valid chain
-
-action: 1 SelectNewChain -- [7]
-  error: parameter is not a valid chain
+action: 1 SelectNewChain -- {"chain":7}
+  error: chain is not a valid chain
 
 action: 1 SelectNewChain L
   error: cannot select chain as the new chain
@@ -67,10 +58,10 @@ Game JSON:
   7,
   [35,10,58,1,106,55,98,101,69,70,88,15,34,93,105],
   [
-    [[]],
-    [[1]],
-    [[0]],
-    [[[0],0]],
-    [[34]]
+    [{"startGame":{}}],
+    [{"playTile":{"tile":1}}],
+    [{"selectNewChain":{"chain":0}}],
+    [{"purchaseShares":{"chains":[0],"endGame":false}}],
+    [{"playTile":{"tile":34}}]
   ]
 ]

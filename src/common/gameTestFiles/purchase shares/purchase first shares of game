@@ -29,9 +29,9 @@ action: 1 SelectNewChain L
     0: 11A(l) 1A(l) 7E(l) 7B(l) 11I(l) 12C(l)
     1: 4B(l) none 8H(h) 10H(l) 2G(l) 8G(h)
   messages:
-    0: [[0]]
-    1: [[0]]
-    w: [[0]]
+    0: [{"selectNewChain":{"chain":0}}]
+    1: [{"selectNewChain":{"chain":0}}]
+    w: [{"selectNewChain":{"chain":0}}]
   history messages:
     1 FormedChain L
   next action: 1 PurchaseShares
@@ -52,9 +52,9 @@ action: 1 PurchaseShares L,L 1
   revealed tile bag tiles: 3I:1
   player ID with playable tile: 0
   messages:
-    0: [[[0,0],1],null,[],[-1],0]
-    1: [[[0,0],1],null,[],[26],0]
-    w: [[[0,0],1],null,[],[-1],0]
+    0: [{"purchaseShares":{"chains":[0,0],"endGame":true}},null,[],[-1],0]
+    1: [{"purchaseShares":{"chains":[0,0],"endGame":true}},null,[],[26],0]
+    w: [{"purchaseShares":{"chains":[0,0],"endGame":true}},null,[],[-1],0]
   history messages:
     1 PurchasedShares 2L
     1 DrewTile 3I
@@ -72,12 +72,12 @@ Game JSON:
   7,
   [11,10,3,13,58,55,98,101,21,12,70,88,15,69,90,28,0,26],
   [
-    [[]],
-    [[3]],
-    [[21]],
-    [[13]],
-    [[12]],
-    [[0]],
-    [[[0,0],1]]
+    [{"startGame":{}}],
+    [{"playTile":{"tile":3}}],
+    [{"playTile":{"tile":21}}],
+    [{"playTile":{"tile":13}}],
+    [{"playTile":{"tile":12}}],
+    [{"selectNewChain":{"chain":0}}],
+    [{"purchaseShares":{"chains":[0,0],"endGame":true}}]
   ]
 ]

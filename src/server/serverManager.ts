@@ -3,7 +3,7 @@ import { MessageToClientEnum, MessageToServerEnum } from '../common/enums';
 import { Game } from '../common/game';
 import { GameSetup } from '../common/gameSetup';
 import { gameModeToNumPlayers, getNewTileBag, isASCII } from '../common/helpers';
-import { ErrorCode, GameMode, PlayerArrangementMode } from '../common/pb';
+import { ErrorCode, GameAction, GameMode, PlayerArrangementMode } from '../common/pb';
 import { LogMessage } from './enums';
 import { ReuseIDManager } from './reuseIDManager';
 import { UserDataProvider } from './userDataProvider';
@@ -447,7 +447,7 @@ export class ServerManager {
         aClient.queueMessage(message);
       });
 
-      game.doGameAction([], Date.now());
+      game.doGameAction(GameAction.fromObject({ startGame: {} }), Date.now());
       this.sendLastGameMoveDataMessage(gameData);
     } else if (gameSetup.history.length > 0) {
       this.sendGameSetupChanges(gameData);
@@ -602,9 +602,8 @@ export class ServerManager {
       return;
     }
 
-    const gameActionParameters = params.slice(1);
     try {
-      game.doGameAction(gameActionParameters, Date.now());
+      game.doGameAction(params[1], Date.now());
     } catch (e) {
       this.kickWithError(client.connection, ErrorCode.INVALID_MESSAGE);
       return;

@@ -17,7 +17,7 @@ import { GameActionEnum, GameHistoryMessageEnum, ScoreBoardIndexEnum, TileEnum }
 import { ActionBase } from './gameActions/base';
 import { ActionStartGame } from './gameActions/startGame';
 import { calculateBonuses, neighboringTilesLookup } from './helpers';
-import { GameBoardType, GameMode, PlayerArrangementMode } from './pb';
+import { GameAction, GameBoardType, GameMode, PlayerArrangementMode } from './pb';
 
 type GameJSON = [GameMode, PlayerArrangementMode, number | null, number, number[], string[], number, number[], ([any] | [any, number])[]];
 
@@ -75,7 +75,7 @@ export class Game {
   }
 
   processMoveDataMessage(message: any[]) {
-    const gameActionParameters: any[] = message[0];
+    const gameAction: GameAction = message[0];
 
     let timestamp: number | null = null;
     if (message.length >= 2) {
@@ -100,7 +100,7 @@ export class Game {
       this.processPlayerIDWithPlayableTile(message[4]);
     }
 
-    this.doGameAction(gameActionParameters, timestamp);
+    this.doGameAction(gameAction, timestamp);
   }
 
   processRevealedTileRackTiles(entries: [number, number][]) {
@@ -145,11 +145,11 @@ export class Game {
     this.playerIDWithPlayableTile = playerIDWithPlayableTile;
   }
 
-  doGameAction(parameters: any[], timestamp: number | null) {
+  doGameAction(gameAction: GameAction, timestamp: number | null) {
     let currentAction = this.gameActionStack[this.gameActionStack.length - 1];
 
-    let newActions: ActionBase[] | null = currentAction.execute(parameters);
-    this.getCurrentMoveData().setGameAction(currentAction.playerID, currentAction.gameAction, parameters, timestamp);
+    let newActions: ActionBase[] | null = currentAction.execute(gameAction);
+    this.getCurrentMoveData().setGameAction(currentAction.playerID, currentAction.gameAction, gameAction, timestamp);
 
     while (newActions !== null) {
       this.gameActionStack.pop();
@@ -495,7 +495,7 @@ export class Game {
     const gameActions = new Array(this.moveDataHistory.size);
     let lastTimestamp: number | null = null;
     this.moveDataHistory.forEach((moveData, i) => {
-      const gameActionData: any[] = [moveData.gameActionParameters];
+      const gameActionData: any[] = [moveData.gameAction];
 
       const currentTimestamp = moveData.timestamp;
       if (currentTimestamp !== null) {
@@ -557,13 +557,14 @@ export class Game {
   }
 }
 
+const dummyGameAction = GameAction.create();
 const dummyPlayerMessages: any[][] = [];
 const dummyWatcherMessage: any[] = [];
 
 export class MoveData {
   playerID = -1;
-  gameAction = GameActionEnum.StartGame;
-  gameActionParameters: any[] = [];
+  gameActionEnum = GameActionEnum.StartGame;
+  gameAction = dummyGameAction;
   timestamp: number | null = null;
   revealedTileRackTiles: MoveDataTileRackTile[] = [];
   revealedTileBagTiles: MoveDataTileBagTile[] = [];
@@ -591,10 +592,10 @@ export class MoveData {
     this.nextGameAction = game.gameActionStack[game.gameActionStack.length - 1];
   }
 
-  setGameAction(playerID: number, gameAction: GameActionEnum, parameters: any[], timestamp: number | null) {
+  setGameAction(playerID: number, gameActionEnum: GameActionEnum, gameAction: GameAction, timestamp: number | null) {
     this.playerID = playerID;
+    this.gameActionEnum = gameActionEnum;
     this.gameAction = gameAction;
-    this.gameActionParameters = parameters;
     this.timestamp = timestamp;
   }
 
@@ -675,15 +676,15 @@ export class MoveData {
     }
 
     if (this.playerIDWithPlayableTile !== null) {
-      return [this.gameActionParameters, timestamp, revealedTileRackTiles, revealedTileBagTiles, this.playerIDWithPlayableTile];
+      return [this.gameAction, timestamp, revealedTileRackTiles, revealedTileBagTiles, this.playerIDWithPlayableTile];
     } else if (revealedTileBagTiles.length > 0) {
-      return [this.gameActionParameters, timestamp, revealedTileRackTiles, revealedTileBagTiles];
+      return [this.gameAction, timestamp, revealedTileRackTiles, revealedTileBagTiles];
     } else if (revealedTileRackTiles.length > 0) {
-      return [this.gameActionParameters, timestamp, revealedTileRackTiles];
+      return [this.gameAction, timestamp, revealedTileRackTiles];
     } else if (timestamp !== null) {
-      return [this.gameActionParameters, timestamp];
+      return [this.gameAction, timestamp];
     } else {
-      return [this.gameActionParameters];
+      return [this.gameAction];
     }
   }
 }

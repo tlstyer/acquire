@@ -2,7 +2,7 @@ import { GameActionEnum, GameHistoryMessageEnum } from '../enums';
 import { UserInputError } from '../error';
 import { Game } from '../game';
 import { neighboringTilesLookup } from '../helpers';
-import { GameBoardType } from '../pb';
+import { GameAction, GameBoardType } from '../pb';
 import { ActionBase } from './base';
 import { ActionSelectMergerSurvivor } from './selectMergerSurvivor';
 import { ActionSelectNewChain } from './selectNewChain';
@@ -43,13 +43,13 @@ export class ActionPlayTile extends ActionBase {
     }
   }
 
-  execute(parameters: any[]) {
-    if (parameters.length !== 1) {
-      throw new UserInputError('did not get exactly 1 parameter');
+  execute(gameAction: GameAction) {
+    if (!gameAction.playTile) {
+      throw new UserInputError('playTile game action not provided');
     }
-    const tile: number = parameters[0];
-    if (!Number.isInteger(tile) || tile < 0 || tile >= 108) {
-      throw new UserInputError('parameter is not a valid tile');
+    const tile = gameAction.playTile.tile;
+    if (tile === null || tile === undefined || tile < 0 || tile >= 108) {
+      throw new UserInputError('tile is not a valid tile');
     }
     const tileRackIndex = this.game.tileRacks.get(this.playerID)!.indexOf(tile);
     if (tileRackIndex === -1) {

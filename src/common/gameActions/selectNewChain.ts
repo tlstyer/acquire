@@ -1,7 +1,7 @@
 import { GameActionEnum, GameHistoryMessageEnum } from '../enums';
 import { UserInputError } from '../error';
 import { Game } from '../game';
-import { GameBoardType } from '../pb';
+import { GameAction, GameBoardType } from '../pb';
 import { ActionBase } from './base';
 
 export class ActionSelectNewChain extends ActionBase {
@@ -20,19 +20,19 @@ export class ActionSelectNewChain extends ActionBase {
     }
   }
 
-  execute(parameters: any[]) {
-    if (parameters.length !== 1) {
-      throw new UserInputError('did not get exactly 1 parameter');
+  execute(gameAction: GameAction) {
+    if (!gameAction.selectNewChain) {
+      throw new UserInputError('selectNewChain game action not provided');
     }
-    const chain: number = parameters[0];
-    if (!Number.isInteger(chain) || chain < GameBoardType.LUXOR || chain > GameBoardType.IMPERIAL) {
-      throw new UserInputError('parameter is not a valid chain');
+    const newChain = gameAction.selectNewChain.chain;
+    if (newChain === null || newChain === undefined || newChain < GameBoardType.LUXOR || newChain > GameBoardType.IMPERIAL) {
+      throw new UserInputError('chain is not a valid chain');
     }
-    if (this.availableChains.indexOf(chain) === -1) {
+    if (this.availableChains.indexOf(newChain) === -1) {
       throw new UserInputError('cannot select chain as the new chain');
     }
 
-    this.createNewChain(chain);
+    this.createNewChain(newChain);
     return [];
   }
 

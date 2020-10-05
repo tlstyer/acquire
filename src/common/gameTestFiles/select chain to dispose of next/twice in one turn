@@ -50,11 +50,11 @@ action: 0 PlayTile 5G
     3: 5D(I) 12H(h) 10I(l) 8H(l) 3F(L) 11H(h)
   revealed tile rack tiles: 5G:0
   messages:
-    0: [[42]]
-    1: [[42],null,[[42,0]]]
-    2: [[42],null,[[42,0]]]
-    3: [[42],null,[[42,0]]]
-    w: [[42],null,[[42,0]]]
+    0: [{"playTile":{"tile":42}}]
+    1: [{"playTile":{"tile":42}},null,[[42,0]]]
+    2: [{"playTile":{"tile":42}},null,[[42,0]]]
+    3: [{"playTile":{"tile":42}},null,[[42,0]]]
+    w: [{"playTile":{"tile":42}},null,[[42,0]]]
   history messages:
     0 PlayedTile 5G
     0 MergedChains L,T,C,I
@@ -76,11 +76,11 @@ action: 0 SelectMergerSurvivor I
     2: 9C(l) 11G(l) 10D(l) 4D(l) 1G(l) 2I(l)
     3: 5D(I) 12H(h) 10I(l) 8H(l) 3F(I) 11H(h)
   messages:
-    0: [[6]]
-    1: [[6]]
-    2: [[6]]
-    3: [[6]]
-    w: [[6]]
+    0: [{"selectMergerSurvivor":{"chain":6}}]
+    1: [{"selectMergerSurvivor":{"chain":6}}]
+    2: [{"selectMergerSurvivor":{"chain":6}}]
+    3: [{"selectMergerSurvivor":{"chain":6}}]
+    w: [{"selectMergerSurvivor":{"chain":6}}]
   history messages:
     0 SelectedMergerSurvivor I
     0 ReceivedBonus L 20
@@ -107,11 +107,11 @@ action: 0 SelectChainToDisposeOfNext T
     2: 9C(l) 11G(l) 10D(l) 4D(l) 1G(l) 2I(l)
     3: 5D(I) 12H(h) 10I(l) 8H(l) 3F(I) 11H(h)
   messages:
-    0: [[1]]
-    1: [[1]]
-    2: [[1]]
-    3: [[1]]
-    w: [[1]]
+    0: [{"selectChainToDisposeOfNext":{"chain":1}}]
+    1: [{"selectChainToDisposeOfNext":{"chain":1}}]
+    2: [{"selectChainToDisposeOfNext":{"chain":1}}]
+    3: [{"selectChainToDisposeOfNext":{"chain":1}}]
+    w: [{"selectChainToDisposeOfNext":{"chain":1}}]
   history messages:
     0 SelectedChainToDisposeOfNext T
   next action: 1 DisposeOfShares T
@@ -136,11 +136,11 @@ action: 0 SelectChainToDisposeOfNext C
     2: 9C(l) 11G(l) 10D(l) 4D(l) 1G(l) 2I(l)
     3: 5D(I) 12H(h) 10I(l) 8H(l) 3F(I) 11H(h)
   messages:
-    0: [[5]]
-    1: [[5]]
-    2: [[5]]
-    3: [[5]]
-    w: [[5]]
+    0: [{"selectChainToDisposeOfNext":{"chain":5}}]
+    1: [{"selectChainToDisposeOfNext":{"chain":5}}]
+    2: [{"selectChainToDisposeOfNext":{"chain":5}}]
+    3: [{"selectChainToDisposeOfNext":{"chain":5}}]
+    w: [{"selectChainToDisposeOfNext":{"chain":5}}]
   history messages:
     0 SelectedChainToDisposeOfNext C
   next action: 2 DisposeOfShares C
@@ -171,11 +171,11 @@ action: 0 PurchaseShares I 1
   revealed tile bag tiles: 1A:0
   player ID with playable tile: 1
   messages:
-    0: [[[6],1],null,[],[0],1]
-    1: [[[6],1],null,[],[-1],1]
-    2: [[[6],1],null,[],[-1],1]
-    3: [[[6],1],null,[],[-1],1]
-    w: [[[6],1],null,[],[-1],1]
+    0: [{"purchaseShares":{"chains":[6],"endGame":true}},null,[],[0],1]
+    1: [{"purchaseShares":{"chains":[6],"endGame":true}},null,[],[-1],1]
+    2: [{"purchaseShares":{"chains":[6],"endGame":true}},null,[],[-1],1]
+    3: [{"purchaseShares":{"chains":[6],"endGame":true}},null,[],[-1],1]
+    w: [{"purchaseShares":{"chains":[6],"endGame":true}},null,[],[-1],1]
   history messages:
     0 PurchasedShares 1I
     0 DrewTile 1A
@@ -193,29 +193,29 @@ Game JSON:
   9,
   [24,51,41,43,33,42,29,38,5,69,44,82,1,98,18,80,60,96,84,30,6,17,40,106,89,70,23,97,12,32,74,39,0],
   [
-    [[]],
-    [[33]],
-    [[0]],
-    [[[0,0,0],0]],
-    [[44]],
-    [[1]],
-    [[[1,1,1],0]],
-    [[60]],
-    [[5]],
-    [[[5,5,5],0]],
-    [[40]],
-    [[6]],
-    [[[5,1,0],0]],
-    [[42]],
-    [[6]],
-    [[1]],
-    [[0,0]],
-    [[0,0]],
-    [[5]],
-    [[0,0]],
-    [[0,0]],
-    [[0,0]],
-    [[0,0]],
-    [[[6],1]]
+    [{"startGame":{}}],
+    [{"playTile":{"tile":33}}],
+    [{"selectNewChain":{"chain":0}}],
+    [{"purchaseShares":{"chains":[0,0,0],"endGame":false}}],
+    [{"playTile":{"tile":44}}],
+    [{"selectNewChain":{"chain":1}}],
+    [{"purchaseShares":{"chains":[1,1,1],"endGame":false}}],
+    [{"playTile":{"tile":60}}],
+    [{"selectNewChain":{"chain":5}}],
+    [{"purchaseShares":{"chains":[5,5,5],"endGame":false}}],
+    [{"playTile":{"tile":40}}],
+    [{"selectNewChain":{"chain":6}}],
+    [{"purchaseShares":{"chains":[5,1,0],"endGame":false}}],
+    [{"playTile":{"tile":42}}],
+    [{"selectMergerSurvivor":{"chain":6}}],
+    [{"selectChainToDisposeOfNext":{"chain":1}}],
+    [{"disposeOfShares":{"tradeAmount":0,"sellAmount":0}}],
+    [{"disposeOfShares":{"tradeAmount":0,"sellAmount":0}}],
+    [{"selectChainToDisposeOfNext":{"chain":5}}],
+    [{"disposeOfShares":{"tradeAmount":0,"sellAmount":0}}],
+    [{"disposeOfShares":{"tradeAmount":0,"sellAmount":0}}],
+    [{"disposeOfShares":{"tradeAmount":0,"sellAmount":0}}],
+    [{"disposeOfShares":{"tradeAmount":0,"sellAmount":0}}],
+    [{"purchaseShares":{"chains":[6],"endGame":true}}]
   ]
 ]

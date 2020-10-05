@@ -1,7 +1,7 @@
 import { GameActionEnum, GameHistoryMessageEnum, ScoreBoardIndexEnum } from '../enums';
 import { UserInputError } from '../error';
 import { Game } from '../game';
-import { GameBoardType } from '../pb';
+import { GameAction, GameBoardType } from '../pb';
 import { ActionBase } from './base';
 import { ActionGameOver } from './gameOver';
 import { ActionPlayTile } from './playTile';
@@ -65,26 +65,26 @@ export class ActionPurchaseShares extends ActionBase {
     }
   }
 
-  execute(parameters: any[]) {
-    if (parameters.length !== 2) {
-      throw new UserInputError('did not get exactly 2 parameters');
+  execute(gameAction: GameAction) {
+    if (!gameAction.purchaseShares) {
+      throw new UserInputError('purchaseShares game action not provided');
     }
-    const chains: number[] = parameters[0];
-    if (!Array.isArray(chains)) {
-      throw new UserInputError('chains parameter is not an array');
+    const chains = gameAction.purchaseShares.chains;
+    if (chains === null || chains === undefined) {
+      throw new UserInputError('chains is not an array');
     }
     if (chains.length > 3) {
-      throw new UserInputError('length of chains parameter is larger than 3');
+      throw new UserInputError('number of chains is larger than 3');
     }
     for (let i = 0; i < chains.length; i++) {
       const chain = chains[i];
-      if (!Number.isInteger(chain) || chain < GameBoardType.LUXOR || chain > GameBoardType.IMPERIAL) {
-        throw new UserInputError('a chain parameter is not a valid chain');
+      if (chain === null || chain === undefined || chain < GameBoardType.LUXOR || chain > GameBoardType.IMPERIAL) {
+        throw new UserInputError('a chain is not a valid chain');
       }
     }
-    const endGame: number = parameters[1];
-    if (endGame !== 0 && endGame !== 1) {
-      throw new UserInputError('end game parameter is not 0 or 1');
+    const endGame = gameAction.purchaseShares.endGame;
+    if (endGame === null || endGame === undefined) {
+      throw new UserInputError('end game is not true or false');
     }
 
     const chainCounts = [0, 0, 0, 0, 0, 0, 0];
@@ -126,7 +126,7 @@ export class ActionPurchaseShares extends ActionBase {
       this.game.getCurrentMoveData().addGameHistoryMessage(GameHistoryMessageEnum.PurchasedShares, this.playerID, [chainsAndCounts]);
     }
 
-    return this.completeAction(endGame === 1 && this.canEndGame);
+    return this.completeAction(endGame && this.canEndGame);
   }
 
   protected completeAction(endGame: boolean): ActionBase[] {

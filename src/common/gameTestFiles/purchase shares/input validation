@@ -23,9 +23,9 @@ action: 0 SelectNewChain L
     0: 1B(l) 5E(L) none 11I(l) 4E(L) 3G(l)
     1: 2B(l) 5F(l) 7H(l) 7A(n) 3D(L) 4H(l)
   messages:
-    0: [[0]]
-    1: [[0]]
-    w: [[0]]
+    0: [{"selectNewChain":{"chain":0}}]
+    1: [{"selectNewChain":{"chain":0}}]
+    w: [{"selectNewChain":{"chain":0}}]
   history messages:
     0 FormedChain L
   next action: 0 PurchaseShares
@@ -144,52 +144,28 @@ action: 0 PlayTile 11D
     1: 5G(c) 9A(l) 7H(l) 9H(l) 3D(L) 4H(l)
   revealed tile rack tiles: 11D:0
   messages:
-    0: [[93]]
-    1: [[93],null,[[93,0]]]
-    w: [[93],null,[[93,0]]]
+    0: [{"playTile":{"tile":93}}]
+    1: [{"playTile":{"tile":93}},null,[[93,0]]]
+    w: [{"playTile":{"tile":93}},null,[[93,0]]]
   history messages:
     0 PlayedTile 11D
     0 FormedChain T
   next action: 0 PurchaseShares
 
-action: 0 PurchaseShares -- []
-  error: did not get exactly 2 parameters
+action: 0 PurchaseShares -- {}
+  error: chains is not an array
 
-action: 0 PurchaseShares -- ["hello!"]
-  error: did not get exactly 2 parameters
+action: 0 PurchaseShares T,A,F,W 1
+  error: number of chains is larger than 3
 
-action: 0 PurchaseShares -- ["hello","acquire","world!"]
-  error: did not get exactly 2 parameters
+action: 0 PurchaseShares -- {"chains":[1,null,2],"endGame":false}
+  error: a chain is not a valid chain
 
-action: 0 PurchaseShares -- ["hello",0]
-  error: chains parameter is not an array
+action: 0 PurchaseShares -- {"chains":[7,1,2],"endGame":true}
+  error: a chain is not a valid chain
 
-action: 0 PurchaseShares -- [true,1]
-  error: chains parameter is not an array
-
-action: 0 PurchaseShares -- [{"hello":"world!"},0]
-  error: chains parameter is not an array
-
-action: 0 PurchaseShares -- [[1,2,3,4],1]
-  error: length of chains parameter is larger than 3
-
-action: 0 PurchaseShares -- [["hi!"],1]
-  error: a chain parameter is not a valid chain
-
-action: 0 PurchaseShares -- [[1,2,{}],1]
-  error: a chain parameter is not a valid chain
-
-action: 0 PurchaseShares -- [[1,-1,2],1]
-  error: a chain parameter is not a valid chain
-
-action: 0 PurchaseShares -- [[7,1,2],1]
-  error: a chain parameter is not a valid chain
-
-action: 0 PurchaseShares -- [[1,2,3],true]
-  error: end game parameter is not 0 or 1
-
-action: 0 PurchaseShares -- [[],2]
-  error: end game parameter is not 0 or 1
+action: 0 PurchaseShares -- {"chains":[1,2,3]}
+  error: end game is not true or false
 
 action: 0 PurchaseShares W,W,W 0
   error: more shares requested for a chain than are available
@@ -208,49 +184,49 @@ Game JSON:
   1,
   [55,30,1,40,39,98,31,24,10,41,61,54,21,34,47,53,74,23,6,68,64,0,85,102,7,77,49,42,97,79,93,72],
   [
-    [[]],
-    [[39]],
-    [[0]],
-    [[[0],0]],
-    [[54]],
-    [[6]],
-    [[[0],0]],
-    [[1]],
-    [[[6],0]],
-    [[10]],
-    [[5]],
-    [[[0],0]],
-    [[47]],
-    [[[0,5],0]],
-    [[53]],
-    [[[0],0]],
-    [[24]],
-    [[[0],0]],
-    [[23]],
-    [[4]],
-    [[[0,5],0]],
-    [[64]],
-    [[[0,4],0]],
-    [[0]],
-    [[[0,4],0]],
-    [[31]],
-    [[[4,4,4],0]],
-    [[102]],
-    [[[4,4,4],0]],
-    [[6]],
-    [[[4,4,4],0]],
-    [[77]],
-    [[[4,4,4],0]],
-    [[49]],
-    [[[4,4,4],0]],
-    [[68]],
-    [[3]],
-    [[[4,4],0]],
-    [[7]],
-    [[2]],
-    [[[4,4,4],0]],
-    [[41]],
-    [[[2,2],0]],
-    [[93]]
+    [{"startGame":{}}],
+    [{"playTile":{"tile":39}}],
+    [{"selectNewChain":{"chain":0}}],
+    [{"purchaseShares":{"chains":[0],"endGame":false}}],
+    [{"playTile":{"tile":54}}],
+    [{"selectNewChain":{"chain":6}}],
+    [{"purchaseShares":{"chains":[0],"endGame":false}}],
+    [{"playTile":{"tile":1}}],
+    [{"purchaseShares":{"chains":[6],"endGame":false}}],
+    [{"playTile":{"tile":10}}],
+    [{"selectNewChain":{"chain":5}}],
+    [{"purchaseShares":{"chains":[0],"endGame":false}}],
+    [{"playTile":{"tile":47}}],
+    [{"purchaseShares":{"chains":[0,5],"endGame":false}}],
+    [{"playTile":{"tile":53}}],
+    [{"purchaseShares":{"chains":[0],"endGame":false}}],
+    [{"playTile":{"tile":24}}],
+    [{"purchaseShares":{"chains":[0],"endGame":false}}],
+    [{"playTile":{"tile":23}}],
+    [{"selectNewChain":{"chain":4}}],
+    [{"purchaseShares":{"chains":[0,5],"endGame":false}}],
+    [{"playTile":{"tile":64}}],
+    [{"purchaseShares":{"chains":[0,4],"endGame":false}}],
+    [{"playTile":{"tile":0}}],
+    [{"purchaseShares":{"chains":[0,4],"endGame":false}}],
+    [{"playTile":{"tile":31}}],
+    [{"purchaseShares":{"chains":[4,4,4],"endGame":false}}],
+    [{"playTile":{"tile":102}}],
+    [{"purchaseShares":{"chains":[4,4,4],"endGame":false}}],
+    [{"playTile":{"tile":6}}],
+    [{"purchaseShares":{"chains":[4,4,4],"endGame":false}}],
+    [{"playTile":{"tile":77}}],
+    [{"purchaseShares":{"chains":[4,4,4],"endGame":false}}],
+    [{"playTile":{"tile":49}}],
+    [{"purchaseShares":{"chains":[4,4,4],"endGame":false}}],
+    [{"playTile":{"tile":68}}],
+    [{"selectNewChain":{"chain":3}}],
+    [{"purchaseShares":{"chains":[4,4],"endGame":false}}],
+    [{"playTile":{"tile":7}}],
+    [{"selectNewChain":{"chain":2}}],
+    [{"purchaseShares":{"chains":[4,4,4],"endGame":false}}],
+    [{"playTile":{"tile":41}}],
+    [{"purchaseShares":{"chains":[2,2],"endGame":false}}],
+    [{"playTile":{"tile":93}}]
   ]
 ]

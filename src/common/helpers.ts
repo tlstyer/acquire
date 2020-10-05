@@ -137,3 +137,15 @@ export const gameModeToTeamSize = new Map([
   [GameMode.TEAMS_2_VS_2_VS_2, 2],
   [GameMode.TEAMS_3_VS_3, 3],
 ]);
+
+export function lowercaseFirstLetter(str: string) {
+  return str.charAt(0).toLowerCase() + str.slice(1);
+}
+
+export function getValueOfKey(obj: any) {
+  for (const key in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+      return obj[key];
+    }
+  }
+}

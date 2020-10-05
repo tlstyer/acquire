@@ -40,32 +40,23 @@ action: 0 PlayTile 3B
     2: 1B(C) 4G(l) 3C(m) 12F(n) 3A(n) 1D(l)
   revealed tile rack tiles: 3B:0
   messages:
-    0: [[19]]
-    1: [[19],null,[[19,0]]]
-    2: [[19],null,[[19,0]]]
-    w: [[19],null,[[19,0]]]
+    0: [{"playTile":{"tile":19}}]
+    1: [{"playTile":{"tile":19}},null,[[19,0]]]
+    2: [{"playTile":{"tile":19}},null,[[19,0]]]
+    w: [{"playTile":{"tile":19}},null,[[19,0]]]
   history messages:
     0 PlayedTile 3B
     0 MergedChains A,C
   next action: 0 SelectMergerSurvivor A,C
 
-action: 0 SelectMergerSurvivor -- []
-  error: did not get exactly 1 parameter
+action: 0 SelectMergerSurvivor -- {}
+  error: chain is not a valid chain
 
-action: 0 SelectMergerSurvivor -- ["hello","world!"]
-  error: did not get exactly 1 parameter
+action: 0 SelectMergerSurvivor -- {"chain":-1}
+  error: chain is not a valid chain
 
-action: 0 SelectMergerSurvivor -- ["hello!"]
-  error: parameter is not a valid chain
-
-action: 0 SelectMergerSurvivor -- [true]
-  error: parameter is not a valid chain
-
-action: 0 SelectMergerSurvivor -- [-1]
-  error: parameter is not a valid chain
-
-action: 0 SelectMergerSurvivor -- [7]
-  error: parameter is not a valid chain
+action: 0 SelectMergerSurvivor -- {"chain":7}
+  error: chain is not a valid chain
 
 action: 0 SelectMergerSurvivor L
   error: cannot select chain as the controlling chain
@@ -93,15 +84,15 @@ Game JSON:
   7,
   [28,10,105,29,49,58,19,98,101,11,12,70,88,15,69,1,33,20,60,18,3,53,46,104],
   [
-    [[]],
-    [[29]],
-    [[2]],
-    [[[2,2,2],0]],
-    [[11]],
-    [[5]],
-    [[[2,5,5],0]],
-    [[60]],
-    [[[2,2,2],0]],
-    [[19]]
+    [{"startGame":{}}],
+    [{"playTile":{"tile":29}}],
+    [{"selectNewChain":{"chain":2}}],
+    [{"purchaseShares":{"chains":[2,2,2],"endGame":false}}],
+    [{"playTile":{"tile":11}}],
+    [{"selectNewChain":{"chain":5}}],
+    [{"purchaseShares":{"chains":[2,5,5],"endGame":false}}],
+    [{"playTile":{"tile":60}}],
+    [{"purchaseShares":{"chains":[2,2,2],"endGame":false}}],
+    [{"playTile":{"tile":19}}]
   ]
 ]

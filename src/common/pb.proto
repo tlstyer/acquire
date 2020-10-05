@@ -50,3 +50,36 @@ enum PlayerArrangementMode {
   EXACT_ORDER = 2;
   SPECIFY_TEAMS = 3;
 }
+
+message GameAction {
+  message StartGame {}
+
+  message PlayTile { int32 tile = 1; }
+
+  message SelectNewChain { GameBoardType chain = 1; }
+
+  message SelectMergerSurvivor { GameBoardType chain = 1; }
+
+  message SelectChainToDisposeOfNext { GameBoardType chain = 1; }
+
+  message DisposeOfShares {
+    int32 trade_amount = 1;
+    int32 sell_amount = 2;
+  }
+
+  message PurchaseShares {
+    repeated GameBoardType chains = 1;
+    bool end_game = 2;
+  }
+
+  message GameOver {}
+
+  StartGame start_game = 1;
+  PlayTile play_tile = 2;
+  SelectNewChain select_new_chain = 3;
+  SelectMergerSurvivor select_merger_survivor = 4;
+  SelectChainToDisposeOfNext select_chain_to_dispose_of_next = 5;
+  DisposeOfShares dispose_of_shares = 6;
+  PurchaseShares purchase_shares = 7;
+  GameOver game_over = 8;
+}

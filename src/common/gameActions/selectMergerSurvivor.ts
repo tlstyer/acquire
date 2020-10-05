@@ -2,7 +2,7 @@ import { GameActionEnum, GameHistoryMessageEnum, ScoreBoardIndexEnum } from '../
 import { UserInputError } from '../error';
 import { Game } from '../game';
 import { calculateBonuses } from '../helpers';
-import { GameBoardType } from '../pb';
+import { GameAction, GameBoardType } from '../pb';
 import { ActionBase } from './base';
 import { ActionSelectChainToDisposeOfNext } from './selectChainToDisposeOfNext';
 
@@ -51,21 +51,21 @@ export class ActionSelectMergerSurvivor extends ActionBase {
     }
   }
 
-  execute(parameters: any[]) {
-    if (parameters.length !== 1) {
-      throw new UserInputError('did not get exactly 1 parameter');
+  execute(gameAction: GameAction) {
+    if (!gameAction.selectMergerSurvivor) {
+      throw new UserInputError('selectMergerSurvivor game action not provided');
     }
-    const controllingChain: GameBoardType = parameters[0];
-    if (!Number.isInteger(controllingChain) || controllingChain < GameBoardType.LUXOR || controllingChain > GameBoardType.IMPERIAL) {
-      throw new UserInputError('parameter is not a valid chain');
+    const chain = gameAction.selectMergerSurvivor.chain;
+    if (chain === null || chain === undefined || chain < GameBoardType.LUXOR || chain > GameBoardType.IMPERIAL) {
+      throw new UserInputError('chain is not a valid chain');
     }
-    if (this.chainsBySize[0].indexOf(controllingChain) === -1) {
+    if (this.chainsBySize[0].indexOf(chain) === -1) {
       throw new UserInputError('cannot select chain as the controlling chain');
     }
 
-    this.game.getCurrentMoveData().addGameHistoryMessage(GameHistoryMessageEnum.SelectedMergerSurvivor, this.playerID, [controllingChain]);
+    this.game.getCurrentMoveData().addGameHistoryMessage(GameHistoryMessageEnum.SelectedMergerSurvivor, this.playerID, [chain]);
 
-    return this.completeAction(controllingChain);
+    return this.completeAction(chain);
   }
 
   protected completeAction(controllingChain: GameBoardType) {

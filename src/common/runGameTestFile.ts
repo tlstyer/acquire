@@ -8,7 +8,8 @@ import { ActionGameOver } from './gameActions/gameOver';
 import { ActionSelectChainToDisposeOfNext } from './gameActions/selectChainToDisposeOfNext';
 import { ActionSelectMergerSurvivor } from './gameActions/selectMergerSurvivor';
 import { ActionSelectNewChain } from './gameActions/selectNewChain';
-import { GameBoardType, GameMode, PlayerArrangementMode } from './pb';
+import { getValueOfKey, lowercaseFirstLetter } from './helpers';
+import { GameAction, GameBoardType, GameMode, PlayerArrangementMode } from './pb';
 
 export function runGameTestFile(inputLines: string[]) {
   let game: Game | null = null;
@@ -110,36 +111,40 @@ export function runGameTestFile(inputLines: string[]) {
 
         const actualGameActionName = game.gameActionStack[game.gameActionStack.length - 1].constructor.name.slice(6);
         // @ts-ignore actualGameActionName is in GameAction
-        const actualGameAction = GameActionEnum[actualGameActionName];
+        const actualGameAction: GameActionEnum = GameActionEnum[actualGameActionName];
 
-        let parameters: any[] = [];
+        let gameAction: GameAction;
         let usingJSONParameters = false;
         if (actionParts.length > 2) {
           if (actionParts[2] === '--') {
             usingJSONParameters = true;
+            const json = actionParts.slice(3).join(' ');
+            let parsedJson;
             try {
-              parameters = JSON.parse(actionParts.slice(3).join(' '));
+              parsedJson = JSON.parse(json);
             } catch (error) {
               expect(false).toBe(true);
             }
-            expect(Array.isArray(parameters)).toBe(true);
+            gameAction = GameAction.create({ [lowercaseFirstLetter(actualGameActionName)]: parsedJson });
           } else {
-            parameters = fromParameterStrings(actualGameAction, actionParts.slice(2));
+            gameAction = fromParameterStrings(actualGameAction, actionParts.slice(2));
           }
+        } else {
+          gameAction = GameAction.create({ [lowercaseFirstLetter(actualGameActionName)]: {} });
         }
 
         outputLines.push('');
 
         try {
-          game.doGameAction(parameters, timestamp);
+          game.doGameAction(gameAction, timestamp);
           lastMoveData = game.moveDataHistory.get(game.moveDataHistory.size - 1, null);
         } catch (error) {
           if (error instanceof UserInputError) {
             let stringParameters = '';
             if (usingJSONParameters) {
-              stringParameters = ` -- ${JSON.stringify(parameters)}`;
+              stringParameters = ` -- ${JSON.stringify(getValueOfKey(GameAction.toObject(gameAction)))}`;
             } else {
-              const arr = toParameterStrings(actualGameAction, parameters);
+              const arr = toParameterStrings(gameAction);
               if (arr.length > 0) {
                 stringParameters = ` ${arr.join(' ')}`;
               }
@@ -203,57 +208,76 @@ const abbreviationToGameBoardType = new Map([
   ['I', GameBoardType.IMPERIAL],
 ]);
 
-function fromParameterStrings(gameAction: GameActionEnum, strings: string[]) {
-  const parameters: any[] = [];
+function fromParameterStrings(gameActionEnum: GameActionEnum, strings: string[]) {
+  const gameAction = GameAction.create();
 
-  switch (gameAction) {
-    case GameActionEnum.PlayTile:
-      parameters.push(fromTileString(strings[0]));
+  switch (gameActionEnum) {
+    case GameActionEnum.PlayTile: {
+      const playTile = GameAction.PlayTile.create();
+      playTile.tile = fromTileString(strings[0]);
+      gameAction.playTile = playTile;
       break;
-    case GameActionEnum.SelectNewChain:
-    case GameActionEnum.SelectMergerSurvivor:
-    case GameActionEnum.SelectChainToDisposeOfNext:
-      parameters.push(abbreviationToGameBoardType.get(strings[0])!);
+    }
+    case GameActionEnum.SelectNewChain: {
+      const selectNewChain = GameAction.SelectNewChain.create();
+      selectNewChain.chain = abbreviationToGameBoardType.get(strings[0])!;
+      gameAction.selectNewChain = selectNewChain;
       break;
-    case GameActionEnum.DisposeOfShares:
-      parameters.push(...strings.map((s) => parseInt(s, 10)));
+    }
+    case GameActionEnum.SelectMergerSurvivor: {
+      const selectMergerSurvivor = GameAction.SelectMergerSurvivor.create();
+      selectMergerSurvivor.chain = abbreviationToGameBoardType.get(strings[0])!;
+      gameAction.selectMergerSurvivor = selectMergerSurvivor;
       break;
-    case GameActionEnum.PurchaseShares:
-      if (strings[0] === 'x') {
-        parameters.push([]);
-      } else {
-        parameters.push(strings[0].split(',').map((s) => abbreviationToGameBoardType.get(s)));
+    }
+    case GameActionEnum.SelectChainToDisposeOfNext: {
+      const selectChainToDisposeOfNext = GameAction.SelectChainToDisposeOfNext.create();
+      selectChainToDisposeOfNext.chain = abbreviationToGameBoardType.get(strings[0])!;
+      gameAction.selectChainToDisposeOfNext = selectChainToDisposeOfNext;
+      break;
+    }
+    case GameActionEnum.DisposeOfShares: {
+      const disposeOfShares = GameAction.DisposeOfShares.create();
+      disposeOfShares.tradeAmount = parseInt(strings[0], 10);
+      disposeOfShares.sellAmount = parseInt(strings[1], 10);
+      gameAction.disposeOfShares = disposeOfShares;
+      break;
+    }
+    case GameActionEnum.PurchaseShares: {
+      const purchaseShares = GameAction.PurchaseShares.create();
+      if (strings[0] !== 'x') {
+        purchaseShares.chains = strings[0].split(',').map((s) => abbreviationToGameBoardType.get(s)!);
       }
-      parameters.push(parseInt(strings[1], 10));
+      purchaseShares.endGame = strings[1] === '1';
+      gameAction.purchaseShares = purchaseShares;
       break;
+    }
   }
 
-  return parameters;
+  return gameAction;
 }
 
-function toParameterStrings(gameAction: GameActionEnum, parameters: any[]) {
+function toParameterStrings(gameAction: GameAction) {
   const strings: any[] = [];
 
-  switch (gameAction) {
-    case GameActionEnum.PlayTile:
-      strings.push(toTileString(parameters[0]));
-      break;
-    case GameActionEnum.SelectNewChain:
-    case GameActionEnum.SelectMergerSurvivor:
-    case GameActionEnum.SelectChainToDisposeOfNext:
-      strings.push(gameBoardTypeToCharacter.get(parameters[0])!);
-      break;
-    case GameActionEnum.DisposeOfShares:
-      strings.push(...parameters.map((p) => p.toString()));
-      break;
-    case GameActionEnum.PurchaseShares:
-      if (parameters[0].length === 0) {
-        strings.push('x');
-      } else {
-        strings.push(parameters[0].map((p: number) => gameBoardTypeToCharacter.get(p)).join(','));
-      }
-      strings.push(parameters[1].toString());
-      break;
+  if (gameAction.playTile) {
+    strings.push(toTileString(gameAction.playTile.tile!));
+  } else if (gameAction.selectNewChain) {
+    strings.push(gameBoardTypeToCharacter.get(gameAction.selectNewChain.chain!)!);
+  } else if (gameAction.selectMergerSurvivor) {
+    strings.push(gameBoardTypeToCharacter.get(gameAction.selectMergerSurvivor.chain!)!);
+  } else if (gameAction.selectChainToDisposeOfNext) {
+    strings.push(gameBoardTypeToCharacter.get(gameAction.selectChainToDisposeOfNext.chain!)!);
+  } else if (gameAction.disposeOfShares) {
+    strings.push(gameAction.disposeOfShares.tradeAmount?.toString());
+    strings.push(gameAction.disposeOfShares.sellAmount?.toString());
+  } else if (gameAction.purchaseShares) {
+    if (gameAction.purchaseShares.chains!.length === 0) {
+      strings.push('x');
+    } else {
+      strings.push(gameAction.purchaseShares.chains!.map((p: number) => gameBoardTypeToCharacter.get(p)).join(','));
+    }
+    strings.push(gameAction.purchaseShares.endGame ? '1' : '0');
   }
 
   return strings;
@@ -284,12 +308,12 @@ function getMoveDataLines(moveData: MoveData, revealedTilesPlayerID: number | nu
     lines.push(`timestamp: ${moveData.timestamp}`);
   }
 
-  const arr = toParameterStrings(moveData.gameAction, moveData.gameActionParameters);
+  const arr = toParameterStrings(moveData.gameAction);
   let stringParameters = '';
   if (arr.length > 0) {
     stringParameters = ` ${arr.join(' ')}`;
   }
-  lines.push(`action: ${moveData.playerID} ${GameActionEnum[moveData.gameAction]}${stringParameters}`);
+  lines.push(`action: ${moveData.playerID} ${GameActionEnum[moveData.gameActionEnum]}${stringParameters}`);
 
   if (detailed) {
     const gameBoardLines = getGameBoardLines(moveData.gameBoard);
@@ -343,9 +367,9 @@ function getMoveDataLines(moveData: MoveData, revealedTilesPlayerID: number | nu
     lines.push('  messages:');
     moveData.createPlayerAndWatcherMessages();
     for (let playerID = 0; playerID < moveData.playerMessages.length; playerID++) {
-      lines.push(`    ${playerID}: ${JSON.stringify(moveData.playerMessages[playerID])}`);
+      lines.push(`    ${playerID}: ${formatPlayerOrWatcherMessage(moveData.playerMessages[playerID])}`);
     }
-    lines.push(`    w: ${JSON.stringify(moveData.watcherMessage)}`);
+    lines.push(`    w: ${formatPlayerOrWatcherMessage(moveData.watcherMessage)}`);
 
     lines.push('  history messages:');
     moveData.gameHistoryMessages.forEach((ghm) => {
@@ -369,6 +393,12 @@ function getRevealedTileRackTilesStringForPlayer(revealedTileRackTiles: MoveData
   }
 
   return parts.join(', ');
+}
+
+function formatPlayerOrWatcherMessage(message: any[]) {
+  message = [...message];
+  message[0] = GameAction.toObject(message[0]);
+  return JSON.stringify(message);
 }
 
 function getArrayFromRevealedTileRackTilesString(revealedTileRackTilesString: string) {
@@ -610,9 +640,10 @@ function getFormattedGameJSONLines(game: Game) {
 
   const lastGameActionIndex = gameActions.length - 1;
   for (let i = 0; i < gameActions.length; i++) {
-    const gameAction = gameActions[i];
+    const gameAction = [...gameActions[i]];
+    gameAction[0] = GameAction.toObject(gameAction[0]);
 
-    const json = JSON.stringify(gameAction).replace(/,(\d+)\]$/g, ', $1]');
+    const json = JSON.stringify(gameAction);
     const possibleTrailingComma = i !== lastGameActionIndex ? ',' : '';
     lines.push(`    ${json}${possibleTrailingComma}`);
   }

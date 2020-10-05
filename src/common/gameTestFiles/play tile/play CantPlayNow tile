@@ -91,9 +91,9 @@ action: 0 PurchaseShares L,C,T 0
   revealed tile bag tiles: 1A:0
   player ID with playable tile: 1
   messages:
-    0: [[[0,5,1],0],null,[],[0],1]
-    1: [[[0,5,1],0],null,[],[-1],1]
-    w: [[[0,5,1],0],null,[],[-1],1]
+    0: [{"purchaseShares":{"chains":[0,5,1],"endGame":false}},null,[],[0],1]
+    1: [{"purchaseShares":{"chains":[0,5,1],"endGame":false}},null,[],[-1],1]
+    w: [{"purchaseShares":{"chains":[0,5,1],"endGame":false}},null,[],[-1],1]
   history messages:
     0 PurchasedShares 1L,1T,1C
     0 DrewTile 1A
@@ -114,41 +114,41 @@ Game JSON:
   5,
   [93,20,48,37,16,35,61,51,82,44,102,21,107,73,13,6,46,31,67,30,63,84,54,40,96,74,83,87,0],
   [
-    [[]],
-    [[35]],
-    [[44]],
-    [[6]],
-    [[[],0]],
-    [[13]],
-    [[[6],0]],
-    [[21]],
-    [[5]],
-    [[[],0]],
-    [[46]],
-    [[[5],0]],
-    [[102]],
-    [[3]],
-    [[[],0]],
-    [[37]],
-    [[4]],
-    [[[3],0]],
-    [[82]],
-    [[[4],0]],
-    [[67]],
-    [[[],0]],
-    [[73]],
-    [[2]],
-    [[[],0]],
-    [[54]],
-    [[[2],0]],
-    [[31]],
-    [[[2,3,5],0]],
-    [[63]],
-    [[1]],
-    [[[1,2,4],0]],
-    [[40]],
-    [[[1,1,4],0]],
-    [[96]],
-    [[[0,5,1],0]]
+    [{"startGame":{}}],
+    [{"playTile":{"tile":35}}],
+    [{"playTile":{"tile":44}}],
+    [{"selectNewChain":{"chain":6}}],
+    [{"purchaseShares":{"endGame":false}}],
+    [{"playTile":{"tile":13}}],
+    [{"purchaseShares":{"chains":[6],"endGame":false}}],
+    [{"playTile":{"tile":21}}],
+    [{"selectNewChain":{"chain":5}}],
+    [{"purchaseShares":{"endGame":false}}],
+    [{"playTile":{"tile":46}}],
+    [{"purchaseShares":{"chains":[5],"endGame":false}}],
+    [{"playTile":{"tile":102}}],
+    [{"selectNewChain":{"chain":3}}],
+    [{"purchaseShares":{"endGame":false}}],
+    [{"playTile":{"tile":37}}],
+    [{"selectNewChain":{"chain":4}}],
+    [{"purchaseShares":{"chains":[3],"endGame":false}}],
+    [{"playTile":{"tile":82}}],
+    [{"purchaseShares":{"chains":[4],"endGame":false}}],
+    [{"playTile":{"tile":67}}],
+    [{"purchaseShares":{"endGame":false}}],
+    [{"playTile":{"tile":73}}],
+    [{"selectNewChain":{"chain":2}}],
+    [{"purchaseShares":{"endGame":false}}],
+    [{"playTile":{"tile":54}}],
+    [{"purchaseShares":{"chains":[2],"endGame":false}}],
+    [{"playTile":{"tile":31}}],
+    [{"purchaseShares":{"chains":[2,3,5],"endGame":false}}],
+    [{"playTile":{"tile":63}}],
+    [{"selectNewChain":{"chain":1}}],
+    [{"purchaseShares":{"chains":[1,2,4],"endGame":false}}],
+    [{"playTile":{"tile":40}}],
+    [{"purchaseShares":{"chains":[1,1,4],"endGame":false}}],
+    [{"playTile":{"tile":96}}],
+    [{"purchaseShares":{"chains":[0,5,1],"endGame":false}}]
   ]
 ]

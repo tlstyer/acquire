@@ -21,9 +21,9 @@ action: 1 StartGame
   revealed tile bag tiles: 2C:all, 2B:all, 1D:0, 2E:0, 7E:0, 7B:0, 11I:0, 12C:0, 3D:1, 2D:1, 8H:1, 10H:1, 2G:1, 8G:1
   player ID with playable tile: 0
   messages:
-    0: [[],null,[],[11,10,3,13,58,55,98,101,-1,-1,-1,-1,-1,-1],0]
-    1: [[],null,[],[11,10,-1,-1,-1,-1,-1,-1,21,12,70,88,15,69],0]
-    w: [[],null,[],[11,10,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1],0]
+    0: [{"startGame":{}},null,[],[11,10,3,13,58,55,98,101,-1,-1,-1,-1,-1,-1],0]
+    1: [{"startGame":{}},null,[],[11,10,-1,-1,-1,-1,-1,-1,21,12,70,88,15,69],0]
+    w: [{"startGame":{}},null,[],[11,10,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1],0]
   history messages:
     1 DrewPositionTile 2C
     0 DrewPositionTile 2B
@@ -60,9 +60,9 @@ action: 0 PlayTile 1D
   revealed tile bag tiles: 11A:0
   player ID with playable tile: 1
   messages:
-    0: [[3],null,[],[90],1]
-    1: [[3],null,[[3,0]],[-1],1]
-    w: [[3],null,[[3,0]],[-1],1]
+    0: [{"playTile":{"tile":3}},null,[],[90],1]
+    1: [{"playTile":{"tile":3}},null,[[3,0]],[-1],1]
+    w: [{"playTile":{"tile":3}},null,[[3,0]],[-1],1]
   history messages:
     0 PlayedTile 1D
     0 DrewTile 11A
@@ -86,9 +86,9 @@ action: 1 PlayTile 3D
   revealed tile bag tiles: 4B:1
   player ID with playable tile: 0
   messages:
-    0: [[21],null,[[21,1]],[-1],0]
-    1: [[21],null,[],[28],0]
-    w: [[21],null,[[21,1]],[-1],0]
+    0: [{"playTile":{"tile":21}},null,[[21,1]],[-1],0]
+    1: [{"playTile":{"tile":21}},null,[],[28],0]
+    w: [{"playTile":{"tile":21}},null,[[21,1]],[-1],0]
   history messages:
     1 PlayedTile 3D
     1 DrewTile 4B
@@ -113,9 +113,9 @@ action: 0 PlayTile 2E
   revealed tile bag tiles: 1A:0
   player ID with playable tile: 1
   messages:
-    0: [[13],1234567891011,[],[0],1]
-    1: [[13],1234567891011,[[13,0]],[-1],1]
-    w: [[13],1234567891011,[[13,0]],[-1],1]
+    0: [{"playTile":{"tile":13}},1234567891011,[],[0],1]
+    1: [{"playTile":{"tile":13}},1234567891011,[[13,0]],[-1],1]
+    w: [{"playTile":{"tile":13}},1234567891011,[[13,0]],[-1],1]
   history messages:
     0 PlayedTile 2E
     0 DrewTile 1A
@@ -138,9 +138,9 @@ action: 1 PlayTile 2D
     1: 4B(l) none 8H(h) 10H(l) 2G(l) 8G(h)
   revealed tile rack tiles: 2D:1
   messages:
-    0: [[12],2020,[[12,1]]]
-    1: [[12],2020]
-    w: [[12],2020,[[12,1]]]
+    0: [{"playTile":{"tile":12}},2020,[[12,1]]]
+    1: [{"playTile":{"tile":12}},2020]
+    w: [{"playTile":{"tile":12}},2020,[[12,1]]]
   history messages:
     1 PlayedTile 2D
   next action: 1 SelectNewChain L,T,A,F,W,C,I
@@ -159,9 +159,9 @@ action: 1 SelectNewChain L
     0: 11A(l) 1A(l) 7E(l) 7B(l) 11I(l) 12C(l)
     1: 4B(l) none 8H(h) 10H(l) 2G(l) 8G(h)
   messages:
-    0: [[0]]
-    1: [[0]]
-    w: [[0]]
+    0: [{"selectNewChain":{"chain":0}}]
+    1: [{"selectNewChain":{"chain":0}}]
+    w: [{"selectNewChain":{"chain":0}}]
   history messages:
     1 FormedChain L
   next action: 1 PurchaseShares
@@ -177,11 +177,11 @@ Game JSON:
   7,
   [11,10,3,13,58,55,98,101,21,12,70,88,15,69,90,28,0,26],
   [
-    [[]],
-    [[3]],
-    [[21]],
-    [[13], 1234567891011],
-    [[12], 2020],
-    [[0]]
+    [{"startGame":{}}],
+    [{"playTile":{"tile":3}}],
+    [{"playTile":{"tile":21}}],
+    [{"playTile":{"tile":13}},1234567891011],
+    [{"playTile":{"tile":12}},2020],
+    [{"selectNewChain":{"chain":0}}]
   ]
 ]
