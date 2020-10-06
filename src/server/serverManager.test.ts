@@ -1,26 +1,26 @@
-import { Connection } from 'sockjs';
+import * as WebSocket from 'ws';
 import { GameSetupChangeEnum, MessageToClientEnum, MessageToServerEnum } from '../common/enums';
 import { ErrorCode, GameAction, GameMode, PlayerArrangementMode } from '../common/pb';
-import { Client, ConnectionState, GameData, ServerManager, User } from './serverManager';
+import { ConnectionState, GameData, ServerManager, User } from './serverManager';
 import { TestUserDataProvider } from './userDataProvider';
 
 class TestServer {
-  connectionListener: ((conn: TestConnection) => any) | null = null;
+  connectionListener: ((conn: TestWebSocket) => any) | null = null;
 
-  on(event: string, listener: (conn: TestConnection) => any) {
+  on(event: string, listener: (conn: TestWebSocket) => any) {
     if (event === 'connection') {
       this.connectionListener = listener;
     }
   }
 
-  openConnection(conn: TestConnection) {
+  openConnection(conn: TestWebSocket) {
     if (this.connectionListener) {
       this.connectionListener(conn);
     }
   }
 }
 
-class TestConnection {
+class TestWebSocket {
   dataListener: ((message: string) => any) | null = null;
   closeListener: (() => void) | null = null;
 
@@ -31,14 +31,14 @@ class TestConnection {
   constructor(public id: string) {}
 
   on(event: string, listener: any) {
-    if (event === 'data') {
+    if (event === 'message') {
       this.dataListener = listener;
     } else if (event === 'close') {
       this.closeListener = listener;
     }
   }
 
-  write(message: string) {
+  send(message: string) {
     this.receivedMessages.push(JSON.parse(message));
   }
 
@@ -119,7 +119,7 @@ async function getServerManagerAndStuffAfterGameStarted() {
 }
 
 class ClientData {
-  constructor(public clientID: number, public connection: TestConnection, public gameID?: number) {}
+  constructor(public clientID: number, public webSocket: TestWebSocket, public gameID?: number) {}
 }
 
 class UserData {
@@ -133,7 +133,7 @@ class GameDataData {
 // UCR = Un-Circular-Reference-ified
 
 class UCRClient {
-  constructor(public clientID: number, public connection: Connection, public gameID: number | null, public userID: number) {}
+  constructor(public clientID: number, public webSocket: WebSocket, public gameID: number | null, public userID: number) {}
 }
 
 class UCRUser {
@@ -146,12 +146,12 @@ class UCRGameData {
   constructor(public gameID: number, public gameDisplayNumber: number, public userIDs: Set<number>) {}
 }
 
-type ConnectionIDToUCRClient = Map<string, UCRClient>;
+type WebSocketIDToUCRClient = Map<number, UCRClient>;
 type UserIDToUCRUser = Map<number, UCRUser>;
 type GameIDTOUCRGameData = Map<number, UCRGameData>;
 
 function expectClientAndUserAndGameData(serverManager: ServerManager, userDatas: UserData[], gameDataDatas: GameDataData[]) {
-  const connectionIDToUCRClient: ConnectionIDToUCRClient = new Map();
+  const webSocketIDToUCRClient: WebSocketIDToUCRClient = new Map();
   const userIDToUCRUser: UserIDToUCRUser = new Map();
   const gameIDTOUCRGameData: GameIDTOUCRGameData = new Map();
   const gameDisplayNumberTOUCRGameData: GameIDTOUCRGameData = new Map();
@@ -168,10 +168,10 @@ function expectClientAndUserAndGameData(serverManager: ServerManager, userDatas:
 
     userData.clientDatas.forEach((clientData) => {
       // @ts-ignore
-      const connection: Connection = clientData.connection;
+      const webSocket: WebSocket = clientData.webSocket;
       const gameID = clientData.gameID !== undefined ? clientData.gameID : null;
 
-      connectionIDToUCRClient.set(clientData.connection.id, new UCRClient(clientData.clientID, connection, gameID, userData.userID));
+      webSocketIDToUCRClient.set(serverManager.webSocketToID.get(webSocket)!, new UCRClient(clientData.clientID, webSocket, gameID, userData.userID));
       if (clientData.gameID !== undefined) {
         gameIDTOUCRGameData.get(clientData.gameID)!.clientIDs.add(clientData.clientID);
       }
@@ -194,19 +194,19 @@ function expectClientAndUserAndGameData(serverManager: ServerManager, userDatas:
     });
   });
 
-  expect(uncircularreferenceifyConnectionIDToClient(serverManager.connectionIDToClient)).toEqual(connectionIDToUCRClient);
+  expect(uncircularreferenceifyWebSocketIDToUCRClient(serverManager)).toEqual(webSocketIDToUCRClient);
   expect(uncircularreferenceifyUserIDToUser(serverManager.userIDToUser)).toEqual(userIDToUCRUser);
   expect(uncircularreferenceifyGameIDToGameData(serverManager.gameIDToGameData)).toEqual(gameIDTOUCRGameData);
   expect(uncircularreferenceifyGameIDToGameData(serverManager.gameDisplayNumberToGameData)).toEqual(gameDisplayNumberTOUCRGameData);
 }
 
-function uncircularreferenceifyConnectionIDToClient(connectionIDToClient: Map<string, Client>) {
-  const connectionIDToUCRClient: ConnectionIDToUCRClient = new Map();
+function uncircularreferenceifyWebSocketIDToUCRClient(serverManager: ServerManager) {
+  const connectionIDToUCRClient: WebSocketIDToUCRClient = new Map();
 
-  connectionIDToClient.forEach((client, connectionID) => {
+  serverManager.webSocketToClient.forEach((client) => {
     const gameID = client.gameData !== null ? client.gameData.id : null;
 
-    connectionIDToUCRClient.set(connectionID, new UCRClient(client.id, client.connection, gameID, client.user.id));
+    connectionIDToUCRClient.set(serverManager.webSocketToID.get(client.webSocket)!, new UCRClient(client.id, client.webSocket, gameID, client.user.id));
   });
 
   return connectionIDToUCRClient;
@@ -252,18 +252,18 @@ function uncircularreferenceifyGameIDToGameData(gameIDToGameData: Map<number, Ga
 }
 
 async function connectToServer(server: TestServer, username: string) {
-  const connection = new TestConnection(username);
-  server.openConnection(connection);
-  connection.sendMessage([0, username, '', []]);
+  const webSocket = new TestWebSocket(username);
+  server.openConnection(webSocket);
+  webSocket.sendMessage([0, username, '', []]);
   await new Promise((resolve) => setTimeout(resolve, 0));
 
-  return connection;
+  return webSocket;
 }
 
-function expectClientKickedDueToInvalidMessage(connection: TestConnection) {
-  expect(connection.receivedMessages.length).toBe(1);
-  expect(connection.receivedMessages[0]).toEqual([[MessageToClientEnum.FatalError, ErrorCode.INVALID_MESSAGE]]);
-  expect(connection.readyState).toBe(WebSocket.CLOSED);
+function expectClientKickedDueToInvalidMessage(webSocket: TestWebSocket) {
+  expect(webSocket.receivedMessages.length).toBe(1);
+  expect(webSocket.receivedMessages[0]).toEqual([[MessageToClientEnum.FatalError, ErrorCode.INVALID_MESSAGE]]);
+  expect(webSocket.readyState).toBe(WebSocket.CLOSED);
 }
 
 async function expectKicksClientDueToInvalidMessage(message: any[]) {
@@ -281,73 +281,63 @@ describe('when not sending first message', () => {
   test('can open connections and then close them', () => {
     const { serverManager, server } = getServerManagerAndStuff();
 
-    const connection1 = new TestConnection('connection ID 1');
-    server.openConnection(connection1);
+    const webSocket1 = new TestWebSocket('connection ID 1');
+    server.openConnection(webSocket1);
 
-    expect(serverManager.connectionIDToConnectionState).toEqual(new Map([[connection1.id, ConnectionState.WaitingForFirstMessage]]));
-    expect(serverManager.connectionIDToPreLoggedInConnection).toEqual(new Map([[connection1.id, connection1]]));
+    expect(serverManager.webSocketToConnectionState).toEqual(new Map([[webSocket1, ConnectionState.WaitingForFirstMessage]]));
+    expect(serverManager.preLoggedInWebSockets).toEqual(new Set([webSocket1]));
 
-    const connection2 = new TestConnection('connection ID 2');
-    server.openConnection(connection2);
+    const webSocket2 = new TestWebSocket('connection ID 2');
+    server.openConnection(webSocket2);
 
-    expect(serverManager.connectionIDToConnectionState).toEqual(
+    expect(serverManager.webSocketToConnectionState).toEqual(
       new Map([
-        [connection1.id, ConnectionState.WaitingForFirstMessage],
-        [connection2.id, ConnectionState.WaitingForFirstMessage],
+        [webSocket1, ConnectionState.WaitingForFirstMessage],
+        [webSocket2, ConnectionState.WaitingForFirstMessage],
       ]),
     );
-    expect(serverManager.connectionIDToPreLoggedInConnection).toEqual(
-      new Map([
-        [connection1.id, connection1],
-        [connection2.id, connection2],
-      ]),
-    );
+    expect(serverManager.preLoggedInWebSockets).toEqual(new Set([webSocket1, webSocket2]));
 
-    connection1.close();
+    webSocket1.close();
 
-    expect(serverManager.connectionIDToConnectionState).toEqual(new Map([[connection2.id, ConnectionState.WaitingForFirstMessage]]));
-    expect(serverManager.connectionIDToPreLoggedInConnection).toEqual(new Map([[connection2.id, connection2]]));
+    expect(serverManager.webSocketToConnectionState).toEqual(new Map([[webSocket2, ConnectionState.WaitingForFirstMessage]]));
+    expect(serverManager.preLoggedInWebSockets).toEqual(new Set([webSocket2]));
 
-    connection2.close();
+    webSocket2.close();
 
-    expect(serverManager.connectionIDToConnectionState).toEqual(new Map());
-    expect(serverManager.connectionIDToPreLoggedInConnection).toEqual(new Map());
+    expect(serverManager.webSocketToConnectionState).toEqual(new Map());
+    expect(serverManager.preLoggedInWebSockets).toEqual(new Set());
   });
 
   test('closing already closed connection does nothing', () => {
     const { serverManager, server } = getServerManagerAndStuff();
 
-    const connection1 = new TestConnection('connection ID 1');
-    server.openConnection(connection1);
+    const webSocket1 = new TestWebSocket('connection ID 1');
+    server.openConnection(webSocket1);
 
-    expect(serverManager.connectionIDToConnectionState).toEqual(new Map([[connection1.id, ConnectionState.WaitingForFirstMessage]]));
-    expect(serverManager.connectionIDToPreLoggedInConnection).toEqual(new Map([[connection1.id, connection1]]));
+    expect(serverManager.webSocketToConnectionState).toEqual(new Map([[webSocket1, ConnectionState.WaitingForFirstMessage]]));
+    expect(serverManager.preLoggedInWebSockets).toEqual(new Set([webSocket1]));
 
-    const connection2 = new TestConnection('connection ID 2');
-    server.openConnection(connection2);
+    const webSocket2 = new TestWebSocket('connection ID 2');
+    server.openConnection(webSocket2);
 
-    expect(serverManager.connectionIDToConnectionState).toEqual(
+    expect(serverManager.webSocketToConnectionState).toEqual(
       new Map([
-        [connection1.id, ConnectionState.WaitingForFirstMessage],
-        [connection2.id, ConnectionState.WaitingForFirstMessage],
+        [webSocket1, ConnectionState.WaitingForFirstMessage],
+        [webSocket2, ConnectionState.WaitingForFirstMessage],
       ]),
     );
-    expect(serverManager.connectionIDToPreLoggedInConnection).toEqual(
-      new Map([
-        [connection1.id, connection1],
-        [connection2.id, connection2],
-      ]),
-    );
+    expect(serverManager.preLoggedInWebSockets).toEqual(new Set([webSocket1, webSocket2]));
 
-    connection1.close();
+    webSocket1.close();
 
-    expect(serverManager.connectionIDToConnectionState).toEqual(new Map([[connection2.id, ConnectionState.WaitingForFirstMessage]]));
-    expect(serverManager.connectionIDToPreLoggedInConnection).toEqual(new Map([[connection2.id, connection2]]));
+    expect(serverManager.webSocketToConnectionState).toEqual(new Map([[webSocket2, ConnectionState.WaitingForFirstMessage]]));
+    expect(serverManager.preLoggedInWebSockets).toEqual(new Set([webSocket2]));
 
-    connection1.close();
+    webSocket1.close();
 
-    expect(serverManager.connectionIDToConnectionState).toEqual(new Map([[connection2.id, ConnectionState.WaitingForFirstMessage]]));
-    expect(serverManager.connectionIDToPreLoggedInConnection).toEqual(new Map([[connection2.id, connection2]]));
+    expect(serverManager.webSocketToConnectionState).toEqual(new Map([[webSocket2, ConnectionState.WaitingForFirstMessage]]));
+    expect(serverManager.preLoggedInWebSockets).toEqual(new Set([webSocket2]));
   });
 });
 
@@ -359,14 +349,14 @@ describe('when sending first message', () => {
       await userDataProvider.createUser('has password', 'password');
       await userDataProvider.createUser('does not have password', null);
 
-      const connection = new TestConnection('connection');
-      server.openConnection(connection);
-      connection.sendMessage(inputMessage);
+      const webSocket = new TestWebSocket('connection');
+      server.openConnection(webSocket);
+      webSocket.sendMessage(inputMessage);
 
       await new Promise((resolve) => setTimeout(resolve, 0));
 
-      expect(connection.receivedMessages).toEqual([[[MessageToClientEnum.FatalError, outputErrorCode]]]);
-      expect(connection.readyState).toBe(WebSocket.CLOSED);
+      expect(webSocket.receivedMessages).toEqual([[[MessageToClientEnum.FatalError, outputErrorCode]]]);
+      expect(webSocket.readyState).toBe(WebSocket.CLOSED);
     }
 
     test('after sending invalid JSON', async () => {
@@ -437,64 +427,64 @@ describe('when sending first message', () => {
       await userDataProvider.createUser('has password', 'password');
       await userDataProvider.createUser('does not have password', null);
 
-      const connection1 = new TestConnection('connection 1');
-      server.openConnection(connection1);
-      connection1.sendMessage([0, username, password, []]);
+      const webSocket1 = new TestWebSocket('connection 1');
+      server.openConnection(webSocket1);
+      webSocket1.sendMessage([0, username, password, []]);
       await new Promise((resolve) => setTimeout(resolve, 0));
 
       function expectJustConnection1Data() {
-        expect(serverManager.connectionIDToConnectionState).toEqual(new Map([[connection1.id, ConnectionState.LoggedIn]]));
-        expect(serverManager.connectionIDToPreLoggedInConnection).toEqual(new Map());
+        expect(serverManager.webSocketToConnectionState).toEqual(new Map([[webSocket1, ConnectionState.LoggedIn]]));
+        expect(serverManager.preLoggedInWebSockets).toEqual(new Set());
         expect(serverManager.clientIDManager.used).toEqual(new Set([1]));
-        expectClientAndUserAndGameData(serverManager, [new UserData(expectedUserID, username, [new ClientData(1, connection1)])], []);
-        expect(connection1.readyState).toBe(WebSocket.OPEN);
+        expectClientAndUserAndGameData(serverManager, [new UserData(expectedUserID, username, [new ClientData(1, webSocket1)])], []);
+        expect(webSocket1.readyState).toBe(WebSocket.OPEN);
       }
       expectJustConnection1Data();
-      expect(connection1.receivedMessages.length).toBe(1);
-      expect(connection1.receivedMessages[0]).toEqual([[MessageToClientEnum.Greetings, 1, [[expectedUserID, username, [[1]]]], []]]);
+      expect(webSocket1.receivedMessages.length).toBe(1);
+      expect(webSocket1.receivedMessages[0]).toEqual([[MessageToClientEnum.Greetings, 1, [[expectedUserID, username, [[1]]]], []]]);
 
-      const connection2 = new TestConnection('connection 2');
-      server.openConnection(connection2);
-      connection2.sendMessage([0, username, password, []]);
+      const webSocket2 = new TestWebSocket('connection 2');
+      server.openConnection(webSocket2);
+      webSocket2.sendMessage([0, username, password, []]);
       await new Promise((resolve) => setTimeout(resolve, 0));
 
-      expect(serverManager.connectionIDToConnectionState).toEqual(
+      expect(serverManager.webSocketToConnectionState).toEqual(
         new Map([
-          [connection1.id, ConnectionState.LoggedIn],
-          [connection2.id, ConnectionState.LoggedIn],
+          [webSocket1, ConnectionState.LoggedIn],
+          [webSocket2, ConnectionState.LoggedIn],
         ]),
       );
-      expect(serverManager.connectionIDToPreLoggedInConnection).toEqual(new Map());
+      expect(serverManager.preLoggedInWebSockets).toEqual(new Set());
       expect(serverManager.clientIDManager.used).toEqual(new Set([1, 2]));
       expectClientAndUserAndGameData(
         serverManager,
-        [new UserData(expectedUserID, username, [new ClientData(1, connection1), new ClientData(2, connection2)])],
+        [new UserData(expectedUserID, username, [new ClientData(1, webSocket1), new ClientData(2, webSocket2)])],
         [],
       );
-      expect(connection1.readyState).toBe(WebSocket.OPEN);
-      expect(connection2.readyState).toBe(WebSocket.OPEN);
-      expect(connection1.receivedMessages.length).toBe(2);
-      expect(connection1.receivedMessages[1]).toEqual([[MessageToClientEnum.ClientConnected, 2, expectedUserID]]);
-      expect(connection2.receivedMessages.length).toBe(1);
-      expect(connection2.receivedMessages[0]).toEqual([[MessageToClientEnum.Greetings, 2, [[expectedUserID, username, [[1], [2]]]], []]]);
+      expect(webSocket1.readyState).toBe(WebSocket.OPEN);
+      expect(webSocket2.readyState).toBe(WebSocket.OPEN);
+      expect(webSocket1.receivedMessages.length).toBe(2);
+      expect(webSocket1.receivedMessages[1]).toEqual([[MessageToClientEnum.ClientConnected, 2, expectedUserID]]);
+      expect(webSocket2.receivedMessages.length).toBe(1);
+      expect(webSocket2.receivedMessages[0]).toEqual([[MessageToClientEnum.Greetings, 2, [[expectedUserID, username, [[1], [2]]]], []]]);
 
-      connection2.close();
+      webSocket2.close();
 
       expectJustConnection1Data();
-      expect(connection2.readyState).toBe(WebSocket.CLOSED);
-      expect(connection1.receivedMessages.length).toBe(3);
-      expect(connection1.receivedMessages[2]).toEqual([[MessageToClientEnum.ClientDisconnected, 2]]);
-      expect(connection2.receivedMessages.length).toBe(1);
+      expect(webSocket2.readyState).toBe(WebSocket.CLOSED);
+      expect(webSocket1.receivedMessages.length).toBe(3);
+      expect(webSocket1.receivedMessages[2]).toEqual([[MessageToClientEnum.ClientDisconnected, 2]]);
+      expect(webSocket2.receivedMessages.length).toBe(1);
 
-      connection1.close();
+      webSocket1.close();
 
-      expect(serverManager.connectionIDToConnectionState).toEqual(new Map([]));
-      expect(serverManager.connectionIDToPreLoggedInConnection).toEqual(new Map());
+      expect(serverManager.webSocketToConnectionState).toEqual(new Map([]));
+      expect(serverManager.preLoggedInWebSockets).toEqual(new Set());
       expect(serverManager.clientIDManager.used).toEqual(new Set());
       expectClientAndUserAndGameData(serverManager, [], []);
-      expect(connection1.readyState).toBe(WebSocket.CLOSED);
-      expect(connection1.receivedMessages.length).toBe(3);
-      expect(connection2.receivedMessages.length).toBe(1);
+      expect(webSocket1.readyState).toBe(WebSocket.CLOSED);
+      expect(webSocket1.receivedMessages.length).toBe(3);
+      expect(webSocket2.receivedMessages.length).toBe(1);
     }
 
     test('after providing correct password', async () => {

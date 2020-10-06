@@ -96,36 +96,6 @@ function getProductionConfig(APP) {
   const packageVersionLookup = getPackageVersionLookup();
   const shortCSSNameLookup = getShortCSSNameLookup();
 
-  const externals = [
-    {
-      module: 'immutable',
-      global: 'Immutable',
-      entry: `https://unpkg.com/immutable@${packageVersionLookup['immutable']}/dist/immutable.min.js`,
-    },
-    {
-      module: 'protobufjs/minimal',
-      global: 'protobuf',
-      entry: `https://unpkg.com/protobufjs@${packageVersionLookup['protobufjs']}/dist/minimal/protobuf.min.js`,
-    },
-    {
-      module: 'react',
-      global: 'React',
-      entry: `https://unpkg.com/react@${packageVersionLookup['react']}/umd/react.production.min.js`,
-    },
-    {
-      module: 'react-dom',
-      global: 'ReactDOM',
-      entry: `https://unpkg.com/react-dom@${packageVersionLookup['react-dom']}/umd/react-dom.production.min.js`,
-    },
-  ];
-  if (APP === 'index') {
-    externals.push({
-      module: 'sockjs-client',
-      global: 'SockJS',
-      entry: `https://unpkg.com/sockjs-client@${packageVersionLookup['sockjs-client']}/dist/sockjs.min.js`,
-    });
-  }
-
   return {
     entry: {
       app: `./src/client/${APP}.tsx`,
@@ -158,7 +128,28 @@ function getProductionConfig(APP) {
         },
       }),
       new HtmlWebpackExternalsPlugin({
-        externals,
+        externals: [
+          {
+            module: 'immutable',
+            global: 'Immutable',
+            entry: `https://unpkg.com/immutable@${packageVersionLookup['immutable']}/dist/immutable.min.js`,
+          },
+          {
+            module: 'protobufjs/minimal',
+            global: 'protobuf',
+            entry: `https://unpkg.com/protobufjs@${packageVersionLookup['protobufjs']}/dist/minimal/protobuf.min.js`,
+          },
+          {
+            module: 'react',
+            global: 'React',
+            entry: `https://unpkg.com/react@${packageVersionLookup['react']}/umd/react.production.min.js`,
+          },
+          {
+            module: 'react-dom',
+            global: 'ReactDOM',
+            entry: `https://unpkg.com/react-dom@${packageVersionLookup['react-dom']}/umd/react-dom.production.min.js`,
+          },
+        ],
       }),
       new MiniCssExtractPlugin({
         filename: `${APP}.[contenthash].css`,

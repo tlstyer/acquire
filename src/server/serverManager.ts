@@ -1,4 +1,4 @@
-import { Connection, Server } from 'sockjs';
+import * as WebSocket from 'ws';
 import { MessageToClientEnum, MessageToServerEnum } from '../common/enums';
 import { Game } from '../common/game';
 import { GameSetup } from '../common/gameSetup';
@@ -15,12 +15,14 @@ export enum ConnectionState {
 }
 
 export class ServerManager {
-  connectionIDToConnectionState = new Map<string, ConnectionState>();
+  nextWebSocketID = 1;
+  webSocketToID = new WeakMap<WebSocket, number>();
 
-  connectionIDToPreLoggedInConnection = new Map<string, Connection>();
+  webSocketToConnectionState = new Map<WebSocket, ConnectionState>();
+  preLoggedInWebSockets = new Set<WebSocket>();
 
   clientIDManager = new ReuseIDManager(60000);
-  connectionIDToClient = new Map<string, Client>();
+  webSocketToClient = new Map<WebSocket, Client>();
   userIDToUser = new Map<number, User>();
 
   gameDisplayNumberManager = new ReuseIDManager(60000);
@@ -31,7 +33,12 @@ export class ServerManager {
 
   lastLogMessageTime = 0;
 
-  constructor(public server: Server, public userDataProvider: UserDataProvider, public nextGameID: number, public logger: (message: string) => void) {
+  constructor(
+    public webSocketServer: WebSocket.Server,
+    public userDataProvider: UserDataProvider,
+    public nextGameID: number,
+    public logger: (message: string) => void,
+  ) {
     this.onMessageFunctions = new Map([
       [MessageToServerEnum.CreateGame, this.onMessageCreateGame],
       [MessageToServerEnum.EnterGame, this.onMessageEnterGame],
@@ -48,38 +55,33 @@ export class ServerManager {
   }
 
   manage() {
-    this.server.on('connection', (connection) => {
-      this.logMessage(
-        LogMessage.Connected,
-        connection.id,
-        connection.headers,
-        connection.pathname,
-        connection.protocol,
-        connection.remoteAddress,
-        connection.remotePort,
-      );
+    this.webSocketServer.on('connection', (webSocket, incomingMessage) => {
+      const webSocketID = this.nextWebSocketID++;
+      this.webSocketToID.set(webSocket, webSocketID);
 
-      this.addConnection(connection);
+      this.logMessage(LogMessage.Connected, webSocketID, incomingMessage?.headers, incomingMessage?.socket?.remoteAddress, incomingMessage?.socket?.remotePort);
 
-      connection.on('data', (messageString) => {
+      this.addConnection(webSocket);
+
+      webSocket.on('message', (messageString) => {
         let message: any[];
         try {
-          message = JSON.parse(messageString);
+          message = JSON.parse(messageString.toString());
         } catch (error) {
-          this.logMessage(LogMessage.MessageThatIsNotJSON, connection.id, messageString);
+          this.logMessage(LogMessage.MessageThatIsNotJSON, webSocketID, messageString);
 
-          this.kickWithError(connection, ErrorCode.INVALID_MESSAGE_FORMAT);
+          this.kickWithError(webSocket, ErrorCode.INVALID_MESSAGE_FORMAT);
           return;
         }
 
         if (!Array.isArray(message)) {
-          this.logMessage(LogMessage.MessageThatIsNotAnArray, connection.id, message);
+          this.logMessage(LogMessage.MessageThatIsNotAnArray, webSocketID, message);
 
-          this.kickWithError(connection, ErrorCode.INVALID_MESSAGE_FORMAT);
+          this.kickWithError(webSocket, ErrorCode.INVALID_MESSAGE_FORMAT);
           return;
         }
 
-        const client = this.connectionIDToClient.get(connection.id);
+        const client = this.webSocketToClient.get(webSocket);
         if (client !== undefined) {
           this.logMessage(LogMessage.MessageWhileLoggedIn, client.id, message);
         } else {
@@ -89,10 +91,10 @@ export class ServerManager {
             sanitizedMessage[2] = '***';
           }
 
-          this.logMessage(LogMessage.MessageWhileNotLoggedIn, connection.id, sanitizedMessage);
+          this.logMessage(LogMessage.MessageWhileNotLoggedIn, webSocketID, sanitizedMessage);
         }
 
-        const connectionState = this.connectionIDToConnectionState.get(connection.id);
+        const connectionState = this.webSocketToConnectionState.get(webSocket);
 
         if (connectionState === ConnectionState.LoggedIn && client !== undefined) {
           const handler = this.onMessageFunctions.get(message[0]);
@@ -102,25 +104,25 @@ export class ServerManager {
 
             this.sendAllQueuedMessages();
           } else {
-            this.kickWithError(connection, ErrorCode.INVALID_MESSAGE);
+            this.kickWithError(webSocket, ErrorCode.INVALID_MESSAGE);
           }
         } else if (connectionState === ConnectionState.WaitingForFirstMessage) {
-          this.connectionIDToConnectionState.set(connection.id, ConnectionState.ProcessingFirstMessage);
+          this.webSocketToConnectionState.set(webSocket, ConnectionState.ProcessingFirstMessage);
 
           // eslint-disable-next-line @typescript-eslint/no-floating-promises
-          this.processFirstMessage(connection, message);
+          this.processFirstMessage(webSocket, message);
         }
       });
 
-      connection.on('close', () => {
-        const client = this.connectionIDToClient.get(connection.id);
+      webSocket.on('close', () => {
+        const client = this.webSocketToClient.get(webSocket);
         if (client !== undefined) {
-          this.logMessage(LogMessage.Disconnected, connection.id, client.id, client.user.id, client.user.name);
+          this.logMessage(LogMessage.Disconnected, webSocketID, client.id, client.user.id, client.user.name);
         } else {
-          this.logMessage(LogMessage.Disconnected, connection.id);
+          this.logMessage(LogMessage.Disconnected, webSocketID);
         }
 
-        this.removeConnection(connection);
+        this.removeConnection(webSocket);
 
         this.sendAllQueuedMessages();
       });
@@ -128,81 +130,81 @@ export class ServerManager {
   }
 
   sendAllQueuedMessages() {
-    this.connectionIDToClient.forEach((aClient) => {
+    this.webSocketToClient.forEach((aClient) => {
       aClient.sendQueuedMessages();
     });
   }
 
-  addConnection(connection: Connection) {
-    this.connectionIDToConnectionState.set(connection.id, ConnectionState.WaitingForFirstMessage);
-    this.connectionIDToPreLoggedInConnection.set(connection.id, connection);
+  addConnection(webSocket: WebSocket) {
+    this.webSocketToConnectionState.set(webSocket, ConnectionState.WaitingForFirstMessage);
+    this.preLoggedInWebSockets.add(webSocket);
   }
 
-  removeConnection(connection: Connection) {
-    const connectionState = this.connectionIDToConnectionState.get(connection.id);
+  removeConnection(webSocket: WebSocket) {
+    const connectionState = this.webSocketToConnectionState.get(webSocket);
     if (connectionState === undefined) {
       return;
     }
 
-    this.connectionIDToConnectionState.delete(connection.id);
+    this.webSocketToConnectionState.delete(webSocket);
 
     if (connectionState === ConnectionState.LoggedIn) {
-      const client = this.connectionIDToClient.get(connection.id);
+      const client = this.webSocketToClient.get(webSocket);
       if (client === undefined) {
         return;
       }
 
       this.clientIDManager.returnID(client.id);
 
-      this.connectionIDToClient.delete(connection.id);
+      this.webSocketToClient.delete(webSocket);
 
       const user = client.user;
       user.clients.delete(client);
       this.deleteUserIfItDoesNotHaveReferences(user);
 
       const messageToOtherClients = JSON.stringify([MessageToClientEnum.ClientDisconnected, client.id]);
-      this.connectionIDToClient.forEach((otherClient) => {
+      this.webSocketToClient.forEach((otherClient) => {
         otherClient.queueMessage(messageToOtherClients);
       });
     } else {
-      this.connectionIDToPreLoggedInConnection.delete(connection.id);
+      this.preLoggedInWebSockets.delete(webSocket);
     }
   }
 
-  kickWithError(connection: Connection, errorCode: ErrorCode) {
-    this.logMessage(LogMessage.KickedWithError, connection.id, errorCode);
+  kickWithError(webSocket: WebSocket, errorCode: ErrorCode) {
+    this.logMessage(LogMessage.KickedWithError, this.webSocketToID.get(webSocket), errorCode);
 
-    connection.write(JSON.stringify([[MessageToClientEnum.FatalError, errorCode]]));
-    connection.close();
+    webSocket.send(JSON.stringify([[MessageToClientEnum.FatalError, errorCode]]));
+    webSocket.close();
   }
 
-  async processFirstMessage(connection: Connection, message: any[]) {
+  async processFirstMessage(webSocket: WebSocket, message: any[]) {
     if (message.length !== 4) {
-      this.kickWithError(connection, ErrorCode.INVALID_MESSAGE_FORMAT);
+      this.kickWithError(webSocket, ErrorCode.INVALID_MESSAGE_FORMAT);
       return;
     }
 
     const version: number = message[0];
     if (version !== 0) {
-      this.kickWithError(connection, ErrorCode.NOT_USING_LATEST_VERSION);
+      this.kickWithError(webSocket, ErrorCode.NOT_USING_LATEST_VERSION);
       return;
     }
 
     const username: string = message[1];
     if (username.length === 0 || username.length > 32 || !isASCII(username)) {
-      this.kickWithError(connection, ErrorCode.INVALID_USERNAME);
+      this.kickWithError(webSocket, ErrorCode.INVALID_USERNAME);
       return;
     }
 
     const password: string = message[2];
     if (typeof password !== 'string') {
-      this.kickWithError(connection, ErrorCode.INVALID_MESSAGE_FORMAT);
+      this.kickWithError(webSocket, ErrorCode.INVALID_MESSAGE_FORMAT);
       return;
     }
 
     const gameDataArray: any[] = message[3];
     if (!Array.isArray(gameDataArray)) {
-      this.kickWithError(connection, ErrorCode.INVALID_MESSAGE_FORMAT);
+      this.kickWithError(webSocket, ErrorCode.INVALID_MESSAGE_FORMAT);
       return;
     }
 
@@ -210,7 +212,7 @@ export class ServerManager {
     try {
       userData = await this.userDataProvider.lookupUser(username);
     } catch (error) {
-      this.kickWithError(connection, ErrorCode.INTERNAL_SERVER_ERROR);
+      this.kickWithError(webSocket, ErrorCode.INTERNAL_SERVER_ERROR);
       return;
     }
 
@@ -219,17 +221,17 @@ export class ServerManager {
     if (userData !== null) {
       if (userData.hasPassword) {
         if (password.length === 0) {
-          this.kickWithError(connection, ErrorCode.MISSING_PASSWORD);
+          this.kickWithError(webSocket, ErrorCode.MISSING_PASSWORD);
           return;
         } else if (!userData.verifyPassword(password)) {
-          this.kickWithError(connection, ErrorCode.INCORRECT_PASSWORD);
+          this.kickWithError(webSocket, ErrorCode.INCORRECT_PASSWORD);
           return;
         } else {
           userID = userData.userID;
         }
       } else {
         if (password.length > 0) {
-          this.kickWithError(connection, ErrorCode.PROVIDED_PASSWORD);
+          this.kickWithError(webSocket, ErrorCode.PROVIDED_PASSWORD);
           return;
         } else {
           userID = userData.userID;
@@ -237,21 +239,21 @@ export class ServerManager {
       }
     } else {
       if (password.length > 0) {
-        this.kickWithError(connection, ErrorCode.PROVIDED_PASSWORD);
+        this.kickWithError(webSocket, ErrorCode.PROVIDED_PASSWORD);
         return;
       } else {
         try {
           userID = await this.userDataProvider.createUser(username, null);
         } catch (error) {
-          this.kickWithError(connection, ErrorCode.INTERNAL_SERVER_ERROR);
+          this.kickWithError(webSocket, ErrorCode.INTERNAL_SERVER_ERROR);
           return;
         }
       }
     }
 
-    this.connectionIDToConnectionState.set(connection.id, ConnectionState.LoggedIn);
+    this.webSocketToConnectionState.set(webSocket, ConnectionState.LoggedIn);
 
-    this.connectionIDToPreLoggedInConnection.delete(connection.id);
+    this.preLoggedInWebSockets.delete(webSocket);
 
     let user = this.userIDToUser.get(userID);
     let isNewUser = false;
@@ -261,8 +263,8 @@ export class ServerManager {
       isNewUser = true;
     }
 
-    const client = new Client(this.clientIDManager.getID(), connection, user);
-    this.connectionIDToClient.set(connection.id, client);
+    const client = new Client(this.clientIDManager.getID(), webSocket, user);
+    this.webSocketToClient.set(webSocket, client);
     user.clients.add(client);
 
     client.queueMessage(this.getGreetingsMessage(gameDataArray, client));
@@ -273,7 +275,7 @@ export class ServerManager {
     }
     const messageToOtherClients = JSON.stringify(outgoingMessageParts);
 
-    this.connectionIDToClient.forEach((otherClient) => {
+    this.webSocketToClient.forEach((otherClient) => {
       if (otherClient !== client) {
         otherClient.queueMessage(messageToOtherClients);
       }
@@ -281,18 +283,18 @@ export class ServerManager {
 
     this.sendAllQueuedMessages();
 
-    this.logMessage(LogMessage.LoggedIn, connection.id, client.id, userID, username);
+    this.logMessage(LogMessage.LoggedIn, this.webSocketToID.get(webSocket), client.id, userID, username);
   }
 
   onMessageCreateGame(client: Client, params: any[]) {
     if (params.length !== 1) {
-      this.kickWithError(client.connection, ErrorCode.INVALID_MESSAGE);
+      this.kickWithError(client.webSocket, ErrorCode.INVALID_MESSAGE);
       return;
     }
 
     const gameMode: GameMode = params[0];
     if (!gameModeToNumPlayers.has(gameMode)) {
-      this.kickWithError(client.connection, ErrorCode.INVALID_MESSAGE);
+      this.kickWithError(client.webSocket, ErrorCode.INVALID_MESSAGE);
       return;
     }
 
@@ -312,7 +314,7 @@ export class ServerManager {
 
     const gameCreatedMessage = JSON.stringify([MessageToClientEnum.GameCreated, gameData.id, gameData.displayNumber, gameData.gameSetup!.gameMode, client.id]);
     const clientEnteredGameMessage = JSON.stringify([MessageToClientEnum.ClientEnteredGame, client.id, gameData.displayNumber]);
-    this.connectionIDToClient.forEach((aClient) => {
+    this.webSocketToClient.forEach((aClient) => {
       aClient.queueMessage(gameCreatedMessage);
       aClient.queueMessage(clientEnteredGameMessage);
     });
@@ -320,14 +322,14 @@ export class ServerManager {
 
   onMessageEnterGame(client: Client, params: any[]) {
     if (params.length !== 1) {
-      this.kickWithError(client.connection, ErrorCode.INVALID_MESSAGE);
+      this.kickWithError(client.webSocket, ErrorCode.INVALID_MESSAGE);
       return;
     }
 
     const gameDisplayNumber: number = params[0];
     const gameData = this.gameDisplayNumberToGameData.get(gameDisplayNumber);
     if (gameData === undefined) {
-      this.kickWithError(client.connection, ErrorCode.INVALID_MESSAGE);
+      this.kickWithError(client.webSocket, ErrorCode.INVALID_MESSAGE);
       return;
     }
 
@@ -340,14 +342,14 @@ export class ServerManager {
     client.gameData = gameData;
 
     const message = JSON.stringify([MessageToClientEnum.ClientEnteredGame, client.id, gameData.displayNumber]);
-    this.connectionIDToClient.forEach((aClient) => {
+    this.webSocketToClient.forEach((aClient) => {
       aClient.queueMessage(message);
     });
   }
 
   onMessageExitGame(client: Client, params: any[]) {
     if (params.length !== 0) {
-      this.kickWithError(client.connection, ErrorCode.INVALID_MESSAGE);
+      this.kickWithError(client.webSocket, ErrorCode.INVALID_MESSAGE);
       return;
     }
 
@@ -361,7 +363,7 @@ export class ServerManager {
     client.gameData = null;
 
     const message = JSON.stringify([MessageToClientEnum.ClientExitedGame, client.id]);
-    this.connectionIDToClient.forEach((aClient) => {
+    this.webSocketToClient.forEach((aClient) => {
       aClient.queueMessage(message);
     });
   }
@@ -378,7 +380,7 @@ export class ServerManager {
     }
 
     if (params.length !== 0) {
-      this.kickWithError(client.connection, ErrorCode.INVALID_MESSAGE);
+      this.kickWithError(client.webSocket, ErrorCode.INVALID_MESSAGE);
       return;
     }
 
@@ -403,7 +405,7 @@ export class ServerManager {
     }
 
     if (params.length !== 0) {
-      this.kickWithError(client.connection, ErrorCode.INVALID_MESSAGE);
+      this.kickWithError(client.webSocket, ErrorCode.INVALID_MESSAGE);
       return;
     }
 
@@ -429,7 +431,7 @@ export class ServerManager {
     }
 
     if (params.length !== 0) {
-      this.kickWithError(client.connection, ErrorCode.INVALID_MESSAGE);
+      this.kickWithError(client.webSocket, ErrorCode.INVALID_MESSAGE);
       return;
     }
 
@@ -443,7 +445,7 @@ export class ServerManager {
       gameData.game = game;
 
       const message = JSON.stringify([MessageToClientEnum.GameStarted, gameData.displayNumber, userIDs.toJS()]);
-      this.connectionIDToClient.forEach((aClient) => {
+      this.webSocketToClient.forEach((aClient) => {
         aClient.queueMessage(message);
       });
 
@@ -466,12 +468,12 @@ export class ServerManager {
     }
 
     if (client.user.id !== gameSetup.hostUserID) {
-      this.kickWithError(client.connection, ErrorCode.INVALID_MESSAGE);
+      this.kickWithError(client.webSocket, ErrorCode.INVALID_MESSAGE);
       return;
     }
 
     if (params.length !== gameSetup.changeGameMode.length) {
-      this.kickWithError(client.connection, ErrorCode.INVALID_MESSAGE);
+      this.kickWithError(client.webSocket, ErrorCode.INVALID_MESSAGE);
       return;
     }
 
@@ -494,12 +496,12 @@ export class ServerManager {
     }
 
     if (client.user.id !== gameSetup.hostUserID) {
-      this.kickWithError(client.connection, ErrorCode.INVALID_MESSAGE);
+      this.kickWithError(client.webSocket, ErrorCode.INVALID_MESSAGE);
       return;
     }
 
     if (params.length !== gameSetup.changePlayerArrangementMode.length) {
-      this.kickWithError(client.connection, ErrorCode.INVALID_MESSAGE);
+      this.kickWithError(client.webSocket, ErrorCode.INVALID_MESSAGE);
       return;
     }
 
@@ -522,12 +524,12 @@ export class ServerManager {
     }
 
     if (client.user.id !== gameSetup.hostUserID) {
-      this.kickWithError(client.connection, ErrorCode.INVALID_MESSAGE);
+      this.kickWithError(client.webSocket, ErrorCode.INVALID_MESSAGE);
       return;
     }
 
     if (params.length !== gameSetup.swapPositions.length) {
-      this.kickWithError(client.connection, ErrorCode.INVALID_MESSAGE);
+      this.kickWithError(client.webSocket, ErrorCode.INVALID_MESSAGE);
       return;
     }
 
@@ -550,12 +552,12 @@ export class ServerManager {
     }
 
     if (client.user.id !== gameSetup.hostUserID) {
-      this.kickWithError(client.connection, ErrorCode.INVALID_MESSAGE);
+      this.kickWithError(client.webSocket, ErrorCode.INVALID_MESSAGE);
       return;
     }
 
     if (params.length !== gameSetup.kickUser.length) {
-      this.kickWithError(client.connection, ErrorCode.INVALID_MESSAGE);
+      this.kickWithError(client.webSocket, ErrorCode.INVALID_MESSAGE);
       return;
     }
 
@@ -582,13 +584,13 @@ export class ServerManager {
     }
 
     if (params.length === 0) {
-      this.kickWithError(client.connection, ErrorCode.INVALID_MESSAGE);
+      this.kickWithError(client.webSocket, ErrorCode.INVALID_MESSAGE);
       return;
     }
 
     const moveHistorySize: number = params[0];
     if (!Number.isInteger(moveHistorySize) || moveHistorySize < 0) {
-      this.kickWithError(client.connection, ErrorCode.INVALID_MESSAGE);
+      this.kickWithError(client.webSocket, ErrorCode.INVALID_MESSAGE);
       return;
     }
 
@@ -605,7 +607,7 @@ export class ServerManager {
     try {
       game.doGameAction(params[1], Date.now());
     } catch (e) {
-      this.kickWithError(client.connection, ErrorCode.INVALID_MESSAGE);
+      this.kickWithError(client.webSocket, ErrorCode.INVALID_MESSAGE);
       return;
     }
 
@@ -617,7 +619,7 @@ export class ServerManager {
 
     gameSetup.history.forEach((change) => {
       const message = JSON.stringify([MessageToClientEnum.GameSetupChanged, gameData.displayNumber, ...change]);
-      this.connectionIDToClient.forEach((aClient) => {
+      this.webSocketToClient.forEach((aClient) => {
         aClient.queueMessage(message);
       });
     });
@@ -648,7 +650,7 @@ export class ServerManager {
 
     // send watcher messages to everybody else
     const watcherMessage = JSON.stringify([MessageToClientEnum.GameActionDone, gameData.displayNumber, ...moveData.watcherMessage]);
-    this.connectionIDToClient.forEach((aClient) => {
+    this.webSocketToClient.forEach((aClient) => {
       if (!playerUserIDs.has(aClient.user.id)) {
         aClient.queueMessage(watcherMessage);
       }
@@ -737,7 +739,7 @@ export class Client {
   gameData: GameData | null = null;
   queuedMessages: string[] = [];
 
-  constructor(public id: number, public connection: Connection, public user: User) {}
+  constructor(public id: number, public webSocket: WebSocket, public user: User) {}
 
   queueMessage(message: string) {
     this.queuedMessages.push(message);
@@ -745,7 +747,7 @@ export class Client {
 
   sendQueuedMessages() {
     if (this.queuedMessages.length > 0) {
-      this.connection.write(['[', this.queuedMessages.join(','), ']'].join(''));
+      this.webSocket.send(['[', this.queuedMessages.join(','), ']'].join(''));
       this.queuedMessages.length = 0;
     }
   }

@@ -1,15 +1,15 @@
 import { List } from 'immutable';
-import * as SockJS from 'sockjs-client';
 import { GameActionEnum, GameSetupChangeEnum, MessageToClientEnum, MessageToServerEnum } from '../common/enums';
 import { ErrorCode, GameAction, GameMode, PlayerArrangementMode } from '../common/pb';
 import { Client, ClientManager, ClientManagerPage, GameData, User } from './clientManager';
 
-jest.mock('sockjs-client');
+class TestWebSocket {
+  static OPEN = WebSocket.OPEN;
 
-// @ts-ignore
-const mockSockJS: jest.Mock = SockJS;
+  constructor() {
+    testWebSocket = this;
+  }
 
-class TestConnection {
   onopen: ((e: any) => any) | null = null;
   onmessage: ((e: any) => any) | null = null;
   onclose: ((e: any) => any) | null = null;
@@ -50,19 +50,22 @@ class TestConnection {
   }
 }
 
+let testWebSocket: TestWebSocket | undefined;
+
+// @ts-ignore
+global.WebSocket = TestWebSocket;
+
 function getClientManagerAndStuff() {
+  testWebSocket = undefined;
+
   const clientManager = new ClientManager();
-  const testConnection = new TestConnection();
 
   const renderMock = jest.fn();
   clientManager.render = renderMock;
 
-  mockSockJS.mockReset();
-  mockSockJS.mockImplementation(() => testConnection);
-
   clientManager.manage();
 
-  return { clientManager, testConnection, renderMock };
+  return { clientManager, renderMock };
 }
 
 class ClientData {
@@ -197,34 +200,34 @@ function uncircularreferenceifyGameIDToGameData(gameIDToGameData: Map<number, Ga
 }
 
 function sendsMessageWhenConnected(handlerCallback: (clientManager: ClientManager) => void, expectedMessage: any[]) {
-  const { clientManager, testConnection } = getClientManagerAndStuff();
+  const { clientManager } = getClientManagerAndStuff();
 
   clientManager.onSubmitLoginForm('me', '');
-  testConnection.triggerOpen();
-  testConnection.clearSentMessages();
+  testWebSocket!.triggerOpen();
+  testWebSocket!.clearSentMessages();
 
   handlerCallback(clientManager);
 
-  expect(testConnection.sentMessages.length).toBe(1);
-  expect(testConnection.sentMessages[0]).toEqual(expectedMessage);
+  expect(testWebSocket!.sentMessages.length).toBe(1);
+  expect(testWebSocket!.sentMessages[0]).toEqual(expectedMessage);
 }
 
 function doesNotSendMessageWhenNotConnected(handlerCallback: (clientManager: ClientManager) => void) {
-  const { clientManager, testConnection } = getClientManagerAndStuff();
+  const { clientManager } = getClientManagerAndStuff();
 
   clientManager.onSubmitLoginForm('me', '');
-  testConnection.triggerOpen();
-  testConnection.triggerClose();
-  testConnection.clearSentMessages();
+  testWebSocket!.triggerOpen();
+  testWebSocket!.triggerClose();
+  testWebSocket!.clearSentMessages();
 
   handlerCallback(clientManager);
 
-  expect(testConnection.sentMessages.length).toBe(0);
+  expect(testWebSocket!.sentMessages.length).toBe(0);
 }
 
 describe('onSubmitLoginForm', () => {
   test('connection is instantiated and first message is sent', () => {
-    const { clientManager, testConnection, renderMock } = getClientManagerAndStuff();
+    const { clientManager, renderMock } = getClientManagerAndStuff();
 
     expect(clientManager.page).toBe(ClientManagerPage.Login);
     expect(renderMock.mock.calls.length).toBe(1);
@@ -232,35 +235,35 @@ describe('onSubmitLoginForm', () => {
     clientManager.onSubmitLoginForm('username', 'password');
 
     expect(clientManager.page).toBe(ClientManagerPage.Connecting);
-    expect(clientManager.socket).toBe(testConnection);
+    expect(clientManager.socket).toBe(testWebSocket);
     if (clientManager.socket !== null) {
-      expect(testConnection.onopen).toBe(clientManager.onSocketOpen);
-      expect(testConnection.onmessage).toBe(clientManager.onSocketMessage);
-      expect(testConnection.onclose).toBe(clientManager.onSocketClose);
+      expect(testWebSocket!.onopen).toBe(clientManager.onSocketOpen);
+      expect(testWebSocket!.onmessage).toBe(clientManager.onSocketMessage);
+      expect(testWebSocket!.onclose).toBe(clientManager.onSocketClose);
     }
     expect(renderMock.mock.calls.length).toBe(2);
-    expect(testConnection.sentMessages).toEqual([]);
+    expect(testWebSocket!.sentMessages).toEqual([]);
 
-    testConnection.triggerOpen();
+    testWebSocket!.triggerOpen();
 
     expect(renderMock.mock.calls.length).toBe(2);
-    expect(testConnection.sentMessages).toEqual([[0, 'username', 'password', []]]);
+    expect(testWebSocket!.sentMessages).toEqual([[0, 'username', 'password', []]]);
   });
 
   test('goes back to login page upon fatal error followed by a closed connection', () => {
-    const { clientManager, testConnection, renderMock } = getClientManagerAndStuff();
+    const { clientManager, renderMock } = getClientManagerAndStuff();
 
     clientManager.onSubmitLoginForm('username', 'password');
 
-    testConnection.triggerOpen();
+    testWebSocket!.triggerOpen();
 
-    testConnection.triggerMessage([[MessageToClientEnum.FatalError, ErrorCode.INCORRECT_PASSWORD]]);
+    testWebSocket!.triggerMessage([[MessageToClientEnum.FatalError, ErrorCode.INCORRECT_PASSWORD]]);
 
     expect(clientManager.errorCode).toBe(ErrorCode.INCORRECT_PASSWORD);
     expect(clientManager.page).toBe(ClientManagerPage.Connecting);
     expect(renderMock.mock.calls.length).toBe(3);
 
-    testConnection.triggerClose();
+    testWebSocket!.triggerClose();
 
     expect(clientManager.errorCode).toBe(ErrorCode.INCORRECT_PASSWORD);
     expect(clientManager.page).toBe(ClientManagerPage.Login);
@@ -268,11 +271,11 @@ describe('onSubmitLoginForm', () => {
   });
 
   test('goes back to login page upon closed connection before receiving a message', () => {
-    const { clientManager, testConnection, renderMock } = getClientManagerAndStuff();
+    const { clientManager, renderMock } = getClientManagerAndStuff();
 
     clientManager.onSubmitLoginForm('username', 'password');
 
-    testConnection.triggerClose();
+    testWebSocket!.triggerClose();
 
     expect(clientManager.errorCode).toBe(ErrorCode.COULD_NOT_CONNECT);
     expect(clientManager.page).toBe(ClientManagerPage.Login);
@@ -280,13 +283,13 @@ describe('onSubmitLoginForm', () => {
   });
 
   test('goes to the lobby page upon receiving the Greeting message', () => {
-    const { clientManager, testConnection, renderMock } = getClientManagerAndStuff();
+    const { clientManager, renderMock } = getClientManagerAndStuff();
 
     clientManager.onSubmitLoginForm('user', '');
 
-    testConnection.triggerOpen();
+    testWebSocket!.triggerOpen();
 
-    testConnection.triggerMessage([[MessageToClientEnum.Greetings, 1, [[1, 'user', [[1]]]], []]]);
+    testWebSocket!.triggerMessage([[MessageToClientEnum.Greetings, 1, [[1, 'user', [[1]]]], []]]);
 
     expect(clientManager.errorCode).toBe(null);
     expect(clientManager.page).toBe(ClientManagerPage.Lobby);
@@ -298,41 +301,41 @@ describe('onSubmitLoginForm', () => {
 
 describe('onSubmitCreateGame', () => {
   test('sends CreateGame message when connected', () => {
-    const { clientManager, testConnection } = getClientManagerAndStuff();
+    const { clientManager } = getClientManagerAndStuff();
 
     clientManager.onSubmitLoginForm('me', '');
-    testConnection.triggerOpen();
-    testConnection.triggerMessage([[MessageToClientEnum.Greetings, 2, [[1, 'me', [[2]]]], []]]);
-    testConnection.clearSentMessages();
+    testWebSocket!.triggerOpen();
+    testWebSocket!.triggerMessage([[MessageToClientEnum.Greetings, 2, [[1, 'me', [[2]]]], []]]);
+    testWebSocket!.clearSentMessages();
 
     clientManager.onSubmitCreateGame(GameMode.TEAMS_2_VS_2);
 
-    expect(testConnection.sentMessages.length).toBe(1);
-    expect(testConnection.sentMessages[0]).toEqual([MessageToServerEnum.CreateGame, GameMode.TEAMS_2_VS_2]);
+    expect(testWebSocket!.sentMessages.length).toBe(1);
+    expect(testWebSocket!.sentMessages[0]).toEqual([MessageToServerEnum.CreateGame, GameMode.TEAMS_2_VS_2]);
   });
 
   test('does not send CreateGame message when not connected', () => {
-    const { clientManager, testConnection } = getClientManagerAndStuff();
+    const { clientManager } = getClientManagerAndStuff();
 
     clientManager.onSubmitLoginForm('me', '');
-    testConnection.triggerOpen();
-    testConnection.triggerMessage([[MessageToClientEnum.Greetings, 2, [[1, 'me', [[2]]]], []]]);
-    testConnection.triggerClose();
-    testConnection.clearSentMessages();
+    testWebSocket!.triggerOpen();
+    testWebSocket!.triggerMessage([[MessageToClientEnum.Greetings, 2, [[1, 'me', [[2]]]], []]]);
+    testWebSocket!.triggerClose();
+    testWebSocket!.clearSentMessages();
 
     clientManager.onSubmitCreateGame(GameMode.TEAMS_2_VS_2);
 
-    expect(testConnection.sentMessages.length).toBe(0);
+    expect(testWebSocket!.sentMessages.length).toBe(0);
   });
 });
 
 describe('onEnterClicked', () => {
   test('sends EnterGame message when connected', () => {
-    const { clientManager, testConnection } = getClientManagerAndStuff();
+    const { clientManager } = getClientManagerAndStuff();
 
     clientManager.onSubmitLoginForm('me', '');
-    testConnection.triggerOpen();
-    testConnection.triggerMessage([
+    testWebSocket!.triggerOpen();
+    testWebSocket!.triggerMessage([
       [
         MessageToClientEnum.Greetings,
         2,
@@ -343,20 +346,20 @@ describe('onEnterClicked', () => {
         [[0, 10, 1, GameMode.TEAMS_2_VS_2, PlayerArrangementMode.RANDOM_ORDER, 1, [1, 0, 0, 0], [0, 0, 0, 0]]],
       ],
     ]);
-    testConnection.clearSentMessages();
+    testWebSocket!.clearSentMessages();
 
     clientManager.gameDisplayNumberToGameData.get(1)!.onEnterClicked();
 
-    expect(testConnection.sentMessages.length).toBe(1);
-    expect(testConnection.sentMessages[0]).toEqual([MessageToServerEnum.EnterGame, 1]);
+    expect(testWebSocket!.sentMessages.length).toBe(1);
+    expect(testWebSocket!.sentMessages[0]).toEqual([MessageToServerEnum.EnterGame, 1]);
   });
 
   test('does not send EnterGame message when not connected', () => {
-    const { clientManager, testConnection } = getClientManagerAndStuff();
+    const { clientManager } = getClientManagerAndStuff();
 
     clientManager.onSubmitLoginForm('me', '');
-    testConnection.triggerOpen();
-    testConnection.triggerMessage([
+    testWebSocket!.triggerOpen();
+    testWebSocket!.triggerMessage([
       [
         MessageToClientEnum.Greetings,
         2,
@@ -367,12 +370,12 @@ describe('onEnterClicked', () => {
         [[0, 10, 1, GameMode.TEAMS_2_VS_2, PlayerArrangementMode.RANDOM_ORDER, 1, [1, 0, 0, 0], [0, 0, 0, 0]]],
       ],
     ]);
-    testConnection.triggerClose();
-    testConnection.clearSentMessages();
+    testWebSocket!.triggerClose();
+    testWebSocket!.clearSentMessages();
 
     clientManager.gameDisplayNumberToGameData.get(1)!.onEnterClicked();
 
-    expect(testConnection.sentMessages.length).toBe(0);
+    expect(testWebSocket!.sentMessages.length).toBe(0);
   });
 });
 
@@ -464,13 +467,13 @@ describe('onKickUser', () => {
 
 describe('MessageToClient.Greetings', () => {
   test('message is processed correctly (1)', () => {
-    const { clientManager, testConnection } = getClientManagerAndStuff();
+    const { clientManager } = getClientManagerAndStuff();
 
     clientManager.onSubmitLoginForm('me', '');
-    testConnection.triggerOpen();
+    testWebSocket!.triggerOpen();
     const gameSetupJSON1 = [GameMode.TEAMS_3_VS_3, PlayerArrangementMode.RANDOM_ORDER, 4, [4, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0]];
     const gameSetupJSON2 = [GameMode.SINGLES_2, PlayerArrangementMode.EXACT_ORDER, 5, [9, 5], [0, 1]];
-    testConnection.triggerMessage([
+    testWebSocket!.triggerMessage([
       [
         MessageToClientEnum.Greetings,
         7,
@@ -513,11 +516,11 @@ describe('MessageToClient.Greetings', () => {
   });
 
   test('message is processed correctly (2)', () => {
-    const { clientManager, testConnection } = getClientManagerAndStuff();
+    const { clientManager } = getClientManagerAndStuff();
 
     clientManager.onSubmitLoginForm('2', '');
-    testConnection.triggerOpen();
-    testConnection.triggerMessage([
+    testWebSocket!.triggerOpen();
+    testWebSocket!.triggerMessage([
       [
         MessageToClientEnum.Greetings,
         4,
@@ -574,24 +577,24 @@ describe('MessageToClient.Greetings', () => {
 
 describe('MessageToClient.ClientConnected', () => {
   test('new user and client added', () => {
-    const { clientManager, testConnection } = getClientManagerAndStuff();
+    const { clientManager } = getClientManagerAndStuff();
 
     clientManager.onSubmitLoginForm('me', '');
-    testConnection.triggerOpen();
-    testConnection.triggerMessage([[MessageToClientEnum.Greetings, 2, [[1, 'me', [[2]]]], []]]);
-    testConnection.triggerMessage([[MessageToClientEnum.ClientConnected, 4, 3, 'user 3']]);
+    testWebSocket!.triggerOpen();
+    testWebSocket!.triggerMessage([[MessageToClientEnum.Greetings, 2, [[1, 'me', [[2]]]], []]]);
+    testWebSocket!.triggerMessage([[MessageToClientEnum.ClientConnected, 4, 3, 'user 3']]);
 
     expectClientAndUserAndGameData(clientManager, [new UserData(1, 'me', [new ClientData(2)]), new UserData(3, 'user 3', [new ClientData(4)])], []);
   });
 
   test('client added for existing user', () => {
-    const { clientManager, testConnection } = getClientManagerAndStuff();
+    const { clientManager } = getClientManagerAndStuff();
 
     clientManager.onSubmitLoginForm('me', '');
-    testConnection.triggerOpen();
-    testConnection.triggerMessage([[MessageToClientEnum.Greetings, 2, [[1, 'me', [[2]]]], []]]);
-    testConnection.triggerMessage([[MessageToClientEnum.ClientConnected, 4, 3, 'user 3']]);
-    testConnection.triggerMessage([[MessageToClientEnum.ClientConnected, 5, 3]]);
+    testWebSocket!.triggerOpen();
+    testWebSocket!.triggerMessage([[MessageToClientEnum.Greetings, 2, [[1, 'me', [[2]]]], []]]);
+    testWebSocket!.triggerMessage([[MessageToClientEnum.ClientConnected, 4, 3, 'user 3']]);
+    testWebSocket!.triggerMessage([[MessageToClientEnum.ClientConnected, 5, 3]]);
 
     expectClientAndUserAndGameData(
       clientManager,
@@ -603,39 +606,39 @@ describe('MessageToClient.ClientConnected', () => {
 
 describe('MessageToClient.ClientDisconnected', () => {
   test('sole client of a user disconnects', () => {
-    const { clientManager, testConnection } = getClientManagerAndStuff();
+    const { clientManager } = getClientManagerAndStuff();
 
     clientManager.onSubmitLoginForm('me', '');
-    testConnection.triggerOpen();
-    testConnection.triggerMessage([[MessageToClientEnum.Greetings, 2, [[1, 'me', [[2]]]], []]]);
-    testConnection.triggerMessage([[MessageToClientEnum.ClientConnected, 4, 3, 'user 3']]);
-    testConnection.triggerMessage([[MessageToClientEnum.ClientDisconnected, 4]]);
+    testWebSocket!.triggerOpen();
+    testWebSocket!.triggerMessage([[MessageToClientEnum.Greetings, 2, [[1, 'me', [[2]]]], []]]);
+    testWebSocket!.triggerMessage([[MessageToClientEnum.ClientConnected, 4, 3, 'user 3']]);
+    testWebSocket!.triggerMessage([[MessageToClientEnum.ClientDisconnected, 4]]);
 
     expectClientAndUserAndGameData(clientManager, [new UserData(1, 'me', [new ClientData(2)])], []);
   });
 
   test('a client of a user disconnects, leaving another client still connected', () => {
-    const { clientManager, testConnection } = getClientManagerAndStuff();
+    const { clientManager } = getClientManagerAndStuff();
 
     clientManager.onSubmitLoginForm('me', '');
-    testConnection.triggerOpen();
-    testConnection.triggerMessage([[MessageToClientEnum.Greetings, 2, [[1, 'me', [[2]]]], []]]);
-    testConnection.triggerMessage([[MessageToClientEnum.ClientConnected, 4, 3, 'user 3']]);
-    testConnection.triggerMessage([[MessageToClientEnum.ClientConnected, 5, 3]]);
-    testConnection.triggerMessage([[MessageToClientEnum.ClientDisconnected, 4]]);
+    testWebSocket!.triggerOpen();
+    testWebSocket!.triggerMessage([[MessageToClientEnum.Greetings, 2, [[1, 'me', [[2]]]], []]]);
+    testWebSocket!.triggerMessage([[MessageToClientEnum.ClientConnected, 4, 3, 'user 3']]);
+    testWebSocket!.triggerMessage([[MessageToClientEnum.ClientConnected, 5, 3]]);
+    testWebSocket!.triggerMessage([[MessageToClientEnum.ClientDisconnected, 4]]);
 
     expectClientAndUserAndGameData(clientManager, [new UserData(1, 'me', [new ClientData(2)]), new UserData(3, 'user 3', [new ClientData(5)])], []);
   });
 
   test('user is not deleted if they are in a game', () => {
-    const { clientManager, testConnection } = getClientManagerAndStuff();
+    const { clientManager } = getClientManagerAndStuff();
 
     clientManager.onSubmitLoginForm('me', '');
-    testConnection.triggerOpen();
-    testConnection.triggerMessage([[MessageToClientEnum.Greetings, 2, [[1, 'me', [[2]]]], []]]);
-    testConnection.triggerMessage([[MessageToClientEnum.ClientConnected, 4, 3, 'user 3']]);
-    testConnection.triggerMessage([[MessageToClientEnum.GameCreated, 10, 1, GameMode.TEAMS_2_VS_2, 4]]);
-    testConnection.triggerMessage([[MessageToClientEnum.ClientDisconnected, 4]]);
+    testWebSocket!.triggerOpen();
+    testWebSocket!.triggerMessage([[MessageToClientEnum.Greetings, 2, [[1, 'me', [[2]]]], []]]);
+    testWebSocket!.triggerMessage([[MessageToClientEnum.ClientConnected, 4, 3, 'user 3']]);
+    testWebSocket!.triggerMessage([[MessageToClientEnum.GameCreated, 10, 1, GameMode.TEAMS_2_VS_2, 4]]);
+    testWebSocket!.triggerMessage([[MessageToClientEnum.ClientDisconnected, 4]]);
 
     expect(clientManager.userIDToUser.get(3)!.numGames).toBe(1);
     expectClientAndUserAndGameData(clientManager, [new UserData(1, 'me', [new ClientData(2)]), new UserData(3, 'user 3', [])], [new GameDataData(10, 1, [3])]);
@@ -644,13 +647,13 @@ describe('MessageToClient.ClientDisconnected', () => {
 
 describe('MessageToClient.GameCreated', () => {
   test('game is added', () => {
-    const { clientManager, testConnection } = getClientManagerAndStuff();
+    const { clientManager } = getClientManagerAndStuff();
 
     clientManager.onSubmitLoginForm('me', '');
-    testConnection.triggerOpen();
-    testConnection.triggerMessage([[MessageToClientEnum.Greetings, 2, [[1, 'me', [[2]]]], []]]);
-    testConnection.triggerMessage([[MessageToClientEnum.ClientConnected, 4, 3, 'user 3']]);
-    testConnection.triggerMessage([[MessageToClientEnum.GameCreated, 10, 1, GameMode.TEAMS_2_VS_2, 2]]);
+    testWebSocket!.triggerOpen();
+    testWebSocket!.triggerMessage([[MessageToClientEnum.Greetings, 2, [[1, 'me', [[2]]]], []]]);
+    testWebSocket!.triggerMessage([[MessageToClientEnum.ClientConnected, 4, 3, 'user 3']]);
+    testWebSocket!.triggerMessage([[MessageToClientEnum.GameCreated, 10, 1, GameMode.TEAMS_2_VS_2, 2]]);
 
     expectClientAndUserAndGameData(
       clientManager,
@@ -669,13 +672,13 @@ describe('MessageToClient.GameCreated', () => {
 
 describe('MessageToClient.ClientEnteredGame', () => {
   test('own client enters game', () => {
-    const { clientManager, testConnection } = getClientManagerAndStuff();
+    const { clientManager } = getClientManagerAndStuff();
 
     clientManager.onSubmitLoginForm('me', '');
-    testConnection.triggerOpen();
-    testConnection.triggerMessage([[MessageToClientEnum.Greetings, 2, [[1, 'me', [[2]]]], []]]);
-    testConnection.triggerMessage([[MessageToClientEnum.ClientConnected, 4, 3, 'user 3']]);
-    testConnection.triggerMessage([
+    testWebSocket!.triggerOpen();
+    testWebSocket!.triggerMessage([[MessageToClientEnum.Greetings, 2, [[1, 'me', [[2]]]], []]]);
+    testWebSocket!.triggerMessage([[MessageToClientEnum.ClientConnected, 4, 3, 'user 3']]);
+    testWebSocket!.triggerMessage([
       [MessageToClientEnum.GameCreated, 10, 1, GameMode.TEAMS_2_VS_2, 2],
       [MessageToClientEnum.ClientEnteredGame, 2, 1],
     ]);
@@ -689,13 +692,13 @@ describe('MessageToClient.ClientEnteredGame', () => {
   });
 
   test('other client enters game', () => {
-    const { clientManager, testConnection } = getClientManagerAndStuff();
+    const { clientManager } = getClientManagerAndStuff();
 
     clientManager.onSubmitLoginForm('me', '');
-    testConnection.triggerOpen();
-    testConnection.triggerMessage([[MessageToClientEnum.Greetings, 2, [[1, 'me', [[2]]]], []]]);
-    testConnection.triggerMessage([[MessageToClientEnum.ClientConnected, 4, 3, 'user 3']]);
-    testConnection.triggerMessage([
+    testWebSocket!.triggerOpen();
+    testWebSocket!.triggerMessage([[MessageToClientEnum.Greetings, 2, [[1, 'me', [[2]]]], []]]);
+    testWebSocket!.triggerMessage([[MessageToClientEnum.ClientConnected, 4, 3, 'user 3']]);
+    testWebSocket!.triggerMessage([
       [MessageToClientEnum.GameCreated, 10, 1, GameMode.TEAMS_2_VS_2, 4],
       [MessageToClientEnum.ClientEnteredGame, 4, 1],
     ]);
@@ -711,11 +714,11 @@ describe('MessageToClient.ClientEnteredGame', () => {
 
 describe('MessageToClient.ClientExitedGame', () => {
   test('own client exits game', () => {
-    const { clientManager, testConnection } = getClientManagerAndStuff();
+    const { clientManager } = getClientManagerAndStuff();
 
     clientManager.onSubmitLoginForm('me', '');
-    testConnection.triggerOpen();
-    testConnection.triggerMessage([
+    testWebSocket!.triggerOpen();
+    testWebSocket!.triggerMessage([
       [
         MessageToClientEnum.Greetings,
         2,
@@ -734,7 +737,7 @@ describe('MessageToClient.ClientExitedGame', () => {
       [new GameDataData(10, 1, [1, 2])],
     );
 
-    testConnection.triggerMessage([[MessageToClientEnum.ClientExitedGame, 2]]);
+    testWebSocket!.triggerMessage([[MessageToClientEnum.ClientExitedGame, 2]]);
 
     expect(clientManager.page).toBe(ClientManagerPage.Lobby);
     expectClientAndUserAndGameData(
@@ -745,11 +748,11 @@ describe('MessageToClient.ClientExitedGame', () => {
   });
 
   test('other client exits game', () => {
-    const { clientManager, testConnection } = getClientManagerAndStuff();
+    const { clientManager } = getClientManagerAndStuff();
 
     clientManager.onSubmitLoginForm('me', '');
-    testConnection.triggerOpen();
-    testConnection.triggerMessage([
+    testWebSocket!.triggerOpen();
+    testWebSocket!.triggerMessage([
       [
         MessageToClientEnum.Greetings,
         2,
@@ -768,7 +771,7 @@ describe('MessageToClient.ClientExitedGame', () => {
       [new GameDataData(10, 1, [1, 2])],
     );
 
-    testConnection.triggerMessage([[MessageToClientEnum.ClientExitedGame, 1]]);
+    testWebSocket!.triggerMessage([[MessageToClientEnum.ClientExitedGame, 1]]);
 
     expect(clientManager.page).toBe(ClientManagerPage.GameSetup);
     expectClientAndUserAndGameData(
@@ -781,11 +784,11 @@ describe('MessageToClient.ClientExitedGame', () => {
 
 describe('MessageToClient.GameSetupChanged', () => {
   test('UserAdded message is processed correctly', () => {
-    const { clientManager, testConnection } = getClientManagerAndStuff();
+    const { clientManager } = getClientManagerAndStuff();
 
     clientManager.onSubmitLoginForm('me', '');
-    testConnection.triggerOpen();
-    testConnection.triggerMessage([
+    testWebSocket!.triggerOpen();
+    testWebSocket!.triggerMessage([
       [
         MessageToClientEnum.Greetings,
         2,
@@ -803,7 +806,7 @@ describe('MessageToClient.GameSetupChanged', () => {
       [new GameDataData(10, 1, [1])],
     );
 
-    testConnection.triggerMessage([[MessageToClientEnum.GameSetupChanged, 1, GameSetupChangeEnum.UserAdded, 2]]);
+    testWebSocket!.triggerMessage([[MessageToClientEnum.GameSetupChanged, 1, GameSetupChangeEnum.UserAdded, 2]]);
 
     expectClientAndUserAndGameData(
       clientManager,
@@ -814,11 +817,11 @@ describe('MessageToClient.GameSetupChanged', () => {
   });
 
   test('UserRemoved message is processed correctly', () => {
-    const { clientManager, testConnection } = getClientManagerAndStuff();
+    const { clientManager } = getClientManagerAndStuff();
 
     clientManager.onSubmitLoginForm('me', '');
-    testConnection.triggerOpen();
-    testConnection.triggerMessage([
+    testWebSocket!.triggerOpen();
+    testWebSocket!.triggerMessage([
       [
         MessageToClientEnum.Greetings,
         2,
@@ -836,7 +839,7 @@ describe('MessageToClient.GameSetupChanged', () => {
       [new GameDataData(10, 1, [1, 2])],
     );
 
-    testConnection.triggerMessage([[MessageToClientEnum.GameSetupChanged, 1, GameSetupChangeEnum.UserRemoved, 2]]);
+    testWebSocket!.triggerMessage([[MessageToClientEnum.GameSetupChanged, 1, GameSetupChangeEnum.UserRemoved, 2]]);
 
     expectClientAndUserAndGameData(
       clientManager,
@@ -847,11 +850,11 @@ describe('MessageToClient.GameSetupChanged', () => {
   });
 
   test('UserApprovedOfGameSetup message is processed correctly', () => {
-    const { clientManager, testConnection } = getClientManagerAndStuff();
+    const { clientManager } = getClientManagerAndStuff();
 
     clientManager.onSubmitLoginForm('me', '');
-    testConnection.triggerOpen();
-    testConnection.triggerMessage([
+    testWebSocket!.triggerOpen();
+    testWebSocket!.triggerMessage([
       [
         MessageToClientEnum.Greetings,
         2,
@@ -869,7 +872,7 @@ describe('MessageToClient.GameSetupChanged', () => {
       [new GameDataData(10, 1, [1, 2])],
     );
 
-    testConnection.triggerMessage([[MessageToClientEnum.GameSetupChanged, 1, GameSetupChangeEnum.UserApprovedOfGameSetup, 2]]);
+    testWebSocket!.triggerMessage([[MessageToClientEnum.GameSetupChanged, 1, GameSetupChangeEnum.UserApprovedOfGameSetup, 2]]);
 
     expectClientAndUserAndGameData(
       clientManager,
@@ -880,11 +883,11 @@ describe('MessageToClient.GameSetupChanged', () => {
   });
 
   test('GameModeChanged message is processed correctly', () => {
-    const { clientManager, testConnection } = getClientManagerAndStuff();
+    const { clientManager } = getClientManagerAndStuff();
 
     clientManager.onSubmitLoginForm('me', '');
-    testConnection.triggerOpen();
-    testConnection.triggerMessage([
+    testWebSocket!.triggerOpen();
+    testWebSocket!.triggerMessage([
       [
         MessageToClientEnum.Greetings,
         2,
@@ -902,7 +905,7 @@ describe('MessageToClient.GameSetupChanged', () => {
       [new GameDataData(10, 1, [1, 2])],
     );
 
-    testConnection.triggerMessage([[MessageToClientEnum.GameSetupChanged, 1, GameSetupChangeEnum.GameModeChanged, GameMode.SINGLES_3]]);
+    testWebSocket!.triggerMessage([[MessageToClientEnum.GameSetupChanged, 1, GameSetupChangeEnum.GameModeChanged, GameMode.SINGLES_3]]);
 
     expectClientAndUserAndGameData(
       clientManager,
@@ -913,11 +916,11 @@ describe('MessageToClient.GameSetupChanged', () => {
   });
 
   test('PlayerArrangementModeChanged message is processed correctly', () => {
-    const { clientManager, testConnection } = getClientManagerAndStuff();
+    const { clientManager } = getClientManagerAndStuff();
 
     clientManager.onSubmitLoginForm('me', '');
-    testConnection.triggerOpen();
-    testConnection.triggerMessage([
+    testWebSocket!.triggerOpen();
+    testWebSocket!.triggerMessage([
       [
         MessageToClientEnum.Greetings,
         2,
@@ -935,7 +938,7 @@ describe('MessageToClient.GameSetupChanged', () => {
       [new GameDataData(10, 1, [1, 2])],
     );
 
-    testConnection.triggerMessage([
+    testWebSocket!.triggerMessage([
       [MessageToClientEnum.GameSetupChanged, 1, GameSetupChangeEnum.PlayerArrangementModeChanged, PlayerArrangementMode.EXACT_ORDER],
     ]);
 
@@ -948,11 +951,11 @@ describe('MessageToClient.GameSetupChanged', () => {
   });
 
   test('PositionsSwapped message is processed correctly', () => {
-    const { clientManager, testConnection } = getClientManagerAndStuff();
+    const { clientManager } = getClientManagerAndStuff();
 
     clientManager.onSubmitLoginForm('me', '');
-    testConnection.triggerOpen();
-    testConnection.triggerMessage([
+    testWebSocket!.triggerOpen();
+    testWebSocket!.triggerMessage([
       [
         MessageToClientEnum.Greetings,
         2,
@@ -970,7 +973,7 @@ describe('MessageToClient.GameSetupChanged', () => {
       [new GameDataData(10, 1, [1, 2])],
     );
 
-    testConnection.triggerMessage([[MessageToClientEnum.GameSetupChanged, 1, GameSetupChangeEnum.PositionsSwapped, 0, 1]]);
+    testWebSocket!.triggerMessage([[MessageToClientEnum.GameSetupChanged, 1, GameSetupChangeEnum.PositionsSwapped, 0, 1]]);
 
     expectClientAndUserAndGameData(
       clientManager,
@@ -981,11 +984,11 @@ describe('MessageToClient.GameSetupChanged', () => {
   });
 
   test('UserKicked message is processed correctly', () => {
-    const { clientManager, testConnection } = getClientManagerAndStuff();
+    const { clientManager } = getClientManagerAndStuff();
 
     clientManager.onSubmitLoginForm('me', '');
-    testConnection.triggerOpen();
-    testConnection.triggerMessage([
+    testWebSocket!.triggerOpen();
+    testWebSocket!.triggerMessage([
       [
         MessageToClientEnum.Greetings,
         2,
@@ -1003,7 +1006,7 @@ describe('MessageToClient.GameSetupChanged', () => {
       [new GameDataData(10, 1, [1, 2])],
     );
 
-    testConnection.triggerMessage([[MessageToClientEnum.GameSetupChanged, 1, GameSetupChangeEnum.UserKicked, 2]]);
+    testWebSocket!.triggerMessage([[MessageToClientEnum.GameSetupChanged, 1, GameSetupChangeEnum.UserKicked, 2]]);
 
     expectClientAndUserAndGameData(
       clientManager,
@@ -1016,11 +1019,11 @@ describe('MessageToClient.GameSetupChanged', () => {
 
 describe('MessageToClient.GameStarted and MessageToClient.GameActionDone', () => {
   test('messages are processed correctly when not in the game', () => {
-    const { clientManager, testConnection } = getClientManagerAndStuff();
+    const { clientManager } = getClientManagerAndStuff();
 
     clientManager.onSubmitLoginForm('me', '');
-    testConnection.triggerOpen();
-    testConnection.triggerMessage([
+    testWebSocket!.triggerOpen();
+    testWebSocket!.triggerMessage([
       [
         MessageToClientEnum.Greetings,
         3,
@@ -1032,7 +1035,7 @@ describe('MessageToClient.GameStarted and MessageToClient.GameActionDone', () =>
         [[0, 10, 1, GameMode.SINGLES_2, PlayerArrangementMode.RANDOM_ORDER, 1, [1, 2], [1, 0]]],
       ],
     ]);
-    testConnection.triggerMessage([
+    testWebSocket!.triggerMessage([
       [MessageToClientEnum.GameStarted, 1, [2, 1]],
       [MessageToClientEnum.GameActionDone, 1, [], 123456789, [], [89, 19, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], 0],
     ]);
@@ -1054,15 +1057,15 @@ describe('MessageToClient.GameStarted and MessageToClient.GameActionDone', () =>
   });
 
   test('messages are processed correctly when in the game', () => {
-    const { clientManager, testConnection } = getClientManagerAndStuff();
+    const { clientManager } = getClientManagerAndStuff();
 
     clientManager.onSubmitLoginForm('user', '');
-    testConnection.triggerOpen();
-    testConnection.triggerMessage([
+    testWebSocket!.triggerOpen();
+    testWebSocket!.triggerMessage([
       [MessageToClientEnum.Greetings, 2, [[1, 'user', [[2]]]], [[0, 1, 1, GameMode.SINGLES_1, PlayerArrangementMode.RANDOM_ORDER, 1, [1], [0]]]],
     ]);
-    testConnection.triggerMessage([[MessageToClientEnum.ClientEnteredGame, 2, 1]]);
-    testConnection.triggerMessage([
+    testWebSocket!.triggerMessage([[MessageToClientEnum.ClientEnteredGame, 2, 1]]);
+    testWebSocket!.triggerMessage([
       [MessageToClientEnum.GameStarted, 1, [1]],
       [MessageToClientEnum.GameActionDone, 1, [], 1550799393696, [], [65, 3, 34, 6, 46, 10, 78], 0],
     ]);

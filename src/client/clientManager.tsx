@@ -3,7 +3,6 @@ import * as style from './clientManager.scss';
 import { List } from 'immutable';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import * as SockJS from 'sockjs-client';
 import { defaultGameBoard } from '../common/defaults';
 import { GameActionEnum, GameSetupChangeEnum, MessageToClientEnum, MessageToServerEnum, ScoreBoardIndexEnum } from '../common/enums';
 import { Game } from '../common/game';
@@ -427,7 +426,7 @@ export class ClientManager {
   };
 
   connect = () => {
-    this.socket = new SockJS('http://localhost:9999/sockjs');
+    this.socket = new WebSocket('ws://localhost:9999');
 
     this.socket.onopen = this.onSocketOpen;
     this.socket.onmessage = this.onSocketMessage;

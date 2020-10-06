@@ -1,20 +1,22 @@
 import * as http from 'http';
-import * as sockjs from 'sockjs';
+import * as WebSocket from 'ws';
 import { ServerManager } from './serverManager';
 import { TestUserDataProvider } from './userDataProvider';
 
-const sockjsServer = sockjs.createServer({
-  sockjs_url: 'https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.5/sockjs.min.js',
-  log: () => {
-    // do nothing
-  },
+const server = http.createServer();
+const webSocketServer = new WebSocket.Server({ noServer: true });
+
+server.on('upgrade', (request, socket, head) => {
+  webSocketServer.handleUpgrade(request, socket, head, (webSocket) => {
+    webSocketServer.emit('connection', webSocket, request);
+  });
 });
-const httpServer = http.createServer();
-sockjsServer.installHandlers(httpServer, { prefix: '/sockjs' });
-httpServer.listen(9999, '0.0.0.0');
 
 const userDataProvider = new TestUserDataProvider();
 const nextGameID = 1;
 
-const serverManager = new ServerManager(sockjsServer, userDataProvider, nextGameID, console.log);
+const serverManager = new ServerManager(webSocketServer, userDataProvider, nextGameID, console.log);
+
 serverManager.manage();
+
+server.listen(9999, '0.0.0.0');
