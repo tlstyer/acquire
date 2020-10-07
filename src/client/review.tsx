@@ -10,7 +10,7 @@ import { Game } from '../common/game';
 import { ActionGameOver } from '../common/gameActions/gameOver';
 import { GameBoard } from './components/GameBoard';
 import { GameHistory } from './components/GameHistory';
-import { GameState } from './components/GameState';
+import { GameStatus } from './components/GameStatus';
 import { ScoreBoard } from './components/ScoreBoard';
 import { TileRackReadOnly } from './components/TileRackReadOnly';
 import { GameBoardLabelMode } from './enums';
@@ -86,7 +86,7 @@ function render() {
           );
         })}
         <GameHistory usernames={game.usernames} moveDataHistory={game.moveDataHistory} selectedMove={selectedMove} onMoveClicked={onMoveClicked} />
-        <GameState usernames={game.usernames} nextGameAction={moveData.nextGameAction} />
+        <GameStatus usernames={game.usernames} nextGameAction={moveData.nextGameAction} />
       </div>
     </div>,
     document.getElementById('root'),

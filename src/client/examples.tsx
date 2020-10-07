@@ -14,7 +14,7 @@ import { ExampleGameSetupMaster } from './components/ExampleGameSetupMaster';
 import { GameBoard, GameBoardProps } from './components/GameBoard';
 import { GameHistory, GameHistoryProps } from './components/GameHistory';
 import { GameListing, GameListingProps } from './components/GameListing';
-import { GameState, GameStateProps } from './components/GameState';
+import { GameStatus, GameStatusProps } from './components/GameStatus';
 import { Header, HeaderProps } from './components/Header';
 import { LoginForm, LoginFormProps } from './components/LoginForm';
 import { PurchaseShares, PurchaseSharesProps } from './components/PurchaseShares';
@@ -47,7 +47,7 @@ class AllDemoProps {
   disposeOfSharesProps: DisposeOfSharesProps[];
   purchaseSharesProps: PurchaseSharesProps[];
   gameHistoryProps: GameHistoryProps[];
-  gameStateProps: GameStateProps[];
+  gameStatusProps: GameStatusProps[];
 
   possibleKeyboardShortcutsEnabledProps: { keyboardShortcutsEnabled: boolean }[];
 
@@ -345,7 +345,7 @@ class AllDemoProps {
     ];
 
     const nextGameActionsArray = getExampleNextGameActionsArray();
-    this.gameStateProps = nextGameActionsArray.map((nextGameAction) => ({
+    this.gameStatusProps = nextGameActionsArray.map((nextGameAction) => ({
       usernames: nextGameAction.game.usernames,
       nextGameAction,
       width: 500,
@@ -402,8 +402,8 @@ function render(props: AllDemoProps) {
       <h1>GameHistory</h1>
       <div className={style.gameHistoryWrapper}>{renderComponentForEachProps(GameHistory, props.gameHistoryProps)}</div>
 
-      <h1>GameState</h1>
-      {renderComponentForEachProps(GameState, props.gameStateProps)}
+      <h1>GameStatus</h1>
+      {renderComponentForEachProps(GameStatus, props.gameStatusProps)}
     </div>,
     document.getElementById('root'),
   );

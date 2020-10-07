@@ -1,4 +1,4 @@
-import * as style from './GameState.scss';
+import * as style from './GameStatus.scss';
 
 import { List } from 'immutable';
 import * as React from 'react';
@@ -14,16 +14,16 @@ import { ActionStartGame } from '../../common/gameActions/startGame';
 import { gameBoardTypeToCSSClassName, gameBoardTypeToHotelInitial, getHotelNameSpan, getUsernameSpan } from '../helpers';
 import { GameBoardType } from '../../common/pb';
 
-export interface GameStateProps {
+export interface GameStatusProps {
   usernames: List<string>;
   nextGameAction: ActionBase;
 }
 
-export class GameState extends React.PureComponent<GameStateProps> {
+export class GameStatus extends React.PureComponent<GameStatusProps> {
   render() {
     const { usernames, nextGameAction } = this.props;
 
-    return gameStateHandlerLookup.get(nextGameAction.gameAction)!(usernames, nextGameAction);
+    return gameStatusHandlerLookup.get(nextGameAction.gameAction)!(usernames, nextGameAction);
   }
 }
 
@@ -83,7 +83,7 @@ const gshl: [GameActionEnum, any][] = [
   ],
   [GameActionEnum.GameOver, () => <div className={style.root}>Game over.</div>],
 ];
-const gameStateHandlerLookup = new Map<GameActionEnum, (usernames: List<string>, action: ActionBase) => JSX.Element>(gshl);
+const gameStatusHandlerLookup = new Map<GameActionEnum, (usernames: List<string>, action: ActionBase) => JSX.Element>(gshl);
 
 function getHotelInitialsList(chains: GameBoardType[]) {
   const entries: (JSX.Element | string)[] = new Array(chains.length * 2 - 1);

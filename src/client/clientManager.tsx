@@ -19,7 +19,7 @@ import { GameBoard } from './components/GameBoard';
 import { GameHistory } from './components/GameHistory';
 import { GameListing } from './components/GameListing';
 import { GameSetupUI } from './components/GameSetupUI';
-import { GameState } from './components/GameState';
+import { GameStatus } from './components/GameStatus';
 import { Header } from './components/Header';
 import { LoginForm } from './components/LoginForm';
 import { PurchaseShares } from './components/PurchaseShares';
@@ -379,7 +379,7 @@ export class ClientManager {
                 />
               ) : undefined)}
             <GameHistory usernames={game.usernames} moveDataHistory={game.moveDataHistory} onMoveClicked={this.onMoveClicked} />
-            <GameState usernames={game.usernames} nextGameAction={nextGameAction} />
+            <GameStatus usernames={game.usernames} nextGameAction={nextGameAction} />
           </div>
         </div>
       </div>
