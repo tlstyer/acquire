@@ -11,20 +11,6 @@ export enum MessageToClientEnum {
   GameActionDone,
 }
 
-export enum MessageToServerEnum {
-  CreateGame,
-  EnterGame,
-  ExitGame,
-  JoinGame,
-  UnjoinGame,
-  ApproveOfGameSetup,
-  ChangeGameMode,
-  ChangePlayerArrangementMode,
-  SwapPositions,
-  KickUser,
-  DoGameAction,
-}
-
 export enum GameActionEnum {
   StartGame,
   PlayTile,

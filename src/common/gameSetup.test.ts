@@ -438,21 +438,9 @@ describe('swapPositions', () => {
 
     expect(gameSetup.usernames.toJS()).toEqual(['user 1', 'user 2', 'user 3', 'user 4']);
 
-    // @ts-ignore
-    gameSetup.swapPositions('invalid mode', 0);
-    // @ts-ignore
-    gameSetup.swapPositions(null, 0);
-    // @ts-ignore
-    gameSetup.swapPositions({}, 0);
     gameSetup.swapPositions(-1, 0);
     gameSetup.swapPositions(4, 0);
 
-    // @ts-ignore
-    gameSetup.swapPositions(0, 'invalid mode');
-    // @ts-ignore
-    gameSetup.swapPositions(0, null);
-    // @ts-ignore
-    gameSetup.swapPositions(0, {});
     gameSetup.swapPositions(0, -1);
     gameSetup.swapPositions(0, 4);
 

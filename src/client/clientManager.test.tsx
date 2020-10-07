@@ -1,6 +1,6 @@
 import { List } from 'immutable';
-import { GameActionEnum, GameSetupChangeEnum, MessageToClientEnum, MessageToServerEnum } from '../common/enums';
-import { ErrorCode, GameAction, GameMode, PlayerArrangementMode } from '../common/pb';
+import { GameActionEnum, GameSetupChangeEnum, MessageToClientEnum } from '../common/enums';
+import { ErrorCode, GameAction, GameMode, MessageToServer, PlayerArrangementMode } from '../common/pb';
 import { Client, ClientManager, ClientManagerPage, GameData, User } from './clientManager';
 
 class TestWebSocket {
@@ -16,10 +16,10 @@ class TestWebSocket {
 
   readyState = WebSocket.CLOSED;
 
-  sentMessages: any[] = [];
+  sentMessages: Uint8Array[] = [];
 
-  send(data: string) {
-    this.sentMessages.push(JSON.parse(data));
+  send(data: Uint8Array) {
+    this.sentMessages.push(data);
   }
 
   triggerOpen() {
@@ -199,7 +199,7 @@ function uncircularreferenceifyGameIDToGameData(gameIDToGameData: Map<number, Ga
   return gameIDTOUCRGameData;
 }
 
-function sendsMessageWhenConnected(handlerCallback: (clientManager: ClientManager) => void, expectedMessage: any[]) {
+function sendsMessageWhenConnected(handlerCallback: (clientManager: ClientManager) => void, expectedObject: any) {
   const { clientManager } = getClientManagerAndStuff();
 
   clientManager.onSubmitLoginForm('me', '');
@@ -208,8 +208,7 @@ function sendsMessageWhenConnected(handlerCallback: (clientManager: ClientManage
 
   handlerCallback(clientManager);
 
-  expect(testWebSocket!.sentMessages.length).toBe(1);
-  expect(testWebSocket!.sentMessages[0]).toEqual(expectedMessage);
+  expectMessageToServerDatasToEqual([expectedObject]);
 }
 
 function doesNotSendMessageWhenNotConnected(handlerCallback: (clientManager: ClientManager) => void) {
@@ -223,6 +222,14 @@ function doesNotSendMessageWhenNotConnected(handlerCallback: (clientManager: Cli
   handlerCallback(clientManager);
 
   expect(testWebSocket!.sentMessages.length).toBe(0);
+}
+
+function expectMessageToServerDatasToEqual(expectedObjects: any[]) {
+  expect(testWebSocket!.sentMessages.length).toBe(expectedObjects.length);
+
+  for (let i = 0; i < expectedObjects.length; i++) {
+    expect(MessageToServer.toObject(MessageToServer.decode(testWebSocket!.sentMessages[i]))).toEqual(expectedObjects[i]);
+  }
 }
 
 describe('onSubmitLoginForm', () => {
@@ -247,7 +254,7 @@ describe('onSubmitLoginForm', () => {
     testWebSocket!.triggerOpen();
 
     expect(renderMock.mock.calls.length).toBe(2);
-    expect(testWebSocket!.sentMessages).toEqual([[0, 'username', 'password', []]]);
+    expectMessageToServerDatasToEqual([{ login: { version: 0, username: 'username', password: 'password' } }]);
   });
 
   test('goes back to login page upon fatal error followed by a closed connection', () => {
@@ -310,8 +317,7 @@ describe('onSubmitCreateGame', () => {
 
     clientManager.onSubmitCreateGame(GameMode.TEAMS_2_VS_2);
 
-    expect(testWebSocket!.sentMessages.length).toBe(1);
-    expect(testWebSocket!.sentMessages[0]).toEqual([MessageToServerEnum.CreateGame, GameMode.TEAMS_2_VS_2]);
+    expectMessageToServerDatasToEqual([{ createGame: { gameMode: GameMode.TEAMS_2_VS_2 } }]);
   });
 
   test('does not send CreateGame message when not connected', () => {
@@ -350,8 +356,7 @@ describe('onEnterClicked', () => {
 
     clientManager.gameDisplayNumberToGameData.get(1)!.onEnterClicked();
 
-    expect(testWebSocket!.sentMessages.length).toBe(1);
-    expect(testWebSocket!.sentMessages[0]).toEqual([MessageToServerEnum.EnterGame, 1]);
+    expectMessageToServerDatasToEqual([{ enterGame: { gameDisplayNumber: 1 } }]);
   });
 
   test('does not send EnterGame message when not connected', () => {
@@ -381,7 +386,7 @@ describe('onEnterClicked', () => {
 
 describe('onExitGameClicked', () => {
   test('sends ExitGame message when connected', () => {
-    sendsMessageWhenConnected((clientManager) => clientManager.onExitGameClicked(), [MessageToServerEnum.ExitGame]);
+    sendsMessageWhenConnected((clientManager) => clientManager.onExitGameClicked(), { exitGame: {} });
   });
 
   test('does not send ExitGame message when not connected', () => {
@@ -391,7 +396,7 @@ describe('onExitGameClicked', () => {
 
 describe('onJoinGame', () => {
   test('sends JoinGame message when connected', () => {
-    sendsMessageWhenConnected((clientManager) => clientManager.onJoinGame(), [MessageToServerEnum.JoinGame]);
+    sendsMessageWhenConnected((clientManager) => clientManager.onJoinGame(), { doGameSetupAction: { joinGame: {} } });
   });
 
   test('does not send JoinGame message when not connected', () => {
@@ -401,7 +406,7 @@ describe('onJoinGame', () => {
 
 describe('onUnjoinGame', () => {
   test('sends UnjoinGame message when connected', () => {
-    sendsMessageWhenConnected((clientManager) => clientManager.onUnjoinGame(), [MessageToServerEnum.UnjoinGame]);
+    sendsMessageWhenConnected((clientManager) => clientManager.onUnjoinGame(), { doGameSetupAction: { unjoinGame: {} } });
   });
 
   test('does not send UnjoinGame message when not connected', () => {
@@ -411,7 +416,7 @@ describe('onUnjoinGame', () => {
 
 describe('onApproveOfGameSetup', () => {
   test('sends ApproveOfGameSetup message when connected', () => {
-    sendsMessageWhenConnected((clientManager) => clientManager.onApproveOfGameSetup(), [MessageToServerEnum.ApproveOfGameSetup]);
+    sendsMessageWhenConnected((clientManager) => clientManager.onApproveOfGameSetup(), { doGameSetupAction: { approveOfGameSetup: {} } });
   });
 
   test('does not send ApproveOfGameSetup message when not connected', () => {
@@ -421,10 +426,9 @@ describe('onApproveOfGameSetup', () => {
 
 describe('onChangeGameMode', () => {
   test('sends ChangeGameMode message when connected', () => {
-    sendsMessageWhenConnected((clientManager) => clientManager.onChangeGameMode(GameMode.TEAMS_2_VS_2), [
-      MessageToServerEnum.ChangeGameMode,
-      GameMode.TEAMS_2_VS_2,
-    ]);
+    sendsMessageWhenConnected((clientManager) => clientManager.onChangeGameMode(GameMode.TEAMS_2_VS_2), {
+      doGameSetupAction: { changeGameMode: { gameMode: GameMode.TEAMS_2_VS_2 } },
+    });
   });
 
   test('does not send ChangeGameMode message when not connected', () => {
@@ -434,10 +438,9 @@ describe('onChangeGameMode', () => {
 
 describe('onChangePlayerArrangementMode', () => {
   test('sends ChangePlayerArrangementMode message when connected', () => {
-    sendsMessageWhenConnected((clientManager) => clientManager.onChangePlayerArrangementMode(PlayerArrangementMode.EXACT_ORDER), [
-      MessageToServerEnum.ChangePlayerArrangementMode,
-      PlayerArrangementMode.EXACT_ORDER,
-    ]);
+    sendsMessageWhenConnected((clientManager) => clientManager.onChangePlayerArrangementMode(PlayerArrangementMode.EXACT_ORDER), {
+      doGameSetupAction: { changePlayerArrangementMode: { playerArrangementMode: PlayerArrangementMode.EXACT_ORDER } },
+    });
   });
 
   test('does not send ChangePlayerArrangementMode message when not connected', () => {
@@ -447,7 +450,7 @@ describe('onChangePlayerArrangementMode', () => {
 
 describe('onSwapPositions', () => {
   test('sends SwapPositions message when connected', () => {
-    sendsMessageWhenConnected((clientManager) => clientManager.onSwapPositions(0, 1), [MessageToServerEnum.SwapPositions, 0, 1]);
+    sendsMessageWhenConnected((clientManager) => clientManager.onSwapPositions(0, 1), { doGameSetupAction: { swapPositions: { position1: 0, position2: 1 } } });
   });
 
   test('does not send SwapPositions message when not connected', () => {
@@ -457,7 +460,7 @@ describe('onSwapPositions', () => {
 
 describe('onKickUser', () => {
   test('sends KickUser message when connected', () => {
-    sendsMessageWhenConnected((clientManager) => clientManager.onKickUser(5), [MessageToServerEnum.KickUser, 5]);
+    sendsMessageWhenConnected((clientManager) => clientManager.onKickUser(5), { doGameSetupAction: { kickUser: { userId: 5 } } });
   });
 
   test('does not send KickUser message when not connected', () => {

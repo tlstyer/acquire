@@ -1,5 +1,6 @@
 import * as WebSocket from 'ws';
-import { GameSetupChangeEnum, MessageToClientEnum, MessageToServerEnum } from '../common/enums';
+import { GameSetupChangeEnum, MessageToClientEnum } from '../common/enums';
+import { encodeMessageToServer } from '../common/helpers';
 import { ErrorCode, GameAction, GameMode, PlayerArrangementMode } from '../common/pb';
 import { ConnectionState, GameData, ServerManager, User } from './serverManager';
 import { TestUserDataProvider } from './userDataProvider';
@@ -21,7 +22,7 @@ class TestServer {
 }
 
 class TestWebSocket {
-  dataListener: ((message: string) => any) | null = null;
+  dataListener: ((message: Uint8Array) => any) | null = null;
   closeListener: (() => void) | null = null;
 
   readyState = WebSocket.OPEN;
@@ -42,12 +43,9 @@ class TestWebSocket {
     this.receivedMessages.push(JSON.parse(message));
   }
 
-  sendMessage(message: any) {
+  sendMessage(messageToServer: any) {
     if (this.dataListener) {
-      if (typeof message !== 'string') {
-        message = JSON.stringify(message);
-      }
-      this.dataListener(message);
+      this.dataListener(encodeMessageToServer(messageToServer));
     }
   }
 
@@ -61,6 +59,54 @@ class TestWebSocket {
   clearReceivedMessages() {
     this.receivedMessages = [];
   }
+}
+
+function messageLogin(version: any, username: any, password: any) {
+  return { login: { version, username, password } };
+}
+
+function messageCreateGame(gameMode: any) {
+  return { createGame: { gameMode } };
+}
+
+function messageEnterGame(gameDisplayNumber: any) {
+  return { enterGame: { gameDisplayNumber } };
+}
+
+function messageExitGame() {
+  return { exitGame: {} };
+}
+
+function messageJoinGame() {
+  return { doGameSetupAction: { joinGame: {} } };
+}
+
+function messageUnjoinGame() {
+  return { doGameSetupAction: { unjoinGame: {} } };
+}
+
+function messageApproveOfGameSetup() {
+  return { doGameSetupAction: { approveOfGameSetup: {} } };
+}
+
+function messageChangeGameMode(gameMode: any) {
+  return { doGameSetupAction: { changeGameMode: { gameMode } } };
+}
+
+function messageChangePlayerArrangementMode(playerArrangementMode: any) {
+  return { doGameSetupAction: { changePlayerArrangementMode: { playerArrangementMode } } };
+}
+
+function messageSwapPositions(position1: any, position2: any) {
+  return { doGameSetupAction: { swapPositions: { position1, position2 } } };
+}
+
+function messageKickUser(userId: any) {
+  return { doGameSetupAction: { kickUser: { userId } } };
+}
+
+function messageDoGameAction(moveDataHistorySize: any, gameAction: any) {
+  return { doGameAction: { moveDataHistorySize, gameAction } };
 }
 
 function getServerManagerAndStuff() {
@@ -84,16 +130,16 @@ async function getServerManagerAndStuffAfterAllApprovedOfGameSetup() {
   const hostConnection = await connectToServer(server, 'host');
   const opponentConnection = await connectToServer(server, 'opponent');
   const anotherConnection = await connectToServer(server, 'another');
-  hostConnection.sendMessage([MessageToServerEnum.CreateGame, GameMode.SINGLES_2]);
-  opponentConnection.sendMessage([MessageToServerEnum.EnterGame, 1]);
-  opponentConnection.sendMessage([MessageToServerEnum.JoinGame]);
+  hostConnection.sendMessage(messageCreateGame(GameMode.SINGLES_2));
+  opponentConnection.sendMessage(messageEnterGame(1));
+  opponentConnection.sendMessage(messageJoinGame());
 
-  hostConnection.sendMessage([MessageToServerEnum.ApproveOfGameSetup]);
+  hostConnection.sendMessage(messageApproveOfGameSetup());
 
   hostConnection.clearReceivedMessages();
   opponentConnection.clearReceivedMessages();
   anotherConnection.clearReceivedMessages();
-  opponentConnection.sendMessage([MessageToServerEnum.ApproveOfGameSetup]);
+  opponentConnection.sendMessage(messageApproveOfGameSetup());
 
   return {
     serverManager,
@@ -254,7 +300,7 @@ function uncircularreferenceifyGameIDToGameData(gameIDToGameData: Map<number, Ga
 async function connectToServer(server: TestServer, username: string) {
   const webSocket = new TestWebSocket(username);
   server.openConnection(webSocket);
-  webSocket.sendMessage([0, username, '', []]);
+  webSocket.sendMessage(messageLogin(0, username, ''));
   await new Promise((resolve) => setTimeout(resolve, 0));
 
   return webSocket;
@@ -266,7 +312,7 @@ function expectClientKickedDueToInvalidMessage(webSocket: TestWebSocket) {
   expect(webSocket.readyState).toBe(WebSocket.CLOSED);
 }
 
-async function expectKicksClientDueToInvalidMessage(message: any[]) {
+async function expectKicksClientDueToInvalidMessage(message: any) {
   const { server } = getServerManagerAndStuff();
 
   const connection = await connectToServer(server, 'user 1');
@@ -343,7 +389,7 @@ describe('when not sending first message', () => {
 
 describe('when sending first message', () => {
   describe('gets kicked', () => {
-    async function getsKickedWithMessage(inputMessage: any, outputErrorCode: ErrorCode) {
+    async function getsKickedWithMessage(messageToServer: any, outputErrorCode: ErrorCode) {
       const { server, userDataProvider } = getServerManagerAndStuff();
 
       await userDataProvider.createUser('has password', 'password');
@@ -351,7 +397,7 @@ describe('when sending first message', () => {
 
       const webSocket = new TestWebSocket('connection');
       server.openConnection(webSocket);
-      webSocket.sendMessage(inputMessage);
+      webSocket.sendMessage(messageToServer);
 
       await new Promise((resolve) => setTimeout(resolve, 0));
 
@@ -359,64 +405,43 @@ describe('when sending first message', () => {
       expect(webSocket.readyState).toBe(WebSocket.CLOSED);
     }
 
-    test('after sending invalid JSON', async () => {
-      await getsKickedWithMessage('', ErrorCode.INVALID_MESSAGE_FORMAT);
-      await getsKickedWithMessage('not json', ErrorCode.INVALID_MESSAGE_FORMAT);
-    });
-
-    test('after sending a non-array', async () => {
+    test('after sending invalid message', async () => {
       await getsKickedWithMessage({}, ErrorCode.INVALID_MESSAGE_FORMAT);
-      await getsKickedWithMessage(null, ErrorCode.INVALID_MESSAGE_FORMAT);
-    });
-
-    test('after sending an array with the wrong length', async () => {
-      await getsKickedWithMessage([1, 2, 3], ErrorCode.INVALID_MESSAGE_FORMAT);
-      await getsKickedWithMessage([1, 2, 3, 4, 5], ErrorCode.INVALID_MESSAGE_FORMAT);
     });
 
     test('after sending wrong version', async () => {
-      await getsKickedWithMessage([-1, 'username', 'password', []], ErrorCode.NOT_USING_LATEST_VERSION);
-      await getsKickedWithMessage([{}, 'username', 'password', []], ErrorCode.NOT_USING_LATEST_VERSION);
+      await getsKickedWithMessage(messageLogin(-1, 'username', 'password'), ErrorCode.NOT_USING_LATEST_VERSION);
     });
 
     test('after sending invalid username', async () => {
-      await getsKickedWithMessage([0, '', 'password', []], ErrorCode.INVALID_USERNAME);
-      await getsKickedWithMessage([0, '123456789012345678901234567890123', 'password', []], ErrorCode.INVALID_USERNAME);
-      await getsKickedWithMessage([0, '▲', 'password', []], ErrorCode.INVALID_USERNAME);
-    });
-
-    test('after sending invalid password', async () => {
-      await getsKickedWithMessage([0, 'username', 0, []], ErrorCode.INVALID_MESSAGE_FORMAT);
-      await getsKickedWithMessage([0, 'username', {}, []], ErrorCode.INVALID_MESSAGE_FORMAT);
-    });
-
-    test('after sending invalid game data array', async () => {
-      await getsKickedWithMessage([0, 'username', '', 0], ErrorCode.INVALID_MESSAGE_FORMAT);
-      await getsKickedWithMessage([0, 'username', '', {}], ErrorCode.INVALID_MESSAGE_FORMAT);
+      await getsKickedWithMessage(messageLogin(0, undefined, 'password'), ErrorCode.INVALID_USERNAME);
+      await getsKickedWithMessage(messageLogin(0, '', 'password'), ErrorCode.INVALID_USERNAME);
+      await getsKickedWithMessage(messageLogin(0, '123456789012345678901234567890123', 'password'), ErrorCode.INVALID_USERNAME);
+      await getsKickedWithMessage(messageLogin(0, '▲', 'password'), ErrorCode.INVALID_USERNAME);
     });
 
     test('after not providing password', async () => {
-      await getsKickedWithMessage([0, 'has password', '', []], ErrorCode.MISSING_PASSWORD);
+      await getsKickedWithMessage(messageLogin(0, 'has password', ''), ErrorCode.MISSING_PASSWORD);
     });
 
     test('after providing incorrect password', async () => {
-      await getsKickedWithMessage([0, 'has password', 'not my password', []], ErrorCode.INCORRECT_PASSWORD);
+      await getsKickedWithMessage(messageLogin(0, 'has password', 'not my password'), ErrorCode.INCORRECT_PASSWORD);
     });
 
     test('after providing a password when test is not set', async () => {
-      await getsKickedWithMessage([0, 'does not have password', 'password', []], ErrorCode.PROVIDED_PASSWORD);
+      await getsKickedWithMessage(messageLogin(0, 'does not have password', 'password'), ErrorCode.PROVIDED_PASSWORD);
     });
 
     test('after providing a password when user data does not exist', async () => {
-      await getsKickedWithMessage([0, 'no user data', 'password', []], ErrorCode.PROVIDED_PASSWORD);
+      await getsKickedWithMessage(messageLogin(0, 'no user data', 'password'), ErrorCode.PROVIDED_PASSWORD);
     });
 
     test("after an error from user data provider's lookupUser()", async () => {
-      await getsKickedWithMessage([0, 'lookupUser error', 'password', []], ErrorCode.INTERNAL_SERVER_ERROR);
+      await getsKickedWithMessage(messageLogin(0, 'lookupUser error', 'password'), ErrorCode.INTERNAL_SERVER_ERROR);
     });
 
     test("after an error from user data provider's createUser()", async () => {
-      await getsKickedWithMessage([0, 'createUser error', '', []], ErrorCode.INTERNAL_SERVER_ERROR);
+      await getsKickedWithMessage(messageLogin(0, 'createUser error', ''), ErrorCode.INTERNAL_SERVER_ERROR);
     });
   });
 
@@ -429,7 +454,7 @@ describe('when sending first message', () => {
 
       const webSocket1 = new TestWebSocket('connection 1');
       server.openConnection(webSocket1);
-      webSocket1.sendMessage([0, username, password, []]);
+      webSocket1.sendMessage(messageLogin(0, username, password));
       await new Promise((resolve) => setTimeout(resolve, 0));
 
       function expectJustConnection1Data() {
@@ -445,7 +470,7 @@ describe('when sending first message', () => {
 
       const webSocket2 = new TestWebSocket('connection 2');
       server.openConnection(webSocket2);
-      webSocket2.sendMessage([0, username, password, []]);
+      webSocket2.sendMessage(messageLogin(0, username, password));
       await new Promise((resolve) => setTimeout(resolve, 0));
 
       expect(serverManager.webSocketToConnectionState).toEqual(
@@ -508,9 +533,9 @@ describe('when sending first message', () => {
       const connection3 = await connectToServer(server, 'user 3');
       const connection4 = await connectToServer(server, 'user 4');
       await connectToServer(server, 'user 1');
-      connection3.sendMessage([MessageToServerEnum.CreateGame, GameMode.SINGLES_2]);
+      connection3.sendMessage(messageCreateGame(GameMode.SINGLES_2));
       connection3.close();
-      connection4.sendMessage([MessageToServerEnum.CreateGame, GameMode.TEAMS_3_VS_3]);
+      connection4.sendMessage(messageCreateGame(GameMode.TEAMS_3_VS_3));
 
       const connection = await connectToServer(server, 'me');
 
@@ -542,7 +567,7 @@ describe('when sending first message', () => {
       Math.random = () => 0.1;
 
       const connection1 = await connectToServer(server, '1');
-      connection1.sendMessage([MessageToServerEnum.CreateGame, GameMode.SINGLES_4]);
+      connection1.sendMessage(messageCreateGame(GameMode.SINGLES_4));
 
       const connection2 = await connectToServer(server, '2');
       expect(connection2.receivedMessages).toEqual([
@@ -558,11 +583,11 @@ describe('when sending first message', () => {
           ],
         ],
       ]);
-      connection2.sendMessage([MessageToServerEnum.CreateGame, GameMode.SINGLES_1]);
-      connection2.sendMessage([MessageToServerEnum.ApproveOfGameSetup]);
-      connection2.sendMessage([MessageToServerEnum.DoGameAction, 1, GameAction.fromObject({ playTile: { tile: 19 } })]);
-      connection2.sendMessage([MessageToServerEnum.DoGameAction, 2, GameAction.fromObject({ playTile: { tile: 29 } })]);
-      connection2.sendMessage([MessageToServerEnum.DoGameAction, 3, GameAction.fromObject({ playTile: { tile: 39 } })]);
+      connection2.sendMessage(messageCreateGame(GameMode.SINGLES_1));
+      connection2.sendMessage(messageApproveOfGameSetup());
+      connection2.sendMessage(messageDoGameAction(1, { playTile: { tile: 19 } }));
+      connection2.sendMessage(messageDoGameAction(2, { playTile: { tile: 29 } }));
+      connection2.sendMessage(messageDoGameAction(3, { playTile: { tile: 39 } }));
 
       const connection3 = await connectToServer(server, '3');
       expect(connection3.receivedMessages).toEqual([
@@ -650,18 +675,14 @@ describe('when sending first message', () => {
 
 describe('after logging in', () => {
   test('kicks client due to invalid message', async () => {
-    await expectKicksClientDueToInvalidMessage([]);
-    await expectKicksClientDueToInvalidMessage([{}]);
-    await expectKicksClientDueToInvalidMessage([-1, 1, 2, 3]);
+    await expectKicksClientDueToInvalidMessage({});
   });
 });
 
 describe('create game', () => {
   test('kicks client due to invalid message', async () => {
-    await expectKicksClientDueToInvalidMessage([MessageToServerEnum.CreateGame]);
-    await expectKicksClientDueToInvalidMessage([MessageToServerEnum.CreateGame, 1, 2]);
-    await expectKicksClientDueToInvalidMessage([MessageToServerEnum.CreateGame, -1]);
-    await expectKicksClientDueToInvalidMessage([MessageToServerEnum.CreateGame, {}]);
+    await expectKicksClientDueToInvalidMessage(messageCreateGame(0));
+    await expectKicksClientDueToInvalidMessage(messageCreateGame(-1));
   });
 
   test('sends MessageToClient.GameCreated and MessageToClient.ClientEnteredGame when successful', async () => {
@@ -678,7 +699,7 @@ describe('create game', () => {
       [],
     );
 
-    connection2.sendMessage([MessageToServerEnum.CreateGame, GameMode.TEAMS_2_VS_2]);
+    connection2.sendMessage(messageCreateGame(GameMode.TEAMS_2_VS_2));
 
     expect(serverManager.userIDToUser.get(1)!.numGames).toBe(0);
     expect(serverManager.userIDToUser.get(2)!.numGames).toBe(1);
@@ -711,11 +732,11 @@ describe('create game', () => {
 
     const connection1 = await connectToServer(server, 'user 1');
     const connection2 = await connectToServer(server, 'user 2');
-    connection2.sendMessage([MessageToServerEnum.CreateGame, GameMode.TEAMS_2_VS_2]);
+    connection2.sendMessage(messageCreateGame(GameMode.TEAMS_2_VS_2));
     connection1.clearReceivedMessages();
     connection2.clearReceivedMessages();
 
-    connection2.sendMessage([MessageToServerEnum.CreateGame, GameMode.TEAMS_2_VS_2]);
+    connection2.sendMessage(messageCreateGame(GameMode.TEAMS_2_VS_2));
 
     expect(serverManager.userIDToUser.get(2)!.numGames).toBe(1);
     expect(serverManager.gameIDToGameData.size).toBe(1);
@@ -726,10 +747,8 @@ describe('create game', () => {
 
 describe('enter game', () => {
   test('kicks client due to invalid message', async () => {
-    await expectKicksClientDueToInvalidMessage([MessageToServerEnum.EnterGame]);
-    await expectKicksClientDueToInvalidMessage([MessageToServerEnum.EnterGame, 1, 2]);
-    await expectKicksClientDueToInvalidMessage([MessageToServerEnum.EnterGame, -1]);
-    await expectKicksClientDueToInvalidMessage([MessageToServerEnum.EnterGame, {}]);
+    await expectKicksClientDueToInvalidMessage(messageEnterGame(0));
+    await expectKicksClientDueToInvalidMessage(messageEnterGame(-1));
   });
 
   test('sends MessageToClient.ClientEnteredGame when successful', async () => {
@@ -737,7 +756,7 @@ describe('enter game', () => {
 
     const connection1 = await connectToServer(server, 'user 1');
     const connection2 = await connectToServer(server, 'user 2');
-    connection1.sendMessage([MessageToServerEnum.CreateGame, GameMode.TEAMS_2_VS_2]);
+    connection1.sendMessage(messageCreateGame(GameMode.TEAMS_2_VS_2));
     connection1.clearReceivedMessages();
     connection2.clearReceivedMessages();
 
@@ -747,7 +766,7 @@ describe('enter game', () => {
       [new GameDataData(10, 1, [1])],
     );
 
-    connection2.sendMessage([MessageToServerEnum.EnterGame, 1]);
+    connection2.sendMessage(messageEnterGame(1));
 
     expectClientAndUserAndGameData(
       serverManager,
@@ -769,19 +788,19 @@ describe('enter game', () => {
     const connection1 = await connectToServer(server, 'user 1');
     const connection2 = await connectToServer(server, 'user 2');
     const connection3 = await connectToServer(server, 'user 3');
-    connection1.sendMessage([MessageToServerEnum.CreateGame, GameMode.TEAMS_2_VS_2]);
-    connection2.sendMessage([MessageToServerEnum.CreateGame, GameMode.SINGLES_3]);
-    connection3.sendMessage([MessageToServerEnum.EnterGame, 2]);
+    connection1.sendMessage(messageCreateGame(GameMode.TEAMS_2_VS_2));
+    connection2.sendMessage(messageCreateGame(GameMode.SINGLES_3));
+    connection3.sendMessage(messageEnterGame(2));
     connection1.clearReceivedMessages();
     connection2.clearReceivedMessages();
     connection3.clearReceivedMessages();
 
-    connection1.sendMessage([MessageToServerEnum.EnterGame, 1]);
-    connection1.sendMessage([MessageToServerEnum.EnterGame, 2]);
-    connection2.sendMessage([MessageToServerEnum.EnterGame, 1]);
-    connection2.sendMessage([MessageToServerEnum.EnterGame, 2]);
-    connection3.sendMessage([MessageToServerEnum.EnterGame, 1]);
-    connection3.sendMessage([MessageToServerEnum.EnterGame, 2]);
+    connection1.sendMessage(messageEnterGame(1));
+    connection1.sendMessage(messageEnterGame(2));
+    connection2.sendMessage(messageEnterGame(1));
+    connection2.sendMessage(messageEnterGame(2));
+    connection3.sendMessage(messageEnterGame(1));
+    connection3.sendMessage(messageEnterGame(2));
 
     expect(connection1.receivedMessages.length).toBe(0);
     expect(connection2.receivedMessages.length).toBe(0);
@@ -793,18 +812,13 @@ describe('enter game', () => {
 });
 
 describe('exit game', () => {
-  test('kicks client due to invalid message', async () => {
-    await expectKicksClientDueToInvalidMessage([MessageToServerEnum.ExitGame, 1]);
-    await expectKicksClientDueToInvalidMessage([MessageToServerEnum.ExitGame, {}]);
-  });
-
   test('sends MessageToClient.ClientExitedGame when successful', async () => {
     const { serverManager, server } = getServerManagerAndStuff();
 
     const connection1 = await connectToServer(server, 'user 1');
     const connection2 = await connectToServer(server, 'user 2');
-    connection1.sendMessage([MessageToServerEnum.CreateGame, GameMode.TEAMS_2_VS_2]);
-    connection2.sendMessage([MessageToServerEnum.EnterGame, 1]);
+    connection1.sendMessage(messageCreateGame(GameMode.TEAMS_2_VS_2));
+    connection2.sendMessage(messageEnterGame(1));
     connection1.clearReceivedMessages();
     connection2.clearReceivedMessages();
 
@@ -814,7 +828,7 @@ describe('exit game', () => {
       [new GameDataData(10, 1, [1])],
     );
 
-    connection2.sendMessage([MessageToServerEnum.ExitGame]);
+    connection2.sendMessage(messageExitGame());
 
     expectClientAndUserAndGameData(
       serverManager,
@@ -835,7 +849,7 @@ describe('exit game', () => {
 
     const connection1 = await connectToServer(server, 'user 1');
     const connection2 = await connectToServer(server, 'user 2');
-    connection1.sendMessage([MessageToServerEnum.CreateGame, GameMode.TEAMS_2_VS_2]);
+    connection1.sendMessage(messageCreateGame(GameMode.TEAMS_2_VS_2));
     connection1.clearReceivedMessages();
     connection2.clearReceivedMessages();
 
@@ -845,7 +859,7 @@ describe('exit game', () => {
       [new GameDataData(10, 1, [1])],
     );
 
-    connection2.sendMessage([MessageToServerEnum.ExitGame]);
+    connection2.sendMessage(messageExitGame());
 
     expectClientAndUserAndGameData(
       serverManager,
@@ -867,25 +881,10 @@ describe('join game', () => {
     const connection = await connectToServer(server, 'user');
     connection.clearReceivedMessages();
 
-    connection.sendMessage([MessageToServerEnum.JoinGame]);
+    connection.sendMessage(messageJoinGame());
 
     expect(connection.receivedMessages.length).toBe(0);
     expect(connection.readyState).toBe(WebSocket.OPEN);
-  });
-
-  test('kicks client due to invalid message', async () => {
-    const { server } = getServerManagerAndStuff();
-
-    const hostConnection = await connectToServer(server, 'host');
-    const otherConnection = await connectToServer(server, 'other');
-    hostConnection.sendMessage([MessageToServerEnum.CreateGame, GameMode.TEAMS_2_VS_2]);
-    otherConnection.sendMessage([MessageToServerEnum.EnterGame, 1]);
-    hostConnection.clearReceivedMessages();
-    otherConnection.clearReceivedMessages();
-
-    otherConnection.sendMessage([MessageToServerEnum.JoinGame, 1]);
-
-    expectClientKickedDueToInvalidMessage(otherConnection);
   });
 
   test('sends MessageToClient.GameSetupChanged when successful', async () => {
@@ -893,8 +892,8 @@ describe('join game', () => {
 
     const hostConnection = await connectToServer(server, 'host');
     const otherConnection = await connectToServer(server, 'other');
-    hostConnection.sendMessage([MessageToServerEnum.CreateGame, GameMode.TEAMS_2_VS_2]);
-    otherConnection.sendMessage([MessageToServerEnum.EnterGame, 1]);
+    hostConnection.sendMessage(messageCreateGame(GameMode.TEAMS_2_VS_2));
+    otherConnection.sendMessage(messageEnterGame(1));
     hostConnection.clearReceivedMessages();
     otherConnection.clearReceivedMessages();
 
@@ -904,7 +903,7 @@ describe('join game', () => {
       [new GameDataData(10, 1, [1])],
     );
 
-    otherConnection.sendMessage([MessageToServerEnum.JoinGame]);
+    otherConnection.sendMessage(messageJoinGame());
 
     expectClientAndUserAndGameData(
       serverManager,
@@ -928,26 +927,10 @@ describe('unjoin game', () => {
     const connection = await connectToServer(server, 'user');
     connection.clearReceivedMessages();
 
-    connection.sendMessage([MessageToServerEnum.UnjoinGame]);
+    connection.sendMessage(messageUnjoinGame());
 
     expect(connection.receivedMessages.length).toBe(0);
     expect(connection.readyState).toBe(WebSocket.OPEN);
-  });
-
-  test('kicks client due to invalid message', async () => {
-    const { server } = getServerManagerAndStuff();
-
-    const hostConnection = await connectToServer(server, 'host');
-    const otherConnection = await connectToServer(server, 'other');
-    hostConnection.sendMessage([MessageToServerEnum.CreateGame, GameMode.TEAMS_2_VS_2]);
-    otherConnection.sendMessage([MessageToServerEnum.EnterGame, 1]);
-    otherConnection.sendMessage([MessageToServerEnum.JoinGame]);
-    hostConnection.clearReceivedMessages();
-    otherConnection.clearReceivedMessages();
-
-    otherConnection.sendMessage([MessageToServerEnum.UnjoinGame, 1]);
-
-    expectClientKickedDueToInvalidMessage(otherConnection);
   });
 
   test('sends MessageToClient.GameSetupChanged when successful', async () => {
@@ -955,9 +938,9 @@ describe('unjoin game', () => {
 
     const hostConnection = await connectToServer(server, 'host');
     const otherConnection = await connectToServer(server, 'other');
-    hostConnection.sendMessage([MessageToServerEnum.CreateGame, GameMode.TEAMS_2_VS_2]);
-    otherConnection.sendMessage([MessageToServerEnum.EnterGame, 1]);
-    otherConnection.sendMessage([MessageToServerEnum.JoinGame]);
+    hostConnection.sendMessage(messageCreateGame(GameMode.TEAMS_2_VS_2));
+    otherConnection.sendMessage(messageEnterGame(1));
+    otherConnection.sendMessage(messageJoinGame());
     hostConnection.clearReceivedMessages();
     otherConnection.clearReceivedMessages();
 
@@ -967,7 +950,7 @@ describe('unjoin game', () => {
       [new GameDataData(10, 1, [1, 2])],
     );
 
-    otherConnection.sendMessage([MessageToServerEnum.UnjoinGame]);
+    otherConnection.sendMessage(messageUnjoinGame());
 
     expectClientAndUserAndGameData(
       serverManager,
@@ -991,25 +974,10 @@ describe('approve of game setup', () => {
     const connection = await connectToServer(server, 'user');
     connection.clearReceivedMessages();
 
-    connection.sendMessage([MessageToServerEnum.ApproveOfGameSetup]);
+    connection.sendMessage(messageApproveOfGameSetup());
 
     expect(connection.receivedMessages.length).toBe(0);
     expect(connection.readyState).toBe(WebSocket.OPEN);
-  });
-
-  test('kicks client due to invalid message', async () => {
-    const { server } = getServerManagerAndStuff();
-
-    const hostConnection = await connectToServer(server, 'host');
-    const otherConnection = await connectToServer(server, 'other');
-    hostConnection.sendMessage([MessageToServerEnum.CreateGame, GameMode.SINGLES_2]);
-    otherConnection.sendMessage([MessageToServerEnum.EnterGame, 1]);
-    hostConnection.clearReceivedMessages();
-    otherConnection.clearReceivedMessages();
-
-    otherConnection.sendMessage([MessageToServerEnum.ApproveOfGameSetup, 1]);
-
-    expectClientKickedDueToInvalidMessage(otherConnection);
   });
 
   test('sends MessageToClient.GameSetupChanged when successful', async () => {
@@ -1017,9 +985,9 @@ describe('approve of game setup', () => {
 
     const hostConnection = await connectToServer(server, 'host');
     const otherConnection = await connectToServer(server, 'other');
-    hostConnection.sendMessage([MessageToServerEnum.CreateGame, GameMode.SINGLES_2]);
-    otherConnection.sendMessage([MessageToServerEnum.EnterGame, 1]);
-    otherConnection.sendMessage([MessageToServerEnum.JoinGame]);
+    hostConnection.sendMessage(messageCreateGame(GameMode.SINGLES_2));
+    otherConnection.sendMessage(messageEnterGame(1));
+    otherConnection.sendMessage(messageJoinGame());
     hostConnection.clearReceivedMessages();
     otherConnection.clearReceivedMessages();
 
@@ -1029,7 +997,7 @@ describe('approve of game setup', () => {
       [new GameDataData(10, 1, [1, 2])],
     );
 
-    otherConnection.sendMessage([MessageToServerEnum.ApproveOfGameSetup]);
+    otherConnection.sendMessage(messageApproveOfGameSetup());
 
     expectClientAndUserAndGameData(
       serverManager,
@@ -1053,7 +1021,7 @@ describe('change game mode', () => {
     const connection = await connectToServer(server, 'user');
     connection.clearReceivedMessages();
 
-    connection.sendMessage([MessageToServerEnum.ChangeGameMode, GameMode.SINGLES_3]);
+    connection.sendMessage(messageChangeGameMode(GameMode.SINGLES_3));
 
     expect(connection.receivedMessages.length).toBe(0);
     expect(connection.readyState).toBe(WebSocket.OPEN);
@@ -1064,26 +1032,14 @@ describe('change game mode', () => {
 
     const hostConnection = await connectToServer(server, 'host');
     const otherConnection = await connectToServer(server, 'other');
-    hostConnection.sendMessage([MessageToServerEnum.CreateGame, GameMode.SINGLES_2]);
-    otherConnection.sendMessage([MessageToServerEnum.EnterGame, 1]);
+    hostConnection.sendMessage(messageCreateGame(GameMode.SINGLES_2));
+    otherConnection.sendMessage(messageEnterGame(1));
     hostConnection.clearReceivedMessages();
     otherConnection.clearReceivedMessages();
 
-    otherConnection.sendMessage([MessageToServerEnum.ChangeGameMode, GameMode.SINGLES_3]);
+    otherConnection.sendMessage(messageChangeGameMode(GameMode.SINGLES_3));
 
     expectClientKickedDueToInvalidMessage(otherConnection);
-  });
-
-  test('kicks client when the host and sending invalid message', async () => {
-    const { server } = getServerManagerAndStuff();
-
-    const hostConnection = await connectToServer(server, 'host');
-    hostConnection.sendMessage([MessageToServerEnum.CreateGame, GameMode.SINGLES_3]);
-    hostConnection.clearReceivedMessages();
-
-    hostConnection.sendMessage([MessageToServerEnum.ChangeGameMode]);
-
-    expectClientKickedDueToInvalidMessage(hostConnection);
   });
 
   test('sends MessageToClient.GameSetupChanged when successful', async () => {
@@ -1091,9 +1047,9 @@ describe('change game mode', () => {
 
     const hostConnection = await connectToServer(server, 'host');
     const otherConnection = await connectToServer(server, 'other');
-    hostConnection.sendMessage([MessageToServerEnum.CreateGame, GameMode.SINGLES_2]);
-    otherConnection.sendMessage([MessageToServerEnum.EnterGame, 1]);
-    otherConnection.sendMessage([MessageToServerEnum.JoinGame]);
+    hostConnection.sendMessage(messageCreateGame(GameMode.SINGLES_2));
+    otherConnection.sendMessage(messageEnterGame(1));
+    otherConnection.sendMessage(messageJoinGame());
     hostConnection.clearReceivedMessages();
     otherConnection.clearReceivedMessages();
 
@@ -1103,7 +1059,7 @@ describe('change game mode', () => {
       [new GameDataData(10, 1, [1, 2])],
     );
 
-    hostConnection.sendMessage([MessageToServerEnum.ChangeGameMode, GameMode.SINGLES_3]);
+    hostConnection.sendMessage(messageChangeGameMode(GameMode.SINGLES_3));
 
     expectClientAndUserAndGameData(
       serverManager,
@@ -1127,7 +1083,7 @@ describe('change player arrangement mode', () => {
     const connection = await connectToServer(server, 'user');
     connection.clearReceivedMessages();
 
-    connection.sendMessage([MessageToServerEnum.ChangePlayerArrangementMode, PlayerArrangementMode.EXACT_ORDER]);
+    connection.sendMessage(messageChangePlayerArrangementMode(PlayerArrangementMode.EXACT_ORDER));
 
     expect(connection.receivedMessages.length).toBe(0);
     expect(connection.readyState).toBe(WebSocket.OPEN);
@@ -1138,26 +1094,14 @@ describe('change player arrangement mode', () => {
 
     const hostConnection = await connectToServer(server, 'host');
     const otherConnection = await connectToServer(server, 'other');
-    hostConnection.sendMessage([MessageToServerEnum.CreateGame, GameMode.SINGLES_2]);
-    otherConnection.sendMessage([MessageToServerEnum.EnterGame, 1]);
+    hostConnection.sendMessage(messageCreateGame(GameMode.SINGLES_2));
+    otherConnection.sendMessage(messageEnterGame(1));
     hostConnection.clearReceivedMessages();
     otherConnection.clearReceivedMessages();
 
-    otherConnection.sendMessage([MessageToServerEnum.ChangePlayerArrangementMode, PlayerArrangementMode.EXACT_ORDER]);
+    otherConnection.sendMessage(messageChangePlayerArrangementMode(PlayerArrangementMode.EXACT_ORDER));
 
     expectClientKickedDueToInvalidMessage(otherConnection);
-  });
-
-  test('kicks client when the host and sending invalid message', async () => {
-    const { server } = getServerManagerAndStuff();
-
-    const hostConnection = await connectToServer(server, 'host');
-    hostConnection.sendMessage([MessageToServerEnum.CreateGame, GameMode.SINGLES_3]);
-    hostConnection.clearReceivedMessages();
-
-    hostConnection.sendMessage([MessageToServerEnum.ChangePlayerArrangementMode]);
-
-    expectClientKickedDueToInvalidMessage(hostConnection);
   });
 
   test('sends MessageToClient.GameSetupChanged when successful', async () => {
@@ -1165,9 +1109,9 @@ describe('change player arrangement mode', () => {
 
     const hostConnection = await connectToServer(server, 'host');
     const otherConnection = await connectToServer(server, 'other');
-    hostConnection.sendMessage([MessageToServerEnum.CreateGame, GameMode.SINGLES_4]);
-    otherConnection.sendMessage([MessageToServerEnum.EnterGame, 1]);
-    otherConnection.sendMessage([MessageToServerEnum.JoinGame]);
+    hostConnection.sendMessage(messageCreateGame(GameMode.SINGLES_4));
+    otherConnection.sendMessage(messageEnterGame(1));
+    otherConnection.sendMessage(messageJoinGame());
     hostConnection.clearReceivedMessages();
     otherConnection.clearReceivedMessages();
 
@@ -1177,7 +1121,7 @@ describe('change player arrangement mode', () => {
       [new GameDataData(10, 1, [1, 2])],
     );
 
-    hostConnection.sendMessage([MessageToServerEnum.ChangePlayerArrangementMode, PlayerArrangementMode.EXACT_ORDER]);
+    hostConnection.sendMessage(messageChangePlayerArrangementMode(PlayerArrangementMode.EXACT_ORDER));
 
     expectClientAndUserAndGameData(
       serverManager,
@@ -1201,7 +1145,7 @@ describe('swap positions', () => {
     const connection = await connectToServer(server, 'user');
     connection.clearReceivedMessages();
 
-    connection.sendMessage([MessageToServerEnum.SwapPositions, 0, 1]);
+    connection.sendMessage(messageSwapPositions(0, 1));
 
     expect(connection.receivedMessages.length).toBe(0);
     expect(connection.readyState).toBe(WebSocket.OPEN);
@@ -1212,26 +1156,14 @@ describe('swap positions', () => {
 
     const hostConnection = await connectToServer(server, 'host');
     const otherConnection = await connectToServer(server, 'other');
-    hostConnection.sendMessage([MessageToServerEnum.CreateGame, GameMode.SINGLES_2]);
-    otherConnection.sendMessage([MessageToServerEnum.EnterGame, 1]);
+    hostConnection.sendMessage(messageCreateGame(GameMode.SINGLES_2));
+    otherConnection.sendMessage(messageEnterGame(1));
     hostConnection.clearReceivedMessages();
     otherConnection.clearReceivedMessages();
 
-    otherConnection.sendMessage([MessageToServerEnum.SwapPositions, 0, 1]);
+    otherConnection.sendMessage(messageSwapPositions(0, 1));
 
     expectClientKickedDueToInvalidMessage(otherConnection);
-  });
-
-  test('kicks client when the host and sending invalid message', async () => {
-    const { server } = getServerManagerAndStuff();
-
-    const hostConnection = await connectToServer(server, 'host');
-    hostConnection.sendMessage([MessageToServerEnum.CreateGame, GameMode.SINGLES_3]);
-    hostConnection.clearReceivedMessages();
-
-    hostConnection.sendMessage([MessageToServerEnum.SwapPositions]);
-
-    expectClientKickedDueToInvalidMessage(hostConnection);
   });
 
   test('sends MessageToClient.GameSetupChanged when successful', async () => {
@@ -1239,9 +1171,9 @@ describe('swap positions', () => {
 
     const hostConnection = await connectToServer(server, 'host');
     const otherConnection = await connectToServer(server, 'other');
-    hostConnection.sendMessage([MessageToServerEnum.CreateGame, GameMode.SINGLES_4]);
-    otherConnection.sendMessage([MessageToServerEnum.EnterGame, 1]);
-    otherConnection.sendMessage([MessageToServerEnum.JoinGame]);
+    hostConnection.sendMessage(messageCreateGame(GameMode.SINGLES_4));
+    otherConnection.sendMessage(messageEnterGame(1));
+    otherConnection.sendMessage(messageJoinGame());
     hostConnection.clearReceivedMessages();
     otherConnection.clearReceivedMessages();
 
@@ -1251,7 +1183,7 @@ describe('swap positions', () => {
       [new GameDataData(10, 1, [1, 2])],
     );
 
-    hostConnection.sendMessage([MessageToServerEnum.SwapPositions, 0, 1]);
+    hostConnection.sendMessage(messageSwapPositions(0, 1));
 
     expectClientAndUserAndGameData(
       serverManager,
@@ -1275,7 +1207,7 @@ describe('kick user', () => {
     const connection = await connectToServer(server, 'user');
     connection.clearReceivedMessages();
 
-    connection.sendMessage([MessageToServerEnum.KickUser, 2]);
+    connection.sendMessage(messageKickUser(2));
 
     expect(connection.receivedMessages.length).toBe(0);
     expect(connection.readyState).toBe(WebSocket.OPEN);
@@ -1286,26 +1218,14 @@ describe('kick user', () => {
 
     const hostConnection = await connectToServer(server, 'host');
     const otherConnection = await connectToServer(server, 'other');
-    hostConnection.sendMessage([MessageToServerEnum.CreateGame, GameMode.SINGLES_2]);
-    otherConnection.sendMessage([MessageToServerEnum.EnterGame, 1]);
+    hostConnection.sendMessage(messageCreateGame(GameMode.SINGLES_2));
+    otherConnection.sendMessage(messageEnterGame(1));
     hostConnection.clearReceivedMessages();
     otherConnection.clearReceivedMessages();
 
-    otherConnection.sendMessage([MessageToServerEnum.KickUser, 2]);
+    otherConnection.sendMessage(messageKickUser(2));
 
     expectClientKickedDueToInvalidMessage(otherConnection);
-  });
-
-  test('kicks client when the host and sending invalid message', async () => {
-    const { server } = getServerManagerAndStuff();
-
-    const hostConnection = await connectToServer(server, 'host');
-    hostConnection.sendMessage([MessageToServerEnum.CreateGame, GameMode.SINGLES_3]);
-    hostConnection.clearReceivedMessages();
-
-    hostConnection.sendMessage([MessageToServerEnum.KickUser]);
-
-    expectClientKickedDueToInvalidMessage(hostConnection);
   });
 
   test('sends MessageToClient.GameSetupChanged when successful', async () => {
@@ -1313,9 +1233,9 @@ describe('kick user', () => {
 
     const hostConnection = await connectToServer(server, 'host');
     const otherConnection = await connectToServer(server, 'other');
-    hostConnection.sendMessage([MessageToServerEnum.CreateGame, GameMode.SINGLES_4]);
-    otherConnection.sendMessage([MessageToServerEnum.EnterGame, 1]);
-    otherConnection.sendMessage([MessageToServerEnum.JoinGame]);
+    hostConnection.sendMessage(messageCreateGame(GameMode.SINGLES_4));
+    otherConnection.sendMessage(messageEnterGame(1));
+    otherConnection.sendMessage(messageJoinGame());
     hostConnection.clearReceivedMessages();
     otherConnection.clearReceivedMessages();
 
@@ -1325,7 +1245,7 @@ describe('kick user', () => {
       [new GameDataData(10, 1, [1, 2])],
     );
 
-    hostConnection.sendMessage([MessageToServerEnum.KickUser, 2]);
+    hostConnection.sendMessage(messageKickUser(2));
 
     expectClientAndUserAndGameData(
       serverManager,
@@ -1411,7 +1331,7 @@ describe('do game action', () => {
     const connection = await connectToServer(server, 'user');
     connection.clearReceivedMessages();
 
-    connection.sendMessage([MessageToServerEnum.DoGameAction, 2, []]);
+    connection.sendMessage(messageDoGameAction(2, undefined));
 
     expect(connection.receivedMessages.length).toBe(0);
     expect(connection.readyState).toBe(WebSocket.OPEN);
@@ -1421,35 +1341,27 @@ describe('do game action', () => {
     const { server } = getServerManagerAndStuff();
 
     const connection = await connectToServer(server, 'user');
-    connection.sendMessage([MessageToServerEnum.CreateGame, GameMode.SINGLES_2]);
+    connection.sendMessage(messageCreateGame(GameMode.SINGLES_2));
     connection.clearReceivedMessages();
 
-    connection.sendMessage([MessageToServerEnum.DoGameAction, 2, []]);
+    connection.sendMessage(messageDoGameAction(2, {}));
 
     expect(connection.receivedMessages.length).toBe(0);
     expect(connection.readyState).toBe(WebSocket.OPEN);
   });
 
-  test('kicks client due to invalid message when parameters array is too short', async () => {
-    const { hostConnection } = await getServerManagerAndStuffAfterGameStarted();
-
-    hostConnection.sendMessage([MessageToServerEnum.DoGameAction]);
-
-    expectClientKickedDueToInvalidMessage(hostConnection);
-  });
-
-  test('kicks client due to invalid message when move history size is not an integer', async () => {
-    const { hostConnection } = await getServerManagerAndStuffAfterGameStarted();
-
-    hostConnection.sendMessage([MessageToServerEnum.DoGameAction, null]);
-
-    expectClientKickedDueToInvalidMessage(hostConnection);
-  });
-
   test('kicks client due to invalid message when move history size is negative', async () => {
     const { hostConnection } = await getServerManagerAndStuffAfterGameStarted();
 
-    hostConnection.sendMessage([MessageToServerEnum.DoGameAction, -1]);
+    hostConnection.sendMessage(messageDoGameAction(-1, {}));
+
+    expectClientKickedDueToInvalidMessage(hostConnection);
+  });
+
+  test('kicks client due to invalid message when no game action is included', async () => {
+    const { hostConnection } = await getServerManagerAndStuffAfterGameStarted();
+
+    hostConnection.sendMessage(messageDoGameAction(0, undefined));
 
     expectClientKickedDueToInvalidMessage(hostConnection);
   });
@@ -1457,7 +1369,7 @@ describe('do game action', () => {
   test('does nothing when move history size is less than the move history size of the game', async () => {
     const { hostConnection } = await getServerManagerAndStuffAfterGameStarted();
 
-    hostConnection.sendMessage([MessageToServerEnum.DoGameAction, 0]);
+    hostConnection.sendMessage(messageDoGameAction(0, {}));
 
     expect(hostConnection.receivedMessages.length).toBe(0);
     expect(hostConnection.readyState).toBe(WebSocket.OPEN);
@@ -1466,7 +1378,7 @@ describe('do game action', () => {
   test('does nothing when move history size is greater than the move history size of the game', async () => {
     const { hostConnection } = await getServerManagerAndStuffAfterGameStarted();
 
-    hostConnection.sendMessage([MessageToServerEnum.DoGameAction, 2]);
+    hostConnection.sendMessage(messageDoGameAction(2, {}));
 
     expect(hostConnection.receivedMessages.length).toBe(0);
     expect(hostConnection.readyState).toBe(WebSocket.OPEN);
@@ -1475,7 +1387,7 @@ describe('do game action', () => {
   test("does nothing when not player's turn", async () => {
     const { hostConnection } = await getServerManagerAndStuffAfterGameStarted();
 
-    hostConnection.sendMessage([MessageToServerEnum.DoGameAction, 1]);
+    hostConnection.sendMessage(messageDoGameAction(1, {}));
 
     expect(hostConnection.receivedMessages.length).toBe(0);
     expect(hostConnection.readyState).toBe(WebSocket.OPEN);
@@ -1484,7 +1396,7 @@ describe('do game action', () => {
   test('kicks client due to invalid message when providing invalid game action parameters', async () => {
     const { opponentConnection } = await getServerManagerAndStuffAfterGameStarted();
 
-    opponentConnection.sendMessage([MessageToServerEnum.DoGameAction, 1, 108]);
+    opponentConnection.sendMessage(messageDoGameAction(1, { playTile: { tile: 108 } }));
 
     expectClientKickedDueToInvalidMessage(opponentConnection);
   });
@@ -1496,7 +1408,7 @@ describe('do game action', () => {
 
     const gameAction = GameAction.fromObject({ playTile: { tile: 29 } });
 
-    opponentConnection.sendMessage([MessageToServerEnum.DoGameAction, 1, gameAction]);
+    opponentConnection.sendMessage(messageDoGameAction(1, gameAction));
 
     expect(hostConnection.receivedMessages.length).toBe(1);
     expect(opponentConnection.receivedMessages.length).toBe(1);

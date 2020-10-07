@@ -1,9 +1,9 @@
 import * as WebSocket from 'ws';
-import { MessageToClientEnum, MessageToServerEnum } from '../common/enums';
+import { MessageToClientEnum } from '../common/enums';
 import { Game } from '../common/game';
 import { GameSetup } from '../common/gameSetup';
 import { gameModeToNumPlayers, getNewTileBag, isASCII } from '../common/helpers';
-import { ErrorCode, GameAction, GameMode, PlayerArrangementMode } from '../common/pb';
+import { ErrorCode, GameAction, GameSetupAction, MessageToServer, PlayerArrangementMode } from '../common/pb';
 import { LogMessage } from './enums';
 import { ReuseIDManager } from './reuseIDManager';
 import { UserDataProvider } from './userDataProvider';
@@ -29,8 +29,6 @@ export class ServerManager {
   gameIDToGameData = new Map<number, GameData>();
   gameDisplayNumberToGameData = new Map<number, GameData>();
 
-  onMessageFunctions: Map<MessageToServerEnum, (client: Client, params: any[]) => void>;
-
   lastLogMessageTime = 0;
 
   constructor(
@@ -38,21 +36,7 @@ export class ServerManager {
     public userDataProvider: UserDataProvider,
     public nextGameID: number,
     public logger: (message: string) => void,
-  ) {
-    this.onMessageFunctions = new Map([
-      [MessageToServerEnum.CreateGame, this.onMessageCreateGame],
-      [MessageToServerEnum.EnterGame, this.onMessageEnterGame],
-      [MessageToServerEnum.ExitGame, this.onMessageExitGame],
-      [MessageToServerEnum.JoinGame, this.onMessageJoinGame],
-      [MessageToServerEnum.UnjoinGame, this.onMessageUnjoinGame],
-      [MessageToServerEnum.ApproveOfGameSetup, this.onMessageApproveOfGameSetup],
-      [MessageToServerEnum.ChangeGameMode, this.onMessageChangeGameMode],
-      [MessageToServerEnum.ChangePlayerArrangementMode, this.onMessageChangePlayerArrangementMode],
-      [MessageToServerEnum.SwapPositions, this.onMessageSwapPositions],
-      [MessageToServerEnum.KickUser, this.onMessageKickUser],
-      [MessageToServerEnum.DoGameAction, this.onMessageDoGameAction],
-    ]);
-  }
+  ) {}
 
   manage() {
     this.webSocketServer.on('connection', (webSocket, incomingMessage) => {
@@ -63,19 +47,13 @@ export class ServerManager {
 
       this.addConnection(webSocket);
 
-      webSocket.on('message', (messageString) => {
-        let message: any[];
+      webSocket.on('message', (rawMessage) => {
+        let message: MessageToServer;
         try {
-          message = JSON.parse(messageString.toString());
+          // @ts-ignore
+          message = MessageToServer.decode(rawMessage);
         } catch (error) {
-          this.logMessage(LogMessage.MessageThatIsNotJSON, webSocketID, messageString);
-
-          this.kickWithError(webSocket, ErrorCode.INVALID_MESSAGE_FORMAT);
-          return;
-        }
-
-        if (!Array.isArray(message)) {
-          this.logMessage(LogMessage.MessageThatIsNotAnArray, webSocketID, message);
+          this.logMessage(LogMessage.InvalidMessage, webSocketID, rawMessage);
 
           this.kickWithError(webSocket, ErrorCode.INVALID_MESSAGE_FORMAT);
           return;
@@ -86,9 +64,9 @@ export class ServerManager {
           this.logMessage(LogMessage.MessageWhileLoggedIn, client.id, message);
         } else {
           let sanitizedMessage = message;
-          if (message[2] !== '') {
-            sanitizedMessage = [...message];
-            sanitizedMessage[2] = '***';
+          if (message.login && message.login.password !== '') {
+            sanitizedMessage = MessageToServer.create(MessageToServer.toObject(message));
+            sanitizedMessage.login!.password = '***';
           }
 
           this.logMessage(LogMessage.MessageWhileNotLoggedIn, webSocketID, sanitizedMessage);
@@ -97,20 +75,48 @@ export class ServerManager {
         const connectionState = this.webSocketToConnectionState.get(webSocket);
 
         if (connectionState === ConnectionState.LoggedIn && client !== undefined) {
-          const handler = this.onMessageFunctions.get(message[0]);
+          if (message.createGame) {
+            this.onMessageCreateGame(client, message.createGame);
+          } else if (message.enterGame) {
+            this.onMessageEnterGame(client, message.enterGame);
+          } else if (message.exitGame) {
+            this.onMessageExitGame(client);
+          } else if (message.doGameSetupAction) {
+            const gameSetupAction: GameSetupAction = message.doGameSetupAction;
 
-          if (handler) {
-            handler.call(this, client, message.slice(1));
-
-            this.sendAllQueuedMessages();
+            if (gameSetupAction.joinGame) {
+              this.onMessageJoinGame(client);
+            } else if (gameSetupAction.unjoinGame) {
+              this.onMessageUnjoinGame(client);
+            } else if (gameSetupAction.approveOfGameSetup) {
+              this.onMessageApproveOfGameSetup(client);
+            } else if (gameSetupAction.changeGameMode) {
+              this.onMessageChangeGameMode(client, gameSetupAction.changeGameMode);
+            } else if (gameSetupAction.changePlayerArrangementMode) {
+              this.onMessageChangePlayerArrangementMode(client, gameSetupAction.changePlayerArrangementMode);
+            } else if (gameSetupAction.swapPositions) {
+              this.onMessageSwapPositions(client, gameSetupAction.swapPositions);
+            } else if (gameSetupAction.kickUser) {
+              this.onMessageKickUser(client, gameSetupAction.kickUser);
+            } else {
+              this.kickWithError(webSocket, ErrorCode.INVALID_MESSAGE);
+            }
+          } else if (message.doGameAction) {
+            this.onMessageDoGameAction(client, message.doGameAction);
           } else {
             this.kickWithError(webSocket, ErrorCode.INVALID_MESSAGE);
           }
+
+          this.sendAllQueuedMessages();
         } else if (connectionState === ConnectionState.WaitingForFirstMessage) {
           this.webSocketToConnectionState.set(webSocket, ConnectionState.ProcessingFirstMessage);
 
-          // eslint-disable-next-line @typescript-eslint/no-floating-promises
-          this.processFirstMessage(webSocket, message);
+          if (message.login) {
+            // eslint-disable-next-line @typescript-eslint/no-floating-promises
+            this.processFirstMessage(webSocket, message.login);
+          } else {
+            this.kickWithError(webSocket, ErrorCode.INVALID_MESSAGE_FORMAT);
+          }
         }
       });
 
@@ -178,32 +184,27 @@ export class ServerManager {
     webSocket.close();
   }
 
-  async processFirstMessage(webSocket: WebSocket, message: any[]) {
-    if (message.length !== 4) {
-      this.kickWithError(webSocket, ErrorCode.INVALID_MESSAGE_FORMAT);
-      return;
-    }
-
-    const version: number = message[0];
+  async processFirstMessage(webSocket: WebSocket, message: MessageToServer.ILogin) {
+    const version = message.version;
     if (version !== 0) {
       this.kickWithError(webSocket, ErrorCode.NOT_USING_LATEST_VERSION);
       return;
     }
 
-    const username: string = message[1];
-    if (username.length === 0 || username.length > 32 || !isASCII(username)) {
+    const username = message.username;
+    if (username === null || username === undefined || username.length === 0 || username.length > 32 || !isASCII(username)) {
       this.kickWithError(webSocket, ErrorCode.INVALID_USERNAME);
       return;
     }
 
-    const password: string = message[2];
-    if (typeof password !== 'string') {
+    const password = message.password;
+    if (password === null || password === undefined) {
       this.kickWithError(webSocket, ErrorCode.INVALID_MESSAGE_FORMAT);
       return;
     }
 
-    const gameDataArray: any[] = message[3];
-    if (!Array.isArray(gameDataArray)) {
+    const gameDatas = message.gameDatas;
+    if (gameDatas === null || gameDatas === undefined) {
       this.kickWithError(webSocket, ErrorCode.INVALID_MESSAGE_FORMAT);
       return;
     }
@@ -267,7 +268,7 @@ export class ServerManager {
     this.webSocketToClient.set(webSocket, client);
     user.clients.add(client);
 
-    client.queueMessage(this.getGreetingsMessage(gameDataArray, client));
+    client.queueMessage(this.getGreetingsMessage(gameDatas, client));
 
     const outgoingMessageParts: any[] = [MessageToClientEnum.ClientConnected, client.id, client.user.id];
     if (isNewUser) {
@@ -286,14 +287,9 @@ export class ServerManager {
     this.logMessage(LogMessage.LoggedIn, this.webSocketToID.get(webSocket), client.id, userID, username);
   }
 
-  onMessageCreateGame(client: Client, params: any[]) {
-    if (params.length !== 1) {
-      this.kickWithError(client.webSocket, ErrorCode.INVALID_MESSAGE);
-      return;
-    }
-
-    const gameMode: GameMode = params[0];
-    if (!gameModeToNumPlayers.has(gameMode)) {
+  onMessageCreateGame(client: Client, message: MessageToServer.ICreateGame) {
+    const gameMode = message.gameMode;
+    if (gameMode === null || gameMode === undefined || !gameModeToNumPlayers.has(gameMode)) {
       this.kickWithError(client.webSocket, ErrorCode.INVALID_MESSAGE);
       return;
     }
@@ -320,13 +316,12 @@ export class ServerManager {
     });
   }
 
-  onMessageEnterGame(client: Client, params: any[]) {
-    if (params.length !== 1) {
+  onMessageEnterGame(client: Client, message: MessageToServer.IEnterGame) {
+    const gameDisplayNumber = message.gameDisplayNumber;
+    if (gameDisplayNumber === null || gameDisplayNumber === undefined) {
       this.kickWithError(client.webSocket, ErrorCode.INVALID_MESSAGE);
       return;
     }
-
-    const gameDisplayNumber: number = params[0];
     const gameData = this.gameDisplayNumberToGameData.get(gameDisplayNumber);
     if (gameData === undefined) {
       this.kickWithError(client.webSocket, ErrorCode.INVALID_MESSAGE);
@@ -341,18 +336,13 @@ export class ServerManager {
 
     client.gameData = gameData;
 
-    const message = JSON.stringify([MessageToClientEnum.ClientEnteredGame, client.id, gameData.displayNumber]);
+    const message2 = JSON.stringify([MessageToClientEnum.ClientEnteredGame, client.id, gameData.displayNumber]);
     this.webSocketToClient.forEach((aClient) => {
-      aClient.queueMessage(message);
+      aClient.queueMessage(message2);
     });
   }
 
-  onMessageExitGame(client: Client, params: any[]) {
-    if (params.length !== 0) {
-      this.kickWithError(client.webSocket, ErrorCode.INVALID_MESSAGE);
-      return;
-    }
-
+  onMessageExitGame(client: Client) {
     const gameData = client.gameData;
     if (gameData === null) {
       return;
@@ -362,13 +352,13 @@ export class ServerManager {
 
     client.gameData = null;
 
-    const message = JSON.stringify([MessageToClientEnum.ClientExitedGame, client.id]);
+    const message2 = JSON.stringify([MessageToClientEnum.ClientExitedGame, client.id]);
     this.webSocketToClient.forEach((aClient) => {
-      aClient.queueMessage(message);
+      aClient.queueMessage(message2);
     });
   }
 
-  onMessageJoinGame(client: Client, params: any[]) {
+  onMessageJoinGame(client: Client) {
     const gameData = client.gameData;
     if (gameData === null) {
       return;
@@ -376,11 +366,6 @@ export class ServerManager {
 
     const gameSetup = gameData.gameSetup;
     if (gameSetup === null) {
-      return;
-    }
-
-    if (params.length !== 0) {
-      this.kickWithError(client.webSocket, ErrorCode.INVALID_MESSAGE);
       return;
     }
 
@@ -393,7 +378,7 @@ export class ServerManager {
     }
   }
 
-  onMessageUnjoinGame(client: Client, params: any[]) {
+  onMessageUnjoinGame(client: Client) {
     const gameData = client.gameData;
     if (gameData === null) {
       return;
@@ -401,11 +386,6 @@ export class ServerManager {
 
     const gameSetup = gameData.gameSetup;
     if (gameSetup === null) {
-      return;
-    }
-
-    if (params.length !== 0) {
-      this.kickWithError(client.webSocket, ErrorCode.INVALID_MESSAGE);
       return;
     }
 
@@ -419,7 +399,7 @@ export class ServerManager {
     }
   }
 
-  onMessageApproveOfGameSetup(client: Client, params: any[]) {
+  onMessageApproveOfGameSetup(client: Client) {
     const gameData = client.gameData;
     if (gameData === null) {
       return;
@@ -427,11 +407,6 @@ export class ServerManager {
 
     const gameSetup = gameData.gameSetup;
     if (gameSetup === null) {
-      return;
-    }
-
-    if (params.length !== 0) {
-      this.kickWithError(client.webSocket, ErrorCode.INVALID_MESSAGE);
       return;
     }
 
@@ -444,9 +419,9 @@ export class ServerManager {
       gameData.gameSetup = null;
       gameData.game = game;
 
-      const message = JSON.stringify([MessageToClientEnum.GameStarted, gameData.displayNumber, userIDs.toJS()]);
+      const message2 = JSON.stringify([MessageToClientEnum.GameStarted, gameData.displayNumber, userIDs.toJS()]);
       this.webSocketToClient.forEach((aClient) => {
-        aClient.queueMessage(message);
+        aClient.queueMessage(message2);
       });
 
       game.doGameAction(GameAction.fromObject({ startGame: {} }), Date.now());
@@ -456,7 +431,7 @@ export class ServerManager {
     }
   }
 
-  onMessageChangeGameMode(client: Client, params: any[]) {
+  onMessageChangeGameMode(client: Client, message: GameSetupAction.IChangeGameMode) {
     const gameData = client.gameData;
     if (gameData === null) {
       return;
@@ -472,19 +447,20 @@ export class ServerManager {
       return;
     }
 
-    if (params.length !== gameSetup.changeGameMode.length) {
+    const gameMode = message.gameMode;
+    if (gameMode === null || gameMode === undefined) {
       this.kickWithError(client.webSocket, ErrorCode.INVALID_MESSAGE);
       return;
     }
 
-    gameSetup.changeGameMode(params[0]);
+    gameSetup.changeGameMode(gameMode);
 
     if (gameSetup.history.length > 0) {
       this.sendGameSetupChanges(gameData);
     }
   }
 
-  onMessageChangePlayerArrangementMode(client: Client, params: any[]) {
+  onMessageChangePlayerArrangementMode(client: Client, message: GameSetupAction.IChangePlayerArrangementMode) {
     const gameData = client.gameData;
     if (gameData === null) {
       return;
@@ -500,19 +476,20 @@ export class ServerManager {
       return;
     }
 
-    if (params.length !== gameSetup.changePlayerArrangementMode.length) {
+    const playerArrangementMode = message.playerArrangementMode;
+    if (playerArrangementMode === null || playerArrangementMode === undefined) {
       this.kickWithError(client.webSocket, ErrorCode.INVALID_MESSAGE);
       return;
     }
 
-    gameSetup.changePlayerArrangementMode(params[0]);
+    gameSetup.changePlayerArrangementMode(playerArrangementMode);
 
     if (gameSetup.history.length > 0) {
       this.sendGameSetupChanges(gameData);
     }
   }
 
-  onMessageSwapPositions(client: Client, params: any[]) {
+  onMessageSwapPositions(client: Client, message: GameSetupAction.ISwapPositions) {
     const gameData = client.gameData;
     if (gameData === null) {
       return;
@@ -528,19 +505,21 @@ export class ServerManager {
       return;
     }
 
-    if (params.length !== gameSetup.swapPositions.length) {
+    const position1 = message.position1;
+    const position2 = message.position2;
+    if (position1 === null || position1 === undefined || position2 === null || position2 === undefined) {
       this.kickWithError(client.webSocket, ErrorCode.INVALID_MESSAGE);
       return;
     }
 
-    gameSetup.swapPositions(params[0], params[1]);
+    gameSetup.swapPositions(position1, position2);
 
     if (gameSetup.history.length > 0) {
       this.sendGameSetupChanges(gameData);
     }
   }
 
-  onMessageKickUser(client: Client, params: any[]) {
+  onMessageKickUser(client: Client, message: GameSetupAction.IKickUser) {
     const gameData = client.gameData;
     if (gameData === null) {
       return;
@@ -556,15 +535,16 @@ export class ServerManager {
       return;
     }
 
-    if (params.length !== gameSetup.kickUser.length) {
+    const userID = message.userId;
+    if (userID === null || userID === undefined) {
       this.kickWithError(client.webSocket, ErrorCode.INVALID_MESSAGE);
       return;
     }
 
-    gameSetup.kickUser(params[0]);
+    gameSetup.kickUser(userID);
 
     if (gameSetup.history.length > 0) {
-      const user = this.userIDToUser.get(params[0])!;
+      const user = this.userIDToUser.get(userID)!;
       user.numGames--;
       this.deleteUserIfItDoesNotHaveReferences(user);
 
@@ -572,7 +552,7 @@ export class ServerManager {
     }
   }
 
-  onMessageDoGameAction(client: Client, params: any[]) {
+  onMessageDoGameAction(client: Client, message: MessageToServer.IDoGameAction) {
     const gameData = client.gameData;
     if (gameData === null) {
       return;
@@ -583,13 +563,9 @@ export class ServerManager {
       return;
     }
 
-    if (params.length === 0) {
-      this.kickWithError(client.webSocket, ErrorCode.INVALID_MESSAGE);
-      return;
-    }
-
-    const moveHistorySize: number = params[0];
-    if (!Number.isInteger(moveHistorySize) || moveHistorySize < 0) {
+    const moveHistorySize = message.moveDataHistorySize;
+    const gameAction = message.gameAction;
+    if (moveHistorySize === null || moveHistorySize === undefined || moveHistorySize < 0 || gameAction === null || gameAction === undefined) {
       this.kickWithError(client.webSocket, ErrorCode.INVALID_MESSAGE);
       return;
     }
@@ -605,7 +581,7 @@ export class ServerManager {
     }
 
     try {
-      game.doGameAction(params[1], Date.now());
+      game.doGameAction(gameAction, Date.now());
     } catch (e) {
       this.kickWithError(client.webSocket, ErrorCode.INVALID_MESSAGE);
       return;
@@ -657,7 +633,7 @@ export class ServerManager {
     });
   }
 
-  getGreetingsMessage(_gameDataArray: any[], client: Client) {
+  getGreetingsMessage(gameDatas: MessageToServer.Login.IGameData[], client: Client) {
     const users: any[] = [];
     this.userIDToUser.forEach((user) => {
       const clients: any[] = [];

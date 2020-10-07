@@ -211,11 +211,11 @@ export class GameSetup {
   }
 
   swapPositions(position1: number, position2: number) {
-    if (!Number.isInteger(position1) || position1 < 0 || position1 >= this.userIDs.size) {
+    if (position1 < 0 || position1 >= this.userIDs.size) {
       return;
     }
 
-    if (!Number.isInteger(position2) || position2 < 0 || position2 >= this.userIDs.size) {
+    if (position2 < 0 || position2 >= this.userIDs.size) {
       return;
     }
 

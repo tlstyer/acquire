@@ -51,6 +51,35 @@ enum PlayerArrangementMode {
   SPECIFY_TEAMS = 3;
 }
 
+message GameSetupAction {
+  message JoinGame {}
+
+  message UnjoinGame {}
+
+  message ApproveOfGameSetup {}
+
+  message ChangeGameMode { GameMode game_mode = 1; }
+
+  message ChangePlayerArrangementMode {
+    PlayerArrangementMode player_arrangement_mode = 1;
+  }
+
+  message SwapPositions {
+    int32 position1 = 1;
+    int32 position2 = 2;
+  }
+
+  message KickUser { int32 user_id = 1; }
+
+  JoinGame join_game = 1;
+  UnjoinGame unjoin_game = 2;
+  ApproveOfGameSetup approve_of_game_setup = 3;
+  ChangeGameMode change_game_mode = 4;
+  ChangePlayerArrangementMode change_player_arrangement_mode = 5;
+  SwapPositions swap_positions = 6;
+  KickUser kick_user = 7;
+}
+
 message GameAction {
   message StartGame {}
 
@@ -82,4 +111,37 @@ message GameAction {
   DisposeOfShares dispose_of_shares = 6;
   PurchaseShares purchase_shares = 7;
   GameOver game_over = 8;
+}
+
+message MessageToServer {
+  message Login {
+    message GameData {
+      int32 game_id = 1;
+      int32 move_data_history_size = 2;
+    }
+
+    int32 version = 1;
+    string username = 2;
+    string password = 3;
+    repeated GameData game_datas = 4;
+    // int32 game_id_to_join = 5;
+  }
+
+  message CreateGame { GameMode game_mode = 1; }
+
+  message EnterGame { int32 game_display_number = 1; }
+
+  message ExitGame {}
+
+  message DoGameAction {
+    int32 move_data_history_size = 1;
+    GameAction game_action = 2;
+  }
+
+  Login login = 1;
+  CreateGame create_game = 2;
+  EnterGame enter_game = 3;
+  ExitGame exit_game = 4;
+  GameSetupAction do_game_setup_action = 5;
+  DoGameAction do_game_action = 6;
 }

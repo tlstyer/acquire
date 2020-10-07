@@ -1,4 +1,4 @@
-import { GameMode } from './pb';
+import { GameMode, MessageToServer } from './pb';
 
 export function getNewTileBag() {
   const tileBag: number[] = new Array(108);
@@ -148,4 +148,8 @@ export function getValueOfKey(obj: any) {
       return obj[key];
     }
   }
+}
+
+export function encodeMessageToServer(message: any) {
+  return MessageToServer.encode(message).finish();
 }

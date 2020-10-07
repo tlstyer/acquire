@@ -1,7 +1,6 @@
 export enum LogMessage {
   Connected,
-  MessageThatIsNotJSON,
-  MessageThatIsNotAnArray,
+  InvalidMessage,
   MessageWhileNotLoggedIn,
   MessageWhileLoggedIn,
   KickedWithError,

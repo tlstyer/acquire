@@ -4,7 +4,7 @@ import { List } from 'immutable';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { defaultGameBoard } from '../common/defaults';
-import { GameActionEnum, GameSetupChangeEnum, MessageToClientEnum, MessageToServerEnum, ScoreBoardIndexEnum } from '../common/enums';
+import { GameActionEnum, GameSetupChangeEnum, MessageToClientEnum, ScoreBoardIndexEnum } from '../common/enums';
 import { Game } from '../common/game';
 import { ActionDisposeOfShares } from '../common/gameActions/disposeOfShares';
 import { ActionGameOver } from '../common/gameActions/gameOver';
@@ -28,6 +28,7 @@ import { SelectChain, SelectChainTitle } from './components/SelectChain';
 import { TileRack } from './components/TileRack';
 import { GameBoardLabelMode, GameStatus } from './enums';
 import { ErrorCode, GameBoardType, GameMode, PlayerArrangementMode } from '../common/pb';
+import { encodeMessageToServer } from '../common/helpers';
 
 export enum ClientManagerPage {
   Login,
@@ -173,7 +174,7 @@ export class ClientManager {
 
   onSubmitCreateGame = (gameMode: GameMode) => {
     if (this.isConnected()) {
-      this.socket!.send(JSON.stringify([MessageToServerEnum.CreateGame, gameMode]));
+      this.socket!.send(encodeMessageToServer({ createGame: { gameMode } }));
     }
   };
 
@@ -221,49 +222,49 @@ export class ClientManager {
 
   onExitGameClicked = () => {
     if (this.isConnected()) {
-      this.socket!.send(JSON.stringify([MessageToServerEnum.ExitGame]));
+      this.socket!.send(encodeMessageToServer({ exitGame: {} }));
     }
   };
 
   onJoinGame = () => {
     if (this.isConnected()) {
-      this.socket!.send(JSON.stringify([MessageToServerEnum.JoinGame]));
+      this.socket!.send(encodeMessageToServer({ doGameSetupAction: { joinGame: {} } }));
     }
   };
 
   onUnjoinGame = () => {
     if (this.isConnected()) {
-      this.socket!.send(JSON.stringify([MessageToServerEnum.UnjoinGame]));
+      this.socket!.send(encodeMessageToServer({ doGameSetupAction: { unjoinGame: {} } }));
     }
   };
 
   onApproveOfGameSetup = () => {
     if (this.isConnected()) {
-      this.socket!.send(JSON.stringify([MessageToServerEnum.ApproveOfGameSetup]));
+      this.socket!.send(encodeMessageToServer({ doGameSetupAction: { approveOfGameSetup: {} } }));
     }
   };
 
   onChangeGameMode = (gameMode: GameMode) => {
     if (this.isConnected()) {
-      this.socket!.send(JSON.stringify([MessageToServerEnum.ChangeGameMode, gameMode]));
+      this.socket!.send(encodeMessageToServer({ doGameSetupAction: { changeGameMode: { gameMode } } }));
     }
   };
 
   onChangePlayerArrangementMode = (playerArrangementMode: PlayerArrangementMode) => {
     if (this.isConnected()) {
-      this.socket!.send(JSON.stringify([MessageToServerEnum.ChangePlayerArrangementMode, playerArrangementMode]));
+      this.socket!.send(encodeMessageToServer({ doGameSetupAction: { changePlayerArrangementMode: { playerArrangementMode } } }));
     }
   };
 
   onSwapPositions = (position1: number, position2: number) => {
     if (this.isConnected()) {
-      this.socket!.send(JSON.stringify([MessageToServerEnum.SwapPositions, position1, position2]));
+      this.socket!.send(encodeMessageToServer({ doGameSetupAction: { swapPositions: { position1, position2 } } }));
     }
   };
 
   onKickUser = (userID: number) => {
     if (this.isConnected()) {
-      this.socket!.send(JSON.stringify([MessageToServerEnum.KickUser, userID]));
+      this.socket!.send(encodeMessageToServer({ doGameSetupAction: { kickUser: { userId: userID } } }));
     }
   };
 
@@ -393,7 +394,7 @@ export class ClientManager {
       const tileType = game.tileRackTypes.get(playerID)!.get(tileRackIndex)!;
 
       if (tileType !== GameBoardType.CANT_PLAY_EVER && tileType !== GameBoardType.CANT_PLAY_NOW) {
-        this.socket!.send(JSON.stringify([MessageToServerEnum.DoGameAction, game.moveDataHistory.size, tile]));
+        this.socket!.send(encodeMessageToServer({ doGameAction: { moveDataHistorySize: game.moveDataHistory.size, gameAction: { playTile: { tile } } } }));
         this.myRequiredGameAction = null;
       }
     }
@@ -401,21 +402,42 @@ export class ClientManager {
 
   onChainSelected = (chain: GameBoardType) => {
     if (this.isConnected()) {
-      this.socket!.send(JSON.stringify([MessageToServerEnum.DoGameAction, this.myClient!.gameData!.game!.moveDataHistory.size, chain]));
+      this.socket!.send(
+        encodeMessageToServer({
+          doGameAction: {
+            moveDataHistorySize: this.myClient!.gameData!.game!.moveDataHistory.size,
+            gameAction: { [chainSelectionGameActionEnumToGameActionString.get(this.myRequiredGameAction!)!]: { chain } },
+          },
+        }),
+      );
       this.myRequiredGameAction = null;
     }
   };
 
   onSharesDisposed = (traded: number, sold: number) => {
     if (this.isConnected()) {
-      this.socket!.send(JSON.stringify([MessageToServerEnum.DoGameAction, this.myClient!.gameData!.game!.moveDataHistory.size, traded, sold]));
+      this.socket!.send(
+        encodeMessageToServer({
+          doGameAction: {
+            moveDataHistorySize: this.myClient!.gameData!.game!.moveDataHistory.size,
+            gameAction: { disposeOfShares: { tradeAmount: traded, sellAmount: sold } },
+          },
+        }),
+      );
       this.myRequiredGameAction = null;
     }
   };
 
   onSharesPurchased = (chains: GameBoardType[], endGame: boolean) => {
     if (this.isConnected()) {
-      this.socket!.send(JSON.stringify([MessageToServerEnum.DoGameAction, this.myClient!.gameData!.game!.moveDataHistory.size, chains, endGame ? 1 : 0]));
+      this.socket!.send(
+        encodeMessageToServer({
+          doGameAction: {
+            moveDataHistorySize: this.myClient!.gameData!.game!.moveDataHistory.size,
+            gameAction: { purchaseShares: { chains, endGame } },
+          },
+        }),
+      );
       this.myRequiredGameAction = null;
     }
   };
@@ -434,7 +456,7 @@ export class ClientManager {
   };
 
   onSocketOpen = () => {
-    this.socket!.send(JSON.stringify([0, this.username, this.password, []]));
+    this.socket!.send(encodeMessageToServer({ login: { version: 0, username: this.username, password: this.password } }));
   };
 
   onSocketMessage = (e: MessageEvent) => {
@@ -725,7 +747,13 @@ export class GameData {
 
   onEnterClicked = () => {
     if (this.clientManager.isConnected()) {
-      this.clientManager.socket!.send(JSON.stringify([MessageToServerEnum.EnterGame, this.displayNumber]));
+      this.clientManager.socket!.send(encodeMessageToServer({ enterGame: { gameDisplayNumber: this.displayNumber } }));
     }
   };
 }
+
+const chainSelectionGameActionEnumToGameActionString = new Map([
+  [GameActionEnum.SelectNewChain, 'selectNewChain'],
+  [GameActionEnum.SelectMergerSurvivor, 'selectMergerSurvivor'],
+  [GameActionEnum.SelectChainToDisposeOfNext, 'selectChainToDisposeOfNext'],
+]);
