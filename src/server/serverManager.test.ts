@@ -1,7 +1,7 @@
 import * as WebSocket from 'ws';
 import { GameSetupChangeEnum, MessageToClientEnum } from '../common/enums';
 import { encodeMessageToServer } from '../common/helpers';
-import { ErrorCode, GameAction, GameMode, PlayerArrangementMode } from '../common/pb';
+import { ErrorCode, GameMode, PlayerArrangementMode } from '../common/pb';
 import { ConnectionState, GameData, ServerManager, User } from './serverManager';
 import { TestUserDataProvider } from './userDataProvider';
 
@@ -607,10 +607,10 @@ describe('when sending first message', () => {
                 11,
                 2,
                 [
-                  [GameAction.fromObject({ startGame: {} }), 1234567903, [], [89, -1, -1, -1, -1, -1, -1], 0],
-                  [GameAction.fromObject({ playTile: { tile: 19 } }), 2, [[19, 0]], [-1], 0],
-                  [GameAction.fromObject({ playTile: { tile: 29 } }), 2, [[29, 0]], [-1], 0],
-                  [GameAction.fromObject({ playTile: { tile: 39 } }), 2, [[39, 0]], [-1], 0],
+                  [{ startGame: {} }, 1234567903, [], [89, -1, -1, -1, -1, -1, -1], 0],
+                  [{ playTile: { tile: 19 } }, 2, [[19, 0]], [-1], 0],
+                  [{ playTile: { tile: 29 } }, 2, [[29, 0]], [-1], 0],
+                  [{ playTile: { tile: 39 } }, 2, [[39, 0]], [-1], 0],
                 ],
                 GameMode.SINGLES_1,
                 PlayerArrangementMode.RANDOM_ORDER,
@@ -640,10 +640,10 @@ describe('when sending first message', () => {
                 11,
                 2,
                 [
-                  [GameAction.fromObject({ startGame: {} }), 1234567903, [], [89, 19, 29, 39, 49, 59, 69], 0],
-                  [GameAction.fromObject({ playTile: { tile: 19 } }), 2, [], [79], 0],
-                  [GameAction.fromObject({ playTile: { tile: 29 } }), 2, [], [0], 0],
-                  [GameAction.fromObject({ playTile: { tile: 39 } }), 2, [], [99], 0],
+                  [{ startGame: {} }, 1234567903, [], [89, 19, 29, 39, 49, 59, 69], 0],
+                  [{ playTile: { tile: 19 } }, 2, [], [79], 0],
+                  [{ playTile: { tile: 29 } }, 2, [], [0], 0],
+                  [{ playTile: { tile: 39 } }, 2, [], [99], 0],
                 ],
                 GameMode.SINGLES_1,
                 PlayerArrangementMode.RANDOM_ORDER,
@@ -1283,39 +1283,15 @@ describe('all approve of game setup', () => {
     const expectedGameStartedMessage = [MessageToClientEnum.GameStarted, 1, [2, 1]];
     expect(hostConnection.receivedMessages[0]).toEqual([
       expectedGameStartedMessage,
-      [
-        MessageToClientEnum.GameActionDone,
-        1,
-        GameAction.fromObject({ startGame: {} }),
-        Date.now(),
-        [],
-        [89, 19, -1, -1, -1, -1, -1, -1, 0, 99, 11, 12, 13, 14],
-        0,
-      ],
+      [MessageToClientEnum.GameActionDone, 1, { startGame: {} }, Date.now(), [], [89, 19, -1, -1, -1, -1, -1, -1, 0, 99, 11, 12, 13, 14], 0],
     ]);
     expect(opponentConnection.receivedMessages[0]).toEqual([
       expectedGameStartedMessage,
-      [
-        MessageToClientEnum.GameActionDone,
-        1,
-        GameAction.fromObject({ startGame: {} }),
-        Date.now(),
-        [],
-        [89, 19, 29, 39, 49, 59, 69, 79, -1, -1, -1, -1, -1, -1],
-        0,
-      ],
+      [MessageToClientEnum.GameActionDone, 1, { startGame: {} }, Date.now(), [], [89, 19, 29, 39, 49, 59, 69, 79, -1, -1, -1, -1, -1, -1], 0],
     ]);
     expect(anotherConnection.receivedMessages[0]).toEqual([
       expectedGameStartedMessage,
-      [
-        MessageToClientEnum.GameActionDone,
-        1,
-        GameAction.fromObject({ startGame: {} }),
-        Date.now(),
-        [],
-        [89, 19, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
-        0,
-      ],
+      [MessageToClientEnum.GameActionDone, 1, { startGame: {} }, Date.now(), [], [89, 19, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], 0],
     ]);
 
     const gameData = serverManager.gameDisplayNumberToGameData.get(1)!;
@@ -1406,7 +1382,7 @@ describe('do game action', () => {
 
     Date.now = () => 1234567890 + 1000;
 
-    const gameAction = GameAction.fromObject({ playTile: { tile: 29 } });
+    const gameAction = { playTile: { tile: 29 } };
 
     opponentConnection.sendMessage(messageDoGameAction(1, gameAction));
 

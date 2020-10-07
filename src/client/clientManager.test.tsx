@@ -1,6 +1,6 @@
 import { List } from 'immutable';
 import { GameActionEnum, GameSetupChangeEnum, MessageToClientEnum } from '../common/enums';
-import { ErrorCode, GameAction, GameMode, MessageToServer, PlayerArrangementMode } from '../common/pb';
+import { ErrorCode, GameMode, MessageToServer, PlayerArrangementMode } from '../common/pb';
 import { Client, ClientManager, ClientManagerPage, GameData, User } from './clientManager';
 
 class TestWebSocket {
@@ -540,9 +540,9 @@ describe('MessageToClient.Greetings', () => {
             2,
             [
               [[], 1234567894, [], [89, 19, 29, 39, 49, 59, 69], 0],
-              [GameAction.fromObject({ playTile: { tile: 19 } }), 1, [], [79], 0],
-              [GameAction.fromObject({ playTile: { tile: 29 } }), 1, [], [0], 0],
-              [GameAction.fromObject({ playTile: { tile: 39 } }), 1, [], [99], 0],
+              [{ playTile: { tile: 19 } }, 1, [], [79], 0],
+              [{ playTile: { tile: 29 } }, 1, [], [0], 0],
+              [{ playTile: { tile: 39 } }, 1, [], [99], 0],
             ],
             GameMode.SINGLES_1,
             PlayerArrangementMode.RANDOM_ORDER,
