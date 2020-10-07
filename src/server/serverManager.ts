@@ -425,7 +425,7 @@ export class ServerManager {
       });
 
       game.doGameAction(GameAction.fromObject({ startGame: {} }), Date.now());
-      this.sendLastGameMoveDataMessage(gameData);
+      this.sendLastGameGameStateMessage(gameData);
     } else if (gameSetup.history.length > 0) {
       this.sendGameSetupChanges(gameData);
     }
@@ -563,14 +563,14 @@ export class ServerManager {
       return;
     }
 
-    const moveHistorySize = message.moveDataHistorySize;
+    const gameStateHistorySize = message.gameStateHistorySize;
     const gameAction = message.gameAction;
-    if (moveHistorySize === null || moveHistorySize === undefined || moveHistorySize < 0 || gameAction === null || gameAction === undefined) {
+    if (gameStateHistorySize === null || gameStateHistorySize === undefined || gameStateHistorySize < 0 || gameAction === null || gameAction === undefined) {
       this.kickWithError(client.webSocket, ErrorCode.INVALID_MESSAGE);
       return;
     }
 
-    if (moveHistorySize !== game.moveDataHistory.size) {
+    if (gameStateHistorySize !== game.gameStateHistory.size) {
       return;
     }
 
@@ -587,7 +587,7 @@ export class ServerManager {
       return;
     }
 
-    this.sendLastGameMoveDataMessage(gameData);
+    this.sendLastGameGameStateMessage(gameData);
   }
 
   sendGameSetupChanges(gameData: GameData) {
@@ -603,11 +603,11 @@ export class ServerManager {
     gameSetup.clearHistory();
   }
 
-  sendLastGameMoveDataMessage(gameData: GameData) {
+  sendLastGameGameStateMessage(gameData: GameData) {
     const game = gameData.game!;
-    const moveData = game.moveDataHistory.get(game.moveDataHistory.size - 1)!;
+    const gameState = game.gameStateHistory.get(game.gameStateHistory.size - 1)!;
 
-    moveData.createPlayerAndWatcherMessages();
+    gameState.createPlayerAndWatcherMessages();
 
     const playerUserIDs = new Set<number>();
 
@@ -615,7 +615,7 @@ export class ServerManager {
     game.userIDs.forEach((userID, playerID) => {
       const user = this.userIDToUser.get(userID)!;
       if (user.clients.size > 0) {
-        const message = JSON.stringify([MessageToClientEnum.GameActionDone, gameData.displayNumber, ...moveData.playerMessages[playerID]]);
+        const message = JSON.stringify([MessageToClientEnum.GameActionDone, gameData.displayNumber, ...gameState.playerMessages[playerID]]);
         user.clients.forEach((aClient) => {
           aClient.queueMessage(message);
         });
@@ -625,7 +625,7 @@ export class ServerManager {
     });
 
     // send watcher messages to everybody else
-    const watcherMessage = JSON.stringify([MessageToClientEnum.GameActionDone, gameData.displayNumber, ...moveData.watcherMessage]);
+    const watcherMessage = JSON.stringify([MessageToClientEnum.GameActionDone, gameData.displayNumber, ...gameState.watcherMessage]);
     this.webSocketToClient.forEach((aClient) => {
       if (!playerUserIDs.has(aClient.user.id)) {
         aClient.queueMessage(watcherMessage);
@@ -664,11 +664,11 @@ export class ServerManager {
         const playerID = game.userIDs.indexOf(client.user.id);
 
         const moveHistoryMessages: any[][] = [];
-        game.moveDataHistory.forEach((moveData) => {
+        game.gameStateHistory.forEach((gameState) => {
           if (playerID >= 0) {
-            moveHistoryMessages.push(moveData.playerMessages[playerID]);
+            moveHistoryMessages.push(gameState.playerMessages[playerID]);
           } else {
-            moveHistoryMessages.push(moveData.watcherMessage);
+            moveHistoryMessages.push(gameState.watcherMessage);
           }
         });
         message.push(moveHistoryMessages);

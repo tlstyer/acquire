@@ -270,22 +270,22 @@ export class ClientManager {
 
   renderGamePage = () => {
     const game = this.myClient!.gameData!.game!;
-    const selectedMove = game.moveDataHistory.size - 1;
+    const selectedMove = game.gameStateHistory.size - 1;
 
     const playerID = game.userIDs.indexOf(game.myUserID || -1);
 
-    const moveData = game.moveDataHistory.get(selectedMove)!;
-    const nextGameAction = moveData.nextGameAction;
+    const gameState = game.gameStateHistory.get(selectedMove)!;
+    const nextGameAction = gameState.nextGameAction;
 
-    let turnPlayerID = moveData.turnPlayerID;
+    let turnPlayerID = gameState.turnPlayerID;
     let movePlayerID = nextGameAction.playerID;
     if (nextGameAction instanceof ActionGameOver) {
       turnPlayerID = -1;
       movePlayerID = -1;
     }
 
-    const tileRack = moveData.tileRacks.get(playerID);
-    const tileRackTypes = moveData.tileRackTypes.get(playerID);
+    const tileRack = gameState.tileRacks.get(playerID);
+    const tileRackTypes = gameState.tileRackTypes.get(playerID);
 
     const windowWidth = window.innerWidth;
     const windowHeight = window.innerHeight;
@@ -304,8 +304,8 @@ export class ClientManager {
         <div className={style.main}>
           <div className={style.leftSide}>
             <GameBoard
-              gameBoard={moveData.gameBoard}
-              tileRack={moveData.tileRacks.get(playerID)}
+              gameBoard={gameState.gameBoard}
+              tileRack={gameState.tileRacks.get(playerID)}
               labelMode={GameBoardLabelMode.Nothing}
               cellSize={gameBoardCellSize}
               onCellClicked={this.onTileClicked}
@@ -314,11 +314,11 @@ export class ClientManager {
           <div className={style.rightSide}>
             <ScoreBoard
               usernames={game.usernames}
-              scoreBoard={moveData.scoreBoard}
-              scoreBoardAvailable={moveData.scoreBoardAvailable}
-              scoreBoardChainSize={moveData.scoreBoardChainSize}
-              scoreBoardPrice={moveData.scoreBoardPrice}
-              safeChains={moveData.safeChains}
+              scoreBoard={gameState.scoreBoard}
+              scoreBoardAvailable={gameState.scoreBoardAvailable}
+              scoreBoardChainSize={gameState.scoreBoardChainSize}
+              scoreBoardPrice={gameState.scoreBoardPrice}
+              safeChains={gameState.safeChains}
               turnPlayerID={turnPlayerID}
               movePlayerID={movePlayerID}
               gameMode={game.gameMode}
@@ -378,7 +378,7 @@ export class ClientManager {
                   onSharesPurchased={this.onSharesPurchased}
                 />
               ) : undefined)}
-            <GameHistory usernames={game.usernames} moveDataHistory={game.moveDataHistory} onMoveClicked={this.onMoveClicked} />
+            <GameHistory usernames={game.usernames} gameStateHistory={game.gameStateHistory} onMoveClicked={this.onMoveClicked} />
             <GameStatus usernames={game.usernames} nextGameAction={nextGameAction} />
           </div>
         </div>
@@ -394,7 +394,7 @@ export class ClientManager {
       const tileType = game.tileRackTypes.get(playerID)!.get(tileRackIndex)!;
 
       if (tileType !== GameBoardType.CANT_PLAY_EVER && tileType !== GameBoardType.CANT_PLAY_NOW) {
-        this.socket!.send(encodeMessageToServer({ doGameAction: { moveDataHistorySize: game.moveDataHistory.size, gameAction: { playTile: { tile } } } }));
+        this.socket!.send(encodeMessageToServer({ doGameAction: { gameStateHistorySize: game.gameStateHistory.size, gameAction: { playTile: { tile } } } }));
         this.myRequiredGameAction = null;
       }
     }
@@ -405,7 +405,7 @@ export class ClientManager {
       this.socket!.send(
         encodeMessageToServer({
           doGameAction: {
-            moveDataHistorySize: this.myClient!.gameData!.game!.moveDataHistory.size,
+            gameStateHistorySize: this.myClient!.gameData!.game!.gameStateHistory.size,
             gameAction: { [chainSelectionGameActionEnumToGameActionString.get(this.myRequiredGameAction!)!]: { chain } },
           },
         }),
@@ -419,7 +419,7 @@ export class ClientManager {
       this.socket!.send(
         encodeMessageToServer({
           doGameAction: {
-            moveDataHistorySize: this.myClient!.gameData!.game!.moveDataHistory.size,
+            gameStateHistorySize: this.myClient!.gameData!.game!.gameStateHistory.size,
             gameAction: { disposeOfShares: { tradeAmount: traded, sellAmount: sold } },
           },
         }),
@@ -433,7 +433,7 @@ export class ClientManager {
       this.socket!.send(
         encodeMessageToServer({
           doGameAction: {
-            moveDataHistorySize: this.myClient!.gameData!.game!.moveDataHistory.size,
+            gameStateHistorySize: this.myClient!.gameData!.game!.gameStateHistory.size,
             gameAction: { purchaseShares: { chains, endGame } },
           },
         }),
@@ -539,7 +539,7 @@ export class ClientManager {
           }
         }
       } else {
-        const moveDataMessages: any[] = gameParams[3];
+        const gameStateMessages: any[] = gameParams[3];
         const gameMode: GameMode = gameParams[4];
         const playerArrangementMode: PlayerArrangementMode = gameParams[5];
         const hostUserID: number = gameParams[6];
@@ -554,9 +554,9 @@ export class ClientManager {
 
         gameData.game = new Game(gameMode, playerArrangementMode, [], List(userIDs), List(usernames), hostUserID, myUserID);
 
-        for (let j = 0; j < moveDataMessages.length; j++) {
-          const moveDataMessage = moveDataMessages[j];
-          gameData.game.processMoveDataMessage(moveDataMessage);
+        for (let j = 0; j < gameStateMessages.length; j++) {
+          const gameStateMessage = gameStateMessages[j];
+          gameData.game.processGameStateMessage(gameStateMessage);
         }
       }
     }
@@ -666,11 +666,11 @@ export class ClientManager {
     }
   }
 
-  onMessageGameActionDone(gameDisplayNumber: number, ...moveDataMessage: any[]) {
+  onMessageGameActionDone(gameDisplayNumber: number, ...gameStateMessage: any[]) {
     const gameData = this.gameDisplayNumberToGameData.get(gameDisplayNumber)!;
     const game = gameData.game!;
 
-    game.processMoveDataMessage(moveDataMessage);
+    game.processGameStateMessage(gameStateMessage);
 
     if (this.myClient!.gameData === gameData) {
       this.updateMyRequiredGameAction();

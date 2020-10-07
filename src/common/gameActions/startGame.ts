@@ -15,7 +15,7 @@ export class ActionStartGame extends ActionBase {
   }
 
   execute() {
-    const moveData = this.game.getCurrentMoveData();
+    const gameState = this.game.getCurrentGameState();
 
     // draw position tiles
     const positionTiles: PositionTileData[] = new Array(this.game.userIDs.size);
@@ -29,15 +29,15 @@ export class ActionStartGame extends ActionBase {
     positionTiles.sort((a, b) => a.tileBagIndex - b.tileBagIndex);
     for (let i = 0; i < positionTiles.length; i++) {
       const positionTile = positionTiles[i];
-      moveData.addTileBagTile(positionTile.tile, null);
+      gameState.addTileBagTile(positionTile.tile, null);
       this.game.setGameBoardPosition(positionTile.tile, GameBoardType.NOTHING_YET);
-      moveData.addGameHistoryMessage(GameHistoryMessageEnum.DrewPositionTile, positionTile.playerID, [positionTile.tile]);
+      gameState.addGameHistoryMessage(GameHistoryMessageEnum.DrewPositionTile, positionTile.playerID, [positionTile.tile]);
     }
 
     this.game.nextTileBagIndex = this.game.userIDs.size;
 
     // start game
-    moveData.addGameHistoryMessage(GameHistoryMessageEnum.StartedGame, this.playerID, []);
+    gameState.addGameHistoryMessage(GameHistoryMessageEnum.StartedGame, this.playerID, []);
     for (let playerID = 0; playerID < this.game.userIDs.size; playerID++) {
       this.game.drawTiles(playerID);
     }

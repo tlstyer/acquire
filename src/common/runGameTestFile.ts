@@ -1,7 +1,7 @@
 import { List } from 'immutable';
 import { GameActionEnum, GameHistoryMessageEnum, ScoreBoardIndexEnum, TileEnum } from './enums';
 import { UserInputError } from './error';
-import { Game, GameHistoryMessageData, MoveData, MoveDataTileBagTile, MoveDataTileRackTile } from './game';
+import { Game, GameHistoryMessageData, GameState, GameStateTileBagTile, GameStateTileRackTile } from './game';
 import { ActionBase } from './gameActions/base';
 import { ActionDisposeOfShares } from './gameActions/disposeOfShares';
 import { ActionGameOver } from './gameActions/gameOver';
@@ -24,7 +24,7 @@ export function runGameTestFile(inputLines: string[]) {
   const outputLines: string[] = [];
 
   let myPlayerID: number | null = null;
-  let lastMoveData: MoveData | null = null;
+  let lastGameState: GameState | null = null;
   let timestamp: number | null = null;
 
   for (let lineNumber = 0; lineNumber < inputLines.length; lineNumber++) {
@@ -93,9 +93,9 @@ export function runGameTestFile(inputLines: string[]) {
     } else {
       const lineParts = line.split(': ');
 
-      if (lastMoveData !== null) {
-        outputLines.push(...getMoveDataLines(lastMoveData, myPlayerID, line !== ''));
-        lastMoveData = null;
+      if (lastGameState !== null) {
+        outputLines.push(...getGameStateLines(lastGameState, myPlayerID, line !== ''));
+        lastGameState = null;
       }
 
       if (lineParts[0] === 'revealed tile rack tiles') {
@@ -137,7 +137,7 @@ export function runGameTestFile(inputLines: string[]) {
 
         try {
           game.doGameAction(gameAction, timestamp);
-          lastMoveData = game.moveDataHistory.get(game.moveDataHistory.size - 1, null);
+          lastGameState = game.gameStateHistory.get(game.gameStateHistory.size - 1, null);
         } catch (error) {
           if (error instanceof UserInputError) {
             let stringParameters = '';
@@ -154,7 +154,7 @@ export function runGameTestFile(inputLines: string[]) {
               outputLines.push(`timestamp: ${timestamp}`);
             }
             outputLines.push(
-              `action: ${game.moveDataHistory.get(game.moveDataHistory.size - 1)!.nextGameAction.playerID} ${actualGameActionName}${stringParameters}`,
+              `action: ${game.gameStateHistory.get(game.gameStateHistory.size - 1)!.nextGameAction.playerID} ${actualGameActionName}${stringParameters}`,
             );
             outputLines.push(`  error: ${error.message}`);
           } else {
@@ -285,45 +285,45 @@ function toParameterStrings(gameAction: GameAction) {
 
 const gameBoardStringSpacer = '            ';
 
-function getMoveDataLines(moveData: MoveData, revealedTilesPlayerID: number | null, detailed: boolean) {
+function getGameStateLines(gameState: GameState, revealedTilesPlayerID: number | null, detailed: boolean) {
   const lines: string[] = [];
 
   if (revealedTilesPlayerID !== null) {
-    const rtrtStr = getRevealedTileRackTilesStringForPlayer(moveData.revealedTileRackTiles, revealedTilesPlayerID);
+    const rtrtStr = getRevealedTileRackTilesStringForPlayer(gameState.revealedTileRackTiles, revealedTilesPlayerID);
     if (rtrtStr.length > 0) {
       lines.push(`revealed tile rack tiles: ${rtrtStr}`);
     }
 
-    const rtbtStr = getRevealedTileBagTilesStringForPlayer(moveData.revealedTileBagTiles, revealedTilesPlayerID);
+    const rtbtStr = getRevealedTileBagTilesStringForPlayer(gameState.revealedTileBagTiles, revealedTilesPlayerID);
     if (rtbtStr.length > 0) {
       lines.push(`revealed tile bag tiles: ${rtbtStr}`);
     }
 
-    if (moveData.playerIDWithPlayableTile !== null) {
-      lines.push(`player ID with playable tile: ${moveData.playerIDWithPlayableTile}`);
+    if (gameState.playerIDWithPlayableTile !== null) {
+      lines.push(`player ID with playable tile: ${gameState.playerIDWithPlayableTile}`);
     }
   }
 
-  if (moveData.timestamp !== null) {
-    lines.push(`timestamp: ${moveData.timestamp}`);
+  if (gameState.timestamp !== null) {
+    lines.push(`timestamp: ${gameState.timestamp}`);
   }
 
-  const arr = toParameterStrings(moveData.gameAction);
+  const arr = toParameterStrings(gameState.gameAction);
   let stringParameters = '';
   if (arr.length > 0) {
     stringParameters = ` ${arr.join(' ')}`;
   }
-  lines.push(`action: ${moveData.playerID} ${GameActionEnum[moveData.gameActionEnum]}${stringParameters}`);
+  lines.push(`action: ${gameState.playerID} ${GameActionEnum[gameState.gameActionEnum]}${stringParameters}`);
 
   if (detailed) {
-    const gameBoardLines = getGameBoardLines(moveData.gameBoard);
+    const gameBoardLines = getGameBoardLines(gameState.gameBoard);
     const scoreBoardLines = getScoreBoardLines(
-      moveData.scoreBoard,
-      moveData.scoreBoardAvailable,
-      moveData.scoreBoardChainSize,
-      moveData.scoreBoardPrice,
-      moveData.nextGameAction instanceof ActionGameOver ? -1 : moveData.turnPlayerID,
-      moveData.nextGameAction instanceof ActionGameOver ? -1 : moveData.nextGameAction.playerID,
+      gameState.scoreBoard,
+      gameState.scoreBoardAvailable,
+      gameState.scoreBoardChainSize,
+      gameState.scoreBoardPrice,
+      gameState.nextGameAction instanceof ActionGameOver ? -1 : gameState.turnPlayerID,
+      gameState.nextGameAction instanceof ActionGameOver ? -1 : gameState.nextGameAction.playerID,
     );
     const numLines = Math.max(gameBoardLines.length, scoreBoardLines.length);
     for (let i = 0; i < numLines; i++) {
@@ -337,13 +337,13 @@ function getMoveDataLines(moveData: MoveData, revealedTilesPlayerID: number | nu
     }
 
     lines.push('  tile racks:');
-    moveData.tileRacks.forEach((tileRack, playerID) => {
-      const tileTypes = moveData.tileRackTypes.get(playerID)!;
+    gameState.tileRacks.forEach((tileRack, playerID) => {
+      const tileTypes = gameState.tileRackTypes.get(playerID)!;
       lines.push(`    ${playerID}: ${getTileRackString(tileRack, tileTypes)}`);
     });
 
-    if (moveData.revealedTileRackTiles.length > 0) {
-      const str = moveData.revealedTileRackTiles
+    if (gameState.revealedTileRackTiles.length > 0) {
+      const str = gameState.revealedTileRackTiles
         .map((trt) => {
           return `${toTileString(trt.tile)}:${trt.playerIDBelongsTo.toString()}`;
         })
@@ -351,8 +351,8 @@ function getMoveDataLines(moveData: MoveData, revealedTilesPlayerID: number | nu
       lines.push(`  revealed tile rack tiles: ${str}`);
     }
 
-    if (moveData.revealedTileBagTiles.length > 0) {
-      const str = moveData.revealedTileBagTiles
+    if (gameState.revealedTileBagTiles.length > 0) {
+      const str = gameState.revealedTileBagTiles
         .map((tbt) => {
           return `${toTileString(tbt.tile)}:${tbt.playerIDWithPermission === null ? 'all' : tbt.playerIDWithPermission.toString()}`;
         })
@@ -360,29 +360,29 @@ function getMoveDataLines(moveData: MoveData, revealedTilesPlayerID: number | nu
       lines.push(`  revealed tile bag tiles: ${str}`);
     }
 
-    if (moveData.playerIDWithPlayableTile !== null) {
-      lines.push(`  player ID with playable tile: ${moveData.playerIDWithPlayableTile}`);
+    if (gameState.playerIDWithPlayableTile !== null) {
+      lines.push(`  player ID with playable tile: ${gameState.playerIDWithPlayableTile}`);
     }
 
     lines.push('  messages:');
-    moveData.createPlayerAndWatcherMessages();
-    for (let playerID = 0; playerID < moveData.playerMessages.length; playerID++) {
-      lines.push(`    ${playerID}: ${formatPlayerOrWatcherMessage(moveData.playerMessages[playerID])}`);
+    gameState.createPlayerAndWatcherMessages();
+    for (let playerID = 0; playerID < gameState.playerMessages.length; playerID++) {
+      lines.push(`    ${playerID}: ${formatPlayerOrWatcherMessage(gameState.playerMessages[playerID])}`);
     }
-    lines.push(`    w: ${formatPlayerOrWatcherMessage(moveData.watcherMessage)}`);
+    lines.push(`    w: ${formatPlayerOrWatcherMessage(gameState.watcherMessage)}`);
 
     lines.push('  history messages:');
-    moveData.gameHistoryMessages.forEach((ghm) => {
+    gameState.gameHistoryMessages.forEach((ghm) => {
       lines.push(`    ${getGameHistoryMessageString(ghm)}`);
     });
 
-    lines.push(`  next action: ${getNextActionString(moveData.nextGameAction)}`);
+    lines.push(`  next action: ${getNextActionString(gameState.nextGameAction)}`);
   }
 
   return lines;
 }
 
-function getRevealedTileRackTilesStringForPlayer(revealedTileRackTiles: MoveDataTileRackTile[], playerID: number) {
+function getRevealedTileRackTilesStringForPlayer(revealedTileRackTiles: GameStateTileRackTile[], playerID: number) {
   const parts: string[] = [];
 
   for (let i = 0; i < revealedTileRackTiles.length; i++) {
@@ -413,7 +413,7 @@ function getArrayFromRevealedTileRackTilesString(revealedTileRackTilesString: st
   return revealedTileRackTiles;
 }
 
-function getRevealedTileBagTilesStringForPlayer(revealedTileBagTiles: MoveDataTileBagTile[], playerID: number) {
+function getRevealedTileBagTilesStringForPlayer(revealedTileBagTiles: GameStateTileBagTile[], playerID: number) {
   const parts: string[] = [];
 
   for (let i = 0; i < revealedTileBagTiles.length; i++) {

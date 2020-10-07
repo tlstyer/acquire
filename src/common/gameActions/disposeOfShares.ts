@@ -53,7 +53,7 @@ export class ActionDisposeOfShares extends ActionBase {
       this.game.adjustPlayerScoreBoardRow(this.playerID, adjustments);
     }
 
-    this.game.getCurrentMoveData().addGameHistoryMessage(GameHistoryMessageEnum.DisposedOfShares, this.playerID, [this.defunctChain, tradeAmount, sellAmount]);
+    this.game.getCurrentGameState().addGameHistoryMessage(GameHistoryMessageEnum.DisposedOfShares, this.playerID, [this.defunctChain, tradeAmount, sellAmount]);
 
     return [];
   }

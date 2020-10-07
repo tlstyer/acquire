@@ -16,11 +16,11 @@ import { TileRackReadOnly } from './components/TileRackReadOnly';
 import { GameBoardLabelMode } from './enums';
 
 function render() {
-  const moveData = game.moveDataHistory.get(selectedMove)!;
+  const gameState = game.gameStateHistory.get(selectedMove)!;
 
-  let turnPlayerID = moveData.turnPlayerID;
-  let movePlayerID = moveData.nextGameAction.playerID;
-  if (moveData.nextGameAction instanceof ActionGameOver) {
+  let turnPlayerID = gameState.turnPlayerID;
+  let movePlayerID = gameState.nextGameAction.playerID;
+  if (gameState.nextGameAction instanceof ActionGameOver) {
     turnPlayerID = -1;
     movePlayerID = -1;
   }
@@ -28,12 +28,12 @@ function render() {
   let gameBoardTileRack: List<number | null> | undefined;
   if (game.userIDs.size > 1) {
     if (followedPlayerID !== null) {
-      gameBoardTileRack = moveData.tileRacks.get(followedPlayerID)!;
+      gameBoardTileRack = gameState.tileRacks.get(followedPlayerID)!;
     } else if (movePlayerID !== -1) {
-      gameBoardTileRack = moveData.tileRacks.get(movePlayerID)!;
+      gameBoardTileRack = gameState.tileRacks.get(movePlayerID)!;
     }
   } else {
-    gameBoardTileRack = moveData.tileRacks.get(0)!;
+    gameBoardTileRack = gameState.tileRacks.get(0)!;
   }
 
   const windowWidth = window.innerWidth;
@@ -50,24 +50,24 @@ function render() {
   ReactDOM.render(
     <div className={style.root}>
       <div style={{ width: gameBoardWidth }}>
-        <GameBoard gameBoard={moveData.gameBoard} tileRack={gameBoardTileRack} labelMode={GameBoardLabelMode.Nothing} cellSize={gameBoardCellSize} />
+        <GameBoard gameBoard={gameState.gameBoard} tileRack={gameBoardTileRack} labelMode={GameBoardLabelMode.Nothing} cellSize={gameBoardCellSize} />
       </div>
       <div className={style.rightSide}>
         <ScoreBoard
           usernames={game.usernames}
-          scoreBoard={moveData.scoreBoard}
-          scoreBoardAvailable={moveData.scoreBoardAvailable}
-          scoreBoardChainSize={moveData.scoreBoardChainSize}
-          scoreBoardPrice={moveData.scoreBoardPrice}
-          safeChains={moveData.safeChains}
+          scoreBoard={gameState.scoreBoard}
+          scoreBoardAvailable={gameState.scoreBoardAvailable}
+          scoreBoardChainSize={gameState.scoreBoardChainSize}
+          scoreBoardPrice={gameState.scoreBoardPrice}
+          safeChains={gameState.safeChains}
           turnPlayerID={turnPlayerID}
           movePlayerID={movePlayerID}
           gameMode={game.gameMode}
           cellWidth={scoreBoardCellWidth}
         />
         {game.userIDs.map((_, playerID) => {
-          const tileRack = moveData.tileRacks.get(playerID)!;
-          const tileRackTypes = moveData.tileRackTypes.get(playerID)!;
+          const tileRack = gameState.tileRacks.get(playerID)!;
+          const tileRackTypes = gameState.tileRackTypes.get(playerID)!;
           return (
             <div key={playerID}>
               <div className={style.tileRackWrapper}>
@@ -85,8 +85,8 @@ function render() {
             </div>
           );
         })}
-        <GameHistory usernames={game.usernames} moveDataHistory={game.moveDataHistory} selectedMove={selectedMove} onMoveClicked={onMoveClicked} />
-        <GameStatus usernames={game.usernames} nextGameAction={moveData.nextGameAction} />
+        <GameHistory usernames={game.usernames} gameStateHistory={game.gameStateHistory} selectedMove={selectedMove} onMoveClicked={onMoveClicked} />
+        <GameStatus usernames={game.usernames} nextGameAction={gameState.nextGameAction} />
       </div>
     </div>,
     document.getElementById('root'),
@@ -123,7 +123,7 @@ window.addEventListener('keydown', (event) => {
       }
     } else {
       selectedMove++;
-      const lastMove = game.moveDataHistory.size - 1;
+      const lastMove = game.gameStateHistory.size - 1;
       if (selectedMove > lastMove) {
         selectedMove = lastMove;
       }
@@ -156,7 +156,7 @@ function main() {
   const gameJson = require('raw-loader!../common/gameTestFiles/other/no tiles played for entire round').default.split('\nGame JSON:\n')[1];
 
   game = Game.fromJSON(JSON.parse(gameJson));
-  selectedMove = game.moveDataHistory.size - 1;
+  selectedMove = game.gameStateHistory.size - 1;
   periodicResizeCheck();
 }
 

@@ -6,7 +6,7 @@ import * as style from './examples.scss';
 import { List } from 'immutable';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { defaultGameBoard, defaultMoveDataHistory } from '../common/defaults';
+import { defaultGameBoard, defaultGameStateHistory } from '../common/defaults';
 import { Game } from '../common/game';
 import { CreateGame, CreateGameProps } from './components/CreateGame';
 import { DisposeOfShares, DisposeOfSharesProps } from './components/DisposeOfShares';
@@ -329,17 +329,17 @@ class AllDemoProps {
     this.gameHistoryProps = [
       {
         usernames: dummyGameForGetGameHistory.usernames,
-        moveDataHistory: dummyGameForGetGameHistory.moveDataHistory,
+        gameStateHistory: dummyGameForGetGameHistory.gameStateHistory,
         onMoveClicked,
       },
       {
         usernames: game1 !== null ? game1.usernames : List(),
-        moveDataHistory: game1 !== null ? game1.moveDataHistory : defaultMoveDataHistory,
+        gameStateHistory: game1 !== null ? game1.gameStateHistory : defaultGameStateHistory,
         onMoveClicked,
       },
       {
         usernames: game2 !== null ? game2.usernames : List(),
-        moveDataHistory: game2 !== null ? game2.moveDataHistory : defaultMoveDataHistory,
+        gameStateHistory: game2 !== null ? game2.gameStateHistory : defaultGameStateHistory,
         onMoveClicked,
       },
     ];
@@ -516,7 +516,7 @@ window.addEventListener('keydown', (event) => {
       selectedMove = 0;
     }
 
-    const lastMove = allDemoProps.gameHistoryProps[2].moveDataHistory.size - 1;
+    const lastMove = allDemoProps.gameHistoryProps[2].gameStateHistory.size - 1;
     if (selectedMove > lastMove) {
       selectedMove = lastMove;
     }

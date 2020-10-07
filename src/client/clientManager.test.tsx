@@ -600,7 +600,7 @@ describe('MessageToClient.Greetings', () => {
     expect(game).toBeDefined();
     expect(game.gameMode).toBe(GameMode.SINGLES_1);
     expect(game.hostUserID).toBe(2);
-    expect(game.moveDataHistory.size).toBe(4);
+    expect(game.gameStateHistory.size).toBe(4);
     expect(game.myUserID).toBe(2);
     expect(game.playerArrangementMode).toBe(PlayerArrangementMode.RANDOM_ORDER);
     expect(game.userIDs).toEqual(List([2]));

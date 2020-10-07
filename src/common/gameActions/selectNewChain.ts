@@ -43,6 +43,6 @@ export class ActionSelectNewChain extends ActionBase {
       this.game.adjustPlayerScoreBoardRow(this.playerID, [[chain, 1]]);
     }
 
-    this.game.getCurrentMoveData().addGameHistoryMessage(GameHistoryMessageEnum.FormedChain, this.playerID, [chain]);
+    this.game.getCurrentGameState().addGameHistoryMessage(GameHistoryMessageEnum.FormedChain, this.playerID, [chain]);
   }
 }

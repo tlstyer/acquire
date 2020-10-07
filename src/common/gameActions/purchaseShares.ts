@@ -57,7 +57,7 @@ export class ActionPurchaseShares extends ActionBase {
 
     if (!canPurchaseShares && !this.canEndGame) {
       if (this.cannotAffordAnyShares) {
-        this.game.getCurrentMoveData().addGameHistoryMessage(GameHistoryMessageEnum.CouldNotAffordAnyShares, this.playerID, []);
+        this.game.getCurrentGameState().addGameHistoryMessage(GameHistoryMessageEnum.CouldNotAffordAnyShares, this.playerID, []);
       }
       return this.completeAction(false);
     } else {
@@ -121,9 +121,9 @@ export class ActionPurchaseShares extends ActionBase {
     }
 
     if (this.cannotAffordAnyShares) {
-      this.game.getCurrentMoveData().addGameHistoryMessage(GameHistoryMessageEnum.CouldNotAffordAnyShares, this.playerID, []);
+      this.game.getCurrentGameState().addGameHistoryMessage(GameHistoryMessageEnum.CouldNotAffordAnyShares, this.playerID, []);
     } else {
-      this.game.getCurrentMoveData().addGameHistoryMessage(GameHistoryMessageEnum.PurchasedShares, this.playerID, [chainsAndCounts]);
+      this.game.getCurrentGameState().addGameHistoryMessage(GameHistoryMessageEnum.PurchasedShares, this.playerID, [chainsAndCounts]);
     }
 
     return this.completeAction(endGame && this.canEndGame);
@@ -135,11 +135,11 @@ export class ActionPurchaseShares extends ActionBase {
 
     if (endGame || allTilesPlayed || noTilesPlayedForEntireRound) {
       if (endGame) {
-        this.game.getCurrentMoveData().addGameHistoryMessage(GameHistoryMessageEnum.EndedGame, this.playerID, []);
+        this.game.getCurrentGameState().addGameHistoryMessage(GameHistoryMessageEnum.EndedGame, this.playerID, []);
       } else if (allTilesPlayed) {
-        this.game.getCurrentMoveData().addGameHistoryMessage(GameHistoryMessageEnum.AllTilesPlayed, null, []);
+        this.game.getCurrentGameState().addGameHistoryMessage(GameHistoryMessageEnum.AllTilesPlayed, null, []);
       } else {
-        this.game.getCurrentMoveData().addGameHistoryMessage(GameHistoryMessageEnum.NoTilesPlayedForEntireRound, null, []);
+        this.game.getCurrentGameState().addGameHistoryMessage(GameHistoryMessageEnum.NoTilesPlayedForEntireRound, null, []);
       }
 
       return [new ActionGameOver(this.game, this.playerID)];
@@ -150,7 +150,7 @@ export class ActionPurchaseShares extends ActionBase {
 
       allTilesPlayed = this.game.gameBoardTypeCounts[GameBoardType.NOTHING] === 0;
       if (allTilesPlayed) {
-        this.game.getCurrentMoveData().addGameHistoryMessage(GameHistoryMessageEnum.AllTilesPlayed, null, []);
+        this.game.getCurrentGameState().addGameHistoryMessage(GameHistoryMessageEnum.AllTilesPlayed, null, []);
         return [new ActionGameOver(this.game, this.playerID)];
       }
 

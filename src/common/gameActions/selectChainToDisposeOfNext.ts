@@ -30,7 +30,7 @@ export class ActionSelectChainToDisposeOfNext extends ActionBase {
       throw new UserInputError('cannot select chain as the next chain');
     }
 
-    this.game.getCurrentMoveData().addGameHistoryMessage(GameHistoryMessageEnum.SelectedChainToDisposeOfNext, this.playerID, [chain]);
+    this.game.getCurrentGameState().addGameHistoryMessage(GameHistoryMessageEnum.SelectedChainToDisposeOfNext, this.playerID, [chain]);
 
     return this.completeAction(chain);
   }

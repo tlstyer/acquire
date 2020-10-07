@@ -3,13 +3,13 @@ import * as style from './GameHistory.scss';
 import { List } from 'immutable';
 import * as React from 'react';
 import { GameHistoryMessageEnum } from '../../common/enums';
-import { GameHistoryMessageData, MoveData } from '../../common/game';
+import { GameHistoryMessageData, GameState } from '../../common/game';
 import { getHotelNameSpan, getTileString, getUsernameSpan } from '../helpers';
 import { GameBoardType } from '../../common/pb';
 
 export interface GameHistoryProps {
   usernames: List<string>;
-  moveDataHistory: List<MoveData>;
+  gameStateHistory: List<GameState>;
   selectedMove?: number;
   onMoveClicked: (index: number) => void;
 }
@@ -53,11 +53,11 @@ export class GameHistory extends React.PureComponent<GameHistoryProps> {
   };
 
   render() {
-    const { usernames, moveDataHistory, selectedMove, onMoveClicked } = this.props;
+    const { usernames, gameStateHistory, selectedMove, onMoveClicked } = this.props;
 
     return (
       <div className={style.root} ref={this.parentRef}>
-        {moveDataHistory.map((moveData, i) => {
+        {gameStateHistory.map((gameState, i) => {
           const optionalProps: { [key: string]: any } = {};
           if (i === selectedMove) {
             optionalProps.ref = this.selectedMoveRef;
@@ -65,7 +65,7 @@ export class GameHistory extends React.PureComponent<GameHistoryProps> {
 
           return (
             <div key={i} {...optionalProps}>
-              <MoveHistory usernames={usernames} moveData={moveData} moveIndex={i} isSelected={i === selectedMove} onMoveClicked={onMoveClicked} />
+              <MoveHistory usernames={usernames} gameState={gameState} moveIndex={i} isSelected={i === selectedMove} onMoveClicked={onMoveClicked} />
             </div>
           );
         })}
@@ -76,7 +76,7 @@ export class GameHistory extends React.PureComponent<GameHistoryProps> {
 
 interface MoveHistoryProps {
   usernames: List<string>;
-  moveData: MoveData;
+  gameState: GameState;
   moveIndex: number;
   isSelected: boolean;
   onMoveClicked: (index: number) => void;
@@ -84,17 +84,17 @@ interface MoveHistoryProps {
 
 class MoveHistory extends React.PureComponent<MoveHistoryProps> {
   render() {
-    const { usernames, moveData, moveIndex, isSelected, onMoveClicked } = this.props;
+    const { usernames, gameState, moveIndex, isSelected, onMoveClicked } = this.props;
 
     const optionalProps: { [key: string]: any } = {};
-    if (moveData.timestamp !== null) {
-      const date = new Date(moveData.timestamp);
+    if (gameState.timestamp !== null) {
+      const date = new Date(gameState.timestamp);
       optionalProps.title = date.toString();
     }
 
     return (
       <div className={style.move + (isSelected ? ` ${style.selected}` : '')} {...optionalProps} onClick={() => onMoveClicked(moveIndex)}>
-        {moveData.gameHistoryMessages.map((ghmd, index) => {
+        {gameState.gameHistoryMessages.map((ghmd, index) => {
           const username = ghmd.playerID === null ? '' : usernames.get(ghmd.playerID)!;
           return gameHistoryMessageHandlerLookup.get(ghmd.gameHistoryMessage)!(index, username, ghmd);
         })}

@@ -1,8 +1,8 @@
 import { List } from 'immutable';
-import { MoveData } from './game';
+import { GameState } from './game';
 import { GameBoardType } from './pb';
 
-export const defaultMoveDataHistory = List<MoveData>([]);
+export const defaultGameStateHistory = List<GameState>([]);
 
 export const defaultTileRacks = List<List<number | null>>([]);
 

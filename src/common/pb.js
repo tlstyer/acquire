@@ -5214,7 +5214,7 @@ $root.MessageToServer = (function() {
              * @memberof MessageToServer.Login
              * @interface IGameData
              * @property {number|null} [gameId] GameData gameId
-             * @property {number|null} [moveDataHistorySize] GameData moveDataHistorySize
+             * @property {number|null} [gameStateHistorySize] GameData gameStateHistorySize
              */
 
             /**
@@ -5241,12 +5241,12 @@ $root.MessageToServer = (function() {
             GameData.prototype.gameId = 0;
 
             /**
-             * GameData moveDataHistorySize.
-             * @member {number} moveDataHistorySize
+             * GameData gameStateHistorySize.
+             * @member {number} gameStateHistorySize
              * @memberof MessageToServer.Login.GameData
              * @instance
              */
-            GameData.prototype.moveDataHistorySize = 0;
+            GameData.prototype.gameStateHistorySize = 0;
 
             /**
              * Creates a new GameData instance using the specified properties.
@@ -5274,8 +5274,8 @@ $root.MessageToServer = (function() {
                     writer = $Writer.create();
                 if (message.gameId != null && Object.hasOwnProperty.call(message, "gameId"))
                     writer.uint32(/* id 1, wireType 0 =*/8).int32(message.gameId);
-                if (message.moveDataHistorySize != null && Object.hasOwnProperty.call(message, "moveDataHistorySize"))
-                    writer.uint32(/* id 2, wireType 0 =*/16).int32(message.moveDataHistorySize);
+                if (message.gameStateHistorySize != null && Object.hasOwnProperty.call(message, "gameStateHistorySize"))
+                    writer.uint32(/* id 2, wireType 0 =*/16).int32(message.gameStateHistorySize);
                 return writer;
             };
 
@@ -5314,7 +5314,7 @@ $root.MessageToServer = (function() {
                         message.gameId = reader.int32();
                         break;
                     case 2:
-                        message.moveDataHistorySize = reader.int32();
+                        message.gameStateHistorySize = reader.int32();
                         break;
                     default:
                         reader.skipType(tag & 7);
@@ -5354,9 +5354,9 @@ $root.MessageToServer = (function() {
                 if (message.gameId != null && message.hasOwnProperty("gameId"))
                     if (!$util.isInteger(message.gameId))
                         return "gameId: integer expected";
-                if (message.moveDataHistorySize != null && message.hasOwnProperty("moveDataHistorySize"))
-                    if (!$util.isInteger(message.moveDataHistorySize))
-                        return "moveDataHistorySize: integer expected";
+                if (message.gameStateHistorySize != null && message.hasOwnProperty("gameStateHistorySize"))
+                    if (!$util.isInteger(message.gameStateHistorySize))
+                        return "gameStateHistorySize: integer expected";
                 return null;
             };
 
@@ -5374,8 +5374,8 @@ $root.MessageToServer = (function() {
                 var message = new $root.MessageToServer.Login.GameData();
                 if (object.gameId != null)
                     message.gameId = object.gameId | 0;
-                if (object.moveDataHistorySize != null)
-                    message.moveDataHistorySize = object.moveDataHistorySize | 0;
+                if (object.gameStateHistorySize != null)
+                    message.gameStateHistorySize = object.gameStateHistorySize | 0;
                 return message;
             };
 
@@ -5394,12 +5394,12 @@ $root.MessageToServer = (function() {
                 var object = {};
                 if (options.defaults) {
                     object.gameId = 0;
-                    object.moveDataHistorySize = 0;
+                    object.gameStateHistorySize = 0;
                 }
                 if (message.gameId != null && message.hasOwnProperty("gameId"))
                     object.gameId = message.gameId;
-                if (message.moveDataHistorySize != null && message.hasOwnProperty("moveDataHistorySize"))
-                    object.moveDataHistorySize = message.moveDataHistorySize;
+                if (message.gameStateHistorySize != null && message.hasOwnProperty("gameStateHistorySize"))
+                    object.gameStateHistorySize = message.gameStateHistorySize;
                 return object;
             };
 
@@ -6008,7 +6008,7 @@ $root.MessageToServer = (function() {
          * Properties of a DoGameAction.
          * @memberof MessageToServer
          * @interface IDoGameAction
-         * @property {number|null} [moveDataHistorySize] DoGameAction moveDataHistorySize
+         * @property {number|null} [gameStateHistorySize] DoGameAction gameStateHistorySize
          * @property {IGameAction|null} [gameAction] DoGameAction gameAction
          */
 
@@ -6028,12 +6028,12 @@ $root.MessageToServer = (function() {
         }
 
         /**
-         * DoGameAction moveDataHistorySize.
-         * @member {number} moveDataHistorySize
+         * DoGameAction gameStateHistorySize.
+         * @member {number} gameStateHistorySize
          * @memberof MessageToServer.DoGameAction
          * @instance
          */
-        DoGameAction.prototype.moveDataHistorySize = 0;
+        DoGameAction.prototype.gameStateHistorySize = 0;
 
         /**
          * DoGameAction gameAction.
@@ -6067,8 +6067,8 @@ $root.MessageToServer = (function() {
         DoGameAction.encode = function encode(message, writer) {
             if (!writer)
                 writer = $Writer.create();
-            if (message.moveDataHistorySize != null && Object.hasOwnProperty.call(message, "moveDataHistorySize"))
-                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.moveDataHistorySize);
+            if (message.gameStateHistorySize != null && Object.hasOwnProperty.call(message, "gameStateHistorySize"))
+                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.gameStateHistorySize);
             if (message.gameAction != null && Object.hasOwnProperty.call(message, "gameAction"))
                 $root.GameAction.encode(message.gameAction, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
             return writer;
@@ -6106,7 +6106,7 @@ $root.MessageToServer = (function() {
                 var tag = reader.uint32();
                 switch (tag >>> 3) {
                 case 1:
-                    message.moveDataHistorySize = reader.int32();
+                    message.gameStateHistorySize = reader.int32();
                     break;
                 case 2:
                     message.gameAction = $root.GameAction.decode(reader, reader.uint32());
@@ -6146,9 +6146,9 @@ $root.MessageToServer = (function() {
         DoGameAction.verify = function verify(message) {
             if (typeof message !== "object" || message === null)
                 return "object expected";
-            if (message.moveDataHistorySize != null && message.hasOwnProperty("moveDataHistorySize"))
-                if (!$util.isInteger(message.moveDataHistorySize))
-                    return "moveDataHistorySize: integer expected";
+            if (message.gameStateHistorySize != null && message.hasOwnProperty("gameStateHistorySize"))
+                if (!$util.isInteger(message.gameStateHistorySize))
+                    return "gameStateHistorySize: integer expected";
             if (message.gameAction != null && message.hasOwnProperty("gameAction")) {
                 var error = $root.GameAction.verify(message.gameAction);
                 if (error)
@@ -6169,8 +6169,8 @@ $root.MessageToServer = (function() {
             if (object instanceof $root.MessageToServer.DoGameAction)
                 return object;
             var message = new $root.MessageToServer.DoGameAction();
-            if (object.moveDataHistorySize != null)
-                message.moveDataHistorySize = object.moveDataHistorySize | 0;
+            if (object.gameStateHistorySize != null)
+                message.gameStateHistorySize = object.gameStateHistorySize | 0;
             if (object.gameAction != null) {
                 if (typeof object.gameAction !== "object")
                     throw TypeError(".MessageToServer.DoGameAction.gameAction: object expected");
@@ -6193,11 +6193,11 @@ $root.MessageToServer = (function() {
                 options = {};
             var object = {};
             if (options.defaults) {
-                object.moveDataHistorySize = 0;
+                object.gameStateHistorySize = 0;
                 object.gameAction = null;
             }
-            if (message.moveDataHistorySize != null && message.hasOwnProperty("moveDataHistorySize"))
-                object.moveDataHistorySize = message.moveDataHistorySize;
+            if (message.gameStateHistorySize != null && message.hasOwnProperty("gameStateHistorySize"))
+                object.gameStateHistorySize = message.gameStateHistorySize;
             if (message.gameAction != null && message.hasOwnProperty("gameAction"))
                 object.gameAction = $root.GameAction.toObject(message.gameAction, options);
             return object;

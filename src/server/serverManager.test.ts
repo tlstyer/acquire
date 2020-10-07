@@ -105,8 +105,8 @@ function messageKickUser(userId: any) {
   return { doGameSetupAction: { kickUser: { userId } } };
 }
 
-function messageDoGameAction(moveDataHistorySize: any, gameAction: any) {
-  return { doGameAction: { moveDataHistorySize, gameAction } };
+function messageDoGameAction(gameStateHistorySize: any, gameAction: any) {
+  return { doGameAction: { gameStateHistorySize, gameAction } };
 }
 
 function getServerManagerAndStuff() {

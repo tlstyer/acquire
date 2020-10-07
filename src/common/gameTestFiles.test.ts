@@ -44,15 +44,15 @@ function processDirectory(base: string, dir: string) {
           const playerID = game.userIDs.indexOf(game.myUserID || -1);
           const game2 = new Game(game.gameMode, game.playerArrangementMode, [], game.userIDs, game.usernames, game.hostUserID, game.myUserID);
 
-          game.moveDataHistory.forEach((moveData) => {
-            moveData.createPlayerAndWatcherMessages();
-            const gameMessage = playerID !== -1 ? moveData.playerMessages[playerID] : moveData.watcherMessage;
-            game2.processMoveDataMessage(gameMessage);
+          game.gameStateHistory.forEach((gameState) => {
+            gameState.createPlayerAndWatcherMessages();
+            const gameMessage = playerID !== -1 ? gameState.playerMessages[playerID] : gameState.watcherMessage;
+            game2.processGameStateMessage(gameMessage);
 
-            const moveData2 = game2.moveDataHistory.get(game2.moveDataHistory.size - 1, null);
-            if (moveData2 !== null) {
-              moveData2.createPlayerAndWatcherMessages();
-              const gameMessage2 = playerID !== -1 ? moveData2.playerMessages[playerID] : moveData2.watcherMessage;
+            const gameState2 = game2.gameStateHistory.get(game2.gameStateHistory.size - 1, null);
+            if (gameState2 !== null) {
+              gameState2.createPlayerAndWatcherMessages();
+              const gameMessage2 = playerID !== -1 ? gameState2.playerMessages[playerID] : gameState2.watcherMessage;
               expect(gameMessage2).toEqual(gameMessage);
             } else {
               expect(false).toBe(true);

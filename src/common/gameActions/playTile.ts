@@ -13,11 +13,11 @@ export class ActionPlayTile extends ActionBase {
   }
 
   prepare() {
-    const moveData = this.game.getCurrentMoveData();
+    const gameState = this.game.getCurrentGameState();
 
     this.game.turnPlayerID = this.playerID;
 
-    moveData.addGameHistoryMessage(GameHistoryMessageEnum.TurnBegan, this.playerID, []);
+    gameState.addGameHistoryMessage(GameHistoryMessageEnum.TurnBegan, this.playerID, []);
 
     let hasAPlayableTile = false;
     if (this.playerID === this.game.playerIDWithPlayableTile) {
@@ -38,7 +38,7 @@ export class ActionPlayTile extends ActionBase {
       return null;
     } else {
       this.game.numTurnsWithoutPlayedTiles++;
-      moveData.addGameHistoryMessage(GameHistoryMessageEnum.HasNoPlayableTile, this.playerID, []);
+      gameState.addGameHistoryMessage(GameHistoryMessageEnum.HasNoPlayableTile, this.playerID, []);
       return [];
     }
   }
@@ -80,7 +80,7 @@ export class ActionPlayTile extends ActionBase {
 
     this.game.removeTile(this.playerID, tileRackIndex);
 
-    this.game.getCurrentMoveData().addGameHistoryMessage(GameHistoryMessageEnum.PlayedTile, this.playerID, [tile]);
+    this.game.getCurrentGameState().addGameHistoryMessage(GameHistoryMessageEnum.PlayedTile, this.playerID, [tile]);
 
     return response;
   }

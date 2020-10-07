@@ -129,7 +129,7 @@ message MessageToServer {
   message Login {
     message GameData {
       int32 game_id = 1;
-      int32 move_data_history_size = 2;
+      int32 game_state_history_size = 2;
     }
 
     int32 version = 1;
@@ -146,7 +146,7 @@ message MessageToServer {
   message ExitGame {}
 
   message DoGameAction {
-    int32 move_data_history_size = 1;
+    int32 game_state_history_size = 1;
     GameAction game_action = 2;
   }
 

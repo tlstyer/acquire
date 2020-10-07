@@ -19,7 +19,7 @@ class TestDate {
 const onMoveClicked = jest.fn();
 const game = getDummyGameForGetGameHistory();
 const jsx = (
-  <GameHistory usernames={List(['Tim', 'Rita', 'Dad', 'Mom'])} moveDataHistory={game.moveDataHistory} selectedMove={1} onMoveClicked={onMoveClicked} />
+  <GameHistory usernames={List(['Tim', 'Rita', 'Dad', 'Mom'])} gameStateHistory={game.gameStateHistory} selectedMove={1} onMoveClicked={onMoveClicked} />
 );
 
 const dateNow = Date.now;

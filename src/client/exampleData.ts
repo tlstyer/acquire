@@ -1,5 +1,5 @@
 import { List } from 'immutable';
-import { defaultMoveDataHistory } from '../common/defaults';
+import { defaultGameStateHistory } from '../common/defaults';
 import { GameHistoryMessageEnum } from '../common/enums';
 import { Game } from '../common/game';
 import { ActionDisposeOfShares } from '../common/gameActions/disposeOfShares';
@@ -17,73 +17,73 @@ import { allChains } from './helpers';
 export function getDummyGameForGetGameHistory() {
   const game = new Game(GameMode.SINGLES_4, PlayerArrangementMode.EXACT_ORDER, getNewTileBag(), List([2, 3, 5, 8]), List(['Tim', 'Rita', 'Dad', 'Mom']), 8, 3);
   game.doGameAction(GameAction.create({ startGame: {} }), null);
-  game.moveDataHistory = defaultMoveDataHistory;
+  game.gameStateHistory = defaultGameStateHistory;
 
-  let moveData = game.getCurrentMoveData();
-  moveData.addGameHistoryMessage(GameHistoryMessageEnum.TurnBegan, 0, []);
-  moveData.timestamp = 1524896229792;
+  let gameState = game.getCurrentGameState();
+  gameState.addGameHistoryMessage(GameHistoryMessageEnum.TurnBegan, 0, []);
+  gameState.timestamp = 1524896229792;
   game.endCurrentMove();
 
-  moveData = game.getCurrentMoveData();
-  moveData.addGameHistoryMessage(GameHistoryMessageEnum.DrewPositionTile, 1, [21]);
+  gameState = game.getCurrentGameState();
+  gameState.addGameHistoryMessage(GameHistoryMessageEnum.DrewPositionTile, 1, [21]);
   game.endCurrentMove();
 
-  moveData = game.getCurrentMoveData();
-  moveData.addGameHistoryMessage(GameHistoryMessageEnum.StartedGame, 2, []);
+  gameState = game.getCurrentGameState();
+  gameState.addGameHistoryMessage(GameHistoryMessageEnum.StartedGame, 2, []);
   game.endCurrentMove();
 
-  moveData = game.getCurrentMoveData();
-  moveData.addGameHistoryMessage(GameHistoryMessageEnum.DrewTile, 3, [100]);
+  gameState = game.getCurrentGameState();
+  gameState.addGameHistoryMessage(GameHistoryMessageEnum.DrewTile, 3, [100]);
   game.endCurrentMove();
 
-  moveData = game.getCurrentMoveData();
-  moveData.addGameHistoryMessage(GameHistoryMessageEnum.HasNoPlayableTile, 0, []);
+  gameState = game.getCurrentGameState();
+  gameState.addGameHistoryMessage(GameHistoryMessageEnum.HasNoPlayableTile, 0, []);
   game.endCurrentMove();
 
-  moveData = game.getCurrentMoveData();
-  moveData.addGameHistoryMessage(GameHistoryMessageEnum.PlayedTile, 1, [40]);
+  gameState = game.getCurrentGameState();
+  gameState.addGameHistoryMessage(GameHistoryMessageEnum.PlayedTile, 1, [40]);
   game.endCurrentMove();
 
-  moveData = game.getCurrentMoveData();
-  moveData.addGameHistoryMessage(GameHistoryMessageEnum.FormedChain, 2, [0]);
+  gameState = game.getCurrentGameState();
+  gameState.addGameHistoryMessage(GameHistoryMessageEnum.FormedChain, 2, [0]);
   game.endCurrentMove();
 
-  moveData = game.getCurrentMoveData();
-  moveData.addGameHistoryMessage(GameHistoryMessageEnum.MergedChains, 3, [[1, 2]]);
-  moveData.addGameHistoryMessage(GameHistoryMessageEnum.MergedChains, 0, [[3, 4, 5]]);
-  moveData.addGameHistoryMessage(GameHistoryMessageEnum.MergedChains, 1, [[0, 1, 2, 6]]);
+  gameState = game.getCurrentGameState();
+  gameState.addGameHistoryMessage(GameHistoryMessageEnum.MergedChains, 3, [[1, 2]]);
+  gameState.addGameHistoryMessage(GameHistoryMessageEnum.MergedChains, 0, [[3, 4, 5]]);
+  gameState.addGameHistoryMessage(GameHistoryMessageEnum.MergedChains, 1, [[0, 1, 2, 6]]);
   game.endCurrentMove();
 
-  moveData = game.getCurrentMoveData();
-  moveData.addGameHistoryMessage(GameHistoryMessageEnum.SelectedMergerSurvivor, 2, [3]);
+  gameState = game.getCurrentGameState();
+  gameState.addGameHistoryMessage(GameHistoryMessageEnum.SelectedMergerSurvivor, 2, [3]);
   game.endCurrentMove();
 
-  moveData = game.getCurrentMoveData();
-  moveData.addGameHistoryMessage(GameHistoryMessageEnum.SelectedChainToDisposeOfNext, 3, [4]);
+  gameState = game.getCurrentGameState();
+  gameState.addGameHistoryMessage(GameHistoryMessageEnum.SelectedChainToDisposeOfNext, 3, [4]);
   game.endCurrentMove();
 
-  moveData = game.getCurrentMoveData();
-  moveData.addGameHistoryMessage(GameHistoryMessageEnum.ReceivedBonus, 0, [5, 25]);
+  gameState = game.getCurrentGameState();
+  gameState.addGameHistoryMessage(GameHistoryMessageEnum.ReceivedBonus, 0, [5, 25]);
   game.endCurrentMove();
 
-  moveData = game.getCurrentMoveData();
-  moveData.addGameHistoryMessage(GameHistoryMessageEnum.DisposedOfShares, 1, [6, 2, 3]);
+  gameState = game.getCurrentGameState();
+  gameState.addGameHistoryMessage(GameHistoryMessageEnum.DisposedOfShares, 1, [6, 2, 3]);
   game.endCurrentMove();
 
-  moveData = game.getCurrentMoveData();
-  moveData.addGameHistoryMessage(GameHistoryMessageEnum.CouldNotAffordAnyShares, 2, []);
+  gameState = game.getCurrentGameState();
+  gameState.addGameHistoryMessage(GameHistoryMessageEnum.CouldNotAffordAnyShares, 2, []);
   game.endCurrentMove();
 
-  moveData = game.getCurrentMoveData();
-  moveData.addGameHistoryMessage(GameHistoryMessageEnum.PurchasedShares, 3, [[]]);
-  moveData.addGameHistoryMessage(GameHistoryMessageEnum.PurchasedShares, 0, [[[0, 3]]]);
-  moveData.addGameHistoryMessage(GameHistoryMessageEnum.PurchasedShares, 1, [
+  gameState = game.getCurrentGameState();
+  gameState.addGameHistoryMessage(GameHistoryMessageEnum.PurchasedShares, 3, [[]]);
+  gameState.addGameHistoryMessage(GameHistoryMessageEnum.PurchasedShares, 0, [[[0, 3]]]);
+  gameState.addGameHistoryMessage(GameHistoryMessageEnum.PurchasedShares, 1, [
     [
       [1, 2],
       [2, 1],
     ],
   ]);
-  moveData.addGameHistoryMessage(GameHistoryMessageEnum.PurchasedShares, 2, [
+  gameState.addGameHistoryMessage(GameHistoryMessageEnum.PurchasedShares, 2, [
     [
       [3, 1],
       [4, 1],
@@ -92,24 +92,24 @@ export function getDummyGameForGetGameHistory() {
   ]);
   game.endCurrentMove();
 
-  moveData = game.getCurrentMoveData();
-  moveData.addGameHistoryMessage(GameHistoryMessageEnum.DrewLastTile, 3, []);
+  gameState = game.getCurrentGameState();
+  gameState.addGameHistoryMessage(GameHistoryMessageEnum.DrewLastTile, 3, []);
   game.endCurrentMove();
 
-  moveData = game.getCurrentMoveData();
-  moveData.addGameHistoryMessage(GameHistoryMessageEnum.ReplacedDeadTile, 0, [30]);
+  gameState = game.getCurrentGameState();
+  gameState.addGameHistoryMessage(GameHistoryMessageEnum.ReplacedDeadTile, 0, [30]);
   game.endCurrentMove();
 
-  moveData = game.getCurrentMoveData();
-  moveData.addGameHistoryMessage(GameHistoryMessageEnum.EndedGame, 1, []);
+  gameState = game.getCurrentGameState();
+  gameState.addGameHistoryMessage(GameHistoryMessageEnum.EndedGame, 1, []);
   game.endCurrentMove();
 
-  moveData = game.getCurrentMoveData();
-  moveData.addGameHistoryMessage(GameHistoryMessageEnum.NoTilesPlayedForEntireRound, null, []);
+  gameState = game.getCurrentGameState();
+  gameState.addGameHistoryMessage(GameHistoryMessageEnum.NoTilesPlayedForEntireRound, null, []);
   game.endCurrentMove();
 
-  moveData = game.getCurrentMoveData();
-  moveData.addGameHistoryMessage(GameHistoryMessageEnum.AllTilesPlayed, null, []);
+  gameState = game.getCurrentGameState();
+  gameState.addGameHistoryMessage(GameHistoryMessageEnum.AllTilesPlayed, null, []);
   game.endCurrentMove();
 
   return game;

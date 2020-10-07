@@ -1,7 +1,7 @@
 import { List } from 'immutable';
 import {
   defaultGameBoard,
-  defaultMoveDataHistory,
+  defaultGameStateHistory,
   defaultSafeChains,
   defaultScoreBoard,
   defaultScoreBoardAvailable,
@@ -24,8 +24,8 @@ type GameJSON = [GameMode, PlayerArrangementMode, number | null, number, number[
 export class Game {
   nextTileBagIndex = 0;
   gameBoardTypeCounts: number[];
-  protected currentMoveData: MoveData | null = null;
-  moveDataHistory = defaultMoveDataHistory;
+  protected currentGameState: GameState | null = null;
+  gameStateHistory = defaultGameStateHistory;
   gameActionStack: ActionBase[] = [];
   numTurnsWithoutPlayedTiles = 0;
 
@@ -74,16 +74,16 @@ export class Game {
     this.scoreBoardAtLastNetWorthsUpdate = this.scoreBoard;
   }
 
-  processMoveDataMessage(message: any[]) {
+  processGameStateMessage(message: any[]) {
     const gameAction: GameAction = message[0];
 
     let timestamp: number | null = null;
     if (message.length >= 2) {
       timestamp = message[1];
       if (timestamp !== null) {
-        const previousMoveData = this.moveDataHistory.get(this.moveDataHistory.size - 1, null);
-        if (previousMoveData !== null && previousMoveData.timestamp !== null) {
-          timestamp += previousMoveData.timestamp;
+        const previousGameState = this.gameStateHistory.get(this.gameStateHistory.size - 1, null);
+        if (previousGameState !== null && previousGameState.timestamp !== null) {
+          timestamp += previousGameState.timestamp;
         }
       }
     }
@@ -149,7 +149,7 @@ export class Game {
     let currentAction = this.gameActionStack[this.gameActionStack.length - 1];
 
     let newActions: ActionBase[] | null = currentAction.execute(gameAction);
-    this.getCurrentMoveData().setGameAction(currentAction.playerID, currentAction.gameAction, gameAction, timestamp);
+    this.getCurrentGameState().setGameAction(currentAction.playerID, currentAction.gameAction, gameAction, timestamp);
 
     while (newActions !== null) {
       this.gameActionStack.pop();
@@ -181,14 +181,14 @@ export class Game {
       const tile = this.tileBag[this.nextTileBagIndex++];
       this.tileRacks = this.tileRacks.setIn([playerID, i], tile);
 
-      this.getCurrentMoveData().addTileBagTile(tile, playerID);
+      this.getCurrentGameState().addTileBagTile(tile, playerID);
 
       if (addDrewTileMessage) {
-        this.getCurrentMoveData().addGameHistoryMessage(GameHistoryMessageEnum.DrewTile, playerID, [tile]);
+        this.getCurrentGameState().addGameHistoryMessage(GameHistoryMessageEnum.DrewTile, playerID, [tile]);
       }
 
       if (this.nextTileBagIndex === 108) {
-        this.getCurrentMoveData().addGameHistoryMessage(GameHistoryMessageEnum.DrewLastTile, playerID, []);
+        this.getCurrentGameState().addGameHistoryMessage(GameHistoryMessageEnum.DrewLastTile, playerID, []);
       }
     }
   }
@@ -217,7 +217,7 @@ export class Game {
 
         this.removeTile(playerID, tileIndex);
         this.setGameBoardPosition(tile, GameBoardType.CANT_PLAY_EVER);
-        this.getCurrentMoveData().addGameHistoryMessage(GameHistoryMessageEnum.ReplacedDeadTile, playerID, [tile]);
+        this.getCurrentGameState().addGameHistoryMessage(GameHistoryMessageEnum.ReplacedDeadTile, playerID, [tile]);
         this.drawTiles(playerID);
         this.determineTileRackTypesForPlayer(playerID);
         replacedADeadTile = true;
@@ -334,7 +334,7 @@ export class Game {
     const previousGameBoardType = this.gameBoard.get(tile % 9)!.get(tile / 9)!;
 
     if (previousGameBoardType === GameBoardType.NOTHING) {
-      this.getCurrentMoveData().addPlayedTile(tile, this.gameActionStack[this.gameActionStack.length - 1].playerID);
+      this.getCurrentGameState().addPlayedTile(tile, this.gameActionStack[this.gameActionStack.length - 1].playerID);
     }
 
     this.gameBoardTypeCounts[previousGameBoardType]--;
@@ -475,29 +475,29 @@ export class Game {
     this.scoreBoardPriceAtLastNetWorthsUpdate = this.scoreBoardPrice;
   }
 
-  getCurrentMoveData() {
-    if (this.currentMoveData === null) {
-      this.currentMoveData = new MoveData(this, this.moveDataHistory.get(this.moveDataHistory.size - 1, null));
+  getCurrentGameState() {
+    if (this.currentGameState === null) {
+      this.currentGameState = new GameState(this, this.gameStateHistory.get(this.gameStateHistory.size - 1, null));
     }
-    return this.currentMoveData;
+    return this.currentGameState;
   }
 
   endCurrentMove() {
     this.updateNetWorths();
 
-    this.currentMoveData = this.getCurrentMoveData();
-    this.currentMoveData.endMove();
-    this.moveDataHistory = this.moveDataHistory.push(this.currentMoveData);
-    this.currentMoveData = null;
+    this.currentGameState = this.getCurrentGameState();
+    this.currentGameState.endMove();
+    this.gameStateHistory = this.gameStateHistory.push(this.currentGameState);
+    this.currentGameState = null;
   }
 
   toJSON(): GameJSON {
-    const gameActions = new Array(this.moveDataHistory.size);
+    const gameActions = new Array(this.gameStateHistory.size);
     let lastTimestamp: number | null = null;
-    this.moveDataHistory.forEach((moveData, i) => {
-      const gameActionData: any[] = [moveData.gameAction];
+    this.gameStateHistory.forEach((gameState, i) => {
+      const gameActionData: any[] = [gameState.gameAction];
 
-      const currentTimestamp = moveData.timestamp;
+      const currentTimestamp = gameState.timestamp;
       if (currentTimestamp !== null) {
         if (lastTimestamp === null) {
           gameActionData.push(currentTimestamp);
@@ -561,13 +561,13 @@ const dummyGameAction = GameAction.create();
 const dummyPlayerMessages: any[][] = [];
 const dummyWatcherMessage: any[] = [];
 
-export class MoveData {
+export class GameState {
   playerID = -1;
   gameActionEnum = GameActionEnum.StartGame;
   gameAction = dummyGameAction;
   timestamp: number | null = null;
-  revealedTileRackTiles: MoveDataTileRackTile[] = [];
-  revealedTileBagTiles: MoveDataTileBagTile[] = [];
+  revealedTileRackTiles: GameStateTileRackTile[] = [];
+  revealedTileBagTiles: GameStateTileBagTile[] = [];
   playerIDWithPlayableTile: number | null = null;
   gameHistoryMessages: GameHistoryMessageData[] = [];
   nextGameAction: ActionBase;
@@ -582,12 +582,12 @@ export class MoveData {
   scoreBoardPrice = defaultScoreBoardPrice;
   safeChains = defaultSafeChains;
 
-  revealedTileBagTilesLookup = new Map<number, MoveDataTileBagTile>();
+  revealedTileBagTilesLookup = new Map<number, GameStateTileBagTile>();
 
   playerMessages = dummyPlayerMessages;
   watcherMessage = dummyWatcherMessage;
 
-  constructor(public game: Game, public previousMoveData: MoveData | null) {
+  constructor(public game: Game, public previousGameState: GameState | null) {
     // assign something to this.nextGameAction so it gets set in the constructor
     this.nextGameAction = game.gameActionStack[game.gameActionStack.length - 1];
   }
@@ -600,9 +600,9 @@ export class MoveData {
   }
 
   addTileBagTile(tile: number, playerID: number | null) {
-    const moveDataTileBagTile = new MoveDataTileBagTile(tile, playerID);
-    this.revealedTileBagTiles.push(moveDataTileBagTile);
-    this.revealedTileBagTilesLookup.set(tile, moveDataTileBagTile);
+    const gameStateDataTileBagTile = new GameStateTileBagTile(tile, playerID);
+    this.revealedTileBagTiles.push(gameStateDataTileBagTile);
+    this.revealedTileBagTilesLookup.set(tile, gameStateDataTileBagTile);
   }
 
   addPlayedTile(tile: number, playerID: number) {
@@ -612,7 +612,7 @@ export class MoveData {
       this.revealedTileBagTilesLookup.get(tile)!.playerIDWithPermission = null;
     } else {
       // add it to the tile rack additions
-      this.revealedTileRackTiles.push(new MoveDataTileRackTile(tile, playerID));
+      this.revealedTileRackTiles.push(new GameStateTileRackTile(tile, playerID));
     }
   }
 
@@ -653,24 +653,24 @@ export class MoveData {
 
   createMessage(playerID: number) {
     let timestamp = this.timestamp;
-    if (timestamp !== null && this.previousMoveData !== null && this.previousMoveData.timestamp !== null) {
-      timestamp -= this.previousMoveData.timestamp;
+    if (timestamp !== null && this.previousGameState !== null && this.previousGameState.timestamp !== null) {
+      timestamp -= this.previousGameState.timestamp;
     }
 
     const revealedTileRackTiles: [number, number][] = [];
     for (let i = 0; i < this.revealedTileRackTiles.length; i++) {
-      const moveDataTileRackTile = this.revealedTileRackTiles[i];
-      if (moveDataTileRackTile.playerIDBelongsTo !== playerID) {
-        revealedTileRackTiles.push([moveDataTileRackTile.tile, moveDataTileRackTile.playerIDBelongsTo]);
+      const gameStateTileRackTile = this.revealedTileRackTiles[i];
+      if (gameStateTileRackTile.playerIDBelongsTo !== playerID) {
+        revealedTileRackTiles.push([gameStateTileRackTile.tile, gameStateTileRackTile.playerIDBelongsTo]);
       }
     }
 
     const revealedTileBagTiles: number[] = [];
     for (let i = 0; i < this.revealedTileBagTiles.length; i++) {
-      const moveDataTileBagTile = this.revealedTileBagTiles[i];
+      const gameStateTileBagTile = this.revealedTileBagTiles[i];
       revealedTileBagTiles.push(
-        moveDataTileBagTile.playerIDWithPermission === null || moveDataTileBagTile.playerIDWithPermission === playerID
-          ? moveDataTileBagTile.tile
+        gameStateTileBagTile.playerIDWithPermission === null || gameStateTileBagTile.playerIDWithPermission === playerID
+          ? gameStateTileBagTile.tile
           : TileEnum.Unknown,
       );
     }
@@ -693,10 +693,10 @@ export class GameHistoryMessageData {
   constructor(public gameHistoryMessage: GameHistoryMessageEnum, public playerID: number | null, public parameters: any[]) {}
 }
 
-export class MoveDataTileRackTile {
+export class GameStateTileRackTile {
   constructor(public tile: number, public playerIDBelongsTo: number) {}
 }
 
-export class MoveDataTileBagTile {
+export class GameStateTileBagTile {
   constructor(public tile: number, public playerIDWithPermission: number | null) {}
 }

@@ -40,7 +40,7 @@ export class ActionSelectMergerSurvivor extends ActionBase {
   }
 
   prepare() {
-    this.game.getCurrentMoveData().addGameHistoryMessage(GameHistoryMessageEnum.MergedChains, this.playerID, [this.chains]);
+    this.game.getCurrentGameState().addGameHistoryMessage(GameHistoryMessageEnum.MergedChains, this.playerID, [this.chains]);
 
     if (this.chainsBySize[0].length === 1) {
       return this.completeAction(this.chainsBySize[0][0]);
@@ -63,13 +63,13 @@ export class ActionSelectMergerSurvivor extends ActionBase {
       throw new UserInputError('cannot select chain as the controlling chain');
     }
 
-    this.game.getCurrentMoveData().addGameHistoryMessage(GameHistoryMessageEnum.SelectedMergerSurvivor, this.playerID, [chain]);
+    this.game.getCurrentGameState().addGameHistoryMessage(GameHistoryMessageEnum.SelectedMergerSurvivor, this.playerID, [chain]);
 
     return this.completeAction(chain);
   }
 
   protected completeAction(controllingChain: GameBoardType) {
-    const moveData = this.game.getCurrentMoveData();
+    const gameState = this.game.getCurrentGameState();
 
     this.game.fillCells(this.tile, controllingChain);
     this.game.setChainSize(controllingChain, this.game.gameBoardTypeCounts[controllingChain]);
@@ -88,7 +88,7 @@ export class ActionSelectMergerSurvivor extends ActionBase {
         for (let j = 0; j < chainBonuses.length; j++) {
           const chainBonus = chainBonuses[j];
           bonuses[chainBonus.playerID] += chainBonus.amount;
-          moveData.addGameHistoryMessage(GameHistoryMessageEnum.ReceivedBonus, chainBonus.playerID, [chain, chainBonus.amount]);
+          gameState.addGameHistoryMessage(GameHistoryMessageEnum.ReceivedBonus, chainBonus.playerID, [chain, chainBonus.amount]);
         }
       }
     }

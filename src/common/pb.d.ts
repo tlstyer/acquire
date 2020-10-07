@@ -2013,8 +2013,8 @@ export namespace MessageToServer {
             /** GameData gameId */
             gameId?: (number|null);
 
-            /** GameData moveDataHistorySize */
-            moveDataHistorySize?: (number|null);
+            /** GameData gameStateHistorySize */
+            gameStateHistorySize?: (number|null);
         }
 
         /** Represents a GameData. */
@@ -2029,8 +2029,8 @@ export namespace MessageToServer {
             /** GameData gameId. */
             public gameId: number;
 
-            /** GameData moveDataHistorySize. */
-            public moveDataHistorySize: number;
+            /** GameData gameStateHistorySize. */
+            public gameStateHistorySize: number;
 
             /**
              * Creates a new GameData instance using the specified properties.
@@ -2371,8 +2371,8 @@ export namespace MessageToServer {
     /** Properties of a DoGameAction. */
     interface IDoGameAction {
 
-        /** DoGameAction moveDataHistorySize */
-        moveDataHistorySize?: (number|null);
+        /** DoGameAction gameStateHistorySize */
+        gameStateHistorySize?: (number|null);
 
         /** DoGameAction gameAction */
         gameAction?: (IGameAction|null);
@@ -2387,8 +2387,8 @@ export namespace MessageToServer {
          */
         constructor(properties?: MessageToServer.IDoGameAction);
 
-        /** DoGameAction moveDataHistorySize. */
-        public moveDataHistorySize: number;
+        /** DoGameAction gameStateHistorySize. */
+        public gameStateHistorySize: number;
 
         /** DoGameAction gameAction. */
         public gameAction?: (IGameAction|null);
