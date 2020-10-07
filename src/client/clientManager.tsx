@@ -26,7 +26,7 @@ import { PurchaseShares } from './components/PurchaseShares';
 import { ScoreBoard } from './components/ScoreBoard';
 import { SelectChain, SelectChainTitle } from './components/SelectChain';
 import { TileRack } from './components/TileRack';
-import { GameBoardLabelMode, GameStatus } from './enums';
+import { GameBoardLabelMode, GameStatusEnum } from './enums';
 import { ErrorCode, GameBoardType, GameMode, GameSetupData, PlayerArrangementMode } from '../common/pb';
 import { encodeMessageToServer } from '../common/helpers';
 
@@ -149,7 +149,7 @@ export class ClientManager {
                 usernames={gameSetup.usernames}
                 gameDisplayNumber={gameData.displayNumber}
                 gameMode={gameSetup.gameMode}
-                gameStatus={GameStatus.SettingUp}
+                gameStatus={GameStatusEnum.SettingUp}
                 onEnterClicked={gameData.onEnterClicked}
               />
             );
@@ -162,7 +162,7 @@ export class ClientManager {
                 usernames={game.usernames}
                 gameDisplayNumber={gameData.displayNumber}
                 gameMode={game.gameMode}
-                gameStatus={game.gameActionStack[0] instanceof ActionGameOver ? GameStatus.Completed : GameStatus.InProgress}
+                gameStatus={game.gameActionStack[0] instanceof ActionGameOver ? GameStatusEnum.Completed : GameStatusEnum.InProgress}
                 onEnterClicked={gameData.onEnterClicked}
               />
             );

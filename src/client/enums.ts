@@ -4,7 +4,7 @@ export enum GameBoardLabelMode {
   Nothing,
 }
 
-export enum GameStatus {
+export enum GameStatusEnum {
   SettingUp,
   InProgress,
   Completed,

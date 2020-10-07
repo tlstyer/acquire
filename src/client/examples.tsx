@@ -22,7 +22,7 @@ import { ScoreBoard, ScoreBoardProps } from './components/ScoreBoard';
 import { SelectChain, SelectChainProps, SelectChainTitle } from './components/SelectChain';
 import { TileRack, TileRackProps } from './components/TileRack';
 import { TileRackReadOnly, TileRackReadOnlyProps } from './components/TileRackReadOnly';
-import { GameBoardLabelMode, GameStatus } from './enums';
+import { GameBoardLabelMode, GameStatusEnum } from './enums';
 import { getDummyGameForGetGameHistory, getExampleNextGameActionsArray } from './exampleData';
 import {
   disposeOfSharesKeyboardShortcutsDescription,
@@ -79,7 +79,7 @@ class AllDemoProps {
         usernames: List(['Host', null, 'User 2', null]),
         gameDisplayNumber: 1,
         gameMode: GameMode.SINGLES_4,
-        gameStatus: GameStatus.SettingUp,
+        gameStatus: GameStatusEnum.SettingUp,
         onEnterClicked,
       },
       {
@@ -87,7 +87,7 @@ class AllDemoProps {
         usernames: List(['Tim', 'Rita', 'Dad', 'Mom', 'REALLY, REALLY, REALLY, REALLY, REALLY LONG NAME', 'pgyqj,;']),
         gameDisplayNumber: 2,
         gameMode: GameMode.TEAMS_2_VS_2_VS_2,
-        gameStatus: GameStatus.InProgress,
+        gameStatus: GameStatusEnum.InProgress,
         onEnterClicked,
       },
       {
@@ -95,7 +95,7 @@ class AllDemoProps {
         usernames: List(['player 1', 'player 2', 'player 3', 'player 4']),
         gameDisplayNumber: 3,
         gameMode: GameMode.TEAMS_2_VS_2,
-        gameStatus: GameStatus.Completed,
+        gameStatus: GameStatusEnum.Completed,
         onEnterClicked,
       },
     ];

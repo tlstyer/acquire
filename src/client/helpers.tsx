@@ -2,7 +2,7 @@ import * as common from './common.scss';
 
 import * as React from 'react';
 import { TileEnum } from '../common/enums';
-import { GameStatus } from './enums';
+import { GameStatusEnum } from './enums';
 import { GameBoardType, GameMode } from '../common/pb';
 
 export const allChains = [
@@ -99,9 +99,9 @@ export const gameModeToString = new Map([
 ]);
 
 export const gameStatusToString = new Map([
-  [GameStatus.SettingUp, 'Setting Up'],
-  [GameStatus.InProgress, 'In Progress'],
-  [GameStatus.Completed, 'Completed'],
+  [GameStatusEnum.SettingUp, 'Setting Up'],
+  [GameStatusEnum.InProgress, 'In Progress'],
+  [GameStatusEnum.Completed, 'Completed'],
 ]);
 
 export function hackDoNotInterfereWithKeyboardShortcuts(event: React.KeyboardEvent<HTMLElement>) {

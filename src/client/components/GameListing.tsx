@@ -3,7 +3,7 @@ import * as style from './GameListing.scss';
 import { List } from 'immutable';
 import * as React from 'react';
 import { gameModeToNumPlayers, gameModeToTeamSize } from '../../common/helpers';
-import { GameStatus } from '../enums';
+import { GameStatusEnum } from '../enums';
 import { gameModeToString, gameStatusToString, teamNumberToCSSClassName } from '../helpers';
 import { MiniGameBoard } from './MiniGameBoard';
 import { GameBoardType, GameMode } from '../../common/pb';
@@ -13,7 +13,7 @@ export interface GameListingProps {
   usernames: List<string | null>;
   gameDisplayNumber: number;
   gameMode: GameMode;
-  gameStatus: GameStatus;
+  gameStatus: GameStatusEnum;
   onEnterClicked: () => void;
 }
 
