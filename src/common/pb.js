@@ -684,6 +684,544 @@ $root.GameSetupData = (function() {
     return GameSetupData;
 })();
 
+$root.GameStateData = (function() {
+
+    /**
+     * Properties of a GameStateData.
+     * @exports IGameStateData
+     * @interface IGameStateData
+     * @property {IGameAction|null} [gameAction] GameStateData gameAction
+     * @property {number|null} [timestamp] GameStateData timestamp
+     * @property {Array.<GameStateData.IRevealedTileRackTile>|null} [revealedTileRackTiles] GameStateData revealedTileRackTiles
+     * @property {Array.<number>|null} [revealedTileBagTiles] GameStateData revealedTileBagTiles
+     * @property {number|null} [playerIdWithPlayableTilePlusOne] GameStateData playerIdWithPlayableTilePlusOne
+     */
+
+    /**
+     * Constructs a new GameStateData.
+     * @exports GameStateData
+     * @classdesc Represents a GameStateData.
+     * @implements IGameStateData
+     * @constructor
+     * @param {IGameStateData=} [properties] Properties to set
+     */
+    function GameStateData(properties) {
+        this.revealedTileRackTiles = [];
+        this.revealedTileBagTiles = [];
+        if (properties)
+            for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                if (properties[keys[i]] != null)
+                    this[keys[i]] = properties[keys[i]];
+    }
+
+    /**
+     * GameStateData gameAction.
+     * @member {IGameAction|null|undefined} gameAction
+     * @memberof GameStateData
+     * @instance
+     */
+    GameStateData.prototype.gameAction = null;
+
+    /**
+     * GameStateData timestamp.
+     * @member {number} timestamp
+     * @memberof GameStateData
+     * @instance
+     */
+    GameStateData.prototype.timestamp = 0;
+
+    /**
+     * GameStateData revealedTileRackTiles.
+     * @member {Array.<GameStateData.IRevealedTileRackTile>} revealedTileRackTiles
+     * @memberof GameStateData
+     * @instance
+     */
+    GameStateData.prototype.revealedTileRackTiles = $util.emptyArray;
+
+    /**
+     * GameStateData revealedTileBagTiles.
+     * @member {Array.<number>} revealedTileBagTiles
+     * @memberof GameStateData
+     * @instance
+     */
+    GameStateData.prototype.revealedTileBagTiles = $util.emptyArray;
+
+    /**
+     * GameStateData playerIdWithPlayableTilePlusOne.
+     * @member {number} playerIdWithPlayableTilePlusOne
+     * @memberof GameStateData
+     * @instance
+     */
+    GameStateData.prototype.playerIdWithPlayableTilePlusOne = 0;
+
+    /**
+     * Creates a new GameStateData instance using the specified properties.
+     * @function create
+     * @memberof GameStateData
+     * @static
+     * @param {IGameStateData=} [properties] Properties to set
+     * @returns {GameStateData} GameStateData instance
+     */
+    GameStateData.create = function create(properties) {
+        return new GameStateData(properties);
+    };
+
+    /**
+     * Encodes the specified GameStateData message. Does not implicitly {@link GameStateData.verify|verify} messages.
+     * @function encode
+     * @memberof GameStateData
+     * @static
+     * @param {IGameStateData} message GameStateData message or plain object to encode
+     * @param {$protobuf.Writer} [writer] Writer to encode to
+     * @returns {$protobuf.Writer} Writer
+     */
+    GameStateData.encode = function encode(message, writer) {
+        if (!writer)
+            writer = $Writer.create();
+        if (message.gameAction != null && Object.hasOwnProperty.call(message, "gameAction"))
+            $root.GameAction.encode(message.gameAction, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+        if (message.timestamp != null && Object.hasOwnProperty.call(message, "timestamp"))
+            writer.uint32(/* id 2, wireType 0 =*/16).int32(message.timestamp);
+        if (message.revealedTileRackTiles != null && message.revealedTileRackTiles.length)
+            for (var i = 0; i < message.revealedTileRackTiles.length; ++i)
+                $root.GameStateData.RevealedTileRackTile.encode(message.revealedTileRackTiles[i], writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
+        if (message.revealedTileBagTiles != null && message.revealedTileBagTiles.length) {
+            writer.uint32(/* id 4, wireType 2 =*/34).fork();
+            for (var i = 0; i < message.revealedTileBagTiles.length; ++i)
+                writer.int32(message.revealedTileBagTiles[i]);
+            writer.ldelim();
+        }
+        if (message.playerIdWithPlayableTilePlusOne != null && Object.hasOwnProperty.call(message, "playerIdWithPlayableTilePlusOne"))
+            writer.uint32(/* id 5, wireType 0 =*/40).int32(message.playerIdWithPlayableTilePlusOne);
+        return writer;
+    };
+
+    /**
+     * Encodes the specified GameStateData message, length delimited. Does not implicitly {@link GameStateData.verify|verify} messages.
+     * @function encodeDelimited
+     * @memberof GameStateData
+     * @static
+     * @param {IGameStateData} message GameStateData message or plain object to encode
+     * @param {$protobuf.Writer} [writer] Writer to encode to
+     * @returns {$protobuf.Writer} Writer
+     */
+    GameStateData.encodeDelimited = function encodeDelimited(message, writer) {
+        return this.encode(message, writer).ldelim();
+    };
+
+    /**
+     * Decodes a GameStateData message from the specified reader or buffer.
+     * @function decode
+     * @memberof GameStateData
+     * @static
+     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+     * @param {number} [length] Message length if known beforehand
+     * @returns {GameStateData} GameStateData
+     * @throws {Error} If the payload is not a reader or valid buffer
+     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+     */
+    GameStateData.decode = function decode(reader, length) {
+        if (!(reader instanceof $Reader))
+            reader = $Reader.create(reader);
+        var end = length === undefined ? reader.len : reader.pos + length, message = new $root.GameStateData();
+        while (reader.pos < end) {
+            var tag = reader.uint32();
+            switch (tag >>> 3) {
+            case 1:
+                message.gameAction = $root.GameAction.decode(reader, reader.uint32());
+                break;
+            case 2:
+                message.timestamp = reader.int32();
+                break;
+            case 3:
+                if (!(message.revealedTileRackTiles && message.revealedTileRackTiles.length))
+                    message.revealedTileRackTiles = [];
+                message.revealedTileRackTiles.push($root.GameStateData.RevealedTileRackTile.decode(reader, reader.uint32()));
+                break;
+            case 4:
+                if (!(message.revealedTileBagTiles && message.revealedTileBagTiles.length))
+                    message.revealedTileBagTiles = [];
+                if ((tag & 7) === 2) {
+                    var end2 = reader.uint32() + reader.pos;
+                    while (reader.pos < end2)
+                        message.revealedTileBagTiles.push(reader.int32());
+                } else
+                    message.revealedTileBagTiles.push(reader.int32());
+                break;
+            case 5:
+                message.playerIdWithPlayableTilePlusOne = reader.int32();
+                break;
+            default:
+                reader.skipType(tag & 7);
+                break;
+            }
+        }
+        return message;
+    };
+
+    /**
+     * Decodes a GameStateData message from the specified reader or buffer, length delimited.
+     * @function decodeDelimited
+     * @memberof GameStateData
+     * @static
+     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+     * @returns {GameStateData} GameStateData
+     * @throws {Error} If the payload is not a reader or valid buffer
+     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+     */
+    GameStateData.decodeDelimited = function decodeDelimited(reader) {
+        if (!(reader instanceof $Reader))
+            reader = new $Reader(reader);
+        return this.decode(reader, reader.uint32());
+    };
+
+    /**
+     * Verifies a GameStateData message.
+     * @function verify
+     * @memberof GameStateData
+     * @static
+     * @param {Object.<string,*>} message Plain object to verify
+     * @returns {string|null} `null` if valid, otherwise the reason why it is not
+     */
+    GameStateData.verify = function verify(message) {
+        if (typeof message !== "object" || message === null)
+            return "object expected";
+        if (message.gameAction != null && message.hasOwnProperty("gameAction")) {
+            var error = $root.GameAction.verify(message.gameAction);
+            if (error)
+                return "gameAction." + error;
+        }
+        if (message.timestamp != null && message.hasOwnProperty("timestamp"))
+            if (!$util.isInteger(message.timestamp))
+                return "timestamp: integer expected";
+        if (message.revealedTileRackTiles != null && message.hasOwnProperty("revealedTileRackTiles")) {
+            if (!Array.isArray(message.revealedTileRackTiles))
+                return "revealedTileRackTiles: array expected";
+            for (var i = 0; i < message.revealedTileRackTiles.length; ++i) {
+                var error = $root.GameStateData.RevealedTileRackTile.verify(message.revealedTileRackTiles[i]);
+                if (error)
+                    return "revealedTileRackTiles." + error;
+            }
+        }
+        if (message.revealedTileBagTiles != null && message.hasOwnProperty("revealedTileBagTiles")) {
+            if (!Array.isArray(message.revealedTileBagTiles))
+                return "revealedTileBagTiles: array expected";
+            for (var i = 0; i < message.revealedTileBagTiles.length; ++i)
+                if (!$util.isInteger(message.revealedTileBagTiles[i]))
+                    return "revealedTileBagTiles: integer[] expected";
+        }
+        if (message.playerIdWithPlayableTilePlusOne != null && message.hasOwnProperty("playerIdWithPlayableTilePlusOne"))
+            if (!$util.isInteger(message.playerIdWithPlayableTilePlusOne))
+                return "playerIdWithPlayableTilePlusOne: integer expected";
+        return null;
+    };
+
+    /**
+     * Creates a GameStateData message from a plain object. Also converts values to their respective internal types.
+     * @function fromObject
+     * @memberof GameStateData
+     * @static
+     * @param {Object.<string,*>} object Plain object
+     * @returns {GameStateData} GameStateData
+     */
+    GameStateData.fromObject = function fromObject(object) {
+        if (object instanceof $root.GameStateData)
+            return object;
+        var message = new $root.GameStateData();
+        if (object.gameAction != null) {
+            if (typeof object.gameAction !== "object")
+                throw TypeError(".GameStateData.gameAction: object expected");
+            message.gameAction = $root.GameAction.fromObject(object.gameAction);
+        }
+        if (object.timestamp != null)
+            message.timestamp = object.timestamp | 0;
+        if (object.revealedTileRackTiles) {
+            if (!Array.isArray(object.revealedTileRackTiles))
+                throw TypeError(".GameStateData.revealedTileRackTiles: array expected");
+            message.revealedTileRackTiles = [];
+            for (var i = 0; i < object.revealedTileRackTiles.length; ++i) {
+                if (typeof object.revealedTileRackTiles[i] !== "object")
+                    throw TypeError(".GameStateData.revealedTileRackTiles: object expected");
+                message.revealedTileRackTiles[i] = $root.GameStateData.RevealedTileRackTile.fromObject(object.revealedTileRackTiles[i]);
+            }
+        }
+        if (object.revealedTileBagTiles) {
+            if (!Array.isArray(object.revealedTileBagTiles))
+                throw TypeError(".GameStateData.revealedTileBagTiles: array expected");
+            message.revealedTileBagTiles = [];
+            for (var i = 0; i < object.revealedTileBagTiles.length; ++i)
+                message.revealedTileBagTiles[i] = object.revealedTileBagTiles[i] | 0;
+        }
+        if (object.playerIdWithPlayableTilePlusOne != null)
+            message.playerIdWithPlayableTilePlusOne = object.playerIdWithPlayableTilePlusOne | 0;
+        return message;
+    };
+
+    /**
+     * Creates a plain object from a GameStateData message. Also converts values to other types if specified.
+     * @function toObject
+     * @memberof GameStateData
+     * @static
+     * @param {GameStateData} message GameStateData
+     * @param {$protobuf.IConversionOptions} [options] Conversion options
+     * @returns {Object.<string,*>} Plain object
+     */
+    GameStateData.toObject = function toObject(message, options) {
+        if (!options)
+            options = {};
+        var object = {};
+        if (options.arrays || options.defaults) {
+            object.revealedTileRackTiles = [];
+            object.revealedTileBagTiles = [];
+        }
+        if (options.defaults) {
+            object.gameAction = null;
+            object.timestamp = 0;
+            object.playerIdWithPlayableTilePlusOne = 0;
+        }
+        if (message.gameAction != null && message.hasOwnProperty("gameAction"))
+            object.gameAction = $root.GameAction.toObject(message.gameAction, options);
+        if (message.timestamp != null && message.hasOwnProperty("timestamp"))
+            object.timestamp = message.timestamp;
+        if (message.revealedTileRackTiles && message.revealedTileRackTiles.length) {
+            object.revealedTileRackTiles = [];
+            for (var j = 0; j < message.revealedTileRackTiles.length; ++j)
+                object.revealedTileRackTiles[j] = $root.GameStateData.RevealedTileRackTile.toObject(message.revealedTileRackTiles[j], options);
+        }
+        if (message.revealedTileBagTiles && message.revealedTileBagTiles.length) {
+            object.revealedTileBagTiles = [];
+            for (var j = 0; j < message.revealedTileBagTiles.length; ++j)
+                object.revealedTileBagTiles[j] = message.revealedTileBagTiles[j];
+        }
+        if (message.playerIdWithPlayableTilePlusOne != null && message.hasOwnProperty("playerIdWithPlayableTilePlusOne"))
+            object.playerIdWithPlayableTilePlusOne = message.playerIdWithPlayableTilePlusOne;
+        return object;
+    };
+
+    /**
+     * Converts this GameStateData to JSON.
+     * @function toJSON
+     * @memberof GameStateData
+     * @instance
+     * @returns {Object.<string,*>} JSON object
+     */
+    GameStateData.prototype.toJSON = function toJSON() {
+        return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+    };
+
+    GameStateData.RevealedTileRackTile = (function() {
+
+        /**
+         * Properties of a RevealedTileRackTile.
+         * @memberof GameStateData
+         * @interface IRevealedTileRackTile
+         * @property {number|null} [tile] RevealedTileRackTile tile
+         * @property {number|null} [playerIdBelongsTo] RevealedTileRackTile playerIdBelongsTo
+         */
+
+        /**
+         * Constructs a new RevealedTileRackTile.
+         * @memberof GameStateData
+         * @classdesc Represents a RevealedTileRackTile.
+         * @implements IRevealedTileRackTile
+         * @constructor
+         * @param {GameStateData.IRevealedTileRackTile=} [properties] Properties to set
+         */
+        function RevealedTileRackTile(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * RevealedTileRackTile tile.
+         * @member {number} tile
+         * @memberof GameStateData.RevealedTileRackTile
+         * @instance
+         */
+        RevealedTileRackTile.prototype.tile = 0;
+
+        /**
+         * RevealedTileRackTile playerIdBelongsTo.
+         * @member {number} playerIdBelongsTo
+         * @memberof GameStateData.RevealedTileRackTile
+         * @instance
+         */
+        RevealedTileRackTile.prototype.playerIdBelongsTo = 0;
+
+        /**
+         * Creates a new RevealedTileRackTile instance using the specified properties.
+         * @function create
+         * @memberof GameStateData.RevealedTileRackTile
+         * @static
+         * @param {GameStateData.IRevealedTileRackTile=} [properties] Properties to set
+         * @returns {GameStateData.RevealedTileRackTile} RevealedTileRackTile instance
+         */
+        RevealedTileRackTile.create = function create(properties) {
+            return new RevealedTileRackTile(properties);
+        };
+
+        /**
+         * Encodes the specified RevealedTileRackTile message. Does not implicitly {@link GameStateData.RevealedTileRackTile.verify|verify} messages.
+         * @function encode
+         * @memberof GameStateData.RevealedTileRackTile
+         * @static
+         * @param {GameStateData.IRevealedTileRackTile} message RevealedTileRackTile message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        RevealedTileRackTile.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.tile != null && Object.hasOwnProperty.call(message, "tile"))
+                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.tile);
+            if (message.playerIdBelongsTo != null && Object.hasOwnProperty.call(message, "playerIdBelongsTo"))
+                writer.uint32(/* id 2, wireType 0 =*/16).int32(message.playerIdBelongsTo);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified RevealedTileRackTile message, length delimited. Does not implicitly {@link GameStateData.RevealedTileRackTile.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof GameStateData.RevealedTileRackTile
+         * @static
+         * @param {GameStateData.IRevealedTileRackTile} message RevealedTileRackTile message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        RevealedTileRackTile.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a RevealedTileRackTile message from the specified reader or buffer.
+         * @function decode
+         * @memberof GameStateData.RevealedTileRackTile
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {GameStateData.RevealedTileRackTile} RevealedTileRackTile
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        RevealedTileRackTile.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.GameStateData.RevealedTileRackTile();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.tile = reader.int32();
+                    break;
+                case 2:
+                    message.playerIdBelongsTo = reader.int32();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a RevealedTileRackTile message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof GameStateData.RevealedTileRackTile
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {GameStateData.RevealedTileRackTile} RevealedTileRackTile
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        RevealedTileRackTile.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a RevealedTileRackTile message.
+         * @function verify
+         * @memberof GameStateData.RevealedTileRackTile
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        RevealedTileRackTile.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.tile != null && message.hasOwnProperty("tile"))
+                if (!$util.isInteger(message.tile))
+                    return "tile: integer expected";
+            if (message.playerIdBelongsTo != null && message.hasOwnProperty("playerIdBelongsTo"))
+                if (!$util.isInteger(message.playerIdBelongsTo))
+                    return "playerIdBelongsTo: integer expected";
+            return null;
+        };
+
+        /**
+         * Creates a RevealedTileRackTile message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof GameStateData.RevealedTileRackTile
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {GameStateData.RevealedTileRackTile} RevealedTileRackTile
+         */
+        RevealedTileRackTile.fromObject = function fromObject(object) {
+            if (object instanceof $root.GameStateData.RevealedTileRackTile)
+                return object;
+            var message = new $root.GameStateData.RevealedTileRackTile();
+            if (object.tile != null)
+                message.tile = object.tile | 0;
+            if (object.playerIdBelongsTo != null)
+                message.playerIdBelongsTo = object.playerIdBelongsTo | 0;
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a RevealedTileRackTile message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof GameStateData.RevealedTileRackTile
+         * @static
+         * @param {GameStateData.RevealedTileRackTile} message RevealedTileRackTile
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        RevealedTileRackTile.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults) {
+                object.tile = 0;
+                object.playerIdBelongsTo = 0;
+            }
+            if (message.tile != null && message.hasOwnProperty("tile"))
+                object.tile = message.tile;
+            if (message.playerIdBelongsTo != null && message.hasOwnProperty("playerIdBelongsTo"))
+                object.playerIdBelongsTo = message.playerIdBelongsTo;
+            return object;
+        };
+
+        /**
+         * Converts this RevealedTileRackTile to JSON.
+         * @function toJSON
+         * @memberof GameStateData.RevealedTileRackTile
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        RevealedTileRackTile.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return RevealedTileRackTile;
+    })();
+
+    return GameStateData;
+})();
+
 $root.GameSetupAction = (function() {
 
     /**

@@ -598,9 +598,9 @@ action: 0 PlayTile 10A
     1: none none none none none none
   revealed tile rack tiles: 10A:0
   messages:
-    0: [{"playTile":{"tile":81}}]
-    1: [{"playTile":{"tile":81}},null,[[81,0]]]
-    w: [{"playTile":{"tile":81}},null,[[81,0]]]
+    0: {"gameAction":{"playTile":{"tile":81}}}
+    1: {"gameAction":{"playTile":{"tile":81}},"revealedTileRackTiles":[{"tile":81,"playerIdBelongsTo":0}]}
+    w: {"gameAction":{"playTile":{"tile":81}},"revealedTileRackTiles":[{"tile":81,"playerIdBelongsTo":0}]}
   history messages:
     0 PlayedTile 10A
   next action: 0 PurchaseShares
@@ -619,9 +619,9 @@ action: 0 PurchaseShares x 0
     0: none none none none none none
     1: none none none none none none
   messages:
-    0: [{"purchaseShares":{"endGame":false}}]
-    1: [{"purchaseShares":{"endGame":false}}]
-    w: [{"purchaseShares":{"endGame":false}}]
+    0: {"gameAction":{"purchaseShares":{"endGame":false}}}
+    1: {"gameAction":{"purchaseShares":{"endGame":false}}}
+    w: {"gameAction":{"purchaseShares":{"endGame":false}}}
   history messages:
     0 PurchasedShares x
     AllTilesPlayed

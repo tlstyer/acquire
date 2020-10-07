@@ -23,9 +23,9 @@ action: 0 SelectNewChain L
     0: 1B(l) 5E(L) none 11I(l) 4E(L) 3G(l)
     1: 2B(l) 5F(l) 7H(l) 7A(n) 3D(L) 4H(l)
   messages:
-    0: [{"selectNewChain":{"chain":0}}]
-    1: [{"selectNewChain":{"chain":0}}]
-    w: [{"selectNewChain":{"chain":0}}]
+    0: {"gameAction":{"selectNewChain":{"chain":0}}}
+    1: {"gameAction":{"selectNewChain":{"chain":0}}}
+    w: {"gameAction":{"selectNewChain":{"chain":0}}}
   history messages:
     0 FormedChain L
   next action: 0 PurchaseShares
@@ -144,9 +144,9 @@ action: 0 PlayTile 11D
     1: 5G(c) 9A(l) 7H(l) 9H(l) 3D(L) 4H(l)
   revealed tile rack tiles: 11D:0
   messages:
-    0: [{"playTile":{"tile":93}}]
-    1: [{"playTile":{"tile":93}},null,[[93,0]]]
-    w: [{"playTile":{"tile":93}},null,[[93,0]]]
+    0: {"gameAction":{"playTile":{"tile":93}}}
+    1: {"gameAction":{"playTile":{"tile":93}},"revealedTileRackTiles":[{"tile":93,"playerIdBelongsTo":0}]}
+    w: {"gameAction":{"playTile":{"tile":93}},"revealedTileRackTiles":[{"tile":93,"playerIdBelongsTo":0}]}
   history messages:
     0 PlayedTile 11D
     0 FormedChain T

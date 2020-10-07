@@ -248,6 +248,200 @@ export namespace GameSetupData {
     }
 }
 
+/** Represents a GameStateData. */
+export class GameStateData implements IGameStateData {
+
+    /**
+     * Constructs a new GameStateData.
+     * @param [properties] Properties to set
+     */
+    constructor(properties?: IGameStateData);
+
+    /** GameStateData gameAction. */
+    public gameAction?: (IGameAction|null);
+
+    /** GameStateData timestamp. */
+    public timestamp: number;
+
+    /** GameStateData revealedTileRackTiles. */
+    public revealedTileRackTiles: GameStateData.IRevealedTileRackTile[];
+
+    /** GameStateData revealedTileBagTiles. */
+    public revealedTileBagTiles: number[];
+
+    /** GameStateData playerIdWithPlayableTilePlusOne. */
+    public playerIdWithPlayableTilePlusOne: number;
+
+    /**
+     * Creates a new GameStateData instance using the specified properties.
+     * @param [properties] Properties to set
+     * @returns GameStateData instance
+     */
+    public static create(properties?: IGameStateData): GameStateData;
+
+    /**
+     * Encodes the specified GameStateData message. Does not implicitly {@link GameStateData.verify|verify} messages.
+     * @param message GameStateData message or plain object to encode
+     * @param [writer] Writer to encode to
+     * @returns Writer
+     */
+    public static encode(message: IGameStateData, writer?: $protobuf.Writer): $protobuf.Writer;
+
+    /**
+     * Encodes the specified GameStateData message, length delimited. Does not implicitly {@link GameStateData.verify|verify} messages.
+     * @param message GameStateData message or plain object to encode
+     * @param [writer] Writer to encode to
+     * @returns Writer
+     */
+    public static encodeDelimited(message: IGameStateData, writer?: $protobuf.Writer): $protobuf.Writer;
+
+    /**
+     * Decodes a GameStateData message from the specified reader or buffer.
+     * @param reader Reader or buffer to decode from
+     * @param [length] Message length if known beforehand
+     * @returns GameStateData
+     * @throws {Error} If the payload is not a reader or valid buffer
+     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+     */
+    public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): GameStateData;
+
+    /**
+     * Decodes a GameStateData message from the specified reader or buffer, length delimited.
+     * @param reader Reader or buffer to decode from
+     * @returns GameStateData
+     * @throws {Error} If the payload is not a reader or valid buffer
+     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+     */
+    public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): GameStateData;
+
+    /**
+     * Verifies a GameStateData message.
+     * @param message Plain object to verify
+     * @returns `null` if valid, otherwise the reason why it is not
+     */
+    public static verify(message: { [k: string]: any }): (string|null);
+
+    /**
+     * Creates a GameStateData message from a plain object. Also converts values to their respective internal types.
+     * @param object Plain object
+     * @returns GameStateData
+     */
+    public static fromObject(object: { [k: string]: any }): GameStateData;
+
+    /**
+     * Creates a plain object from a GameStateData message. Also converts values to other types if specified.
+     * @param message GameStateData
+     * @param [options] Conversion options
+     * @returns Plain object
+     */
+    public static toObject(message: GameStateData, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+    /**
+     * Converts this GameStateData to JSON.
+     * @returns JSON object
+     */
+    public toJSON(): { [k: string]: any };
+}
+
+export namespace GameStateData {
+
+    /** Properties of a RevealedTileRackTile. */
+    interface IRevealedTileRackTile {
+
+        /** RevealedTileRackTile tile */
+        tile?: (number|null);
+
+        /** RevealedTileRackTile playerIdBelongsTo */
+        playerIdBelongsTo?: (number|null);
+    }
+
+    /** Represents a RevealedTileRackTile. */
+    class RevealedTileRackTile implements IRevealedTileRackTile {
+
+        /**
+         * Constructs a new RevealedTileRackTile.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: GameStateData.IRevealedTileRackTile);
+
+        /** RevealedTileRackTile tile. */
+        public tile: number;
+
+        /** RevealedTileRackTile playerIdBelongsTo. */
+        public playerIdBelongsTo: number;
+
+        /**
+         * Creates a new RevealedTileRackTile instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns RevealedTileRackTile instance
+         */
+        public static create(properties?: GameStateData.IRevealedTileRackTile): GameStateData.RevealedTileRackTile;
+
+        /**
+         * Encodes the specified RevealedTileRackTile message. Does not implicitly {@link GameStateData.RevealedTileRackTile.verify|verify} messages.
+         * @param message RevealedTileRackTile message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: GameStateData.IRevealedTileRackTile, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified RevealedTileRackTile message, length delimited. Does not implicitly {@link GameStateData.RevealedTileRackTile.verify|verify} messages.
+         * @param message RevealedTileRackTile message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: GameStateData.IRevealedTileRackTile, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a RevealedTileRackTile message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns RevealedTileRackTile
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): GameStateData.RevealedTileRackTile;
+
+        /**
+         * Decodes a RevealedTileRackTile message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns RevealedTileRackTile
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): GameStateData.RevealedTileRackTile;
+
+        /**
+         * Verifies a RevealedTileRackTile message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a RevealedTileRackTile message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns RevealedTileRackTile
+         */
+        public static fromObject(object: { [k: string]: any }): GameStateData.RevealedTileRackTile;
+
+        /**
+         * Creates a plain object from a RevealedTileRackTile message. Also converts values to other types if specified.
+         * @param message RevealedTileRackTile
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: GameStateData.RevealedTileRackTile, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this RevealedTileRackTile to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+}
+
 /** Represents a GameSetupAction. */
 export class GameSetupAction implements IGameSetupAction {
 

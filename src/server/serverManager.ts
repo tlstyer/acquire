@@ -3,7 +3,7 @@ import { MessageToClientEnum } from '../common/enums';
 import { Game } from '../common/game';
 import { GameSetup } from '../common/gameSetup';
 import { gameModeToNumPlayers, getNewTileBag, isASCII } from '../common/helpers';
-import { ErrorCode, GameAction, GameSetupAction, MessageToServer, PlayerArrangementMode } from '../common/pb';
+import { ErrorCode, GameAction, GameSetupAction, GameStateData, MessageToServer, PlayerArrangementMode } from '../common/pb';
 import { LogMessage } from './enums';
 import { ReuseIDManager } from './reuseIDManager';
 import { UserDataProvider } from './userDataProvider';
@@ -607,7 +607,7 @@ export class ServerManager {
     const game = gameData.game!;
     const gameState = game.gameStateHistory.get(game.gameStateHistory.size - 1)!;
 
-    gameState.createPlayerAndWatcherMessages();
+    gameState.createPlayerAndWatcherGameStateDatas();
 
     const playerUserIDs = new Set<number>();
 
@@ -615,7 +615,7 @@ export class ServerManager {
     game.userIDs.forEach((userID, playerID) => {
       const user = this.userIDToUser.get(userID)!;
       if (user.clients.size > 0) {
-        const message = JSON.stringify([MessageToClientEnum.GameActionDone, gameData.displayNumber, ...gameState.playerMessages[playerID]]);
+        const message = JSON.stringify([MessageToClientEnum.GameActionDone, gameData.displayNumber, gameState.playerGameStateDatas[playerID]]);
         user.clients.forEach((aClient) => {
           aClient.queueMessage(message);
         });
@@ -625,7 +625,7 @@ export class ServerManager {
     });
 
     // send watcher messages to everybody else
-    const watcherMessage = JSON.stringify([MessageToClientEnum.GameActionDone, gameData.displayNumber, ...gameState.watcherMessage]);
+    const watcherMessage = JSON.stringify([MessageToClientEnum.GameActionDone, gameData.displayNumber, gameState.watcherGameStateData]);
     this.webSocketToClient.forEach((aClient) => {
       if (!playerUserIDs.has(aClient.user.id)) {
         aClient.queueMessage(watcherMessage);
@@ -663,15 +663,15 @@ export class ServerManager {
         const game = gameData.game!;
         const playerID = game.userIDs.indexOf(client.user.id);
 
-        const moveHistoryMessages: any[][] = [];
+        const gameStateDatas: GameStateData[] = [];
         game.gameStateHistory.forEach((gameState) => {
           if (playerID >= 0) {
-            moveHistoryMessages.push(gameState.playerMessages[playerID]);
+            gameStateDatas.push(gameState.playerGameStateDatas[playerID]);
           } else {
-            moveHistoryMessages.push(gameState.watcherMessage);
+            gameStateDatas.push(gameState.watcherGameStateData);
           }
         });
-        message.push(moveHistoryMessages);
+        message.push(gameStateDatas);
 
         message.push(game.gameMode, game.playerArrangementMode, game.hostUserID, game.userIDs);
       }

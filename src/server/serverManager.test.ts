@@ -627,16 +627,33 @@ describe('when sending first message', () => {
                 11,
                 2,
                 [
-                  [
-                    { startGame: {} },
-                    1234567903,
-                    [],
-                    [89, TileEnum.Unknown, TileEnum.Unknown, TileEnum.Unknown, TileEnum.Unknown, TileEnum.Unknown, TileEnum.Unknown],
-                    0,
-                  ],
-                  [{ playTile: { tile: 19 } }, 2, [[19, 0]], [TileEnum.Unknown], 0],
-                  [{ playTile: { tile: 29 } }, 2, [[29, 0]], [TileEnum.Unknown], 0],
-                  [{ playTile: { tile: 39 } }, 2, [[39, 0]], [TileEnum.Unknown], 0],
+                  {
+                    gameAction: { startGame: {} },
+                    timestamp: 1234567903,
+                    revealedTileBagTiles: [89, TileEnum.Unknown, TileEnum.Unknown, TileEnum.Unknown, TileEnum.Unknown, TileEnum.Unknown, TileEnum.Unknown],
+                    playerIdWithPlayableTilePlusOne: 1,
+                  },
+                  {
+                    gameAction: { playTile: { tile: 19 } },
+                    timestamp: 2,
+                    revealedTileRackTiles: [{ tile: 19, playerIdBelongsTo: 0 }],
+                    revealedTileBagTiles: [TileEnum.Unknown],
+                    playerIdWithPlayableTilePlusOne: 1,
+                  },
+                  {
+                    gameAction: { playTile: { tile: 29 } },
+                    timestamp: 2,
+                    revealedTileRackTiles: [{ tile: 29, playerIdBelongsTo: 0 }],
+                    revealedTileBagTiles: [TileEnum.Unknown],
+                    playerIdWithPlayableTilePlusOne: 1,
+                  },
+                  {
+                    gameAction: { playTile: { tile: 39 } },
+                    timestamp: 2,
+                    revealedTileRackTiles: [{ tile: 39, playerIdBelongsTo: 0 }],
+                    revealedTileBagTiles: [TileEnum.Unknown],
+                    playerIdWithPlayableTilePlusOne: 1,
+                  },
                 ],
                 GameMode.SINGLES_1,
                 PlayerArrangementMode.RANDOM_ORDER,
@@ -675,10 +692,15 @@ describe('when sending first message', () => {
                 11,
                 2,
                 [
-                  [{ startGame: {} }, 1234567903, [], [89, 19, 29, 39, 49, 59, 69], 0],
-                  [{ playTile: { tile: 19 } }, 2, [], [79], 0],
-                  [{ playTile: { tile: 29 } }, 2, [], [0], 0],
-                  [{ playTile: { tile: 39 } }, 2, [], [99], 0],
+                  {
+                    gameAction: { startGame: {} },
+                    timestamp: 1234567903,
+                    revealedTileBagTiles: [89, 19, 29, 39, 49, 59, 69],
+                    playerIdWithPlayableTilePlusOne: 1,
+                  },
+                  { gameAction: { playTile: { tile: 19 } }, timestamp: 2, revealedTileBagTiles: [79], playerIdWithPlayableTilePlusOne: 1 },
+                  { gameAction: { playTile: { tile: 29 } }, timestamp: 2, revealedTileBagTiles: [0], playerIdWithPlayableTilePlusOne: 1 },
+                  { gameAction: { playTile: { tile: 39 } }, timestamp: 2, revealedTileBagTiles: [99], playerIdWithPlayableTilePlusOne: 1 },
                 ],
                 GameMode.SINGLES_1,
                 PlayerArrangementMode.RANDOM_ORDER,
@@ -1321,11 +1343,27 @@ describe('all approve of game setup', () => {
       [
         MessageToClientEnum.GameActionDone,
         1,
-        { startGame: {} },
-        Date.now(),
-        [],
-        [89, 19, TileEnum.Unknown, TileEnum.Unknown, TileEnum.Unknown, TileEnum.Unknown, TileEnum.Unknown, TileEnum.Unknown, 0, 99, 11, 12, 13, 14],
-        0,
+        {
+          gameAction: { startGame: {} },
+          timestamp: Date.now(),
+          revealedTileBagTiles: [
+            89,
+            19,
+            TileEnum.Unknown,
+            TileEnum.Unknown,
+            TileEnum.Unknown,
+            TileEnum.Unknown,
+            TileEnum.Unknown,
+            TileEnum.Unknown,
+            0,
+            99,
+            11,
+            12,
+            13,
+            14,
+          ],
+          playerIdWithPlayableTilePlusOne: 1,
+        },
       ],
     ]);
     expect(opponentConnection.receivedMessages[0]).toEqual([
@@ -1333,11 +1371,27 @@ describe('all approve of game setup', () => {
       [
         MessageToClientEnum.GameActionDone,
         1,
-        { startGame: {} },
-        Date.now(),
-        [],
-        [89, 19, 29, 39, 49, 59, 69, 79, TileEnum.Unknown, TileEnum.Unknown, TileEnum.Unknown, TileEnum.Unknown, TileEnum.Unknown, TileEnum.Unknown],
-        0,
+        {
+          gameAction: { startGame: {} },
+          timestamp: Date.now(),
+          revealedTileBagTiles: [
+            89,
+            19,
+            29,
+            39,
+            49,
+            59,
+            69,
+            79,
+            TileEnum.Unknown,
+            TileEnum.Unknown,
+            TileEnum.Unknown,
+            TileEnum.Unknown,
+            TileEnum.Unknown,
+            TileEnum.Unknown,
+          ],
+          playerIdWithPlayableTilePlusOne: 1,
+        },
       ],
     ]);
     expect(anotherConnection.receivedMessages[0]).toEqual([
@@ -1345,26 +1399,27 @@ describe('all approve of game setup', () => {
       [
         MessageToClientEnum.GameActionDone,
         1,
-        { startGame: {} },
-        Date.now(),
-        [],
-        [
-          89,
-          19,
-          TileEnum.Unknown,
-          TileEnum.Unknown,
-          TileEnum.Unknown,
-          TileEnum.Unknown,
-          TileEnum.Unknown,
-          TileEnum.Unknown,
-          TileEnum.Unknown,
-          TileEnum.Unknown,
-          TileEnum.Unknown,
-          TileEnum.Unknown,
-          TileEnum.Unknown,
-          TileEnum.Unknown,
-        ],
-        0,
+        {
+          gameAction: { startGame: {} },
+          timestamp: Date.now(),
+          revealedTileBagTiles: [
+            89,
+            19,
+            TileEnum.Unknown,
+            TileEnum.Unknown,
+            TileEnum.Unknown,
+            TileEnum.Unknown,
+            TileEnum.Unknown,
+            TileEnum.Unknown,
+            TileEnum.Unknown,
+            TileEnum.Unknown,
+            TileEnum.Unknown,
+            TileEnum.Unknown,
+            TileEnum.Unknown,
+            TileEnum.Unknown,
+          ],
+          playerIdWithPlayableTilePlusOne: 1,
+        },
       ],
     ]);
 
@@ -1464,8 +1519,34 @@ describe('do game action', () => {
     expect(opponentConnection.receivedMessages.length).toBe(1);
     expect(anotherConnection.receivedMessages.length).toBe(1);
 
-    expect(hostConnection.receivedMessages[0]).toEqual([[MessageToClientEnum.GameActionDone, 1, gameAction, 1000, [[29, 0]], [TileEnum.Unknown], 1]]);
-    expect(opponentConnection.receivedMessages[0]).toEqual([[MessageToClientEnum.GameActionDone, 1, gameAction, 1000, [], [15], 1]]);
-    expect(anotherConnection.receivedMessages[0]).toEqual([[MessageToClientEnum.GameActionDone, 1, gameAction, 1000, [[29, 0]], [TileEnum.Unknown], 1]]);
+    expect(hostConnection.receivedMessages[0]).toEqual([
+      [
+        MessageToClientEnum.GameActionDone,
+        1,
+        {
+          gameAction,
+          timestamp: 1000,
+          revealedTileRackTiles: [{ tile: 29, playerIdBelongsTo: 0 }],
+          revealedTileBagTiles: [TileEnum.Unknown],
+          playerIdWithPlayableTilePlusOne: 2,
+        },
+      ],
+    ]);
+    expect(opponentConnection.receivedMessages[0]).toEqual([
+      [MessageToClientEnum.GameActionDone, 1, { gameAction, timestamp: 1000, revealedTileBagTiles: [15], playerIdWithPlayableTilePlusOne: 2 }],
+    ]);
+    expect(anotherConnection.receivedMessages[0]).toEqual([
+      [
+        MessageToClientEnum.GameActionDone,
+        1,
+        {
+          gameAction,
+          timestamp: 1000,
+          revealedTileRackTiles: [{ tile: 29, playerIdBelongsTo: 0 }],
+          revealedTileBagTiles: [TileEnum.Unknown],
+          playerIdWithPlayableTilePlusOne: 2,
+        },
+      ],
+    ]);
   });
 });

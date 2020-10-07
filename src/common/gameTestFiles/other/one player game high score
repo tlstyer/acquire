@@ -591,8 +591,8 @@ action: 0 PurchaseShares x 1
   tile racks:
     0: none 6B(F) 5H(I) 6H(I) 3D(I) 10E(L)
   messages:
-    0: [{"purchaseShares":{"endGame":true}},11085]
-    w: [{"purchaseShares":{"endGame":true}},11085]
+    0: {"gameAction":{"purchaseShares":{"endGame":true}},"timestamp":11085}
+    w: {"gameAction":{"purchaseShares":{"endGame":true}},"timestamp":11085}
   history messages:
     0 PurchasedShares x
     0 EndedGame

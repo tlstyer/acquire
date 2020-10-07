@@ -27,7 +27,7 @@ import { ScoreBoard } from './components/ScoreBoard';
 import { SelectChain, SelectChainTitle } from './components/SelectChain';
 import { TileRack } from './components/TileRack';
 import { GameBoardLabelMode, GameStatusEnum } from './enums';
-import { ErrorCode, GameBoardType, GameMode, GameSetupData, PlayerArrangementMode } from '../common/pb';
+import { ErrorCode, GameBoardType, GameMode, GameSetupData, GameStateData, PlayerArrangementMode } from '../common/pb';
 import { encodeMessageToServer } from '../common/helpers';
 
 export enum ClientManagerPage {
@@ -556,7 +556,7 @@ export class ClientManager {
 
         for (let j = 0; j < gameStateMessages.length; j++) {
           const gameStateMessage = gameStateMessages[j];
-          gameData.game.processGameStateMessage(gameStateMessage);
+          gameData.game.processGameStateData(gameStateMessage);
         }
       }
     }
@@ -666,11 +666,11 @@ export class ClientManager {
     }
   }
 
-  onMessageGameActionDone(gameDisplayNumber: number, ...gameStateMessage: any[]) {
+  onMessageGameActionDone(gameDisplayNumber: number, gameStateData: GameStateData) {
     const gameData = this.gameDisplayNumberToGameData.get(gameDisplayNumber)!;
     const game = gameData.game!;
 
-    game.processGameStateMessage(gameStateMessage);
+    game.processGameStateData(gameStateData);
 
     if (this.myClient!.gameData === gameData) {
       this.updateMyRequiredGameAction();

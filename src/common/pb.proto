@@ -63,6 +63,20 @@ message GameSetupData {
   repeated Position positions = 3;
 }
 
+message GameStateData {
+  message RevealedTileRackTile {
+    int32 tile = 1;
+    int32 player_id_belongs_to = 2;
+  }
+
+  GameAction game_action = 1;
+  int32 timestamp = 2;
+  repeated RevealedTileRackTile revealed_tile_rack_tiles = 3;
+  repeated int32 revealed_tile_bag_tiles = 4;
+  // 1 more than actual player_id
+  int32 player_id_with_playable_tile_plus_one = 5;
+}
+
 message GameSetupAction {
   message JoinGame {}
 

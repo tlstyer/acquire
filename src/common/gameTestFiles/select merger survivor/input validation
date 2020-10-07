@@ -40,10 +40,10 @@ action: 0 PlayTile 3B
     2: 1B(C) 4G(l) 3C(m) 12F(n) 3A(n) 1D(l)
   revealed tile rack tiles: 3B:0
   messages:
-    0: [{"playTile":{"tile":19}}]
-    1: [{"playTile":{"tile":19}},null,[[19,0]]]
-    2: [{"playTile":{"tile":19}},null,[[19,0]]]
-    w: [{"playTile":{"tile":19}},null,[[19,0]]]
+    0: {"gameAction":{"playTile":{"tile":19}}}
+    1: {"gameAction":{"playTile":{"tile":19}},"revealedTileRackTiles":[{"tile":19,"playerIdBelongsTo":0}]}
+    2: {"gameAction":{"playTile":{"tile":19}},"revealedTileRackTiles":[{"tile":19,"playerIdBelongsTo":0}]}
+    w: {"gameAction":{"playTile":{"tile":19}},"revealedTileRackTiles":[{"tile":19,"playerIdBelongsTo":0}]}
   history messages:
     0 PlayedTile 3B
     0 MergedChains A,C

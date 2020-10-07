@@ -21,9 +21,9 @@ action: 1 StartGame
   revealed tile bag tiles: 4I:all, 2B:all, 8G:0, 8H:0, 10H:0, 2G:0, 1D:0, 11D:0, 7E:1, 1B:1, 12H:1, 7B:1, 11I:1, 12C:1
   player ID with playable tile: 0
   messages:
-    0: [{"startGame":{}},null,[],[35,10,69,70,88,15,3,93,108,108,108,108,108,108],0]
-    1: [{"startGame":{}},null,[],[35,10,108,108,108,108,108,108,58,1,106,55,98,101],0]
-    w: [{"startGame":{}},null,[],[35,10,108,108,108,108,108,108,108,108,108,108,108,108],0]
+    0: {"gameAction":{"startGame":{}},"revealedTileBagTiles":[35,10,69,70,88,15,3,93,108,108,108,108,108,108],"playerIdWithPlayableTilePlusOne":1}
+    1: {"gameAction":{"startGame":{}},"revealedTileBagTiles":[35,10,108,108,108,108,108,108,58,1,106,55,98,101],"playerIdWithPlayableTilePlusOne":1}
+    w: {"gameAction":{"startGame":{}},"revealedTileBagTiles":[35,10,108,108,108,108,108,108,108,108,108,108,108,108],"playerIdWithPlayableTilePlusOne":1}
   history messages:
     1 DrewPositionTile 4I
     0 DrewPositionTile 2B
@@ -60,9 +60,9 @@ action: 0 PlayTile 8G
   revealed tile bag tiles: 1A:0
   player ID with playable tile: 1
   messages:
-    0: [{"playTile":{"tile":69}},null,[],[0],1]
-    1: [{"playTile":{"tile":69}},null,[[69,0]],[108],1]
-    w: [{"playTile":{"tile":69}},null,[[69,0]],[108],1]
+    0: {"gameAction":{"playTile":{"tile":69}},"revealedTileBagTiles":[0],"playerIdWithPlayableTilePlusOne":2}
+    1: {"gameAction":{"playTile":{"tile":69}},"revealedTileRackTiles":[{"tile":69,"playerIdBelongsTo":0}],"revealedTileBagTiles":[108],"playerIdWithPlayableTilePlusOne":2}
+    w: {"gameAction":{"playTile":{"tile":69}},"revealedTileRackTiles":[{"tile":69,"playerIdBelongsTo":0}],"revealedTileBagTiles":[108],"playerIdWithPlayableTilePlusOne":2}
   history messages:
     0 PlayedTile 8G
     0 DrewTile 1A

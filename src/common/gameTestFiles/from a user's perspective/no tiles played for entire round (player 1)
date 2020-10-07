@@ -239,9 +239,9 @@ action: 1 PlayTile 9I
   revealed tile bag tiles: 11I:1
   player ID with playable tile: 1
   messages:
-    0: [{"playTile":{"tile":80}},null,[[80,1]],[108],1]
-    1: [{"playTile":{"tile":80}},null,[],[98],1]
-    w: [{"playTile":{"tile":80}},null,[[80,1]],[108],1]
+    0: {"gameAction":{"playTile":{"tile":80}},"revealedTileRackTiles":[{"tile":80,"playerIdBelongsTo":1}],"revealedTileBagTiles":[108],"playerIdWithPlayableTilePlusOne":2}
+    1: {"gameAction":{"playTile":{"tile":80}},"revealedTileBagTiles":[98],"playerIdWithPlayableTilePlusOne":2}
+    w: {"gameAction":{"playTile":{"tile":80}},"revealedTileRackTiles":[{"tile":80,"playerIdBelongsTo":1}],"revealedTileBagTiles":[108],"playerIdWithPlayableTilePlusOne":2}
   history messages:
     1 PlayedTile 9I
     1 CouldNotAffordAnyShares
@@ -269,9 +269,9 @@ action: 1 PlayTile 3F
   revealed tile rack tiles: 3F:1
   revealed tile bag tiles: 12A:1
   messages:
-    0: [{"playTile":{"tile":23}},null,[[23,1]],[108]]
-    1: [{"playTile":{"tile":23}},null,[],[99]]
-    w: [{"playTile":{"tile":23}},null,[[23,1]],[108]]
+    0: {"gameAction":{"playTile":{"tile":23}},"revealedTileRackTiles":[{"tile":23,"playerIdBelongsTo":1}],"revealedTileBagTiles":[108]}
+    1: {"gameAction":{"playTile":{"tile":23}},"revealedTileBagTiles":[99]}
+    w: {"gameAction":{"playTile":{"tile":23}},"revealedTileRackTiles":[{"tile":23,"playerIdBelongsTo":1}],"revealedTileBagTiles":[108]}
   history messages:
     1 PlayedTile 3F
     1 CouldNotAffordAnyShares

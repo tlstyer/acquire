@@ -39,10 +39,10 @@ action: 2 PurchaseShares A,A,A 0
   revealed tile bag tiles: 12F:2
   player ID with playable tile: 0
   messages:
-    0: [{"purchaseShares":{"chains":[2,2,2],"endGame":false}},null,[],[108],0]
-    1: [{"purchaseShares":{"chains":[2,2,2],"endGame":false}},null,[],[108],0]
-    2: [{"purchaseShares":{"chains":[2,2,2],"endGame":false}},null,[],[104],0]
-    w: [{"purchaseShares":{"chains":[2,2,2],"endGame":false}},null,[],[108],0]
+    0: {"gameAction":{"purchaseShares":{"chains":[2,2,2],"endGame":false}},"revealedTileBagTiles":[108],"playerIdWithPlayableTilePlusOne":1}
+    1: {"gameAction":{"purchaseShares":{"chains":[2,2,2],"endGame":false}},"revealedTileBagTiles":[108],"playerIdWithPlayableTilePlusOne":1}
+    2: {"gameAction":{"purchaseShares":{"chains":[2,2,2],"endGame":false}},"revealedTileBagTiles":[104],"playerIdWithPlayableTilePlusOne":1}
+    w: {"gameAction":{"purchaseShares":{"chains":[2,2,2],"endGame":false}},"revealedTileBagTiles":[108],"playerIdWithPlayableTilePlusOne":1}
   history messages:
     2 PurchasedShares 3A
     2 DrewTile 12F
@@ -65,10 +65,10 @@ action: 0 PlayTile 3B
     2: 12F(n) 4G(l) 3C(C) 7G(l) 3A(C) 1D(l)
   revealed tile rack tiles: 3B:0
   messages:
-    0: [{"playTile":{"tile":19}}]
-    1: [{"playTile":{"tile":19}},null,[[19,0]]]
-    2: [{"playTile":{"tile":19}},null,[[19,0]]]
-    w: [{"playTile":{"tile":19}},null,[[19,0]]]
+    0: {"gameAction":{"playTile":{"tile":19}}}
+    1: {"gameAction":{"playTile":{"tile":19}},"revealedTileRackTiles":[{"tile":19,"playerIdBelongsTo":0}]}
+    2: {"gameAction":{"playTile":{"tile":19}},"revealedTileRackTiles":[{"tile":19,"playerIdBelongsTo":0}]}
+    w: {"gameAction":{"playTile":{"tile":19}},"revealedTileRackTiles":[{"tile":19,"playerIdBelongsTo":0}]}
   history messages:
     0 PlayedTile 3B
     0 MergedChains A,C

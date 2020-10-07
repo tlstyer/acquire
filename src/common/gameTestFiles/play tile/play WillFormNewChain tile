@@ -21,9 +21,9 @@ action: 1 StartGame
   revealed tile bag tiles: 4I:all, 2B:all, 7E:0, 1B:0, 12H:0, 7B:0, 11I:0, 12C:0, 8G:1, 8H:1, 10H:1, 2G:1, 1D:1, 11D:1
   player ID with playable tile: 0
   messages:
-    0: [{"startGame":{}},null,[],[35,10,58,1,106,55,98,101,108,108,108,108,108,108],0]
-    1: [{"startGame":{}},null,[],[35,10,108,108,108,108,108,108,69,70,88,15,3,93],0]
-    w: [{"startGame":{}},null,[],[35,10,108,108,108,108,108,108,108,108,108,108,108,108],0]
+    0: {"gameAction":{"startGame":{}},"revealedTileBagTiles":[35,10,58,1,106,55,98,101,108,108,108,108,108,108],"playerIdWithPlayableTilePlusOne":1}
+    1: {"gameAction":{"startGame":{}},"revealedTileBagTiles":[35,10,108,108,108,108,108,108,69,70,88,15,3,93],"playerIdWithPlayableTilePlusOne":1}
+    w: {"gameAction":{"startGame":{}},"revealedTileBagTiles":[35,10,108,108,108,108,108,108,108,108,108,108,108,108],"playerIdWithPlayableTilePlusOne":1}
   history messages:
     1 DrewPositionTile 4I
     0 DrewPositionTile 2B
@@ -58,9 +58,9 @@ action: 0 PlayTile 1B
     1: 8G(h) 8H(h) 10H(l) 2G(l) 1D(l) 11D(l)
   revealed tile rack tiles: 1B:0
   messages:
-    0: [{"playTile":{"tile":1}}]
-    1: [{"playTile":{"tile":1}},null,[[1,0]]]
-    w: [{"playTile":{"tile":1}},null,[[1,0]]]
+    0: {"gameAction":{"playTile":{"tile":1}}}
+    1: {"gameAction":{"playTile":{"tile":1}},"revealedTileRackTiles":[{"tile":1,"playerIdBelongsTo":0}]}
+    w: {"gameAction":{"playTile":{"tile":1}},"revealedTileRackTiles":[{"tile":1,"playerIdBelongsTo":0}]}
   history messages:
     0 PlayedTile 1B
   next action: 0 SelectNewChain L,T,A,F,W,C,I

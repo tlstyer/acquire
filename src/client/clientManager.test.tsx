@@ -578,10 +578,10 @@ describe('MessageToClient.Greetings', () => {
             11,
             2,
             [
-              [[], 1234567894, [], [89, 19, 29, 39, 49, 59, 69], 0],
-              [{ playTile: { tile: 19 } }, 1, [], [79], 0],
-              [{ playTile: { tile: 29 } }, 1, [], [0], 0],
-              [{ playTile: { tile: 39 } }, 1, [], [99], 0],
+              { gameAction: { startGame: {} }, timestamp: 1234567894, revealedTileBagTiles: [89, 19, 29, 39, 49, 59, 69], playerIdWithPlayableTilePlusOne: 1 },
+              { gameAction: { playTile: { tile: 19 } }, timestamp: 1, revealedTileBagTiles: [79], playerIdWithPlayableTilePlusOne: 1 },
+              { gameAction: { playTile: { tile: 29 } }, timestamp: 1, revealedTileBagTiles: [0], playerIdWithPlayableTilePlusOne: 1 },
+              { gameAction: { playTile: { tile: 39 } }, timestamp: 1, revealedTileBagTiles: [99], playerIdWithPlayableTilePlusOne: 1 },
             ],
             GameMode.SINGLES_1,
             PlayerArrangementMode.RANDOM_ORDER,
@@ -1192,26 +1192,27 @@ describe('MessageToClient.GameStarted and MessageToClient.GameActionDone', () =>
       [
         MessageToClientEnum.GameActionDone,
         1,
-        [],
-        123456789,
-        [],
-        [
-          89,
-          19,
-          TileEnum.Unknown,
-          TileEnum.Unknown,
-          TileEnum.Unknown,
-          TileEnum.Unknown,
-          TileEnum.Unknown,
-          TileEnum.Unknown,
-          TileEnum.Unknown,
-          TileEnum.Unknown,
-          TileEnum.Unknown,
-          TileEnum.Unknown,
-          TileEnum.Unknown,
-          TileEnum.Unknown,
-        ],
-        0,
+        {
+          gameAction: { startGame: {} },
+          timestamp: 123456789,
+          revealedTileBagTiles: [
+            89,
+            19,
+            TileEnum.Unknown,
+            TileEnum.Unknown,
+            TileEnum.Unknown,
+            TileEnum.Unknown,
+            TileEnum.Unknown,
+            TileEnum.Unknown,
+            TileEnum.Unknown,
+            TileEnum.Unknown,
+            TileEnum.Unknown,
+            TileEnum.Unknown,
+            TileEnum.Unknown,
+            TileEnum.Unknown,
+          ],
+          playerIdWithPlayableTilePlusOne: 1,
+        },
       ],
     ]);
 
@@ -1258,7 +1259,16 @@ describe('MessageToClient.GameStarted and MessageToClient.GameActionDone', () =>
     testWebSocket!.triggerMessage([[MessageToClientEnum.ClientEnteredGame, 2, 1]]);
     testWebSocket!.triggerMessage([
       [MessageToClientEnum.GameStarted, 1, [1]],
-      [MessageToClientEnum.GameActionDone, 1, [], 1550799393696, [], [65, 3, 34, 6, 46, 10, 78], 0],
+      [
+        MessageToClientEnum.GameActionDone,
+        1,
+        {
+          gameAction: { startGame: {} },
+          timestamp: 1550799393696,
+          revealedTileBagTiles: [65, 3, 34, 6, 46, 10, 78],
+          playerIdWithPlayableTilePlusOne: 1,
+        },
+      ],
     ]);
 
     expect(clientManager.page).toBe(ClientManagerPage.Game);

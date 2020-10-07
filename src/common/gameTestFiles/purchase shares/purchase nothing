@@ -29,9 +29,9 @@ action: 1 SelectNewChain L
     0: 11A(l) 1A(l) 7E(l) 7B(l) 11I(l) 12C(l)
     1: 4B(l) none 8H(h) 10H(l) 2G(l) 8G(h)
   messages:
-    0: [{"selectNewChain":{"chain":0}}]
-    1: [{"selectNewChain":{"chain":0}}]
-    w: [{"selectNewChain":{"chain":0}}]
+    0: {"gameAction":{"selectNewChain":{"chain":0}}}
+    1: {"gameAction":{"selectNewChain":{"chain":0}}}
+    w: {"gameAction":{"selectNewChain":{"chain":0}}}
   history messages:
     1 FormedChain L
   next action: 1 PurchaseShares
@@ -52,9 +52,9 @@ action: 1 PurchaseShares x 0
   revealed tile bag tiles: 3I:1
   player ID with playable tile: 0
   messages:
-    0: [{"purchaseShares":{"endGame":false}},null,[],[108],0]
-    1: [{"purchaseShares":{"endGame":false}},null,[],[26],0]
-    w: [{"purchaseShares":{"endGame":false}},null,[],[108],0]
+    0: {"gameAction":{"purchaseShares":{"endGame":false}},"revealedTileBagTiles":[108],"playerIdWithPlayableTilePlusOne":1}
+    1: {"gameAction":{"purchaseShares":{"endGame":false}},"revealedTileBagTiles":[26],"playerIdWithPlayableTilePlusOne":1}
+    w: {"gameAction":{"purchaseShares":{"endGame":false}},"revealedTileBagTiles":[108],"playerIdWithPlayableTilePlusOne":1}
   history messages:
     1 PurchasedShares x
     1 DrewTile 3I

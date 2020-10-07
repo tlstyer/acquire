@@ -50,11 +50,11 @@ action: 0 PlayTile 5G
     3: 5D(I) 12H(h) 10I(l) 8H(l) 3F(L) 11H(h)
   revealed tile rack tiles: 5G:0
   messages:
-    0: [{"playTile":{"tile":42}}]
-    1: [{"playTile":{"tile":42}},null,[[42,0]]]
-    2: [{"playTile":{"tile":42}},null,[[42,0]]]
-    3: [{"playTile":{"tile":42}},null,[[42,0]]]
-    w: [{"playTile":{"tile":42}},null,[[42,0]]]
+    0: {"gameAction":{"playTile":{"tile":42}}}
+    1: {"gameAction":{"playTile":{"tile":42}},"revealedTileRackTiles":[{"tile":42,"playerIdBelongsTo":0}]}
+    2: {"gameAction":{"playTile":{"tile":42}},"revealedTileRackTiles":[{"tile":42,"playerIdBelongsTo":0}]}
+    3: {"gameAction":{"playTile":{"tile":42}},"revealedTileRackTiles":[{"tile":42,"playerIdBelongsTo":0}]}
+    w: {"gameAction":{"playTile":{"tile":42}},"revealedTileRackTiles":[{"tile":42,"playerIdBelongsTo":0}]}
   history messages:
     0 PlayedTile 5G
     0 MergedChains L,T,C,I
@@ -76,11 +76,11 @@ action: 0 SelectMergerSurvivor I
     2: 9C(l) 11G(l) 10D(l) 4D(l) 1G(l) 2I(l)
     3: 5D(I) 12H(h) 10I(l) 8H(l) 3F(I) 11H(h)
   messages:
-    0: [{"selectMergerSurvivor":{"chain":6}}]
-    1: [{"selectMergerSurvivor":{"chain":6}}]
-    2: [{"selectMergerSurvivor":{"chain":6}}]
-    3: [{"selectMergerSurvivor":{"chain":6}}]
-    w: [{"selectMergerSurvivor":{"chain":6}}]
+    0: {"gameAction":{"selectMergerSurvivor":{"chain":6}}}
+    1: {"gameAction":{"selectMergerSurvivor":{"chain":6}}}
+    2: {"gameAction":{"selectMergerSurvivor":{"chain":6}}}
+    3: {"gameAction":{"selectMergerSurvivor":{"chain":6}}}
+    w: {"gameAction":{"selectMergerSurvivor":{"chain":6}}}
   history messages:
     0 SelectedMergerSurvivor I
     0 ReceivedBonus L 20

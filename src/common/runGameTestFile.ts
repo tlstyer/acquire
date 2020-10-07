@@ -1,7 +1,7 @@
 import { List } from 'immutable';
 import { GameActionEnum, GameHistoryMessageEnum, ScoreBoardIndexEnum, TileEnum } from './enums';
 import { UserInputError } from './error';
-import { Game, GameHistoryMessageData, GameState, GameStateTileBagTile, GameStateTileRackTile } from './game';
+import { Game, GameHistoryMessageData, GameState, GameStateTileBagTile } from './game';
 import { ActionBase } from './gameActions/base';
 import { ActionDisposeOfShares } from './gameActions/disposeOfShares';
 import { ActionGameOver } from './gameActions/gameOver';
@@ -9,7 +9,7 @@ import { ActionSelectChainToDisposeOfNext } from './gameActions/selectChainToDis
 import { ActionSelectMergerSurvivor } from './gameActions/selectMergerSurvivor';
 import { ActionSelectNewChain } from './gameActions/selectNewChain';
 import { getValueOfKey, lowercaseFirstLetter } from './helpers';
-import { GameAction, GameBoardType, GameMode, PlayerArrangementMode } from './pb';
+import { GameAction, GameBoardType, GameMode, GameStateData, PlayerArrangementMode } from './pb';
 
 export function runGameTestFile(inputLines: string[]) {
   let game: Game | null = null;
@@ -345,7 +345,7 @@ function getGameStateLines(gameState: GameState, revealedTilesPlayerID: number |
     if (gameState.revealedTileRackTiles.length > 0) {
       const str = gameState.revealedTileRackTiles
         .map((trt) => {
-          return `${toTileString(trt.tile)}:${trt.playerIDBelongsTo.toString()}`;
+          return `${toTileString(trt.tile)}:${trt.playerIdBelongsTo.toString()}`;
         })
         .join(', ');
       lines.push(`  revealed tile rack tiles: ${str}`);
@@ -365,11 +365,11 @@ function getGameStateLines(gameState: GameState, revealedTilesPlayerID: number |
     }
 
     lines.push('  messages:');
-    gameState.createPlayerAndWatcherMessages();
-    for (let playerID = 0; playerID < gameState.playerMessages.length; playerID++) {
-      lines.push(`    ${playerID}: ${formatPlayerOrWatcherMessage(gameState.playerMessages[playerID])}`);
+    gameState.createPlayerAndWatcherGameStateDatas();
+    for (let playerID = 0; playerID < gameState.playerGameStateDatas.length; playerID++) {
+      lines.push(`    ${playerID}: ${formatPlayerOrWatcherGameStateData(gameState.playerGameStateDatas[playerID])}`);
     }
-    lines.push(`    w: ${formatPlayerOrWatcherMessage(gameState.watcherMessage)}`);
+    lines.push(`    w: ${formatPlayerOrWatcherGameStateData(gameState.watcherGameStateData)}`);
 
     lines.push('  history messages:');
     gameState.gameHistoryMessages.forEach((ghm) => {
@@ -382,32 +382,35 @@ function getGameStateLines(gameState: GameState, revealedTilesPlayerID: number |
   return lines;
 }
 
-function getRevealedTileRackTilesStringForPlayer(revealedTileRackTiles: GameStateTileRackTile[], playerID: number) {
+function getRevealedTileRackTilesStringForPlayer(revealedTileRackTiles: GameStateData.RevealedTileRackTile[], playerID: number) {
   const parts: string[] = [];
 
   for (let i = 0; i < revealedTileRackTiles.length; i++) {
     const rtrt = revealedTileRackTiles[i];
-    if (rtrt.playerIDBelongsTo !== playerID) {
-      parts.push(`${toTileString(rtrt.tile)}:${rtrt.playerIDBelongsTo}`);
+    if (rtrt.playerIdBelongsTo !== playerID) {
+      parts.push(`${toTileString(rtrt.tile)}:${rtrt.playerIdBelongsTo}`);
     }
   }
 
   return parts.join(', ');
 }
 
-function formatPlayerOrWatcherMessage(message: any[]) {
-  message = [...message];
-  message[0] = GameAction.toObject(message[0]);
-  return JSON.stringify(message);
+function formatPlayerOrWatcherGameStateData(gameStateData: GameStateData) {
+  return JSON.stringify(GameStateData.toObject(gameStateData));
 }
 
 function getArrayFromRevealedTileRackTilesString(revealedTileRackTilesString: string) {
   const strParts = revealedTileRackTilesString.split(', ');
-  const revealedTileRackTiles: [number, number][] = new Array(strParts.length);
+  const revealedTileRackTiles: GameStateData.RevealedTileRackTile[] = new Array(strParts.length);
 
   for (let i = 0; i < strParts.length; i++) {
     const [tileStr, playerIDStr] = strParts[i].split(':');
-    revealedTileRackTiles[i] = [fromTileString(tileStr), parseInt(playerIDStr, 10)];
+
+    const revealedTileRackTile = GameStateData.RevealedTileRackTile.create();
+    revealedTileRackTile.tile = fromTileString(tileStr);
+    revealedTileRackTile.playerIdBelongsTo = parseInt(playerIDStr, 10);
+
+    revealedTileRackTiles[i] = revealedTileRackTile;
   }
 
   return revealedTileRackTiles;

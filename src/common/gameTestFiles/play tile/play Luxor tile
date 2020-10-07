@@ -27,9 +27,9 @@ action: 0 PurchaseShares L,L,L 0
   revealed tile bag tiles: 7G:0
   player ID with playable tile: 1
   messages:
-    0: [{"purchaseShares":{"chains":[0,0,0],"endGame":false}},null,[],[60],1]
-    1: [{"purchaseShares":{"chains":[0,0,0],"endGame":false}},null,[],[108],1]
-    w: [{"purchaseShares":{"chains":[0,0,0],"endGame":false}},null,[],[108],1]
+    0: {"gameAction":{"purchaseShares":{"chains":[0,0,0],"endGame":false}},"revealedTileBagTiles":[60],"playerIdWithPlayableTilePlusOne":2}
+    1: {"gameAction":{"purchaseShares":{"chains":[0,0,0],"endGame":false}},"revealedTileBagTiles":[108],"playerIdWithPlayableTilePlusOne":2}
+    w: {"gameAction":{"purchaseShares":{"chains":[0,0,0],"endGame":false}},"revealedTileBagTiles":[108],"playerIdWithPlayableTilePlusOne":2}
   history messages:
     0 PurchasedShares 3L
     0 DrewTile 7G
@@ -51,9 +51,9 @@ action: 1 PlayTile 2A
     1: none 8H(l) 10H(l) 2G(l) 1D(l) 11D(l)
   revealed tile rack tiles: 2A:1
   messages:
-    0: [{"playTile":{"tile":9}},null,[[9,1]]]
-    1: [{"playTile":{"tile":9}}]
-    w: [{"playTile":{"tile":9}},null,[[9,1]]]
+    0: {"gameAction":{"playTile":{"tile":9}},"revealedTileRackTiles":[{"tile":9,"playerIdBelongsTo":1}]}
+    1: {"gameAction":{"playTile":{"tile":9}}}
+    w: {"gameAction":{"playTile":{"tile":9}},"revealedTileRackTiles":[{"tile":9,"playerIdBelongsTo":1}]}
   history messages:
     1 PlayedTile 2A
   next action: 1 PurchaseShares
