@@ -1,7 +1,7 @@
 import * as WebSocket from 'ws';
 import { GameSetupChangeEnum, MessageToClientEnum } from '../common/enums';
 import { encodeMessageToServer } from '../common/helpers';
-import { ErrorCode, GameMode, PlayerArrangementMode } from '../common/pb';
+import { ErrorCode, GameMode, GameSetupData, PlayerArrangementMode } from '../common/pb';
 import { ConnectionState, GameData, ServerManager, User } from './serverManager';
 import { TestUserDataProvider } from './userDataProvider';
 
@@ -552,8 +552,8 @@ describe('when sending first message', () => {
             [5, 'me', [[7]]],
           ],
           [
-            [0, 10, 1, ...serverManager.gameDisplayNumberToGameData.get(1)!.gameSetup!.toJSON()],
-            [0, 11, 2, ...serverManager.gameDisplayNumberToGameData.get(2)!.gameSetup!.toJSON()],
+            [0, 10, 1, serverManager.gameDisplayNumberToGameData.get(1)!.gameSetup!.toGameSetupData().toJSON()],
+            [0, 11, 2, serverManager.gameDisplayNumberToGameData.get(2)!.gameSetup!.toGameSetupData().toJSON()],
           ],
         ],
       ]);
@@ -579,7 +579,18 @@ describe('when sending first message', () => {
               [1, '1', [[1, 1]]],
               [2, '2', [[2]]],
             ],
-            [[0, 10, 1, GameMode.SINGLES_4, PlayerArrangementMode.RANDOM_ORDER, 1, [1, 0, 0, 0], [0, 0, 0, 0]]],
+            [
+              [
+                0,
+                10,
+                1,
+                GameSetupData.fromObject({
+                  gameMode: GameMode.SINGLES_4,
+                  playerArrangementMode: PlayerArrangementMode.RANDOM_ORDER,
+                  positions: [{ userId: 1, isHost: true }, {}, {}, {}],
+                }).toJSON(),
+              ],
+            ],
           ],
         ],
       ]);
@@ -601,7 +612,16 @@ describe('when sending first message', () => {
               [3, '3', [[3]]],
             ],
             [
-              [0, 10, 1, GameMode.SINGLES_4, PlayerArrangementMode.RANDOM_ORDER, 1, [1, 0, 0, 0], [0, 0, 0, 0]],
+              [
+                0,
+                10,
+                1,
+                GameSetupData.fromObject({
+                  gameMode: GameMode.SINGLES_4,
+                  playerArrangementMode: PlayerArrangementMode.RANDOM_ORDER,
+                  positions: [{ userId: 1, isHost: true }, {}, {}, {}],
+                }).toJSON(),
+              ],
               [
                 1,
                 11,
@@ -634,7 +654,16 @@ describe('when sending first message', () => {
               [3, '3', [[3]]],
             ],
             [
-              [0, 10, 1, GameMode.SINGLES_4, PlayerArrangementMode.RANDOM_ORDER, 1, [1, 0, 0, 0], [0, 0, 0, 0]],
+              [
+                0,
+                10,
+                1,
+                GameSetupData.fromObject({
+                  gameMode: GameMode.SINGLES_4,
+                  playerArrangementMode: PlayerArrangementMode.RANDOM_ORDER,
+                  positions: [{ userId: 1, isHost: true }, {}, {}, {}],
+                }).toJSON(),
+              ],
               [
                 1,
                 11,

@@ -27,7 +27,7 @@ import { ScoreBoard } from './components/ScoreBoard';
 import { SelectChain, SelectChainTitle } from './components/SelectChain';
 import { TileRack } from './components/TileRack';
 import { GameBoardLabelMode, GameStatus } from './enums';
-import { ErrorCode, GameBoardType, GameMode, PlayerArrangementMode } from '../common/pb';
+import { ErrorCode, GameBoardType, GameMode, GameSetupData, PlayerArrangementMode } from '../common/pb';
 import { encodeMessageToServer } from '../common/helpers';
 
 export enum ClientManagerPage {
@@ -527,14 +527,14 @@ export class ClientManager {
       const gameData = this.gameIDToGameData.get(gameID)!;
 
       if (isGameSetup) {
-        const gameSetupJSON = gameParams.slice(3);
+        const gameSetupData: GameSetupData = gameParams[3];
 
-        gameData.gameSetup = GameSetup.fromJSON(gameSetupJSON, this.getUsernameForUserID);
+        gameData.gameSetup = GameSetup.fromGameSetupData(gameSetupData, this.getUsernameForUserID);
 
-        const userIDs: number[] = gameSetupJSON[3];
-        for (let j = 0; j < userIDs.length; j++) {
-          const userID = userIDs[j];
-          if (userID !== 0) {
+        const positions = gameSetupData.positions;
+        for (let j = 0; j < positions.length; j++) {
+          const userID = positions[j].userId;
+          if (userID !== null && userID !== undefined && userID !== 0) {
             this.userIDToUser.get(userID)!.numGames++;
           }
         }

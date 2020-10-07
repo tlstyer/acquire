@@ -54,6 +54,200 @@ export enum PlayerArrangementMode {
     SPECIFY_TEAMS = 3
 }
 
+/** Represents a GameSetupData. */
+export class GameSetupData implements IGameSetupData {
+
+    /**
+     * Constructs a new GameSetupData.
+     * @param [properties] Properties to set
+     */
+    constructor(properties?: IGameSetupData);
+
+    /** GameSetupData gameMode. */
+    public gameMode: GameMode;
+
+    /** GameSetupData playerArrangementMode. */
+    public playerArrangementMode: PlayerArrangementMode;
+
+    /** GameSetupData positions. */
+    public positions: GameSetupData.IPosition[];
+
+    /**
+     * Creates a new GameSetupData instance using the specified properties.
+     * @param [properties] Properties to set
+     * @returns GameSetupData instance
+     */
+    public static create(properties?: IGameSetupData): GameSetupData;
+
+    /**
+     * Encodes the specified GameSetupData message. Does not implicitly {@link GameSetupData.verify|verify} messages.
+     * @param message GameSetupData message or plain object to encode
+     * @param [writer] Writer to encode to
+     * @returns Writer
+     */
+    public static encode(message: IGameSetupData, writer?: $protobuf.Writer): $protobuf.Writer;
+
+    /**
+     * Encodes the specified GameSetupData message, length delimited. Does not implicitly {@link GameSetupData.verify|verify} messages.
+     * @param message GameSetupData message or plain object to encode
+     * @param [writer] Writer to encode to
+     * @returns Writer
+     */
+    public static encodeDelimited(message: IGameSetupData, writer?: $protobuf.Writer): $protobuf.Writer;
+
+    /**
+     * Decodes a GameSetupData message from the specified reader or buffer.
+     * @param reader Reader or buffer to decode from
+     * @param [length] Message length if known beforehand
+     * @returns GameSetupData
+     * @throws {Error} If the payload is not a reader or valid buffer
+     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+     */
+    public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): GameSetupData;
+
+    /**
+     * Decodes a GameSetupData message from the specified reader or buffer, length delimited.
+     * @param reader Reader or buffer to decode from
+     * @returns GameSetupData
+     * @throws {Error} If the payload is not a reader or valid buffer
+     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+     */
+    public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): GameSetupData;
+
+    /**
+     * Verifies a GameSetupData message.
+     * @param message Plain object to verify
+     * @returns `null` if valid, otherwise the reason why it is not
+     */
+    public static verify(message: { [k: string]: any }): (string|null);
+
+    /**
+     * Creates a GameSetupData message from a plain object. Also converts values to their respective internal types.
+     * @param object Plain object
+     * @returns GameSetupData
+     */
+    public static fromObject(object: { [k: string]: any }): GameSetupData;
+
+    /**
+     * Creates a plain object from a GameSetupData message. Also converts values to other types if specified.
+     * @param message GameSetupData
+     * @param [options] Conversion options
+     * @returns Plain object
+     */
+    public static toObject(message: GameSetupData, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+    /**
+     * Converts this GameSetupData to JSON.
+     * @returns JSON object
+     */
+    public toJSON(): { [k: string]: any };
+}
+
+export namespace GameSetupData {
+
+    /** Properties of a Position. */
+    interface IPosition {
+
+        /** Position userId */
+        userId?: (number|null);
+
+        /** Position isHost */
+        isHost?: (boolean|null);
+
+        /** Position approvesOfGameSetup */
+        approvesOfGameSetup?: (boolean|null);
+    }
+
+    /** Represents a Position. */
+    class Position implements IPosition {
+
+        /**
+         * Constructs a new Position.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: GameSetupData.IPosition);
+
+        /** Position userId. */
+        public userId: number;
+
+        /** Position isHost. */
+        public isHost: boolean;
+
+        /** Position approvesOfGameSetup. */
+        public approvesOfGameSetup: boolean;
+
+        /**
+         * Creates a new Position instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns Position instance
+         */
+        public static create(properties?: GameSetupData.IPosition): GameSetupData.Position;
+
+        /**
+         * Encodes the specified Position message. Does not implicitly {@link GameSetupData.Position.verify|verify} messages.
+         * @param message Position message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: GameSetupData.IPosition, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified Position message, length delimited. Does not implicitly {@link GameSetupData.Position.verify|verify} messages.
+         * @param message Position message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: GameSetupData.IPosition, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a Position message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns Position
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): GameSetupData.Position;
+
+        /**
+         * Decodes a Position message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns Position
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): GameSetupData.Position;
+
+        /**
+         * Verifies a Position message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a Position message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns Position
+         */
+        public static fromObject(object: { [k: string]: any }): GameSetupData.Position;
+
+        /**
+         * Creates a plain object from a Position message. Also converts values to other types if specified.
+         * @param message Position
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: GameSetupData.Position, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this Position to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+}
+
 /** Represents a GameSetupAction. */
 export class GameSetupAction implements IGameSetupAction {
 

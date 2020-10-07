@@ -1,7 +1,7 @@
 import { List } from 'immutable';
 import { GameSetupChangeEnum } from './enums';
 import { gameModeToNumPlayers, gameModeToTeamSize, shuffleArray } from './helpers';
-import { GameMode, PlayerArrangementMode } from './pb';
+import { GameMode, GameSetupData, PlayerArrangementMode } from './pb';
 
 const defaultApprovals = new Map([
   [1, List([false])],
@@ -11,8 +11,6 @@ const defaultApprovals = new Map([
   [5, List([false, false, false, false, false])],
   [6, List([false, false, false, false, false, false])],
 ]);
-
-type GameSetupJSON = [GameMode, PlayerArrangementMode, number, number[], number[]];
 
 export class GameSetup {
   hostUsername: string;
@@ -329,56 +327,71 @@ export class GameSetup {
     return [List(userIDs), List(usernames)];
   }
 
-  toJSON(): GameSetupJSON {
-    const userIDs: number[] = new Array(this.userIDs.size);
+  toGameSetupData(): GameSetupData {
+    const gameSetupData = GameSetupData.create();
+    gameSetupData.gameMode = this.gameMode;
+    gameSetupData.playerArrangementMode = this.playerArrangementMode;
+    gameSetupData.positions = [];
+
     this.userIDs.forEach((userID, position) => {
-      userIDs[position] = userID || 0;
+      const positionData = GameSetupData.Position.create();
+
+      if (userID !== null) {
+        positionData.userId = userID;
+        if (userID === this.hostUserID) {
+          positionData.isHost = true;
+        }
+        if (this.approvals.get(position)) {
+          positionData.approvesOfGameSetup = true;
+        }
+      }
+
+      gameSetupData.positions.push(positionData);
     });
 
-    const approvals: number[] = new Array(this.approvals.size);
-    this.approvals.forEach((approved, position) => {
-      approvals[position] = approved ? 1 : 0;
-    });
-
-    return [this.gameMode, this.playerArrangementMode, this.hostUserID, userIDs, approvals];
+    return gameSetupData;
   }
 
-  static fromJSON(json: GameSetupJSON, getUsernameForUserID: (userID: number) => string) {
-    const [gameMode, playerArrangementMode, hostUserID, userIDs, intApprovals] = json;
+  static fromGameSetupData(gameSetupData: GameSetupData, getUsernameForUserID: (userID: number) => string) {
+    const positions = gameSetupData.positions;
 
-    const gameSetup = new GameSetup(gameMode, playerArrangementMode, hostUserID, getUsernameForUserID);
-
-    const usernames: (string | null)[] = new Array(userIDs.length);
-    const userIDsArray: (number | null)[] = new Array(userIDs.length);
-
-    for (let position = 0; position < userIDs.length; position++) {
-      const userID = userIDs[position];
-
-      if (userID !== 0) {
-        usernames[position] = getUsernameForUserID(userID);
-        userIDsArray[position] = userID;
-        gameSetup.userIDsSet.add(userID);
-      } else {
-        usernames[position] = null;
-        userIDsArray[position] = null;
-      }
-    }
-
-    gameSetup.usernames = List(usernames);
-    gameSetup.userIDs = List(userIDsArray);
-
-    const approvals: boolean[] = new Array(intApprovals.length);
+    const usernames: (string | null)[] = new Array(positions.length);
+    const userIDsArray: (number | null)[] = new Array(positions.length);
+    const userIDsSet = new Set<number>();
+    let hostUserID = 0;
+    const approvals: boolean[] = new Array(positions.length);
     let approvedByEverybody = true;
-    for (let position = 0; position < intApprovals.length; position++) {
-      const approved = intApprovals[position] === 1;
 
-      approvals[position] = approved;
+    for (let index = 0; index < positions.length; index++) {
+      const position = positions[index];
+      const userID = position.userId;
 
-      if (!approved) {
+      if (userID !== null && userID !== undefined && userID !== 0) {
+        const isHost = position.isHost;
+        const approvesOfGameSetup = position.approvesOfGameSetup;
+
+        usernames[index] = getUsernameForUserID(userID);
+        userIDsArray[index] = userID;
+        userIDsSet.add(userID);
+        if (isHost) {
+          hostUserID = userID;
+        }
+        approvals[index] = approvesOfGameSetup ? true : false;
+        if (!approvesOfGameSetup) {
+          approvedByEverybody = false;
+        }
+      } else {
+        usernames[index] = null;
+        userIDsArray[index] = null;
+        approvals[index] = false;
         approvedByEverybody = false;
       }
     }
 
+    const gameSetup = new GameSetup(gameSetupData.gameMode, gameSetupData.playerArrangementMode, hostUserID, getUsernameForUserID);
+    gameSetup.usernames = List(usernames);
+    gameSetup.userIDs = List(userIDsArray);
+    gameSetup.userIDsSet = userIDsSet;
     gameSetup.approvals = List(approvals);
     gameSetup.approvedByEverybody = approvedByEverybody;
 

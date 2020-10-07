@@ -127,6 +127,563 @@ $root.PlayerArrangementMode = (function() {
     return values;
 })();
 
+$root.GameSetupData = (function() {
+
+    /**
+     * Properties of a GameSetupData.
+     * @exports IGameSetupData
+     * @interface IGameSetupData
+     * @property {GameMode|null} [gameMode] GameSetupData gameMode
+     * @property {PlayerArrangementMode|null} [playerArrangementMode] GameSetupData playerArrangementMode
+     * @property {Array.<GameSetupData.IPosition>|null} [positions] GameSetupData positions
+     */
+
+    /**
+     * Constructs a new GameSetupData.
+     * @exports GameSetupData
+     * @classdesc Represents a GameSetupData.
+     * @implements IGameSetupData
+     * @constructor
+     * @param {IGameSetupData=} [properties] Properties to set
+     */
+    function GameSetupData(properties) {
+        this.positions = [];
+        if (properties)
+            for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                if (properties[keys[i]] != null)
+                    this[keys[i]] = properties[keys[i]];
+    }
+
+    /**
+     * GameSetupData gameMode.
+     * @member {GameMode} gameMode
+     * @memberof GameSetupData
+     * @instance
+     */
+    GameSetupData.prototype.gameMode = 1;
+
+    /**
+     * GameSetupData playerArrangementMode.
+     * @member {PlayerArrangementMode} playerArrangementMode
+     * @memberof GameSetupData
+     * @instance
+     */
+    GameSetupData.prototype.playerArrangementMode = 0;
+
+    /**
+     * GameSetupData positions.
+     * @member {Array.<GameSetupData.IPosition>} positions
+     * @memberof GameSetupData
+     * @instance
+     */
+    GameSetupData.prototype.positions = $util.emptyArray;
+
+    /**
+     * Creates a new GameSetupData instance using the specified properties.
+     * @function create
+     * @memberof GameSetupData
+     * @static
+     * @param {IGameSetupData=} [properties] Properties to set
+     * @returns {GameSetupData} GameSetupData instance
+     */
+    GameSetupData.create = function create(properties) {
+        return new GameSetupData(properties);
+    };
+
+    /**
+     * Encodes the specified GameSetupData message. Does not implicitly {@link GameSetupData.verify|verify} messages.
+     * @function encode
+     * @memberof GameSetupData
+     * @static
+     * @param {IGameSetupData} message GameSetupData message or plain object to encode
+     * @param {$protobuf.Writer} [writer] Writer to encode to
+     * @returns {$protobuf.Writer} Writer
+     */
+    GameSetupData.encode = function encode(message, writer) {
+        if (!writer)
+            writer = $Writer.create();
+        if (message.gameMode != null && Object.hasOwnProperty.call(message, "gameMode"))
+            writer.uint32(/* id 1, wireType 0 =*/8).int32(message.gameMode);
+        if (message.playerArrangementMode != null && Object.hasOwnProperty.call(message, "playerArrangementMode"))
+            writer.uint32(/* id 2, wireType 0 =*/16).int32(message.playerArrangementMode);
+        if (message.positions != null && message.positions.length)
+            for (var i = 0; i < message.positions.length; ++i)
+                $root.GameSetupData.Position.encode(message.positions[i], writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
+        return writer;
+    };
+
+    /**
+     * Encodes the specified GameSetupData message, length delimited. Does not implicitly {@link GameSetupData.verify|verify} messages.
+     * @function encodeDelimited
+     * @memberof GameSetupData
+     * @static
+     * @param {IGameSetupData} message GameSetupData message or plain object to encode
+     * @param {$protobuf.Writer} [writer] Writer to encode to
+     * @returns {$protobuf.Writer} Writer
+     */
+    GameSetupData.encodeDelimited = function encodeDelimited(message, writer) {
+        return this.encode(message, writer).ldelim();
+    };
+
+    /**
+     * Decodes a GameSetupData message from the specified reader or buffer.
+     * @function decode
+     * @memberof GameSetupData
+     * @static
+     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+     * @param {number} [length] Message length if known beforehand
+     * @returns {GameSetupData} GameSetupData
+     * @throws {Error} If the payload is not a reader or valid buffer
+     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+     */
+    GameSetupData.decode = function decode(reader, length) {
+        if (!(reader instanceof $Reader))
+            reader = $Reader.create(reader);
+        var end = length === undefined ? reader.len : reader.pos + length, message = new $root.GameSetupData();
+        while (reader.pos < end) {
+            var tag = reader.uint32();
+            switch (tag >>> 3) {
+            case 1:
+                message.gameMode = reader.int32();
+                break;
+            case 2:
+                message.playerArrangementMode = reader.int32();
+                break;
+            case 3:
+                if (!(message.positions && message.positions.length))
+                    message.positions = [];
+                message.positions.push($root.GameSetupData.Position.decode(reader, reader.uint32()));
+                break;
+            default:
+                reader.skipType(tag & 7);
+                break;
+            }
+        }
+        return message;
+    };
+
+    /**
+     * Decodes a GameSetupData message from the specified reader or buffer, length delimited.
+     * @function decodeDelimited
+     * @memberof GameSetupData
+     * @static
+     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+     * @returns {GameSetupData} GameSetupData
+     * @throws {Error} If the payload is not a reader or valid buffer
+     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+     */
+    GameSetupData.decodeDelimited = function decodeDelimited(reader) {
+        if (!(reader instanceof $Reader))
+            reader = new $Reader(reader);
+        return this.decode(reader, reader.uint32());
+    };
+
+    /**
+     * Verifies a GameSetupData message.
+     * @function verify
+     * @memberof GameSetupData
+     * @static
+     * @param {Object.<string,*>} message Plain object to verify
+     * @returns {string|null} `null` if valid, otherwise the reason why it is not
+     */
+    GameSetupData.verify = function verify(message) {
+        if (typeof message !== "object" || message === null)
+            return "object expected";
+        if (message.gameMode != null && message.hasOwnProperty("gameMode"))
+            switch (message.gameMode) {
+            default:
+                return "gameMode: enum value expected";
+            case 1:
+            case 2:
+            case 3:
+            case 4:
+            case 5:
+            case 6:
+            case 7:
+            case 8:
+            case 9:
+                break;
+            }
+        if (message.playerArrangementMode != null && message.hasOwnProperty("playerArrangementMode"))
+            switch (message.playerArrangementMode) {
+            default:
+                return "playerArrangementMode: enum value expected";
+            case 0:
+            case 1:
+            case 2:
+            case 3:
+                break;
+            }
+        if (message.positions != null && message.hasOwnProperty("positions")) {
+            if (!Array.isArray(message.positions))
+                return "positions: array expected";
+            for (var i = 0; i < message.positions.length; ++i) {
+                var error = $root.GameSetupData.Position.verify(message.positions[i]);
+                if (error)
+                    return "positions." + error;
+            }
+        }
+        return null;
+    };
+
+    /**
+     * Creates a GameSetupData message from a plain object. Also converts values to their respective internal types.
+     * @function fromObject
+     * @memberof GameSetupData
+     * @static
+     * @param {Object.<string,*>} object Plain object
+     * @returns {GameSetupData} GameSetupData
+     */
+    GameSetupData.fromObject = function fromObject(object) {
+        if (object instanceof $root.GameSetupData)
+            return object;
+        var message = new $root.GameSetupData();
+        switch (object.gameMode) {
+        case "SINGLES_1":
+        case 1:
+            message.gameMode = 1;
+            break;
+        case "SINGLES_2":
+        case 2:
+            message.gameMode = 2;
+            break;
+        case "SINGLES_3":
+        case 3:
+            message.gameMode = 3;
+            break;
+        case "SINGLES_4":
+        case 4:
+            message.gameMode = 4;
+            break;
+        case "SINGLES_5":
+        case 5:
+            message.gameMode = 5;
+            break;
+        case "SINGLES_6":
+        case 6:
+            message.gameMode = 6;
+            break;
+        case "TEAMS_2_VS_2":
+        case 7:
+            message.gameMode = 7;
+            break;
+        case "TEAMS_2_VS_2_VS_2":
+        case 8:
+            message.gameMode = 8;
+            break;
+        case "TEAMS_3_VS_3":
+        case 9:
+            message.gameMode = 9;
+            break;
+        }
+        switch (object.playerArrangementMode) {
+        case "VERSION_1":
+        case 0:
+            message.playerArrangementMode = 0;
+            break;
+        case "RANDOM_ORDER":
+        case 1:
+            message.playerArrangementMode = 1;
+            break;
+        case "EXACT_ORDER":
+        case 2:
+            message.playerArrangementMode = 2;
+            break;
+        case "SPECIFY_TEAMS":
+        case 3:
+            message.playerArrangementMode = 3;
+            break;
+        }
+        if (object.positions) {
+            if (!Array.isArray(object.positions))
+                throw TypeError(".GameSetupData.positions: array expected");
+            message.positions = [];
+            for (var i = 0; i < object.positions.length; ++i) {
+                if (typeof object.positions[i] !== "object")
+                    throw TypeError(".GameSetupData.positions: object expected");
+                message.positions[i] = $root.GameSetupData.Position.fromObject(object.positions[i]);
+            }
+        }
+        return message;
+    };
+
+    /**
+     * Creates a plain object from a GameSetupData message. Also converts values to other types if specified.
+     * @function toObject
+     * @memberof GameSetupData
+     * @static
+     * @param {GameSetupData} message GameSetupData
+     * @param {$protobuf.IConversionOptions} [options] Conversion options
+     * @returns {Object.<string,*>} Plain object
+     */
+    GameSetupData.toObject = function toObject(message, options) {
+        if (!options)
+            options = {};
+        var object = {};
+        if (options.arrays || options.defaults)
+            object.positions = [];
+        if (options.defaults) {
+            object.gameMode = options.enums === String ? "SINGLES_1" : 1;
+            object.playerArrangementMode = options.enums === String ? "VERSION_1" : 0;
+        }
+        if (message.gameMode != null && message.hasOwnProperty("gameMode"))
+            object.gameMode = options.enums === String ? $root.GameMode[message.gameMode] : message.gameMode;
+        if (message.playerArrangementMode != null && message.hasOwnProperty("playerArrangementMode"))
+            object.playerArrangementMode = options.enums === String ? $root.PlayerArrangementMode[message.playerArrangementMode] : message.playerArrangementMode;
+        if (message.positions && message.positions.length) {
+            object.positions = [];
+            for (var j = 0; j < message.positions.length; ++j)
+                object.positions[j] = $root.GameSetupData.Position.toObject(message.positions[j], options);
+        }
+        return object;
+    };
+
+    /**
+     * Converts this GameSetupData to JSON.
+     * @function toJSON
+     * @memberof GameSetupData
+     * @instance
+     * @returns {Object.<string,*>} JSON object
+     */
+    GameSetupData.prototype.toJSON = function toJSON() {
+        return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+    };
+
+    GameSetupData.Position = (function() {
+
+        /**
+         * Properties of a Position.
+         * @memberof GameSetupData
+         * @interface IPosition
+         * @property {number|null} [userId] Position userId
+         * @property {boolean|null} [isHost] Position isHost
+         * @property {boolean|null} [approvesOfGameSetup] Position approvesOfGameSetup
+         */
+
+        /**
+         * Constructs a new Position.
+         * @memberof GameSetupData
+         * @classdesc Represents a Position.
+         * @implements IPosition
+         * @constructor
+         * @param {GameSetupData.IPosition=} [properties] Properties to set
+         */
+        function Position(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * Position userId.
+         * @member {number} userId
+         * @memberof GameSetupData.Position
+         * @instance
+         */
+        Position.prototype.userId = 0;
+
+        /**
+         * Position isHost.
+         * @member {boolean} isHost
+         * @memberof GameSetupData.Position
+         * @instance
+         */
+        Position.prototype.isHost = false;
+
+        /**
+         * Position approvesOfGameSetup.
+         * @member {boolean} approvesOfGameSetup
+         * @memberof GameSetupData.Position
+         * @instance
+         */
+        Position.prototype.approvesOfGameSetup = false;
+
+        /**
+         * Creates a new Position instance using the specified properties.
+         * @function create
+         * @memberof GameSetupData.Position
+         * @static
+         * @param {GameSetupData.IPosition=} [properties] Properties to set
+         * @returns {GameSetupData.Position} Position instance
+         */
+        Position.create = function create(properties) {
+            return new Position(properties);
+        };
+
+        /**
+         * Encodes the specified Position message. Does not implicitly {@link GameSetupData.Position.verify|verify} messages.
+         * @function encode
+         * @memberof GameSetupData.Position
+         * @static
+         * @param {GameSetupData.IPosition} message Position message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        Position.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.userId != null && Object.hasOwnProperty.call(message, "userId"))
+                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.userId);
+            if (message.isHost != null && Object.hasOwnProperty.call(message, "isHost"))
+                writer.uint32(/* id 2, wireType 0 =*/16).bool(message.isHost);
+            if (message.approvesOfGameSetup != null && Object.hasOwnProperty.call(message, "approvesOfGameSetup"))
+                writer.uint32(/* id 3, wireType 0 =*/24).bool(message.approvesOfGameSetup);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified Position message, length delimited. Does not implicitly {@link GameSetupData.Position.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof GameSetupData.Position
+         * @static
+         * @param {GameSetupData.IPosition} message Position message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        Position.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a Position message from the specified reader or buffer.
+         * @function decode
+         * @memberof GameSetupData.Position
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {GameSetupData.Position} Position
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        Position.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.GameSetupData.Position();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.userId = reader.int32();
+                    break;
+                case 2:
+                    message.isHost = reader.bool();
+                    break;
+                case 3:
+                    message.approvesOfGameSetup = reader.bool();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a Position message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof GameSetupData.Position
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {GameSetupData.Position} Position
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        Position.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a Position message.
+         * @function verify
+         * @memberof GameSetupData.Position
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        Position.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.userId != null && message.hasOwnProperty("userId"))
+                if (!$util.isInteger(message.userId))
+                    return "userId: integer expected";
+            if (message.isHost != null && message.hasOwnProperty("isHost"))
+                if (typeof message.isHost !== "boolean")
+                    return "isHost: boolean expected";
+            if (message.approvesOfGameSetup != null && message.hasOwnProperty("approvesOfGameSetup"))
+                if (typeof message.approvesOfGameSetup !== "boolean")
+                    return "approvesOfGameSetup: boolean expected";
+            return null;
+        };
+
+        /**
+         * Creates a Position message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof GameSetupData.Position
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {GameSetupData.Position} Position
+         */
+        Position.fromObject = function fromObject(object) {
+            if (object instanceof $root.GameSetupData.Position)
+                return object;
+            var message = new $root.GameSetupData.Position();
+            if (object.userId != null)
+                message.userId = object.userId | 0;
+            if (object.isHost != null)
+                message.isHost = Boolean(object.isHost);
+            if (object.approvesOfGameSetup != null)
+                message.approvesOfGameSetup = Boolean(object.approvesOfGameSetup);
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a Position message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof GameSetupData.Position
+         * @static
+         * @param {GameSetupData.Position} message Position
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        Position.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults) {
+                object.userId = 0;
+                object.isHost = false;
+                object.approvesOfGameSetup = false;
+            }
+            if (message.userId != null && message.hasOwnProperty("userId"))
+                object.userId = message.userId;
+            if (message.isHost != null && message.hasOwnProperty("isHost"))
+                object.isHost = message.isHost;
+            if (message.approvesOfGameSetup != null && message.hasOwnProperty("approvesOfGameSetup"))
+                object.approvesOfGameSetup = message.approvesOfGameSetup;
+            return object;
+        };
+
+        /**
+         * Converts this Position to JSON.
+         * @function toJSON
+         * @memberof GameSetupData.Position
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        Position.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return Position;
+    })();
+
+    return GameSetupData;
+})();
+
 $root.GameSetupAction = (function() {
 
     /**

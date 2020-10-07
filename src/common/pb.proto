@@ -51,6 +51,18 @@ enum PlayerArrangementMode {
   SPECIFY_TEAMS = 3;
 }
 
+message GameSetupData {
+  message Position {
+    int32 user_id = 1;
+    bool is_host = 2;
+    bool approves_of_game_setup = 3;
+  }
+
+  GameMode game_mode = 1;
+  PlayerArrangementMode player_arrangement_mode = 2;
+  repeated Position positions = 3;
+}
+
 message GameSetupAction {
   message JoinGame {}
 

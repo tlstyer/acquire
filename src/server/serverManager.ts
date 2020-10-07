@@ -658,7 +658,7 @@ export class ServerManager {
       const message: any[] = [gameData.gameSetup !== null ? 0 : 1, gameData.id, gameData.displayNumber];
 
       if (gameData.gameSetup !== null) {
-        message.push(...gameData.gameSetup.toJSON());
+        message.push(gameData.gameSetup.toGameSetupData());
       } else {
         const game = gameData.game!;
         const playerID = game.userIDs.indexOf(client.user.id);

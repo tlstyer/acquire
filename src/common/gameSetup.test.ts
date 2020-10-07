@@ -24,7 +24,7 @@ function expectEqualGameSetups(gameSetup1: GameSetup, gameSetup2: GameSetup) {
   gameSetup1.changeFunctions.clear();
   gameSetup2.changeFunctions.clear();
   expect(gameSetup2).toEqual(gameSetup1);
-  expect(gameSetup2.toJSON()).toEqual(gameSetup1.toJSON());
+  expect(gameSetup2.toGameSetupData()).toEqual(gameSetup1.toGameSetupData());
 }
 
 test('can construct', () => {
@@ -739,13 +739,13 @@ describe('getFinalUserIDsAndUsernames', () => {
   });
 });
 
-describe('toJSON and fromJSON', () => {
+describe('toGameSetupData and fromGameSetupData', () => {
   test('just the host', () => {
     const gameSetup = new GameSetup(GameMode.TEAMS_2_VS_2, PlayerArrangementMode.SPECIFY_TEAMS, 1, getUsernameForUserID);
     gameSetup.swapPositions(0, 2);
     gameSetup.clearHistory();
 
-    const gameSetup2 = GameSetup.fromJSON(gameSetup.toJSON(), getUsernameForUserID);
+    const gameSetup2 = GameSetup.fromGameSetupData(gameSetup.toGameSetupData(), getUsernameForUserID);
     gameSetup2.clearHistory();
 
     expectEqualGameSetups(gameSetup, gameSetup2);
@@ -765,7 +765,7 @@ describe('toJSON and fromJSON', () => {
     gameSetup.clearHistory();
     expect(gameSetup.approvedByEverybody).toBe(false);
 
-    const gameSetup2 = GameSetup.fromJSON(gameSetup.toJSON(), getUsernameForUserID);
+    const gameSetup2 = GameSetup.fromGameSetupData(gameSetup.toGameSetupData(), getUsernameForUserID);
     gameSetup2.clearHistory();
 
     expectEqualGameSetups(gameSetup, gameSetup2);
@@ -783,7 +783,7 @@ describe('toJSON and fromJSON', () => {
     gameSetup.clearHistory();
     expect(gameSetup.approvedByEverybody).toBe(true);
 
-    const gameSetup2 = GameSetup.fromJSON(gameSetup.toJSON(), getUsernameForUserID);
+    const gameSetup2 = GameSetup.fromGameSetupData(gameSetup.toGameSetupData(), getUsernameForUserID);
     gameSetup2.clearHistory();
 
     expectEqualGameSetups(gameSetup, gameSetup2);
