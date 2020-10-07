@@ -39,10 +39,10 @@ action: 2 PurchaseShares A,A,A 0
   revealed tile bag tiles: 12F:2
   player ID with playable tile: 0
   messages:
-    0: [{"purchaseShares":{"chains":[2,2,2],"endGame":false}},null,[],[-1],0]
-    1: [{"purchaseShares":{"chains":[2,2,2],"endGame":false}},null,[],[-1],0]
+    0: [{"purchaseShares":{"chains":[2,2,2],"endGame":false}},null,[],[108],0]
+    1: [{"purchaseShares":{"chains":[2,2,2],"endGame":false}},null,[],[108],0]
     2: [{"purchaseShares":{"chains":[2,2,2],"endGame":false}},null,[],[104],0]
-    w: [{"purchaseShares":{"chains":[2,2,2],"endGame":false}},null,[],[-1],0]
+    w: [{"purchaseShares":{"chains":[2,2,2],"endGame":false}},null,[],[108],0]
   history messages:
     2 PurchasedShares 3A
     2 DrewTile 12F

@@ -239,9 +239,9 @@ action: 1 PlayTile 9I
   revealed tile bag tiles: 11I:1
   player ID with playable tile: 1
   messages:
-    0: [{"playTile":{"tile":80}},null,[[80,1]],[-1],1]
+    0: [{"playTile":{"tile":80}},null,[[80,1]],[108],1]
     1: [{"playTile":{"tile":80}},null,[],[98],1]
-    w: [{"playTile":{"tile":80}},null,[[80,1]],[-1],1]
+    w: [{"playTile":{"tile":80}},null,[[80,1]],[108],1]
   history messages:
     1 PlayedTile 9I
     1 CouldNotAffordAnyShares
@@ -269,9 +269,9 @@ action: 1 PlayTile 3F
   revealed tile rack tiles: 3F:1
   revealed tile bag tiles: 12A:1
   messages:
-    0: [{"playTile":{"tile":23}},null,[[23,1]],[-1]]
+    0: [{"playTile":{"tile":23}},null,[[23,1]],[108]]
     1: [{"playTile":{"tile":23}},null,[],[99]]
-    w: [{"playTile":{"tile":23}},null,[[23,1]],[-1]]
+    w: [{"playTile":{"tile":23}},null,[[23,1]],[108]]
   history messages:
     1 PlayedTile 3F
     1 CouldNotAffordAnyShares
@@ -294,7 +294,7 @@ Game JSON:
   [3,4],
   ["Erin","Frank"],
   4,
-  [90,78,-1,-1,-1,-1,-1,-1,62,55,41,8,105,35,-1,59,-1,11,-1,101,-1,102,-1,10,-1,84,-1,83,-1,79,-1,70,-1,88,-1,23,-1,91,-1,85,-1,87,-1,67,-1,80,-1,98,99],
+  [90,78,108,108,108,108,108,108,62,55,41,8,105,35,108,59,108,11,108,101,108,102,108,10,108,84,108,83,108,79,108,70,108,88,108,23,108,91,108,85,108,87,108,67,108,80,108,98,99],
   [
     [{"startGame":{}}],
     [{"playTile":{"tile":9}}],

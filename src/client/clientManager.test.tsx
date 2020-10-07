@@ -1,5 +1,5 @@
 import { List } from 'immutable';
-import { GameActionEnum, GameSetupChangeEnum, MessageToClientEnum } from '../common/enums';
+import { GameActionEnum, GameSetupChangeEnum, MessageToClientEnum, TileEnum } from '../common/enums';
 import { ErrorCode, GameMode, GameSetupData, MessageToServer, PlayerArrangementMode } from '../common/pb';
 import { Client, ClientManager, ClientManagerPage, GameData, User } from './clientManager';
 
@@ -1189,7 +1189,30 @@ describe('MessageToClient.GameStarted and MessageToClient.GameActionDone', () =>
     ]);
     testWebSocket!.triggerMessage([
       [MessageToClientEnum.GameStarted, 1, [2, 1]],
-      [MessageToClientEnum.GameActionDone, 1, [], 123456789, [], [89, 19, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], 0],
+      [
+        MessageToClientEnum.GameActionDone,
+        1,
+        [],
+        123456789,
+        [],
+        [
+          89,
+          19,
+          TileEnum.Unknown,
+          TileEnum.Unknown,
+          TileEnum.Unknown,
+          TileEnum.Unknown,
+          TileEnum.Unknown,
+          TileEnum.Unknown,
+          TileEnum.Unknown,
+          TileEnum.Unknown,
+          TileEnum.Unknown,
+          TileEnum.Unknown,
+          TileEnum.Unknown,
+          TileEnum.Unknown,
+        ],
+        0,
+      ],
     ]);
 
     expect(clientManager.page).toBe(ClientManagerPage.Lobby);

@@ -52,9 +52,9 @@ action: 1 PurchaseShares L,L 1
   revealed tile bag tiles: 3I:1
   player ID with playable tile: 0
   messages:
-    0: [{"purchaseShares":{"chains":[0,0],"endGame":true}},null,[],[-1],0]
+    0: [{"purchaseShares":{"chains":[0,0],"endGame":true}},null,[],[108],0]
     1: [{"purchaseShares":{"chains":[0,0],"endGame":true}},null,[],[26],0]
-    w: [{"purchaseShares":{"chains":[0,0],"endGame":true}},null,[],[-1],0]
+    w: [{"purchaseShares":{"chains":[0,0],"endGame":true}},null,[],[108],0]
   history messages:
     1 PurchasedShares 2L
     1 DrewTile 3I

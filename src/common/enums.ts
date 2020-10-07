@@ -68,5 +68,5 @@ export enum ScoreBoardIndexEnum {
 }
 
 export enum TileEnum {
-  Unknown = -1,
+  Unknown = 108,
 }

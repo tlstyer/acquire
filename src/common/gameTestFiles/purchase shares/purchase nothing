@@ -52,9 +52,9 @@ action: 1 PurchaseShares x 0
   revealed tile bag tiles: 3I:1
   player ID with playable tile: 0
   messages:
-    0: [{"purchaseShares":{"endGame":false}},null,[],[-1],0]
+    0: [{"purchaseShares":{"endGame":false}},null,[],[108],0]
     1: [{"purchaseShares":{"endGame":false}},null,[],[26],0]
-    w: [{"purchaseShares":{"endGame":false}},null,[],[-1],0]
+    w: [{"purchaseShares":{"endGame":false}},null,[],[108],0]
   history messages:
     1 PurchasedShares x
     1 DrewTile 3I

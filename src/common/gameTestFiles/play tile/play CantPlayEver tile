@@ -200,8 +200,8 @@ action: 0 PurchaseShares W,C,C 0
   player ID with playable tile: 1
   messages:
     0: [{"purchaseShares":{"chains":[4,5,5],"endGame":false}},null,[],[76],1]
-    1: [{"purchaseShares":{"chains":[4,5,5],"endGame":false}},null,[],[-1],1]
-    w: [{"purchaseShares":{"chains":[4,5,5],"endGame":false}},null,[],[-1],1]
+    1: [{"purchaseShares":{"chains":[4,5,5],"endGame":false}},null,[],[108],1]
+    w: [{"purchaseShares":{"chains":[4,5,5],"endGame":false}},null,[],[108],1]
   history messages:
     0 PurchasedShares 1W,2C
     0 DrewTile 9E
