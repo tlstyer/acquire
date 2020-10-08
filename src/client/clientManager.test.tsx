@@ -1,6 +1,6 @@
 import { List } from 'immutable';
 import { GameActionEnum, GameSetupChangeEnum, MessageToClientEnum, TileEnum } from '../common/enums';
-import { ErrorCode, GameMode, GameSetupData, MessageToServer, PlayerArrangementMode } from '../common/pb';
+import { ErrorCode, GameMode, PB, PlayerArrangementMode } from '../common/pb';
 import { Client, ClientManager, ClientManagerPage, GameData, User } from './clientManager';
 
 class TestWebSocket {
@@ -228,7 +228,7 @@ function expectMessageToServerDatasToEqual(expectedObjects: any[]) {
   expect(testWebSocket!.sentMessages.length).toBe(expectedObjects.length);
 
   for (let i = 0; i < expectedObjects.length; i++) {
-    expect(MessageToServer.toObject(MessageToServer.decode(testWebSocket!.sentMessages[i]))).toEqual(expectedObjects[i]);
+    expect(PB.MessageToServer.toObject(PB.MessageToServer.decode(testWebSocket!.sentMessages[i]))).toEqual(expectedObjects[i]);
   }
 }
 
@@ -532,8 +532,8 @@ describe('MessageToClient.Greetings', () => {
     expect(clientManager.userIDToUser.get(5)!.numGames).toBe(1);
     expect(clientManager.userIDToUser.get(9)!.numGames).toBe(1);
     expect(clientManager.myClient).toBe(clientManager.clientIDToClient.get(7));
-    expect(GameSetupData.toObject(clientManager.gameIDToGameData.get(1)!.gameSetup!.toGameSetupData())).toEqual(gameSetupData1);
-    expect(GameSetupData.toObject(clientManager.gameIDToGameData.get(2)!.gameSetup!.toGameSetupData())).toEqual(gameSetupData2);
+    expect(PB.GameSetupData.toObject(clientManager.gameIDToGameData.get(1)!.gameSetup!.toGameSetupData())).toEqual(gameSetupData1);
+    expect(PB.GameSetupData.toObject(clientManager.gameIDToGameData.get(2)!.gameSetup!.toGameSetupData())).toEqual(gameSetupData2);
     expectClientAndUserAndGameData(
       clientManager,
       [

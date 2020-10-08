@@ -51,123 +51,125 @@ enum PlayerArrangementMode {
   SPECIFY_TEAMS = 3;
 }
 
-message GameSetupData {
-  message Position {
-    int32 user_id = 1;
-    bool is_host = 2;
-    bool approves_of_game_setup = 3;
-  }
-
-  GameMode game_mode = 1;
-  PlayerArrangementMode player_arrangement_mode = 2;
-  repeated Position positions = 3;
-}
-
-message GameStateData {
-  message RevealedTileRackTile {
-    int32 tile = 1;
-    int32 player_id_belongs_to = 2;
-  }
-
-  GameAction game_action = 1;
-  int32 timestamp = 2;
-  repeated RevealedTileRackTile revealed_tile_rack_tiles = 3;
-  repeated int32 revealed_tile_bag_tiles = 4;
-  // 1 more than actual player_id
-  int32 player_id_with_playable_tile_plus_one = 5;
-}
-
-message GameSetupAction {
-  message JoinGame {}
-
-  message UnjoinGame {}
-
-  message ApproveOfGameSetup {}
-
-  message ChangeGameMode { GameMode game_mode = 1; }
-
-  message ChangePlayerArrangementMode {
-    PlayerArrangementMode player_arrangement_mode = 1;
-  }
-
-  message SwapPositions {
-    int32 position1 = 1;
-    int32 position2 = 2;
-  }
-
-  message KickUser { int32 user_id = 1; }
-
-  JoinGame join_game = 1;
-  UnjoinGame unjoin_game = 2;
-  ApproveOfGameSetup approve_of_game_setup = 3;
-  ChangeGameMode change_game_mode = 4;
-  ChangePlayerArrangementMode change_player_arrangement_mode = 5;
-  SwapPositions swap_positions = 6;
-  KickUser kick_user = 7;
-}
-
-message GameAction {
-  message StartGame {}
-
-  message PlayTile { int32 tile = 1; }
-
-  message SelectNewChain { GameBoardType chain = 1; }
-
-  message SelectMergerSurvivor { GameBoardType chain = 1; }
-
-  message SelectChainToDisposeOfNext { GameBoardType chain = 1; }
-
-  message DisposeOfShares {
-    int32 trade_amount = 1;
-    int32 sell_amount = 2;
-  }
-
-  message PurchaseShares {
-    repeated GameBoardType chains = 1;
-    bool end_game = 2;
-  }
-
-  message GameOver {}
-
-  StartGame start_game = 1;
-  PlayTile play_tile = 2;
-  SelectNewChain select_new_chain = 3;
-  SelectMergerSurvivor select_merger_survivor = 4;
-  SelectChainToDisposeOfNext select_chain_to_dispose_of_next = 5;
-  DisposeOfShares dispose_of_shares = 6;
-  PurchaseShares purchase_shares = 7;
-  GameOver game_over = 8;
-}
-
-message MessageToServer {
-  message Login {
-    message GameData {
-      int32 game_id = 1;
-      int32 game_state_history_size = 2;
+message PB {
+  message GameSetupData {
+    message Position {
+      int32 user_id = 1;
+      bool is_host = 2;
+      bool approves_of_game_setup = 3;
     }
 
-    int32 version = 1;
-    string username = 2;
-    string password = 3;
-    repeated GameData game_datas = 4;
-    // int32 game_id_to_join = 5;
+    GameMode game_mode = 1;
+    PlayerArrangementMode player_arrangement_mode = 2;
+    repeated Position positions = 3;
   }
 
-  message CreateGame { GameMode game_mode = 1; }
+  message GameStateData {
+    message RevealedTileRackTile {
+      int32 tile = 1;
+      int32 player_id_belongs_to = 2;
+    }
 
-  message EnterGame { int32 game_display_number = 1; }
-
-  message ExitGame {}
-
-  message DoGameAction {
-    int32 game_state_history_size = 1;
-    GameAction game_action = 2;
+    GameAction game_action = 1;
+    int32 timestamp = 2;
+    repeated RevealedTileRackTile revealed_tile_rack_tiles = 3;
+    repeated int32 revealed_tile_bag_tiles = 4;
+    // 1 more than actual player_id
+    int32 player_id_with_playable_tile_plus_one = 5;
   }
 
-  Login login = 1;
-  CreateGame create_game = 2;
-  EnterGame enter_game = 3;
-  ExitGame exit_game = 4;
-  GameSetupAction do_game_setup_action = 5;
-  DoGameAction do_game_action = 6;
+  message GameSetupAction {
+    message JoinGame {}
+
+    message UnjoinGame {}
+
+    message ApproveOfGameSetup {}
+
+    message ChangeGameMode { GameMode game_mode = 1; }
+
+    message ChangePlayerArrangementMode {
+      PlayerArrangementMode player_arrangement_mode = 1;
+    }
+
+    message SwapPositions {
+      int32 position1 = 1;
+      int32 position2 = 2;
+    }
+
+    message KickUser { int32 user_id = 1; }
+
+    JoinGame join_game = 1;
+    UnjoinGame unjoin_game = 2;
+    ApproveOfGameSetup approve_of_game_setup = 3;
+    ChangeGameMode change_game_mode = 4;
+    ChangePlayerArrangementMode change_player_arrangement_mode = 5;
+    SwapPositions swap_positions = 6;
+    KickUser kick_user = 7;
+  }
+
+  message GameAction {
+    message StartGame {}
+
+    message PlayTile { int32 tile = 1; }
+
+    message SelectNewChain { GameBoardType chain = 1; }
+
+    message SelectMergerSurvivor { GameBoardType chain = 1; }
+
+    message SelectChainToDisposeOfNext { GameBoardType chain = 1; }
+
+    message DisposeOfShares {
+      int32 trade_amount = 1;
+      int32 sell_amount = 2;
+    }
+
+    message PurchaseShares {
+      repeated GameBoardType chains = 1;
+      bool end_game = 2;
+    }
+
+    message GameOver {}
+
+    StartGame start_game = 1;
+    PlayTile play_tile = 2;
+    SelectNewChain select_new_chain = 3;
+    SelectMergerSurvivor select_merger_survivor = 4;
+    SelectChainToDisposeOfNext select_chain_to_dispose_of_next = 5;
+    DisposeOfShares dispose_of_shares = 6;
+    PurchaseShares purchase_shares = 7;
+    GameOver game_over = 8;
+  }
+
+  message MessageToServer {
+    message Login {
+      message GameData {
+        int32 game_id = 1;
+        int32 game_state_history_size = 2;
+      }
+
+      int32 version = 1;
+      string username = 2;
+      string password = 3;
+      repeated GameData game_datas = 4;
+      // int32 game_id_to_join = 5;
+    }
+
+    message CreateGame { GameMode game_mode = 1; }
+
+    message EnterGame { int32 game_display_number = 1; }
+
+    message ExitGame {}
+
+    message DoGameAction {
+      int32 game_state_history_size = 1;
+      GameAction game_action = 2;
+    }
+
+    Login login = 1;
+    CreateGame create_game = 2;
+    EnterGame enter_game = 3;
+    ExitGame exit_game = 4;
+    GameSetupAction do_game_setup_action = 5;
+    DoGameAction do_game_action = 6;
+  }
 }

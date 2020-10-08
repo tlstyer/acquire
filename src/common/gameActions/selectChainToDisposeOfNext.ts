@@ -1,7 +1,7 @@
 import { GameActionEnum, GameHistoryMessageEnum } from '../enums';
 import { UserInputError } from '../error';
 import { Game } from '../game';
-import { GameAction, GameBoardType } from '../pb';
+import { GameBoardType, PB } from '../pb';
 import { ActionBase } from './base';
 import { ActionDisposeOfShares } from './disposeOfShares';
 
@@ -18,7 +18,7 @@ export class ActionSelectChainToDisposeOfNext extends ActionBase {
     }
   }
 
-  execute(gameAction: GameAction) {
+  execute(gameAction: PB.IGameAction) {
     if (!gameAction.selectChainToDisposeOfNext) {
       throw new UserInputError('selectChainToDisposeOfNext game action not provided');
     }

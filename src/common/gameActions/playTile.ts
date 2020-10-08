@@ -2,7 +2,7 @@ import { GameActionEnum, GameHistoryMessageEnum } from '../enums';
 import { UserInputError } from '../error';
 import { Game } from '../game';
 import { neighboringTilesLookup } from '../helpers';
-import { GameAction, GameBoardType } from '../pb';
+import { GameBoardType, PB } from '../pb';
 import { ActionBase } from './base';
 import { ActionSelectMergerSurvivor } from './selectMergerSurvivor';
 import { ActionSelectNewChain } from './selectNewChain';
@@ -43,7 +43,7 @@ export class ActionPlayTile extends ActionBase {
     }
   }
 
-  execute(gameAction: GameAction) {
+  execute(gameAction: PB.IGameAction) {
     if (!gameAction.playTile) {
       throw new UserInputError('playTile game action not provided');
     }

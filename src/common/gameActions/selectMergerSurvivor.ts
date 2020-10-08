@@ -2,7 +2,7 @@ import { GameActionEnum, GameHistoryMessageEnum, ScoreBoardIndexEnum } from '../
 import { UserInputError } from '../error';
 import { Game } from '../game';
 import { calculateBonuses } from '../helpers';
-import { GameAction, GameBoardType } from '../pb';
+import { GameBoardType, PB } from '../pb';
 import { ActionBase } from './base';
 import { ActionSelectChainToDisposeOfNext } from './selectChainToDisposeOfNext';
 
@@ -51,7 +51,7 @@ export class ActionSelectMergerSurvivor extends ActionBase {
     }
   }
 
-  execute(gameAction: GameAction) {
+  execute(gameAction: PB.IGameAction) {
     if (!gameAction.selectMergerSurvivor) {
       throw new UserInputError('selectMergerSurvivor game action not provided');
     }

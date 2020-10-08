@@ -3,7 +3,7 @@ import { MessageToClientEnum } from '../common/enums';
 import { Game } from '../common/game';
 import { GameSetup } from '../common/gameSetup';
 import { gameModeToNumPlayers, getNewTileBag, isASCII } from '../common/helpers';
-import { ErrorCode, GameAction, GameSetupAction, GameStateData, MessageToServer, PlayerArrangementMode } from '../common/pb';
+import { ErrorCode, PB, PlayerArrangementMode } from '../common/pb';
 import { LogMessage } from './enums';
 import { ReuseIDManager } from './reuseIDManager';
 import { UserDataProvider } from './userDataProvider';
@@ -48,10 +48,10 @@ export class ServerManager {
       this.addConnection(webSocket);
 
       webSocket.on('message', (rawMessage) => {
-        let message: MessageToServer;
+        let message: PB.MessageToServer;
         try {
           // @ts-ignore
-          message = MessageToServer.decode(rawMessage);
+          message = PB.MessageToServer.decode(rawMessage);
         } catch (error) {
           this.logMessage(LogMessage.InvalidMessage, webSocketID, rawMessage);
 
@@ -65,7 +65,7 @@ export class ServerManager {
         } else {
           let sanitizedMessage = message;
           if (message.login && message.login.password !== '') {
-            sanitizedMessage = MessageToServer.create(MessageToServer.toObject(message));
+            sanitizedMessage = PB.MessageToServer.create(PB.MessageToServer.toObject(message));
             sanitizedMessage.login!.password = '***';
           }
 
@@ -82,7 +82,7 @@ export class ServerManager {
           } else if (message.exitGame) {
             this.onMessageExitGame(client);
           } else if (message.doGameSetupAction) {
-            const gameSetupAction: GameSetupAction = message.doGameSetupAction;
+            const gameSetupAction = message.doGameSetupAction;
 
             if (gameSetupAction.joinGame) {
               this.onMessageJoinGame(client);
@@ -184,7 +184,7 @@ export class ServerManager {
     webSocket.close();
   }
 
-  async processFirstMessage(webSocket: WebSocket, message: MessageToServer.ILogin) {
+  async processFirstMessage(webSocket: WebSocket, message: PB.MessageToServer.ILogin) {
     const version = message.version;
     if (version !== 0) {
       this.kickWithError(webSocket, ErrorCode.NOT_USING_LATEST_VERSION);
@@ -287,7 +287,7 @@ export class ServerManager {
     this.logMessage(LogMessage.LoggedIn, this.webSocketToID.get(webSocket), client.id, userID, username);
   }
 
-  onMessageCreateGame(client: Client, message: MessageToServer.ICreateGame) {
+  onMessageCreateGame(client: Client, message: PB.MessageToServer.ICreateGame) {
     const gameMode = message.gameMode;
     if (gameMode === null || gameMode === undefined || !gameModeToNumPlayers.has(gameMode)) {
       this.kickWithError(client.webSocket, ErrorCode.INVALID_MESSAGE);
@@ -316,7 +316,7 @@ export class ServerManager {
     });
   }
 
-  onMessageEnterGame(client: Client, message: MessageToServer.IEnterGame) {
+  onMessageEnterGame(client: Client, message: PB.MessageToServer.IEnterGame) {
     const gameDisplayNumber = message.gameDisplayNumber;
     if (gameDisplayNumber === null || gameDisplayNumber === undefined) {
       this.kickWithError(client.webSocket, ErrorCode.INVALID_MESSAGE);
@@ -424,14 +424,14 @@ export class ServerManager {
         aClient.queueMessage(message2);
       });
 
-      game.doGameAction(GameAction.fromObject({ startGame: {} }), Date.now());
+      game.doGameAction(PB.GameAction.fromObject({ startGame: {} }), Date.now());
       this.sendLastGameGameStateMessage(gameData);
     } else if (gameSetup.history.length > 0) {
       this.sendGameSetupChanges(gameData);
     }
   }
 
-  onMessageChangeGameMode(client: Client, message: GameSetupAction.IChangeGameMode) {
+  onMessageChangeGameMode(client: Client, message: PB.GameSetupAction.IChangeGameMode) {
     const gameData = client.gameData;
     if (gameData === null) {
       return;
@@ -460,7 +460,7 @@ export class ServerManager {
     }
   }
 
-  onMessageChangePlayerArrangementMode(client: Client, message: GameSetupAction.IChangePlayerArrangementMode) {
+  onMessageChangePlayerArrangementMode(client: Client, message: PB.GameSetupAction.IChangePlayerArrangementMode) {
     const gameData = client.gameData;
     if (gameData === null) {
       return;
@@ -489,7 +489,7 @@ export class ServerManager {
     }
   }
 
-  onMessageSwapPositions(client: Client, message: GameSetupAction.ISwapPositions) {
+  onMessageSwapPositions(client: Client, message: PB.GameSetupAction.ISwapPositions) {
     const gameData = client.gameData;
     if (gameData === null) {
       return;
@@ -519,7 +519,7 @@ export class ServerManager {
     }
   }
 
-  onMessageKickUser(client: Client, message: GameSetupAction.IKickUser) {
+  onMessageKickUser(client: Client, message: PB.GameSetupAction.IKickUser) {
     const gameData = client.gameData;
     if (gameData === null) {
       return;
@@ -552,7 +552,7 @@ export class ServerManager {
     }
   }
 
-  onMessageDoGameAction(client: Client, message: MessageToServer.IDoGameAction) {
+  onMessageDoGameAction(client: Client, message: PB.MessageToServer.IDoGameAction) {
     const gameData = client.gameData;
     if (gameData === null) {
       return;
@@ -633,7 +633,7 @@ export class ServerManager {
     });
   }
 
-  getGreetingsMessage(gameDatas: MessageToServer.Login.IGameData[], client: Client) {
+  getGreetingsMessage(gameDatas: PB.MessageToServer.Login.IGameData[], client: Client) {
     const users: any[] = [];
     this.userIDToUser.forEach((user) => {
       const clients: any[] = [];
@@ -663,7 +663,7 @@ export class ServerManager {
         const game = gameData.game!;
         const playerID = game.userIDs.indexOf(client.user.id);
 
-        const gameStateDatas: GameStateData[] = [];
+        const gameStateDatas: PB.GameStateData[] = [];
         game.gameStateHistory.forEach((gameState) => {
           if (playerID >= 0) {
             gameStateDatas.push(gameState.playerGameStateDatas[playerID]);

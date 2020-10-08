@@ -1,7 +1,7 @@
 import { GameActionEnum, GameHistoryMessageEnum, ScoreBoardIndexEnum } from '../enums';
 import { UserInputError } from '../error';
 import { Game } from '../game';
-import { GameAction, GameBoardType } from '../pb';
+import { GameBoardType, PB } from '../pb';
 import { ActionBase } from './base';
 import { ActionGameOver } from './gameOver';
 import { ActionPlayTile } from './playTile';
@@ -65,7 +65,7 @@ export class ActionPurchaseShares extends ActionBase {
     }
   }
 
-  execute(gameAction: GameAction) {
+  execute(gameAction: PB.IGameAction) {
     if (!gameAction.purchaseShares) {
       throw new UserInputError('purchaseShares game action not provided');
     }

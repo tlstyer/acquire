@@ -1,7 +1,7 @@
 import { GameActionEnum, GameHistoryMessageEnum, ScoreBoardIndexEnum } from '../enums';
 import { UserInputError } from '../error';
 import { Game } from '../game';
-import { GameAction, GameBoardType } from '../pb';
+import { GameBoardType, PB } from '../pb';
 import { ActionBase } from './base';
 
 export class ActionDisposeOfShares extends ActionBase {
@@ -20,7 +20,7 @@ export class ActionDisposeOfShares extends ActionBase {
     return null;
   }
 
-  execute(gameAction: GameAction) {
+  execute(gameAction: PB.IGameAction) {
     if (!gameAction.disposeOfShares) {
       throw new UserInputError('disposeOfShares game action not provided');
     }

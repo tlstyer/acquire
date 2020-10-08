@@ -1,7 +1,7 @@
 import * as WebSocket from 'ws';
 import { GameSetupChangeEnum, MessageToClientEnum, TileEnum } from '../common/enums';
 import { encodeMessageToServer } from '../common/helpers';
-import { ErrorCode, GameMode, GameSetupData, PlayerArrangementMode } from '../common/pb';
+import { ErrorCode, GameMode, PB, PlayerArrangementMode } from '../common/pb';
 import { ConnectionState, GameData, ServerManager, User } from './serverManager';
 import { TestUserDataProvider } from './userDataProvider';
 
@@ -584,7 +584,7 @@ describe('when sending first message', () => {
                 0,
                 10,
                 1,
-                GameSetupData.fromObject({
+                PB.GameSetupData.fromObject({
                   gameMode: GameMode.SINGLES_4,
                   playerArrangementMode: PlayerArrangementMode.RANDOM_ORDER,
                   positions: [{ userId: 1, isHost: true }, {}, {}, {}],
@@ -616,7 +616,7 @@ describe('when sending first message', () => {
                 0,
                 10,
                 1,
-                GameSetupData.fromObject({
+                PB.GameSetupData.fromObject({
                   gameMode: GameMode.SINGLES_4,
                   playerArrangementMode: PlayerArrangementMode.RANDOM_ORDER,
                   positions: [{ userId: 1, isHost: true }, {}, {}, {}],
@@ -681,7 +681,7 @@ describe('when sending first message', () => {
                 0,
                 10,
                 1,
-                GameSetupData.fromObject({
+                PB.GameSetupData.fromObject({
                   gameMode: GameMode.SINGLES_4,
                   playerArrangementMode: PlayerArrangementMode.RANDOM_ORDER,
                   positions: [{ userId: 1, isHost: true }, {}, {}, {}],

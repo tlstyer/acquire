@@ -17,7 +17,7 @@ import { GameActionEnum, GameHistoryMessageEnum, ScoreBoardIndexEnum, TileEnum }
 import { ActionBase } from './gameActions/base';
 import { ActionStartGame } from './gameActions/startGame';
 import { calculateBonuses, neighboringTilesLookup } from './helpers';
-import { GameAction, GameBoardType, GameMode, GameStateData, PlayerArrangementMode } from './pb';
+import { GameBoardType, GameMode, PB, PlayerArrangementMode } from './pb';
 
 type GameJSON = [GameMode, PlayerArrangementMode, number | null, number, number[], string[], number, number[], ([any] | [any, number])[]];
 
@@ -74,8 +74,8 @@ export class Game {
     this.scoreBoardAtLastNetWorthsUpdate = this.scoreBoard;
   }
 
-  processGameStateData(gameStateData: GameStateData) {
-    const gameAction = gameStateData.gameAction;
+  processGameStateData(gameStateData: PB.GameStateData) {
+    const gameAction = gameStateData.gameAction!;
 
     let timestamp: number | null = null;
     if (gameStateData.timestamp !== null && gameStateData.timestamp !== undefined && gameStateData.timestamp !== 0) {
@@ -103,7 +103,7 @@ export class Game {
     this.doGameAction(gameAction, timestamp);
   }
 
-  processRevealedTileRackTiles(entries: GameStateData.IRevealedTileRackTile[]) {
+  processRevealedTileRackTiles(entries: PB.GameStateData.IRevealedTileRackTile[]) {
     const playerIDs: number[] = [];
 
     this.tileRacks = this.tileRacks.asMutable();
@@ -148,7 +148,7 @@ export class Game {
     this.playerIDWithPlayableTile = playerIDWithPlayableTile;
   }
 
-  doGameAction(gameAction: GameAction, timestamp: number | null) {
+  doGameAction(gameAction: PB.IGameAction, timestamp: number | null) {
     let currentAction = this.gameActionStack[this.gameActionStack.length - 1];
 
     let newActions: ActionBase[] | null = currentAction.execute(gameAction);
@@ -560,16 +560,16 @@ export class Game {
   }
 }
 
-const dummyGameAction = GameAction.create();
-const dummyPlayerGameStateDatas: GameStateData[] = [];
-const dummyWatcherGameStateData = GameStateData.create();
+const dummyGameAction: PB.IGameAction = PB.GameAction.create();
+const dummyPlayerGameStateDatas: PB.GameStateData[] = [];
+const dummyWatcherGameStateData = PB.GameStateData.create();
 
 export class GameState {
   playerID = -1;
   gameActionEnum = GameActionEnum.StartGame;
   gameAction = dummyGameAction;
   timestamp: number | null = null;
-  revealedTileRackTiles: GameStateData.RevealedTileRackTile[] = [];
+  revealedTileRackTiles: PB.GameStateData.RevealedTileRackTile[] = [];
   revealedTileBagTiles: GameStateTileBagTile[] = [];
   playerIDWithPlayableTile: number | null = null;
   gameHistoryMessages: GameHistoryMessageData[] = [];
@@ -595,7 +595,7 @@ export class GameState {
     this.nextGameAction = game.gameActionStack[game.gameActionStack.length - 1];
   }
 
-  setGameAction(playerID: number, gameActionEnum: GameActionEnum, gameAction: GameAction, timestamp: number | null) {
+  setGameAction(playerID: number, gameActionEnum: GameActionEnum, gameAction: PB.IGameAction, timestamp: number | null) {
     this.playerID = playerID;
     this.gameActionEnum = gameActionEnum;
     this.gameAction = gameAction;
@@ -615,7 +615,7 @@ export class GameState {
       this.revealedTileBagTilesLookup.get(tile)!.playerIDWithPermission = null;
     } else {
       // add it to the tile rack additions
-      const revealedTileRackTile = GameStateData.RevealedTileRackTile.create();
+      const revealedTileRackTile = PB.GameStateData.RevealedTileRackTile.create();
       revealedTileRackTile.tile = tile;
       revealedTileRackTile.playerIdBelongsTo = playerID;
       this.revealedTileRackTiles.push(revealedTileRackTile);
@@ -663,7 +663,7 @@ export class GameState {
       timestamp -= this.previousGameState.timestamp;
     }
 
-    const revealedTileRackTiles: GameStateData.RevealedTileRackTile[] = [];
+    const revealedTileRackTiles: PB.GameStateData.RevealedTileRackTile[] = [];
     for (let i = 0; i < this.revealedTileRackTiles.length; i++) {
       const gameStateTileRackTile = this.revealedTileRackTiles[i];
       if (gameStateTileRackTile.playerIdBelongsTo !== playerID) {
@@ -681,7 +681,7 @@ export class GameState {
       );
     }
 
-    const gameStateData = GameStateData.create();
+    const gameStateData = PB.GameStateData.create();
 
     gameStateData.gameAction = this.gameAction;
     if (timestamp !== null) {
