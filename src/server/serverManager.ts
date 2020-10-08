@@ -594,7 +594,7 @@ export class ServerManager {
     const gameSetup = gameData.gameSetup!;
 
     gameSetup.history.forEach((change) => {
-      const message = JSON.stringify([MessageToClientEnum.GameSetupChanged, gameData.displayNumber, ...change]);
+      const message = JSON.stringify([MessageToClientEnum.GameSetupChanged, gameData.displayNumber, change]);
       this.webSocketToClient.forEach((aClient) => {
         aClient.queueMessage(message);
       });

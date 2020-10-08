@@ -3635,6 +3635,1764 @@ $root.PB = (function() {
         return GameSetupAction;
     })();
 
+    PB.GameSetupChange = (function() {
+
+        /**
+         * Properties of a GameSetupChange.
+         * @memberof PB
+         * @interface IGameSetupChange
+         * @property {PB.GameSetupChange.IUserAdded|null} [userAdded] GameSetupChange userAdded
+         * @property {PB.GameSetupChange.IUserRemoved|null} [userRemoved] GameSetupChange userRemoved
+         * @property {PB.GameSetupChange.IUserApprovedOfGameSetup|null} [userApprovedOfGameSetup] GameSetupChange userApprovedOfGameSetup
+         * @property {PB.GameSetupChange.IGameModeChanged|null} [gameModeChanged] GameSetupChange gameModeChanged
+         * @property {PB.GameSetupChange.IPlayerArrangementModeChanged|null} [playerArrangementModeChanged] GameSetupChange playerArrangementModeChanged
+         * @property {PB.GameSetupChange.IPositionsSwapped|null} [positionsSwapped] GameSetupChange positionsSwapped
+         * @property {PB.GameSetupChange.IUserKicked|null} [userKicked] GameSetupChange userKicked
+         */
+
+        /**
+         * Constructs a new GameSetupChange.
+         * @memberof PB
+         * @classdesc Represents a GameSetupChange.
+         * @implements IGameSetupChange
+         * @constructor
+         * @param {PB.IGameSetupChange=} [properties] Properties to set
+         */
+        function GameSetupChange(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * GameSetupChange userAdded.
+         * @member {PB.GameSetupChange.IUserAdded|null|undefined} userAdded
+         * @memberof PB.GameSetupChange
+         * @instance
+         */
+        GameSetupChange.prototype.userAdded = null;
+
+        /**
+         * GameSetupChange userRemoved.
+         * @member {PB.GameSetupChange.IUserRemoved|null|undefined} userRemoved
+         * @memberof PB.GameSetupChange
+         * @instance
+         */
+        GameSetupChange.prototype.userRemoved = null;
+
+        /**
+         * GameSetupChange userApprovedOfGameSetup.
+         * @member {PB.GameSetupChange.IUserApprovedOfGameSetup|null|undefined} userApprovedOfGameSetup
+         * @memberof PB.GameSetupChange
+         * @instance
+         */
+        GameSetupChange.prototype.userApprovedOfGameSetup = null;
+
+        /**
+         * GameSetupChange gameModeChanged.
+         * @member {PB.GameSetupChange.IGameModeChanged|null|undefined} gameModeChanged
+         * @memberof PB.GameSetupChange
+         * @instance
+         */
+        GameSetupChange.prototype.gameModeChanged = null;
+
+        /**
+         * GameSetupChange playerArrangementModeChanged.
+         * @member {PB.GameSetupChange.IPlayerArrangementModeChanged|null|undefined} playerArrangementModeChanged
+         * @memberof PB.GameSetupChange
+         * @instance
+         */
+        GameSetupChange.prototype.playerArrangementModeChanged = null;
+
+        /**
+         * GameSetupChange positionsSwapped.
+         * @member {PB.GameSetupChange.IPositionsSwapped|null|undefined} positionsSwapped
+         * @memberof PB.GameSetupChange
+         * @instance
+         */
+        GameSetupChange.prototype.positionsSwapped = null;
+
+        /**
+         * GameSetupChange userKicked.
+         * @member {PB.GameSetupChange.IUserKicked|null|undefined} userKicked
+         * @memberof PB.GameSetupChange
+         * @instance
+         */
+        GameSetupChange.prototype.userKicked = null;
+
+        /**
+         * Creates a new GameSetupChange instance using the specified properties.
+         * @function create
+         * @memberof PB.GameSetupChange
+         * @static
+         * @param {PB.IGameSetupChange=} [properties] Properties to set
+         * @returns {PB.GameSetupChange} GameSetupChange instance
+         */
+        GameSetupChange.create = function create(properties) {
+            return new GameSetupChange(properties);
+        };
+
+        /**
+         * Encodes the specified GameSetupChange message. Does not implicitly {@link PB.GameSetupChange.verify|verify} messages.
+         * @function encode
+         * @memberof PB.GameSetupChange
+         * @static
+         * @param {PB.IGameSetupChange} message GameSetupChange message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        GameSetupChange.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.userAdded != null && Object.hasOwnProperty.call(message, "userAdded"))
+                $root.PB.GameSetupChange.UserAdded.encode(message.userAdded, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+            if (message.userRemoved != null && Object.hasOwnProperty.call(message, "userRemoved"))
+                $root.PB.GameSetupChange.UserRemoved.encode(message.userRemoved, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
+            if (message.userApprovedOfGameSetup != null && Object.hasOwnProperty.call(message, "userApprovedOfGameSetup"))
+                $root.PB.GameSetupChange.UserApprovedOfGameSetup.encode(message.userApprovedOfGameSetup, writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
+            if (message.gameModeChanged != null && Object.hasOwnProperty.call(message, "gameModeChanged"))
+                $root.PB.GameSetupChange.GameModeChanged.encode(message.gameModeChanged, writer.uint32(/* id 4, wireType 2 =*/34).fork()).ldelim();
+            if (message.playerArrangementModeChanged != null && Object.hasOwnProperty.call(message, "playerArrangementModeChanged"))
+                $root.PB.GameSetupChange.PlayerArrangementModeChanged.encode(message.playerArrangementModeChanged, writer.uint32(/* id 5, wireType 2 =*/42).fork()).ldelim();
+            if (message.positionsSwapped != null && Object.hasOwnProperty.call(message, "positionsSwapped"))
+                $root.PB.GameSetupChange.PositionsSwapped.encode(message.positionsSwapped, writer.uint32(/* id 6, wireType 2 =*/50).fork()).ldelim();
+            if (message.userKicked != null && Object.hasOwnProperty.call(message, "userKicked"))
+                $root.PB.GameSetupChange.UserKicked.encode(message.userKicked, writer.uint32(/* id 7, wireType 2 =*/58).fork()).ldelim();
+            return writer;
+        };
+
+        /**
+         * Encodes the specified GameSetupChange message, length delimited. Does not implicitly {@link PB.GameSetupChange.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof PB.GameSetupChange
+         * @static
+         * @param {PB.IGameSetupChange} message GameSetupChange message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        GameSetupChange.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a GameSetupChange message from the specified reader or buffer.
+         * @function decode
+         * @memberof PB.GameSetupChange
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {PB.GameSetupChange} GameSetupChange
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        GameSetupChange.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.PB.GameSetupChange();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.userAdded = $root.PB.GameSetupChange.UserAdded.decode(reader, reader.uint32());
+                    break;
+                case 2:
+                    message.userRemoved = $root.PB.GameSetupChange.UserRemoved.decode(reader, reader.uint32());
+                    break;
+                case 3:
+                    message.userApprovedOfGameSetup = $root.PB.GameSetupChange.UserApprovedOfGameSetup.decode(reader, reader.uint32());
+                    break;
+                case 4:
+                    message.gameModeChanged = $root.PB.GameSetupChange.GameModeChanged.decode(reader, reader.uint32());
+                    break;
+                case 5:
+                    message.playerArrangementModeChanged = $root.PB.GameSetupChange.PlayerArrangementModeChanged.decode(reader, reader.uint32());
+                    break;
+                case 6:
+                    message.positionsSwapped = $root.PB.GameSetupChange.PositionsSwapped.decode(reader, reader.uint32());
+                    break;
+                case 7:
+                    message.userKicked = $root.PB.GameSetupChange.UserKicked.decode(reader, reader.uint32());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a GameSetupChange message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof PB.GameSetupChange
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {PB.GameSetupChange} GameSetupChange
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        GameSetupChange.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a GameSetupChange message.
+         * @function verify
+         * @memberof PB.GameSetupChange
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        GameSetupChange.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.userAdded != null && message.hasOwnProperty("userAdded")) {
+                var error = $root.PB.GameSetupChange.UserAdded.verify(message.userAdded);
+                if (error)
+                    return "userAdded." + error;
+            }
+            if (message.userRemoved != null && message.hasOwnProperty("userRemoved")) {
+                var error = $root.PB.GameSetupChange.UserRemoved.verify(message.userRemoved);
+                if (error)
+                    return "userRemoved." + error;
+            }
+            if (message.userApprovedOfGameSetup != null && message.hasOwnProperty("userApprovedOfGameSetup")) {
+                var error = $root.PB.GameSetupChange.UserApprovedOfGameSetup.verify(message.userApprovedOfGameSetup);
+                if (error)
+                    return "userApprovedOfGameSetup." + error;
+            }
+            if (message.gameModeChanged != null && message.hasOwnProperty("gameModeChanged")) {
+                var error = $root.PB.GameSetupChange.GameModeChanged.verify(message.gameModeChanged);
+                if (error)
+                    return "gameModeChanged." + error;
+            }
+            if (message.playerArrangementModeChanged != null && message.hasOwnProperty("playerArrangementModeChanged")) {
+                var error = $root.PB.GameSetupChange.PlayerArrangementModeChanged.verify(message.playerArrangementModeChanged);
+                if (error)
+                    return "playerArrangementModeChanged." + error;
+            }
+            if (message.positionsSwapped != null && message.hasOwnProperty("positionsSwapped")) {
+                var error = $root.PB.GameSetupChange.PositionsSwapped.verify(message.positionsSwapped);
+                if (error)
+                    return "positionsSwapped." + error;
+            }
+            if (message.userKicked != null && message.hasOwnProperty("userKicked")) {
+                var error = $root.PB.GameSetupChange.UserKicked.verify(message.userKicked);
+                if (error)
+                    return "userKicked." + error;
+            }
+            return null;
+        };
+
+        /**
+         * Creates a GameSetupChange message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof PB.GameSetupChange
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {PB.GameSetupChange} GameSetupChange
+         */
+        GameSetupChange.fromObject = function fromObject(object) {
+            if (object instanceof $root.PB.GameSetupChange)
+                return object;
+            var message = new $root.PB.GameSetupChange();
+            if (object.userAdded != null) {
+                if (typeof object.userAdded !== "object")
+                    throw TypeError(".PB.GameSetupChange.userAdded: object expected");
+                message.userAdded = $root.PB.GameSetupChange.UserAdded.fromObject(object.userAdded);
+            }
+            if (object.userRemoved != null) {
+                if (typeof object.userRemoved !== "object")
+                    throw TypeError(".PB.GameSetupChange.userRemoved: object expected");
+                message.userRemoved = $root.PB.GameSetupChange.UserRemoved.fromObject(object.userRemoved);
+            }
+            if (object.userApprovedOfGameSetup != null) {
+                if (typeof object.userApprovedOfGameSetup !== "object")
+                    throw TypeError(".PB.GameSetupChange.userApprovedOfGameSetup: object expected");
+                message.userApprovedOfGameSetup = $root.PB.GameSetupChange.UserApprovedOfGameSetup.fromObject(object.userApprovedOfGameSetup);
+            }
+            if (object.gameModeChanged != null) {
+                if (typeof object.gameModeChanged !== "object")
+                    throw TypeError(".PB.GameSetupChange.gameModeChanged: object expected");
+                message.gameModeChanged = $root.PB.GameSetupChange.GameModeChanged.fromObject(object.gameModeChanged);
+            }
+            if (object.playerArrangementModeChanged != null) {
+                if (typeof object.playerArrangementModeChanged !== "object")
+                    throw TypeError(".PB.GameSetupChange.playerArrangementModeChanged: object expected");
+                message.playerArrangementModeChanged = $root.PB.GameSetupChange.PlayerArrangementModeChanged.fromObject(object.playerArrangementModeChanged);
+            }
+            if (object.positionsSwapped != null) {
+                if (typeof object.positionsSwapped !== "object")
+                    throw TypeError(".PB.GameSetupChange.positionsSwapped: object expected");
+                message.positionsSwapped = $root.PB.GameSetupChange.PositionsSwapped.fromObject(object.positionsSwapped);
+            }
+            if (object.userKicked != null) {
+                if (typeof object.userKicked !== "object")
+                    throw TypeError(".PB.GameSetupChange.userKicked: object expected");
+                message.userKicked = $root.PB.GameSetupChange.UserKicked.fromObject(object.userKicked);
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a GameSetupChange message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof PB.GameSetupChange
+         * @static
+         * @param {PB.GameSetupChange} message GameSetupChange
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        GameSetupChange.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults) {
+                object.userAdded = null;
+                object.userRemoved = null;
+                object.userApprovedOfGameSetup = null;
+                object.gameModeChanged = null;
+                object.playerArrangementModeChanged = null;
+                object.positionsSwapped = null;
+                object.userKicked = null;
+            }
+            if (message.userAdded != null && message.hasOwnProperty("userAdded"))
+                object.userAdded = $root.PB.GameSetupChange.UserAdded.toObject(message.userAdded, options);
+            if (message.userRemoved != null && message.hasOwnProperty("userRemoved"))
+                object.userRemoved = $root.PB.GameSetupChange.UserRemoved.toObject(message.userRemoved, options);
+            if (message.userApprovedOfGameSetup != null && message.hasOwnProperty("userApprovedOfGameSetup"))
+                object.userApprovedOfGameSetup = $root.PB.GameSetupChange.UserApprovedOfGameSetup.toObject(message.userApprovedOfGameSetup, options);
+            if (message.gameModeChanged != null && message.hasOwnProperty("gameModeChanged"))
+                object.gameModeChanged = $root.PB.GameSetupChange.GameModeChanged.toObject(message.gameModeChanged, options);
+            if (message.playerArrangementModeChanged != null && message.hasOwnProperty("playerArrangementModeChanged"))
+                object.playerArrangementModeChanged = $root.PB.GameSetupChange.PlayerArrangementModeChanged.toObject(message.playerArrangementModeChanged, options);
+            if (message.positionsSwapped != null && message.hasOwnProperty("positionsSwapped"))
+                object.positionsSwapped = $root.PB.GameSetupChange.PositionsSwapped.toObject(message.positionsSwapped, options);
+            if (message.userKicked != null && message.hasOwnProperty("userKicked"))
+                object.userKicked = $root.PB.GameSetupChange.UserKicked.toObject(message.userKicked, options);
+            return object;
+        };
+
+        /**
+         * Converts this GameSetupChange to JSON.
+         * @function toJSON
+         * @memberof PB.GameSetupChange
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        GameSetupChange.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        GameSetupChange.UserAdded = (function() {
+
+            /**
+             * Properties of a UserAdded.
+             * @memberof PB.GameSetupChange
+             * @interface IUserAdded
+             * @property {number|null} [userId] UserAdded userId
+             */
+
+            /**
+             * Constructs a new UserAdded.
+             * @memberof PB.GameSetupChange
+             * @classdesc Represents a UserAdded.
+             * @implements IUserAdded
+             * @constructor
+             * @param {PB.GameSetupChange.IUserAdded=} [properties] Properties to set
+             */
+            function UserAdded(properties) {
+                if (properties)
+                    for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                        if (properties[keys[i]] != null)
+                            this[keys[i]] = properties[keys[i]];
+            }
+
+            /**
+             * UserAdded userId.
+             * @member {number} userId
+             * @memberof PB.GameSetupChange.UserAdded
+             * @instance
+             */
+            UserAdded.prototype.userId = 0;
+
+            /**
+             * Creates a new UserAdded instance using the specified properties.
+             * @function create
+             * @memberof PB.GameSetupChange.UserAdded
+             * @static
+             * @param {PB.GameSetupChange.IUserAdded=} [properties] Properties to set
+             * @returns {PB.GameSetupChange.UserAdded} UserAdded instance
+             */
+            UserAdded.create = function create(properties) {
+                return new UserAdded(properties);
+            };
+
+            /**
+             * Encodes the specified UserAdded message. Does not implicitly {@link PB.GameSetupChange.UserAdded.verify|verify} messages.
+             * @function encode
+             * @memberof PB.GameSetupChange.UserAdded
+             * @static
+             * @param {PB.GameSetupChange.IUserAdded} message UserAdded message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            UserAdded.encode = function encode(message, writer) {
+                if (!writer)
+                    writer = $Writer.create();
+                if (message.userId != null && Object.hasOwnProperty.call(message, "userId"))
+                    writer.uint32(/* id 1, wireType 0 =*/8).int32(message.userId);
+                return writer;
+            };
+
+            /**
+             * Encodes the specified UserAdded message, length delimited. Does not implicitly {@link PB.GameSetupChange.UserAdded.verify|verify} messages.
+             * @function encodeDelimited
+             * @memberof PB.GameSetupChange.UserAdded
+             * @static
+             * @param {PB.GameSetupChange.IUserAdded} message UserAdded message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            UserAdded.encodeDelimited = function encodeDelimited(message, writer) {
+                return this.encode(message, writer).ldelim();
+            };
+
+            /**
+             * Decodes a UserAdded message from the specified reader or buffer.
+             * @function decode
+             * @memberof PB.GameSetupChange.UserAdded
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @param {number} [length] Message length if known beforehand
+             * @returns {PB.GameSetupChange.UserAdded} UserAdded
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            UserAdded.decode = function decode(reader, length) {
+                if (!(reader instanceof $Reader))
+                    reader = $Reader.create(reader);
+                var end = length === undefined ? reader.len : reader.pos + length, message = new $root.PB.GameSetupChange.UserAdded();
+                while (reader.pos < end) {
+                    var tag = reader.uint32();
+                    switch (tag >>> 3) {
+                    case 1:
+                        message.userId = reader.int32();
+                        break;
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
+                    }
+                }
+                return message;
+            };
+
+            /**
+             * Decodes a UserAdded message from the specified reader or buffer, length delimited.
+             * @function decodeDelimited
+             * @memberof PB.GameSetupChange.UserAdded
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @returns {PB.GameSetupChange.UserAdded} UserAdded
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            UserAdded.decodeDelimited = function decodeDelimited(reader) {
+                if (!(reader instanceof $Reader))
+                    reader = new $Reader(reader);
+                return this.decode(reader, reader.uint32());
+            };
+
+            /**
+             * Verifies a UserAdded message.
+             * @function verify
+             * @memberof PB.GameSetupChange.UserAdded
+             * @static
+             * @param {Object.<string,*>} message Plain object to verify
+             * @returns {string|null} `null` if valid, otherwise the reason why it is not
+             */
+            UserAdded.verify = function verify(message) {
+                if (typeof message !== "object" || message === null)
+                    return "object expected";
+                if (message.userId != null && message.hasOwnProperty("userId"))
+                    if (!$util.isInteger(message.userId))
+                        return "userId: integer expected";
+                return null;
+            };
+
+            /**
+             * Creates a UserAdded message from a plain object. Also converts values to their respective internal types.
+             * @function fromObject
+             * @memberof PB.GameSetupChange.UserAdded
+             * @static
+             * @param {Object.<string,*>} object Plain object
+             * @returns {PB.GameSetupChange.UserAdded} UserAdded
+             */
+            UserAdded.fromObject = function fromObject(object) {
+                if (object instanceof $root.PB.GameSetupChange.UserAdded)
+                    return object;
+                var message = new $root.PB.GameSetupChange.UserAdded();
+                if (object.userId != null)
+                    message.userId = object.userId | 0;
+                return message;
+            };
+
+            /**
+             * Creates a plain object from a UserAdded message. Also converts values to other types if specified.
+             * @function toObject
+             * @memberof PB.GameSetupChange.UserAdded
+             * @static
+             * @param {PB.GameSetupChange.UserAdded} message UserAdded
+             * @param {$protobuf.IConversionOptions} [options] Conversion options
+             * @returns {Object.<string,*>} Plain object
+             */
+            UserAdded.toObject = function toObject(message, options) {
+                if (!options)
+                    options = {};
+                var object = {};
+                if (options.defaults)
+                    object.userId = 0;
+                if (message.userId != null && message.hasOwnProperty("userId"))
+                    object.userId = message.userId;
+                return object;
+            };
+
+            /**
+             * Converts this UserAdded to JSON.
+             * @function toJSON
+             * @memberof PB.GameSetupChange.UserAdded
+             * @instance
+             * @returns {Object.<string,*>} JSON object
+             */
+            UserAdded.prototype.toJSON = function toJSON() {
+                return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+            };
+
+            return UserAdded;
+        })();
+
+        GameSetupChange.UserRemoved = (function() {
+
+            /**
+             * Properties of a UserRemoved.
+             * @memberof PB.GameSetupChange
+             * @interface IUserRemoved
+             * @property {number|null} [userId] UserRemoved userId
+             */
+
+            /**
+             * Constructs a new UserRemoved.
+             * @memberof PB.GameSetupChange
+             * @classdesc Represents a UserRemoved.
+             * @implements IUserRemoved
+             * @constructor
+             * @param {PB.GameSetupChange.IUserRemoved=} [properties] Properties to set
+             */
+            function UserRemoved(properties) {
+                if (properties)
+                    for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                        if (properties[keys[i]] != null)
+                            this[keys[i]] = properties[keys[i]];
+            }
+
+            /**
+             * UserRemoved userId.
+             * @member {number} userId
+             * @memberof PB.GameSetupChange.UserRemoved
+             * @instance
+             */
+            UserRemoved.prototype.userId = 0;
+
+            /**
+             * Creates a new UserRemoved instance using the specified properties.
+             * @function create
+             * @memberof PB.GameSetupChange.UserRemoved
+             * @static
+             * @param {PB.GameSetupChange.IUserRemoved=} [properties] Properties to set
+             * @returns {PB.GameSetupChange.UserRemoved} UserRemoved instance
+             */
+            UserRemoved.create = function create(properties) {
+                return new UserRemoved(properties);
+            };
+
+            /**
+             * Encodes the specified UserRemoved message. Does not implicitly {@link PB.GameSetupChange.UserRemoved.verify|verify} messages.
+             * @function encode
+             * @memberof PB.GameSetupChange.UserRemoved
+             * @static
+             * @param {PB.GameSetupChange.IUserRemoved} message UserRemoved message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            UserRemoved.encode = function encode(message, writer) {
+                if (!writer)
+                    writer = $Writer.create();
+                if (message.userId != null && Object.hasOwnProperty.call(message, "userId"))
+                    writer.uint32(/* id 1, wireType 0 =*/8).int32(message.userId);
+                return writer;
+            };
+
+            /**
+             * Encodes the specified UserRemoved message, length delimited. Does not implicitly {@link PB.GameSetupChange.UserRemoved.verify|verify} messages.
+             * @function encodeDelimited
+             * @memberof PB.GameSetupChange.UserRemoved
+             * @static
+             * @param {PB.GameSetupChange.IUserRemoved} message UserRemoved message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            UserRemoved.encodeDelimited = function encodeDelimited(message, writer) {
+                return this.encode(message, writer).ldelim();
+            };
+
+            /**
+             * Decodes a UserRemoved message from the specified reader or buffer.
+             * @function decode
+             * @memberof PB.GameSetupChange.UserRemoved
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @param {number} [length] Message length if known beforehand
+             * @returns {PB.GameSetupChange.UserRemoved} UserRemoved
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            UserRemoved.decode = function decode(reader, length) {
+                if (!(reader instanceof $Reader))
+                    reader = $Reader.create(reader);
+                var end = length === undefined ? reader.len : reader.pos + length, message = new $root.PB.GameSetupChange.UserRemoved();
+                while (reader.pos < end) {
+                    var tag = reader.uint32();
+                    switch (tag >>> 3) {
+                    case 1:
+                        message.userId = reader.int32();
+                        break;
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
+                    }
+                }
+                return message;
+            };
+
+            /**
+             * Decodes a UserRemoved message from the specified reader or buffer, length delimited.
+             * @function decodeDelimited
+             * @memberof PB.GameSetupChange.UserRemoved
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @returns {PB.GameSetupChange.UserRemoved} UserRemoved
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            UserRemoved.decodeDelimited = function decodeDelimited(reader) {
+                if (!(reader instanceof $Reader))
+                    reader = new $Reader(reader);
+                return this.decode(reader, reader.uint32());
+            };
+
+            /**
+             * Verifies a UserRemoved message.
+             * @function verify
+             * @memberof PB.GameSetupChange.UserRemoved
+             * @static
+             * @param {Object.<string,*>} message Plain object to verify
+             * @returns {string|null} `null` if valid, otherwise the reason why it is not
+             */
+            UserRemoved.verify = function verify(message) {
+                if (typeof message !== "object" || message === null)
+                    return "object expected";
+                if (message.userId != null && message.hasOwnProperty("userId"))
+                    if (!$util.isInteger(message.userId))
+                        return "userId: integer expected";
+                return null;
+            };
+
+            /**
+             * Creates a UserRemoved message from a plain object. Also converts values to their respective internal types.
+             * @function fromObject
+             * @memberof PB.GameSetupChange.UserRemoved
+             * @static
+             * @param {Object.<string,*>} object Plain object
+             * @returns {PB.GameSetupChange.UserRemoved} UserRemoved
+             */
+            UserRemoved.fromObject = function fromObject(object) {
+                if (object instanceof $root.PB.GameSetupChange.UserRemoved)
+                    return object;
+                var message = new $root.PB.GameSetupChange.UserRemoved();
+                if (object.userId != null)
+                    message.userId = object.userId | 0;
+                return message;
+            };
+
+            /**
+             * Creates a plain object from a UserRemoved message. Also converts values to other types if specified.
+             * @function toObject
+             * @memberof PB.GameSetupChange.UserRemoved
+             * @static
+             * @param {PB.GameSetupChange.UserRemoved} message UserRemoved
+             * @param {$protobuf.IConversionOptions} [options] Conversion options
+             * @returns {Object.<string,*>} Plain object
+             */
+            UserRemoved.toObject = function toObject(message, options) {
+                if (!options)
+                    options = {};
+                var object = {};
+                if (options.defaults)
+                    object.userId = 0;
+                if (message.userId != null && message.hasOwnProperty("userId"))
+                    object.userId = message.userId;
+                return object;
+            };
+
+            /**
+             * Converts this UserRemoved to JSON.
+             * @function toJSON
+             * @memberof PB.GameSetupChange.UserRemoved
+             * @instance
+             * @returns {Object.<string,*>} JSON object
+             */
+            UserRemoved.prototype.toJSON = function toJSON() {
+                return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+            };
+
+            return UserRemoved;
+        })();
+
+        GameSetupChange.UserApprovedOfGameSetup = (function() {
+
+            /**
+             * Properties of a UserApprovedOfGameSetup.
+             * @memberof PB.GameSetupChange
+             * @interface IUserApprovedOfGameSetup
+             * @property {number|null} [userId] UserApprovedOfGameSetup userId
+             */
+
+            /**
+             * Constructs a new UserApprovedOfGameSetup.
+             * @memberof PB.GameSetupChange
+             * @classdesc Represents a UserApprovedOfGameSetup.
+             * @implements IUserApprovedOfGameSetup
+             * @constructor
+             * @param {PB.GameSetupChange.IUserApprovedOfGameSetup=} [properties] Properties to set
+             */
+            function UserApprovedOfGameSetup(properties) {
+                if (properties)
+                    for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                        if (properties[keys[i]] != null)
+                            this[keys[i]] = properties[keys[i]];
+            }
+
+            /**
+             * UserApprovedOfGameSetup userId.
+             * @member {number} userId
+             * @memberof PB.GameSetupChange.UserApprovedOfGameSetup
+             * @instance
+             */
+            UserApprovedOfGameSetup.prototype.userId = 0;
+
+            /**
+             * Creates a new UserApprovedOfGameSetup instance using the specified properties.
+             * @function create
+             * @memberof PB.GameSetupChange.UserApprovedOfGameSetup
+             * @static
+             * @param {PB.GameSetupChange.IUserApprovedOfGameSetup=} [properties] Properties to set
+             * @returns {PB.GameSetupChange.UserApprovedOfGameSetup} UserApprovedOfGameSetup instance
+             */
+            UserApprovedOfGameSetup.create = function create(properties) {
+                return new UserApprovedOfGameSetup(properties);
+            };
+
+            /**
+             * Encodes the specified UserApprovedOfGameSetup message. Does not implicitly {@link PB.GameSetupChange.UserApprovedOfGameSetup.verify|verify} messages.
+             * @function encode
+             * @memberof PB.GameSetupChange.UserApprovedOfGameSetup
+             * @static
+             * @param {PB.GameSetupChange.IUserApprovedOfGameSetup} message UserApprovedOfGameSetup message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            UserApprovedOfGameSetup.encode = function encode(message, writer) {
+                if (!writer)
+                    writer = $Writer.create();
+                if (message.userId != null && Object.hasOwnProperty.call(message, "userId"))
+                    writer.uint32(/* id 1, wireType 0 =*/8).int32(message.userId);
+                return writer;
+            };
+
+            /**
+             * Encodes the specified UserApprovedOfGameSetup message, length delimited. Does not implicitly {@link PB.GameSetupChange.UserApprovedOfGameSetup.verify|verify} messages.
+             * @function encodeDelimited
+             * @memberof PB.GameSetupChange.UserApprovedOfGameSetup
+             * @static
+             * @param {PB.GameSetupChange.IUserApprovedOfGameSetup} message UserApprovedOfGameSetup message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            UserApprovedOfGameSetup.encodeDelimited = function encodeDelimited(message, writer) {
+                return this.encode(message, writer).ldelim();
+            };
+
+            /**
+             * Decodes a UserApprovedOfGameSetup message from the specified reader or buffer.
+             * @function decode
+             * @memberof PB.GameSetupChange.UserApprovedOfGameSetup
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @param {number} [length] Message length if known beforehand
+             * @returns {PB.GameSetupChange.UserApprovedOfGameSetup} UserApprovedOfGameSetup
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            UserApprovedOfGameSetup.decode = function decode(reader, length) {
+                if (!(reader instanceof $Reader))
+                    reader = $Reader.create(reader);
+                var end = length === undefined ? reader.len : reader.pos + length, message = new $root.PB.GameSetupChange.UserApprovedOfGameSetup();
+                while (reader.pos < end) {
+                    var tag = reader.uint32();
+                    switch (tag >>> 3) {
+                    case 1:
+                        message.userId = reader.int32();
+                        break;
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
+                    }
+                }
+                return message;
+            };
+
+            /**
+             * Decodes a UserApprovedOfGameSetup message from the specified reader or buffer, length delimited.
+             * @function decodeDelimited
+             * @memberof PB.GameSetupChange.UserApprovedOfGameSetup
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @returns {PB.GameSetupChange.UserApprovedOfGameSetup} UserApprovedOfGameSetup
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            UserApprovedOfGameSetup.decodeDelimited = function decodeDelimited(reader) {
+                if (!(reader instanceof $Reader))
+                    reader = new $Reader(reader);
+                return this.decode(reader, reader.uint32());
+            };
+
+            /**
+             * Verifies a UserApprovedOfGameSetup message.
+             * @function verify
+             * @memberof PB.GameSetupChange.UserApprovedOfGameSetup
+             * @static
+             * @param {Object.<string,*>} message Plain object to verify
+             * @returns {string|null} `null` if valid, otherwise the reason why it is not
+             */
+            UserApprovedOfGameSetup.verify = function verify(message) {
+                if (typeof message !== "object" || message === null)
+                    return "object expected";
+                if (message.userId != null && message.hasOwnProperty("userId"))
+                    if (!$util.isInteger(message.userId))
+                        return "userId: integer expected";
+                return null;
+            };
+
+            /**
+             * Creates a UserApprovedOfGameSetup message from a plain object. Also converts values to their respective internal types.
+             * @function fromObject
+             * @memberof PB.GameSetupChange.UserApprovedOfGameSetup
+             * @static
+             * @param {Object.<string,*>} object Plain object
+             * @returns {PB.GameSetupChange.UserApprovedOfGameSetup} UserApprovedOfGameSetup
+             */
+            UserApprovedOfGameSetup.fromObject = function fromObject(object) {
+                if (object instanceof $root.PB.GameSetupChange.UserApprovedOfGameSetup)
+                    return object;
+                var message = new $root.PB.GameSetupChange.UserApprovedOfGameSetup();
+                if (object.userId != null)
+                    message.userId = object.userId | 0;
+                return message;
+            };
+
+            /**
+             * Creates a plain object from a UserApprovedOfGameSetup message. Also converts values to other types if specified.
+             * @function toObject
+             * @memberof PB.GameSetupChange.UserApprovedOfGameSetup
+             * @static
+             * @param {PB.GameSetupChange.UserApprovedOfGameSetup} message UserApprovedOfGameSetup
+             * @param {$protobuf.IConversionOptions} [options] Conversion options
+             * @returns {Object.<string,*>} Plain object
+             */
+            UserApprovedOfGameSetup.toObject = function toObject(message, options) {
+                if (!options)
+                    options = {};
+                var object = {};
+                if (options.defaults)
+                    object.userId = 0;
+                if (message.userId != null && message.hasOwnProperty("userId"))
+                    object.userId = message.userId;
+                return object;
+            };
+
+            /**
+             * Converts this UserApprovedOfGameSetup to JSON.
+             * @function toJSON
+             * @memberof PB.GameSetupChange.UserApprovedOfGameSetup
+             * @instance
+             * @returns {Object.<string,*>} JSON object
+             */
+            UserApprovedOfGameSetup.prototype.toJSON = function toJSON() {
+                return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+            };
+
+            return UserApprovedOfGameSetup;
+        })();
+
+        GameSetupChange.GameModeChanged = (function() {
+
+            /**
+             * Properties of a GameModeChanged.
+             * @memberof PB.GameSetupChange
+             * @interface IGameModeChanged
+             * @property {GameMode|null} [gameMode] GameModeChanged gameMode
+             */
+
+            /**
+             * Constructs a new GameModeChanged.
+             * @memberof PB.GameSetupChange
+             * @classdesc Represents a GameModeChanged.
+             * @implements IGameModeChanged
+             * @constructor
+             * @param {PB.GameSetupChange.IGameModeChanged=} [properties] Properties to set
+             */
+            function GameModeChanged(properties) {
+                if (properties)
+                    for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                        if (properties[keys[i]] != null)
+                            this[keys[i]] = properties[keys[i]];
+            }
+
+            /**
+             * GameModeChanged gameMode.
+             * @member {GameMode} gameMode
+             * @memberof PB.GameSetupChange.GameModeChanged
+             * @instance
+             */
+            GameModeChanged.prototype.gameMode = 1;
+
+            /**
+             * Creates a new GameModeChanged instance using the specified properties.
+             * @function create
+             * @memberof PB.GameSetupChange.GameModeChanged
+             * @static
+             * @param {PB.GameSetupChange.IGameModeChanged=} [properties] Properties to set
+             * @returns {PB.GameSetupChange.GameModeChanged} GameModeChanged instance
+             */
+            GameModeChanged.create = function create(properties) {
+                return new GameModeChanged(properties);
+            };
+
+            /**
+             * Encodes the specified GameModeChanged message. Does not implicitly {@link PB.GameSetupChange.GameModeChanged.verify|verify} messages.
+             * @function encode
+             * @memberof PB.GameSetupChange.GameModeChanged
+             * @static
+             * @param {PB.GameSetupChange.IGameModeChanged} message GameModeChanged message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            GameModeChanged.encode = function encode(message, writer) {
+                if (!writer)
+                    writer = $Writer.create();
+                if (message.gameMode != null && Object.hasOwnProperty.call(message, "gameMode"))
+                    writer.uint32(/* id 1, wireType 0 =*/8).int32(message.gameMode);
+                return writer;
+            };
+
+            /**
+             * Encodes the specified GameModeChanged message, length delimited. Does not implicitly {@link PB.GameSetupChange.GameModeChanged.verify|verify} messages.
+             * @function encodeDelimited
+             * @memberof PB.GameSetupChange.GameModeChanged
+             * @static
+             * @param {PB.GameSetupChange.IGameModeChanged} message GameModeChanged message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            GameModeChanged.encodeDelimited = function encodeDelimited(message, writer) {
+                return this.encode(message, writer).ldelim();
+            };
+
+            /**
+             * Decodes a GameModeChanged message from the specified reader or buffer.
+             * @function decode
+             * @memberof PB.GameSetupChange.GameModeChanged
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @param {number} [length] Message length if known beforehand
+             * @returns {PB.GameSetupChange.GameModeChanged} GameModeChanged
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            GameModeChanged.decode = function decode(reader, length) {
+                if (!(reader instanceof $Reader))
+                    reader = $Reader.create(reader);
+                var end = length === undefined ? reader.len : reader.pos + length, message = new $root.PB.GameSetupChange.GameModeChanged();
+                while (reader.pos < end) {
+                    var tag = reader.uint32();
+                    switch (tag >>> 3) {
+                    case 1:
+                        message.gameMode = reader.int32();
+                        break;
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
+                    }
+                }
+                return message;
+            };
+
+            /**
+             * Decodes a GameModeChanged message from the specified reader or buffer, length delimited.
+             * @function decodeDelimited
+             * @memberof PB.GameSetupChange.GameModeChanged
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @returns {PB.GameSetupChange.GameModeChanged} GameModeChanged
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            GameModeChanged.decodeDelimited = function decodeDelimited(reader) {
+                if (!(reader instanceof $Reader))
+                    reader = new $Reader(reader);
+                return this.decode(reader, reader.uint32());
+            };
+
+            /**
+             * Verifies a GameModeChanged message.
+             * @function verify
+             * @memberof PB.GameSetupChange.GameModeChanged
+             * @static
+             * @param {Object.<string,*>} message Plain object to verify
+             * @returns {string|null} `null` if valid, otherwise the reason why it is not
+             */
+            GameModeChanged.verify = function verify(message) {
+                if (typeof message !== "object" || message === null)
+                    return "object expected";
+                if (message.gameMode != null && message.hasOwnProperty("gameMode"))
+                    switch (message.gameMode) {
+                    default:
+                        return "gameMode: enum value expected";
+                    case 1:
+                    case 2:
+                    case 3:
+                    case 4:
+                    case 5:
+                    case 6:
+                    case 7:
+                    case 8:
+                    case 9:
+                        break;
+                    }
+                return null;
+            };
+
+            /**
+             * Creates a GameModeChanged message from a plain object. Also converts values to their respective internal types.
+             * @function fromObject
+             * @memberof PB.GameSetupChange.GameModeChanged
+             * @static
+             * @param {Object.<string,*>} object Plain object
+             * @returns {PB.GameSetupChange.GameModeChanged} GameModeChanged
+             */
+            GameModeChanged.fromObject = function fromObject(object) {
+                if (object instanceof $root.PB.GameSetupChange.GameModeChanged)
+                    return object;
+                var message = new $root.PB.GameSetupChange.GameModeChanged();
+                switch (object.gameMode) {
+                case "SINGLES_1":
+                case 1:
+                    message.gameMode = 1;
+                    break;
+                case "SINGLES_2":
+                case 2:
+                    message.gameMode = 2;
+                    break;
+                case "SINGLES_3":
+                case 3:
+                    message.gameMode = 3;
+                    break;
+                case "SINGLES_4":
+                case 4:
+                    message.gameMode = 4;
+                    break;
+                case "SINGLES_5":
+                case 5:
+                    message.gameMode = 5;
+                    break;
+                case "SINGLES_6":
+                case 6:
+                    message.gameMode = 6;
+                    break;
+                case "TEAMS_2_VS_2":
+                case 7:
+                    message.gameMode = 7;
+                    break;
+                case "TEAMS_2_VS_2_VS_2":
+                case 8:
+                    message.gameMode = 8;
+                    break;
+                case "TEAMS_3_VS_3":
+                case 9:
+                    message.gameMode = 9;
+                    break;
+                }
+                return message;
+            };
+
+            /**
+             * Creates a plain object from a GameModeChanged message. Also converts values to other types if specified.
+             * @function toObject
+             * @memberof PB.GameSetupChange.GameModeChanged
+             * @static
+             * @param {PB.GameSetupChange.GameModeChanged} message GameModeChanged
+             * @param {$protobuf.IConversionOptions} [options] Conversion options
+             * @returns {Object.<string,*>} Plain object
+             */
+            GameModeChanged.toObject = function toObject(message, options) {
+                if (!options)
+                    options = {};
+                var object = {};
+                if (options.defaults)
+                    object.gameMode = options.enums === String ? "SINGLES_1" : 1;
+                if (message.gameMode != null && message.hasOwnProperty("gameMode"))
+                    object.gameMode = options.enums === String ? $root.GameMode[message.gameMode] : message.gameMode;
+                return object;
+            };
+
+            /**
+             * Converts this GameModeChanged to JSON.
+             * @function toJSON
+             * @memberof PB.GameSetupChange.GameModeChanged
+             * @instance
+             * @returns {Object.<string,*>} JSON object
+             */
+            GameModeChanged.prototype.toJSON = function toJSON() {
+                return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+            };
+
+            return GameModeChanged;
+        })();
+
+        GameSetupChange.PlayerArrangementModeChanged = (function() {
+
+            /**
+             * Properties of a PlayerArrangementModeChanged.
+             * @memberof PB.GameSetupChange
+             * @interface IPlayerArrangementModeChanged
+             * @property {PlayerArrangementMode|null} [playerArrangementMode] PlayerArrangementModeChanged playerArrangementMode
+             */
+
+            /**
+             * Constructs a new PlayerArrangementModeChanged.
+             * @memberof PB.GameSetupChange
+             * @classdesc Represents a PlayerArrangementModeChanged.
+             * @implements IPlayerArrangementModeChanged
+             * @constructor
+             * @param {PB.GameSetupChange.IPlayerArrangementModeChanged=} [properties] Properties to set
+             */
+            function PlayerArrangementModeChanged(properties) {
+                if (properties)
+                    for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                        if (properties[keys[i]] != null)
+                            this[keys[i]] = properties[keys[i]];
+            }
+
+            /**
+             * PlayerArrangementModeChanged playerArrangementMode.
+             * @member {PlayerArrangementMode} playerArrangementMode
+             * @memberof PB.GameSetupChange.PlayerArrangementModeChanged
+             * @instance
+             */
+            PlayerArrangementModeChanged.prototype.playerArrangementMode = 0;
+
+            /**
+             * Creates a new PlayerArrangementModeChanged instance using the specified properties.
+             * @function create
+             * @memberof PB.GameSetupChange.PlayerArrangementModeChanged
+             * @static
+             * @param {PB.GameSetupChange.IPlayerArrangementModeChanged=} [properties] Properties to set
+             * @returns {PB.GameSetupChange.PlayerArrangementModeChanged} PlayerArrangementModeChanged instance
+             */
+            PlayerArrangementModeChanged.create = function create(properties) {
+                return new PlayerArrangementModeChanged(properties);
+            };
+
+            /**
+             * Encodes the specified PlayerArrangementModeChanged message. Does not implicitly {@link PB.GameSetupChange.PlayerArrangementModeChanged.verify|verify} messages.
+             * @function encode
+             * @memberof PB.GameSetupChange.PlayerArrangementModeChanged
+             * @static
+             * @param {PB.GameSetupChange.IPlayerArrangementModeChanged} message PlayerArrangementModeChanged message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            PlayerArrangementModeChanged.encode = function encode(message, writer) {
+                if (!writer)
+                    writer = $Writer.create();
+                if (message.playerArrangementMode != null && Object.hasOwnProperty.call(message, "playerArrangementMode"))
+                    writer.uint32(/* id 1, wireType 0 =*/8).int32(message.playerArrangementMode);
+                return writer;
+            };
+
+            /**
+             * Encodes the specified PlayerArrangementModeChanged message, length delimited. Does not implicitly {@link PB.GameSetupChange.PlayerArrangementModeChanged.verify|verify} messages.
+             * @function encodeDelimited
+             * @memberof PB.GameSetupChange.PlayerArrangementModeChanged
+             * @static
+             * @param {PB.GameSetupChange.IPlayerArrangementModeChanged} message PlayerArrangementModeChanged message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            PlayerArrangementModeChanged.encodeDelimited = function encodeDelimited(message, writer) {
+                return this.encode(message, writer).ldelim();
+            };
+
+            /**
+             * Decodes a PlayerArrangementModeChanged message from the specified reader or buffer.
+             * @function decode
+             * @memberof PB.GameSetupChange.PlayerArrangementModeChanged
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @param {number} [length] Message length if known beforehand
+             * @returns {PB.GameSetupChange.PlayerArrangementModeChanged} PlayerArrangementModeChanged
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            PlayerArrangementModeChanged.decode = function decode(reader, length) {
+                if (!(reader instanceof $Reader))
+                    reader = $Reader.create(reader);
+                var end = length === undefined ? reader.len : reader.pos + length, message = new $root.PB.GameSetupChange.PlayerArrangementModeChanged();
+                while (reader.pos < end) {
+                    var tag = reader.uint32();
+                    switch (tag >>> 3) {
+                    case 1:
+                        message.playerArrangementMode = reader.int32();
+                        break;
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
+                    }
+                }
+                return message;
+            };
+
+            /**
+             * Decodes a PlayerArrangementModeChanged message from the specified reader or buffer, length delimited.
+             * @function decodeDelimited
+             * @memberof PB.GameSetupChange.PlayerArrangementModeChanged
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @returns {PB.GameSetupChange.PlayerArrangementModeChanged} PlayerArrangementModeChanged
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            PlayerArrangementModeChanged.decodeDelimited = function decodeDelimited(reader) {
+                if (!(reader instanceof $Reader))
+                    reader = new $Reader(reader);
+                return this.decode(reader, reader.uint32());
+            };
+
+            /**
+             * Verifies a PlayerArrangementModeChanged message.
+             * @function verify
+             * @memberof PB.GameSetupChange.PlayerArrangementModeChanged
+             * @static
+             * @param {Object.<string,*>} message Plain object to verify
+             * @returns {string|null} `null` if valid, otherwise the reason why it is not
+             */
+            PlayerArrangementModeChanged.verify = function verify(message) {
+                if (typeof message !== "object" || message === null)
+                    return "object expected";
+                if (message.playerArrangementMode != null && message.hasOwnProperty("playerArrangementMode"))
+                    switch (message.playerArrangementMode) {
+                    default:
+                        return "playerArrangementMode: enum value expected";
+                    case 0:
+                    case 1:
+                    case 2:
+                    case 3:
+                        break;
+                    }
+                return null;
+            };
+
+            /**
+             * Creates a PlayerArrangementModeChanged message from a plain object. Also converts values to their respective internal types.
+             * @function fromObject
+             * @memberof PB.GameSetupChange.PlayerArrangementModeChanged
+             * @static
+             * @param {Object.<string,*>} object Plain object
+             * @returns {PB.GameSetupChange.PlayerArrangementModeChanged} PlayerArrangementModeChanged
+             */
+            PlayerArrangementModeChanged.fromObject = function fromObject(object) {
+                if (object instanceof $root.PB.GameSetupChange.PlayerArrangementModeChanged)
+                    return object;
+                var message = new $root.PB.GameSetupChange.PlayerArrangementModeChanged();
+                switch (object.playerArrangementMode) {
+                case "VERSION_1":
+                case 0:
+                    message.playerArrangementMode = 0;
+                    break;
+                case "RANDOM_ORDER":
+                case 1:
+                    message.playerArrangementMode = 1;
+                    break;
+                case "EXACT_ORDER":
+                case 2:
+                    message.playerArrangementMode = 2;
+                    break;
+                case "SPECIFY_TEAMS":
+                case 3:
+                    message.playerArrangementMode = 3;
+                    break;
+                }
+                return message;
+            };
+
+            /**
+             * Creates a plain object from a PlayerArrangementModeChanged message. Also converts values to other types if specified.
+             * @function toObject
+             * @memberof PB.GameSetupChange.PlayerArrangementModeChanged
+             * @static
+             * @param {PB.GameSetupChange.PlayerArrangementModeChanged} message PlayerArrangementModeChanged
+             * @param {$protobuf.IConversionOptions} [options] Conversion options
+             * @returns {Object.<string,*>} Plain object
+             */
+            PlayerArrangementModeChanged.toObject = function toObject(message, options) {
+                if (!options)
+                    options = {};
+                var object = {};
+                if (options.defaults)
+                    object.playerArrangementMode = options.enums === String ? "VERSION_1" : 0;
+                if (message.playerArrangementMode != null && message.hasOwnProperty("playerArrangementMode"))
+                    object.playerArrangementMode = options.enums === String ? $root.PlayerArrangementMode[message.playerArrangementMode] : message.playerArrangementMode;
+                return object;
+            };
+
+            /**
+             * Converts this PlayerArrangementModeChanged to JSON.
+             * @function toJSON
+             * @memberof PB.GameSetupChange.PlayerArrangementModeChanged
+             * @instance
+             * @returns {Object.<string,*>} JSON object
+             */
+            PlayerArrangementModeChanged.prototype.toJSON = function toJSON() {
+                return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+            };
+
+            return PlayerArrangementModeChanged;
+        })();
+
+        GameSetupChange.PositionsSwapped = (function() {
+
+            /**
+             * Properties of a PositionsSwapped.
+             * @memberof PB.GameSetupChange
+             * @interface IPositionsSwapped
+             * @property {number|null} [position1] PositionsSwapped position1
+             * @property {number|null} [position2] PositionsSwapped position2
+             */
+
+            /**
+             * Constructs a new PositionsSwapped.
+             * @memberof PB.GameSetupChange
+             * @classdesc Represents a PositionsSwapped.
+             * @implements IPositionsSwapped
+             * @constructor
+             * @param {PB.GameSetupChange.IPositionsSwapped=} [properties] Properties to set
+             */
+            function PositionsSwapped(properties) {
+                if (properties)
+                    for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                        if (properties[keys[i]] != null)
+                            this[keys[i]] = properties[keys[i]];
+            }
+
+            /**
+             * PositionsSwapped position1.
+             * @member {number} position1
+             * @memberof PB.GameSetupChange.PositionsSwapped
+             * @instance
+             */
+            PositionsSwapped.prototype.position1 = 0;
+
+            /**
+             * PositionsSwapped position2.
+             * @member {number} position2
+             * @memberof PB.GameSetupChange.PositionsSwapped
+             * @instance
+             */
+            PositionsSwapped.prototype.position2 = 0;
+
+            /**
+             * Creates a new PositionsSwapped instance using the specified properties.
+             * @function create
+             * @memberof PB.GameSetupChange.PositionsSwapped
+             * @static
+             * @param {PB.GameSetupChange.IPositionsSwapped=} [properties] Properties to set
+             * @returns {PB.GameSetupChange.PositionsSwapped} PositionsSwapped instance
+             */
+            PositionsSwapped.create = function create(properties) {
+                return new PositionsSwapped(properties);
+            };
+
+            /**
+             * Encodes the specified PositionsSwapped message. Does not implicitly {@link PB.GameSetupChange.PositionsSwapped.verify|verify} messages.
+             * @function encode
+             * @memberof PB.GameSetupChange.PositionsSwapped
+             * @static
+             * @param {PB.GameSetupChange.IPositionsSwapped} message PositionsSwapped message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            PositionsSwapped.encode = function encode(message, writer) {
+                if (!writer)
+                    writer = $Writer.create();
+                if (message.position1 != null && Object.hasOwnProperty.call(message, "position1"))
+                    writer.uint32(/* id 1, wireType 0 =*/8).int32(message.position1);
+                if (message.position2 != null && Object.hasOwnProperty.call(message, "position2"))
+                    writer.uint32(/* id 2, wireType 0 =*/16).int32(message.position2);
+                return writer;
+            };
+
+            /**
+             * Encodes the specified PositionsSwapped message, length delimited. Does not implicitly {@link PB.GameSetupChange.PositionsSwapped.verify|verify} messages.
+             * @function encodeDelimited
+             * @memberof PB.GameSetupChange.PositionsSwapped
+             * @static
+             * @param {PB.GameSetupChange.IPositionsSwapped} message PositionsSwapped message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            PositionsSwapped.encodeDelimited = function encodeDelimited(message, writer) {
+                return this.encode(message, writer).ldelim();
+            };
+
+            /**
+             * Decodes a PositionsSwapped message from the specified reader or buffer.
+             * @function decode
+             * @memberof PB.GameSetupChange.PositionsSwapped
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @param {number} [length] Message length if known beforehand
+             * @returns {PB.GameSetupChange.PositionsSwapped} PositionsSwapped
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            PositionsSwapped.decode = function decode(reader, length) {
+                if (!(reader instanceof $Reader))
+                    reader = $Reader.create(reader);
+                var end = length === undefined ? reader.len : reader.pos + length, message = new $root.PB.GameSetupChange.PositionsSwapped();
+                while (reader.pos < end) {
+                    var tag = reader.uint32();
+                    switch (tag >>> 3) {
+                    case 1:
+                        message.position1 = reader.int32();
+                        break;
+                    case 2:
+                        message.position2 = reader.int32();
+                        break;
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
+                    }
+                }
+                return message;
+            };
+
+            /**
+             * Decodes a PositionsSwapped message from the specified reader or buffer, length delimited.
+             * @function decodeDelimited
+             * @memberof PB.GameSetupChange.PositionsSwapped
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @returns {PB.GameSetupChange.PositionsSwapped} PositionsSwapped
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            PositionsSwapped.decodeDelimited = function decodeDelimited(reader) {
+                if (!(reader instanceof $Reader))
+                    reader = new $Reader(reader);
+                return this.decode(reader, reader.uint32());
+            };
+
+            /**
+             * Verifies a PositionsSwapped message.
+             * @function verify
+             * @memberof PB.GameSetupChange.PositionsSwapped
+             * @static
+             * @param {Object.<string,*>} message Plain object to verify
+             * @returns {string|null} `null` if valid, otherwise the reason why it is not
+             */
+            PositionsSwapped.verify = function verify(message) {
+                if (typeof message !== "object" || message === null)
+                    return "object expected";
+                if (message.position1 != null && message.hasOwnProperty("position1"))
+                    if (!$util.isInteger(message.position1))
+                        return "position1: integer expected";
+                if (message.position2 != null && message.hasOwnProperty("position2"))
+                    if (!$util.isInteger(message.position2))
+                        return "position2: integer expected";
+                return null;
+            };
+
+            /**
+             * Creates a PositionsSwapped message from a plain object. Also converts values to their respective internal types.
+             * @function fromObject
+             * @memberof PB.GameSetupChange.PositionsSwapped
+             * @static
+             * @param {Object.<string,*>} object Plain object
+             * @returns {PB.GameSetupChange.PositionsSwapped} PositionsSwapped
+             */
+            PositionsSwapped.fromObject = function fromObject(object) {
+                if (object instanceof $root.PB.GameSetupChange.PositionsSwapped)
+                    return object;
+                var message = new $root.PB.GameSetupChange.PositionsSwapped();
+                if (object.position1 != null)
+                    message.position1 = object.position1 | 0;
+                if (object.position2 != null)
+                    message.position2 = object.position2 | 0;
+                return message;
+            };
+
+            /**
+             * Creates a plain object from a PositionsSwapped message. Also converts values to other types if specified.
+             * @function toObject
+             * @memberof PB.GameSetupChange.PositionsSwapped
+             * @static
+             * @param {PB.GameSetupChange.PositionsSwapped} message PositionsSwapped
+             * @param {$protobuf.IConversionOptions} [options] Conversion options
+             * @returns {Object.<string,*>} Plain object
+             */
+            PositionsSwapped.toObject = function toObject(message, options) {
+                if (!options)
+                    options = {};
+                var object = {};
+                if (options.defaults) {
+                    object.position1 = 0;
+                    object.position2 = 0;
+                }
+                if (message.position1 != null && message.hasOwnProperty("position1"))
+                    object.position1 = message.position1;
+                if (message.position2 != null && message.hasOwnProperty("position2"))
+                    object.position2 = message.position2;
+                return object;
+            };
+
+            /**
+             * Converts this PositionsSwapped to JSON.
+             * @function toJSON
+             * @memberof PB.GameSetupChange.PositionsSwapped
+             * @instance
+             * @returns {Object.<string,*>} JSON object
+             */
+            PositionsSwapped.prototype.toJSON = function toJSON() {
+                return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+            };
+
+            return PositionsSwapped;
+        })();
+
+        GameSetupChange.UserKicked = (function() {
+
+            /**
+             * Properties of a UserKicked.
+             * @memberof PB.GameSetupChange
+             * @interface IUserKicked
+             * @property {number|null} [userId] UserKicked userId
+             */
+
+            /**
+             * Constructs a new UserKicked.
+             * @memberof PB.GameSetupChange
+             * @classdesc Represents a UserKicked.
+             * @implements IUserKicked
+             * @constructor
+             * @param {PB.GameSetupChange.IUserKicked=} [properties] Properties to set
+             */
+            function UserKicked(properties) {
+                if (properties)
+                    for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                        if (properties[keys[i]] != null)
+                            this[keys[i]] = properties[keys[i]];
+            }
+
+            /**
+             * UserKicked userId.
+             * @member {number} userId
+             * @memberof PB.GameSetupChange.UserKicked
+             * @instance
+             */
+            UserKicked.prototype.userId = 0;
+
+            /**
+             * Creates a new UserKicked instance using the specified properties.
+             * @function create
+             * @memberof PB.GameSetupChange.UserKicked
+             * @static
+             * @param {PB.GameSetupChange.IUserKicked=} [properties] Properties to set
+             * @returns {PB.GameSetupChange.UserKicked} UserKicked instance
+             */
+            UserKicked.create = function create(properties) {
+                return new UserKicked(properties);
+            };
+
+            /**
+             * Encodes the specified UserKicked message. Does not implicitly {@link PB.GameSetupChange.UserKicked.verify|verify} messages.
+             * @function encode
+             * @memberof PB.GameSetupChange.UserKicked
+             * @static
+             * @param {PB.GameSetupChange.IUserKicked} message UserKicked message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            UserKicked.encode = function encode(message, writer) {
+                if (!writer)
+                    writer = $Writer.create();
+                if (message.userId != null && Object.hasOwnProperty.call(message, "userId"))
+                    writer.uint32(/* id 1, wireType 0 =*/8).int32(message.userId);
+                return writer;
+            };
+
+            /**
+             * Encodes the specified UserKicked message, length delimited. Does not implicitly {@link PB.GameSetupChange.UserKicked.verify|verify} messages.
+             * @function encodeDelimited
+             * @memberof PB.GameSetupChange.UserKicked
+             * @static
+             * @param {PB.GameSetupChange.IUserKicked} message UserKicked message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            UserKicked.encodeDelimited = function encodeDelimited(message, writer) {
+                return this.encode(message, writer).ldelim();
+            };
+
+            /**
+             * Decodes a UserKicked message from the specified reader or buffer.
+             * @function decode
+             * @memberof PB.GameSetupChange.UserKicked
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @param {number} [length] Message length if known beforehand
+             * @returns {PB.GameSetupChange.UserKicked} UserKicked
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            UserKicked.decode = function decode(reader, length) {
+                if (!(reader instanceof $Reader))
+                    reader = $Reader.create(reader);
+                var end = length === undefined ? reader.len : reader.pos + length, message = new $root.PB.GameSetupChange.UserKicked();
+                while (reader.pos < end) {
+                    var tag = reader.uint32();
+                    switch (tag >>> 3) {
+                    case 1:
+                        message.userId = reader.int32();
+                        break;
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
+                    }
+                }
+                return message;
+            };
+
+            /**
+             * Decodes a UserKicked message from the specified reader or buffer, length delimited.
+             * @function decodeDelimited
+             * @memberof PB.GameSetupChange.UserKicked
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @returns {PB.GameSetupChange.UserKicked} UserKicked
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            UserKicked.decodeDelimited = function decodeDelimited(reader) {
+                if (!(reader instanceof $Reader))
+                    reader = new $Reader(reader);
+                return this.decode(reader, reader.uint32());
+            };
+
+            /**
+             * Verifies a UserKicked message.
+             * @function verify
+             * @memberof PB.GameSetupChange.UserKicked
+             * @static
+             * @param {Object.<string,*>} message Plain object to verify
+             * @returns {string|null} `null` if valid, otherwise the reason why it is not
+             */
+            UserKicked.verify = function verify(message) {
+                if (typeof message !== "object" || message === null)
+                    return "object expected";
+                if (message.userId != null && message.hasOwnProperty("userId"))
+                    if (!$util.isInteger(message.userId))
+                        return "userId: integer expected";
+                return null;
+            };
+
+            /**
+             * Creates a UserKicked message from a plain object. Also converts values to their respective internal types.
+             * @function fromObject
+             * @memberof PB.GameSetupChange.UserKicked
+             * @static
+             * @param {Object.<string,*>} object Plain object
+             * @returns {PB.GameSetupChange.UserKicked} UserKicked
+             */
+            UserKicked.fromObject = function fromObject(object) {
+                if (object instanceof $root.PB.GameSetupChange.UserKicked)
+                    return object;
+                var message = new $root.PB.GameSetupChange.UserKicked();
+                if (object.userId != null)
+                    message.userId = object.userId | 0;
+                return message;
+            };
+
+            /**
+             * Creates a plain object from a UserKicked message. Also converts values to other types if specified.
+             * @function toObject
+             * @memberof PB.GameSetupChange.UserKicked
+             * @static
+             * @param {PB.GameSetupChange.UserKicked} message UserKicked
+             * @param {$protobuf.IConversionOptions} [options] Conversion options
+             * @returns {Object.<string,*>} Plain object
+             */
+            UserKicked.toObject = function toObject(message, options) {
+                if (!options)
+                    options = {};
+                var object = {};
+                if (options.defaults)
+                    object.userId = 0;
+                if (message.userId != null && message.hasOwnProperty("userId"))
+                    object.userId = message.userId;
+                return object;
+            };
+
+            /**
+             * Converts this UserKicked to JSON.
+             * @function toJSON
+             * @memberof PB.GameSetupChange.UserKicked
+             * @instance
+             * @returns {Object.<string,*>} JSON object
+             */
+            UserKicked.prototype.toJSON = function toJSON() {
+                return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+            };
+
+            return UserKicked;
+        })();
+
+        return GameSetupChange;
+    })();
+
     PB.GameAction = (function() {
 
         /**

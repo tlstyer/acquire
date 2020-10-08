@@ -44,16 +44,6 @@ export enum GameHistoryMessageEnum {
   AllTilesPlayed,
 }
 
-export enum GameSetupChangeEnum {
-  UserAdded,
-  UserRemoved,
-  UserApprovedOfGameSetup,
-  GameModeChanged,
-  PlayerArrangementModeChanged,
-  PositionsSwapped,
-  UserKicked,
-}
-
 export enum ScoreBoardIndexEnum {
   Luxor,
   Tower,

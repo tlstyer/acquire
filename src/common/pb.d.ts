@@ -1510,6 +1510,771 @@ export namespace PB {
         }
     }
 
+    /** Properties of a GameSetupChange. */
+    interface IGameSetupChange {
+
+        /** GameSetupChange userAdded */
+        userAdded?: (PB.GameSetupChange.IUserAdded|null);
+
+        /** GameSetupChange userRemoved */
+        userRemoved?: (PB.GameSetupChange.IUserRemoved|null);
+
+        /** GameSetupChange userApprovedOfGameSetup */
+        userApprovedOfGameSetup?: (PB.GameSetupChange.IUserApprovedOfGameSetup|null);
+
+        /** GameSetupChange gameModeChanged */
+        gameModeChanged?: (PB.GameSetupChange.IGameModeChanged|null);
+
+        /** GameSetupChange playerArrangementModeChanged */
+        playerArrangementModeChanged?: (PB.GameSetupChange.IPlayerArrangementModeChanged|null);
+
+        /** GameSetupChange positionsSwapped */
+        positionsSwapped?: (PB.GameSetupChange.IPositionsSwapped|null);
+
+        /** GameSetupChange userKicked */
+        userKicked?: (PB.GameSetupChange.IUserKicked|null);
+    }
+
+    /** Represents a GameSetupChange. */
+    class GameSetupChange implements IGameSetupChange {
+
+        /**
+         * Constructs a new GameSetupChange.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: PB.IGameSetupChange);
+
+        /** GameSetupChange userAdded. */
+        public userAdded?: (PB.GameSetupChange.IUserAdded|null);
+
+        /** GameSetupChange userRemoved. */
+        public userRemoved?: (PB.GameSetupChange.IUserRemoved|null);
+
+        /** GameSetupChange userApprovedOfGameSetup. */
+        public userApprovedOfGameSetup?: (PB.GameSetupChange.IUserApprovedOfGameSetup|null);
+
+        /** GameSetupChange gameModeChanged. */
+        public gameModeChanged?: (PB.GameSetupChange.IGameModeChanged|null);
+
+        /** GameSetupChange playerArrangementModeChanged. */
+        public playerArrangementModeChanged?: (PB.GameSetupChange.IPlayerArrangementModeChanged|null);
+
+        /** GameSetupChange positionsSwapped. */
+        public positionsSwapped?: (PB.GameSetupChange.IPositionsSwapped|null);
+
+        /** GameSetupChange userKicked. */
+        public userKicked?: (PB.GameSetupChange.IUserKicked|null);
+
+        /**
+         * Creates a new GameSetupChange instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns GameSetupChange instance
+         */
+        public static create(properties?: PB.IGameSetupChange): PB.GameSetupChange;
+
+        /**
+         * Encodes the specified GameSetupChange message. Does not implicitly {@link PB.GameSetupChange.verify|verify} messages.
+         * @param message GameSetupChange message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: PB.IGameSetupChange, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified GameSetupChange message, length delimited. Does not implicitly {@link PB.GameSetupChange.verify|verify} messages.
+         * @param message GameSetupChange message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: PB.IGameSetupChange, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a GameSetupChange message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns GameSetupChange
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): PB.GameSetupChange;
+
+        /**
+         * Decodes a GameSetupChange message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns GameSetupChange
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): PB.GameSetupChange;
+
+        /**
+         * Verifies a GameSetupChange message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a GameSetupChange message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns GameSetupChange
+         */
+        public static fromObject(object: { [k: string]: any }): PB.GameSetupChange;
+
+        /**
+         * Creates a plain object from a GameSetupChange message. Also converts values to other types if specified.
+         * @param message GameSetupChange
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: PB.GameSetupChange, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this GameSetupChange to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    namespace GameSetupChange {
+
+        /** Properties of a UserAdded. */
+        interface IUserAdded {
+
+            /** UserAdded userId */
+            userId?: (number|null);
+        }
+
+        /** Represents a UserAdded. */
+        class UserAdded implements IUserAdded {
+
+            /**
+             * Constructs a new UserAdded.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: PB.GameSetupChange.IUserAdded);
+
+            /** UserAdded userId. */
+            public userId: number;
+
+            /**
+             * Creates a new UserAdded instance using the specified properties.
+             * @param [properties] Properties to set
+             * @returns UserAdded instance
+             */
+            public static create(properties?: PB.GameSetupChange.IUserAdded): PB.GameSetupChange.UserAdded;
+
+            /**
+             * Encodes the specified UserAdded message. Does not implicitly {@link PB.GameSetupChange.UserAdded.verify|verify} messages.
+             * @param message UserAdded message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encode(message: PB.GameSetupChange.IUserAdded, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Encodes the specified UserAdded message, length delimited. Does not implicitly {@link PB.GameSetupChange.UserAdded.verify|verify} messages.
+             * @param message UserAdded message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encodeDelimited(message: PB.GameSetupChange.IUserAdded, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Decodes a UserAdded message from the specified reader or buffer.
+             * @param reader Reader or buffer to decode from
+             * @param [length] Message length if known beforehand
+             * @returns UserAdded
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): PB.GameSetupChange.UserAdded;
+
+            /**
+             * Decodes a UserAdded message from the specified reader or buffer, length delimited.
+             * @param reader Reader or buffer to decode from
+             * @returns UserAdded
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): PB.GameSetupChange.UserAdded;
+
+            /**
+             * Verifies a UserAdded message.
+             * @param message Plain object to verify
+             * @returns `null` if valid, otherwise the reason why it is not
+             */
+            public static verify(message: { [k: string]: any }): (string|null);
+
+            /**
+             * Creates a UserAdded message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns UserAdded
+             */
+            public static fromObject(object: { [k: string]: any }): PB.GameSetupChange.UserAdded;
+
+            /**
+             * Creates a plain object from a UserAdded message. Also converts values to other types if specified.
+             * @param message UserAdded
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: PB.GameSetupChange.UserAdded, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this UserAdded to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+        }
+
+        /** Properties of a UserRemoved. */
+        interface IUserRemoved {
+
+            /** UserRemoved userId */
+            userId?: (number|null);
+        }
+
+        /** Represents a UserRemoved. */
+        class UserRemoved implements IUserRemoved {
+
+            /**
+             * Constructs a new UserRemoved.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: PB.GameSetupChange.IUserRemoved);
+
+            /** UserRemoved userId. */
+            public userId: number;
+
+            /**
+             * Creates a new UserRemoved instance using the specified properties.
+             * @param [properties] Properties to set
+             * @returns UserRemoved instance
+             */
+            public static create(properties?: PB.GameSetupChange.IUserRemoved): PB.GameSetupChange.UserRemoved;
+
+            /**
+             * Encodes the specified UserRemoved message. Does not implicitly {@link PB.GameSetupChange.UserRemoved.verify|verify} messages.
+             * @param message UserRemoved message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encode(message: PB.GameSetupChange.IUserRemoved, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Encodes the specified UserRemoved message, length delimited. Does not implicitly {@link PB.GameSetupChange.UserRemoved.verify|verify} messages.
+             * @param message UserRemoved message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encodeDelimited(message: PB.GameSetupChange.IUserRemoved, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Decodes a UserRemoved message from the specified reader or buffer.
+             * @param reader Reader or buffer to decode from
+             * @param [length] Message length if known beforehand
+             * @returns UserRemoved
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): PB.GameSetupChange.UserRemoved;
+
+            /**
+             * Decodes a UserRemoved message from the specified reader or buffer, length delimited.
+             * @param reader Reader or buffer to decode from
+             * @returns UserRemoved
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): PB.GameSetupChange.UserRemoved;
+
+            /**
+             * Verifies a UserRemoved message.
+             * @param message Plain object to verify
+             * @returns `null` if valid, otherwise the reason why it is not
+             */
+            public static verify(message: { [k: string]: any }): (string|null);
+
+            /**
+             * Creates a UserRemoved message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns UserRemoved
+             */
+            public static fromObject(object: { [k: string]: any }): PB.GameSetupChange.UserRemoved;
+
+            /**
+             * Creates a plain object from a UserRemoved message. Also converts values to other types if specified.
+             * @param message UserRemoved
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: PB.GameSetupChange.UserRemoved, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this UserRemoved to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+        }
+
+        /** Properties of a UserApprovedOfGameSetup. */
+        interface IUserApprovedOfGameSetup {
+
+            /** UserApprovedOfGameSetup userId */
+            userId?: (number|null);
+        }
+
+        /** Represents a UserApprovedOfGameSetup. */
+        class UserApprovedOfGameSetup implements IUserApprovedOfGameSetup {
+
+            /**
+             * Constructs a new UserApprovedOfGameSetup.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: PB.GameSetupChange.IUserApprovedOfGameSetup);
+
+            /** UserApprovedOfGameSetup userId. */
+            public userId: number;
+
+            /**
+             * Creates a new UserApprovedOfGameSetup instance using the specified properties.
+             * @param [properties] Properties to set
+             * @returns UserApprovedOfGameSetup instance
+             */
+            public static create(properties?: PB.GameSetupChange.IUserApprovedOfGameSetup): PB.GameSetupChange.UserApprovedOfGameSetup;
+
+            /**
+             * Encodes the specified UserApprovedOfGameSetup message. Does not implicitly {@link PB.GameSetupChange.UserApprovedOfGameSetup.verify|verify} messages.
+             * @param message UserApprovedOfGameSetup message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encode(message: PB.GameSetupChange.IUserApprovedOfGameSetup, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Encodes the specified UserApprovedOfGameSetup message, length delimited. Does not implicitly {@link PB.GameSetupChange.UserApprovedOfGameSetup.verify|verify} messages.
+             * @param message UserApprovedOfGameSetup message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encodeDelimited(message: PB.GameSetupChange.IUserApprovedOfGameSetup, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Decodes a UserApprovedOfGameSetup message from the specified reader or buffer.
+             * @param reader Reader or buffer to decode from
+             * @param [length] Message length if known beforehand
+             * @returns UserApprovedOfGameSetup
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): PB.GameSetupChange.UserApprovedOfGameSetup;
+
+            /**
+             * Decodes a UserApprovedOfGameSetup message from the specified reader or buffer, length delimited.
+             * @param reader Reader or buffer to decode from
+             * @returns UserApprovedOfGameSetup
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): PB.GameSetupChange.UserApprovedOfGameSetup;
+
+            /**
+             * Verifies a UserApprovedOfGameSetup message.
+             * @param message Plain object to verify
+             * @returns `null` if valid, otherwise the reason why it is not
+             */
+            public static verify(message: { [k: string]: any }): (string|null);
+
+            /**
+             * Creates a UserApprovedOfGameSetup message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns UserApprovedOfGameSetup
+             */
+            public static fromObject(object: { [k: string]: any }): PB.GameSetupChange.UserApprovedOfGameSetup;
+
+            /**
+             * Creates a plain object from a UserApprovedOfGameSetup message. Also converts values to other types if specified.
+             * @param message UserApprovedOfGameSetup
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: PB.GameSetupChange.UserApprovedOfGameSetup, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this UserApprovedOfGameSetup to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+        }
+
+        /** Properties of a GameModeChanged. */
+        interface IGameModeChanged {
+
+            /** GameModeChanged gameMode */
+            gameMode?: (GameMode|null);
+        }
+
+        /** Represents a GameModeChanged. */
+        class GameModeChanged implements IGameModeChanged {
+
+            /**
+             * Constructs a new GameModeChanged.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: PB.GameSetupChange.IGameModeChanged);
+
+            /** GameModeChanged gameMode. */
+            public gameMode: GameMode;
+
+            /**
+             * Creates a new GameModeChanged instance using the specified properties.
+             * @param [properties] Properties to set
+             * @returns GameModeChanged instance
+             */
+            public static create(properties?: PB.GameSetupChange.IGameModeChanged): PB.GameSetupChange.GameModeChanged;
+
+            /**
+             * Encodes the specified GameModeChanged message. Does not implicitly {@link PB.GameSetupChange.GameModeChanged.verify|verify} messages.
+             * @param message GameModeChanged message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encode(message: PB.GameSetupChange.IGameModeChanged, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Encodes the specified GameModeChanged message, length delimited. Does not implicitly {@link PB.GameSetupChange.GameModeChanged.verify|verify} messages.
+             * @param message GameModeChanged message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encodeDelimited(message: PB.GameSetupChange.IGameModeChanged, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Decodes a GameModeChanged message from the specified reader or buffer.
+             * @param reader Reader or buffer to decode from
+             * @param [length] Message length if known beforehand
+             * @returns GameModeChanged
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): PB.GameSetupChange.GameModeChanged;
+
+            /**
+             * Decodes a GameModeChanged message from the specified reader or buffer, length delimited.
+             * @param reader Reader or buffer to decode from
+             * @returns GameModeChanged
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): PB.GameSetupChange.GameModeChanged;
+
+            /**
+             * Verifies a GameModeChanged message.
+             * @param message Plain object to verify
+             * @returns `null` if valid, otherwise the reason why it is not
+             */
+            public static verify(message: { [k: string]: any }): (string|null);
+
+            /**
+             * Creates a GameModeChanged message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns GameModeChanged
+             */
+            public static fromObject(object: { [k: string]: any }): PB.GameSetupChange.GameModeChanged;
+
+            /**
+             * Creates a plain object from a GameModeChanged message. Also converts values to other types if specified.
+             * @param message GameModeChanged
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: PB.GameSetupChange.GameModeChanged, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this GameModeChanged to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+        }
+
+        /** Properties of a PlayerArrangementModeChanged. */
+        interface IPlayerArrangementModeChanged {
+
+            /** PlayerArrangementModeChanged playerArrangementMode */
+            playerArrangementMode?: (PlayerArrangementMode|null);
+        }
+
+        /** Represents a PlayerArrangementModeChanged. */
+        class PlayerArrangementModeChanged implements IPlayerArrangementModeChanged {
+
+            /**
+             * Constructs a new PlayerArrangementModeChanged.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: PB.GameSetupChange.IPlayerArrangementModeChanged);
+
+            /** PlayerArrangementModeChanged playerArrangementMode. */
+            public playerArrangementMode: PlayerArrangementMode;
+
+            /**
+             * Creates a new PlayerArrangementModeChanged instance using the specified properties.
+             * @param [properties] Properties to set
+             * @returns PlayerArrangementModeChanged instance
+             */
+            public static create(properties?: PB.GameSetupChange.IPlayerArrangementModeChanged): PB.GameSetupChange.PlayerArrangementModeChanged;
+
+            /**
+             * Encodes the specified PlayerArrangementModeChanged message. Does not implicitly {@link PB.GameSetupChange.PlayerArrangementModeChanged.verify|verify} messages.
+             * @param message PlayerArrangementModeChanged message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encode(message: PB.GameSetupChange.IPlayerArrangementModeChanged, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Encodes the specified PlayerArrangementModeChanged message, length delimited. Does not implicitly {@link PB.GameSetupChange.PlayerArrangementModeChanged.verify|verify} messages.
+             * @param message PlayerArrangementModeChanged message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encodeDelimited(message: PB.GameSetupChange.IPlayerArrangementModeChanged, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Decodes a PlayerArrangementModeChanged message from the specified reader or buffer.
+             * @param reader Reader or buffer to decode from
+             * @param [length] Message length if known beforehand
+             * @returns PlayerArrangementModeChanged
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): PB.GameSetupChange.PlayerArrangementModeChanged;
+
+            /**
+             * Decodes a PlayerArrangementModeChanged message from the specified reader or buffer, length delimited.
+             * @param reader Reader or buffer to decode from
+             * @returns PlayerArrangementModeChanged
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): PB.GameSetupChange.PlayerArrangementModeChanged;
+
+            /**
+             * Verifies a PlayerArrangementModeChanged message.
+             * @param message Plain object to verify
+             * @returns `null` if valid, otherwise the reason why it is not
+             */
+            public static verify(message: { [k: string]: any }): (string|null);
+
+            /**
+             * Creates a PlayerArrangementModeChanged message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns PlayerArrangementModeChanged
+             */
+            public static fromObject(object: { [k: string]: any }): PB.GameSetupChange.PlayerArrangementModeChanged;
+
+            /**
+             * Creates a plain object from a PlayerArrangementModeChanged message. Also converts values to other types if specified.
+             * @param message PlayerArrangementModeChanged
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: PB.GameSetupChange.PlayerArrangementModeChanged, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this PlayerArrangementModeChanged to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+        }
+
+        /** Properties of a PositionsSwapped. */
+        interface IPositionsSwapped {
+
+            /** PositionsSwapped position1 */
+            position1?: (number|null);
+
+            /** PositionsSwapped position2 */
+            position2?: (number|null);
+        }
+
+        /** Represents a PositionsSwapped. */
+        class PositionsSwapped implements IPositionsSwapped {
+
+            /**
+             * Constructs a new PositionsSwapped.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: PB.GameSetupChange.IPositionsSwapped);
+
+            /** PositionsSwapped position1. */
+            public position1: number;
+
+            /** PositionsSwapped position2. */
+            public position2: number;
+
+            /**
+             * Creates a new PositionsSwapped instance using the specified properties.
+             * @param [properties] Properties to set
+             * @returns PositionsSwapped instance
+             */
+            public static create(properties?: PB.GameSetupChange.IPositionsSwapped): PB.GameSetupChange.PositionsSwapped;
+
+            /**
+             * Encodes the specified PositionsSwapped message. Does not implicitly {@link PB.GameSetupChange.PositionsSwapped.verify|verify} messages.
+             * @param message PositionsSwapped message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encode(message: PB.GameSetupChange.IPositionsSwapped, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Encodes the specified PositionsSwapped message, length delimited. Does not implicitly {@link PB.GameSetupChange.PositionsSwapped.verify|verify} messages.
+             * @param message PositionsSwapped message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encodeDelimited(message: PB.GameSetupChange.IPositionsSwapped, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Decodes a PositionsSwapped message from the specified reader or buffer.
+             * @param reader Reader or buffer to decode from
+             * @param [length] Message length if known beforehand
+             * @returns PositionsSwapped
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): PB.GameSetupChange.PositionsSwapped;
+
+            /**
+             * Decodes a PositionsSwapped message from the specified reader or buffer, length delimited.
+             * @param reader Reader or buffer to decode from
+             * @returns PositionsSwapped
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): PB.GameSetupChange.PositionsSwapped;
+
+            /**
+             * Verifies a PositionsSwapped message.
+             * @param message Plain object to verify
+             * @returns `null` if valid, otherwise the reason why it is not
+             */
+            public static verify(message: { [k: string]: any }): (string|null);
+
+            /**
+             * Creates a PositionsSwapped message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns PositionsSwapped
+             */
+            public static fromObject(object: { [k: string]: any }): PB.GameSetupChange.PositionsSwapped;
+
+            /**
+             * Creates a plain object from a PositionsSwapped message. Also converts values to other types if specified.
+             * @param message PositionsSwapped
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: PB.GameSetupChange.PositionsSwapped, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this PositionsSwapped to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+        }
+
+        /** Properties of a UserKicked. */
+        interface IUserKicked {
+
+            /** UserKicked userId */
+            userId?: (number|null);
+        }
+
+        /** Represents a UserKicked. */
+        class UserKicked implements IUserKicked {
+
+            /**
+             * Constructs a new UserKicked.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: PB.GameSetupChange.IUserKicked);
+
+            /** UserKicked userId. */
+            public userId: number;
+
+            /**
+             * Creates a new UserKicked instance using the specified properties.
+             * @param [properties] Properties to set
+             * @returns UserKicked instance
+             */
+            public static create(properties?: PB.GameSetupChange.IUserKicked): PB.GameSetupChange.UserKicked;
+
+            /**
+             * Encodes the specified UserKicked message. Does not implicitly {@link PB.GameSetupChange.UserKicked.verify|verify} messages.
+             * @param message UserKicked message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encode(message: PB.GameSetupChange.IUserKicked, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Encodes the specified UserKicked message, length delimited. Does not implicitly {@link PB.GameSetupChange.UserKicked.verify|verify} messages.
+             * @param message UserKicked message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encodeDelimited(message: PB.GameSetupChange.IUserKicked, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Decodes a UserKicked message from the specified reader or buffer.
+             * @param reader Reader or buffer to decode from
+             * @param [length] Message length if known beforehand
+             * @returns UserKicked
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): PB.GameSetupChange.UserKicked;
+
+            /**
+             * Decodes a UserKicked message from the specified reader or buffer, length delimited.
+             * @param reader Reader or buffer to decode from
+             * @returns UserKicked
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): PB.GameSetupChange.UserKicked;
+
+            /**
+             * Verifies a UserKicked message.
+             * @param message Plain object to verify
+             * @returns `null` if valid, otherwise the reason why it is not
+             */
+            public static verify(message: { [k: string]: any }): (string|null);
+
+            /**
+             * Creates a UserKicked message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns UserKicked
+             */
+            public static fromObject(object: { [k: string]: any }): PB.GameSetupChange.UserKicked;
+
+            /**
+             * Creates a plain object from a UserKicked message. Also converts values to other types if specified.
+             * @param message UserKicked
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: PB.GameSetupChange.UserKicked, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this UserKicked to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+        }
+    }
+
     /** Properties of a GameAction. */
     interface IGameAction {
 

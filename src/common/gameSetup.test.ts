@@ -1,8 +1,7 @@
 import { List } from 'immutable';
 import * as seedrandom from 'seedrandom';
-import { GameSetupChangeEnum } from './enums';
 import { GameSetup } from './gameSetup';
-import { GameMode, PlayerArrangementMode } from './pb';
+import { GameMode, PB, PlayerArrangementMode } from './pb';
 
 const dummyApprovals = List([true]);
 
@@ -21,8 +20,6 @@ function getUsernameForUserID(userID: number) {
 }
 
 function expectEqualGameSetups(gameSetup1: GameSetup, gameSetup2: GameSetup) {
-  gameSetup1.changeFunctions.clear();
-  gameSetup2.changeFunctions.clear();
   expect(gameSetup2).toEqual(gameSetup1);
   expect(gameSetup2.toGameSetupData()).toEqual(gameSetup1.toGameSetupData());
 }
@@ -55,10 +52,7 @@ describe('addUser', () => {
     expect(gameSetup.usernames.toJS()).toEqual(['user 1', 'user 3', 'user 4']);
     expect(gameSetup.userIDs.toJS()).toEqual([1, 3, 4]);
     expect(gameSetup.userIDsSet).toEqual(new Set([1, 3, 4]));
-    expect(gameSetup.history).toEqual([
-      [GameSetupChangeEnum.UserAdded, 3],
-      [GameSetupChangeEnum.UserAdded, 4],
-    ]);
+    expect(gameSetup.history).toEqual([PB.GameSetupChange.create({ userAdded: { userId: 3 } }), PB.GameSetupChange.create({ userAdded: { userId: 4 } })]);
   });
 
   test('duplicate users are rejected', () => {
@@ -70,7 +64,7 @@ describe('addUser', () => {
     expect(gameSetup.usernames.toJS()).toEqual(['user 1', 'user 6', null]);
     expect(gameSetup.userIDs.toJS()).toEqual([1, 6, null]);
     expect(gameSetup.userIDsSet).toEqual(new Set([1, 6]));
-    expect(gameSetup.history).toEqual([[GameSetupChangeEnum.UserAdded, 6]]);
+    expect(gameSetup.history).toEqual([PB.GameSetupChange.create({ userAdded: { userId: 6 } })]);
   });
 
   test('approvals are reset', () => {
@@ -97,17 +91,14 @@ describe('removeUser', () => {
     expect(gameSetup.usernames.toJS()).toEqual(['user 1', null, 'user 2']);
     expect(gameSetup.userIDs.toJS()).toEqual([1, null, 2]);
     expect(gameSetup.userIDsSet).toEqual(new Set([1, 2]));
-    expect(gameSetup.history).toEqual([[GameSetupChangeEnum.UserRemoved, 7]]);
+    expect(gameSetup.history).toEqual([PB.GameSetupChange.create({ userRemoved: { userId: 7 } })]);
 
     gameSetup.removeUser(2);
 
     expect(gameSetup.usernames.toJS()).toEqual(['user 1', null, null]);
     expect(gameSetup.userIDs.toJS()).toEqual([1, null, null]);
     expect(gameSetup.userIDsSet).toEqual(new Set([1]));
-    expect(gameSetup.history).toEqual([
-      [GameSetupChangeEnum.UserRemoved, 7],
-      [GameSetupChangeEnum.UserRemoved, 2],
-    ]);
+    expect(gameSetup.history).toEqual([PB.GameSetupChange.create({ userRemoved: { userId: 7 } }), PB.GameSetupChange.create({ userRemoved: { userId: 2 } })]);
   });
 
   test('cannot remove host', () => {
@@ -196,7 +187,7 @@ describe('approve', () => {
 
     expect(gameSetup.approvals.toJS()).toEqual([false, true]);
     expect(gameSetup.approvedByEverybody).toBe(false);
-    expect(gameSetup.history).toEqual([[GameSetupChangeEnum.UserApprovedOfGameSetup, 2]]);
+    expect(gameSetup.history).toEqual([PB.GameSetupChange.create({ userApprovedOfGameSetup: { userId: 2 } })]);
   });
 
   test('approvedByEverybody set to true when last approval received', () => {
@@ -214,7 +205,7 @@ describe('approve', () => {
 
     expect(gameSetup.approvals.toJS()).toEqual([true, true, true]);
     expect(gameSetup.approvedByEverybody).toBe(true);
-    expect(gameSetup.history).toEqual([[GameSetupChangeEnum.UserApprovedOfGameSetup, 2]]);
+    expect(gameSetup.history).toEqual([PB.GameSetupChange.create({ userApprovedOfGameSetup: { userId: 2 } })]);
   });
 });
 
@@ -282,7 +273,7 @@ describe('changeGameMode', () => {
 
     expect(gameSetup.gameMode).toBe(GameMode.SINGLES_4);
     expect(gameSetup.usernames.toJS()).toEqual(['user 1', 'user 2', null, null]);
-    expect(gameSetup.history).toEqual([[GameSetupChangeEnum.GameModeChanged, GameMode.SINGLES_4]]);
+    expect(gameSetup.history).toEqual([PB.GameSetupChange.create({ gameModeChanged: { gameMode: GameMode.SINGLES_4 } })]);
   });
 
   test('spots added for added player positions', () => {
@@ -297,7 +288,7 @@ describe('changeGameMode', () => {
 
     expect(gameSetup.gameMode).toBe(GameMode.SINGLES_4);
     expect(gameSetup.usernames.toJS()).toEqual(['user 1', 'user 2', null, null]);
-    expect(gameSetup.history).toEqual([[GameSetupChangeEnum.GameModeChanged, GameMode.SINGLES_4]]);
+    expect(gameSetup.history).toEqual([PB.GameSetupChange.create({ gameModeChanged: { gameMode: GameMode.SINGLES_4 } })]);
   });
 
   test('spots removed for removed player positions', () => {
@@ -312,7 +303,7 @@ describe('changeGameMode', () => {
 
     expect(gameSetup.gameMode).toBe(GameMode.SINGLES_2);
     expect(gameSetup.usernames.toJS()).toEqual(['user 1', 'user 2']);
-    expect(gameSetup.history).toEqual([[GameSetupChangeEnum.GameModeChanged, GameMode.SINGLES_2]]);
+    expect(gameSetup.history).toEqual([PB.GameSetupChange.create({ gameModeChanged: { gameMode: GameMode.SINGLES_2 } })]);
   });
 
   test('spots removed and positions shifted for removed player positions', () => {
@@ -333,7 +324,7 @@ describe('changeGameMode', () => {
 
     expect(gameSetup.gameMode).toBe(GameMode.TEAMS_2_VS_2);
     expect(gameSetup.usernames.toJS()).toEqual(['user 1', 'user 5', 'user 3', 'user 6']);
-    expect(gameSetup.history).toEqual([[GameSetupChangeEnum.GameModeChanged, GameMode.TEAMS_2_VS_2]]);
+    expect(gameSetup.history).toEqual([PB.GameSetupChange.create({ gameModeChanged: { gameMode: GameMode.TEAMS_2_VS_2 } })]);
   });
 
   test('player arrangement mode changed to RandomOrder from SpecifyTeams when switching to a Singles game', () => {
@@ -348,7 +339,7 @@ describe('changeGameMode', () => {
     expect(gameSetup.gameMode).toBe(GameMode.SINGLES_4);
     expect(gameSetup.playerArrangementMode).toBe(PlayerArrangementMode.RANDOM_ORDER);
     expect(gameSetup.usernames.toJS()).toEqual(['user 1', null, null, null]);
-    expect(gameSetup.history).toEqual([[GameSetupChangeEnum.GameModeChanged, GameMode.SINGLES_4]]);
+    expect(gameSetup.history).toEqual([PB.GameSetupChange.create({ gameModeChanged: { gameMode: GameMode.SINGLES_4 } })]);
   });
 
   test('approvals are reset', () => {
@@ -413,7 +404,9 @@ describe('changePlayerArrangementMode', () => {
     gameSetup.changePlayerArrangementMode(PlayerArrangementMode.EXACT_ORDER);
 
     expect(gameSetup.playerArrangementMode).toBe(PlayerArrangementMode.EXACT_ORDER);
-    expect(gameSetup.history).toEqual([[GameSetupChangeEnum.PlayerArrangementModeChanged, PlayerArrangementMode.EXACT_ORDER]]);
+    expect(gameSetup.history).toEqual([
+      PB.GameSetupChange.create({ playerArrangementModeChanged: { playerArrangementMode: PlayerArrangementMode.EXACT_ORDER } }),
+    ]);
   });
 
   test('approvals are reset', () => {
@@ -472,17 +465,17 @@ describe('swapPositions', () => {
     expect(gameSetup.usernames.toJS()).toEqual(['user 1', 'user 2', 'user 3', 'user 4']);
     gameSetup.swapPositions(0, 1);
     expect(gameSetup.usernames.toJS()).toEqual(['user 2', 'user 1', 'user 3', 'user 4']);
-    expect(gameSetup.history).toEqual([[GameSetupChangeEnum.PositionsSwapped, 0, 1]]);
+    expect(gameSetup.history).toEqual([PB.GameSetupChange.create({ positionsSwapped: { position1: 0, position2: 1 } })]);
     gameSetup.clearHistory();
 
     gameSetup.swapPositions(2, 3);
     expect(gameSetup.usernames.toJS()).toEqual(['user 2', 'user 1', 'user 4', 'user 3']);
-    expect(gameSetup.history).toEqual([[GameSetupChangeEnum.PositionsSwapped, 2, 3]]);
+    expect(gameSetup.history).toEqual([PB.GameSetupChange.create({ positionsSwapped: { position1: 2, position2: 3 } })]);
     gameSetup.clearHistory();
 
     gameSetup.swapPositions(0, 3);
     expect(gameSetup.usernames.toJS()).toEqual(['user 3', 'user 1', 'user 4', 'user 2']);
-    expect(gameSetup.history).toEqual([[GameSetupChangeEnum.PositionsSwapped, 0, 3]]);
+    expect(gameSetup.history).toEqual([PB.GameSetupChange.create({ positionsSwapped: { position1: 0, position2: 3 } })]);
     gameSetup.clearHistory();
   });
 
@@ -567,7 +560,7 @@ describe('kickUser', () => {
     expect(gameSetup.usernames.toJS()).toEqual(['user 1', null, 'user 3', null]);
     expect(gameSetup.userIDs.toJS()).toEqual([1, null, 3, null]);
     expect(gameSetup.userIDsSet).toEqual(new Set([1, 3]));
-    expect(gameSetup.history).toEqual([[GameSetupChangeEnum.UserKicked, 2]]);
+    expect(gameSetup.history).toEqual([PB.GameSetupChange.create({ userKicked: { userId: 2 } })]);
   });
 
   test('approvals are reset', () => {
@@ -589,47 +582,27 @@ describe('processChange', () => {
   test('no changes upon invalid message', () => {
     const gameSetup = new GameSetup(GameMode.SINGLES_4, PlayerArrangementMode.RANDOM_ORDER, 1, getUsernameForUserID);
 
-    // @ts-ignore
-    gameSetup.processChange(null);
-    expect(gameSetup.history).toEqual([]);
-
-    // @ts-ignore
-    gameSetup.processChange({});
-    expect(gameSetup.history).toEqual([]);
-
-    gameSetup.processChange([]);
-    expect(gameSetup.history).toEqual([]);
-
-    gameSetup.processChange(['not an integer']);
-    expect(gameSetup.history).toEqual([]);
-
-    gameSetup.processChange([-1]);
-    expect(gameSetup.history).toEqual([]);
-
-    gameSetup.processChange([GameSetupChangeEnum.UserAdded]);
-    expect(gameSetup.history).toEqual([]);
-
-    gameSetup.processChange([GameSetupChangeEnum.UserAdded, 1, 2]);
+    gameSetup.processChange(PB.GameSetupChange.create());
     expect(gameSetup.history).toEqual([]);
   });
 
   test('changes are processed', () => {
     const gameSetup = new GameSetup(GameMode.SINGLES_4, PlayerArrangementMode.RANDOM_ORDER, 1, getUsernameForUserID);
 
-    gameSetup.processChange([GameSetupChangeEnum.UserAdded, 2]);
-    gameSetup.processChange([GameSetupChangeEnum.UserAdded, 3]);
-    gameSetup.processChange([GameSetupChangeEnum.UserAdded, 4]);
-    gameSetup.processChange([GameSetupChangeEnum.UserRemoved, 3]);
-    gameSetup.processChange([GameSetupChangeEnum.GameModeChanged, GameMode.TEAMS_2_VS_2]);
-    gameSetup.processChange([GameSetupChangeEnum.PlayerArrangementModeChanged, PlayerArrangementMode.EXACT_ORDER]);
-    gameSetup.processChange([GameSetupChangeEnum.PositionsSwapped, 0, 3]);
-    gameSetup.processChange([GameSetupChangeEnum.UserKicked, 2]);
-    gameSetup.processChange([GameSetupChangeEnum.UserAdded, 5]);
-    gameSetup.processChange([GameSetupChangeEnum.UserAdded, 6]);
-    gameSetup.processChange([GameSetupChangeEnum.UserApprovedOfGameSetup, 1]);
-    gameSetup.processChange([GameSetupChangeEnum.UserApprovedOfGameSetup, 4]);
-    gameSetup.processChange([GameSetupChangeEnum.UserApprovedOfGameSetup, 5]);
-    gameSetup.processChange([GameSetupChangeEnum.UserApprovedOfGameSetup, 6]);
+    gameSetup.processChange(PB.GameSetupChange.create({ userAdded: { userId: 2 } }));
+    gameSetup.processChange(PB.GameSetupChange.create({ userAdded: { userId: 3 } }));
+    gameSetup.processChange(PB.GameSetupChange.create({ userAdded: { userId: 4 } }));
+    gameSetup.processChange(PB.GameSetupChange.create({ userRemoved: { userId: 3 } }));
+    gameSetup.processChange(PB.GameSetupChange.create({ gameModeChanged: { gameMode: GameMode.TEAMS_2_VS_2 } }));
+    gameSetup.processChange(PB.GameSetupChange.create({ playerArrangementModeChanged: { playerArrangementMode: PlayerArrangementMode.EXACT_ORDER } }));
+    gameSetup.processChange(PB.GameSetupChange.create({ positionsSwapped: { position1: 0, position2: 3 } }));
+    gameSetup.processChange(PB.GameSetupChange.create({ userKicked: { userId: 2 } }));
+    gameSetup.processChange(PB.GameSetupChange.create({ userAdded: { userId: 5 } }));
+    gameSetup.processChange(PB.GameSetupChange.create({ userAdded: { userId: 6 } }));
+    gameSetup.processChange(PB.GameSetupChange.create({ userApprovedOfGameSetup: { userId: 1 } }));
+    gameSetup.processChange(PB.GameSetupChange.create({ userApprovedOfGameSetup: { userId: 4 } }));
+    gameSetup.processChange(PB.GameSetupChange.create({ userApprovedOfGameSetup: { userId: 5 } }));
+    gameSetup.processChange(PB.GameSetupChange.create({ userApprovedOfGameSetup: { userId: 6 } }));
 
     expect(gameSetup.gameMode).toBe(GameMode.TEAMS_2_VS_2);
     expect(gameSetup.playerArrangementMode).toBe(PlayerArrangementMode.EXACT_ORDER);

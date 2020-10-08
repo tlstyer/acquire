@@ -4,7 +4,7 @@ import { List } from 'immutable';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { defaultGameBoard } from '../common/defaults';
-import { GameActionEnum, GameSetupChangeEnum, MessageToClientEnum, ScoreBoardIndexEnum } from '../common/enums';
+import { GameActionEnum, MessageToClientEnum, ScoreBoardIndexEnum } from '../common/enums';
 import { Game } from '../common/game';
 import { ActionDisposeOfShares } from '../common/gameActions/disposeOfShares';
 import { ActionGameOver } from '../common/gameActions/gameOver';
@@ -633,22 +633,18 @@ export class ClientManager {
     }
   }
 
-  onMessageGameSetupChanged(gameDisplayNumber: number, ...params: any[]) {
+  onMessageGameSetupChanged(gameDisplayNumber: number, gameSetupChange: PB.GameSetupChange) {
     const gameSetup = this.gameDisplayNumberToGameData.get(gameDisplayNumber)!.gameSetup!;
 
-    gameSetup.processChange(params);
+    gameSetup.processChange(gameSetupChange);
 
-    switch (params[0]) {
-      case GameSetupChangeEnum.UserAdded:
-        this.userIDToUser.get(params[1])!.numGames++;
-        break;
-      case GameSetupChangeEnum.UserRemoved:
-      case GameSetupChangeEnum.UserKicked: {
-        const user = this.userIDToUser.get(params[1])!;
-        user.numGames--;
-        this.deleteUserIfItDoesNotHaveReferences(user);
-        break;
-      }
+    if (gameSetupChange.userAdded) {
+      this.userIDToUser.get(gameSetupChange.userAdded.userId!)!.numGames++;
+    } else if (gameSetupChange.userRemoved || gameSetupChange.userKicked) {
+      const userID = gameSetupChange.userRemoved ? gameSetupChange.userRemoved.userId! : gameSetupChange.userKicked!.userId!;
+      const user = this.userIDToUser.get(userID)!;
+      user.numGames--;
+      this.deleteUserIfItDoesNotHaveReferences(user);
     }
   }
 

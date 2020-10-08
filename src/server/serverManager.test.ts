@@ -1,5 +1,5 @@
 import * as WebSocket from 'ws';
-import { GameSetupChangeEnum, MessageToClientEnum, TileEnum } from '../common/enums';
+import { MessageToClientEnum, TileEnum } from '../common/enums';
 import { encodeMessageToServer } from '../common/helpers';
 import { ErrorCode, GameMode, PB, PlayerArrangementMode } from '../common/pb';
 import { ConnectionState, GameData, ServerManager, User } from './serverManager';
@@ -973,7 +973,7 @@ describe('join game', () => {
     expect(hostConnection.receivedMessages.length).toBe(1);
     expect(otherConnection.receivedMessages.length).toBe(1);
 
-    const expectedMessage = [[MessageToClientEnum.GameSetupChanged, 1, GameSetupChangeEnum.UserAdded, 2]];
+    const expectedMessage = [[MessageToClientEnum.GameSetupChanged, 1, PB.GameSetupChange.create({ userAdded: { userId: 2 } })]];
     expect(hostConnection.receivedMessages[0]).toEqual(expectedMessage);
     expect(otherConnection.receivedMessages[0]).toEqual(expectedMessage);
   });
@@ -1020,7 +1020,7 @@ describe('unjoin game', () => {
     expect(hostConnection.receivedMessages.length).toBe(1);
     expect(otherConnection.receivedMessages.length).toBe(1);
 
-    const expectedMessage = [[MessageToClientEnum.GameSetupChanged, 1, GameSetupChangeEnum.UserRemoved, 2]];
+    const expectedMessage = [[MessageToClientEnum.GameSetupChanged, 1, PB.GameSetupChange.create({ userRemoved: { userId: 2 } })]];
     expect(hostConnection.receivedMessages[0]).toEqual(expectedMessage);
     expect(otherConnection.receivedMessages[0]).toEqual(expectedMessage);
   });
@@ -1067,7 +1067,7 @@ describe('approve of game setup', () => {
     expect(hostConnection.receivedMessages.length).toBe(1);
     expect(otherConnection.receivedMessages.length).toBe(1);
 
-    const expectedMessage = [[MessageToClientEnum.GameSetupChanged, 1, GameSetupChangeEnum.UserApprovedOfGameSetup, 2]];
+    const expectedMessage = [[MessageToClientEnum.GameSetupChanged, 1, PB.GameSetupChange.create({ userApprovedOfGameSetup: { userId: 2 } })]];
     expect(hostConnection.receivedMessages[0]).toEqual(expectedMessage);
     expect(otherConnection.receivedMessages[0]).toEqual(expectedMessage);
   });
@@ -1129,7 +1129,9 @@ describe('change game mode', () => {
     expect(hostConnection.receivedMessages.length).toBe(1);
     expect(otherConnection.receivedMessages.length).toBe(1);
 
-    const expectedMessage = [[MessageToClientEnum.GameSetupChanged, 1, GameSetupChangeEnum.GameModeChanged, GameMode.SINGLES_3]];
+    const expectedMessage = [
+      [MessageToClientEnum.GameSetupChanged, 1, PB.GameSetupChange.create({ gameModeChanged: { gameMode: GameMode.SINGLES_3 } }).toJSON()],
+    ];
     expect(hostConnection.receivedMessages[0]).toEqual(expectedMessage);
     expect(otherConnection.receivedMessages[0]).toEqual(expectedMessage);
   });
@@ -1191,7 +1193,13 @@ describe('change player arrangement mode', () => {
     expect(hostConnection.receivedMessages.length).toBe(1);
     expect(otherConnection.receivedMessages.length).toBe(1);
 
-    const expectedMessage = [[MessageToClientEnum.GameSetupChanged, 1, GameSetupChangeEnum.PlayerArrangementModeChanged, PlayerArrangementMode.EXACT_ORDER]];
+    const expectedMessage = [
+      [
+        MessageToClientEnum.GameSetupChanged,
+        1,
+        PB.GameSetupChange.create({ playerArrangementModeChanged: { playerArrangementMode: PlayerArrangementMode.EXACT_ORDER } }).toJSON(),
+      ],
+    ];
     expect(hostConnection.receivedMessages[0]).toEqual(expectedMessage);
     expect(otherConnection.receivedMessages[0]).toEqual(expectedMessage);
   });
@@ -1253,7 +1261,7 @@ describe('swap positions', () => {
     expect(hostConnection.receivedMessages.length).toBe(1);
     expect(otherConnection.receivedMessages.length).toBe(1);
 
-    const expectedMessage = [[MessageToClientEnum.GameSetupChanged, 1, GameSetupChangeEnum.PositionsSwapped, 0, 1]];
+    const expectedMessage = [[MessageToClientEnum.GameSetupChanged, 1, PB.GameSetupChange.create({ positionsSwapped: { position1: 0, position2: 1 } })]];
     expect(hostConnection.receivedMessages[0]).toEqual(expectedMessage);
     expect(otherConnection.receivedMessages[0]).toEqual(expectedMessage);
   });
@@ -1315,7 +1323,7 @@ describe('kick user', () => {
     expect(hostConnection.receivedMessages.length).toBe(1);
     expect(otherConnection.receivedMessages.length).toBe(1);
 
-    const expectedMessage = [[MessageToClientEnum.GameSetupChanged, 1, GameSetupChangeEnum.UserKicked, 2]];
+    const expectedMessage = [[MessageToClientEnum.GameSetupChanged, 1, PB.GameSetupChange.create({ userKicked: { userId: 2 } })]];
     expect(hostConnection.receivedMessages[0]).toEqual(expectedMessage);
     expect(otherConnection.receivedMessages[0]).toEqual(expectedMessage);
   });

@@ -122,6 +122,35 @@ message PB {
     KickUser kick_user = 7;
   }
 
+  message GameSetupChange {
+    message UserAdded { int32 user_id = 1; }
+
+    message UserRemoved { int32 user_id = 1; }
+
+    message UserApprovedOfGameSetup { int32 user_id = 1; }
+
+    message GameModeChanged { GameMode game_mode = 1; }
+
+    message PlayerArrangementModeChanged {
+      PlayerArrangementMode player_arrangement_mode = 1;
+    }
+
+    message PositionsSwapped {
+      int32 position1 = 1;
+      int32 position2 = 2;
+    }
+
+    message UserKicked { int32 user_id = 1; }
+
+    UserAdded user_added = 1;
+    UserRemoved user_removed = 2;
+    UserApprovedOfGameSetup user_approved_of_game_setup = 3;
+    GameModeChanged game_mode_changed = 4;
+    PlayerArrangementModeChanged player_arrangement_mode_changed = 5;
+    PositionsSwapped positions_swapped = 6;
+    UserKicked user_kicked = 7;
+  }
+
   message GameAction {
     message StartGame {}
 
