@@ -556,6 +556,213 @@ export namespace PB {
         }
     }
 
+    /** Properties of a GameData. */
+    interface IGameData {
+
+        /** GameData gameMode */
+        gameMode?: (GameMode|null);
+
+        /** GameData playerArrangementMode */
+        playerArrangementMode?: (PlayerArrangementMode|null);
+
+        /** GameData positions */
+        positions?: (PB.GameData.IPosition[]|null);
+
+        /** GameData gameStateDatas */
+        gameStateDatas?: (PB.IGameStateData[]|null);
+    }
+
+    /** Represents a GameData. */
+    class GameData implements IGameData {
+
+        /**
+         * Constructs a new GameData.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: PB.IGameData);
+
+        /** GameData gameMode. */
+        public gameMode: GameMode;
+
+        /** GameData playerArrangementMode. */
+        public playerArrangementMode: PlayerArrangementMode;
+
+        /** GameData positions. */
+        public positions: PB.GameData.IPosition[];
+
+        /** GameData gameStateDatas. */
+        public gameStateDatas: PB.IGameStateData[];
+
+        /**
+         * Creates a new GameData instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns GameData instance
+         */
+        public static create(properties?: PB.IGameData): PB.GameData;
+
+        /**
+         * Encodes the specified GameData message. Does not implicitly {@link PB.GameData.verify|verify} messages.
+         * @param message GameData message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: PB.IGameData, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified GameData message, length delimited. Does not implicitly {@link PB.GameData.verify|verify} messages.
+         * @param message GameData message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: PB.IGameData, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a GameData message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns GameData
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): PB.GameData;
+
+        /**
+         * Decodes a GameData message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns GameData
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): PB.GameData;
+
+        /**
+         * Verifies a GameData message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a GameData message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns GameData
+         */
+        public static fromObject(object: { [k: string]: any }): PB.GameData;
+
+        /**
+         * Creates a plain object from a GameData message. Also converts values to other types if specified.
+         * @param message GameData
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: PB.GameData, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this GameData to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    namespace GameData {
+
+        /** Properties of a Position. */
+        interface IPosition {
+
+            /** Position userId */
+            userId?: (number|null);
+
+            /** Position isHost */
+            isHost?: (boolean|null);
+        }
+
+        /** Represents a Position. */
+        class Position implements IPosition {
+
+            /**
+             * Constructs a new Position.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: PB.GameData.IPosition);
+
+            /** Position userId. */
+            public userId: number;
+
+            /** Position isHost. */
+            public isHost: boolean;
+
+            /**
+             * Creates a new Position instance using the specified properties.
+             * @param [properties] Properties to set
+             * @returns Position instance
+             */
+            public static create(properties?: PB.GameData.IPosition): PB.GameData.Position;
+
+            /**
+             * Encodes the specified Position message. Does not implicitly {@link PB.GameData.Position.verify|verify} messages.
+             * @param message Position message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encode(message: PB.GameData.IPosition, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Encodes the specified Position message, length delimited. Does not implicitly {@link PB.GameData.Position.verify|verify} messages.
+             * @param message Position message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encodeDelimited(message: PB.GameData.IPosition, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Decodes a Position message from the specified reader or buffer.
+             * @param reader Reader or buffer to decode from
+             * @param [length] Message length if known beforehand
+             * @returns Position
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): PB.GameData.Position;
+
+            /**
+             * Decodes a Position message from the specified reader or buffer, length delimited.
+             * @param reader Reader or buffer to decode from
+             * @returns Position
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): PB.GameData.Position;
+
+            /**
+             * Verifies a Position message.
+             * @param message Plain object to verify
+             * @returns `null` if valid, otherwise the reason why it is not
+             */
+            public static verify(message: { [k: string]: any }): (string|null);
+
+            /**
+             * Creates a Position message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns Position
+             */
+            public static fromObject(object: { [k: string]: any }): PB.GameData.Position;
+
+            /**
+             * Creates a plain object from a Position message. Also converts values to other types if specified.
+             * @param message Position
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: PB.GameData.Position, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this Position to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+        }
+    }
+
     /** Properties of a GameSetupAction. */
     interface IGameSetupAction {
 

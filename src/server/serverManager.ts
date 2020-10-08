@@ -671,9 +671,25 @@ export class ServerManager {
             gameStateDatas.push(gameState.watcherGameStateData);
           }
         });
-        message.push(gameStateDatas);
 
-        message.push(game.gameMode, game.playerArrangementMode, game.hostUserID, game.userIDs);
+        const positions: PB.GameData.Position[] = [];
+        game.userIDs.forEach((userID) => {
+          const position = PB.GameData.Position.create();
+          position.userId = userID;
+          if (userID === game.hostUserID) {
+            position.isHost = true;
+          }
+
+          positions.push(position);
+        });
+
+        const gameDataPB = PB.GameData.create();
+        gameDataPB.gameMode = game.gameMode;
+        gameDataPB.playerArrangementMode = game.playerArrangementMode;
+        gameDataPB.positions = positions;
+        gameDataPB.gameStateDatas = gameStateDatas;
+
+        message.push(gameDataPB);
       }
 
       games.push(message);

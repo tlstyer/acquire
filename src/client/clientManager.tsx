@@ -539,24 +539,32 @@ export class ClientManager {
           }
         }
       } else {
-        const gameStateMessages: any[] = gameParams[3];
-        const gameMode: GameMode = gameParams[4];
-        const playerArrangementMode: PlayerArrangementMode = gameParams[5];
-        const hostUserID: number = gameParams[6];
-        const userIDs: number[] = gameParams[7];
+        const gameDataPB: PB.GameData = gameParams[3];
 
+        const userIDs: number[] = [];
         const usernames: string[] = [];
-        for (let j = 0; j < userIDs.length; j++) {
-          const userID = userIDs[j];
+        let hostUserID = 0;
+
+        const positions = gameDataPB.positions;
+        for (let j = 0; j < positions.length; j++) {
+          const position = positions[j];
+          const userID = position.userId!;
+
+          userIDs.push(userID);
+
           this.userIDToUser.get(userID)!.numGames++;
           usernames.push(this.getUsernameForUserID(userID));
+
+          if (position.isHost) {
+            hostUserID = userID;
+          }
         }
 
-        gameData.game = new Game(gameMode, playerArrangementMode, [], List(userIDs), List(usernames), hostUserID, myUserID);
+        gameData.game = new Game(gameDataPB.gameMode, gameDataPB.playerArrangementMode, [], List(userIDs), List(usernames), hostUserID, myUserID);
 
-        for (let j = 0; j < gameStateMessages.length; j++) {
-          const gameStateMessage = gameStateMessages[j];
-          gameData.game.processGameStateData(gameStateMessage);
+        const gameStateDatas = gameDataPB.gameStateDatas;
+        for (let j = 0; j < gameStateDatas.length; j++) {
+          gameData.game.processGameStateData(gameStateDatas[j]);
         }
       }
     }

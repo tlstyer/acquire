@@ -78,6 +78,21 @@ message PB {
     int32 player_id_with_playable_tile_plus_one = 5;
   }
 
+  message GameData {
+    message Position {
+      int32 user_id = 1;
+      bool is_host = 2;
+    }
+
+    // these 3 entries are excluded if client knows about this game
+    GameMode game_mode = 1;
+    PlayerArrangementMode player_arrangement_mode = 2;
+    repeated Position positions = 3;
+
+    // skip game state datas client already knows
+    repeated GameStateData game_state_datas = 4;
+  }
+
   message GameSetupAction {
     message JoinGame {}
 

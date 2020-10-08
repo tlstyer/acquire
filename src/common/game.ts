@@ -74,7 +74,7 @@ export class Game {
     this.scoreBoardAtLastNetWorthsUpdate = this.scoreBoard;
   }
 
-  processGameStateData(gameStateData: PB.GameStateData) {
+  processGameStateData(gameStateData: PB.IGameStateData) {
     const gameAction = gameStateData.gameAction!;
 
     let timestamp: number | null = null;

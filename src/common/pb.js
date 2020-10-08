@@ -1379,6 +1379,585 @@ $root.PB = (function() {
         return GameStateData;
     })();
 
+    PB.GameData = (function() {
+
+        /**
+         * Properties of a GameData.
+         * @memberof PB
+         * @interface IGameData
+         * @property {GameMode|null} [gameMode] GameData gameMode
+         * @property {PlayerArrangementMode|null} [playerArrangementMode] GameData playerArrangementMode
+         * @property {Array.<PB.GameData.IPosition>|null} [positions] GameData positions
+         * @property {Array.<PB.IGameStateData>|null} [gameStateDatas] GameData gameStateDatas
+         */
+
+        /**
+         * Constructs a new GameData.
+         * @memberof PB
+         * @classdesc Represents a GameData.
+         * @implements IGameData
+         * @constructor
+         * @param {PB.IGameData=} [properties] Properties to set
+         */
+        function GameData(properties) {
+            this.positions = [];
+            this.gameStateDatas = [];
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * GameData gameMode.
+         * @member {GameMode} gameMode
+         * @memberof PB.GameData
+         * @instance
+         */
+        GameData.prototype.gameMode = 1;
+
+        /**
+         * GameData playerArrangementMode.
+         * @member {PlayerArrangementMode} playerArrangementMode
+         * @memberof PB.GameData
+         * @instance
+         */
+        GameData.prototype.playerArrangementMode = 0;
+
+        /**
+         * GameData positions.
+         * @member {Array.<PB.GameData.IPosition>} positions
+         * @memberof PB.GameData
+         * @instance
+         */
+        GameData.prototype.positions = $util.emptyArray;
+
+        /**
+         * GameData gameStateDatas.
+         * @member {Array.<PB.IGameStateData>} gameStateDatas
+         * @memberof PB.GameData
+         * @instance
+         */
+        GameData.prototype.gameStateDatas = $util.emptyArray;
+
+        /**
+         * Creates a new GameData instance using the specified properties.
+         * @function create
+         * @memberof PB.GameData
+         * @static
+         * @param {PB.IGameData=} [properties] Properties to set
+         * @returns {PB.GameData} GameData instance
+         */
+        GameData.create = function create(properties) {
+            return new GameData(properties);
+        };
+
+        /**
+         * Encodes the specified GameData message. Does not implicitly {@link PB.GameData.verify|verify} messages.
+         * @function encode
+         * @memberof PB.GameData
+         * @static
+         * @param {PB.IGameData} message GameData message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        GameData.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.gameMode != null && Object.hasOwnProperty.call(message, "gameMode"))
+                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.gameMode);
+            if (message.playerArrangementMode != null && Object.hasOwnProperty.call(message, "playerArrangementMode"))
+                writer.uint32(/* id 2, wireType 0 =*/16).int32(message.playerArrangementMode);
+            if (message.positions != null && message.positions.length)
+                for (var i = 0; i < message.positions.length; ++i)
+                    $root.PB.GameData.Position.encode(message.positions[i], writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
+            if (message.gameStateDatas != null && message.gameStateDatas.length)
+                for (var i = 0; i < message.gameStateDatas.length; ++i)
+                    $root.PB.GameStateData.encode(message.gameStateDatas[i], writer.uint32(/* id 4, wireType 2 =*/34).fork()).ldelim();
+            return writer;
+        };
+
+        /**
+         * Encodes the specified GameData message, length delimited. Does not implicitly {@link PB.GameData.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof PB.GameData
+         * @static
+         * @param {PB.IGameData} message GameData message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        GameData.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a GameData message from the specified reader or buffer.
+         * @function decode
+         * @memberof PB.GameData
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {PB.GameData} GameData
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        GameData.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.PB.GameData();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.gameMode = reader.int32();
+                    break;
+                case 2:
+                    message.playerArrangementMode = reader.int32();
+                    break;
+                case 3:
+                    if (!(message.positions && message.positions.length))
+                        message.positions = [];
+                    message.positions.push($root.PB.GameData.Position.decode(reader, reader.uint32()));
+                    break;
+                case 4:
+                    if (!(message.gameStateDatas && message.gameStateDatas.length))
+                        message.gameStateDatas = [];
+                    message.gameStateDatas.push($root.PB.GameStateData.decode(reader, reader.uint32()));
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a GameData message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof PB.GameData
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {PB.GameData} GameData
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        GameData.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a GameData message.
+         * @function verify
+         * @memberof PB.GameData
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        GameData.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.gameMode != null && message.hasOwnProperty("gameMode"))
+                switch (message.gameMode) {
+                default:
+                    return "gameMode: enum value expected";
+                case 1:
+                case 2:
+                case 3:
+                case 4:
+                case 5:
+                case 6:
+                case 7:
+                case 8:
+                case 9:
+                    break;
+                }
+            if (message.playerArrangementMode != null && message.hasOwnProperty("playerArrangementMode"))
+                switch (message.playerArrangementMode) {
+                default:
+                    return "playerArrangementMode: enum value expected";
+                case 0:
+                case 1:
+                case 2:
+                case 3:
+                    break;
+                }
+            if (message.positions != null && message.hasOwnProperty("positions")) {
+                if (!Array.isArray(message.positions))
+                    return "positions: array expected";
+                for (var i = 0; i < message.positions.length; ++i) {
+                    var error = $root.PB.GameData.Position.verify(message.positions[i]);
+                    if (error)
+                        return "positions." + error;
+                }
+            }
+            if (message.gameStateDatas != null && message.hasOwnProperty("gameStateDatas")) {
+                if (!Array.isArray(message.gameStateDatas))
+                    return "gameStateDatas: array expected";
+                for (var i = 0; i < message.gameStateDatas.length; ++i) {
+                    var error = $root.PB.GameStateData.verify(message.gameStateDatas[i]);
+                    if (error)
+                        return "gameStateDatas." + error;
+                }
+            }
+            return null;
+        };
+
+        /**
+         * Creates a GameData message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof PB.GameData
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {PB.GameData} GameData
+         */
+        GameData.fromObject = function fromObject(object) {
+            if (object instanceof $root.PB.GameData)
+                return object;
+            var message = new $root.PB.GameData();
+            switch (object.gameMode) {
+            case "SINGLES_1":
+            case 1:
+                message.gameMode = 1;
+                break;
+            case "SINGLES_2":
+            case 2:
+                message.gameMode = 2;
+                break;
+            case "SINGLES_3":
+            case 3:
+                message.gameMode = 3;
+                break;
+            case "SINGLES_4":
+            case 4:
+                message.gameMode = 4;
+                break;
+            case "SINGLES_5":
+            case 5:
+                message.gameMode = 5;
+                break;
+            case "SINGLES_6":
+            case 6:
+                message.gameMode = 6;
+                break;
+            case "TEAMS_2_VS_2":
+            case 7:
+                message.gameMode = 7;
+                break;
+            case "TEAMS_2_VS_2_VS_2":
+            case 8:
+                message.gameMode = 8;
+                break;
+            case "TEAMS_3_VS_3":
+            case 9:
+                message.gameMode = 9;
+                break;
+            }
+            switch (object.playerArrangementMode) {
+            case "VERSION_1":
+            case 0:
+                message.playerArrangementMode = 0;
+                break;
+            case "RANDOM_ORDER":
+            case 1:
+                message.playerArrangementMode = 1;
+                break;
+            case "EXACT_ORDER":
+            case 2:
+                message.playerArrangementMode = 2;
+                break;
+            case "SPECIFY_TEAMS":
+            case 3:
+                message.playerArrangementMode = 3;
+                break;
+            }
+            if (object.positions) {
+                if (!Array.isArray(object.positions))
+                    throw TypeError(".PB.GameData.positions: array expected");
+                message.positions = [];
+                for (var i = 0; i < object.positions.length; ++i) {
+                    if (typeof object.positions[i] !== "object")
+                        throw TypeError(".PB.GameData.positions: object expected");
+                    message.positions[i] = $root.PB.GameData.Position.fromObject(object.positions[i]);
+                }
+            }
+            if (object.gameStateDatas) {
+                if (!Array.isArray(object.gameStateDatas))
+                    throw TypeError(".PB.GameData.gameStateDatas: array expected");
+                message.gameStateDatas = [];
+                for (var i = 0; i < object.gameStateDatas.length; ++i) {
+                    if (typeof object.gameStateDatas[i] !== "object")
+                        throw TypeError(".PB.GameData.gameStateDatas: object expected");
+                    message.gameStateDatas[i] = $root.PB.GameStateData.fromObject(object.gameStateDatas[i]);
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a GameData message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof PB.GameData
+         * @static
+         * @param {PB.GameData} message GameData
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        GameData.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.arrays || options.defaults) {
+                object.positions = [];
+                object.gameStateDatas = [];
+            }
+            if (options.defaults) {
+                object.gameMode = options.enums === String ? "SINGLES_1" : 1;
+                object.playerArrangementMode = options.enums === String ? "VERSION_1" : 0;
+            }
+            if (message.gameMode != null && message.hasOwnProperty("gameMode"))
+                object.gameMode = options.enums === String ? $root.GameMode[message.gameMode] : message.gameMode;
+            if (message.playerArrangementMode != null && message.hasOwnProperty("playerArrangementMode"))
+                object.playerArrangementMode = options.enums === String ? $root.PlayerArrangementMode[message.playerArrangementMode] : message.playerArrangementMode;
+            if (message.positions && message.positions.length) {
+                object.positions = [];
+                for (var j = 0; j < message.positions.length; ++j)
+                    object.positions[j] = $root.PB.GameData.Position.toObject(message.positions[j], options);
+            }
+            if (message.gameStateDatas && message.gameStateDatas.length) {
+                object.gameStateDatas = [];
+                for (var j = 0; j < message.gameStateDatas.length; ++j)
+                    object.gameStateDatas[j] = $root.PB.GameStateData.toObject(message.gameStateDatas[j], options);
+            }
+            return object;
+        };
+
+        /**
+         * Converts this GameData to JSON.
+         * @function toJSON
+         * @memberof PB.GameData
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        GameData.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        GameData.Position = (function() {
+
+            /**
+             * Properties of a Position.
+             * @memberof PB.GameData
+             * @interface IPosition
+             * @property {number|null} [userId] Position userId
+             * @property {boolean|null} [isHost] Position isHost
+             */
+
+            /**
+             * Constructs a new Position.
+             * @memberof PB.GameData
+             * @classdesc Represents a Position.
+             * @implements IPosition
+             * @constructor
+             * @param {PB.GameData.IPosition=} [properties] Properties to set
+             */
+            function Position(properties) {
+                if (properties)
+                    for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                        if (properties[keys[i]] != null)
+                            this[keys[i]] = properties[keys[i]];
+            }
+
+            /**
+             * Position userId.
+             * @member {number} userId
+             * @memberof PB.GameData.Position
+             * @instance
+             */
+            Position.prototype.userId = 0;
+
+            /**
+             * Position isHost.
+             * @member {boolean} isHost
+             * @memberof PB.GameData.Position
+             * @instance
+             */
+            Position.prototype.isHost = false;
+
+            /**
+             * Creates a new Position instance using the specified properties.
+             * @function create
+             * @memberof PB.GameData.Position
+             * @static
+             * @param {PB.GameData.IPosition=} [properties] Properties to set
+             * @returns {PB.GameData.Position} Position instance
+             */
+            Position.create = function create(properties) {
+                return new Position(properties);
+            };
+
+            /**
+             * Encodes the specified Position message. Does not implicitly {@link PB.GameData.Position.verify|verify} messages.
+             * @function encode
+             * @memberof PB.GameData.Position
+             * @static
+             * @param {PB.GameData.IPosition} message Position message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            Position.encode = function encode(message, writer) {
+                if (!writer)
+                    writer = $Writer.create();
+                if (message.userId != null && Object.hasOwnProperty.call(message, "userId"))
+                    writer.uint32(/* id 1, wireType 0 =*/8).int32(message.userId);
+                if (message.isHost != null && Object.hasOwnProperty.call(message, "isHost"))
+                    writer.uint32(/* id 2, wireType 0 =*/16).bool(message.isHost);
+                return writer;
+            };
+
+            /**
+             * Encodes the specified Position message, length delimited. Does not implicitly {@link PB.GameData.Position.verify|verify} messages.
+             * @function encodeDelimited
+             * @memberof PB.GameData.Position
+             * @static
+             * @param {PB.GameData.IPosition} message Position message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            Position.encodeDelimited = function encodeDelimited(message, writer) {
+                return this.encode(message, writer).ldelim();
+            };
+
+            /**
+             * Decodes a Position message from the specified reader or buffer.
+             * @function decode
+             * @memberof PB.GameData.Position
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @param {number} [length] Message length if known beforehand
+             * @returns {PB.GameData.Position} Position
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            Position.decode = function decode(reader, length) {
+                if (!(reader instanceof $Reader))
+                    reader = $Reader.create(reader);
+                var end = length === undefined ? reader.len : reader.pos + length, message = new $root.PB.GameData.Position();
+                while (reader.pos < end) {
+                    var tag = reader.uint32();
+                    switch (tag >>> 3) {
+                    case 1:
+                        message.userId = reader.int32();
+                        break;
+                    case 2:
+                        message.isHost = reader.bool();
+                        break;
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
+                    }
+                }
+                return message;
+            };
+
+            /**
+             * Decodes a Position message from the specified reader or buffer, length delimited.
+             * @function decodeDelimited
+             * @memberof PB.GameData.Position
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @returns {PB.GameData.Position} Position
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            Position.decodeDelimited = function decodeDelimited(reader) {
+                if (!(reader instanceof $Reader))
+                    reader = new $Reader(reader);
+                return this.decode(reader, reader.uint32());
+            };
+
+            /**
+             * Verifies a Position message.
+             * @function verify
+             * @memberof PB.GameData.Position
+             * @static
+             * @param {Object.<string,*>} message Plain object to verify
+             * @returns {string|null} `null` if valid, otherwise the reason why it is not
+             */
+            Position.verify = function verify(message) {
+                if (typeof message !== "object" || message === null)
+                    return "object expected";
+                if (message.userId != null && message.hasOwnProperty("userId"))
+                    if (!$util.isInteger(message.userId))
+                        return "userId: integer expected";
+                if (message.isHost != null && message.hasOwnProperty("isHost"))
+                    if (typeof message.isHost !== "boolean")
+                        return "isHost: boolean expected";
+                return null;
+            };
+
+            /**
+             * Creates a Position message from a plain object. Also converts values to their respective internal types.
+             * @function fromObject
+             * @memberof PB.GameData.Position
+             * @static
+             * @param {Object.<string,*>} object Plain object
+             * @returns {PB.GameData.Position} Position
+             */
+            Position.fromObject = function fromObject(object) {
+                if (object instanceof $root.PB.GameData.Position)
+                    return object;
+                var message = new $root.PB.GameData.Position();
+                if (object.userId != null)
+                    message.userId = object.userId | 0;
+                if (object.isHost != null)
+                    message.isHost = Boolean(object.isHost);
+                return message;
+            };
+
+            /**
+             * Creates a plain object from a Position message. Also converts values to other types if specified.
+             * @function toObject
+             * @memberof PB.GameData.Position
+             * @static
+             * @param {PB.GameData.Position} message Position
+             * @param {$protobuf.IConversionOptions} [options] Conversion options
+             * @returns {Object.<string,*>} Plain object
+             */
+            Position.toObject = function toObject(message, options) {
+                if (!options)
+                    options = {};
+                var object = {};
+                if (options.defaults) {
+                    object.userId = 0;
+                    object.isHost = false;
+                }
+                if (message.userId != null && message.hasOwnProperty("userId"))
+                    object.userId = message.userId;
+                if (message.isHost != null && message.hasOwnProperty("isHost"))
+                    object.isHost = message.isHost;
+                return object;
+            };
+
+            /**
+             * Converts this Position to JSON.
+             * @function toJSON
+             * @memberof PB.GameData.Position
+             * @instance
+             * @returns {Object.<string,*>} JSON object
+             */
+            Position.prototype.toJSON = function toJSON() {
+                return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+            };
+
+            return Position;
+        })();
+
+        return GameData;
+    })();
+
     PB.GameSetupAction = (function() {
 
         /**
