@@ -621,9 +621,9 @@ action: 0 PurchaseShares x 0
     0: none none none none none none
     1: none none none none none none
   messages:
-    0: {"gameAction":{"purchaseShares":{"endGame":false}},"timestamp":1515151515151}
-    1: {"gameAction":{"purchaseShares":{"endGame":false}},"timestamp":1515151515151}
-    w: {"gameAction":{"purchaseShares":{"endGame":false}},"timestamp":1515151515151}
+    0: {"gameAction":{"purchaseShares":{"chains":[],"endGame":false}},"timestamp":1515151515151}
+    1: {"gameAction":{"purchaseShares":{"chains":[],"endGame":false}},"timestamp":1515151515151}
+    w: {"gameAction":{"purchaseShares":{"chains":[],"endGame":false}},"timestamp":1515151515151}
   history messages:
     0 PurchasedShares x
     AllTilesPlayed
@@ -651,11 +651,11 @@ Game JSON:
     [{"playTile":{"tile":21}}],
     [{"purchaseShares":{"chains":[5],"endGame":false}}],
     [{"playTile":{"tile":35}}],
-    [{"purchaseShares":{"endGame":false}}],
+    [{"purchaseShares":{"chains":[],"endGame":false}}],
     [{"playTile":{"tile":59}}],
-    [{"purchaseShares":{"endGame":false}}],
+    [{"purchaseShares":{"chains":[],"endGame":false}}],
     [{"playTile":{"tile":36}}],
-    [{"purchaseShares":{"endGame":false}}],
+    [{"purchaseShares":{"chains":[],"endGame":false}}],
     [{"playTile":{"tile":50}}],
     [{"selectNewChain":{"chain":6}}],
     [{"purchaseShares":{"chains":[6],"endGame":false}}],
@@ -664,9 +664,9 @@ Game JSON:
     [{"playTile":{"tile":39}}],
     [{"purchaseShares":{"chains":[6],"endGame":false}}],
     [{"playTile":{"tile":65}}],
-    [{"purchaseShares":{"endGame":false}}],
+    [{"purchaseShares":{"chains":[],"endGame":false}}],
     [{"playTile":{"tile":18}}],
-    [{"purchaseShares":{"endGame":false}}],
+    [{"purchaseShares":{"chains":[],"endGame":false}}],
     [{"playTile":{"tile":74}}],
     [{"selectNewChain":{"chain":2}}],
     [{"purchaseShares":{"chains":[2,2,2],"endGame":false}}],
@@ -796,38 +796,38 @@ Game JSON:
     [{"playTile":{"tile":64}}],
     [{"disposeOfShares":{"tradeAmount":0,"sellAmount":6}}],
     [{"disposeOfShares":{"tradeAmount":0,"sellAmount":12}}],
-    [{"purchaseShares":{"endGame":false}}],
+    [{"purchaseShares":{"chains":[],"endGame":false}}],
     [{"playTile":{"tile":23}}],
-    [{"purchaseShares":{"endGame":false}}],
+    [{"purchaseShares":{"chains":[],"endGame":false}}],
     [{"playTile":{"tile":94}}],
-    [{"purchaseShares":{"endGame":false}}],
+    [{"purchaseShares":{"chains":[],"endGame":false}}],
     [{"playTile":{"tile":1}}],
-    [{"purchaseShares":{"endGame":false}}],
+    [{"purchaseShares":{"chains":[],"endGame":false}}],
     [{"playTile":{"tile":88}}],
-    [{"purchaseShares":{"endGame":false}}],
+    [{"purchaseShares":{"chains":[],"endGame":false}}],
     [{"playTile":{"tile":55}}],
-    [{"purchaseShares":{"endGame":false}}],
+    [{"purchaseShares":{"chains":[],"endGame":false}}],
     [{"playTile":{"tile":46}}],
-    [{"purchaseShares":{"endGame":false}}],
+    [{"purchaseShares":{"chains":[],"endGame":false}}],
     [{"playTile":{"tile":72}}],
-    [{"purchaseShares":{"endGame":false}}],
+    [{"purchaseShares":{"chains":[],"endGame":false}}],
     [{"playTile":{"tile":26}}],
-    [{"purchaseShares":{"endGame":false}}],
+    [{"purchaseShares":{"chains":[],"endGame":false}}],
     [{"playTile":{"tile":0}}],
-    [{"purchaseShares":{"endGame":false}}],
+    [{"purchaseShares":{"chains":[],"endGame":false}}],
     [{"playTile":{"tile":3}}],
-    [{"purchaseShares":{"endGame":false}}],
+    [{"purchaseShares":{"chains":[],"endGame":false}}],
     [{"playTile":{"tile":41}}],
-    [{"purchaseShares":{"endGame":false}}],
+    [{"purchaseShares":{"chains":[],"endGame":false}}],
     [{"playTile":{"tile":4}}],
-    [{"purchaseShares":{"endGame":false}}],
+    [{"purchaseShares":{"chains":[],"endGame":false}}],
     [{"playTile":{"tile":92}}],
-    [{"purchaseShares":{"endGame":false}}],
-    [{"purchaseShares":{"endGame":false}}],
+    [{"purchaseShares":{"chains":[],"endGame":false}}],
+    [{"purchaseShares":{"chains":[],"endGame":false}}],
     [{"playTile":{"tile":91}}],
-    [{"purchaseShares":{"endGame":false}}],
-    [{"purchaseShares":{"endGame":false}}],
+    [{"purchaseShares":{"chains":[],"endGame":false}}],
+    [{"purchaseShares":{"chains":[],"endGame":false}}],
     [{"playTile":{"tile":81}}],
-    [{"purchaseShares":{"endGame":false}},1515151515151]
+    [{"purchaseShares":{"chains":[],"endGame":false}},1515151515151]
   ]
 ]

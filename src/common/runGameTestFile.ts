@@ -415,7 +415,7 @@ function formatPlayerOrWatcherGameStateData(gameStateData: PB_GameStateData) {
     revealedTileRackTiles: gameStateData.revealedTileRackTiles.length > 0 ? gameStateData.revealedTileRackTiles : undefined,
     revealedTileBagTiles: gameStateData.revealedTileBagTiles.length > 0 ? gameStateData.revealedTileBagTiles : undefined,
     playerIdWithPlayableTilePlusOne: gameStateData.playerIdWithPlayableTilePlusOne >= 1 ? gameStateData.playerIdWithPlayableTilePlusOne : undefined,
-  }).replace(/"chains":\[\],/g, '');
+  });
 }
 
 function getArrayFromRevealedTileRackTilesString(revealedTileRackTilesString: string) {
@@ -666,7 +666,7 @@ function getFormattedGameJSONLines(game: Game) {
     const gameAction = [...gameActions[i]];
     gameAction[0] = PB_GameAction.create(gameAction[0]);
 
-    const json = JSON.stringify(gameAction).replace('"chains":[],', '');
+    const json = JSON.stringify(gameAction);
     const possibleTrailingComma = i !== lastGameActionIndex ? ',' : '';
     lines.push(`    ${json}${possibleTrailingComma}`);
   }

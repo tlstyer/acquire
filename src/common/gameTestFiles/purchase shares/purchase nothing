@@ -52,9 +52,9 @@ action: 1 PurchaseShares x 0
   revealed tile bag tiles: 3I:1
   player ID with playable tile: 0
   messages:
-    0: {"gameAction":{"purchaseShares":{"endGame":false}},"revealedTileBagTiles":[108],"playerIdWithPlayableTilePlusOne":1}
-    1: {"gameAction":{"purchaseShares":{"endGame":false}},"revealedTileBagTiles":[26],"playerIdWithPlayableTilePlusOne":1}
-    w: {"gameAction":{"purchaseShares":{"endGame":false}},"revealedTileBagTiles":[108],"playerIdWithPlayableTilePlusOne":1}
+    0: {"gameAction":{"purchaseShares":{"chains":[],"endGame":false}},"revealedTileBagTiles":[108],"playerIdWithPlayableTilePlusOne":1}
+    1: {"gameAction":{"purchaseShares":{"chains":[],"endGame":false}},"revealedTileBagTiles":[26],"playerIdWithPlayableTilePlusOne":1}
+    w: {"gameAction":{"purchaseShares":{"chains":[],"endGame":false}},"revealedTileBagTiles":[108],"playerIdWithPlayableTilePlusOne":1}
   history messages:
     1 PurchasedShares x
     1 DrewTile 3I
@@ -78,6 +78,6 @@ Game JSON:
     [{"playTile":{"tile":13}}],
     [{"playTile":{"tile":12}}],
     [{"selectNewChain":{"chain":0}}],
-    [{"purchaseShares":{"endGame":false}}]
+    [{"purchaseShares":{"chains":[],"endGame":false}}]
   ]
 ]

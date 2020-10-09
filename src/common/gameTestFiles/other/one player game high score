@@ -591,8 +591,8 @@ action: 0 PurchaseShares x 1
   tile racks:
     0: none 6B(F) 5H(I) 6H(I) 3D(I) 10E(L)
   messages:
-    0: {"gameAction":{"purchaseShares":{"endGame":true}},"timestamp":11085}
-    w: {"gameAction":{"purchaseShares":{"endGame":true}},"timestamp":11085}
+    0: {"gameAction":{"purchaseShares":{"chains":[],"endGame":true}},"timestamp":11085}
+    w: {"gameAction":{"purchaseShares":{"chains":[],"endGame":true}},"timestamp":11085}
   history messages:
     0 PurchasedShares x
     0 EndedGame
@@ -787,19 +787,19 @@ Game JSON:
     [{"playTile":{"tile":24}},1564],
     [{"purchaseShares":{"chains":[5,5,5],"endGame":false}},2235],
     [{"playTile":{"tile":27}},7888],
-    [{"purchaseShares":{"endGame":false}},2886],
+    [{"purchaseShares":{"chains":[],"endGame":false}},2886],
     [{"playTile":{"tile":76}},6713],
-    [{"purchaseShares":{"endGame":false}},1998],
+    [{"purchaseShares":{"chains":[],"endGame":false}},1998],
     [{"playTile":{"tile":18}},3186],
     [{"disposeOfShares":{"tradeAmount":0,"sellAmount":16}},2500],
     [{"playTile":{"tile":3}},13119],
     [{"disposeOfShares":{"tradeAmount":0,"sellAmount":25}},2070],
-    [{"purchaseShares":{"endGame":false}},2008],
+    [{"purchaseShares":{"chains":[],"endGame":false}},2008],
     [{"playTile":{"tile":10}},2408],
-    [{"purchaseShares":{"endGame":false}},2241],
+    [{"purchaseShares":{"chains":[],"endGame":false}},2241],
     [{"playTile":{"tile":78}},4180],
-    [{"purchaseShares":{"endGame":false}},2836],
+    [{"purchaseShares":{"chains":[],"endGame":false}},2836],
     [{"playTile":{"tile":12}},2864],
-    [{"purchaseShares":{"endGame":true}},11085]
+    [{"purchaseShares":{"chains":[],"endGame":true}},11085]
   ]
 ]
