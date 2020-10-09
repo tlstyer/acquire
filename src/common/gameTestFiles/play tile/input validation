@@ -43,9 +43,6 @@ action: 1 StartGame
     0 TurnBegan
   next action: 0 PlayTile
 
-action: 0 PlayTile -- {}
-  error: tile is not a valid tile
-
 action: 0 PlayTile -- {"tile":-1}
   error: tile is not a valid tile
 

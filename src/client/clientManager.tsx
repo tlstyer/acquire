@@ -27,7 +27,7 @@ import { ScoreBoard } from './components/ScoreBoard';
 import { SelectChain, SelectChainTitle } from './components/SelectChain';
 import { TileRack } from './components/TileRack';
 import { GameBoardLabelMode, GameStatusEnum } from './enums';
-import { ErrorCode, GameBoardType, GameMode, PB, PlayerArrangementMode } from '../common/pb';
+import { ErrorCode, GameBoardType, GameMode, PB_GameData, PB_GameSetupChange, PB_GameSetupData, PB_GameStateData, PlayerArrangementMode } from '../common/pb';
 import { encodeMessageToServer } from '../common/helpers';
 
 export enum ClientManagerPage {
@@ -527,7 +527,7 @@ export class ClientManager {
       const gameData = this.gameIDToGameData.get(gameID)!;
 
       if (isGameSetup) {
-        const gameSetupData: PB.GameSetupData = gameParams[3];
+        const gameSetupData: PB_GameSetupData = gameParams[3];
 
         gameData.gameSetup = GameSetup.fromGameSetupData(gameSetupData, this.getUsernameForUserID);
 
@@ -539,7 +539,7 @@ export class ClientManager {
           }
         }
       } else {
-        const gameDataPB: PB.GameData = gameParams[3];
+        const gameDataPB: PB_GameData = gameParams[3];
 
         const userIDs: number[] = [];
         const usernames: string[] = [];
@@ -633,7 +633,7 @@ export class ClientManager {
     }
   }
 
-  onMessageGameSetupChanged(gameDisplayNumber: number, gameSetupChange: PB.GameSetupChange) {
+  onMessageGameSetupChanged(gameDisplayNumber: number, gameSetupChange: PB_GameSetupChange) {
     const gameSetup = this.gameDisplayNumberToGameData.get(gameDisplayNumber)!.gameSetup!;
 
     gameSetup.processChange(gameSetupChange);
@@ -670,7 +670,7 @@ export class ClientManager {
     }
   }
 
-  onMessageGameActionDone(gameDisplayNumber: number, gameStateData: PB.GameStateData) {
+  onMessageGameActionDone(gameDisplayNumber: number, gameStateData: PB_GameStateData) {
     const gameData = this.gameDisplayNumberToGameData.get(gameDisplayNumber)!;
     const game = gameData.game!;
 

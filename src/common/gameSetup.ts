@@ -1,6 +1,6 @@
 import { List } from 'immutable';
 import { gameModeToNumPlayers, gameModeToTeamSize, shuffleArray } from './helpers';
-import { GameMode, PB, PlayerArrangementMode } from './pb';
+import { GameMode, PB_GameSetupChange, PB_GameSetupData, PB_GameSetupData_Position, PlayerArrangementMode } from './pb';
 
 const defaultApprovals = new Map([
   [1, List([false])],
@@ -18,7 +18,7 @@ export class GameSetup {
   userIDsSet: Set<number>;
   approvals: List<boolean>;
   approvedByEverybody: boolean;
-  history: PB.GameSetupChange[] = [];
+  history: PB_GameSetupChange[] = [];
 
   constructor(
     public gameMode: GameMode,
@@ -66,7 +66,7 @@ export class GameSetup {
         this.userIDsSet.add(userID);
         this.approvals = defaultApprovals.get(gameModeToNumPlayers.get(this.gameMode)!)!;
         this.approvedByEverybody = false;
-        this.history.push(PB.GameSetupChange.create({ userAdded: { userId: userID } }));
+        this.history.push(PB_GameSetupChange.create({ userAdded: { userId: userID } }));
         break;
       }
     }
@@ -88,7 +88,7 @@ export class GameSetup {
         this.userIDsSet.delete(userID);
         this.approvals = defaultApprovals.get(gameModeToNumPlayers.get(this.gameMode)!)!;
         this.approvedByEverybody = false;
-        this.history.push(PB.GameSetupChange.create({ userRemoved: { userId: userID } }));
+        this.history.push(PB_GameSetupChange.create({ userRemoved: { userId: userID } }));
         break;
       }
     }
@@ -107,7 +107,7 @@ export class GameSetup {
       if (this.userIDs.get(position) === userID) {
         if (this.approvals.get(position)! === false) {
           this.approvals = this.approvals.set(position, true);
-          this.history.push(PB.GameSetupChange.create({ userApprovedOfGameSetup: { userId: userID } }));
+          this.history.push(PB_GameSetupChange.create({ userApprovedOfGameSetup: { userId: userID } }));
         }
         break;
       }
@@ -168,7 +168,7 @@ export class GameSetup {
     }
 
     this.gameMode = gameMode;
-    this.history.push(PB.GameSetupChange.create({ gameModeChanged: { gameMode } }));
+    this.history.push(PB_GameSetupChange.create({ gameModeChanged: { gameMode } }));
   }
 
   changePlayerArrangementMode(playerArrangementMode: PlayerArrangementMode) {
@@ -192,7 +192,7 @@ export class GameSetup {
     this.playerArrangementMode = playerArrangementMode;
     this.approvals = defaultApprovals.get(gameModeToNumPlayers.get(this.gameMode)!)!;
     this.approvedByEverybody = false;
-    this.history.push(PB.GameSetupChange.create({ playerArrangementModeChanged: { playerArrangementMode } }));
+    this.history.push(PB_GameSetupChange.create({ playerArrangementModeChanged: { playerArrangementMode } }));
   }
 
   swapPositions(position1: number, position2: number) {
@@ -221,7 +221,7 @@ export class GameSetup {
     this.approvals = defaultApprovals.get(gameModeToNumPlayers.get(this.gameMode)!)!;
     this.approvedByEverybody = false;
 
-    this.history.push(PB.GameSetupChange.create({ positionsSwapped: { position1, position2 } }));
+    this.history.push(PB_GameSetupChange.create({ positionsSwapped: { position1, position2 } }));
   }
 
   kickUser(userID: number) {
@@ -240,13 +240,13 @@ export class GameSetup {
         this.userIDsSet.delete(userID);
         this.approvals = defaultApprovals.get(gameModeToNumPlayers.get(this.gameMode)!)!;
         this.approvedByEverybody = false;
-        this.history.push(PB.GameSetupChange.create({ userKicked: { userId: userID } }));
+        this.history.push(PB_GameSetupChange.create({ userKicked: { userId: userID } }));
         break;
       }
     }
   }
 
-  processChange(gameSetupChange: PB.GameSetupChange) {
+  processChange(gameSetupChange: PB_GameSetupChange) {
     if (gameSetupChange.userAdded) {
       this.addUser(gameSetupChange.userAdded.userId!);
     } else if (gameSetupChange.userRemoved) {
@@ -314,14 +314,14 @@ export class GameSetup {
     return [List(userIDs), List(usernames)];
   }
 
-  toGameSetupData(): PB.GameSetupData {
-    const gameSetupData = PB.GameSetupData.create();
+  toGameSetupData(): PB_GameSetupData {
+    const gameSetupData = PB_GameSetupData.create();
     gameSetupData.gameMode = this.gameMode;
     gameSetupData.playerArrangementMode = this.playerArrangementMode;
     gameSetupData.positions = [];
 
     this.userIDs.forEach((userID, position) => {
-      const positionData = PB.GameSetupData.Position.create();
+      const positionData = PB_GameSetupData_Position.create();
 
       if (userID !== null) {
         positionData.userId = userID;
@@ -339,7 +339,7 @@ export class GameSetup {
     return gameSetupData;
   }
 
-  static fromGameSetupData(gameSetupData: PB.GameSetupData, getUsernameForUserID: (userID: number) => string) {
+  static fromGameSetupData(gameSetupData: PB_GameSetupData, getUsernameForUserID: (userID: number) => string) {
     const positions = gameSetupData.positions;
 
     const usernames: (string | null)[] = new Array(positions.length);

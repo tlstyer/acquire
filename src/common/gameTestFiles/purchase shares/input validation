@@ -152,20 +152,11 @@ action: 0 PlayTile 11D
     0 FormedChain T
   next action: 0 PurchaseShares
 
-action: 0 PurchaseShares -- {}
-  error: chains is not an array
-
 action: 0 PurchaseShares T,A,F,W 1
   error: number of chains is larger than 3
 
-action: 0 PurchaseShares -- {"chains":[1,null,2],"endGame":false}
-  error: a chain is not a valid chain
-
 action: 0 PurchaseShares -- {"chains":[7,1,2],"endGame":true}
   error: a chain is not a valid chain
-
-action: 0 PurchaseShares -- {"chains":[1,2,3]}
-  error: end game is not true or false
 
 action: 0 PurchaseShares W,W,W 0
   error: more shares requested for a chain than are available

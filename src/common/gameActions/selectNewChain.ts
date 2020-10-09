@@ -1,7 +1,7 @@
 import { GameActionEnum, GameHistoryMessageEnum } from '../enums';
 import { UserInputError } from '../error';
 import { Game } from '../game';
-import { GameBoardType, PB } from '../pb';
+import { GameBoardType, PB_GameAction } from '../pb';
 import { ActionBase } from './base';
 
 export class ActionSelectNewChain extends ActionBase {
@@ -20,12 +20,12 @@ export class ActionSelectNewChain extends ActionBase {
     }
   }
 
-  execute(gameAction: PB.IGameAction) {
+  execute(gameAction: PB_GameAction) {
     if (!gameAction.selectNewChain) {
       throw new UserInputError('selectNewChain game action not provided');
     }
     const newChain = gameAction.selectNewChain.chain;
-    if (newChain === null || newChain === undefined || newChain < GameBoardType.LUXOR || newChain > GameBoardType.IMPERIAL) {
+    if (newChain < GameBoardType.LUXOR || newChain > GameBoardType.IMPERIAL) {
       throw new UserInputError('chain is not a valid chain');
     }
     if (this.availableChains.indexOf(newChain) === -1) {

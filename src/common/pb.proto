@@ -33,6 +33,8 @@ enum GameBoardType {
 }
 
 enum GameMode {
+  // not used, here because the first enum value must be zero in proto3
+  UNKNOWN = 0;
   SINGLES_1 = 1;
   SINGLES_2 = 2;
   SINGLES_3 = 3;

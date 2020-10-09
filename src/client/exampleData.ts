@@ -11,12 +11,12 @@ import { ActionSelectMergerSurvivor } from '../common/gameActions/selectMergerSu
 import { ActionSelectNewChain } from '../common/gameActions/selectNewChain';
 import { ActionStartGame } from '../common/gameActions/startGame';
 import { getNewTileBag } from '../common/helpers';
-import { GameBoardType, GameMode, PB, PlayerArrangementMode } from '../common/pb';
+import { GameBoardType, GameMode, PB_GameAction, PlayerArrangementMode } from '../common/pb';
 import { allChains } from './helpers';
 
 export function getDummyGameForGetGameHistory() {
   const game = new Game(GameMode.SINGLES_4, PlayerArrangementMode.EXACT_ORDER, getNewTileBag(), List([2, 3, 5, 8]), List(['Tim', 'Rita', 'Dad', 'Mom']), 8, 3);
-  game.doGameAction(PB.GameAction.create({ startGame: {} }), null);
+  game.doGameAction(PB_GameAction.create({ startGame: {} }), null);
   game.gameStateHistory = defaultGameStateHistory;
 
   let gameState = game.getCurrentGameState();

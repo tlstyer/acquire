@@ -17,7 +17,7 @@ import { GameActionEnum, GameHistoryMessageEnum, ScoreBoardIndexEnum, TileEnum }
 import { ActionBase } from './gameActions/base';
 import { ActionStartGame } from './gameActions/startGame';
 import { calculateBonuses, neighboringTilesLookup } from './helpers';
-import { GameBoardType, GameMode, PB, PlayerArrangementMode } from './pb';
+import { GameBoardType, GameMode, PB_GameAction, PB_GameStateData, PB_GameStateData_RevealedTileRackTile, PlayerArrangementMode } from './pb';
 
 type GameJSON = [GameMode, PlayerArrangementMode, number | null, number, number[], string[], number, number[], ([any] | [any, number])[]];
 
@@ -74,11 +74,11 @@ export class Game {
     this.scoreBoardAtLastNetWorthsUpdate = this.scoreBoard;
   }
 
-  processGameStateData(gameStateData: PB.IGameStateData) {
+  processGameStateData(gameStateData: PB_GameStateData) {
     const gameAction = gameStateData.gameAction!;
 
     let timestamp: number | null = null;
-    if (gameStateData.timestamp !== null && gameStateData.timestamp !== undefined && gameStateData.timestamp !== 0) {
+    if (gameStateData.timestamp !== 0) {
       timestamp = gameStateData.timestamp;
       if (timestamp !== null) {
         const previousGameState = this.gameStateHistory.get(this.gameStateHistory.size - 1, null);
@@ -103,7 +103,7 @@ export class Game {
     this.doGameAction(gameAction, timestamp);
   }
 
-  processRevealedTileRackTiles(entries: PB.GameStateData.IRevealedTileRackTile[]) {
+  processRevealedTileRackTiles(entries: PB_GameStateData_RevealedTileRackTile[]) {
     const playerIDs: number[] = [];
 
     this.tileRacks = this.tileRacks.asMutable();
@@ -148,7 +148,7 @@ export class Game {
     this.playerIDWithPlayableTile = playerIDWithPlayableTile;
   }
 
-  doGameAction(gameAction: PB.IGameAction, timestamp: number | null) {
+  doGameAction(gameAction: PB_GameAction, timestamp: number | null) {
     let currentAction = this.gameActionStack[this.gameActionStack.length - 1];
 
     let newActions: ActionBase[] | null = currentAction.execute(gameAction);
@@ -560,16 +560,16 @@ export class Game {
   }
 }
 
-const dummyGameAction: PB.IGameAction = PB.GameAction.create();
-const dummyPlayerGameStateDatas: PB.GameStateData[] = [];
-const dummyWatcherGameStateData = PB.GameStateData.create();
+const dummyGameAction = PB_GameAction.create();
+const dummyPlayerGameStateDatas: PB_GameStateData[] = [];
+const dummyWatcherGameStateData = PB_GameStateData.create();
 
 export class GameState {
   playerID = -1;
   gameActionEnum = GameActionEnum.StartGame;
   gameAction = dummyGameAction;
   timestamp: number | null = null;
-  revealedTileRackTiles: PB.GameStateData.RevealedTileRackTile[] = [];
+  revealedTileRackTiles: PB_GameStateData_RevealedTileRackTile[] = [];
   revealedTileBagTiles: GameStateTileBagTile[] = [];
   playerIDWithPlayableTile: number | null = null;
   gameHistoryMessages: GameHistoryMessageData[] = [];
@@ -595,7 +595,7 @@ export class GameState {
     this.nextGameAction = game.gameActionStack[game.gameActionStack.length - 1];
   }
 
-  setGameAction(playerID: number, gameActionEnum: GameActionEnum, gameAction: PB.IGameAction, timestamp: number | null) {
+  setGameAction(playerID: number, gameActionEnum: GameActionEnum, gameAction: PB_GameAction, timestamp: number | null) {
     this.playerID = playerID;
     this.gameActionEnum = gameActionEnum;
     this.gameAction = gameAction;
@@ -615,9 +615,7 @@ export class GameState {
       this.revealedTileBagTilesLookup.get(tile)!.playerIDWithPermission = null;
     } else {
       // add it to the tile rack additions
-      const revealedTileRackTile = PB.GameStateData.RevealedTileRackTile.create();
-      revealedTileRackTile.tile = tile;
-      revealedTileRackTile.playerIdBelongsTo = playerID;
+      const revealedTileRackTile = PB_GameStateData_RevealedTileRackTile.create({ tile, playerIdBelongsTo: playerID });
       this.revealedTileRackTiles.push(revealedTileRackTile);
     }
   }
@@ -663,7 +661,7 @@ export class GameState {
       timestamp -= this.previousGameState.timestamp;
     }
 
-    const revealedTileRackTiles: PB.GameStateData.RevealedTileRackTile[] = [];
+    const revealedTileRackTiles: PB_GameStateData_RevealedTileRackTile[] = [];
     for (let i = 0; i < this.revealedTileRackTiles.length; i++) {
       const gameStateTileRackTile = this.revealedTileRackTiles[i];
       if (gameStateTileRackTile.playerIdBelongsTo !== playerID) {
@@ -681,7 +679,7 @@ export class GameState {
       );
     }
 
-    const gameStateData = PB.GameStateData.create();
+    const gameStateData = PB_GameStateData.create();
 
     gameStateData.gameAction = this.gameAction;
     if (timestamp !== null) {

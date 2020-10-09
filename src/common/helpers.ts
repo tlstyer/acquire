@@ -1,4 +1,4 @@
-import { GameMode, PB } from './pb';
+import { GameMode, PB_MessageToServer } from './pb';
 
 export function getNewTileBag() {
   const tileBag: number[] = new Array(108);
@@ -151,5 +151,5 @@ export function getValueOfKey(obj: any) {
 }
 
 export function encodeMessageToServer(message: any) {
-  return PB.MessageToServer.encode(message).finish();
+  return PB_MessageToServer.toBinary(PB_MessageToServer.create(message));
 }

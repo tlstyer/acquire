@@ -1,7 +1,7 @@
 import { GameActionEnum, GameHistoryMessageEnum } from '../enums';
 import { UserInputError } from '../error';
 import { Game } from '../game';
-import { GameBoardType, PB } from '../pb';
+import { GameBoardType, PB_GameAction } from '../pb';
 import { ActionBase } from './base';
 import { ActionDisposeOfShares } from './disposeOfShares';
 
@@ -18,12 +18,12 @@ export class ActionSelectChainToDisposeOfNext extends ActionBase {
     }
   }
 
-  execute(gameAction: PB.IGameAction) {
+  execute(gameAction: PB_GameAction) {
     if (!gameAction.selectChainToDisposeOfNext) {
       throw new UserInputError('selectChainToDisposeOfNext game action not provided');
     }
     const chain = gameAction.selectChainToDisposeOfNext.chain;
-    if (chain === null || chain === undefined || chain < GameBoardType.LUXOR || chain > GameBoardType.IMPERIAL) {
+    if (chain < GameBoardType.LUXOR || chain > GameBoardType.IMPERIAL) {
       throw new UserInputError('chain is not a valid chain');
     }
     if (this.defunctChains.indexOf(chain) === -1) {

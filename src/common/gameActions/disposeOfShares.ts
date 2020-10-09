@@ -1,7 +1,7 @@
 import { GameActionEnum, GameHistoryMessageEnum, ScoreBoardIndexEnum } from '../enums';
 import { UserInputError } from '../error';
 import { Game } from '../game';
-import { GameBoardType, PB } from '../pb';
+import { GameBoardType, PB_GameAction } from '../pb';
 import { ActionBase } from './base';
 
 export class ActionDisposeOfShares extends ActionBase {
@@ -20,16 +20,16 @@ export class ActionDisposeOfShares extends ActionBase {
     return null;
   }
 
-  execute(gameAction: PB.IGameAction) {
+  execute(gameAction: PB_GameAction) {
     if (!gameAction.disposeOfShares) {
       throw new UserInputError('disposeOfShares game action not provided');
     }
     const tradeAmount = gameAction.disposeOfShares.tradeAmount;
     const sellAmount = gameAction.disposeOfShares.sellAmount;
-    if (tradeAmount === null || tradeAmount === undefined || tradeAmount < 0) {
+    if (tradeAmount < 0) {
       throw new UserInputError('trade amount is not an integer >= 0');
     }
-    if (sellAmount === null || sellAmount === undefined || sellAmount < 0) {
+    if (sellAmount < 0) {
       throw new UserInputError('sell amount is not an integer >= 0');
     }
     if (tradeAmount % 2 !== 0) {

@@ -1,7 +1,10 @@
 import { List } from 'immutable';
 import { GameActionEnum, MessageToClientEnum, TileEnum } from '../common/enums';
-import { ErrorCode, GameMode, PB, PlayerArrangementMode } from '../common/pb';
+import { setupTextDecoderAndTextEncoder } from '../common/nodeSpecificStuff';
+import { ErrorCode, GameMode, PB_GameSetupChange, PB_MessageToServer, PlayerArrangementMode } from '../common/pb';
 import { Client, ClientManager, ClientManagerPage, GameData, User } from './clientManager';
+
+setupTextDecoderAndTextEncoder();
 
 class TestWebSocket {
   static OPEN = WebSocket.OPEN;
@@ -16,10 +19,10 @@ class TestWebSocket {
 
   readyState = WebSocket.CLOSED;
 
-  sentMessages: Uint8Array[] = [];
+  sentMessages: PB_MessageToServer[] = [];
 
   send(data: Uint8Array) {
-    this.sentMessages.push(data);
+    this.sentMessages.push(PB_MessageToServer.fromBinary(data));
   }
 
   triggerOpen() {
@@ -228,7 +231,7 @@ function expectMessageToServerDatasToEqual(expectedObjects: any[]) {
   expect(testWebSocket!.sentMessages.length).toBe(expectedObjects.length);
 
   for (let i = 0; i < expectedObjects.length; i++) {
-    expect(PB.MessageToServer.toObject(PB.MessageToServer.decode(testWebSocket!.sentMessages[i]))).toEqual(expectedObjects[i]);
+    expect(testWebSocket!.sentMessages[i]).toEqual(expectedObjects[i]);
   }
 }
 
@@ -254,7 +257,7 @@ describe('onSubmitLoginForm', () => {
     testWebSocket!.triggerOpen();
 
     expect(renderMock.mock.calls.length).toBe(2);
-    expectMessageToServerDatasToEqual([{ login: { version: 0, username: 'username', password: 'password' } }]);
+    expectMessageToServerDatasToEqual([{ login: { version: 0, username: 'username', password: 'password', gameDatas: [] } }]);
   });
 
   test('goes back to login page upon fatal error followed by a closed connection', () => {
@@ -499,12 +502,22 @@ describe('MessageToClient.Greetings', () => {
     const gameSetupData1 = {
       gameMode: GameMode.TEAMS_3_VS_3,
       playerArrangementMode: PlayerArrangementMode.RANDOM_ORDER,
-      positions: [{ userId: 4, isHost: true }, {}, {}, {}, {}, {}],
+      positions: [
+        { userId: 4, isHost: true, approvesOfGameSetup: false },
+        { userId: 0, isHost: false, approvesOfGameSetup: false },
+        { userId: 0, isHost: false, approvesOfGameSetup: false },
+        { userId: 0, isHost: false, approvesOfGameSetup: false },
+        { userId: 0, isHost: false, approvesOfGameSetup: false },
+        { userId: 0, isHost: false, approvesOfGameSetup: false },
+      ],
     };
     const gameSetupData2 = {
       gameMode: GameMode.SINGLES_2,
       playerArrangementMode: PlayerArrangementMode.EXACT_ORDER,
-      positions: [{ userId: 9 }, { userId: 5, isHost: true, approvesOfGameSetup: true }],
+      positions: [
+        { userId: 9, isHost: false, approvesOfGameSetup: false },
+        { userId: 5, isHost: true, approvesOfGameSetup: true },
+      ],
     };
     testWebSocket!.triggerMessage([
       [
@@ -532,8 +545,8 @@ describe('MessageToClient.Greetings', () => {
     expect(clientManager.userIDToUser.get(5)!.numGames).toBe(1);
     expect(clientManager.userIDToUser.get(9)!.numGames).toBe(1);
     expect(clientManager.myClient).toBe(clientManager.clientIDToClient.get(7));
-    expect(PB.GameSetupData.toObject(clientManager.gameIDToGameData.get(1)!.gameSetup!.toGameSetupData())).toEqual(gameSetupData1);
-    expect(PB.GameSetupData.toObject(clientManager.gameIDToGameData.get(2)!.gameSetup!.toGameSetupData())).toEqual(gameSetupData2);
+    expect(clientManager.gameIDToGameData.get(1)!.gameSetup!.toGameSetupData()).toEqual(gameSetupData1);
+    expect(clientManager.gameIDToGameData.get(2)!.gameSetup!.toGameSetupData()).toEqual(gameSetupData2);
     expectClientAndUserAndGameData(
       clientManager,
       [
@@ -887,7 +900,7 @@ describe('MessageToClient.GameSetupChanged', () => {
       [new GameDataData(10, 1, [1])],
     );
 
-    testWebSocket!.triggerMessage([[MessageToClientEnum.GameSetupChanged, 1, PB.GameSetupChange.create({ userAdded: { userId: 2 } })]]);
+    testWebSocket!.triggerMessage([[MessageToClientEnum.GameSetupChanged, 1, PB_GameSetupChange.create({ userAdded: { userId: 2 } })]]);
 
     expectClientAndUserAndGameData(
       clientManager,
@@ -931,7 +944,7 @@ describe('MessageToClient.GameSetupChanged', () => {
       [new GameDataData(10, 1, [1, 2])],
     );
 
-    testWebSocket!.triggerMessage([[MessageToClientEnum.GameSetupChanged, 1, PB.GameSetupChange.create({ userRemoved: { userId: 2 } })]]);
+    testWebSocket!.triggerMessage([[MessageToClientEnum.GameSetupChanged, 1, PB_GameSetupChange.create({ userRemoved: { userId: 2 } })]]);
 
     expectClientAndUserAndGameData(
       clientManager,
@@ -975,7 +988,7 @@ describe('MessageToClient.GameSetupChanged', () => {
       [new GameDataData(10, 1, [1, 2])],
     );
 
-    testWebSocket!.triggerMessage([[MessageToClientEnum.GameSetupChanged, 1, PB.GameSetupChange.create({ userApprovedOfGameSetup: { userId: 2 } })]]);
+    testWebSocket!.triggerMessage([[MessageToClientEnum.GameSetupChanged, 1, PB_GameSetupChange.create({ userApprovedOfGameSetup: { userId: 2 } })]]);
 
     expectClientAndUserAndGameData(
       clientManager,
@@ -1020,7 +1033,7 @@ describe('MessageToClient.GameSetupChanged', () => {
     );
 
     testWebSocket!.triggerMessage([
-      [MessageToClientEnum.GameSetupChanged, 1, PB.GameSetupChange.toObject(PB.GameSetupChange.create({ gameModeChanged: { gameMode: GameMode.SINGLES_3 } }))],
+      [MessageToClientEnum.GameSetupChanged, 1, PB_GameSetupChange.create({ gameModeChanged: { gameMode: GameMode.SINGLES_3 } })],
     ]);
 
     expectClientAndUserAndGameData(
@@ -1069,7 +1082,7 @@ describe('MessageToClient.GameSetupChanged', () => {
       [
         MessageToClientEnum.GameSetupChanged,
         1,
-        PB.GameSetupChange.toObject(PB.GameSetupChange.create({ playerArrangementModeChanged: { playerArrangementMode: PlayerArrangementMode.EXACT_ORDER } })),
+        PB_GameSetupChange.create({ playerArrangementModeChanged: { playerArrangementMode: PlayerArrangementMode.EXACT_ORDER } }),
       ],
     ]);
 
@@ -1115,7 +1128,7 @@ describe('MessageToClient.GameSetupChanged', () => {
       [new GameDataData(10, 1, [1, 2])],
     );
 
-    testWebSocket!.triggerMessage([[MessageToClientEnum.GameSetupChanged, 1, PB.GameSetupChange.create({ positionsSwapped: { position1: 0, position2: 1 } })]]);
+    testWebSocket!.triggerMessage([[MessageToClientEnum.GameSetupChanged, 1, PB_GameSetupChange.create({ positionsSwapped: { position1: 0, position2: 1 } })]]);
 
     expectClientAndUserAndGameData(
       clientManager,
@@ -1159,7 +1172,7 @@ describe('MessageToClient.GameSetupChanged', () => {
       [new GameDataData(10, 1, [1, 2])],
     );
 
-    testWebSocket!.triggerMessage([[MessageToClientEnum.GameSetupChanged, 1, PB.GameSetupChange.create({ userKicked: { userId: 2 } })]]);
+    testWebSocket!.triggerMessage([[MessageToClientEnum.GameSetupChanged, 1, PB_GameSetupChange.create({ userKicked: { userId: 2 } })]]);
 
     expectClientAndUserAndGameData(
       clientManager,

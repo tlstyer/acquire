@@ -2,7 +2,7 @@ import { GameActionEnum, GameHistoryMessageEnum, ScoreBoardIndexEnum } from '../
 import { UserInputError } from '../error';
 import { Game } from '../game';
 import { calculateBonuses } from '../helpers';
-import { GameBoardType, PB } from '../pb';
+import { GameBoardType, PB_GameAction } from '../pb';
 import { ActionBase } from './base';
 import { ActionSelectChainToDisposeOfNext } from './selectChainToDisposeOfNext';
 
@@ -51,12 +51,12 @@ export class ActionSelectMergerSurvivor extends ActionBase {
     }
   }
 
-  execute(gameAction: PB.IGameAction) {
+  execute(gameAction: PB_GameAction) {
     if (!gameAction.selectMergerSurvivor) {
       throw new UserInputError('selectMergerSurvivor game action not provided');
     }
     const chain = gameAction.selectMergerSurvivor.chain;
-    if (chain === null || chain === undefined || chain < GameBoardType.LUXOR || chain > GameBoardType.IMPERIAL) {
+    if (chain < GameBoardType.LUXOR || chain > GameBoardType.IMPERIAL) {
       throw new UserInputError('chain is not a valid chain');
     }
     if (this.chainsBySize[0].indexOf(chain) === -1) {

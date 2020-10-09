@@ -135,11 +135,6 @@ function getProductionConfig(APP) {
             entry: `https://unpkg.com/immutable@${packageVersionLookup['immutable']}/dist/immutable.min.js`,
           },
           {
-            module: 'protobufjs/minimal',
-            global: 'protobuf',
-            entry: `https://unpkg.com/protobufjs@${packageVersionLookup['protobufjs']}/dist/minimal/protobuf.min.js`,
-          },
-          {
             module: 'react',
             global: 'React',
             entry: `https://unpkg.com/react@${packageVersionLookup['react']}/umd/react.production.min.js`,

@@ -49,9 +49,6 @@ action: 0 PlayTile 3B
     0 MergedChains A,C
   next action: 0 SelectMergerSurvivor A,C
 
-action: 0 SelectMergerSurvivor -- {}
-  error: chain is not a valid chain
-
 action: 0 SelectMergerSurvivor -- {"chain":-1}
   error: chain is not a valid chain
 

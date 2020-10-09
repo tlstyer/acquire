@@ -91,9 +91,6 @@ action: 0 SelectMergerSurvivor I
     3 ReceivedBonus C 20
   next action: 0 SelectChainToDisposeOfNext L,T,C
 
-action: 0 SelectChainToDisposeOfNext -- {}
-  error: chain is not a valid chain
-
 action: 0 SelectChainToDisposeOfNext -- {"chain":-1}
   error: chain is not a valid chain
 

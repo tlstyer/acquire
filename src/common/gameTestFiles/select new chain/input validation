@@ -35,9 +35,6 @@ action: 1 PlayTile 4H
     1 PlayedTile 4H
   next action: 1 SelectNewChain T,A,F,W,C,I
 
-action: 1 SelectNewChain -- {}
-  error: chain is not a valid chain
-
 action: 1 SelectNewChain -- {"chain":-1}
   error: chain is not a valid chain
 

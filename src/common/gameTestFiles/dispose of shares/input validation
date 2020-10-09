@@ -51,9 +51,6 @@ action: 0 PlayTile 3B
     2 ReceivedBonus A 15
   next action: 0 DisposeOfShares A
 
-action: 0 DisposeOfShares -- {}
-  error: trade amount is not an integer >= 0
-
 action: 0 DisposeOfShares -1 0
   error: trade amount is not an integer >= 0
 

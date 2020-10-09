@@ -1,9 +1,9 @@
 {
   "private": true,
   "dependencies": {
+    "@protobuf-ts/plugin": "^1.0.5",
     "bufferutil": "^4.0.1",
     "immutable": "4.0.0-rc.12",
-    "protobufjs": "^6.10.1",
     "typescript-collections": "^1.3.3",
     "ws": "^7.3.1"
   },
@@ -62,12 +62,12 @@
     "build-client": "APP=index MODE=production webpack",
     "build-examples": "APP=examples MODE=production webpack",
     "build-review": "APP=review MODE=production webpack",
-    "build-server": "tsc --project tsconfig.server.json ; rsync -ptvi src/common/pb.js dist/server/common/pb.js",
+    "build-server": "tsc --project tsconfig.server.json",
     "client": "APP=index yarn webpack-dev-server",
     "examples": "APP=examples yarn webpack-dev-server",
     "review": "APP=review yarn webpack-dev-server",
     "server": "nodemon --exec ts-node src/server/main.ts",
-    "protobuf": "pbjs -t static-module -w commonjs -o src/common/pb.js src/common/pb.proto ; pbts -o src/common/pb.d.ts src/common/pb.js",
+    "protobuf": "protoc --ts_out src/common --proto_path src/common src/common/pb.proto",
     "test": "jest",
     "lint": "eslint . --fix --ext .ts,.tsx",
     "format": "prettier --write '{,!(.git|node_modules)/**/}*.{css,js,json,md,scss,ts,tsx}' --loglevel warn"

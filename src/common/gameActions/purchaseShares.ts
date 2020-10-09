@@ -1,7 +1,7 @@
 import { GameActionEnum, GameHistoryMessageEnum, ScoreBoardIndexEnum } from '../enums';
 import { UserInputError } from '../error';
 import { Game } from '../game';
-import { GameBoardType, PB } from '../pb';
+import { GameBoardType, PB_GameAction } from '../pb';
 import { ActionBase } from './base';
 import { ActionGameOver } from './gameOver';
 import { ActionPlayTile } from './playTile';
@@ -65,27 +65,21 @@ export class ActionPurchaseShares extends ActionBase {
     }
   }
 
-  execute(gameAction: PB.IGameAction) {
+  execute(gameAction: PB_GameAction) {
     if (!gameAction.purchaseShares) {
       throw new UserInputError('purchaseShares game action not provided');
     }
     const chains = gameAction.purchaseShares.chains;
-    if (chains === null || chains === undefined) {
-      throw new UserInputError('chains is not an array');
-    }
     if (chains.length > 3) {
       throw new UserInputError('number of chains is larger than 3');
     }
     for (let i = 0; i < chains.length; i++) {
       const chain = chains[i];
-      if (chain === null || chain === undefined || chain < GameBoardType.LUXOR || chain > GameBoardType.IMPERIAL) {
+      if (chain < GameBoardType.LUXOR || chain > GameBoardType.IMPERIAL) {
         throw new UserInputError('a chain is not a valid chain');
       }
     }
     const endGame = gameAction.purchaseShares.endGame;
-    if (endGame === null || endGame === undefined) {
-      throw new UserInputError('end game is not true or false');
-    }
 
     const chainCounts = [0, 0, 0, 0, 0, 0, 0];
     for (let i = 0; i < chains.length; i++) {

@@ -2,7 +2,29 @@ import * as WebSocket from 'ws';
 import { Game } from '../common/game';
 import { GameSetup } from '../common/gameSetup';
 import { gameModeToNumPlayers, getNewTileBag, isASCII } from '../common/helpers';
-import { ErrorCode, PB, PlayerArrangementMode } from '../common/pb';
+import {
+  ErrorCode,
+  PB_GameAction,
+  PB_GameData,
+  PB_GameData_Position,
+  PB_GameSetupAction_ChangeGameMode,
+  PB_GameSetupAction_ChangePlayerArrangementMode,
+  PB_GameSetupAction_KickUser,
+  PB_GameSetupAction_SwapPositions,
+  PB_GameStateData,
+  PB_MessagesToClient,
+  PB_MessageToClient,
+  PB_MessageToClient_Greetings_Game,
+  PB_MessageToClient_Greetings_User,
+  PB_MessageToClient_Greetings_User_Client,
+  PB_MessageToServer,
+  PB_MessageToServer_CreateGame,
+  PB_MessageToServer_DoGameAction,
+  PB_MessageToServer_EnterGame,
+  PB_MessageToServer_Login,
+  PB_MessageToServer_Login_GameData,
+  PlayerArrangementMode,
+} from '../common/pb';
 import { LogMessage } from './enums';
 import { ReuseIDManager } from './reuseIDManager';
 import { UserDataProvider } from './userDataProvider';
@@ -47,10 +69,10 @@ export class ServerManager {
       this.addConnection(webSocket);
 
       webSocket.on('message', (rawMessage) => {
-        let message: PB.MessageToServer;
+        let message: PB_MessageToServer;
         try {
           // @ts-ignore
-          message = PB.MessageToServer.decode(rawMessage);
+          message = PB_MessageToServer.fromBinary(rawMessage);
         } catch (error) {
           this.logMessage(LogMessage.InvalidMessage, webSocketID, rawMessage);
 
@@ -64,7 +86,7 @@ export class ServerManager {
         } else {
           let sanitizedMessage = message;
           if (message.login && message.login.password !== '') {
-            sanitizedMessage = PB.MessageToServer.create(PB.MessageToServer.toObject(message));
+            sanitizedMessage = PB_MessageToServer.create(message);
             sanitizedMessage.login!.password = '***';
           }
 
@@ -167,7 +189,7 @@ export class ServerManager {
       user.clients.delete(client);
       this.deleteUserIfItDoesNotHaveReferences(user);
 
-      const clientDisconnectedMessage = PB.MessageToClient.create({
+      const clientDisconnectedMessage = PB_MessageToClient.create({
         clientDisconnected: {
           clientId: client.id,
         },
@@ -184,7 +206,7 @@ export class ServerManager {
     this.logMessage(LogMessage.KickedWithError, this.webSocketToID.get(webSocket), errorCode);
 
     webSocket.send(
-      PB.MessagesToClient.encode({
+      PB_MessagesToClient.toBinary({
         messagesToClient: [
           {
             fatalError: {
@@ -192,12 +214,12 @@ export class ServerManager {
             },
           },
         ],
-      }).finish(),
+      }),
     );
     webSocket.close();
   }
 
-  async processFirstMessage(webSocket: WebSocket, message: PB.MessageToServer.ILogin) {
+  async processFirstMessage(webSocket: WebSocket, message: PB_MessageToServer_Login) {
     const version = message.version;
     if (version !== 0) {
       this.kickWithError(webSocket, ErrorCode.NOT_USING_LATEST_VERSION);
@@ -205,22 +227,14 @@ export class ServerManager {
     }
 
     const username = message.username;
-    if (username === null || username === undefined || username.length === 0 || username.length > 32 || !isASCII(username)) {
+    if (username.length === 0 || username.length > 32 || !isASCII(username)) {
       this.kickWithError(webSocket, ErrorCode.INVALID_USERNAME);
       return;
     }
 
     const password = message.password;
-    if (password === null || password === undefined) {
-      this.kickWithError(webSocket, ErrorCode.INVALID_MESSAGE_FORMAT);
-      return;
-    }
 
     const gameDatas = message.gameDatas;
-    if (gameDatas === null || gameDatas === undefined) {
-      this.kickWithError(webSocket, ErrorCode.INVALID_MESSAGE_FORMAT);
-      return;
-    }
 
     let userData;
     try {
@@ -283,7 +297,7 @@ export class ServerManager {
 
     client.queueMessage(this.getGreetingsMessage(gameDatas, client));
 
-    const clientConnectedMessage = PB.MessageToClient.create({
+    const clientConnectedMessage = PB_MessageToClient.create({
       clientConnected: {
         clientId: client.id,
         userId: client.user.id,
@@ -304,9 +318,9 @@ export class ServerManager {
     this.logMessage(LogMessage.LoggedIn, this.webSocketToID.get(webSocket), client.id, userID, username);
   }
 
-  onMessageCreateGame(client: Client, message: PB.MessageToServer.ICreateGame) {
+  onMessageCreateGame(client: Client, message: PB_MessageToServer_CreateGame) {
     const gameMode = message.gameMode;
-    if (gameMode === null || gameMode === undefined || !gameModeToNumPlayers.has(gameMode)) {
+    if (!gameModeToNumPlayers.has(gameMode)) {
       this.kickWithError(client.webSocket, ErrorCode.INVALID_MESSAGE);
       return;
     }
@@ -325,7 +339,7 @@ export class ServerManager {
     this.gameIDToGameData.set(gameData.id, gameData);
     this.gameDisplayNumberToGameData.set(gameData.displayNumber, gameData);
 
-    const gameCreatedMessage = PB.MessageToClient.create({
+    const gameCreatedMessage = PB_MessageToClient.create({
       gameCreated: {
         gameId: gameData.id,
         gameDisplayNumber: gameData.displayNumber,
@@ -333,7 +347,7 @@ export class ServerManager {
         hostClientId: client.id,
       },
     });
-    const clientEnteredGameMessage = PB.MessageToClient.create({
+    const clientEnteredGameMessage = PB_MessageToClient.create({
       clientEnteredGame: {
         clientId: client.id,
         gameDisplayNumber: gameData.displayNumber,
@@ -345,12 +359,8 @@ export class ServerManager {
     });
   }
 
-  onMessageEnterGame(client: Client, message: PB.MessageToServer.IEnterGame) {
+  onMessageEnterGame(client: Client, message: PB_MessageToServer_EnterGame) {
     const gameDisplayNumber = message.gameDisplayNumber;
-    if (gameDisplayNumber === null || gameDisplayNumber === undefined) {
-      this.kickWithError(client.webSocket, ErrorCode.INVALID_MESSAGE);
-      return;
-    }
     const gameData = this.gameDisplayNumberToGameData.get(gameDisplayNumber);
     if (gameData === undefined) {
       this.kickWithError(client.webSocket, ErrorCode.INVALID_MESSAGE);
@@ -365,7 +375,7 @@ export class ServerManager {
 
     client.gameData = gameData;
 
-    const clientEnteredGameMessage = PB.MessageToClient.create({
+    const clientEnteredGameMessage = PB_MessageToClient.create({
       clientEnteredGame: {
         clientId: client.id,
         gameDisplayNumber: gameData.displayNumber,
@@ -386,7 +396,7 @@ export class ServerManager {
 
     client.gameData = null;
 
-    const clientExitedGameMessage = PB.MessageToClient.create({
+    const clientExitedGameMessage = PB_MessageToClient.create({
       clientExitedGame: {
         clientId: client.id,
       },
@@ -457,7 +467,7 @@ export class ServerManager {
       gameData.gameSetup = null;
       gameData.game = game;
 
-      const gameStartedMessage = PB.MessageToClient.create({
+      const gameStartedMessage = PB_MessageToClient.create({
         gameStarted: {
           gameDisplayNumber: gameData.displayNumber,
           userIds: userIDs.toJS(),
@@ -467,14 +477,14 @@ export class ServerManager {
         aClient.queueMessage(gameStartedMessage);
       });
 
-      game.doGameAction(PB.GameAction.fromObject({ startGame: {} }), Date.now());
+      game.doGameAction(PB_GameAction.create({ startGame: {} }), Date.now());
       this.sendLastGameGameStateMessage(gameData);
     } else if (gameSetup.history.length > 0) {
       this.sendGameSetupChanges(gameData);
     }
   }
 
-  onMessageChangeGameMode(client: Client, message: PB.GameSetupAction.IChangeGameMode) {
+  onMessageChangeGameMode(client: Client, message: PB_GameSetupAction_ChangeGameMode) {
     const gameData = client.gameData;
     if (gameData === null) {
       return;
@@ -490,20 +500,14 @@ export class ServerManager {
       return;
     }
 
-    const gameMode = message.gameMode;
-    if (gameMode === null || gameMode === undefined) {
-      this.kickWithError(client.webSocket, ErrorCode.INVALID_MESSAGE);
-      return;
-    }
-
-    gameSetup.changeGameMode(gameMode);
+    gameSetup.changeGameMode(message.gameMode);
 
     if (gameSetup.history.length > 0) {
       this.sendGameSetupChanges(gameData);
     }
   }
 
-  onMessageChangePlayerArrangementMode(client: Client, message: PB.GameSetupAction.IChangePlayerArrangementMode) {
+  onMessageChangePlayerArrangementMode(client: Client, message: PB_GameSetupAction_ChangePlayerArrangementMode) {
     const gameData = client.gameData;
     if (gameData === null) {
       return;
@@ -519,20 +523,14 @@ export class ServerManager {
       return;
     }
 
-    const playerArrangementMode = message.playerArrangementMode;
-    if (playerArrangementMode === null || playerArrangementMode === undefined) {
-      this.kickWithError(client.webSocket, ErrorCode.INVALID_MESSAGE);
-      return;
-    }
-
-    gameSetup.changePlayerArrangementMode(playerArrangementMode);
+    gameSetup.changePlayerArrangementMode(message.playerArrangementMode);
 
     if (gameSetup.history.length > 0) {
       this.sendGameSetupChanges(gameData);
     }
   }
 
-  onMessageSwapPositions(client: Client, message: PB.GameSetupAction.ISwapPositions) {
+  onMessageSwapPositions(client: Client, message: PB_GameSetupAction_SwapPositions) {
     const gameData = client.gameData;
     if (gameData === null) {
       return;
@@ -548,21 +546,14 @@ export class ServerManager {
       return;
     }
 
-    const position1 = message.position1;
-    const position2 = message.position2;
-    if (position1 === null || position1 === undefined || position2 === null || position2 === undefined) {
-      this.kickWithError(client.webSocket, ErrorCode.INVALID_MESSAGE);
-      return;
-    }
-
-    gameSetup.swapPositions(position1, position2);
+    gameSetup.swapPositions(message.position1, message.position2);
 
     if (gameSetup.history.length > 0) {
       this.sendGameSetupChanges(gameData);
     }
   }
 
-  onMessageKickUser(client: Client, message: PB.GameSetupAction.IKickUser) {
+  onMessageKickUser(client: Client, message: PB_GameSetupAction_KickUser) {
     const gameData = client.gameData;
     if (gameData === null) {
       return;
@@ -579,10 +570,6 @@ export class ServerManager {
     }
 
     const userID = message.userId;
-    if (userID === null || userID === undefined) {
-      this.kickWithError(client.webSocket, ErrorCode.INVALID_MESSAGE);
-      return;
-    }
 
     gameSetup.kickUser(userID);
 
@@ -595,7 +582,7 @@ export class ServerManager {
     }
   }
 
-  onMessageDoGameAction(client: Client, message: PB.MessageToServer.IDoGameAction) {
+  onMessageDoGameAction(client: Client, message: PB_MessageToServer_DoGameAction) {
     const gameData = client.gameData;
     if (gameData === null) {
       return;
@@ -608,7 +595,7 @@ export class ServerManager {
 
     const gameStateHistorySize = message.gameStateHistorySize;
     const gameAction = message.gameAction;
-    if (gameStateHistorySize === null || gameStateHistorySize === undefined || gameStateHistorySize < 0 || gameAction === null || gameAction === undefined) {
+    if (gameStateHistorySize < 0 || gameAction === undefined) {
       this.kickWithError(client.webSocket, ErrorCode.INVALID_MESSAGE);
       return;
     }
@@ -637,7 +624,7 @@ export class ServerManager {
     const gameSetup = gameData.gameSetup!;
 
     gameSetup.history.forEach((gameSetupChange) => {
-      const gameSetupChangedMessage = PB.MessageToClient.create({
+      const gameSetupChangedMessage = PB_MessageToClient.create({
         gameSetupChanged: {
           gameDisplayNumber: gameData.displayNumber,
           gameSetupChange,
@@ -663,7 +650,7 @@ export class ServerManager {
     game.userIDs.forEach((userID, playerID) => {
       const user = this.userIDToUser.get(userID)!;
       if (user.clients.size > 0) {
-        const gameActionDoneMessage = PB.MessageToClient.create({
+        const gameActionDoneMessage = PB_MessageToClient.create({
           gameActionDone: {
             gameDisplayNumber: gameData.displayNumber,
             gameStateData: gameState.playerGameStateDatas[playerID],
@@ -678,7 +665,7 @@ export class ServerManager {
     });
 
     // send watcher messages to everybody else
-    const gameActionDoneMessage = PB.MessageToClient.create({
+    const gameActionDoneMessage = PB_MessageToClient.create({
       gameActionDone: {
         gameDisplayNumber: gameData.displayNumber,
         gameStateData: gameState.watcherGameStateData,
@@ -691,26 +678,26 @@ export class ServerManager {
     });
   }
 
-  getGreetingsMessage(gameDatas: PB.MessageToServer.Login.IGameData[], client: Client) {
-    const users: PB.MessageToClient.Greetings.User[] = [];
+  getGreetingsMessage(gameDatas: PB_MessageToServer_Login_GameData[], client: Client) {
+    const users: PB_MessageToClient_Greetings_User[] = [];
     this.userIDToUser.forEach((user) => {
-      const clients: PB.MessageToClient.Greetings.User.Client[] = [];
+      const clients: PB_MessageToClient_Greetings_User_Client[] = [];
       user.clients.forEach((aClient) => {
-        const client = PB.MessageToClient.Greetings.User.Client.create({ clientId: aClient.id });
+        const client = PB_MessageToClient_Greetings_User_Client.create({ clientId: aClient.id });
         if (aClient.gameData !== null) {
           client.gameDisplayNumber = aClient.gameData.displayNumber;
         }
         clients.push(client);
       });
 
-      const userPB = PB.MessageToClient.Greetings.User.create({ userId: user.id, username: user.name, clients });
+      const userPB = PB_MessageToClient_Greetings_User.create({ userId: user.id, username: user.name, clients });
 
       users.push(userPB);
     });
 
     const games: any[] = [];
     this.gameIDToGameData.forEach((gameData) => {
-      const gamePB = PB.MessageToClient.Greetings.Game.create({ gameId: gameData.id, gameDisplayNumber: gameData.displayNumber });
+      const gamePB = PB_MessageToClient_Greetings_Game.create({ gameId: gameData.id, gameDisplayNumber: gameData.displayNumber });
 
       if (gameData.gameSetup !== null) {
         gamePB.gameSetupData = gameData.gameSetup.toGameSetupData();
@@ -718,7 +705,7 @@ export class ServerManager {
         const game = gameData.game!;
         const playerID = game.userIDs.indexOf(client.user.id);
 
-        const gameStateDatas: PB.GameStateData[] = [];
+        const gameStateDatas: PB_GameStateData[] = [];
         game.gameStateHistory.forEach((gameState) => {
           if (playerID >= 0) {
             gameStateDatas.push(gameState.playerGameStateDatas[playerID]);
@@ -727,10 +714,9 @@ export class ServerManager {
           }
         });
 
-        const positions: PB.GameData.Position[] = [];
+        const positions: PB_GameData_Position[] = [];
         game.userIDs.forEach((userID) => {
-          const position = PB.GameData.Position.create();
-          position.userId = userID;
+          const position = PB_GameData_Position.create({ userId: userID });
           if (userID === game.hostUserID) {
             position.isHost = true;
           }
@@ -738,11 +724,7 @@ export class ServerManager {
           positions.push(position);
         });
 
-        const gameDataPB = PB.GameData.create();
-        gameDataPB.gameMode = game.gameMode;
-        gameDataPB.playerArrangementMode = game.playerArrangementMode;
-        gameDataPB.positions = positions;
-        gameDataPB.gameStateDatas = gameStateDatas;
+        const gameDataPB = PB_GameData.create({ gameMode: game.gameMode, playerArrangementMode: game.playerArrangementMode, positions, gameStateDatas });
 
         gamePB.gameData = gameDataPB;
       }
@@ -750,7 +732,7 @@ export class ServerManager {
       games.push(gamePB);
     });
 
-    return PB.MessageToClient.create({
+    return PB_MessageToClient.create({
       greetings: {
         clientId: client.id,
         users,
@@ -781,17 +763,17 @@ export class ServerManager {
 
 export class Client {
   gameData: GameData | null = null;
-  queuedMessages: PB.MessageToClient[] = [];
+  queuedMessages: PB_MessageToClient[] = [];
 
   constructor(public id: number, public webSocket: WebSocket, public user: User) {}
 
-  queueMessage(message: PB.MessageToClient) {
+  queueMessage(message: PB_MessageToClient) {
     this.queuedMessages.push(message);
   }
 
   sendQueuedMessages() {
     if (this.queuedMessages.length > 0) {
-      this.webSocket.send(PB.MessagesToClient.encode({ messagesToClient: this.queuedMessages }).finish());
+      this.webSocket.send(PB_MessagesToClient.toBinary({ messagesToClient: this.queuedMessages }));
       this.queuedMessages.length = 0;
     }
   }
