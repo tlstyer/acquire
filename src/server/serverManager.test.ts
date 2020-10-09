@@ -332,10 +332,6 @@ async function expectKicksClientDueToInvalidMessage(message: any) {
   expectClientKickedDueToInvalidMessage(connection);
 }
 
-function expectReceivedMessageToEqual(receivedMessage: PB_MessageToClient[], expected: PB_MessageToClient[]) {
-  expect(receivedMessage).toEqual(expected);
-}
-
 describe('when not sending first message', () => {
   test('can open connections and then close them', () => {
     const { serverManager, server } = getServerManagerAndStuff();
@@ -486,7 +482,7 @@ describe('when sending first message', () => {
       }
       expectJustConnection1Data();
       expect(webSocket1.receivedMessages.length).toBe(1);
-      expectReceivedMessageToEqual(webSocket1.receivedMessages[0], [
+      expect(webSocket1.receivedMessages[0]).toEqual([
         PB_MessageToClient.create({
           greetings: {
             clientId: 1,
@@ -526,7 +522,7 @@ describe('when sending first message', () => {
       expect(webSocket1.readyState).toBe(WebSocket.OPEN);
       expect(webSocket2.readyState).toBe(WebSocket.OPEN);
       expect(webSocket1.receivedMessages.length).toBe(2);
-      expectReceivedMessageToEqual(webSocket1.receivedMessages[1], [
+      expect(webSocket1.receivedMessages[1]).toEqual([
         PB_MessageToClient.create({
           clientConnected: {
             clientId: 2,
@@ -535,7 +531,7 @@ describe('when sending first message', () => {
         }),
       ]);
       expect(webSocket2.receivedMessages.length).toBe(1);
-      expectReceivedMessageToEqual(webSocket2.receivedMessages[0], [
+      expect(webSocket2.receivedMessages[0]).toEqual([
         PB_MessageToClient.create({
           greetings: {
             clientId: 2,
@@ -562,7 +558,7 @@ describe('when sending first message', () => {
       expectJustConnection1Data();
       expect(webSocket2.readyState).toBe(WebSocket.CLOSED);
       expect(webSocket1.receivedMessages.length).toBe(3);
-      expectReceivedMessageToEqual(webSocket1.receivedMessages[2], [
+      expect(webSocket1.receivedMessages[2]).toEqual([
         PB_MessageToClient.create({
           clientDisconnected: {
             clientId: 2,
@@ -610,7 +606,7 @@ describe('when sending first message', () => {
       const connection = await connectToServer(server, 'me');
 
       expect(connection.receivedMessages.length).toBe(1);
-      expectReceivedMessageToEqual(connection.receivedMessages[0], [
+      expect(connection.receivedMessages[0]).toEqual([
         PB_MessageToClient.create({
           greetings: {
             clientId: 7,
@@ -642,7 +638,7 @@ describe('when sending first message', () => {
 
       const connection2 = await connectToServer(server, '2');
       expect(connection2.receivedMessages.length).toBe(1);
-      expectReceivedMessageToEqual(connection2.receivedMessages[0], [
+      expect(connection2.receivedMessages[0]).toEqual([
         PB_MessageToClient.create({
           greetings: {
             clientId: 2,
@@ -672,7 +668,7 @@ describe('when sending first message', () => {
 
       const connection3 = await connectToServer(server, '3');
       expect(connection3.receivedMessages.length).toBe(1);
-      expectReceivedMessageToEqual(connection3.receivedMessages[0], [
+      expect(connection3.receivedMessages[0]).toEqual([
         PB_MessageToClient.create({
           greetings: {
             clientId: 3,
@@ -736,7 +732,7 @@ describe('when sending first message', () => {
 
       const connection2b = await connectToServer(server, '2');
       expect(connection2b.receivedMessages.length).toBe(1);
-      expectReceivedMessageToEqual(connection2b.receivedMessages[0], [
+      expect(connection2b.receivedMessages[0]).toEqual([
         PB_MessageToClient.create({
           greetings: {
             clientId: 4,
@@ -788,7 +784,7 @@ describe('when sending first message', () => {
       await connectToServer(server, 'user 2');
 
       expect(connection.receivedMessages.length).toBe(2);
-      expectReceivedMessageToEqual(connection.receivedMessages[1], [
+      expect(connection.receivedMessages[1]).toEqual([
         PB_MessageToClient.create({
           clientConnected: {
             clientId: 2,
@@ -801,7 +797,7 @@ describe('when sending first message', () => {
       await connectToServer(server, 'user 2');
 
       expect(connection.receivedMessages.length).toBe(3);
-      expectReceivedMessageToEqual(connection.receivedMessages[2], [
+      expect(connection.receivedMessages[2]).toEqual([
         PB_MessageToClient.create({
           clientConnected: {
             clientId: 3,
@@ -875,8 +871,8 @@ describe('create game', () => {
         },
       }),
     ];
-    expectReceivedMessageToEqual(connection1.receivedMessages[0], expectedMessage);
-    expectReceivedMessageToEqual(connection2.receivedMessages[0], expectedMessage);
+    expect(connection1.receivedMessages[0]).toEqual(expectedMessage);
+    expect(connection2.receivedMessages[0]).toEqual(expectedMessage);
   });
 
   test('disallows creating a game when currently in a game', async () => {
@@ -937,8 +933,8 @@ describe('enter game', () => {
         },
       }),
     ];
-    expectReceivedMessageToEqual(connection1.receivedMessages[0], expectedMessage);
-    expectReceivedMessageToEqual(connection2.receivedMessages[0], expectedMessage);
+    expect(connection1.receivedMessages[0]).toEqual(expectedMessage);
+    expect(connection2.receivedMessages[0]).toEqual(expectedMessage);
   });
 
   test('disallows entering a game when currently in a game', async () => {
@@ -1005,8 +1001,8 @@ describe('exit game', () => {
         },
       }),
     ];
-    expectReceivedMessageToEqual(connection1.receivedMessages[0], expectedMessage);
-    expectReceivedMessageToEqual(connection2.receivedMessages[0], expectedMessage);
+    expect(connection1.receivedMessages[0]).toEqual(expectedMessage);
+    expect(connection2.receivedMessages[0]).toEqual(expectedMessage);
   });
 
   test('disallows exiting a game when not in a game', async () => {
@@ -1091,8 +1087,8 @@ describe('join game', () => {
         },
       }),
     ];
-    expectReceivedMessageToEqual(hostConnection.receivedMessages[0], expectedMessage);
-    expectReceivedMessageToEqual(otherConnection.receivedMessages[0], expectedMessage);
+    expect(hostConnection.receivedMessages[0]).toEqual(expectedMessage);
+    expect(otherConnection.receivedMessages[0]).toEqual(expectedMessage);
   });
 });
 
@@ -1149,8 +1145,8 @@ describe('unjoin game', () => {
         },
       }),
     ];
-    expectReceivedMessageToEqual(hostConnection.receivedMessages[0], expectedMessage);
-    expectReceivedMessageToEqual(otherConnection.receivedMessages[0], expectedMessage);
+    expect(hostConnection.receivedMessages[0]).toEqual(expectedMessage);
+    expect(otherConnection.receivedMessages[0]).toEqual(expectedMessage);
   });
 });
 
@@ -1207,8 +1203,8 @@ describe('approve of game setup', () => {
         },
       }),
     ];
-    expectReceivedMessageToEqual(hostConnection.receivedMessages[0], expectedMessage);
-    expectReceivedMessageToEqual(otherConnection.receivedMessages[0], expectedMessage);
+    expect(hostConnection.receivedMessages[0]).toEqual(expectedMessage);
+    expect(otherConnection.receivedMessages[0]).toEqual(expectedMessage);
   });
 });
 
@@ -1280,8 +1276,8 @@ describe('change game mode', () => {
         },
       }),
     ];
-    expectReceivedMessageToEqual(hostConnection.receivedMessages[0], expectedMessage);
-    expectReceivedMessageToEqual(otherConnection.receivedMessages[0], expectedMessage);
+    expect(hostConnection.receivedMessages[0]).toEqual(expectedMessage);
+    expect(otherConnection.receivedMessages[0]).toEqual(expectedMessage);
   });
 });
 
@@ -1353,8 +1349,8 @@ describe('change player arrangement mode', () => {
         },
       }),
     ];
-    expectReceivedMessageToEqual(hostConnection.receivedMessages[0], expectedMessage);
-    expectReceivedMessageToEqual(otherConnection.receivedMessages[0], expectedMessage);
+    expect(hostConnection.receivedMessages[0]).toEqual(expectedMessage);
+    expect(otherConnection.receivedMessages[0]).toEqual(expectedMessage);
   });
 });
 
@@ -1427,8 +1423,8 @@ describe('swap positions', () => {
         },
       }),
     ];
-    expectReceivedMessageToEqual(hostConnection.receivedMessages[0], expectedMessage);
-    expectReceivedMessageToEqual(otherConnection.receivedMessages[0], expectedMessage);
+    expect(hostConnection.receivedMessages[0]).toEqual(expectedMessage);
+    expect(otherConnection.receivedMessages[0]).toEqual(expectedMessage);
   });
 });
 
@@ -1500,8 +1496,8 @@ describe('kick user', () => {
         },
       }),
     ];
-    expectReceivedMessageToEqual(hostConnection.receivedMessages[0], expectedMessage);
-    expectReceivedMessageToEqual(otherConnection.receivedMessages[0], expectedMessage);
+    expect(hostConnection.receivedMessages[0]).toEqual(expectedMessage);
+    expect(otherConnection.receivedMessages[0]).toEqual(expectedMessage);
   });
 });
 
@@ -1529,7 +1525,7 @@ describe('all approve of game setup', () => {
         userIds: [2, 1],
       },
     });
-    expectReceivedMessageToEqual(hostConnection.receivedMessages[0], [
+    expect(hostConnection.receivedMessages[0]).toEqual([
       expectedGameStartedMessage,
       PB_MessageToClient.create({
         gameActionDone: {
@@ -1558,7 +1554,7 @@ describe('all approve of game setup', () => {
         },
       }),
     ]);
-    expectReceivedMessageToEqual(opponentConnection.receivedMessages[0], [
+    expect(opponentConnection.receivedMessages[0]).toEqual([
       expectedGameStartedMessage,
       PB_MessageToClient.create({
         gameActionDone: {
@@ -1587,7 +1583,7 @@ describe('all approve of game setup', () => {
         },
       }),
     ]);
-    expectReceivedMessageToEqual(anotherConnection.receivedMessages[0], [
+    expect(anotherConnection.receivedMessages[0]).toEqual([
       expectedGameStartedMessage,
       PB_MessageToClient.create({
         gameActionDone: {
@@ -1713,7 +1709,7 @@ describe('do game action', () => {
     expect(opponentConnection.receivedMessages.length).toBe(1);
     expect(anotherConnection.receivedMessages.length).toBe(1);
 
-    expectReceivedMessageToEqual(hostConnection.receivedMessages[0], [
+    expect(hostConnection.receivedMessages[0]).toEqual([
       PB_MessageToClient.create({
         gameActionDone: {
           gameDisplayNumber: 1,
@@ -1727,7 +1723,7 @@ describe('do game action', () => {
         },
       }),
     ]);
-    expectReceivedMessageToEqual(opponentConnection.receivedMessages[0], [
+    expect(opponentConnection.receivedMessages[0]).toEqual([
       PB_MessageToClient.create({
         gameActionDone: {
           gameDisplayNumber: 1,
@@ -1740,7 +1736,7 @@ describe('do game action', () => {
         },
       }),
     ]);
-    expectReceivedMessageToEqual(anotherConnection.receivedMessages[0], [
+    expect(anotherConnection.receivedMessages[0]).toEqual([
       PB_MessageToClient.create({
         gameActionDone: {
           gameDisplayNumber: 1,
