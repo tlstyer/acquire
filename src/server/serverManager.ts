@@ -1,5 +1,4 @@
 import * as WebSocket from 'ws';
-import { MessageToClientEnum } from '../common/enums';
 import { Game } from '../common/game';
 import { GameSetup } from '../common/gameSetup';
 import { gameModeToNumPlayers, getNewTileBag, isASCII } from '../common/helpers';
@@ -168,9 +167,13 @@ export class ServerManager {
       user.clients.delete(client);
       this.deleteUserIfItDoesNotHaveReferences(user);
 
-      const messageToOtherClients = JSON.stringify([MessageToClientEnum.ClientDisconnected, client.id]);
+      const clientDisconnectedMessage = PB.MessageToClient.create({
+        clientDisconnected: {
+          clientId: client.id,
+        },
+      });
       this.webSocketToClient.forEach((otherClient) => {
-        otherClient.queueMessage(messageToOtherClients);
+        otherClient.queueMessage(clientDisconnectedMessage);
       });
     } else {
       this.preLoggedInWebSockets.delete(webSocket);
@@ -180,7 +183,17 @@ export class ServerManager {
   kickWithError(webSocket: WebSocket, errorCode: ErrorCode) {
     this.logMessage(LogMessage.KickedWithError, this.webSocketToID.get(webSocket), errorCode);
 
-    webSocket.send(JSON.stringify([[MessageToClientEnum.FatalError, errorCode]]));
+    webSocket.send(
+      PB.MessagesToClient.encode({
+        messagesToClient: [
+          {
+            fatalError: {
+              errorCode,
+            },
+          },
+        ],
+      }).finish(),
+    );
     webSocket.close();
   }
 
@@ -270,15 +283,19 @@ export class ServerManager {
 
     client.queueMessage(this.getGreetingsMessage(gameDatas, client));
 
-    const outgoingMessageParts: any[] = [MessageToClientEnum.ClientConnected, client.id, client.user.id];
+    const clientConnectedMessage = PB.MessageToClient.create({
+      clientConnected: {
+        clientId: client.id,
+        userId: client.user.id,
+      },
+    });
     if (isNewUser) {
-      outgoingMessageParts.push(client.user.name);
+      clientConnectedMessage.clientConnected!.username = client.user.name;
     }
-    const messageToOtherClients = JSON.stringify(outgoingMessageParts);
 
     this.webSocketToClient.forEach((otherClient) => {
       if (otherClient !== client) {
-        otherClient.queueMessage(messageToOtherClients);
+        otherClient.queueMessage(clientConnectedMessage);
       }
     });
 
@@ -308,8 +325,20 @@ export class ServerManager {
     this.gameIDToGameData.set(gameData.id, gameData);
     this.gameDisplayNumberToGameData.set(gameData.displayNumber, gameData);
 
-    const gameCreatedMessage = JSON.stringify([MessageToClientEnum.GameCreated, gameData.id, gameData.displayNumber, gameData.gameSetup!.gameMode, client.id]);
-    const clientEnteredGameMessage = JSON.stringify([MessageToClientEnum.ClientEnteredGame, client.id, gameData.displayNumber]);
+    const gameCreatedMessage = PB.MessageToClient.create({
+      gameCreated: {
+        gameId: gameData.id,
+        gameDisplayNumber: gameData.displayNumber,
+        gameMode: gameData.gameSetup!.gameMode,
+        hostClientId: client.id,
+      },
+    });
+    const clientEnteredGameMessage = PB.MessageToClient.create({
+      clientEnteredGame: {
+        clientId: client.id,
+        gameDisplayNumber: gameData.displayNumber,
+      },
+    });
     this.webSocketToClient.forEach((aClient) => {
       aClient.queueMessage(gameCreatedMessage);
       aClient.queueMessage(clientEnteredGameMessage);
@@ -336,9 +365,14 @@ export class ServerManager {
 
     client.gameData = gameData;
 
-    const message2 = JSON.stringify([MessageToClientEnum.ClientEnteredGame, client.id, gameData.displayNumber]);
+    const clientEnteredGameMessage = PB.MessageToClient.create({
+      clientEnteredGame: {
+        clientId: client.id,
+        gameDisplayNumber: gameData.displayNumber,
+      },
+    });
     this.webSocketToClient.forEach((aClient) => {
-      aClient.queueMessage(message2);
+      aClient.queueMessage(clientEnteredGameMessage);
     });
   }
 
@@ -352,9 +386,13 @@ export class ServerManager {
 
     client.gameData = null;
 
-    const message2 = JSON.stringify([MessageToClientEnum.ClientExitedGame, client.id]);
+    const clientExitedGameMessage = PB.MessageToClient.create({
+      clientExitedGame: {
+        clientId: client.id,
+      },
+    });
     this.webSocketToClient.forEach((aClient) => {
-      aClient.queueMessage(message2);
+      aClient.queueMessage(clientExitedGameMessage);
     });
   }
 
@@ -419,9 +457,14 @@ export class ServerManager {
       gameData.gameSetup = null;
       gameData.game = game;
 
-      const message2 = JSON.stringify([MessageToClientEnum.GameStarted, gameData.displayNumber, userIDs.toJS()]);
+      const gameStartedMessage = PB.MessageToClient.create({
+        gameStarted: {
+          gameDisplayNumber: gameData.displayNumber,
+          userIds: userIDs.toJS(),
+        },
+      });
       this.webSocketToClient.forEach((aClient) => {
-        aClient.queueMessage(message2);
+        aClient.queueMessage(gameStartedMessage);
       });
 
       game.doGameAction(PB.GameAction.fromObject({ startGame: {} }), Date.now());
@@ -593,10 +636,15 @@ export class ServerManager {
   sendGameSetupChanges(gameData: GameData) {
     const gameSetup = gameData.gameSetup!;
 
-    gameSetup.history.forEach((change) => {
-      const message = JSON.stringify([MessageToClientEnum.GameSetupChanged, gameData.displayNumber, change]);
+    gameSetup.history.forEach((gameSetupChange) => {
+      const gameSetupChangedMessage = PB.MessageToClient.create({
+        gameSetupChanged: {
+          gameDisplayNumber: gameData.displayNumber,
+          gameSetupChange,
+        },
+      });
       this.webSocketToClient.forEach((aClient) => {
-        aClient.queueMessage(message);
+        aClient.queueMessage(gameSetupChangedMessage);
       });
     });
 
@@ -615,9 +663,14 @@ export class ServerManager {
     game.userIDs.forEach((userID, playerID) => {
       const user = this.userIDToUser.get(userID)!;
       if (user.clients.size > 0) {
-        const message = JSON.stringify([MessageToClientEnum.GameActionDone, gameData.displayNumber, gameState.playerGameStateDatas[playerID]]);
+        const gameActionDoneMessage = PB.MessageToClient.create({
+          gameActionDone: {
+            gameDisplayNumber: gameData.displayNumber,
+            gameStateData: gameState.playerGameStateDatas[playerID],
+          },
+        });
         user.clients.forEach((aClient) => {
-          aClient.queueMessage(message);
+          aClient.queueMessage(gameActionDoneMessage);
         });
       }
 
@@ -625,40 +678,42 @@ export class ServerManager {
     });
 
     // send watcher messages to everybody else
-    const watcherMessage = JSON.stringify([MessageToClientEnum.GameActionDone, gameData.displayNumber, gameState.watcherGameStateData]);
+    const gameActionDoneMessage = PB.MessageToClient.create({
+      gameActionDone: {
+        gameDisplayNumber: gameData.displayNumber,
+        gameStateData: gameState.watcherGameStateData,
+      },
+    });
     this.webSocketToClient.forEach((aClient) => {
       if (!playerUserIDs.has(aClient.user.id)) {
-        aClient.queueMessage(watcherMessage);
+        aClient.queueMessage(gameActionDoneMessage);
       }
     });
   }
 
   getGreetingsMessage(gameDatas: PB.MessageToServer.Login.IGameData[], client: Client) {
-    const users: any[] = [];
+    const users: PB.MessageToClient.Greetings.User[] = [];
     this.userIDToUser.forEach((user) => {
-      const clients: any[] = [];
+      const clients: PB.MessageToClient.Greetings.User.Client[] = [];
       user.clients.forEach((aClient) => {
-        const clientData = [aClient.id];
+        const client = PB.MessageToClient.Greetings.User.Client.create({ clientId: aClient.id });
         if (aClient.gameData !== null) {
-          clientData.push(aClient.gameData.displayNumber);
+          client.gameDisplayNumber = aClient.gameData.displayNumber;
         }
-        clients.push(clientData);
+        clients.push(client);
       });
 
-      const userMessage: any[] = [user.id, user.name];
-      if (clients.length > 0) {
-        userMessage.push(clients);
-      }
+      const userPB = PB.MessageToClient.Greetings.User.create({ userId: user.id, username: user.name, clients });
 
-      users.push(userMessage);
+      users.push(userPB);
     });
 
     const games: any[] = [];
     this.gameIDToGameData.forEach((gameData) => {
-      const message: any[] = [gameData.gameSetup !== null ? 0 : 1, gameData.id, gameData.displayNumber];
+      const gamePB = PB.MessageToClient.Greetings.Game.create({ gameId: gameData.id, gameDisplayNumber: gameData.displayNumber });
 
       if (gameData.gameSetup !== null) {
-        message.push(gameData.gameSetup.toGameSetupData());
+        gamePB.gameSetupData = gameData.gameSetup.toGameSetupData();
       } else {
         const game = gameData.game!;
         const playerID = game.userIDs.indexOf(client.user.id);
@@ -689,22 +744,19 @@ export class ServerManager {
         gameDataPB.positions = positions;
         gameDataPB.gameStateDatas = gameStateDatas;
 
-        message.push(gameDataPB);
+        gamePB.gameData = gameDataPB;
       }
 
-      games.push(message);
+      games.push(gamePB);
     });
 
-    return JSON.stringify([MessageToClientEnum.Greetings, client.id, users, games]);
-  }
-
-  getClientConnectedMessage(client: Client, isNewUser: boolean) {
-    const message: any[] = [MessageToClientEnum.ClientConnected, client.id, client.user.id];
-    if (isNewUser) {
-      message.push(client.user.name);
-    }
-
-    return JSON.stringify(message);
+    return PB.MessageToClient.create({
+      greetings: {
+        clientId: client.id,
+        users,
+        games,
+      },
+    });
   }
 
   getUsernameForUserID = (userID: number) => {
@@ -729,17 +781,17 @@ export class ServerManager {
 
 export class Client {
   gameData: GameData | null = null;
-  queuedMessages: string[] = [];
+  queuedMessages: PB.MessageToClient[] = [];
 
   constructor(public id: number, public webSocket: WebSocket, public user: User) {}
 
-  queueMessage(message: string) {
+  queueMessage(message: PB.MessageToClient) {
     this.queuedMessages.push(message);
   }
 
   sendQueuedMessages() {
     if (this.queuedMessages.length > 0) {
-      this.webSocket.send(['[', this.queuedMessages.join(','), ']'].join(''));
+      this.webSocket.send(PB.MessagesToClient.encode({ messagesToClient: this.queuedMessages }).finish());
       this.queuedMessages.length = 0;
     }
   }

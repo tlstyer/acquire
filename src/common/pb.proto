@@ -216,4 +216,82 @@ message PB {
     GameSetupAction do_game_setup_action = 5;
     DoGameAction do_game_action = 6;
   }
+
+  message MessageToClient {
+    message FatalError { ErrorCode error_code = 1; }
+
+    message Greetings {
+      message User {
+        message Client {
+          int32 client_id = 1;
+          int32 game_display_number = 2; // excluded if not in a game
+        }
+
+        int32 user_id = 1;
+        string username = 2;
+        repeated Client clients = 3;
+      }
+
+      message Game {
+        int32 game_id = 1;
+        int32 game_display_number = 2;
+        GameSetupData game_setup_data = 3; // included if game being set up
+        GameData game_data = 4;            // included if game has started
+      }
+
+      int32 client_id = 1;
+      repeated User users = 2;
+      repeated Game games = 3;
+    }
+
+    message ClientConnected {
+      int32 client_id = 1;
+      int32 user_id = 2;
+      string username = 3; // excluded if already known
+    }
+
+    message ClientDisconnected { int32 client_id = 1; }
+
+    message GameCreated {
+      int32 game_id = 1;
+      int32 game_display_number = 2;
+      GameMode game_mode = 3;
+      int32 host_client_id = 4;
+    }
+
+    message ClientEnteredGame {
+      int32 client_id = 1;
+      int32 game_display_number = 2;
+    }
+
+    message ClientExitedGame { int32 client_id = 1; }
+
+    message GameSetupChanged {
+      int32 game_display_number = 1;
+      GameSetupChange game_setup_change = 2;
+    }
+
+    message GameStarted {
+      int32 game_display_number = 1;
+      repeated int32 user_ids = 2;
+    }
+
+    message GameActionDone {
+      int32 game_display_number = 1;
+      GameStateData game_state_data = 2;
+    }
+
+    FatalError fatal_error = 1;
+    Greetings greetings = 2;
+    ClientConnected client_connected = 3;
+    ClientDisconnected client_disconnected = 4;
+    GameCreated game_created = 5;
+    ClientEnteredGame client_entered_game = 6;
+    ClientExitedGame client_exited_game = 7;
+    GameSetupChanged game_setup_changed = 8;
+    GameStarted game_started = 9;
+    GameActionDone game_action_done = 10;
+  }
+
+  message MessagesToClient { repeated MessageToClient messages_to_client = 1; }
 }

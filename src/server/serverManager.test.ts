@@ -1,5 +1,5 @@
 import * as WebSocket from 'ws';
-import { MessageToClientEnum, TileEnum } from '../common/enums';
+import { TileEnum } from '../common/enums';
 import { encodeMessageToServer } from '../common/helpers';
 import { ErrorCode, GameMode, PB, PlayerArrangementMode } from '../common/pb';
 import { ConnectionState, GameData, ServerManager, User } from './serverManager';
@@ -27,7 +27,7 @@ class TestWebSocket {
 
   readyState = WebSocket.OPEN;
 
-  receivedMessages: any[] = [];
+  receivedMessages: PB.IMessageToClient[][] = [];
 
   constructor(public id: string) {}
 
@@ -39,8 +39,8 @@ class TestWebSocket {
     }
   }
 
-  send(message: string) {
-    this.receivedMessages.push(JSON.parse(message));
+  send(message: Uint8Array) {
+    this.receivedMessages.push(PB.MessagesToClient.decode(message).messagesToClient);
   }
 
   sendMessage(messageToServer: any) {
@@ -308,7 +308,13 @@ async function connectToServer(server: TestServer, username: string) {
 
 function expectClientKickedDueToInvalidMessage(webSocket: TestWebSocket) {
   expect(webSocket.receivedMessages.length).toBe(1);
-  expect(webSocket.receivedMessages[0]).toEqual([[MessageToClientEnum.FatalError, ErrorCode.INVALID_MESSAGE]]);
+  expect(webSocket.receivedMessages[0]).toEqual([
+    PB.MessageToClient.create({
+      fatalError: {
+        errorCode: ErrorCode.INVALID_MESSAGE,
+      },
+    }),
+  ]);
   expect(webSocket.readyState).toBe(WebSocket.CLOSED);
 }
 
@@ -321,6 +327,12 @@ async function expectKicksClientDueToInvalidMessage(message: any) {
   connection.sendMessage(message);
 
   expectClientKickedDueToInvalidMessage(connection);
+}
+
+function expectReceivedMessageToEqual(receivedMessage: PB.IMessageToClient[], expected: PB.MessageToClient[]) {
+  // todo: figure out why some protobufjs objects are interfaces and others aren't
+  // @ts-ignore
+  expect(receivedMessage.map((m) => PB.MessageToClient.toObject(m))).toEqual(expected.map((m) => PB.MessageToClient.toObject(m)));
 }
 
 describe('when not sending first message', () => {
@@ -401,7 +413,14 @@ describe('when sending first message', () => {
 
       await new Promise((resolve) => setTimeout(resolve, 0));
 
-      expect(webSocket.receivedMessages).toEqual([[[MessageToClientEnum.FatalError, outputErrorCode]]]);
+      expect(webSocket.receivedMessages.length).toBe(1);
+      expect(webSocket.receivedMessages[0]).toEqual([
+        PB.MessageToClient.create({
+          fatalError: {
+            errorCode: outputErrorCode,
+          },
+        }),
+      ]);
       expect(webSocket.readyState).toBe(WebSocket.CLOSED);
     }
 
@@ -466,7 +485,24 @@ describe('when sending first message', () => {
       }
       expectJustConnection1Data();
       expect(webSocket1.receivedMessages.length).toBe(1);
-      expect(webSocket1.receivedMessages[0]).toEqual([[MessageToClientEnum.Greetings, 1, [[expectedUserID, username, [[1]]]], []]]);
+      expectReceivedMessageToEqual(webSocket1.receivedMessages[0], [
+        PB.MessageToClient.create({
+          greetings: {
+            clientId: 1,
+            users: [
+              {
+                userId: expectedUserID,
+                username,
+                clients: [
+                  {
+                    clientId: 1,
+                  },
+                ],
+              },
+            ],
+          },
+        }),
+      ]);
 
       const webSocket2 = new TestWebSocket('connection 2');
       server.openConnection(webSocket2);
@@ -489,16 +525,49 @@ describe('when sending first message', () => {
       expect(webSocket1.readyState).toBe(WebSocket.OPEN);
       expect(webSocket2.readyState).toBe(WebSocket.OPEN);
       expect(webSocket1.receivedMessages.length).toBe(2);
-      expect(webSocket1.receivedMessages[1]).toEqual([[MessageToClientEnum.ClientConnected, 2, expectedUserID]]);
+      expectReceivedMessageToEqual(webSocket1.receivedMessages[1], [
+        PB.MessageToClient.create({
+          clientConnected: {
+            clientId: 2,
+            userId: expectedUserID,
+          },
+        }),
+      ]);
       expect(webSocket2.receivedMessages.length).toBe(1);
-      expect(webSocket2.receivedMessages[0]).toEqual([[MessageToClientEnum.Greetings, 2, [[expectedUserID, username, [[1], [2]]]], []]]);
+      expectReceivedMessageToEqual(webSocket2.receivedMessages[0], [
+        PB.MessageToClient.create({
+          greetings: {
+            clientId: 2,
+            users: [
+              {
+                userId: expectedUserID,
+                username,
+                clients: [
+                  {
+                    clientId: 1,
+                  },
+                  {
+                    clientId: 2,
+                  },
+                ],
+              },
+            ],
+          },
+        }),
+      ]);
 
       webSocket2.close();
 
       expectJustConnection1Data();
       expect(webSocket2.readyState).toBe(WebSocket.CLOSED);
       expect(webSocket1.receivedMessages.length).toBe(3);
-      expect(webSocket1.receivedMessages[2]).toEqual([[MessageToClientEnum.ClientDisconnected, 2]]);
+      expectReceivedMessageToEqual(webSocket1.receivedMessages[2], [
+        PB.MessageToClient.create({
+          clientDisconnected: {
+            clientId: 2,
+          },
+        }),
+      ]);
       expect(webSocket2.receivedMessages.length).toBe(1);
 
       webSocket1.close();
@@ -540,22 +609,23 @@ describe('when sending first message', () => {
       const connection = await connectToServer(server, 'me');
 
       expect(connection.receivedMessages.length).toBe(1);
-      expect(connection.receivedMessages[0]).toEqual([
-        [
-          MessageToClientEnum.Greetings,
-          7,
-          [
-            [1, 'user 1', [[1], [6]]],
-            [2, 'user 2', [[2], [3]]],
-            [3, 'user 3'],
-            [4, 'user 4', [[5, 2]]],
-            [5, 'me', [[7]]],
-          ],
-          [
-            [0, 10, 1, serverManager.gameDisplayNumberToGameData.get(1)!.gameSetup!.toGameSetupData().toJSON()],
-            [0, 11, 2, serverManager.gameDisplayNumberToGameData.get(2)!.gameSetup!.toGameSetupData().toJSON()],
-          ],
-        ],
+      expectReceivedMessageToEqual(connection.receivedMessages[0], [
+        PB.MessageToClient.create({
+          greetings: {
+            clientId: 7,
+            users: [
+              { userId: 1, username: 'user 1', clients: [{ clientId: 1 }, { clientId: 6 }] },
+              { userId: 2, username: 'user 2', clients: [{ clientId: 2 }, { clientId: 3 }] },
+              { userId: 3, username: 'user 3' },
+              { userId: 4, username: 'user 4', clients: [{ clientId: 5, gameDisplayNumber: 2 }] },
+              { userId: 5, username: 'me', clients: [{ clientId: 7 }] },
+            ],
+            games: [
+              { gameId: 10, gameDisplayNumber: 1, gameSetupData: serverManager.gameDisplayNumberToGameData.get(1)!.gameSetup!.toGameSetupData() },
+              { gameId: 11, gameDisplayNumber: 2, gameSetupData: serverManager.gameDisplayNumberToGameData.get(2)!.gameSetup!.toGameSetupData() },
+            ],
+          },
+        }),
       ]);
     });
 
@@ -570,29 +640,28 @@ describe('when sending first message', () => {
       connection1.sendMessage(messageCreateGame(GameMode.SINGLES_4));
 
       const connection2 = await connectToServer(server, '2');
-      expect(connection2.receivedMessages).toEqual([
-        [
-          [
-            MessageToClientEnum.Greetings,
-            2,
-            [
-              [1, '1', [[1, 1]]],
-              [2, '2', [[2]]],
+      expect(connection2.receivedMessages.length).toBe(1);
+      expectReceivedMessageToEqual(connection2.receivedMessages[0], [
+        PB.MessageToClient.create({
+          greetings: {
+            clientId: 2,
+            users: [
+              { userId: 1, username: '1', clients: [{ clientId: 1, gameDisplayNumber: 1 }] },
+              { userId: 2, username: '2', clients: [{ clientId: 2 }] },
             ],
-            [
-              [
-                0,
-                10,
-                1,
-                PB.GameSetupData.fromObject({
+            games: [
+              {
+                gameId: 10,
+                gameDisplayNumber: 1,
+                gameSetupData: {
                   gameMode: GameMode.SINGLES_4,
                   playerArrangementMode: PlayerArrangementMode.RANDOM_ORDER,
                   positions: [{ userId: 1, isHost: true }, {}, {}, {}],
-                }).toJSON(),
-              ],
+                },
+              },
             ],
-          ],
-        ],
+          },
+        }),
       ]);
       connection2.sendMessage(messageCreateGame(GameMode.SINGLES_1));
       connection2.sendMessage(messageApproveOfGameSetup());
@@ -601,32 +670,30 @@ describe('when sending first message', () => {
       connection2.sendMessage(messageDoGameAction(3, { playTile: { tile: 39 } }));
 
       const connection3 = await connectToServer(server, '3');
-      expect(connection3.receivedMessages).toEqual([
-        [
-          [
-            MessageToClientEnum.Greetings,
-            3,
-            [
-              [1, '1', [[1, 1]]],
-              [2, '2', [[2, 2]]],
-              [3, '3', [[3]]],
+      expect(connection3.receivedMessages.length).toBe(1);
+      expectReceivedMessageToEqual(connection3.receivedMessages[0], [
+        PB.MessageToClient.create({
+          greetings: {
+            clientId: 3,
+            users: [
+              { userId: 1, username: '1', clients: [{ clientId: 1, gameDisplayNumber: 1 }] },
+              { userId: 2, username: '2', clients: [{ clientId: 2, gameDisplayNumber: 2 }] },
+              { userId: 3, username: '3', clients: [{ clientId: 3 }] },
             ],
-            [
-              [
-                0,
-                10,
-                1,
-                PB.GameSetupData.fromObject({
+            games: [
+              {
+                gameId: 10,
+                gameDisplayNumber: 1,
+                gameSetupData: {
                   gameMode: GameMode.SINGLES_4,
                   playerArrangementMode: PlayerArrangementMode.RANDOM_ORDER,
                   positions: [{ userId: 1, isHost: true }, {}, {}, {}],
-                }).toJSON(),
-              ],
-              [
-                1,
-                11,
-                2,
-                PB.GameData.fromObject({
+                },
+              },
+              {
+                gameId: 11,
+                gameDisplayNumber: 2,
+                gameData: {
                   gameMode: GameMode.SINGLES_1,
                   playerArrangementMode: PlayerArrangementMode.RANDOM_ORDER,
                   positions: [{ userId: 2, isHost: true }],
@@ -659,40 +726,38 @@ describe('when sending first message', () => {
                       playerIdWithPlayableTilePlusOne: 1,
                     },
                   ],
-                }).toJSON(),
-              ],
+                },
+              },
             ],
-          ],
-        ],
+          },
+        }),
       ]);
 
       const connection2b = await connectToServer(server, '2');
-      expect(connection2b.receivedMessages).toEqual([
-        [
-          [
-            MessageToClientEnum.Greetings,
-            4,
-            [
-              [1, '1', [[1, 1]]],
-              [2, '2', [[2, 2], [4]]],
-              [3, '3', [[3]]],
+      expect(connection2b.receivedMessages.length).toBe(1);
+      expectReceivedMessageToEqual(connection2b.receivedMessages[0], [
+        PB.MessageToClient.create({
+          greetings: {
+            clientId: 4,
+            users: [
+              { userId: 1, username: '1', clients: [{ clientId: 1, gameDisplayNumber: 1 }] },
+              { userId: 2, username: '2', clients: [{ clientId: 2, gameDisplayNumber: 2 }, { clientId: 4 }] },
+              { userId: 3, username: '3', clients: [{ clientId: 3 }] },
             ],
-            [
-              [
-                0,
-                10,
-                1,
-                PB.GameSetupData.fromObject({
+            games: [
+              {
+                gameId: 10,
+                gameDisplayNumber: 1,
+                gameSetupData: {
                   gameMode: GameMode.SINGLES_4,
                   playerArrangementMode: PlayerArrangementMode.RANDOM_ORDER,
                   positions: [{ userId: 1, isHost: true }, {}, {}, {}],
-                }).toJSON(),
-              ],
-              [
-                1,
-                11,
-                2,
-                PB.GameData.fromObject({
+                },
+              },
+              {
+                gameId: 11,
+                gameDisplayNumber: 2,
+                gameData: {
                   gameMode: GameMode.SINGLES_1,
                   playerArrangementMode: PlayerArrangementMode.RANDOM_ORDER,
                   positions: [{ userId: 2, isHost: true }],
@@ -707,11 +772,11 @@ describe('when sending first message', () => {
                     { gameAction: { playTile: { tile: 29 } }, timestamp: 2, revealedTileBagTiles: [0], playerIdWithPlayableTilePlusOne: 1 },
                     { gameAction: { playTile: { tile: 39 } }, timestamp: 2, revealedTileBagTiles: [99], playerIdWithPlayableTilePlusOne: 1 },
                   ],
-                }).toJSON(),
-              ],
+                },
+              },
             ],
-          ],
-        ],
+          },
+        }),
       ]);
     });
 
@@ -722,12 +787,27 @@ describe('when sending first message', () => {
       await connectToServer(server, 'user 2');
 
       expect(connection.receivedMessages.length).toBe(2);
-      expect(connection.receivedMessages[1]).toEqual([[MessageToClientEnum.ClientConnected, 2, 2, 'user 2']]);
+      expectReceivedMessageToEqual(connection.receivedMessages[1], [
+        PB.MessageToClient.create({
+          clientConnected: {
+            clientId: 2,
+            userId: 2,
+            username: 'user 2',
+          },
+        }),
+      ]);
 
       await connectToServer(server, 'user 2');
 
       expect(connection.receivedMessages.length).toBe(3);
-      expect(connection.receivedMessages[2]).toEqual([[MessageToClientEnum.ClientConnected, 3, 2]]);
+      expectReceivedMessageToEqual(connection.receivedMessages[2], [
+        PB.MessageToClient.create({
+          clientConnected: {
+            clientId: 3,
+            userId: 2,
+          },
+        }),
+      ]);
     });
   });
 });
@@ -779,11 +859,23 @@ describe('create game', () => {
     expect(connection2.receivedMessages.length).toBe(1);
 
     const expectedMessage = [
-      [MessageToClientEnum.GameCreated, 10, 1, GameMode.TEAMS_2_VS_2, 2],
-      [MessageToClientEnum.ClientEnteredGame, 2, 1],
+      PB.MessageToClient.create({
+        gameCreated: {
+          gameId: 10,
+          gameDisplayNumber: 1,
+          gameMode: GameMode.TEAMS_2_VS_2,
+          hostClientId: 2,
+        },
+      }),
+      PB.MessageToClient.create({
+        clientEnteredGame: {
+          clientId: 2,
+          gameDisplayNumber: 1,
+        },
+      }),
     ];
-    expect(connection1.receivedMessages[0]).toEqual(expectedMessage);
-    expect(connection2.receivedMessages[0]).toEqual(expectedMessage);
+    expectReceivedMessageToEqual(connection1.receivedMessages[0], expectedMessage);
+    expectReceivedMessageToEqual(connection2.receivedMessages[0], expectedMessage);
   });
 
   test('disallows creating a game when currently in a game', async () => {
@@ -836,9 +928,16 @@ describe('enter game', () => {
     expect(connection1.receivedMessages.length).toBe(1);
     expect(connection2.receivedMessages.length).toBe(1);
 
-    const expectedMessage = [[MessageToClientEnum.ClientEnteredGame, 2, 1]];
-    expect(connection1.receivedMessages[0]).toEqual(expectedMessage);
-    expect(connection2.receivedMessages[0]).toEqual(expectedMessage);
+    const expectedMessage = [
+      PB.MessageToClient.create({
+        clientEnteredGame: {
+          clientId: 2,
+          gameDisplayNumber: 1,
+        },
+      }),
+    ];
+    expectReceivedMessageToEqual(connection1.receivedMessages[0], expectedMessage);
+    expectReceivedMessageToEqual(connection2.receivedMessages[0], expectedMessage);
   });
 
   test('disallows entering a game when currently in a game', async () => {
@@ -898,9 +997,15 @@ describe('exit game', () => {
     expect(connection1.receivedMessages.length).toBe(1);
     expect(connection2.receivedMessages.length).toBe(1);
 
-    const expectedMessage = [[MessageToClientEnum.ClientExitedGame, 2]];
-    expect(connection1.receivedMessages[0]).toEqual(expectedMessage);
-    expect(connection2.receivedMessages[0]).toEqual(expectedMessage);
+    const expectedMessage = [
+      PB.MessageToClient.create({
+        clientExitedGame: {
+          clientId: 2,
+        },
+      }),
+    ];
+    expectReceivedMessageToEqual(connection1.receivedMessages[0], expectedMessage);
+    expectReceivedMessageToEqual(connection2.receivedMessages[0], expectedMessage);
   });
 
   test('disallows exiting a game when not in a game', async () => {
@@ -973,9 +1078,20 @@ describe('join game', () => {
     expect(hostConnection.receivedMessages.length).toBe(1);
     expect(otherConnection.receivedMessages.length).toBe(1);
 
-    const expectedMessage = [[MessageToClientEnum.GameSetupChanged, 1, PB.GameSetupChange.create({ userAdded: { userId: 2 } })]];
-    expect(hostConnection.receivedMessages[0]).toEqual(expectedMessage);
-    expect(otherConnection.receivedMessages[0]).toEqual(expectedMessage);
+    const expectedMessage = [
+      PB.MessageToClient.create({
+        gameSetupChanged: {
+          gameDisplayNumber: 1,
+          gameSetupChange: {
+            userAdded: {
+              userId: 2,
+            },
+          },
+        },
+      }),
+    ];
+    expectReceivedMessageToEqual(hostConnection.receivedMessages[0], expectedMessage);
+    expectReceivedMessageToEqual(otherConnection.receivedMessages[0], expectedMessage);
   });
 });
 
@@ -1020,9 +1136,20 @@ describe('unjoin game', () => {
     expect(hostConnection.receivedMessages.length).toBe(1);
     expect(otherConnection.receivedMessages.length).toBe(1);
 
-    const expectedMessage = [[MessageToClientEnum.GameSetupChanged, 1, PB.GameSetupChange.create({ userRemoved: { userId: 2 } })]];
-    expect(hostConnection.receivedMessages[0]).toEqual(expectedMessage);
-    expect(otherConnection.receivedMessages[0]).toEqual(expectedMessage);
+    const expectedMessage = [
+      PB.MessageToClient.create({
+        gameSetupChanged: {
+          gameDisplayNumber: 1,
+          gameSetupChange: {
+            userRemoved: {
+              userId: 2,
+            },
+          },
+        },
+      }),
+    ];
+    expectReceivedMessageToEqual(hostConnection.receivedMessages[0], expectedMessage);
+    expectReceivedMessageToEqual(otherConnection.receivedMessages[0], expectedMessage);
   });
 });
 
@@ -1067,9 +1194,20 @@ describe('approve of game setup', () => {
     expect(hostConnection.receivedMessages.length).toBe(1);
     expect(otherConnection.receivedMessages.length).toBe(1);
 
-    const expectedMessage = [[MessageToClientEnum.GameSetupChanged, 1, PB.GameSetupChange.create({ userApprovedOfGameSetup: { userId: 2 } })]];
-    expect(hostConnection.receivedMessages[0]).toEqual(expectedMessage);
-    expect(otherConnection.receivedMessages[0]).toEqual(expectedMessage);
+    const expectedMessage = [
+      PB.MessageToClient.create({
+        gameSetupChanged: {
+          gameDisplayNumber: 1,
+          gameSetupChange: {
+            userApprovedOfGameSetup: {
+              userId: 2,
+            },
+          },
+        },
+      }),
+    ];
+    expectReceivedMessageToEqual(hostConnection.receivedMessages[0], expectedMessage);
+    expectReceivedMessageToEqual(otherConnection.receivedMessages[0], expectedMessage);
   });
 });
 
@@ -1130,10 +1268,19 @@ describe('change game mode', () => {
     expect(otherConnection.receivedMessages.length).toBe(1);
 
     const expectedMessage = [
-      [MessageToClientEnum.GameSetupChanged, 1, PB.GameSetupChange.create({ gameModeChanged: { gameMode: GameMode.SINGLES_3 } }).toJSON()],
+      PB.MessageToClient.create({
+        gameSetupChanged: {
+          gameDisplayNumber: 1,
+          gameSetupChange: {
+            gameModeChanged: {
+              gameMode: GameMode.SINGLES_3,
+            },
+          },
+        },
+      }),
     ];
-    expect(hostConnection.receivedMessages[0]).toEqual(expectedMessage);
-    expect(otherConnection.receivedMessages[0]).toEqual(expectedMessage);
+    expectReceivedMessageToEqual(hostConnection.receivedMessages[0], expectedMessage);
+    expectReceivedMessageToEqual(otherConnection.receivedMessages[0], expectedMessage);
   });
 });
 
@@ -1194,14 +1341,19 @@ describe('change player arrangement mode', () => {
     expect(otherConnection.receivedMessages.length).toBe(1);
 
     const expectedMessage = [
-      [
-        MessageToClientEnum.GameSetupChanged,
-        1,
-        PB.GameSetupChange.create({ playerArrangementModeChanged: { playerArrangementMode: PlayerArrangementMode.EXACT_ORDER } }).toJSON(),
-      ],
+      PB.MessageToClient.create({
+        gameSetupChanged: {
+          gameDisplayNumber: 1,
+          gameSetupChange: {
+            playerArrangementModeChanged: {
+              playerArrangementMode: PlayerArrangementMode.EXACT_ORDER,
+            },
+          },
+        },
+      }),
     ];
-    expect(hostConnection.receivedMessages[0]).toEqual(expectedMessage);
-    expect(otherConnection.receivedMessages[0]).toEqual(expectedMessage);
+    expectReceivedMessageToEqual(hostConnection.receivedMessages[0], expectedMessage);
+    expectReceivedMessageToEqual(otherConnection.receivedMessages[0], expectedMessage);
   });
 });
 
@@ -1261,9 +1413,21 @@ describe('swap positions', () => {
     expect(hostConnection.receivedMessages.length).toBe(1);
     expect(otherConnection.receivedMessages.length).toBe(1);
 
-    const expectedMessage = [[MessageToClientEnum.GameSetupChanged, 1, PB.GameSetupChange.create({ positionsSwapped: { position1: 0, position2: 1 } })]];
-    expect(hostConnection.receivedMessages[0]).toEqual(expectedMessage);
-    expect(otherConnection.receivedMessages[0]).toEqual(expectedMessage);
+    const expectedMessage = [
+      PB.MessageToClient.create({
+        gameSetupChanged: {
+          gameDisplayNumber: 1,
+          gameSetupChange: {
+            positionsSwapped: {
+              position1: 0,
+              position2: 1,
+            },
+          },
+        },
+      }),
+    ];
+    expectReceivedMessageToEqual(hostConnection.receivedMessages[0], expectedMessage);
+    expectReceivedMessageToEqual(otherConnection.receivedMessages[0], expectedMessage);
   });
 });
 
@@ -1323,9 +1487,20 @@ describe('kick user', () => {
     expect(hostConnection.receivedMessages.length).toBe(1);
     expect(otherConnection.receivedMessages.length).toBe(1);
 
-    const expectedMessage = [[MessageToClientEnum.GameSetupChanged, 1, PB.GameSetupChange.create({ userKicked: { userId: 2 } })]];
-    expect(hostConnection.receivedMessages[0]).toEqual(expectedMessage);
-    expect(otherConnection.receivedMessages[0]).toEqual(expectedMessage);
+    const expectedMessage = [
+      PB.MessageToClient.create({
+        gameSetupChanged: {
+          gameDisplayNumber: 1,
+          gameSetupChange: {
+            userKicked: {
+              userId: 2,
+            },
+          },
+        },
+      }),
+    ];
+    expectReceivedMessageToEqual(hostConnection.receivedMessages[0], expectedMessage);
+    expectReceivedMessageToEqual(otherConnection.receivedMessages[0], expectedMessage);
   });
 });
 
@@ -1347,90 +1522,98 @@ describe('all approve of game setup', () => {
       [new GameDataData(10, 1, [1, 2])],
     );
 
-    const expectedGameStartedMessage = [MessageToClientEnum.GameStarted, 1, [2, 1]];
-    expect(hostConnection.receivedMessages[0]).toEqual([
+    const expectedGameStartedMessage = PB.MessageToClient.create({
+      gameStarted: {
+        gameDisplayNumber: 1,
+        userIds: [2, 1],
+      },
+    });
+    expectReceivedMessageToEqual(hostConnection.receivedMessages[0], [
       expectedGameStartedMessage,
-      [
-        MessageToClientEnum.GameActionDone,
-        1,
-        {
-          gameAction: { startGame: {} },
-          timestamp: Date.now(),
-          revealedTileBagTiles: [
-            89,
-            19,
-            TileEnum.Unknown,
-            TileEnum.Unknown,
-            TileEnum.Unknown,
-            TileEnum.Unknown,
-            TileEnum.Unknown,
-            TileEnum.Unknown,
-            0,
-            99,
-            11,
-            12,
-            13,
-            14,
-          ],
-          playerIdWithPlayableTilePlusOne: 1,
+      PB.MessageToClient.create({
+        gameActionDone: {
+          gameDisplayNumber: 1,
+          gameStateData: {
+            gameAction: { startGame: {} },
+            timestamp: Date.now(),
+            revealedTileBagTiles: [
+              89,
+              19,
+              TileEnum.Unknown,
+              TileEnum.Unknown,
+              TileEnum.Unknown,
+              TileEnum.Unknown,
+              TileEnum.Unknown,
+              TileEnum.Unknown,
+              0,
+              99,
+              11,
+              12,
+              13,
+              14,
+            ],
+            playerIdWithPlayableTilePlusOne: 1,
+          },
         },
-      ],
+      }),
     ]);
-    expect(opponentConnection.receivedMessages[0]).toEqual([
+    expectReceivedMessageToEqual(opponentConnection.receivedMessages[0], [
       expectedGameStartedMessage,
-      [
-        MessageToClientEnum.GameActionDone,
-        1,
-        {
-          gameAction: { startGame: {} },
-          timestamp: Date.now(),
-          revealedTileBagTiles: [
-            89,
-            19,
-            29,
-            39,
-            49,
-            59,
-            69,
-            79,
-            TileEnum.Unknown,
-            TileEnum.Unknown,
-            TileEnum.Unknown,
-            TileEnum.Unknown,
-            TileEnum.Unknown,
-            TileEnum.Unknown,
-          ],
-          playerIdWithPlayableTilePlusOne: 1,
+      PB.MessageToClient.create({
+        gameActionDone: {
+          gameDisplayNumber: 1,
+          gameStateData: {
+            gameAction: { startGame: {} },
+            timestamp: Date.now(),
+            revealedTileBagTiles: [
+              89,
+              19,
+              29,
+              39,
+              49,
+              59,
+              69,
+              79,
+              TileEnum.Unknown,
+              TileEnum.Unknown,
+              TileEnum.Unknown,
+              TileEnum.Unknown,
+              TileEnum.Unknown,
+              TileEnum.Unknown,
+            ],
+            playerIdWithPlayableTilePlusOne: 1,
+          },
         },
-      ],
+      }),
     ]);
-    expect(anotherConnection.receivedMessages[0]).toEqual([
+    expectReceivedMessageToEqual(anotherConnection.receivedMessages[0], [
       expectedGameStartedMessage,
-      [
-        MessageToClientEnum.GameActionDone,
-        1,
-        {
-          gameAction: { startGame: {} },
-          timestamp: Date.now(),
-          revealedTileBagTiles: [
-            89,
-            19,
-            TileEnum.Unknown,
-            TileEnum.Unknown,
-            TileEnum.Unknown,
-            TileEnum.Unknown,
-            TileEnum.Unknown,
-            TileEnum.Unknown,
-            TileEnum.Unknown,
-            TileEnum.Unknown,
-            TileEnum.Unknown,
-            TileEnum.Unknown,
-            TileEnum.Unknown,
-            TileEnum.Unknown,
-          ],
-          playerIdWithPlayableTilePlusOne: 1,
+      PB.MessageToClient.create({
+        gameActionDone: {
+          gameDisplayNumber: 1,
+          gameStateData: {
+            gameAction: { startGame: {} },
+            timestamp: Date.now(),
+            revealedTileBagTiles: [
+              89,
+              19,
+              TileEnum.Unknown,
+              TileEnum.Unknown,
+              TileEnum.Unknown,
+              TileEnum.Unknown,
+              TileEnum.Unknown,
+              TileEnum.Unknown,
+              TileEnum.Unknown,
+              TileEnum.Unknown,
+              TileEnum.Unknown,
+              TileEnum.Unknown,
+              TileEnum.Unknown,
+              TileEnum.Unknown,
+            ],
+            playerIdWithPlayableTilePlusOne: 1,
+          },
         },
-      ],
+      }),
     ]);
 
     const gameData = serverManager.gameDisplayNumberToGameData.get(1)!;
@@ -1529,34 +1712,46 @@ describe('do game action', () => {
     expect(opponentConnection.receivedMessages.length).toBe(1);
     expect(anotherConnection.receivedMessages.length).toBe(1);
 
-    expect(hostConnection.receivedMessages[0]).toEqual([
-      [
-        MessageToClientEnum.GameActionDone,
-        1,
-        {
-          gameAction,
-          timestamp: 1000,
-          revealedTileRackTiles: [{ tile: 29, playerIdBelongsTo: 0 }],
-          revealedTileBagTiles: [TileEnum.Unknown],
-          playerIdWithPlayableTilePlusOne: 2,
+    expectReceivedMessageToEqual(hostConnection.receivedMessages[0], [
+      PB.MessageToClient.create({
+        gameActionDone: {
+          gameDisplayNumber: 1,
+          gameStateData: {
+            gameAction,
+            timestamp: 1000,
+            revealedTileRackTiles: [{ tile: 29, playerIdBelongsTo: 0 }],
+            revealedTileBagTiles: [TileEnum.Unknown],
+            playerIdWithPlayableTilePlusOne: 2,
+          },
         },
-      ],
+      }),
     ]);
-    expect(opponentConnection.receivedMessages[0]).toEqual([
-      [MessageToClientEnum.GameActionDone, 1, { gameAction, timestamp: 1000, revealedTileBagTiles: [15], playerIdWithPlayableTilePlusOne: 2 }],
-    ]);
-    expect(anotherConnection.receivedMessages[0]).toEqual([
-      [
-        MessageToClientEnum.GameActionDone,
-        1,
-        {
-          gameAction,
-          timestamp: 1000,
-          revealedTileRackTiles: [{ tile: 29, playerIdBelongsTo: 0 }],
-          revealedTileBagTiles: [TileEnum.Unknown],
-          playerIdWithPlayableTilePlusOne: 2,
+    expectReceivedMessageToEqual(opponentConnection.receivedMessages[0], [
+      PB.MessageToClient.create({
+        gameActionDone: {
+          gameDisplayNumber: 1,
+          gameStateData: {
+            gameAction,
+            timestamp: 1000,
+            revealedTileBagTiles: [15],
+            playerIdWithPlayableTilePlusOne: 2,
+          },
         },
-      ],
+      }),
+    ]);
+    expectReceivedMessageToEqual(anotherConnection.receivedMessages[0], [
+      PB.MessageToClient.create({
+        gameActionDone: {
+          gameDisplayNumber: 1,
+          gameStateData: {
+            gameAction,
+            timestamp: 1000,
+            revealedTileRackTiles: [{ tile: 29, playerIdBelongsTo: 0 }],
+            revealedTileBagTiles: [TileEnum.Unknown],
+            playerIdWithPlayableTilePlusOne: 2,
+          },
+        },
+      }),
     ]);
   });
 });

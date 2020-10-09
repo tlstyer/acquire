@@ -9252,6 +9252,3670 @@ $root.PB = (function() {
         return MessageToServer;
     })();
 
+    PB.MessageToClient = (function() {
+
+        /**
+         * Properties of a MessageToClient.
+         * @memberof PB
+         * @interface IMessageToClient
+         * @property {PB.MessageToClient.IFatalError|null} [fatalError] MessageToClient fatalError
+         * @property {PB.MessageToClient.IGreetings|null} [greetings] MessageToClient greetings
+         * @property {PB.MessageToClient.IClientConnected|null} [clientConnected] MessageToClient clientConnected
+         * @property {PB.MessageToClient.IClientDisconnected|null} [clientDisconnected] MessageToClient clientDisconnected
+         * @property {PB.MessageToClient.IGameCreated|null} [gameCreated] MessageToClient gameCreated
+         * @property {PB.MessageToClient.IClientEnteredGame|null} [clientEnteredGame] MessageToClient clientEnteredGame
+         * @property {PB.MessageToClient.IClientExitedGame|null} [clientExitedGame] MessageToClient clientExitedGame
+         * @property {PB.MessageToClient.IGameSetupChanged|null} [gameSetupChanged] MessageToClient gameSetupChanged
+         * @property {PB.MessageToClient.IGameStarted|null} [gameStarted] MessageToClient gameStarted
+         * @property {PB.MessageToClient.IGameActionDone|null} [gameActionDone] MessageToClient gameActionDone
+         */
+
+        /**
+         * Constructs a new MessageToClient.
+         * @memberof PB
+         * @classdesc Represents a MessageToClient.
+         * @implements IMessageToClient
+         * @constructor
+         * @param {PB.IMessageToClient=} [properties] Properties to set
+         */
+        function MessageToClient(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * MessageToClient fatalError.
+         * @member {PB.MessageToClient.IFatalError|null|undefined} fatalError
+         * @memberof PB.MessageToClient
+         * @instance
+         */
+        MessageToClient.prototype.fatalError = null;
+
+        /**
+         * MessageToClient greetings.
+         * @member {PB.MessageToClient.IGreetings|null|undefined} greetings
+         * @memberof PB.MessageToClient
+         * @instance
+         */
+        MessageToClient.prototype.greetings = null;
+
+        /**
+         * MessageToClient clientConnected.
+         * @member {PB.MessageToClient.IClientConnected|null|undefined} clientConnected
+         * @memberof PB.MessageToClient
+         * @instance
+         */
+        MessageToClient.prototype.clientConnected = null;
+
+        /**
+         * MessageToClient clientDisconnected.
+         * @member {PB.MessageToClient.IClientDisconnected|null|undefined} clientDisconnected
+         * @memberof PB.MessageToClient
+         * @instance
+         */
+        MessageToClient.prototype.clientDisconnected = null;
+
+        /**
+         * MessageToClient gameCreated.
+         * @member {PB.MessageToClient.IGameCreated|null|undefined} gameCreated
+         * @memberof PB.MessageToClient
+         * @instance
+         */
+        MessageToClient.prototype.gameCreated = null;
+
+        /**
+         * MessageToClient clientEnteredGame.
+         * @member {PB.MessageToClient.IClientEnteredGame|null|undefined} clientEnteredGame
+         * @memberof PB.MessageToClient
+         * @instance
+         */
+        MessageToClient.prototype.clientEnteredGame = null;
+
+        /**
+         * MessageToClient clientExitedGame.
+         * @member {PB.MessageToClient.IClientExitedGame|null|undefined} clientExitedGame
+         * @memberof PB.MessageToClient
+         * @instance
+         */
+        MessageToClient.prototype.clientExitedGame = null;
+
+        /**
+         * MessageToClient gameSetupChanged.
+         * @member {PB.MessageToClient.IGameSetupChanged|null|undefined} gameSetupChanged
+         * @memberof PB.MessageToClient
+         * @instance
+         */
+        MessageToClient.prototype.gameSetupChanged = null;
+
+        /**
+         * MessageToClient gameStarted.
+         * @member {PB.MessageToClient.IGameStarted|null|undefined} gameStarted
+         * @memberof PB.MessageToClient
+         * @instance
+         */
+        MessageToClient.prototype.gameStarted = null;
+
+        /**
+         * MessageToClient gameActionDone.
+         * @member {PB.MessageToClient.IGameActionDone|null|undefined} gameActionDone
+         * @memberof PB.MessageToClient
+         * @instance
+         */
+        MessageToClient.prototype.gameActionDone = null;
+
+        /**
+         * Creates a new MessageToClient instance using the specified properties.
+         * @function create
+         * @memberof PB.MessageToClient
+         * @static
+         * @param {PB.IMessageToClient=} [properties] Properties to set
+         * @returns {PB.MessageToClient} MessageToClient instance
+         */
+        MessageToClient.create = function create(properties) {
+            return new MessageToClient(properties);
+        };
+
+        /**
+         * Encodes the specified MessageToClient message. Does not implicitly {@link PB.MessageToClient.verify|verify} messages.
+         * @function encode
+         * @memberof PB.MessageToClient
+         * @static
+         * @param {PB.IMessageToClient} message MessageToClient message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        MessageToClient.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.fatalError != null && Object.hasOwnProperty.call(message, "fatalError"))
+                $root.PB.MessageToClient.FatalError.encode(message.fatalError, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+            if (message.greetings != null && Object.hasOwnProperty.call(message, "greetings"))
+                $root.PB.MessageToClient.Greetings.encode(message.greetings, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
+            if (message.clientConnected != null && Object.hasOwnProperty.call(message, "clientConnected"))
+                $root.PB.MessageToClient.ClientConnected.encode(message.clientConnected, writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
+            if (message.clientDisconnected != null && Object.hasOwnProperty.call(message, "clientDisconnected"))
+                $root.PB.MessageToClient.ClientDisconnected.encode(message.clientDisconnected, writer.uint32(/* id 4, wireType 2 =*/34).fork()).ldelim();
+            if (message.gameCreated != null && Object.hasOwnProperty.call(message, "gameCreated"))
+                $root.PB.MessageToClient.GameCreated.encode(message.gameCreated, writer.uint32(/* id 5, wireType 2 =*/42).fork()).ldelim();
+            if (message.clientEnteredGame != null && Object.hasOwnProperty.call(message, "clientEnteredGame"))
+                $root.PB.MessageToClient.ClientEnteredGame.encode(message.clientEnteredGame, writer.uint32(/* id 6, wireType 2 =*/50).fork()).ldelim();
+            if (message.clientExitedGame != null && Object.hasOwnProperty.call(message, "clientExitedGame"))
+                $root.PB.MessageToClient.ClientExitedGame.encode(message.clientExitedGame, writer.uint32(/* id 7, wireType 2 =*/58).fork()).ldelim();
+            if (message.gameSetupChanged != null && Object.hasOwnProperty.call(message, "gameSetupChanged"))
+                $root.PB.MessageToClient.GameSetupChanged.encode(message.gameSetupChanged, writer.uint32(/* id 8, wireType 2 =*/66).fork()).ldelim();
+            if (message.gameStarted != null && Object.hasOwnProperty.call(message, "gameStarted"))
+                $root.PB.MessageToClient.GameStarted.encode(message.gameStarted, writer.uint32(/* id 9, wireType 2 =*/74).fork()).ldelim();
+            if (message.gameActionDone != null && Object.hasOwnProperty.call(message, "gameActionDone"))
+                $root.PB.MessageToClient.GameActionDone.encode(message.gameActionDone, writer.uint32(/* id 10, wireType 2 =*/82).fork()).ldelim();
+            return writer;
+        };
+
+        /**
+         * Encodes the specified MessageToClient message, length delimited. Does not implicitly {@link PB.MessageToClient.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof PB.MessageToClient
+         * @static
+         * @param {PB.IMessageToClient} message MessageToClient message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        MessageToClient.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a MessageToClient message from the specified reader or buffer.
+         * @function decode
+         * @memberof PB.MessageToClient
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {PB.MessageToClient} MessageToClient
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        MessageToClient.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.PB.MessageToClient();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.fatalError = $root.PB.MessageToClient.FatalError.decode(reader, reader.uint32());
+                    break;
+                case 2:
+                    message.greetings = $root.PB.MessageToClient.Greetings.decode(reader, reader.uint32());
+                    break;
+                case 3:
+                    message.clientConnected = $root.PB.MessageToClient.ClientConnected.decode(reader, reader.uint32());
+                    break;
+                case 4:
+                    message.clientDisconnected = $root.PB.MessageToClient.ClientDisconnected.decode(reader, reader.uint32());
+                    break;
+                case 5:
+                    message.gameCreated = $root.PB.MessageToClient.GameCreated.decode(reader, reader.uint32());
+                    break;
+                case 6:
+                    message.clientEnteredGame = $root.PB.MessageToClient.ClientEnteredGame.decode(reader, reader.uint32());
+                    break;
+                case 7:
+                    message.clientExitedGame = $root.PB.MessageToClient.ClientExitedGame.decode(reader, reader.uint32());
+                    break;
+                case 8:
+                    message.gameSetupChanged = $root.PB.MessageToClient.GameSetupChanged.decode(reader, reader.uint32());
+                    break;
+                case 9:
+                    message.gameStarted = $root.PB.MessageToClient.GameStarted.decode(reader, reader.uint32());
+                    break;
+                case 10:
+                    message.gameActionDone = $root.PB.MessageToClient.GameActionDone.decode(reader, reader.uint32());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a MessageToClient message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof PB.MessageToClient
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {PB.MessageToClient} MessageToClient
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        MessageToClient.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a MessageToClient message.
+         * @function verify
+         * @memberof PB.MessageToClient
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        MessageToClient.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.fatalError != null && message.hasOwnProperty("fatalError")) {
+                var error = $root.PB.MessageToClient.FatalError.verify(message.fatalError);
+                if (error)
+                    return "fatalError." + error;
+            }
+            if (message.greetings != null && message.hasOwnProperty("greetings")) {
+                var error = $root.PB.MessageToClient.Greetings.verify(message.greetings);
+                if (error)
+                    return "greetings." + error;
+            }
+            if (message.clientConnected != null && message.hasOwnProperty("clientConnected")) {
+                var error = $root.PB.MessageToClient.ClientConnected.verify(message.clientConnected);
+                if (error)
+                    return "clientConnected." + error;
+            }
+            if (message.clientDisconnected != null && message.hasOwnProperty("clientDisconnected")) {
+                var error = $root.PB.MessageToClient.ClientDisconnected.verify(message.clientDisconnected);
+                if (error)
+                    return "clientDisconnected." + error;
+            }
+            if (message.gameCreated != null && message.hasOwnProperty("gameCreated")) {
+                var error = $root.PB.MessageToClient.GameCreated.verify(message.gameCreated);
+                if (error)
+                    return "gameCreated." + error;
+            }
+            if (message.clientEnteredGame != null && message.hasOwnProperty("clientEnteredGame")) {
+                var error = $root.PB.MessageToClient.ClientEnteredGame.verify(message.clientEnteredGame);
+                if (error)
+                    return "clientEnteredGame." + error;
+            }
+            if (message.clientExitedGame != null && message.hasOwnProperty("clientExitedGame")) {
+                var error = $root.PB.MessageToClient.ClientExitedGame.verify(message.clientExitedGame);
+                if (error)
+                    return "clientExitedGame." + error;
+            }
+            if (message.gameSetupChanged != null && message.hasOwnProperty("gameSetupChanged")) {
+                var error = $root.PB.MessageToClient.GameSetupChanged.verify(message.gameSetupChanged);
+                if (error)
+                    return "gameSetupChanged." + error;
+            }
+            if (message.gameStarted != null && message.hasOwnProperty("gameStarted")) {
+                var error = $root.PB.MessageToClient.GameStarted.verify(message.gameStarted);
+                if (error)
+                    return "gameStarted." + error;
+            }
+            if (message.gameActionDone != null && message.hasOwnProperty("gameActionDone")) {
+                var error = $root.PB.MessageToClient.GameActionDone.verify(message.gameActionDone);
+                if (error)
+                    return "gameActionDone." + error;
+            }
+            return null;
+        };
+
+        /**
+         * Creates a MessageToClient message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof PB.MessageToClient
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {PB.MessageToClient} MessageToClient
+         */
+        MessageToClient.fromObject = function fromObject(object) {
+            if (object instanceof $root.PB.MessageToClient)
+                return object;
+            var message = new $root.PB.MessageToClient();
+            if (object.fatalError != null) {
+                if (typeof object.fatalError !== "object")
+                    throw TypeError(".PB.MessageToClient.fatalError: object expected");
+                message.fatalError = $root.PB.MessageToClient.FatalError.fromObject(object.fatalError);
+            }
+            if (object.greetings != null) {
+                if (typeof object.greetings !== "object")
+                    throw TypeError(".PB.MessageToClient.greetings: object expected");
+                message.greetings = $root.PB.MessageToClient.Greetings.fromObject(object.greetings);
+            }
+            if (object.clientConnected != null) {
+                if (typeof object.clientConnected !== "object")
+                    throw TypeError(".PB.MessageToClient.clientConnected: object expected");
+                message.clientConnected = $root.PB.MessageToClient.ClientConnected.fromObject(object.clientConnected);
+            }
+            if (object.clientDisconnected != null) {
+                if (typeof object.clientDisconnected !== "object")
+                    throw TypeError(".PB.MessageToClient.clientDisconnected: object expected");
+                message.clientDisconnected = $root.PB.MessageToClient.ClientDisconnected.fromObject(object.clientDisconnected);
+            }
+            if (object.gameCreated != null) {
+                if (typeof object.gameCreated !== "object")
+                    throw TypeError(".PB.MessageToClient.gameCreated: object expected");
+                message.gameCreated = $root.PB.MessageToClient.GameCreated.fromObject(object.gameCreated);
+            }
+            if (object.clientEnteredGame != null) {
+                if (typeof object.clientEnteredGame !== "object")
+                    throw TypeError(".PB.MessageToClient.clientEnteredGame: object expected");
+                message.clientEnteredGame = $root.PB.MessageToClient.ClientEnteredGame.fromObject(object.clientEnteredGame);
+            }
+            if (object.clientExitedGame != null) {
+                if (typeof object.clientExitedGame !== "object")
+                    throw TypeError(".PB.MessageToClient.clientExitedGame: object expected");
+                message.clientExitedGame = $root.PB.MessageToClient.ClientExitedGame.fromObject(object.clientExitedGame);
+            }
+            if (object.gameSetupChanged != null) {
+                if (typeof object.gameSetupChanged !== "object")
+                    throw TypeError(".PB.MessageToClient.gameSetupChanged: object expected");
+                message.gameSetupChanged = $root.PB.MessageToClient.GameSetupChanged.fromObject(object.gameSetupChanged);
+            }
+            if (object.gameStarted != null) {
+                if (typeof object.gameStarted !== "object")
+                    throw TypeError(".PB.MessageToClient.gameStarted: object expected");
+                message.gameStarted = $root.PB.MessageToClient.GameStarted.fromObject(object.gameStarted);
+            }
+            if (object.gameActionDone != null) {
+                if (typeof object.gameActionDone !== "object")
+                    throw TypeError(".PB.MessageToClient.gameActionDone: object expected");
+                message.gameActionDone = $root.PB.MessageToClient.GameActionDone.fromObject(object.gameActionDone);
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a MessageToClient message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof PB.MessageToClient
+         * @static
+         * @param {PB.MessageToClient} message MessageToClient
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        MessageToClient.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults) {
+                object.fatalError = null;
+                object.greetings = null;
+                object.clientConnected = null;
+                object.clientDisconnected = null;
+                object.gameCreated = null;
+                object.clientEnteredGame = null;
+                object.clientExitedGame = null;
+                object.gameSetupChanged = null;
+                object.gameStarted = null;
+                object.gameActionDone = null;
+            }
+            if (message.fatalError != null && message.hasOwnProperty("fatalError"))
+                object.fatalError = $root.PB.MessageToClient.FatalError.toObject(message.fatalError, options);
+            if (message.greetings != null && message.hasOwnProperty("greetings"))
+                object.greetings = $root.PB.MessageToClient.Greetings.toObject(message.greetings, options);
+            if (message.clientConnected != null && message.hasOwnProperty("clientConnected"))
+                object.clientConnected = $root.PB.MessageToClient.ClientConnected.toObject(message.clientConnected, options);
+            if (message.clientDisconnected != null && message.hasOwnProperty("clientDisconnected"))
+                object.clientDisconnected = $root.PB.MessageToClient.ClientDisconnected.toObject(message.clientDisconnected, options);
+            if (message.gameCreated != null && message.hasOwnProperty("gameCreated"))
+                object.gameCreated = $root.PB.MessageToClient.GameCreated.toObject(message.gameCreated, options);
+            if (message.clientEnteredGame != null && message.hasOwnProperty("clientEnteredGame"))
+                object.clientEnteredGame = $root.PB.MessageToClient.ClientEnteredGame.toObject(message.clientEnteredGame, options);
+            if (message.clientExitedGame != null && message.hasOwnProperty("clientExitedGame"))
+                object.clientExitedGame = $root.PB.MessageToClient.ClientExitedGame.toObject(message.clientExitedGame, options);
+            if (message.gameSetupChanged != null && message.hasOwnProperty("gameSetupChanged"))
+                object.gameSetupChanged = $root.PB.MessageToClient.GameSetupChanged.toObject(message.gameSetupChanged, options);
+            if (message.gameStarted != null && message.hasOwnProperty("gameStarted"))
+                object.gameStarted = $root.PB.MessageToClient.GameStarted.toObject(message.gameStarted, options);
+            if (message.gameActionDone != null && message.hasOwnProperty("gameActionDone"))
+                object.gameActionDone = $root.PB.MessageToClient.GameActionDone.toObject(message.gameActionDone, options);
+            return object;
+        };
+
+        /**
+         * Converts this MessageToClient to JSON.
+         * @function toJSON
+         * @memberof PB.MessageToClient
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        MessageToClient.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        MessageToClient.FatalError = (function() {
+
+            /**
+             * Properties of a FatalError.
+             * @memberof PB.MessageToClient
+             * @interface IFatalError
+             * @property {ErrorCode|null} [errorCode] FatalError errorCode
+             */
+
+            /**
+             * Constructs a new FatalError.
+             * @memberof PB.MessageToClient
+             * @classdesc Represents a FatalError.
+             * @implements IFatalError
+             * @constructor
+             * @param {PB.MessageToClient.IFatalError=} [properties] Properties to set
+             */
+            function FatalError(properties) {
+                if (properties)
+                    for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                        if (properties[keys[i]] != null)
+                            this[keys[i]] = properties[keys[i]];
+            }
+
+            /**
+             * FatalError errorCode.
+             * @member {ErrorCode} errorCode
+             * @memberof PB.MessageToClient.FatalError
+             * @instance
+             */
+            FatalError.prototype.errorCode = 0;
+
+            /**
+             * Creates a new FatalError instance using the specified properties.
+             * @function create
+             * @memberof PB.MessageToClient.FatalError
+             * @static
+             * @param {PB.MessageToClient.IFatalError=} [properties] Properties to set
+             * @returns {PB.MessageToClient.FatalError} FatalError instance
+             */
+            FatalError.create = function create(properties) {
+                return new FatalError(properties);
+            };
+
+            /**
+             * Encodes the specified FatalError message. Does not implicitly {@link PB.MessageToClient.FatalError.verify|verify} messages.
+             * @function encode
+             * @memberof PB.MessageToClient.FatalError
+             * @static
+             * @param {PB.MessageToClient.IFatalError} message FatalError message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            FatalError.encode = function encode(message, writer) {
+                if (!writer)
+                    writer = $Writer.create();
+                if (message.errorCode != null && Object.hasOwnProperty.call(message, "errorCode"))
+                    writer.uint32(/* id 1, wireType 0 =*/8).int32(message.errorCode);
+                return writer;
+            };
+
+            /**
+             * Encodes the specified FatalError message, length delimited. Does not implicitly {@link PB.MessageToClient.FatalError.verify|verify} messages.
+             * @function encodeDelimited
+             * @memberof PB.MessageToClient.FatalError
+             * @static
+             * @param {PB.MessageToClient.IFatalError} message FatalError message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            FatalError.encodeDelimited = function encodeDelimited(message, writer) {
+                return this.encode(message, writer).ldelim();
+            };
+
+            /**
+             * Decodes a FatalError message from the specified reader or buffer.
+             * @function decode
+             * @memberof PB.MessageToClient.FatalError
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @param {number} [length] Message length if known beforehand
+             * @returns {PB.MessageToClient.FatalError} FatalError
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            FatalError.decode = function decode(reader, length) {
+                if (!(reader instanceof $Reader))
+                    reader = $Reader.create(reader);
+                var end = length === undefined ? reader.len : reader.pos + length, message = new $root.PB.MessageToClient.FatalError();
+                while (reader.pos < end) {
+                    var tag = reader.uint32();
+                    switch (tag >>> 3) {
+                    case 1:
+                        message.errorCode = reader.int32();
+                        break;
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
+                    }
+                }
+                return message;
+            };
+
+            /**
+             * Decodes a FatalError message from the specified reader or buffer, length delimited.
+             * @function decodeDelimited
+             * @memberof PB.MessageToClient.FatalError
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @returns {PB.MessageToClient.FatalError} FatalError
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            FatalError.decodeDelimited = function decodeDelimited(reader) {
+                if (!(reader instanceof $Reader))
+                    reader = new $Reader(reader);
+                return this.decode(reader, reader.uint32());
+            };
+
+            /**
+             * Verifies a FatalError message.
+             * @function verify
+             * @memberof PB.MessageToClient.FatalError
+             * @static
+             * @param {Object.<string,*>} message Plain object to verify
+             * @returns {string|null} `null` if valid, otherwise the reason why it is not
+             */
+            FatalError.verify = function verify(message) {
+                if (typeof message !== "object" || message === null)
+                    return "object expected";
+                if (message.errorCode != null && message.hasOwnProperty("errorCode"))
+                    switch (message.errorCode) {
+                    default:
+                        return "errorCode: enum value expected";
+                    case 0:
+                    case 1:
+                    case 2:
+                    case 3:
+                    case 4:
+                    case 5:
+                    case 6:
+                    case 7:
+                    case 8:
+                        break;
+                    }
+                return null;
+            };
+
+            /**
+             * Creates a FatalError message from a plain object. Also converts values to their respective internal types.
+             * @function fromObject
+             * @memberof PB.MessageToClient.FatalError
+             * @static
+             * @param {Object.<string,*>} object Plain object
+             * @returns {PB.MessageToClient.FatalError} FatalError
+             */
+            FatalError.fromObject = function fromObject(object) {
+                if (object instanceof $root.PB.MessageToClient.FatalError)
+                    return object;
+                var message = new $root.PB.MessageToClient.FatalError();
+                switch (object.errorCode) {
+                case "NOT_USING_LATEST_VERSION":
+                case 0:
+                    message.errorCode = 0;
+                    break;
+                case "INTERNAL_SERVER_ERROR":
+                case 1:
+                    message.errorCode = 1;
+                    break;
+                case "INVALID_MESSAGE_FORMAT":
+                case 2:
+                    message.errorCode = 2;
+                    break;
+                case "INVALID_USERNAME":
+                case 3:
+                    message.errorCode = 3;
+                    break;
+                case "MISSING_PASSWORD":
+                case 4:
+                    message.errorCode = 4;
+                    break;
+                case "PROVIDED_PASSWORD":
+                case 5:
+                    message.errorCode = 5;
+                    break;
+                case "INCORRECT_PASSWORD":
+                case 6:
+                    message.errorCode = 6;
+                    break;
+                case "INVALID_MESSAGE":
+                case 7:
+                    message.errorCode = 7;
+                    break;
+                case "COULD_NOT_CONNECT":
+                case 8:
+                    message.errorCode = 8;
+                    break;
+                }
+                return message;
+            };
+
+            /**
+             * Creates a plain object from a FatalError message. Also converts values to other types if specified.
+             * @function toObject
+             * @memberof PB.MessageToClient.FatalError
+             * @static
+             * @param {PB.MessageToClient.FatalError} message FatalError
+             * @param {$protobuf.IConversionOptions} [options] Conversion options
+             * @returns {Object.<string,*>} Plain object
+             */
+            FatalError.toObject = function toObject(message, options) {
+                if (!options)
+                    options = {};
+                var object = {};
+                if (options.defaults)
+                    object.errorCode = options.enums === String ? "NOT_USING_LATEST_VERSION" : 0;
+                if (message.errorCode != null && message.hasOwnProperty("errorCode"))
+                    object.errorCode = options.enums === String ? $root.ErrorCode[message.errorCode] : message.errorCode;
+                return object;
+            };
+
+            /**
+             * Converts this FatalError to JSON.
+             * @function toJSON
+             * @memberof PB.MessageToClient.FatalError
+             * @instance
+             * @returns {Object.<string,*>} JSON object
+             */
+            FatalError.prototype.toJSON = function toJSON() {
+                return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+            };
+
+            return FatalError;
+        })();
+
+        MessageToClient.Greetings = (function() {
+
+            /**
+             * Properties of a Greetings.
+             * @memberof PB.MessageToClient
+             * @interface IGreetings
+             * @property {number|null} [clientId] Greetings clientId
+             * @property {Array.<PB.MessageToClient.Greetings.IUser>|null} [users] Greetings users
+             * @property {Array.<PB.MessageToClient.Greetings.IGame>|null} [games] Greetings games
+             */
+
+            /**
+             * Constructs a new Greetings.
+             * @memberof PB.MessageToClient
+             * @classdesc Represents a Greetings.
+             * @implements IGreetings
+             * @constructor
+             * @param {PB.MessageToClient.IGreetings=} [properties] Properties to set
+             */
+            function Greetings(properties) {
+                this.users = [];
+                this.games = [];
+                if (properties)
+                    for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                        if (properties[keys[i]] != null)
+                            this[keys[i]] = properties[keys[i]];
+            }
+
+            /**
+             * Greetings clientId.
+             * @member {number} clientId
+             * @memberof PB.MessageToClient.Greetings
+             * @instance
+             */
+            Greetings.prototype.clientId = 0;
+
+            /**
+             * Greetings users.
+             * @member {Array.<PB.MessageToClient.Greetings.IUser>} users
+             * @memberof PB.MessageToClient.Greetings
+             * @instance
+             */
+            Greetings.prototype.users = $util.emptyArray;
+
+            /**
+             * Greetings games.
+             * @member {Array.<PB.MessageToClient.Greetings.IGame>} games
+             * @memberof PB.MessageToClient.Greetings
+             * @instance
+             */
+            Greetings.prototype.games = $util.emptyArray;
+
+            /**
+             * Creates a new Greetings instance using the specified properties.
+             * @function create
+             * @memberof PB.MessageToClient.Greetings
+             * @static
+             * @param {PB.MessageToClient.IGreetings=} [properties] Properties to set
+             * @returns {PB.MessageToClient.Greetings} Greetings instance
+             */
+            Greetings.create = function create(properties) {
+                return new Greetings(properties);
+            };
+
+            /**
+             * Encodes the specified Greetings message. Does not implicitly {@link PB.MessageToClient.Greetings.verify|verify} messages.
+             * @function encode
+             * @memberof PB.MessageToClient.Greetings
+             * @static
+             * @param {PB.MessageToClient.IGreetings} message Greetings message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            Greetings.encode = function encode(message, writer) {
+                if (!writer)
+                    writer = $Writer.create();
+                if (message.clientId != null && Object.hasOwnProperty.call(message, "clientId"))
+                    writer.uint32(/* id 1, wireType 0 =*/8).int32(message.clientId);
+                if (message.users != null && message.users.length)
+                    for (var i = 0; i < message.users.length; ++i)
+                        $root.PB.MessageToClient.Greetings.User.encode(message.users[i], writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
+                if (message.games != null && message.games.length)
+                    for (var i = 0; i < message.games.length; ++i)
+                        $root.PB.MessageToClient.Greetings.Game.encode(message.games[i], writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
+                return writer;
+            };
+
+            /**
+             * Encodes the specified Greetings message, length delimited. Does not implicitly {@link PB.MessageToClient.Greetings.verify|verify} messages.
+             * @function encodeDelimited
+             * @memberof PB.MessageToClient.Greetings
+             * @static
+             * @param {PB.MessageToClient.IGreetings} message Greetings message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            Greetings.encodeDelimited = function encodeDelimited(message, writer) {
+                return this.encode(message, writer).ldelim();
+            };
+
+            /**
+             * Decodes a Greetings message from the specified reader or buffer.
+             * @function decode
+             * @memberof PB.MessageToClient.Greetings
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @param {number} [length] Message length if known beforehand
+             * @returns {PB.MessageToClient.Greetings} Greetings
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            Greetings.decode = function decode(reader, length) {
+                if (!(reader instanceof $Reader))
+                    reader = $Reader.create(reader);
+                var end = length === undefined ? reader.len : reader.pos + length, message = new $root.PB.MessageToClient.Greetings();
+                while (reader.pos < end) {
+                    var tag = reader.uint32();
+                    switch (tag >>> 3) {
+                    case 1:
+                        message.clientId = reader.int32();
+                        break;
+                    case 2:
+                        if (!(message.users && message.users.length))
+                            message.users = [];
+                        message.users.push($root.PB.MessageToClient.Greetings.User.decode(reader, reader.uint32()));
+                        break;
+                    case 3:
+                        if (!(message.games && message.games.length))
+                            message.games = [];
+                        message.games.push($root.PB.MessageToClient.Greetings.Game.decode(reader, reader.uint32()));
+                        break;
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
+                    }
+                }
+                return message;
+            };
+
+            /**
+             * Decodes a Greetings message from the specified reader or buffer, length delimited.
+             * @function decodeDelimited
+             * @memberof PB.MessageToClient.Greetings
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @returns {PB.MessageToClient.Greetings} Greetings
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            Greetings.decodeDelimited = function decodeDelimited(reader) {
+                if (!(reader instanceof $Reader))
+                    reader = new $Reader(reader);
+                return this.decode(reader, reader.uint32());
+            };
+
+            /**
+             * Verifies a Greetings message.
+             * @function verify
+             * @memberof PB.MessageToClient.Greetings
+             * @static
+             * @param {Object.<string,*>} message Plain object to verify
+             * @returns {string|null} `null` if valid, otherwise the reason why it is not
+             */
+            Greetings.verify = function verify(message) {
+                if (typeof message !== "object" || message === null)
+                    return "object expected";
+                if (message.clientId != null && message.hasOwnProperty("clientId"))
+                    if (!$util.isInteger(message.clientId))
+                        return "clientId: integer expected";
+                if (message.users != null && message.hasOwnProperty("users")) {
+                    if (!Array.isArray(message.users))
+                        return "users: array expected";
+                    for (var i = 0; i < message.users.length; ++i) {
+                        var error = $root.PB.MessageToClient.Greetings.User.verify(message.users[i]);
+                        if (error)
+                            return "users." + error;
+                    }
+                }
+                if (message.games != null && message.hasOwnProperty("games")) {
+                    if (!Array.isArray(message.games))
+                        return "games: array expected";
+                    for (var i = 0; i < message.games.length; ++i) {
+                        var error = $root.PB.MessageToClient.Greetings.Game.verify(message.games[i]);
+                        if (error)
+                            return "games." + error;
+                    }
+                }
+                return null;
+            };
+
+            /**
+             * Creates a Greetings message from a plain object. Also converts values to their respective internal types.
+             * @function fromObject
+             * @memberof PB.MessageToClient.Greetings
+             * @static
+             * @param {Object.<string,*>} object Plain object
+             * @returns {PB.MessageToClient.Greetings} Greetings
+             */
+            Greetings.fromObject = function fromObject(object) {
+                if (object instanceof $root.PB.MessageToClient.Greetings)
+                    return object;
+                var message = new $root.PB.MessageToClient.Greetings();
+                if (object.clientId != null)
+                    message.clientId = object.clientId | 0;
+                if (object.users) {
+                    if (!Array.isArray(object.users))
+                        throw TypeError(".PB.MessageToClient.Greetings.users: array expected");
+                    message.users = [];
+                    for (var i = 0; i < object.users.length; ++i) {
+                        if (typeof object.users[i] !== "object")
+                            throw TypeError(".PB.MessageToClient.Greetings.users: object expected");
+                        message.users[i] = $root.PB.MessageToClient.Greetings.User.fromObject(object.users[i]);
+                    }
+                }
+                if (object.games) {
+                    if (!Array.isArray(object.games))
+                        throw TypeError(".PB.MessageToClient.Greetings.games: array expected");
+                    message.games = [];
+                    for (var i = 0; i < object.games.length; ++i) {
+                        if (typeof object.games[i] !== "object")
+                            throw TypeError(".PB.MessageToClient.Greetings.games: object expected");
+                        message.games[i] = $root.PB.MessageToClient.Greetings.Game.fromObject(object.games[i]);
+                    }
+                }
+                return message;
+            };
+
+            /**
+             * Creates a plain object from a Greetings message. Also converts values to other types if specified.
+             * @function toObject
+             * @memberof PB.MessageToClient.Greetings
+             * @static
+             * @param {PB.MessageToClient.Greetings} message Greetings
+             * @param {$protobuf.IConversionOptions} [options] Conversion options
+             * @returns {Object.<string,*>} Plain object
+             */
+            Greetings.toObject = function toObject(message, options) {
+                if (!options)
+                    options = {};
+                var object = {};
+                if (options.arrays || options.defaults) {
+                    object.users = [];
+                    object.games = [];
+                }
+                if (options.defaults)
+                    object.clientId = 0;
+                if (message.clientId != null && message.hasOwnProperty("clientId"))
+                    object.clientId = message.clientId;
+                if (message.users && message.users.length) {
+                    object.users = [];
+                    for (var j = 0; j < message.users.length; ++j)
+                        object.users[j] = $root.PB.MessageToClient.Greetings.User.toObject(message.users[j], options);
+                }
+                if (message.games && message.games.length) {
+                    object.games = [];
+                    for (var j = 0; j < message.games.length; ++j)
+                        object.games[j] = $root.PB.MessageToClient.Greetings.Game.toObject(message.games[j], options);
+                }
+                return object;
+            };
+
+            /**
+             * Converts this Greetings to JSON.
+             * @function toJSON
+             * @memberof PB.MessageToClient.Greetings
+             * @instance
+             * @returns {Object.<string,*>} JSON object
+             */
+            Greetings.prototype.toJSON = function toJSON() {
+                return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+            };
+
+            Greetings.User = (function() {
+
+                /**
+                 * Properties of a User.
+                 * @memberof PB.MessageToClient.Greetings
+                 * @interface IUser
+                 * @property {number|null} [userId] User userId
+                 * @property {string|null} [username] User username
+                 * @property {Array.<PB.MessageToClient.Greetings.User.IClient>|null} [clients] User clients
+                 */
+
+                /**
+                 * Constructs a new User.
+                 * @memberof PB.MessageToClient.Greetings
+                 * @classdesc Represents a User.
+                 * @implements IUser
+                 * @constructor
+                 * @param {PB.MessageToClient.Greetings.IUser=} [properties] Properties to set
+                 */
+                function User(properties) {
+                    this.clients = [];
+                    if (properties)
+                        for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                            if (properties[keys[i]] != null)
+                                this[keys[i]] = properties[keys[i]];
+                }
+
+                /**
+                 * User userId.
+                 * @member {number} userId
+                 * @memberof PB.MessageToClient.Greetings.User
+                 * @instance
+                 */
+                User.prototype.userId = 0;
+
+                /**
+                 * User username.
+                 * @member {string} username
+                 * @memberof PB.MessageToClient.Greetings.User
+                 * @instance
+                 */
+                User.prototype.username = "";
+
+                /**
+                 * User clients.
+                 * @member {Array.<PB.MessageToClient.Greetings.User.IClient>} clients
+                 * @memberof PB.MessageToClient.Greetings.User
+                 * @instance
+                 */
+                User.prototype.clients = $util.emptyArray;
+
+                /**
+                 * Creates a new User instance using the specified properties.
+                 * @function create
+                 * @memberof PB.MessageToClient.Greetings.User
+                 * @static
+                 * @param {PB.MessageToClient.Greetings.IUser=} [properties] Properties to set
+                 * @returns {PB.MessageToClient.Greetings.User} User instance
+                 */
+                User.create = function create(properties) {
+                    return new User(properties);
+                };
+
+                /**
+                 * Encodes the specified User message. Does not implicitly {@link PB.MessageToClient.Greetings.User.verify|verify} messages.
+                 * @function encode
+                 * @memberof PB.MessageToClient.Greetings.User
+                 * @static
+                 * @param {PB.MessageToClient.Greetings.IUser} message User message or plain object to encode
+                 * @param {$protobuf.Writer} [writer] Writer to encode to
+                 * @returns {$protobuf.Writer} Writer
+                 */
+                User.encode = function encode(message, writer) {
+                    if (!writer)
+                        writer = $Writer.create();
+                    if (message.userId != null && Object.hasOwnProperty.call(message, "userId"))
+                        writer.uint32(/* id 1, wireType 0 =*/8).int32(message.userId);
+                    if (message.username != null && Object.hasOwnProperty.call(message, "username"))
+                        writer.uint32(/* id 2, wireType 2 =*/18).string(message.username);
+                    if (message.clients != null && message.clients.length)
+                        for (var i = 0; i < message.clients.length; ++i)
+                            $root.PB.MessageToClient.Greetings.User.Client.encode(message.clients[i], writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
+                    return writer;
+                };
+
+                /**
+                 * Encodes the specified User message, length delimited. Does not implicitly {@link PB.MessageToClient.Greetings.User.verify|verify} messages.
+                 * @function encodeDelimited
+                 * @memberof PB.MessageToClient.Greetings.User
+                 * @static
+                 * @param {PB.MessageToClient.Greetings.IUser} message User message or plain object to encode
+                 * @param {$protobuf.Writer} [writer] Writer to encode to
+                 * @returns {$protobuf.Writer} Writer
+                 */
+                User.encodeDelimited = function encodeDelimited(message, writer) {
+                    return this.encode(message, writer).ldelim();
+                };
+
+                /**
+                 * Decodes a User message from the specified reader or buffer.
+                 * @function decode
+                 * @memberof PB.MessageToClient.Greetings.User
+                 * @static
+                 * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                 * @param {number} [length] Message length if known beforehand
+                 * @returns {PB.MessageToClient.Greetings.User} User
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                User.decode = function decode(reader, length) {
+                    if (!(reader instanceof $Reader))
+                        reader = $Reader.create(reader);
+                    var end = length === undefined ? reader.len : reader.pos + length, message = new $root.PB.MessageToClient.Greetings.User();
+                    while (reader.pos < end) {
+                        var tag = reader.uint32();
+                        switch (tag >>> 3) {
+                        case 1:
+                            message.userId = reader.int32();
+                            break;
+                        case 2:
+                            message.username = reader.string();
+                            break;
+                        case 3:
+                            if (!(message.clients && message.clients.length))
+                                message.clients = [];
+                            message.clients.push($root.PB.MessageToClient.Greetings.User.Client.decode(reader, reader.uint32()));
+                            break;
+                        default:
+                            reader.skipType(tag & 7);
+                            break;
+                        }
+                    }
+                    return message;
+                };
+
+                /**
+                 * Decodes a User message from the specified reader or buffer, length delimited.
+                 * @function decodeDelimited
+                 * @memberof PB.MessageToClient.Greetings.User
+                 * @static
+                 * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                 * @returns {PB.MessageToClient.Greetings.User} User
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                User.decodeDelimited = function decodeDelimited(reader) {
+                    if (!(reader instanceof $Reader))
+                        reader = new $Reader(reader);
+                    return this.decode(reader, reader.uint32());
+                };
+
+                /**
+                 * Verifies a User message.
+                 * @function verify
+                 * @memberof PB.MessageToClient.Greetings.User
+                 * @static
+                 * @param {Object.<string,*>} message Plain object to verify
+                 * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                 */
+                User.verify = function verify(message) {
+                    if (typeof message !== "object" || message === null)
+                        return "object expected";
+                    if (message.userId != null && message.hasOwnProperty("userId"))
+                        if (!$util.isInteger(message.userId))
+                            return "userId: integer expected";
+                    if (message.username != null && message.hasOwnProperty("username"))
+                        if (!$util.isString(message.username))
+                            return "username: string expected";
+                    if (message.clients != null && message.hasOwnProperty("clients")) {
+                        if (!Array.isArray(message.clients))
+                            return "clients: array expected";
+                        for (var i = 0; i < message.clients.length; ++i) {
+                            var error = $root.PB.MessageToClient.Greetings.User.Client.verify(message.clients[i]);
+                            if (error)
+                                return "clients." + error;
+                        }
+                    }
+                    return null;
+                };
+
+                /**
+                 * Creates a User message from a plain object. Also converts values to their respective internal types.
+                 * @function fromObject
+                 * @memberof PB.MessageToClient.Greetings.User
+                 * @static
+                 * @param {Object.<string,*>} object Plain object
+                 * @returns {PB.MessageToClient.Greetings.User} User
+                 */
+                User.fromObject = function fromObject(object) {
+                    if (object instanceof $root.PB.MessageToClient.Greetings.User)
+                        return object;
+                    var message = new $root.PB.MessageToClient.Greetings.User();
+                    if (object.userId != null)
+                        message.userId = object.userId | 0;
+                    if (object.username != null)
+                        message.username = String(object.username);
+                    if (object.clients) {
+                        if (!Array.isArray(object.clients))
+                            throw TypeError(".PB.MessageToClient.Greetings.User.clients: array expected");
+                        message.clients = [];
+                        for (var i = 0; i < object.clients.length; ++i) {
+                            if (typeof object.clients[i] !== "object")
+                                throw TypeError(".PB.MessageToClient.Greetings.User.clients: object expected");
+                            message.clients[i] = $root.PB.MessageToClient.Greetings.User.Client.fromObject(object.clients[i]);
+                        }
+                    }
+                    return message;
+                };
+
+                /**
+                 * Creates a plain object from a User message. Also converts values to other types if specified.
+                 * @function toObject
+                 * @memberof PB.MessageToClient.Greetings.User
+                 * @static
+                 * @param {PB.MessageToClient.Greetings.User} message User
+                 * @param {$protobuf.IConversionOptions} [options] Conversion options
+                 * @returns {Object.<string,*>} Plain object
+                 */
+                User.toObject = function toObject(message, options) {
+                    if (!options)
+                        options = {};
+                    var object = {};
+                    if (options.arrays || options.defaults)
+                        object.clients = [];
+                    if (options.defaults) {
+                        object.userId = 0;
+                        object.username = "";
+                    }
+                    if (message.userId != null && message.hasOwnProperty("userId"))
+                        object.userId = message.userId;
+                    if (message.username != null && message.hasOwnProperty("username"))
+                        object.username = message.username;
+                    if (message.clients && message.clients.length) {
+                        object.clients = [];
+                        for (var j = 0; j < message.clients.length; ++j)
+                            object.clients[j] = $root.PB.MessageToClient.Greetings.User.Client.toObject(message.clients[j], options);
+                    }
+                    return object;
+                };
+
+                /**
+                 * Converts this User to JSON.
+                 * @function toJSON
+                 * @memberof PB.MessageToClient.Greetings.User
+                 * @instance
+                 * @returns {Object.<string,*>} JSON object
+                 */
+                User.prototype.toJSON = function toJSON() {
+                    return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                };
+
+                User.Client = (function() {
+
+                    /**
+                     * Properties of a Client.
+                     * @memberof PB.MessageToClient.Greetings.User
+                     * @interface IClient
+                     * @property {number|null} [clientId] Client clientId
+                     * @property {number|null} [gameDisplayNumber] Client gameDisplayNumber
+                     */
+
+                    /**
+                     * Constructs a new Client.
+                     * @memberof PB.MessageToClient.Greetings.User
+                     * @classdesc Represents a Client.
+                     * @implements IClient
+                     * @constructor
+                     * @param {PB.MessageToClient.Greetings.User.IClient=} [properties] Properties to set
+                     */
+                    function Client(properties) {
+                        if (properties)
+                            for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                if (properties[keys[i]] != null)
+                                    this[keys[i]] = properties[keys[i]];
+                    }
+
+                    /**
+                     * Client clientId.
+                     * @member {number} clientId
+                     * @memberof PB.MessageToClient.Greetings.User.Client
+                     * @instance
+                     */
+                    Client.prototype.clientId = 0;
+
+                    /**
+                     * Client gameDisplayNumber.
+                     * @member {number} gameDisplayNumber
+                     * @memberof PB.MessageToClient.Greetings.User.Client
+                     * @instance
+                     */
+                    Client.prototype.gameDisplayNumber = 0;
+
+                    /**
+                     * Creates a new Client instance using the specified properties.
+                     * @function create
+                     * @memberof PB.MessageToClient.Greetings.User.Client
+                     * @static
+                     * @param {PB.MessageToClient.Greetings.User.IClient=} [properties] Properties to set
+                     * @returns {PB.MessageToClient.Greetings.User.Client} Client instance
+                     */
+                    Client.create = function create(properties) {
+                        return new Client(properties);
+                    };
+
+                    /**
+                     * Encodes the specified Client message. Does not implicitly {@link PB.MessageToClient.Greetings.User.Client.verify|verify} messages.
+                     * @function encode
+                     * @memberof PB.MessageToClient.Greetings.User.Client
+                     * @static
+                     * @param {PB.MessageToClient.Greetings.User.IClient} message Client message or plain object to encode
+                     * @param {$protobuf.Writer} [writer] Writer to encode to
+                     * @returns {$protobuf.Writer} Writer
+                     */
+                    Client.encode = function encode(message, writer) {
+                        if (!writer)
+                            writer = $Writer.create();
+                        if (message.clientId != null && Object.hasOwnProperty.call(message, "clientId"))
+                            writer.uint32(/* id 1, wireType 0 =*/8).int32(message.clientId);
+                        if (message.gameDisplayNumber != null && Object.hasOwnProperty.call(message, "gameDisplayNumber"))
+                            writer.uint32(/* id 2, wireType 0 =*/16).int32(message.gameDisplayNumber);
+                        return writer;
+                    };
+
+                    /**
+                     * Encodes the specified Client message, length delimited. Does not implicitly {@link PB.MessageToClient.Greetings.User.Client.verify|verify} messages.
+                     * @function encodeDelimited
+                     * @memberof PB.MessageToClient.Greetings.User.Client
+                     * @static
+                     * @param {PB.MessageToClient.Greetings.User.IClient} message Client message or plain object to encode
+                     * @param {$protobuf.Writer} [writer] Writer to encode to
+                     * @returns {$protobuf.Writer} Writer
+                     */
+                    Client.encodeDelimited = function encodeDelimited(message, writer) {
+                        return this.encode(message, writer).ldelim();
+                    };
+
+                    /**
+                     * Decodes a Client message from the specified reader or buffer.
+                     * @function decode
+                     * @memberof PB.MessageToClient.Greetings.User.Client
+                     * @static
+                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                     * @param {number} [length] Message length if known beforehand
+                     * @returns {PB.MessageToClient.Greetings.User.Client} Client
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    Client.decode = function decode(reader, length) {
+                        if (!(reader instanceof $Reader))
+                            reader = $Reader.create(reader);
+                        var end = length === undefined ? reader.len : reader.pos + length, message = new $root.PB.MessageToClient.Greetings.User.Client();
+                        while (reader.pos < end) {
+                            var tag = reader.uint32();
+                            switch (tag >>> 3) {
+                            case 1:
+                                message.clientId = reader.int32();
+                                break;
+                            case 2:
+                                message.gameDisplayNumber = reader.int32();
+                                break;
+                            default:
+                                reader.skipType(tag & 7);
+                                break;
+                            }
+                        }
+                        return message;
+                    };
+
+                    /**
+                     * Decodes a Client message from the specified reader or buffer, length delimited.
+                     * @function decodeDelimited
+                     * @memberof PB.MessageToClient.Greetings.User.Client
+                     * @static
+                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                     * @returns {PB.MessageToClient.Greetings.User.Client} Client
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    Client.decodeDelimited = function decodeDelimited(reader) {
+                        if (!(reader instanceof $Reader))
+                            reader = new $Reader(reader);
+                        return this.decode(reader, reader.uint32());
+                    };
+
+                    /**
+                     * Verifies a Client message.
+                     * @function verify
+                     * @memberof PB.MessageToClient.Greetings.User.Client
+                     * @static
+                     * @param {Object.<string,*>} message Plain object to verify
+                     * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                     */
+                    Client.verify = function verify(message) {
+                        if (typeof message !== "object" || message === null)
+                            return "object expected";
+                        if (message.clientId != null && message.hasOwnProperty("clientId"))
+                            if (!$util.isInteger(message.clientId))
+                                return "clientId: integer expected";
+                        if (message.gameDisplayNumber != null && message.hasOwnProperty("gameDisplayNumber"))
+                            if (!$util.isInteger(message.gameDisplayNumber))
+                                return "gameDisplayNumber: integer expected";
+                        return null;
+                    };
+
+                    /**
+                     * Creates a Client message from a plain object. Also converts values to their respective internal types.
+                     * @function fromObject
+                     * @memberof PB.MessageToClient.Greetings.User.Client
+                     * @static
+                     * @param {Object.<string,*>} object Plain object
+                     * @returns {PB.MessageToClient.Greetings.User.Client} Client
+                     */
+                    Client.fromObject = function fromObject(object) {
+                        if (object instanceof $root.PB.MessageToClient.Greetings.User.Client)
+                            return object;
+                        var message = new $root.PB.MessageToClient.Greetings.User.Client();
+                        if (object.clientId != null)
+                            message.clientId = object.clientId | 0;
+                        if (object.gameDisplayNumber != null)
+                            message.gameDisplayNumber = object.gameDisplayNumber | 0;
+                        return message;
+                    };
+
+                    /**
+                     * Creates a plain object from a Client message. Also converts values to other types if specified.
+                     * @function toObject
+                     * @memberof PB.MessageToClient.Greetings.User.Client
+                     * @static
+                     * @param {PB.MessageToClient.Greetings.User.Client} message Client
+                     * @param {$protobuf.IConversionOptions} [options] Conversion options
+                     * @returns {Object.<string,*>} Plain object
+                     */
+                    Client.toObject = function toObject(message, options) {
+                        if (!options)
+                            options = {};
+                        var object = {};
+                        if (options.defaults) {
+                            object.clientId = 0;
+                            object.gameDisplayNumber = 0;
+                        }
+                        if (message.clientId != null && message.hasOwnProperty("clientId"))
+                            object.clientId = message.clientId;
+                        if (message.gameDisplayNumber != null && message.hasOwnProperty("gameDisplayNumber"))
+                            object.gameDisplayNumber = message.gameDisplayNumber;
+                        return object;
+                    };
+
+                    /**
+                     * Converts this Client to JSON.
+                     * @function toJSON
+                     * @memberof PB.MessageToClient.Greetings.User.Client
+                     * @instance
+                     * @returns {Object.<string,*>} JSON object
+                     */
+                    Client.prototype.toJSON = function toJSON() {
+                        return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                    };
+
+                    return Client;
+                })();
+
+                return User;
+            })();
+
+            Greetings.Game = (function() {
+
+                /**
+                 * Properties of a Game.
+                 * @memberof PB.MessageToClient.Greetings
+                 * @interface IGame
+                 * @property {number|null} [gameId] Game gameId
+                 * @property {number|null} [gameDisplayNumber] Game gameDisplayNumber
+                 * @property {PB.IGameSetupData|null} [gameSetupData] Game gameSetupData
+                 * @property {PB.IGameData|null} [gameData] Game gameData
+                 */
+
+                /**
+                 * Constructs a new Game.
+                 * @memberof PB.MessageToClient.Greetings
+                 * @classdesc Represents a Game.
+                 * @implements IGame
+                 * @constructor
+                 * @param {PB.MessageToClient.Greetings.IGame=} [properties] Properties to set
+                 */
+                function Game(properties) {
+                    if (properties)
+                        for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                            if (properties[keys[i]] != null)
+                                this[keys[i]] = properties[keys[i]];
+                }
+
+                /**
+                 * Game gameId.
+                 * @member {number} gameId
+                 * @memberof PB.MessageToClient.Greetings.Game
+                 * @instance
+                 */
+                Game.prototype.gameId = 0;
+
+                /**
+                 * Game gameDisplayNumber.
+                 * @member {number} gameDisplayNumber
+                 * @memberof PB.MessageToClient.Greetings.Game
+                 * @instance
+                 */
+                Game.prototype.gameDisplayNumber = 0;
+
+                /**
+                 * Game gameSetupData.
+                 * @member {PB.IGameSetupData|null|undefined} gameSetupData
+                 * @memberof PB.MessageToClient.Greetings.Game
+                 * @instance
+                 */
+                Game.prototype.gameSetupData = null;
+
+                /**
+                 * Game gameData.
+                 * @member {PB.IGameData|null|undefined} gameData
+                 * @memberof PB.MessageToClient.Greetings.Game
+                 * @instance
+                 */
+                Game.prototype.gameData = null;
+
+                /**
+                 * Creates a new Game instance using the specified properties.
+                 * @function create
+                 * @memberof PB.MessageToClient.Greetings.Game
+                 * @static
+                 * @param {PB.MessageToClient.Greetings.IGame=} [properties] Properties to set
+                 * @returns {PB.MessageToClient.Greetings.Game} Game instance
+                 */
+                Game.create = function create(properties) {
+                    return new Game(properties);
+                };
+
+                /**
+                 * Encodes the specified Game message. Does not implicitly {@link PB.MessageToClient.Greetings.Game.verify|verify} messages.
+                 * @function encode
+                 * @memberof PB.MessageToClient.Greetings.Game
+                 * @static
+                 * @param {PB.MessageToClient.Greetings.IGame} message Game message or plain object to encode
+                 * @param {$protobuf.Writer} [writer] Writer to encode to
+                 * @returns {$protobuf.Writer} Writer
+                 */
+                Game.encode = function encode(message, writer) {
+                    if (!writer)
+                        writer = $Writer.create();
+                    if (message.gameId != null && Object.hasOwnProperty.call(message, "gameId"))
+                        writer.uint32(/* id 1, wireType 0 =*/8).int32(message.gameId);
+                    if (message.gameDisplayNumber != null && Object.hasOwnProperty.call(message, "gameDisplayNumber"))
+                        writer.uint32(/* id 2, wireType 0 =*/16).int32(message.gameDisplayNumber);
+                    if (message.gameSetupData != null && Object.hasOwnProperty.call(message, "gameSetupData"))
+                        $root.PB.GameSetupData.encode(message.gameSetupData, writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
+                    if (message.gameData != null && Object.hasOwnProperty.call(message, "gameData"))
+                        $root.PB.GameData.encode(message.gameData, writer.uint32(/* id 4, wireType 2 =*/34).fork()).ldelim();
+                    return writer;
+                };
+
+                /**
+                 * Encodes the specified Game message, length delimited. Does not implicitly {@link PB.MessageToClient.Greetings.Game.verify|verify} messages.
+                 * @function encodeDelimited
+                 * @memberof PB.MessageToClient.Greetings.Game
+                 * @static
+                 * @param {PB.MessageToClient.Greetings.IGame} message Game message or plain object to encode
+                 * @param {$protobuf.Writer} [writer] Writer to encode to
+                 * @returns {$protobuf.Writer} Writer
+                 */
+                Game.encodeDelimited = function encodeDelimited(message, writer) {
+                    return this.encode(message, writer).ldelim();
+                };
+
+                /**
+                 * Decodes a Game message from the specified reader or buffer.
+                 * @function decode
+                 * @memberof PB.MessageToClient.Greetings.Game
+                 * @static
+                 * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                 * @param {number} [length] Message length if known beforehand
+                 * @returns {PB.MessageToClient.Greetings.Game} Game
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                Game.decode = function decode(reader, length) {
+                    if (!(reader instanceof $Reader))
+                        reader = $Reader.create(reader);
+                    var end = length === undefined ? reader.len : reader.pos + length, message = new $root.PB.MessageToClient.Greetings.Game();
+                    while (reader.pos < end) {
+                        var tag = reader.uint32();
+                        switch (tag >>> 3) {
+                        case 1:
+                            message.gameId = reader.int32();
+                            break;
+                        case 2:
+                            message.gameDisplayNumber = reader.int32();
+                            break;
+                        case 3:
+                            message.gameSetupData = $root.PB.GameSetupData.decode(reader, reader.uint32());
+                            break;
+                        case 4:
+                            message.gameData = $root.PB.GameData.decode(reader, reader.uint32());
+                            break;
+                        default:
+                            reader.skipType(tag & 7);
+                            break;
+                        }
+                    }
+                    return message;
+                };
+
+                /**
+                 * Decodes a Game message from the specified reader or buffer, length delimited.
+                 * @function decodeDelimited
+                 * @memberof PB.MessageToClient.Greetings.Game
+                 * @static
+                 * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                 * @returns {PB.MessageToClient.Greetings.Game} Game
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                Game.decodeDelimited = function decodeDelimited(reader) {
+                    if (!(reader instanceof $Reader))
+                        reader = new $Reader(reader);
+                    return this.decode(reader, reader.uint32());
+                };
+
+                /**
+                 * Verifies a Game message.
+                 * @function verify
+                 * @memberof PB.MessageToClient.Greetings.Game
+                 * @static
+                 * @param {Object.<string,*>} message Plain object to verify
+                 * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                 */
+                Game.verify = function verify(message) {
+                    if (typeof message !== "object" || message === null)
+                        return "object expected";
+                    if (message.gameId != null && message.hasOwnProperty("gameId"))
+                        if (!$util.isInteger(message.gameId))
+                            return "gameId: integer expected";
+                    if (message.gameDisplayNumber != null && message.hasOwnProperty("gameDisplayNumber"))
+                        if (!$util.isInteger(message.gameDisplayNumber))
+                            return "gameDisplayNumber: integer expected";
+                    if (message.gameSetupData != null && message.hasOwnProperty("gameSetupData")) {
+                        var error = $root.PB.GameSetupData.verify(message.gameSetupData);
+                        if (error)
+                            return "gameSetupData." + error;
+                    }
+                    if (message.gameData != null && message.hasOwnProperty("gameData")) {
+                        var error = $root.PB.GameData.verify(message.gameData);
+                        if (error)
+                            return "gameData." + error;
+                    }
+                    return null;
+                };
+
+                /**
+                 * Creates a Game message from a plain object. Also converts values to their respective internal types.
+                 * @function fromObject
+                 * @memberof PB.MessageToClient.Greetings.Game
+                 * @static
+                 * @param {Object.<string,*>} object Plain object
+                 * @returns {PB.MessageToClient.Greetings.Game} Game
+                 */
+                Game.fromObject = function fromObject(object) {
+                    if (object instanceof $root.PB.MessageToClient.Greetings.Game)
+                        return object;
+                    var message = new $root.PB.MessageToClient.Greetings.Game();
+                    if (object.gameId != null)
+                        message.gameId = object.gameId | 0;
+                    if (object.gameDisplayNumber != null)
+                        message.gameDisplayNumber = object.gameDisplayNumber | 0;
+                    if (object.gameSetupData != null) {
+                        if (typeof object.gameSetupData !== "object")
+                            throw TypeError(".PB.MessageToClient.Greetings.Game.gameSetupData: object expected");
+                        message.gameSetupData = $root.PB.GameSetupData.fromObject(object.gameSetupData);
+                    }
+                    if (object.gameData != null) {
+                        if (typeof object.gameData !== "object")
+                            throw TypeError(".PB.MessageToClient.Greetings.Game.gameData: object expected");
+                        message.gameData = $root.PB.GameData.fromObject(object.gameData);
+                    }
+                    return message;
+                };
+
+                /**
+                 * Creates a plain object from a Game message. Also converts values to other types if specified.
+                 * @function toObject
+                 * @memberof PB.MessageToClient.Greetings.Game
+                 * @static
+                 * @param {PB.MessageToClient.Greetings.Game} message Game
+                 * @param {$protobuf.IConversionOptions} [options] Conversion options
+                 * @returns {Object.<string,*>} Plain object
+                 */
+                Game.toObject = function toObject(message, options) {
+                    if (!options)
+                        options = {};
+                    var object = {};
+                    if (options.defaults) {
+                        object.gameId = 0;
+                        object.gameDisplayNumber = 0;
+                        object.gameSetupData = null;
+                        object.gameData = null;
+                    }
+                    if (message.gameId != null && message.hasOwnProperty("gameId"))
+                        object.gameId = message.gameId;
+                    if (message.gameDisplayNumber != null && message.hasOwnProperty("gameDisplayNumber"))
+                        object.gameDisplayNumber = message.gameDisplayNumber;
+                    if (message.gameSetupData != null && message.hasOwnProperty("gameSetupData"))
+                        object.gameSetupData = $root.PB.GameSetupData.toObject(message.gameSetupData, options);
+                    if (message.gameData != null && message.hasOwnProperty("gameData"))
+                        object.gameData = $root.PB.GameData.toObject(message.gameData, options);
+                    return object;
+                };
+
+                /**
+                 * Converts this Game to JSON.
+                 * @function toJSON
+                 * @memberof PB.MessageToClient.Greetings.Game
+                 * @instance
+                 * @returns {Object.<string,*>} JSON object
+                 */
+                Game.prototype.toJSON = function toJSON() {
+                    return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                };
+
+                return Game;
+            })();
+
+            return Greetings;
+        })();
+
+        MessageToClient.ClientConnected = (function() {
+
+            /**
+             * Properties of a ClientConnected.
+             * @memberof PB.MessageToClient
+             * @interface IClientConnected
+             * @property {number|null} [clientId] ClientConnected clientId
+             * @property {number|null} [userId] ClientConnected userId
+             * @property {string|null} [username] ClientConnected username
+             */
+
+            /**
+             * Constructs a new ClientConnected.
+             * @memberof PB.MessageToClient
+             * @classdesc Represents a ClientConnected.
+             * @implements IClientConnected
+             * @constructor
+             * @param {PB.MessageToClient.IClientConnected=} [properties] Properties to set
+             */
+            function ClientConnected(properties) {
+                if (properties)
+                    for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                        if (properties[keys[i]] != null)
+                            this[keys[i]] = properties[keys[i]];
+            }
+
+            /**
+             * ClientConnected clientId.
+             * @member {number} clientId
+             * @memberof PB.MessageToClient.ClientConnected
+             * @instance
+             */
+            ClientConnected.prototype.clientId = 0;
+
+            /**
+             * ClientConnected userId.
+             * @member {number} userId
+             * @memberof PB.MessageToClient.ClientConnected
+             * @instance
+             */
+            ClientConnected.prototype.userId = 0;
+
+            /**
+             * ClientConnected username.
+             * @member {string} username
+             * @memberof PB.MessageToClient.ClientConnected
+             * @instance
+             */
+            ClientConnected.prototype.username = "";
+
+            /**
+             * Creates a new ClientConnected instance using the specified properties.
+             * @function create
+             * @memberof PB.MessageToClient.ClientConnected
+             * @static
+             * @param {PB.MessageToClient.IClientConnected=} [properties] Properties to set
+             * @returns {PB.MessageToClient.ClientConnected} ClientConnected instance
+             */
+            ClientConnected.create = function create(properties) {
+                return new ClientConnected(properties);
+            };
+
+            /**
+             * Encodes the specified ClientConnected message. Does not implicitly {@link PB.MessageToClient.ClientConnected.verify|verify} messages.
+             * @function encode
+             * @memberof PB.MessageToClient.ClientConnected
+             * @static
+             * @param {PB.MessageToClient.IClientConnected} message ClientConnected message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            ClientConnected.encode = function encode(message, writer) {
+                if (!writer)
+                    writer = $Writer.create();
+                if (message.clientId != null && Object.hasOwnProperty.call(message, "clientId"))
+                    writer.uint32(/* id 1, wireType 0 =*/8).int32(message.clientId);
+                if (message.userId != null && Object.hasOwnProperty.call(message, "userId"))
+                    writer.uint32(/* id 2, wireType 0 =*/16).int32(message.userId);
+                if (message.username != null && Object.hasOwnProperty.call(message, "username"))
+                    writer.uint32(/* id 3, wireType 2 =*/26).string(message.username);
+                return writer;
+            };
+
+            /**
+             * Encodes the specified ClientConnected message, length delimited. Does not implicitly {@link PB.MessageToClient.ClientConnected.verify|verify} messages.
+             * @function encodeDelimited
+             * @memberof PB.MessageToClient.ClientConnected
+             * @static
+             * @param {PB.MessageToClient.IClientConnected} message ClientConnected message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            ClientConnected.encodeDelimited = function encodeDelimited(message, writer) {
+                return this.encode(message, writer).ldelim();
+            };
+
+            /**
+             * Decodes a ClientConnected message from the specified reader or buffer.
+             * @function decode
+             * @memberof PB.MessageToClient.ClientConnected
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @param {number} [length] Message length if known beforehand
+             * @returns {PB.MessageToClient.ClientConnected} ClientConnected
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            ClientConnected.decode = function decode(reader, length) {
+                if (!(reader instanceof $Reader))
+                    reader = $Reader.create(reader);
+                var end = length === undefined ? reader.len : reader.pos + length, message = new $root.PB.MessageToClient.ClientConnected();
+                while (reader.pos < end) {
+                    var tag = reader.uint32();
+                    switch (tag >>> 3) {
+                    case 1:
+                        message.clientId = reader.int32();
+                        break;
+                    case 2:
+                        message.userId = reader.int32();
+                        break;
+                    case 3:
+                        message.username = reader.string();
+                        break;
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
+                    }
+                }
+                return message;
+            };
+
+            /**
+             * Decodes a ClientConnected message from the specified reader or buffer, length delimited.
+             * @function decodeDelimited
+             * @memberof PB.MessageToClient.ClientConnected
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @returns {PB.MessageToClient.ClientConnected} ClientConnected
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            ClientConnected.decodeDelimited = function decodeDelimited(reader) {
+                if (!(reader instanceof $Reader))
+                    reader = new $Reader(reader);
+                return this.decode(reader, reader.uint32());
+            };
+
+            /**
+             * Verifies a ClientConnected message.
+             * @function verify
+             * @memberof PB.MessageToClient.ClientConnected
+             * @static
+             * @param {Object.<string,*>} message Plain object to verify
+             * @returns {string|null} `null` if valid, otherwise the reason why it is not
+             */
+            ClientConnected.verify = function verify(message) {
+                if (typeof message !== "object" || message === null)
+                    return "object expected";
+                if (message.clientId != null && message.hasOwnProperty("clientId"))
+                    if (!$util.isInteger(message.clientId))
+                        return "clientId: integer expected";
+                if (message.userId != null && message.hasOwnProperty("userId"))
+                    if (!$util.isInteger(message.userId))
+                        return "userId: integer expected";
+                if (message.username != null && message.hasOwnProperty("username"))
+                    if (!$util.isString(message.username))
+                        return "username: string expected";
+                return null;
+            };
+
+            /**
+             * Creates a ClientConnected message from a plain object. Also converts values to their respective internal types.
+             * @function fromObject
+             * @memberof PB.MessageToClient.ClientConnected
+             * @static
+             * @param {Object.<string,*>} object Plain object
+             * @returns {PB.MessageToClient.ClientConnected} ClientConnected
+             */
+            ClientConnected.fromObject = function fromObject(object) {
+                if (object instanceof $root.PB.MessageToClient.ClientConnected)
+                    return object;
+                var message = new $root.PB.MessageToClient.ClientConnected();
+                if (object.clientId != null)
+                    message.clientId = object.clientId | 0;
+                if (object.userId != null)
+                    message.userId = object.userId | 0;
+                if (object.username != null)
+                    message.username = String(object.username);
+                return message;
+            };
+
+            /**
+             * Creates a plain object from a ClientConnected message. Also converts values to other types if specified.
+             * @function toObject
+             * @memberof PB.MessageToClient.ClientConnected
+             * @static
+             * @param {PB.MessageToClient.ClientConnected} message ClientConnected
+             * @param {$protobuf.IConversionOptions} [options] Conversion options
+             * @returns {Object.<string,*>} Plain object
+             */
+            ClientConnected.toObject = function toObject(message, options) {
+                if (!options)
+                    options = {};
+                var object = {};
+                if (options.defaults) {
+                    object.clientId = 0;
+                    object.userId = 0;
+                    object.username = "";
+                }
+                if (message.clientId != null && message.hasOwnProperty("clientId"))
+                    object.clientId = message.clientId;
+                if (message.userId != null && message.hasOwnProperty("userId"))
+                    object.userId = message.userId;
+                if (message.username != null && message.hasOwnProperty("username"))
+                    object.username = message.username;
+                return object;
+            };
+
+            /**
+             * Converts this ClientConnected to JSON.
+             * @function toJSON
+             * @memberof PB.MessageToClient.ClientConnected
+             * @instance
+             * @returns {Object.<string,*>} JSON object
+             */
+            ClientConnected.prototype.toJSON = function toJSON() {
+                return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+            };
+
+            return ClientConnected;
+        })();
+
+        MessageToClient.ClientDisconnected = (function() {
+
+            /**
+             * Properties of a ClientDisconnected.
+             * @memberof PB.MessageToClient
+             * @interface IClientDisconnected
+             * @property {number|null} [clientId] ClientDisconnected clientId
+             */
+
+            /**
+             * Constructs a new ClientDisconnected.
+             * @memberof PB.MessageToClient
+             * @classdesc Represents a ClientDisconnected.
+             * @implements IClientDisconnected
+             * @constructor
+             * @param {PB.MessageToClient.IClientDisconnected=} [properties] Properties to set
+             */
+            function ClientDisconnected(properties) {
+                if (properties)
+                    for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                        if (properties[keys[i]] != null)
+                            this[keys[i]] = properties[keys[i]];
+            }
+
+            /**
+             * ClientDisconnected clientId.
+             * @member {number} clientId
+             * @memberof PB.MessageToClient.ClientDisconnected
+             * @instance
+             */
+            ClientDisconnected.prototype.clientId = 0;
+
+            /**
+             * Creates a new ClientDisconnected instance using the specified properties.
+             * @function create
+             * @memberof PB.MessageToClient.ClientDisconnected
+             * @static
+             * @param {PB.MessageToClient.IClientDisconnected=} [properties] Properties to set
+             * @returns {PB.MessageToClient.ClientDisconnected} ClientDisconnected instance
+             */
+            ClientDisconnected.create = function create(properties) {
+                return new ClientDisconnected(properties);
+            };
+
+            /**
+             * Encodes the specified ClientDisconnected message. Does not implicitly {@link PB.MessageToClient.ClientDisconnected.verify|verify} messages.
+             * @function encode
+             * @memberof PB.MessageToClient.ClientDisconnected
+             * @static
+             * @param {PB.MessageToClient.IClientDisconnected} message ClientDisconnected message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            ClientDisconnected.encode = function encode(message, writer) {
+                if (!writer)
+                    writer = $Writer.create();
+                if (message.clientId != null && Object.hasOwnProperty.call(message, "clientId"))
+                    writer.uint32(/* id 1, wireType 0 =*/8).int32(message.clientId);
+                return writer;
+            };
+
+            /**
+             * Encodes the specified ClientDisconnected message, length delimited. Does not implicitly {@link PB.MessageToClient.ClientDisconnected.verify|verify} messages.
+             * @function encodeDelimited
+             * @memberof PB.MessageToClient.ClientDisconnected
+             * @static
+             * @param {PB.MessageToClient.IClientDisconnected} message ClientDisconnected message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            ClientDisconnected.encodeDelimited = function encodeDelimited(message, writer) {
+                return this.encode(message, writer).ldelim();
+            };
+
+            /**
+             * Decodes a ClientDisconnected message from the specified reader or buffer.
+             * @function decode
+             * @memberof PB.MessageToClient.ClientDisconnected
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @param {number} [length] Message length if known beforehand
+             * @returns {PB.MessageToClient.ClientDisconnected} ClientDisconnected
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            ClientDisconnected.decode = function decode(reader, length) {
+                if (!(reader instanceof $Reader))
+                    reader = $Reader.create(reader);
+                var end = length === undefined ? reader.len : reader.pos + length, message = new $root.PB.MessageToClient.ClientDisconnected();
+                while (reader.pos < end) {
+                    var tag = reader.uint32();
+                    switch (tag >>> 3) {
+                    case 1:
+                        message.clientId = reader.int32();
+                        break;
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
+                    }
+                }
+                return message;
+            };
+
+            /**
+             * Decodes a ClientDisconnected message from the specified reader or buffer, length delimited.
+             * @function decodeDelimited
+             * @memberof PB.MessageToClient.ClientDisconnected
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @returns {PB.MessageToClient.ClientDisconnected} ClientDisconnected
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            ClientDisconnected.decodeDelimited = function decodeDelimited(reader) {
+                if (!(reader instanceof $Reader))
+                    reader = new $Reader(reader);
+                return this.decode(reader, reader.uint32());
+            };
+
+            /**
+             * Verifies a ClientDisconnected message.
+             * @function verify
+             * @memberof PB.MessageToClient.ClientDisconnected
+             * @static
+             * @param {Object.<string,*>} message Plain object to verify
+             * @returns {string|null} `null` if valid, otherwise the reason why it is not
+             */
+            ClientDisconnected.verify = function verify(message) {
+                if (typeof message !== "object" || message === null)
+                    return "object expected";
+                if (message.clientId != null && message.hasOwnProperty("clientId"))
+                    if (!$util.isInteger(message.clientId))
+                        return "clientId: integer expected";
+                return null;
+            };
+
+            /**
+             * Creates a ClientDisconnected message from a plain object. Also converts values to their respective internal types.
+             * @function fromObject
+             * @memberof PB.MessageToClient.ClientDisconnected
+             * @static
+             * @param {Object.<string,*>} object Plain object
+             * @returns {PB.MessageToClient.ClientDisconnected} ClientDisconnected
+             */
+            ClientDisconnected.fromObject = function fromObject(object) {
+                if (object instanceof $root.PB.MessageToClient.ClientDisconnected)
+                    return object;
+                var message = new $root.PB.MessageToClient.ClientDisconnected();
+                if (object.clientId != null)
+                    message.clientId = object.clientId | 0;
+                return message;
+            };
+
+            /**
+             * Creates a plain object from a ClientDisconnected message. Also converts values to other types if specified.
+             * @function toObject
+             * @memberof PB.MessageToClient.ClientDisconnected
+             * @static
+             * @param {PB.MessageToClient.ClientDisconnected} message ClientDisconnected
+             * @param {$protobuf.IConversionOptions} [options] Conversion options
+             * @returns {Object.<string,*>} Plain object
+             */
+            ClientDisconnected.toObject = function toObject(message, options) {
+                if (!options)
+                    options = {};
+                var object = {};
+                if (options.defaults)
+                    object.clientId = 0;
+                if (message.clientId != null && message.hasOwnProperty("clientId"))
+                    object.clientId = message.clientId;
+                return object;
+            };
+
+            /**
+             * Converts this ClientDisconnected to JSON.
+             * @function toJSON
+             * @memberof PB.MessageToClient.ClientDisconnected
+             * @instance
+             * @returns {Object.<string,*>} JSON object
+             */
+            ClientDisconnected.prototype.toJSON = function toJSON() {
+                return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+            };
+
+            return ClientDisconnected;
+        })();
+
+        MessageToClient.GameCreated = (function() {
+
+            /**
+             * Properties of a GameCreated.
+             * @memberof PB.MessageToClient
+             * @interface IGameCreated
+             * @property {number|null} [gameId] GameCreated gameId
+             * @property {number|null} [gameDisplayNumber] GameCreated gameDisplayNumber
+             * @property {GameMode|null} [gameMode] GameCreated gameMode
+             * @property {number|null} [hostClientId] GameCreated hostClientId
+             */
+
+            /**
+             * Constructs a new GameCreated.
+             * @memberof PB.MessageToClient
+             * @classdesc Represents a GameCreated.
+             * @implements IGameCreated
+             * @constructor
+             * @param {PB.MessageToClient.IGameCreated=} [properties] Properties to set
+             */
+            function GameCreated(properties) {
+                if (properties)
+                    for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                        if (properties[keys[i]] != null)
+                            this[keys[i]] = properties[keys[i]];
+            }
+
+            /**
+             * GameCreated gameId.
+             * @member {number} gameId
+             * @memberof PB.MessageToClient.GameCreated
+             * @instance
+             */
+            GameCreated.prototype.gameId = 0;
+
+            /**
+             * GameCreated gameDisplayNumber.
+             * @member {number} gameDisplayNumber
+             * @memberof PB.MessageToClient.GameCreated
+             * @instance
+             */
+            GameCreated.prototype.gameDisplayNumber = 0;
+
+            /**
+             * GameCreated gameMode.
+             * @member {GameMode} gameMode
+             * @memberof PB.MessageToClient.GameCreated
+             * @instance
+             */
+            GameCreated.prototype.gameMode = 1;
+
+            /**
+             * GameCreated hostClientId.
+             * @member {number} hostClientId
+             * @memberof PB.MessageToClient.GameCreated
+             * @instance
+             */
+            GameCreated.prototype.hostClientId = 0;
+
+            /**
+             * Creates a new GameCreated instance using the specified properties.
+             * @function create
+             * @memberof PB.MessageToClient.GameCreated
+             * @static
+             * @param {PB.MessageToClient.IGameCreated=} [properties] Properties to set
+             * @returns {PB.MessageToClient.GameCreated} GameCreated instance
+             */
+            GameCreated.create = function create(properties) {
+                return new GameCreated(properties);
+            };
+
+            /**
+             * Encodes the specified GameCreated message. Does not implicitly {@link PB.MessageToClient.GameCreated.verify|verify} messages.
+             * @function encode
+             * @memberof PB.MessageToClient.GameCreated
+             * @static
+             * @param {PB.MessageToClient.IGameCreated} message GameCreated message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            GameCreated.encode = function encode(message, writer) {
+                if (!writer)
+                    writer = $Writer.create();
+                if (message.gameId != null && Object.hasOwnProperty.call(message, "gameId"))
+                    writer.uint32(/* id 1, wireType 0 =*/8).int32(message.gameId);
+                if (message.gameDisplayNumber != null && Object.hasOwnProperty.call(message, "gameDisplayNumber"))
+                    writer.uint32(/* id 2, wireType 0 =*/16).int32(message.gameDisplayNumber);
+                if (message.gameMode != null && Object.hasOwnProperty.call(message, "gameMode"))
+                    writer.uint32(/* id 3, wireType 0 =*/24).int32(message.gameMode);
+                if (message.hostClientId != null && Object.hasOwnProperty.call(message, "hostClientId"))
+                    writer.uint32(/* id 4, wireType 0 =*/32).int32(message.hostClientId);
+                return writer;
+            };
+
+            /**
+             * Encodes the specified GameCreated message, length delimited. Does not implicitly {@link PB.MessageToClient.GameCreated.verify|verify} messages.
+             * @function encodeDelimited
+             * @memberof PB.MessageToClient.GameCreated
+             * @static
+             * @param {PB.MessageToClient.IGameCreated} message GameCreated message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            GameCreated.encodeDelimited = function encodeDelimited(message, writer) {
+                return this.encode(message, writer).ldelim();
+            };
+
+            /**
+             * Decodes a GameCreated message from the specified reader or buffer.
+             * @function decode
+             * @memberof PB.MessageToClient.GameCreated
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @param {number} [length] Message length if known beforehand
+             * @returns {PB.MessageToClient.GameCreated} GameCreated
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            GameCreated.decode = function decode(reader, length) {
+                if (!(reader instanceof $Reader))
+                    reader = $Reader.create(reader);
+                var end = length === undefined ? reader.len : reader.pos + length, message = new $root.PB.MessageToClient.GameCreated();
+                while (reader.pos < end) {
+                    var tag = reader.uint32();
+                    switch (tag >>> 3) {
+                    case 1:
+                        message.gameId = reader.int32();
+                        break;
+                    case 2:
+                        message.gameDisplayNumber = reader.int32();
+                        break;
+                    case 3:
+                        message.gameMode = reader.int32();
+                        break;
+                    case 4:
+                        message.hostClientId = reader.int32();
+                        break;
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
+                    }
+                }
+                return message;
+            };
+
+            /**
+             * Decodes a GameCreated message from the specified reader or buffer, length delimited.
+             * @function decodeDelimited
+             * @memberof PB.MessageToClient.GameCreated
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @returns {PB.MessageToClient.GameCreated} GameCreated
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            GameCreated.decodeDelimited = function decodeDelimited(reader) {
+                if (!(reader instanceof $Reader))
+                    reader = new $Reader(reader);
+                return this.decode(reader, reader.uint32());
+            };
+
+            /**
+             * Verifies a GameCreated message.
+             * @function verify
+             * @memberof PB.MessageToClient.GameCreated
+             * @static
+             * @param {Object.<string,*>} message Plain object to verify
+             * @returns {string|null} `null` if valid, otherwise the reason why it is not
+             */
+            GameCreated.verify = function verify(message) {
+                if (typeof message !== "object" || message === null)
+                    return "object expected";
+                if (message.gameId != null && message.hasOwnProperty("gameId"))
+                    if (!$util.isInteger(message.gameId))
+                        return "gameId: integer expected";
+                if (message.gameDisplayNumber != null && message.hasOwnProperty("gameDisplayNumber"))
+                    if (!$util.isInteger(message.gameDisplayNumber))
+                        return "gameDisplayNumber: integer expected";
+                if (message.gameMode != null && message.hasOwnProperty("gameMode"))
+                    switch (message.gameMode) {
+                    default:
+                        return "gameMode: enum value expected";
+                    case 1:
+                    case 2:
+                    case 3:
+                    case 4:
+                    case 5:
+                    case 6:
+                    case 7:
+                    case 8:
+                    case 9:
+                        break;
+                    }
+                if (message.hostClientId != null && message.hasOwnProperty("hostClientId"))
+                    if (!$util.isInteger(message.hostClientId))
+                        return "hostClientId: integer expected";
+                return null;
+            };
+
+            /**
+             * Creates a GameCreated message from a plain object. Also converts values to their respective internal types.
+             * @function fromObject
+             * @memberof PB.MessageToClient.GameCreated
+             * @static
+             * @param {Object.<string,*>} object Plain object
+             * @returns {PB.MessageToClient.GameCreated} GameCreated
+             */
+            GameCreated.fromObject = function fromObject(object) {
+                if (object instanceof $root.PB.MessageToClient.GameCreated)
+                    return object;
+                var message = new $root.PB.MessageToClient.GameCreated();
+                if (object.gameId != null)
+                    message.gameId = object.gameId | 0;
+                if (object.gameDisplayNumber != null)
+                    message.gameDisplayNumber = object.gameDisplayNumber | 0;
+                switch (object.gameMode) {
+                case "SINGLES_1":
+                case 1:
+                    message.gameMode = 1;
+                    break;
+                case "SINGLES_2":
+                case 2:
+                    message.gameMode = 2;
+                    break;
+                case "SINGLES_3":
+                case 3:
+                    message.gameMode = 3;
+                    break;
+                case "SINGLES_4":
+                case 4:
+                    message.gameMode = 4;
+                    break;
+                case "SINGLES_5":
+                case 5:
+                    message.gameMode = 5;
+                    break;
+                case "SINGLES_6":
+                case 6:
+                    message.gameMode = 6;
+                    break;
+                case "TEAMS_2_VS_2":
+                case 7:
+                    message.gameMode = 7;
+                    break;
+                case "TEAMS_2_VS_2_VS_2":
+                case 8:
+                    message.gameMode = 8;
+                    break;
+                case "TEAMS_3_VS_3":
+                case 9:
+                    message.gameMode = 9;
+                    break;
+                }
+                if (object.hostClientId != null)
+                    message.hostClientId = object.hostClientId | 0;
+                return message;
+            };
+
+            /**
+             * Creates a plain object from a GameCreated message. Also converts values to other types if specified.
+             * @function toObject
+             * @memberof PB.MessageToClient.GameCreated
+             * @static
+             * @param {PB.MessageToClient.GameCreated} message GameCreated
+             * @param {$protobuf.IConversionOptions} [options] Conversion options
+             * @returns {Object.<string,*>} Plain object
+             */
+            GameCreated.toObject = function toObject(message, options) {
+                if (!options)
+                    options = {};
+                var object = {};
+                if (options.defaults) {
+                    object.gameId = 0;
+                    object.gameDisplayNumber = 0;
+                    object.gameMode = options.enums === String ? "SINGLES_1" : 1;
+                    object.hostClientId = 0;
+                }
+                if (message.gameId != null && message.hasOwnProperty("gameId"))
+                    object.gameId = message.gameId;
+                if (message.gameDisplayNumber != null && message.hasOwnProperty("gameDisplayNumber"))
+                    object.gameDisplayNumber = message.gameDisplayNumber;
+                if (message.gameMode != null && message.hasOwnProperty("gameMode"))
+                    object.gameMode = options.enums === String ? $root.GameMode[message.gameMode] : message.gameMode;
+                if (message.hostClientId != null && message.hasOwnProperty("hostClientId"))
+                    object.hostClientId = message.hostClientId;
+                return object;
+            };
+
+            /**
+             * Converts this GameCreated to JSON.
+             * @function toJSON
+             * @memberof PB.MessageToClient.GameCreated
+             * @instance
+             * @returns {Object.<string,*>} JSON object
+             */
+            GameCreated.prototype.toJSON = function toJSON() {
+                return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+            };
+
+            return GameCreated;
+        })();
+
+        MessageToClient.ClientEnteredGame = (function() {
+
+            /**
+             * Properties of a ClientEnteredGame.
+             * @memberof PB.MessageToClient
+             * @interface IClientEnteredGame
+             * @property {number|null} [clientId] ClientEnteredGame clientId
+             * @property {number|null} [gameDisplayNumber] ClientEnteredGame gameDisplayNumber
+             */
+
+            /**
+             * Constructs a new ClientEnteredGame.
+             * @memberof PB.MessageToClient
+             * @classdesc Represents a ClientEnteredGame.
+             * @implements IClientEnteredGame
+             * @constructor
+             * @param {PB.MessageToClient.IClientEnteredGame=} [properties] Properties to set
+             */
+            function ClientEnteredGame(properties) {
+                if (properties)
+                    for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                        if (properties[keys[i]] != null)
+                            this[keys[i]] = properties[keys[i]];
+            }
+
+            /**
+             * ClientEnteredGame clientId.
+             * @member {number} clientId
+             * @memberof PB.MessageToClient.ClientEnteredGame
+             * @instance
+             */
+            ClientEnteredGame.prototype.clientId = 0;
+
+            /**
+             * ClientEnteredGame gameDisplayNumber.
+             * @member {number} gameDisplayNumber
+             * @memberof PB.MessageToClient.ClientEnteredGame
+             * @instance
+             */
+            ClientEnteredGame.prototype.gameDisplayNumber = 0;
+
+            /**
+             * Creates a new ClientEnteredGame instance using the specified properties.
+             * @function create
+             * @memberof PB.MessageToClient.ClientEnteredGame
+             * @static
+             * @param {PB.MessageToClient.IClientEnteredGame=} [properties] Properties to set
+             * @returns {PB.MessageToClient.ClientEnteredGame} ClientEnteredGame instance
+             */
+            ClientEnteredGame.create = function create(properties) {
+                return new ClientEnteredGame(properties);
+            };
+
+            /**
+             * Encodes the specified ClientEnteredGame message. Does not implicitly {@link PB.MessageToClient.ClientEnteredGame.verify|verify} messages.
+             * @function encode
+             * @memberof PB.MessageToClient.ClientEnteredGame
+             * @static
+             * @param {PB.MessageToClient.IClientEnteredGame} message ClientEnteredGame message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            ClientEnteredGame.encode = function encode(message, writer) {
+                if (!writer)
+                    writer = $Writer.create();
+                if (message.clientId != null && Object.hasOwnProperty.call(message, "clientId"))
+                    writer.uint32(/* id 1, wireType 0 =*/8).int32(message.clientId);
+                if (message.gameDisplayNumber != null && Object.hasOwnProperty.call(message, "gameDisplayNumber"))
+                    writer.uint32(/* id 2, wireType 0 =*/16).int32(message.gameDisplayNumber);
+                return writer;
+            };
+
+            /**
+             * Encodes the specified ClientEnteredGame message, length delimited. Does not implicitly {@link PB.MessageToClient.ClientEnteredGame.verify|verify} messages.
+             * @function encodeDelimited
+             * @memberof PB.MessageToClient.ClientEnteredGame
+             * @static
+             * @param {PB.MessageToClient.IClientEnteredGame} message ClientEnteredGame message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            ClientEnteredGame.encodeDelimited = function encodeDelimited(message, writer) {
+                return this.encode(message, writer).ldelim();
+            };
+
+            /**
+             * Decodes a ClientEnteredGame message from the specified reader or buffer.
+             * @function decode
+             * @memberof PB.MessageToClient.ClientEnteredGame
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @param {number} [length] Message length if known beforehand
+             * @returns {PB.MessageToClient.ClientEnteredGame} ClientEnteredGame
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            ClientEnteredGame.decode = function decode(reader, length) {
+                if (!(reader instanceof $Reader))
+                    reader = $Reader.create(reader);
+                var end = length === undefined ? reader.len : reader.pos + length, message = new $root.PB.MessageToClient.ClientEnteredGame();
+                while (reader.pos < end) {
+                    var tag = reader.uint32();
+                    switch (tag >>> 3) {
+                    case 1:
+                        message.clientId = reader.int32();
+                        break;
+                    case 2:
+                        message.gameDisplayNumber = reader.int32();
+                        break;
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
+                    }
+                }
+                return message;
+            };
+
+            /**
+             * Decodes a ClientEnteredGame message from the specified reader or buffer, length delimited.
+             * @function decodeDelimited
+             * @memberof PB.MessageToClient.ClientEnteredGame
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @returns {PB.MessageToClient.ClientEnteredGame} ClientEnteredGame
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            ClientEnteredGame.decodeDelimited = function decodeDelimited(reader) {
+                if (!(reader instanceof $Reader))
+                    reader = new $Reader(reader);
+                return this.decode(reader, reader.uint32());
+            };
+
+            /**
+             * Verifies a ClientEnteredGame message.
+             * @function verify
+             * @memberof PB.MessageToClient.ClientEnteredGame
+             * @static
+             * @param {Object.<string,*>} message Plain object to verify
+             * @returns {string|null} `null` if valid, otherwise the reason why it is not
+             */
+            ClientEnteredGame.verify = function verify(message) {
+                if (typeof message !== "object" || message === null)
+                    return "object expected";
+                if (message.clientId != null && message.hasOwnProperty("clientId"))
+                    if (!$util.isInteger(message.clientId))
+                        return "clientId: integer expected";
+                if (message.gameDisplayNumber != null && message.hasOwnProperty("gameDisplayNumber"))
+                    if (!$util.isInteger(message.gameDisplayNumber))
+                        return "gameDisplayNumber: integer expected";
+                return null;
+            };
+
+            /**
+             * Creates a ClientEnteredGame message from a plain object. Also converts values to their respective internal types.
+             * @function fromObject
+             * @memberof PB.MessageToClient.ClientEnteredGame
+             * @static
+             * @param {Object.<string,*>} object Plain object
+             * @returns {PB.MessageToClient.ClientEnteredGame} ClientEnteredGame
+             */
+            ClientEnteredGame.fromObject = function fromObject(object) {
+                if (object instanceof $root.PB.MessageToClient.ClientEnteredGame)
+                    return object;
+                var message = new $root.PB.MessageToClient.ClientEnteredGame();
+                if (object.clientId != null)
+                    message.clientId = object.clientId | 0;
+                if (object.gameDisplayNumber != null)
+                    message.gameDisplayNumber = object.gameDisplayNumber | 0;
+                return message;
+            };
+
+            /**
+             * Creates a plain object from a ClientEnteredGame message. Also converts values to other types if specified.
+             * @function toObject
+             * @memberof PB.MessageToClient.ClientEnteredGame
+             * @static
+             * @param {PB.MessageToClient.ClientEnteredGame} message ClientEnteredGame
+             * @param {$protobuf.IConversionOptions} [options] Conversion options
+             * @returns {Object.<string,*>} Plain object
+             */
+            ClientEnteredGame.toObject = function toObject(message, options) {
+                if (!options)
+                    options = {};
+                var object = {};
+                if (options.defaults) {
+                    object.clientId = 0;
+                    object.gameDisplayNumber = 0;
+                }
+                if (message.clientId != null && message.hasOwnProperty("clientId"))
+                    object.clientId = message.clientId;
+                if (message.gameDisplayNumber != null && message.hasOwnProperty("gameDisplayNumber"))
+                    object.gameDisplayNumber = message.gameDisplayNumber;
+                return object;
+            };
+
+            /**
+             * Converts this ClientEnteredGame to JSON.
+             * @function toJSON
+             * @memberof PB.MessageToClient.ClientEnteredGame
+             * @instance
+             * @returns {Object.<string,*>} JSON object
+             */
+            ClientEnteredGame.prototype.toJSON = function toJSON() {
+                return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+            };
+
+            return ClientEnteredGame;
+        })();
+
+        MessageToClient.ClientExitedGame = (function() {
+
+            /**
+             * Properties of a ClientExitedGame.
+             * @memberof PB.MessageToClient
+             * @interface IClientExitedGame
+             * @property {number|null} [clientId] ClientExitedGame clientId
+             */
+
+            /**
+             * Constructs a new ClientExitedGame.
+             * @memberof PB.MessageToClient
+             * @classdesc Represents a ClientExitedGame.
+             * @implements IClientExitedGame
+             * @constructor
+             * @param {PB.MessageToClient.IClientExitedGame=} [properties] Properties to set
+             */
+            function ClientExitedGame(properties) {
+                if (properties)
+                    for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                        if (properties[keys[i]] != null)
+                            this[keys[i]] = properties[keys[i]];
+            }
+
+            /**
+             * ClientExitedGame clientId.
+             * @member {number} clientId
+             * @memberof PB.MessageToClient.ClientExitedGame
+             * @instance
+             */
+            ClientExitedGame.prototype.clientId = 0;
+
+            /**
+             * Creates a new ClientExitedGame instance using the specified properties.
+             * @function create
+             * @memberof PB.MessageToClient.ClientExitedGame
+             * @static
+             * @param {PB.MessageToClient.IClientExitedGame=} [properties] Properties to set
+             * @returns {PB.MessageToClient.ClientExitedGame} ClientExitedGame instance
+             */
+            ClientExitedGame.create = function create(properties) {
+                return new ClientExitedGame(properties);
+            };
+
+            /**
+             * Encodes the specified ClientExitedGame message. Does not implicitly {@link PB.MessageToClient.ClientExitedGame.verify|verify} messages.
+             * @function encode
+             * @memberof PB.MessageToClient.ClientExitedGame
+             * @static
+             * @param {PB.MessageToClient.IClientExitedGame} message ClientExitedGame message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            ClientExitedGame.encode = function encode(message, writer) {
+                if (!writer)
+                    writer = $Writer.create();
+                if (message.clientId != null && Object.hasOwnProperty.call(message, "clientId"))
+                    writer.uint32(/* id 1, wireType 0 =*/8).int32(message.clientId);
+                return writer;
+            };
+
+            /**
+             * Encodes the specified ClientExitedGame message, length delimited. Does not implicitly {@link PB.MessageToClient.ClientExitedGame.verify|verify} messages.
+             * @function encodeDelimited
+             * @memberof PB.MessageToClient.ClientExitedGame
+             * @static
+             * @param {PB.MessageToClient.IClientExitedGame} message ClientExitedGame message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            ClientExitedGame.encodeDelimited = function encodeDelimited(message, writer) {
+                return this.encode(message, writer).ldelim();
+            };
+
+            /**
+             * Decodes a ClientExitedGame message from the specified reader or buffer.
+             * @function decode
+             * @memberof PB.MessageToClient.ClientExitedGame
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @param {number} [length] Message length if known beforehand
+             * @returns {PB.MessageToClient.ClientExitedGame} ClientExitedGame
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            ClientExitedGame.decode = function decode(reader, length) {
+                if (!(reader instanceof $Reader))
+                    reader = $Reader.create(reader);
+                var end = length === undefined ? reader.len : reader.pos + length, message = new $root.PB.MessageToClient.ClientExitedGame();
+                while (reader.pos < end) {
+                    var tag = reader.uint32();
+                    switch (tag >>> 3) {
+                    case 1:
+                        message.clientId = reader.int32();
+                        break;
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
+                    }
+                }
+                return message;
+            };
+
+            /**
+             * Decodes a ClientExitedGame message from the specified reader or buffer, length delimited.
+             * @function decodeDelimited
+             * @memberof PB.MessageToClient.ClientExitedGame
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @returns {PB.MessageToClient.ClientExitedGame} ClientExitedGame
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            ClientExitedGame.decodeDelimited = function decodeDelimited(reader) {
+                if (!(reader instanceof $Reader))
+                    reader = new $Reader(reader);
+                return this.decode(reader, reader.uint32());
+            };
+
+            /**
+             * Verifies a ClientExitedGame message.
+             * @function verify
+             * @memberof PB.MessageToClient.ClientExitedGame
+             * @static
+             * @param {Object.<string,*>} message Plain object to verify
+             * @returns {string|null} `null` if valid, otherwise the reason why it is not
+             */
+            ClientExitedGame.verify = function verify(message) {
+                if (typeof message !== "object" || message === null)
+                    return "object expected";
+                if (message.clientId != null && message.hasOwnProperty("clientId"))
+                    if (!$util.isInteger(message.clientId))
+                        return "clientId: integer expected";
+                return null;
+            };
+
+            /**
+             * Creates a ClientExitedGame message from a plain object. Also converts values to their respective internal types.
+             * @function fromObject
+             * @memberof PB.MessageToClient.ClientExitedGame
+             * @static
+             * @param {Object.<string,*>} object Plain object
+             * @returns {PB.MessageToClient.ClientExitedGame} ClientExitedGame
+             */
+            ClientExitedGame.fromObject = function fromObject(object) {
+                if (object instanceof $root.PB.MessageToClient.ClientExitedGame)
+                    return object;
+                var message = new $root.PB.MessageToClient.ClientExitedGame();
+                if (object.clientId != null)
+                    message.clientId = object.clientId | 0;
+                return message;
+            };
+
+            /**
+             * Creates a plain object from a ClientExitedGame message. Also converts values to other types if specified.
+             * @function toObject
+             * @memberof PB.MessageToClient.ClientExitedGame
+             * @static
+             * @param {PB.MessageToClient.ClientExitedGame} message ClientExitedGame
+             * @param {$protobuf.IConversionOptions} [options] Conversion options
+             * @returns {Object.<string,*>} Plain object
+             */
+            ClientExitedGame.toObject = function toObject(message, options) {
+                if (!options)
+                    options = {};
+                var object = {};
+                if (options.defaults)
+                    object.clientId = 0;
+                if (message.clientId != null && message.hasOwnProperty("clientId"))
+                    object.clientId = message.clientId;
+                return object;
+            };
+
+            /**
+             * Converts this ClientExitedGame to JSON.
+             * @function toJSON
+             * @memberof PB.MessageToClient.ClientExitedGame
+             * @instance
+             * @returns {Object.<string,*>} JSON object
+             */
+            ClientExitedGame.prototype.toJSON = function toJSON() {
+                return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+            };
+
+            return ClientExitedGame;
+        })();
+
+        MessageToClient.GameSetupChanged = (function() {
+
+            /**
+             * Properties of a GameSetupChanged.
+             * @memberof PB.MessageToClient
+             * @interface IGameSetupChanged
+             * @property {number|null} [gameDisplayNumber] GameSetupChanged gameDisplayNumber
+             * @property {PB.IGameSetupChange|null} [gameSetupChange] GameSetupChanged gameSetupChange
+             */
+
+            /**
+             * Constructs a new GameSetupChanged.
+             * @memberof PB.MessageToClient
+             * @classdesc Represents a GameSetupChanged.
+             * @implements IGameSetupChanged
+             * @constructor
+             * @param {PB.MessageToClient.IGameSetupChanged=} [properties] Properties to set
+             */
+            function GameSetupChanged(properties) {
+                if (properties)
+                    for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                        if (properties[keys[i]] != null)
+                            this[keys[i]] = properties[keys[i]];
+            }
+
+            /**
+             * GameSetupChanged gameDisplayNumber.
+             * @member {number} gameDisplayNumber
+             * @memberof PB.MessageToClient.GameSetupChanged
+             * @instance
+             */
+            GameSetupChanged.prototype.gameDisplayNumber = 0;
+
+            /**
+             * GameSetupChanged gameSetupChange.
+             * @member {PB.IGameSetupChange|null|undefined} gameSetupChange
+             * @memberof PB.MessageToClient.GameSetupChanged
+             * @instance
+             */
+            GameSetupChanged.prototype.gameSetupChange = null;
+
+            /**
+             * Creates a new GameSetupChanged instance using the specified properties.
+             * @function create
+             * @memberof PB.MessageToClient.GameSetupChanged
+             * @static
+             * @param {PB.MessageToClient.IGameSetupChanged=} [properties] Properties to set
+             * @returns {PB.MessageToClient.GameSetupChanged} GameSetupChanged instance
+             */
+            GameSetupChanged.create = function create(properties) {
+                return new GameSetupChanged(properties);
+            };
+
+            /**
+             * Encodes the specified GameSetupChanged message. Does not implicitly {@link PB.MessageToClient.GameSetupChanged.verify|verify} messages.
+             * @function encode
+             * @memberof PB.MessageToClient.GameSetupChanged
+             * @static
+             * @param {PB.MessageToClient.IGameSetupChanged} message GameSetupChanged message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            GameSetupChanged.encode = function encode(message, writer) {
+                if (!writer)
+                    writer = $Writer.create();
+                if (message.gameDisplayNumber != null && Object.hasOwnProperty.call(message, "gameDisplayNumber"))
+                    writer.uint32(/* id 1, wireType 0 =*/8).int32(message.gameDisplayNumber);
+                if (message.gameSetupChange != null && Object.hasOwnProperty.call(message, "gameSetupChange"))
+                    $root.PB.GameSetupChange.encode(message.gameSetupChange, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
+                return writer;
+            };
+
+            /**
+             * Encodes the specified GameSetupChanged message, length delimited. Does not implicitly {@link PB.MessageToClient.GameSetupChanged.verify|verify} messages.
+             * @function encodeDelimited
+             * @memberof PB.MessageToClient.GameSetupChanged
+             * @static
+             * @param {PB.MessageToClient.IGameSetupChanged} message GameSetupChanged message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            GameSetupChanged.encodeDelimited = function encodeDelimited(message, writer) {
+                return this.encode(message, writer).ldelim();
+            };
+
+            /**
+             * Decodes a GameSetupChanged message from the specified reader or buffer.
+             * @function decode
+             * @memberof PB.MessageToClient.GameSetupChanged
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @param {number} [length] Message length if known beforehand
+             * @returns {PB.MessageToClient.GameSetupChanged} GameSetupChanged
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            GameSetupChanged.decode = function decode(reader, length) {
+                if (!(reader instanceof $Reader))
+                    reader = $Reader.create(reader);
+                var end = length === undefined ? reader.len : reader.pos + length, message = new $root.PB.MessageToClient.GameSetupChanged();
+                while (reader.pos < end) {
+                    var tag = reader.uint32();
+                    switch (tag >>> 3) {
+                    case 1:
+                        message.gameDisplayNumber = reader.int32();
+                        break;
+                    case 2:
+                        message.gameSetupChange = $root.PB.GameSetupChange.decode(reader, reader.uint32());
+                        break;
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
+                    }
+                }
+                return message;
+            };
+
+            /**
+             * Decodes a GameSetupChanged message from the specified reader or buffer, length delimited.
+             * @function decodeDelimited
+             * @memberof PB.MessageToClient.GameSetupChanged
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @returns {PB.MessageToClient.GameSetupChanged} GameSetupChanged
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            GameSetupChanged.decodeDelimited = function decodeDelimited(reader) {
+                if (!(reader instanceof $Reader))
+                    reader = new $Reader(reader);
+                return this.decode(reader, reader.uint32());
+            };
+
+            /**
+             * Verifies a GameSetupChanged message.
+             * @function verify
+             * @memberof PB.MessageToClient.GameSetupChanged
+             * @static
+             * @param {Object.<string,*>} message Plain object to verify
+             * @returns {string|null} `null` if valid, otherwise the reason why it is not
+             */
+            GameSetupChanged.verify = function verify(message) {
+                if (typeof message !== "object" || message === null)
+                    return "object expected";
+                if (message.gameDisplayNumber != null && message.hasOwnProperty("gameDisplayNumber"))
+                    if (!$util.isInteger(message.gameDisplayNumber))
+                        return "gameDisplayNumber: integer expected";
+                if (message.gameSetupChange != null && message.hasOwnProperty("gameSetupChange")) {
+                    var error = $root.PB.GameSetupChange.verify(message.gameSetupChange);
+                    if (error)
+                        return "gameSetupChange." + error;
+                }
+                return null;
+            };
+
+            /**
+             * Creates a GameSetupChanged message from a plain object. Also converts values to their respective internal types.
+             * @function fromObject
+             * @memberof PB.MessageToClient.GameSetupChanged
+             * @static
+             * @param {Object.<string,*>} object Plain object
+             * @returns {PB.MessageToClient.GameSetupChanged} GameSetupChanged
+             */
+            GameSetupChanged.fromObject = function fromObject(object) {
+                if (object instanceof $root.PB.MessageToClient.GameSetupChanged)
+                    return object;
+                var message = new $root.PB.MessageToClient.GameSetupChanged();
+                if (object.gameDisplayNumber != null)
+                    message.gameDisplayNumber = object.gameDisplayNumber | 0;
+                if (object.gameSetupChange != null) {
+                    if (typeof object.gameSetupChange !== "object")
+                        throw TypeError(".PB.MessageToClient.GameSetupChanged.gameSetupChange: object expected");
+                    message.gameSetupChange = $root.PB.GameSetupChange.fromObject(object.gameSetupChange);
+                }
+                return message;
+            };
+
+            /**
+             * Creates a plain object from a GameSetupChanged message. Also converts values to other types if specified.
+             * @function toObject
+             * @memberof PB.MessageToClient.GameSetupChanged
+             * @static
+             * @param {PB.MessageToClient.GameSetupChanged} message GameSetupChanged
+             * @param {$protobuf.IConversionOptions} [options] Conversion options
+             * @returns {Object.<string,*>} Plain object
+             */
+            GameSetupChanged.toObject = function toObject(message, options) {
+                if (!options)
+                    options = {};
+                var object = {};
+                if (options.defaults) {
+                    object.gameDisplayNumber = 0;
+                    object.gameSetupChange = null;
+                }
+                if (message.gameDisplayNumber != null && message.hasOwnProperty("gameDisplayNumber"))
+                    object.gameDisplayNumber = message.gameDisplayNumber;
+                if (message.gameSetupChange != null && message.hasOwnProperty("gameSetupChange"))
+                    object.gameSetupChange = $root.PB.GameSetupChange.toObject(message.gameSetupChange, options);
+                return object;
+            };
+
+            /**
+             * Converts this GameSetupChanged to JSON.
+             * @function toJSON
+             * @memberof PB.MessageToClient.GameSetupChanged
+             * @instance
+             * @returns {Object.<string,*>} JSON object
+             */
+            GameSetupChanged.prototype.toJSON = function toJSON() {
+                return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+            };
+
+            return GameSetupChanged;
+        })();
+
+        MessageToClient.GameStarted = (function() {
+
+            /**
+             * Properties of a GameStarted.
+             * @memberof PB.MessageToClient
+             * @interface IGameStarted
+             * @property {number|null} [gameDisplayNumber] GameStarted gameDisplayNumber
+             * @property {Array.<number>|null} [userIds] GameStarted userIds
+             */
+
+            /**
+             * Constructs a new GameStarted.
+             * @memberof PB.MessageToClient
+             * @classdesc Represents a GameStarted.
+             * @implements IGameStarted
+             * @constructor
+             * @param {PB.MessageToClient.IGameStarted=} [properties] Properties to set
+             */
+            function GameStarted(properties) {
+                this.userIds = [];
+                if (properties)
+                    for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                        if (properties[keys[i]] != null)
+                            this[keys[i]] = properties[keys[i]];
+            }
+
+            /**
+             * GameStarted gameDisplayNumber.
+             * @member {number} gameDisplayNumber
+             * @memberof PB.MessageToClient.GameStarted
+             * @instance
+             */
+            GameStarted.prototype.gameDisplayNumber = 0;
+
+            /**
+             * GameStarted userIds.
+             * @member {Array.<number>} userIds
+             * @memberof PB.MessageToClient.GameStarted
+             * @instance
+             */
+            GameStarted.prototype.userIds = $util.emptyArray;
+
+            /**
+             * Creates a new GameStarted instance using the specified properties.
+             * @function create
+             * @memberof PB.MessageToClient.GameStarted
+             * @static
+             * @param {PB.MessageToClient.IGameStarted=} [properties] Properties to set
+             * @returns {PB.MessageToClient.GameStarted} GameStarted instance
+             */
+            GameStarted.create = function create(properties) {
+                return new GameStarted(properties);
+            };
+
+            /**
+             * Encodes the specified GameStarted message. Does not implicitly {@link PB.MessageToClient.GameStarted.verify|verify} messages.
+             * @function encode
+             * @memberof PB.MessageToClient.GameStarted
+             * @static
+             * @param {PB.MessageToClient.IGameStarted} message GameStarted message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            GameStarted.encode = function encode(message, writer) {
+                if (!writer)
+                    writer = $Writer.create();
+                if (message.gameDisplayNumber != null && Object.hasOwnProperty.call(message, "gameDisplayNumber"))
+                    writer.uint32(/* id 1, wireType 0 =*/8).int32(message.gameDisplayNumber);
+                if (message.userIds != null && message.userIds.length) {
+                    writer.uint32(/* id 2, wireType 2 =*/18).fork();
+                    for (var i = 0; i < message.userIds.length; ++i)
+                        writer.int32(message.userIds[i]);
+                    writer.ldelim();
+                }
+                return writer;
+            };
+
+            /**
+             * Encodes the specified GameStarted message, length delimited. Does not implicitly {@link PB.MessageToClient.GameStarted.verify|verify} messages.
+             * @function encodeDelimited
+             * @memberof PB.MessageToClient.GameStarted
+             * @static
+             * @param {PB.MessageToClient.IGameStarted} message GameStarted message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            GameStarted.encodeDelimited = function encodeDelimited(message, writer) {
+                return this.encode(message, writer).ldelim();
+            };
+
+            /**
+             * Decodes a GameStarted message from the specified reader or buffer.
+             * @function decode
+             * @memberof PB.MessageToClient.GameStarted
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @param {number} [length] Message length if known beforehand
+             * @returns {PB.MessageToClient.GameStarted} GameStarted
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            GameStarted.decode = function decode(reader, length) {
+                if (!(reader instanceof $Reader))
+                    reader = $Reader.create(reader);
+                var end = length === undefined ? reader.len : reader.pos + length, message = new $root.PB.MessageToClient.GameStarted();
+                while (reader.pos < end) {
+                    var tag = reader.uint32();
+                    switch (tag >>> 3) {
+                    case 1:
+                        message.gameDisplayNumber = reader.int32();
+                        break;
+                    case 2:
+                        if (!(message.userIds && message.userIds.length))
+                            message.userIds = [];
+                        if ((tag & 7) === 2) {
+                            var end2 = reader.uint32() + reader.pos;
+                            while (reader.pos < end2)
+                                message.userIds.push(reader.int32());
+                        } else
+                            message.userIds.push(reader.int32());
+                        break;
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
+                    }
+                }
+                return message;
+            };
+
+            /**
+             * Decodes a GameStarted message from the specified reader or buffer, length delimited.
+             * @function decodeDelimited
+             * @memberof PB.MessageToClient.GameStarted
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @returns {PB.MessageToClient.GameStarted} GameStarted
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            GameStarted.decodeDelimited = function decodeDelimited(reader) {
+                if (!(reader instanceof $Reader))
+                    reader = new $Reader(reader);
+                return this.decode(reader, reader.uint32());
+            };
+
+            /**
+             * Verifies a GameStarted message.
+             * @function verify
+             * @memberof PB.MessageToClient.GameStarted
+             * @static
+             * @param {Object.<string,*>} message Plain object to verify
+             * @returns {string|null} `null` if valid, otherwise the reason why it is not
+             */
+            GameStarted.verify = function verify(message) {
+                if (typeof message !== "object" || message === null)
+                    return "object expected";
+                if (message.gameDisplayNumber != null && message.hasOwnProperty("gameDisplayNumber"))
+                    if (!$util.isInteger(message.gameDisplayNumber))
+                        return "gameDisplayNumber: integer expected";
+                if (message.userIds != null && message.hasOwnProperty("userIds")) {
+                    if (!Array.isArray(message.userIds))
+                        return "userIds: array expected";
+                    for (var i = 0; i < message.userIds.length; ++i)
+                        if (!$util.isInteger(message.userIds[i]))
+                            return "userIds: integer[] expected";
+                }
+                return null;
+            };
+
+            /**
+             * Creates a GameStarted message from a plain object. Also converts values to their respective internal types.
+             * @function fromObject
+             * @memberof PB.MessageToClient.GameStarted
+             * @static
+             * @param {Object.<string,*>} object Plain object
+             * @returns {PB.MessageToClient.GameStarted} GameStarted
+             */
+            GameStarted.fromObject = function fromObject(object) {
+                if (object instanceof $root.PB.MessageToClient.GameStarted)
+                    return object;
+                var message = new $root.PB.MessageToClient.GameStarted();
+                if (object.gameDisplayNumber != null)
+                    message.gameDisplayNumber = object.gameDisplayNumber | 0;
+                if (object.userIds) {
+                    if (!Array.isArray(object.userIds))
+                        throw TypeError(".PB.MessageToClient.GameStarted.userIds: array expected");
+                    message.userIds = [];
+                    for (var i = 0; i < object.userIds.length; ++i)
+                        message.userIds[i] = object.userIds[i] | 0;
+                }
+                return message;
+            };
+
+            /**
+             * Creates a plain object from a GameStarted message. Also converts values to other types if specified.
+             * @function toObject
+             * @memberof PB.MessageToClient.GameStarted
+             * @static
+             * @param {PB.MessageToClient.GameStarted} message GameStarted
+             * @param {$protobuf.IConversionOptions} [options] Conversion options
+             * @returns {Object.<string,*>} Plain object
+             */
+            GameStarted.toObject = function toObject(message, options) {
+                if (!options)
+                    options = {};
+                var object = {};
+                if (options.arrays || options.defaults)
+                    object.userIds = [];
+                if (options.defaults)
+                    object.gameDisplayNumber = 0;
+                if (message.gameDisplayNumber != null && message.hasOwnProperty("gameDisplayNumber"))
+                    object.gameDisplayNumber = message.gameDisplayNumber;
+                if (message.userIds && message.userIds.length) {
+                    object.userIds = [];
+                    for (var j = 0; j < message.userIds.length; ++j)
+                        object.userIds[j] = message.userIds[j];
+                }
+                return object;
+            };
+
+            /**
+             * Converts this GameStarted to JSON.
+             * @function toJSON
+             * @memberof PB.MessageToClient.GameStarted
+             * @instance
+             * @returns {Object.<string,*>} JSON object
+             */
+            GameStarted.prototype.toJSON = function toJSON() {
+                return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+            };
+
+            return GameStarted;
+        })();
+
+        MessageToClient.GameActionDone = (function() {
+
+            /**
+             * Properties of a GameActionDone.
+             * @memberof PB.MessageToClient
+             * @interface IGameActionDone
+             * @property {number|null} [gameDisplayNumber] GameActionDone gameDisplayNumber
+             * @property {PB.IGameStateData|null} [gameStateData] GameActionDone gameStateData
+             */
+
+            /**
+             * Constructs a new GameActionDone.
+             * @memberof PB.MessageToClient
+             * @classdesc Represents a GameActionDone.
+             * @implements IGameActionDone
+             * @constructor
+             * @param {PB.MessageToClient.IGameActionDone=} [properties] Properties to set
+             */
+            function GameActionDone(properties) {
+                if (properties)
+                    for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                        if (properties[keys[i]] != null)
+                            this[keys[i]] = properties[keys[i]];
+            }
+
+            /**
+             * GameActionDone gameDisplayNumber.
+             * @member {number} gameDisplayNumber
+             * @memberof PB.MessageToClient.GameActionDone
+             * @instance
+             */
+            GameActionDone.prototype.gameDisplayNumber = 0;
+
+            /**
+             * GameActionDone gameStateData.
+             * @member {PB.IGameStateData|null|undefined} gameStateData
+             * @memberof PB.MessageToClient.GameActionDone
+             * @instance
+             */
+            GameActionDone.prototype.gameStateData = null;
+
+            /**
+             * Creates a new GameActionDone instance using the specified properties.
+             * @function create
+             * @memberof PB.MessageToClient.GameActionDone
+             * @static
+             * @param {PB.MessageToClient.IGameActionDone=} [properties] Properties to set
+             * @returns {PB.MessageToClient.GameActionDone} GameActionDone instance
+             */
+            GameActionDone.create = function create(properties) {
+                return new GameActionDone(properties);
+            };
+
+            /**
+             * Encodes the specified GameActionDone message. Does not implicitly {@link PB.MessageToClient.GameActionDone.verify|verify} messages.
+             * @function encode
+             * @memberof PB.MessageToClient.GameActionDone
+             * @static
+             * @param {PB.MessageToClient.IGameActionDone} message GameActionDone message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            GameActionDone.encode = function encode(message, writer) {
+                if (!writer)
+                    writer = $Writer.create();
+                if (message.gameDisplayNumber != null && Object.hasOwnProperty.call(message, "gameDisplayNumber"))
+                    writer.uint32(/* id 1, wireType 0 =*/8).int32(message.gameDisplayNumber);
+                if (message.gameStateData != null && Object.hasOwnProperty.call(message, "gameStateData"))
+                    $root.PB.GameStateData.encode(message.gameStateData, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
+                return writer;
+            };
+
+            /**
+             * Encodes the specified GameActionDone message, length delimited. Does not implicitly {@link PB.MessageToClient.GameActionDone.verify|verify} messages.
+             * @function encodeDelimited
+             * @memberof PB.MessageToClient.GameActionDone
+             * @static
+             * @param {PB.MessageToClient.IGameActionDone} message GameActionDone message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            GameActionDone.encodeDelimited = function encodeDelimited(message, writer) {
+                return this.encode(message, writer).ldelim();
+            };
+
+            /**
+             * Decodes a GameActionDone message from the specified reader or buffer.
+             * @function decode
+             * @memberof PB.MessageToClient.GameActionDone
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @param {number} [length] Message length if known beforehand
+             * @returns {PB.MessageToClient.GameActionDone} GameActionDone
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            GameActionDone.decode = function decode(reader, length) {
+                if (!(reader instanceof $Reader))
+                    reader = $Reader.create(reader);
+                var end = length === undefined ? reader.len : reader.pos + length, message = new $root.PB.MessageToClient.GameActionDone();
+                while (reader.pos < end) {
+                    var tag = reader.uint32();
+                    switch (tag >>> 3) {
+                    case 1:
+                        message.gameDisplayNumber = reader.int32();
+                        break;
+                    case 2:
+                        message.gameStateData = $root.PB.GameStateData.decode(reader, reader.uint32());
+                        break;
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
+                    }
+                }
+                return message;
+            };
+
+            /**
+             * Decodes a GameActionDone message from the specified reader or buffer, length delimited.
+             * @function decodeDelimited
+             * @memberof PB.MessageToClient.GameActionDone
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @returns {PB.MessageToClient.GameActionDone} GameActionDone
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            GameActionDone.decodeDelimited = function decodeDelimited(reader) {
+                if (!(reader instanceof $Reader))
+                    reader = new $Reader(reader);
+                return this.decode(reader, reader.uint32());
+            };
+
+            /**
+             * Verifies a GameActionDone message.
+             * @function verify
+             * @memberof PB.MessageToClient.GameActionDone
+             * @static
+             * @param {Object.<string,*>} message Plain object to verify
+             * @returns {string|null} `null` if valid, otherwise the reason why it is not
+             */
+            GameActionDone.verify = function verify(message) {
+                if (typeof message !== "object" || message === null)
+                    return "object expected";
+                if (message.gameDisplayNumber != null && message.hasOwnProperty("gameDisplayNumber"))
+                    if (!$util.isInteger(message.gameDisplayNumber))
+                        return "gameDisplayNumber: integer expected";
+                if (message.gameStateData != null && message.hasOwnProperty("gameStateData")) {
+                    var error = $root.PB.GameStateData.verify(message.gameStateData);
+                    if (error)
+                        return "gameStateData." + error;
+                }
+                return null;
+            };
+
+            /**
+             * Creates a GameActionDone message from a plain object. Also converts values to their respective internal types.
+             * @function fromObject
+             * @memberof PB.MessageToClient.GameActionDone
+             * @static
+             * @param {Object.<string,*>} object Plain object
+             * @returns {PB.MessageToClient.GameActionDone} GameActionDone
+             */
+            GameActionDone.fromObject = function fromObject(object) {
+                if (object instanceof $root.PB.MessageToClient.GameActionDone)
+                    return object;
+                var message = new $root.PB.MessageToClient.GameActionDone();
+                if (object.gameDisplayNumber != null)
+                    message.gameDisplayNumber = object.gameDisplayNumber | 0;
+                if (object.gameStateData != null) {
+                    if (typeof object.gameStateData !== "object")
+                        throw TypeError(".PB.MessageToClient.GameActionDone.gameStateData: object expected");
+                    message.gameStateData = $root.PB.GameStateData.fromObject(object.gameStateData);
+                }
+                return message;
+            };
+
+            /**
+             * Creates a plain object from a GameActionDone message. Also converts values to other types if specified.
+             * @function toObject
+             * @memberof PB.MessageToClient.GameActionDone
+             * @static
+             * @param {PB.MessageToClient.GameActionDone} message GameActionDone
+             * @param {$protobuf.IConversionOptions} [options] Conversion options
+             * @returns {Object.<string,*>} Plain object
+             */
+            GameActionDone.toObject = function toObject(message, options) {
+                if (!options)
+                    options = {};
+                var object = {};
+                if (options.defaults) {
+                    object.gameDisplayNumber = 0;
+                    object.gameStateData = null;
+                }
+                if (message.gameDisplayNumber != null && message.hasOwnProperty("gameDisplayNumber"))
+                    object.gameDisplayNumber = message.gameDisplayNumber;
+                if (message.gameStateData != null && message.hasOwnProperty("gameStateData"))
+                    object.gameStateData = $root.PB.GameStateData.toObject(message.gameStateData, options);
+                return object;
+            };
+
+            /**
+             * Converts this GameActionDone to JSON.
+             * @function toJSON
+             * @memberof PB.MessageToClient.GameActionDone
+             * @instance
+             * @returns {Object.<string,*>} JSON object
+             */
+            GameActionDone.prototype.toJSON = function toJSON() {
+                return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+            };
+
+            return GameActionDone;
+        })();
+
+        return MessageToClient;
+    })();
+
+    PB.MessagesToClient = (function() {
+
+        /**
+         * Properties of a MessagesToClient.
+         * @memberof PB
+         * @interface IMessagesToClient
+         * @property {Array.<PB.IMessageToClient>|null} [messagesToClient] MessagesToClient messagesToClient
+         */
+
+        /**
+         * Constructs a new MessagesToClient.
+         * @memberof PB
+         * @classdesc Represents a MessagesToClient.
+         * @implements IMessagesToClient
+         * @constructor
+         * @param {PB.IMessagesToClient=} [properties] Properties to set
+         */
+        function MessagesToClient(properties) {
+            this.messagesToClient = [];
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * MessagesToClient messagesToClient.
+         * @member {Array.<PB.IMessageToClient>} messagesToClient
+         * @memberof PB.MessagesToClient
+         * @instance
+         */
+        MessagesToClient.prototype.messagesToClient = $util.emptyArray;
+
+        /**
+         * Creates a new MessagesToClient instance using the specified properties.
+         * @function create
+         * @memberof PB.MessagesToClient
+         * @static
+         * @param {PB.IMessagesToClient=} [properties] Properties to set
+         * @returns {PB.MessagesToClient} MessagesToClient instance
+         */
+        MessagesToClient.create = function create(properties) {
+            return new MessagesToClient(properties);
+        };
+
+        /**
+         * Encodes the specified MessagesToClient message. Does not implicitly {@link PB.MessagesToClient.verify|verify} messages.
+         * @function encode
+         * @memberof PB.MessagesToClient
+         * @static
+         * @param {PB.IMessagesToClient} message MessagesToClient message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        MessagesToClient.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.messagesToClient != null && message.messagesToClient.length)
+                for (var i = 0; i < message.messagesToClient.length; ++i)
+                    $root.PB.MessageToClient.encode(message.messagesToClient[i], writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+            return writer;
+        };
+
+        /**
+         * Encodes the specified MessagesToClient message, length delimited. Does not implicitly {@link PB.MessagesToClient.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof PB.MessagesToClient
+         * @static
+         * @param {PB.IMessagesToClient} message MessagesToClient message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        MessagesToClient.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a MessagesToClient message from the specified reader or buffer.
+         * @function decode
+         * @memberof PB.MessagesToClient
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {PB.MessagesToClient} MessagesToClient
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        MessagesToClient.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.PB.MessagesToClient();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    if (!(message.messagesToClient && message.messagesToClient.length))
+                        message.messagesToClient = [];
+                    message.messagesToClient.push($root.PB.MessageToClient.decode(reader, reader.uint32()));
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a MessagesToClient message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof PB.MessagesToClient
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {PB.MessagesToClient} MessagesToClient
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        MessagesToClient.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a MessagesToClient message.
+         * @function verify
+         * @memberof PB.MessagesToClient
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        MessagesToClient.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.messagesToClient != null && message.hasOwnProperty("messagesToClient")) {
+                if (!Array.isArray(message.messagesToClient))
+                    return "messagesToClient: array expected";
+                for (var i = 0; i < message.messagesToClient.length; ++i) {
+                    var error = $root.PB.MessageToClient.verify(message.messagesToClient[i]);
+                    if (error)
+                        return "messagesToClient." + error;
+                }
+            }
+            return null;
+        };
+
+        /**
+         * Creates a MessagesToClient message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof PB.MessagesToClient
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {PB.MessagesToClient} MessagesToClient
+         */
+        MessagesToClient.fromObject = function fromObject(object) {
+            if (object instanceof $root.PB.MessagesToClient)
+                return object;
+            var message = new $root.PB.MessagesToClient();
+            if (object.messagesToClient) {
+                if (!Array.isArray(object.messagesToClient))
+                    throw TypeError(".PB.MessagesToClient.messagesToClient: array expected");
+                message.messagesToClient = [];
+                for (var i = 0; i < object.messagesToClient.length; ++i) {
+                    if (typeof object.messagesToClient[i] !== "object")
+                        throw TypeError(".PB.MessagesToClient.messagesToClient: object expected");
+                    message.messagesToClient[i] = $root.PB.MessageToClient.fromObject(object.messagesToClient[i]);
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a MessagesToClient message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof PB.MessagesToClient
+         * @static
+         * @param {PB.MessagesToClient} message MessagesToClient
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        MessagesToClient.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.arrays || options.defaults)
+                object.messagesToClient = [];
+            if (message.messagesToClient && message.messagesToClient.length) {
+                object.messagesToClient = [];
+                for (var j = 0; j < message.messagesToClient.length; ++j)
+                    object.messagesToClient[j] = $root.PB.MessageToClient.toObject(message.messagesToClient[j], options);
+            }
+            return object;
+        };
+
+        /**
+         * Converts this MessagesToClient to JSON.
+         * @function toJSON
+         * @memberof PB.MessagesToClient
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        MessagesToClient.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return MessagesToClient;
+    })();
+
     return PB;
 })();
 

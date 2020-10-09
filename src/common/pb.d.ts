@@ -3819,4 +3819,1519 @@ export namespace PB {
             public toJSON(): { [k: string]: any };
         }
     }
+
+    /** Properties of a MessageToClient. */
+    interface IMessageToClient {
+
+        /** MessageToClient fatalError */
+        fatalError?: (PB.MessageToClient.IFatalError|null);
+
+        /** MessageToClient greetings */
+        greetings?: (PB.MessageToClient.IGreetings|null);
+
+        /** MessageToClient clientConnected */
+        clientConnected?: (PB.MessageToClient.IClientConnected|null);
+
+        /** MessageToClient clientDisconnected */
+        clientDisconnected?: (PB.MessageToClient.IClientDisconnected|null);
+
+        /** MessageToClient gameCreated */
+        gameCreated?: (PB.MessageToClient.IGameCreated|null);
+
+        /** MessageToClient clientEnteredGame */
+        clientEnteredGame?: (PB.MessageToClient.IClientEnteredGame|null);
+
+        /** MessageToClient clientExitedGame */
+        clientExitedGame?: (PB.MessageToClient.IClientExitedGame|null);
+
+        /** MessageToClient gameSetupChanged */
+        gameSetupChanged?: (PB.MessageToClient.IGameSetupChanged|null);
+
+        /** MessageToClient gameStarted */
+        gameStarted?: (PB.MessageToClient.IGameStarted|null);
+
+        /** MessageToClient gameActionDone */
+        gameActionDone?: (PB.MessageToClient.IGameActionDone|null);
+    }
+
+    /** Represents a MessageToClient. */
+    class MessageToClient implements IMessageToClient {
+
+        /**
+         * Constructs a new MessageToClient.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: PB.IMessageToClient);
+
+        /** MessageToClient fatalError. */
+        public fatalError?: (PB.MessageToClient.IFatalError|null);
+
+        /** MessageToClient greetings. */
+        public greetings?: (PB.MessageToClient.IGreetings|null);
+
+        /** MessageToClient clientConnected. */
+        public clientConnected?: (PB.MessageToClient.IClientConnected|null);
+
+        /** MessageToClient clientDisconnected. */
+        public clientDisconnected?: (PB.MessageToClient.IClientDisconnected|null);
+
+        /** MessageToClient gameCreated. */
+        public gameCreated?: (PB.MessageToClient.IGameCreated|null);
+
+        /** MessageToClient clientEnteredGame. */
+        public clientEnteredGame?: (PB.MessageToClient.IClientEnteredGame|null);
+
+        /** MessageToClient clientExitedGame. */
+        public clientExitedGame?: (PB.MessageToClient.IClientExitedGame|null);
+
+        /** MessageToClient gameSetupChanged. */
+        public gameSetupChanged?: (PB.MessageToClient.IGameSetupChanged|null);
+
+        /** MessageToClient gameStarted. */
+        public gameStarted?: (PB.MessageToClient.IGameStarted|null);
+
+        /** MessageToClient gameActionDone. */
+        public gameActionDone?: (PB.MessageToClient.IGameActionDone|null);
+
+        /**
+         * Creates a new MessageToClient instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns MessageToClient instance
+         */
+        public static create(properties?: PB.IMessageToClient): PB.MessageToClient;
+
+        /**
+         * Encodes the specified MessageToClient message. Does not implicitly {@link PB.MessageToClient.verify|verify} messages.
+         * @param message MessageToClient message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: PB.IMessageToClient, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified MessageToClient message, length delimited. Does not implicitly {@link PB.MessageToClient.verify|verify} messages.
+         * @param message MessageToClient message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: PB.IMessageToClient, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a MessageToClient message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns MessageToClient
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): PB.MessageToClient;
+
+        /**
+         * Decodes a MessageToClient message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns MessageToClient
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): PB.MessageToClient;
+
+        /**
+         * Verifies a MessageToClient message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a MessageToClient message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns MessageToClient
+         */
+        public static fromObject(object: { [k: string]: any }): PB.MessageToClient;
+
+        /**
+         * Creates a plain object from a MessageToClient message. Also converts values to other types if specified.
+         * @param message MessageToClient
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: PB.MessageToClient, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this MessageToClient to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    namespace MessageToClient {
+
+        /** Properties of a FatalError. */
+        interface IFatalError {
+
+            /** FatalError errorCode */
+            errorCode?: (ErrorCode|null);
+        }
+
+        /** Represents a FatalError. */
+        class FatalError implements IFatalError {
+
+            /**
+             * Constructs a new FatalError.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: PB.MessageToClient.IFatalError);
+
+            /** FatalError errorCode. */
+            public errorCode: ErrorCode;
+
+            /**
+             * Creates a new FatalError instance using the specified properties.
+             * @param [properties] Properties to set
+             * @returns FatalError instance
+             */
+            public static create(properties?: PB.MessageToClient.IFatalError): PB.MessageToClient.FatalError;
+
+            /**
+             * Encodes the specified FatalError message. Does not implicitly {@link PB.MessageToClient.FatalError.verify|verify} messages.
+             * @param message FatalError message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encode(message: PB.MessageToClient.IFatalError, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Encodes the specified FatalError message, length delimited. Does not implicitly {@link PB.MessageToClient.FatalError.verify|verify} messages.
+             * @param message FatalError message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encodeDelimited(message: PB.MessageToClient.IFatalError, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Decodes a FatalError message from the specified reader or buffer.
+             * @param reader Reader or buffer to decode from
+             * @param [length] Message length if known beforehand
+             * @returns FatalError
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): PB.MessageToClient.FatalError;
+
+            /**
+             * Decodes a FatalError message from the specified reader or buffer, length delimited.
+             * @param reader Reader or buffer to decode from
+             * @returns FatalError
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): PB.MessageToClient.FatalError;
+
+            /**
+             * Verifies a FatalError message.
+             * @param message Plain object to verify
+             * @returns `null` if valid, otherwise the reason why it is not
+             */
+            public static verify(message: { [k: string]: any }): (string|null);
+
+            /**
+             * Creates a FatalError message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns FatalError
+             */
+            public static fromObject(object: { [k: string]: any }): PB.MessageToClient.FatalError;
+
+            /**
+             * Creates a plain object from a FatalError message. Also converts values to other types if specified.
+             * @param message FatalError
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: PB.MessageToClient.FatalError, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this FatalError to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+        }
+
+        /** Properties of a Greetings. */
+        interface IGreetings {
+
+            /** Greetings clientId */
+            clientId?: (number|null);
+
+            /** Greetings users */
+            users?: (PB.MessageToClient.Greetings.IUser[]|null);
+
+            /** Greetings games */
+            games?: (PB.MessageToClient.Greetings.IGame[]|null);
+        }
+
+        /** Represents a Greetings. */
+        class Greetings implements IGreetings {
+
+            /**
+             * Constructs a new Greetings.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: PB.MessageToClient.IGreetings);
+
+            /** Greetings clientId. */
+            public clientId: number;
+
+            /** Greetings users. */
+            public users: PB.MessageToClient.Greetings.IUser[];
+
+            /** Greetings games. */
+            public games: PB.MessageToClient.Greetings.IGame[];
+
+            /**
+             * Creates a new Greetings instance using the specified properties.
+             * @param [properties] Properties to set
+             * @returns Greetings instance
+             */
+            public static create(properties?: PB.MessageToClient.IGreetings): PB.MessageToClient.Greetings;
+
+            /**
+             * Encodes the specified Greetings message. Does not implicitly {@link PB.MessageToClient.Greetings.verify|verify} messages.
+             * @param message Greetings message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encode(message: PB.MessageToClient.IGreetings, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Encodes the specified Greetings message, length delimited. Does not implicitly {@link PB.MessageToClient.Greetings.verify|verify} messages.
+             * @param message Greetings message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encodeDelimited(message: PB.MessageToClient.IGreetings, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Decodes a Greetings message from the specified reader or buffer.
+             * @param reader Reader or buffer to decode from
+             * @param [length] Message length if known beforehand
+             * @returns Greetings
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): PB.MessageToClient.Greetings;
+
+            /**
+             * Decodes a Greetings message from the specified reader or buffer, length delimited.
+             * @param reader Reader or buffer to decode from
+             * @returns Greetings
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): PB.MessageToClient.Greetings;
+
+            /**
+             * Verifies a Greetings message.
+             * @param message Plain object to verify
+             * @returns `null` if valid, otherwise the reason why it is not
+             */
+            public static verify(message: { [k: string]: any }): (string|null);
+
+            /**
+             * Creates a Greetings message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns Greetings
+             */
+            public static fromObject(object: { [k: string]: any }): PB.MessageToClient.Greetings;
+
+            /**
+             * Creates a plain object from a Greetings message. Also converts values to other types if specified.
+             * @param message Greetings
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: PB.MessageToClient.Greetings, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this Greetings to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+        }
+
+        namespace Greetings {
+
+            /** Properties of a User. */
+            interface IUser {
+
+                /** User userId */
+                userId?: (number|null);
+
+                /** User username */
+                username?: (string|null);
+
+                /** User clients */
+                clients?: (PB.MessageToClient.Greetings.User.IClient[]|null);
+            }
+
+            /** Represents a User. */
+            class User implements IUser {
+
+                /**
+                 * Constructs a new User.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: PB.MessageToClient.Greetings.IUser);
+
+                /** User userId. */
+                public userId: number;
+
+                /** User username. */
+                public username: string;
+
+                /** User clients. */
+                public clients: PB.MessageToClient.Greetings.User.IClient[];
+
+                /**
+                 * Creates a new User instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns User instance
+                 */
+                public static create(properties?: PB.MessageToClient.Greetings.IUser): PB.MessageToClient.Greetings.User;
+
+                /**
+                 * Encodes the specified User message. Does not implicitly {@link PB.MessageToClient.Greetings.User.verify|verify} messages.
+                 * @param message User message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: PB.MessageToClient.Greetings.IUser, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Encodes the specified User message, length delimited. Does not implicitly {@link PB.MessageToClient.Greetings.User.verify|verify} messages.
+                 * @param message User message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encodeDelimited(message: PB.MessageToClient.Greetings.IUser, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a User message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns User
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): PB.MessageToClient.Greetings.User;
+
+                /**
+                 * Decodes a User message from the specified reader or buffer, length delimited.
+                 * @param reader Reader or buffer to decode from
+                 * @returns User
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): PB.MessageToClient.Greetings.User;
+
+                /**
+                 * Verifies a User message.
+                 * @param message Plain object to verify
+                 * @returns `null` if valid, otherwise the reason why it is not
+                 */
+                public static verify(message: { [k: string]: any }): (string|null);
+
+                /**
+                 * Creates a User message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns User
+                 */
+                public static fromObject(object: { [k: string]: any }): PB.MessageToClient.Greetings.User;
+
+                /**
+                 * Creates a plain object from a User message. Also converts values to other types if specified.
+                 * @param message User
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: PB.MessageToClient.Greetings.User, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this User to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+            }
+
+            namespace User {
+
+                /** Properties of a Client. */
+                interface IClient {
+
+                    /** Client clientId */
+                    clientId?: (number|null);
+
+                    /** Client gameDisplayNumber */
+                    gameDisplayNumber?: (number|null);
+                }
+
+                /** Represents a Client. */
+                class Client implements IClient {
+
+                    /**
+                     * Constructs a new Client.
+                     * @param [properties] Properties to set
+                     */
+                    constructor(properties?: PB.MessageToClient.Greetings.User.IClient);
+
+                    /** Client clientId. */
+                    public clientId: number;
+
+                    /** Client gameDisplayNumber. */
+                    public gameDisplayNumber: number;
+
+                    /**
+                     * Creates a new Client instance using the specified properties.
+                     * @param [properties] Properties to set
+                     * @returns Client instance
+                     */
+                    public static create(properties?: PB.MessageToClient.Greetings.User.IClient): PB.MessageToClient.Greetings.User.Client;
+
+                    /**
+                     * Encodes the specified Client message. Does not implicitly {@link PB.MessageToClient.Greetings.User.Client.verify|verify} messages.
+                     * @param message Client message or plain object to encode
+                     * @param [writer] Writer to encode to
+                     * @returns Writer
+                     */
+                    public static encode(message: PB.MessageToClient.Greetings.User.IClient, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                    /**
+                     * Encodes the specified Client message, length delimited. Does not implicitly {@link PB.MessageToClient.Greetings.User.Client.verify|verify} messages.
+                     * @param message Client message or plain object to encode
+                     * @param [writer] Writer to encode to
+                     * @returns Writer
+                     */
+                    public static encodeDelimited(message: PB.MessageToClient.Greetings.User.IClient, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                    /**
+                     * Decodes a Client message from the specified reader or buffer.
+                     * @param reader Reader or buffer to decode from
+                     * @param [length] Message length if known beforehand
+                     * @returns Client
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): PB.MessageToClient.Greetings.User.Client;
+
+                    /**
+                     * Decodes a Client message from the specified reader or buffer, length delimited.
+                     * @param reader Reader or buffer to decode from
+                     * @returns Client
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): PB.MessageToClient.Greetings.User.Client;
+
+                    /**
+                     * Verifies a Client message.
+                     * @param message Plain object to verify
+                     * @returns `null` if valid, otherwise the reason why it is not
+                     */
+                    public static verify(message: { [k: string]: any }): (string|null);
+
+                    /**
+                     * Creates a Client message from a plain object. Also converts values to their respective internal types.
+                     * @param object Plain object
+                     * @returns Client
+                     */
+                    public static fromObject(object: { [k: string]: any }): PB.MessageToClient.Greetings.User.Client;
+
+                    /**
+                     * Creates a plain object from a Client message. Also converts values to other types if specified.
+                     * @param message Client
+                     * @param [options] Conversion options
+                     * @returns Plain object
+                     */
+                    public static toObject(message: PB.MessageToClient.Greetings.User.Client, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                    /**
+                     * Converts this Client to JSON.
+                     * @returns JSON object
+                     */
+                    public toJSON(): { [k: string]: any };
+                }
+            }
+
+            /** Properties of a Game. */
+            interface IGame {
+
+                /** Game gameId */
+                gameId?: (number|null);
+
+                /** Game gameDisplayNumber */
+                gameDisplayNumber?: (number|null);
+
+                /** Game gameSetupData */
+                gameSetupData?: (PB.IGameSetupData|null);
+
+                /** Game gameData */
+                gameData?: (PB.IGameData|null);
+            }
+
+            /** Represents a Game. */
+            class Game implements IGame {
+
+                /**
+                 * Constructs a new Game.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: PB.MessageToClient.Greetings.IGame);
+
+                /** Game gameId. */
+                public gameId: number;
+
+                /** Game gameDisplayNumber. */
+                public gameDisplayNumber: number;
+
+                /** Game gameSetupData. */
+                public gameSetupData?: (PB.IGameSetupData|null);
+
+                /** Game gameData. */
+                public gameData?: (PB.IGameData|null);
+
+                /**
+                 * Creates a new Game instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns Game instance
+                 */
+                public static create(properties?: PB.MessageToClient.Greetings.IGame): PB.MessageToClient.Greetings.Game;
+
+                /**
+                 * Encodes the specified Game message. Does not implicitly {@link PB.MessageToClient.Greetings.Game.verify|verify} messages.
+                 * @param message Game message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: PB.MessageToClient.Greetings.IGame, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Encodes the specified Game message, length delimited. Does not implicitly {@link PB.MessageToClient.Greetings.Game.verify|verify} messages.
+                 * @param message Game message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encodeDelimited(message: PB.MessageToClient.Greetings.IGame, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a Game message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns Game
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): PB.MessageToClient.Greetings.Game;
+
+                /**
+                 * Decodes a Game message from the specified reader or buffer, length delimited.
+                 * @param reader Reader or buffer to decode from
+                 * @returns Game
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): PB.MessageToClient.Greetings.Game;
+
+                /**
+                 * Verifies a Game message.
+                 * @param message Plain object to verify
+                 * @returns `null` if valid, otherwise the reason why it is not
+                 */
+                public static verify(message: { [k: string]: any }): (string|null);
+
+                /**
+                 * Creates a Game message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns Game
+                 */
+                public static fromObject(object: { [k: string]: any }): PB.MessageToClient.Greetings.Game;
+
+                /**
+                 * Creates a plain object from a Game message. Also converts values to other types if specified.
+                 * @param message Game
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: PB.MessageToClient.Greetings.Game, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this Game to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+            }
+        }
+
+        /** Properties of a ClientConnected. */
+        interface IClientConnected {
+
+            /** ClientConnected clientId */
+            clientId?: (number|null);
+
+            /** ClientConnected userId */
+            userId?: (number|null);
+
+            /** ClientConnected username */
+            username?: (string|null);
+        }
+
+        /** Represents a ClientConnected. */
+        class ClientConnected implements IClientConnected {
+
+            /**
+             * Constructs a new ClientConnected.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: PB.MessageToClient.IClientConnected);
+
+            /** ClientConnected clientId. */
+            public clientId: number;
+
+            /** ClientConnected userId. */
+            public userId: number;
+
+            /** ClientConnected username. */
+            public username: string;
+
+            /**
+             * Creates a new ClientConnected instance using the specified properties.
+             * @param [properties] Properties to set
+             * @returns ClientConnected instance
+             */
+            public static create(properties?: PB.MessageToClient.IClientConnected): PB.MessageToClient.ClientConnected;
+
+            /**
+             * Encodes the specified ClientConnected message. Does not implicitly {@link PB.MessageToClient.ClientConnected.verify|verify} messages.
+             * @param message ClientConnected message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encode(message: PB.MessageToClient.IClientConnected, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Encodes the specified ClientConnected message, length delimited. Does not implicitly {@link PB.MessageToClient.ClientConnected.verify|verify} messages.
+             * @param message ClientConnected message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encodeDelimited(message: PB.MessageToClient.IClientConnected, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Decodes a ClientConnected message from the specified reader or buffer.
+             * @param reader Reader or buffer to decode from
+             * @param [length] Message length if known beforehand
+             * @returns ClientConnected
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): PB.MessageToClient.ClientConnected;
+
+            /**
+             * Decodes a ClientConnected message from the specified reader or buffer, length delimited.
+             * @param reader Reader or buffer to decode from
+             * @returns ClientConnected
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): PB.MessageToClient.ClientConnected;
+
+            /**
+             * Verifies a ClientConnected message.
+             * @param message Plain object to verify
+             * @returns `null` if valid, otherwise the reason why it is not
+             */
+            public static verify(message: { [k: string]: any }): (string|null);
+
+            /**
+             * Creates a ClientConnected message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns ClientConnected
+             */
+            public static fromObject(object: { [k: string]: any }): PB.MessageToClient.ClientConnected;
+
+            /**
+             * Creates a plain object from a ClientConnected message. Also converts values to other types if specified.
+             * @param message ClientConnected
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: PB.MessageToClient.ClientConnected, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this ClientConnected to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+        }
+
+        /** Properties of a ClientDisconnected. */
+        interface IClientDisconnected {
+
+            /** ClientDisconnected clientId */
+            clientId?: (number|null);
+        }
+
+        /** Represents a ClientDisconnected. */
+        class ClientDisconnected implements IClientDisconnected {
+
+            /**
+             * Constructs a new ClientDisconnected.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: PB.MessageToClient.IClientDisconnected);
+
+            /** ClientDisconnected clientId. */
+            public clientId: number;
+
+            /**
+             * Creates a new ClientDisconnected instance using the specified properties.
+             * @param [properties] Properties to set
+             * @returns ClientDisconnected instance
+             */
+            public static create(properties?: PB.MessageToClient.IClientDisconnected): PB.MessageToClient.ClientDisconnected;
+
+            /**
+             * Encodes the specified ClientDisconnected message. Does not implicitly {@link PB.MessageToClient.ClientDisconnected.verify|verify} messages.
+             * @param message ClientDisconnected message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encode(message: PB.MessageToClient.IClientDisconnected, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Encodes the specified ClientDisconnected message, length delimited. Does not implicitly {@link PB.MessageToClient.ClientDisconnected.verify|verify} messages.
+             * @param message ClientDisconnected message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encodeDelimited(message: PB.MessageToClient.IClientDisconnected, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Decodes a ClientDisconnected message from the specified reader or buffer.
+             * @param reader Reader or buffer to decode from
+             * @param [length] Message length if known beforehand
+             * @returns ClientDisconnected
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): PB.MessageToClient.ClientDisconnected;
+
+            /**
+             * Decodes a ClientDisconnected message from the specified reader or buffer, length delimited.
+             * @param reader Reader or buffer to decode from
+             * @returns ClientDisconnected
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): PB.MessageToClient.ClientDisconnected;
+
+            /**
+             * Verifies a ClientDisconnected message.
+             * @param message Plain object to verify
+             * @returns `null` if valid, otherwise the reason why it is not
+             */
+            public static verify(message: { [k: string]: any }): (string|null);
+
+            /**
+             * Creates a ClientDisconnected message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns ClientDisconnected
+             */
+            public static fromObject(object: { [k: string]: any }): PB.MessageToClient.ClientDisconnected;
+
+            /**
+             * Creates a plain object from a ClientDisconnected message. Also converts values to other types if specified.
+             * @param message ClientDisconnected
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: PB.MessageToClient.ClientDisconnected, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this ClientDisconnected to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+        }
+
+        /** Properties of a GameCreated. */
+        interface IGameCreated {
+
+            /** GameCreated gameId */
+            gameId?: (number|null);
+
+            /** GameCreated gameDisplayNumber */
+            gameDisplayNumber?: (number|null);
+
+            /** GameCreated gameMode */
+            gameMode?: (GameMode|null);
+
+            /** GameCreated hostClientId */
+            hostClientId?: (number|null);
+        }
+
+        /** Represents a GameCreated. */
+        class GameCreated implements IGameCreated {
+
+            /**
+             * Constructs a new GameCreated.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: PB.MessageToClient.IGameCreated);
+
+            /** GameCreated gameId. */
+            public gameId: number;
+
+            /** GameCreated gameDisplayNumber. */
+            public gameDisplayNumber: number;
+
+            /** GameCreated gameMode. */
+            public gameMode: GameMode;
+
+            /** GameCreated hostClientId. */
+            public hostClientId: number;
+
+            /**
+             * Creates a new GameCreated instance using the specified properties.
+             * @param [properties] Properties to set
+             * @returns GameCreated instance
+             */
+            public static create(properties?: PB.MessageToClient.IGameCreated): PB.MessageToClient.GameCreated;
+
+            /**
+             * Encodes the specified GameCreated message. Does not implicitly {@link PB.MessageToClient.GameCreated.verify|verify} messages.
+             * @param message GameCreated message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encode(message: PB.MessageToClient.IGameCreated, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Encodes the specified GameCreated message, length delimited. Does not implicitly {@link PB.MessageToClient.GameCreated.verify|verify} messages.
+             * @param message GameCreated message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encodeDelimited(message: PB.MessageToClient.IGameCreated, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Decodes a GameCreated message from the specified reader or buffer.
+             * @param reader Reader or buffer to decode from
+             * @param [length] Message length if known beforehand
+             * @returns GameCreated
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): PB.MessageToClient.GameCreated;
+
+            /**
+             * Decodes a GameCreated message from the specified reader or buffer, length delimited.
+             * @param reader Reader or buffer to decode from
+             * @returns GameCreated
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): PB.MessageToClient.GameCreated;
+
+            /**
+             * Verifies a GameCreated message.
+             * @param message Plain object to verify
+             * @returns `null` if valid, otherwise the reason why it is not
+             */
+            public static verify(message: { [k: string]: any }): (string|null);
+
+            /**
+             * Creates a GameCreated message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns GameCreated
+             */
+            public static fromObject(object: { [k: string]: any }): PB.MessageToClient.GameCreated;
+
+            /**
+             * Creates a plain object from a GameCreated message. Also converts values to other types if specified.
+             * @param message GameCreated
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: PB.MessageToClient.GameCreated, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this GameCreated to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+        }
+
+        /** Properties of a ClientEnteredGame. */
+        interface IClientEnteredGame {
+
+            /** ClientEnteredGame clientId */
+            clientId?: (number|null);
+
+            /** ClientEnteredGame gameDisplayNumber */
+            gameDisplayNumber?: (number|null);
+        }
+
+        /** Represents a ClientEnteredGame. */
+        class ClientEnteredGame implements IClientEnteredGame {
+
+            /**
+             * Constructs a new ClientEnteredGame.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: PB.MessageToClient.IClientEnteredGame);
+
+            /** ClientEnteredGame clientId. */
+            public clientId: number;
+
+            /** ClientEnteredGame gameDisplayNumber. */
+            public gameDisplayNumber: number;
+
+            /**
+             * Creates a new ClientEnteredGame instance using the specified properties.
+             * @param [properties] Properties to set
+             * @returns ClientEnteredGame instance
+             */
+            public static create(properties?: PB.MessageToClient.IClientEnteredGame): PB.MessageToClient.ClientEnteredGame;
+
+            /**
+             * Encodes the specified ClientEnteredGame message. Does not implicitly {@link PB.MessageToClient.ClientEnteredGame.verify|verify} messages.
+             * @param message ClientEnteredGame message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encode(message: PB.MessageToClient.IClientEnteredGame, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Encodes the specified ClientEnteredGame message, length delimited. Does not implicitly {@link PB.MessageToClient.ClientEnteredGame.verify|verify} messages.
+             * @param message ClientEnteredGame message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encodeDelimited(message: PB.MessageToClient.IClientEnteredGame, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Decodes a ClientEnteredGame message from the specified reader or buffer.
+             * @param reader Reader or buffer to decode from
+             * @param [length] Message length if known beforehand
+             * @returns ClientEnteredGame
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): PB.MessageToClient.ClientEnteredGame;
+
+            /**
+             * Decodes a ClientEnteredGame message from the specified reader or buffer, length delimited.
+             * @param reader Reader or buffer to decode from
+             * @returns ClientEnteredGame
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): PB.MessageToClient.ClientEnteredGame;
+
+            /**
+             * Verifies a ClientEnteredGame message.
+             * @param message Plain object to verify
+             * @returns `null` if valid, otherwise the reason why it is not
+             */
+            public static verify(message: { [k: string]: any }): (string|null);
+
+            /**
+             * Creates a ClientEnteredGame message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns ClientEnteredGame
+             */
+            public static fromObject(object: { [k: string]: any }): PB.MessageToClient.ClientEnteredGame;
+
+            /**
+             * Creates a plain object from a ClientEnteredGame message. Also converts values to other types if specified.
+             * @param message ClientEnteredGame
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: PB.MessageToClient.ClientEnteredGame, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this ClientEnteredGame to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+        }
+
+        /** Properties of a ClientExitedGame. */
+        interface IClientExitedGame {
+
+            /** ClientExitedGame clientId */
+            clientId?: (number|null);
+        }
+
+        /** Represents a ClientExitedGame. */
+        class ClientExitedGame implements IClientExitedGame {
+
+            /**
+             * Constructs a new ClientExitedGame.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: PB.MessageToClient.IClientExitedGame);
+
+            /** ClientExitedGame clientId. */
+            public clientId: number;
+
+            /**
+             * Creates a new ClientExitedGame instance using the specified properties.
+             * @param [properties] Properties to set
+             * @returns ClientExitedGame instance
+             */
+            public static create(properties?: PB.MessageToClient.IClientExitedGame): PB.MessageToClient.ClientExitedGame;
+
+            /**
+             * Encodes the specified ClientExitedGame message. Does not implicitly {@link PB.MessageToClient.ClientExitedGame.verify|verify} messages.
+             * @param message ClientExitedGame message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encode(message: PB.MessageToClient.IClientExitedGame, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Encodes the specified ClientExitedGame message, length delimited. Does not implicitly {@link PB.MessageToClient.ClientExitedGame.verify|verify} messages.
+             * @param message ClientExitedGame message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encodeDelimited(message: PB.MessageToClient.IClientExitedGame, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Decodes a ClientExitedGame message from the specified reader or buffer.
+             * @param reader Reader or buffer to decode from
+             * @param [length] Message length if known beforehand
+             * @returns ClientExitedGame
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): PB.MessageToClient.ClientExitedGame;
+
+            /**
+             * Decodes a ClientExitedGame message from the specified reader or buffer, length delimited.
+             * @param reader Reader or buffer to decode from
+             * @returns ClientExitedGame
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): PB.MessageToClient.ClientExitedGame;
+
+            /**
+             * Verifies a ClientExitedGame message.
+             * @param message Plain object to verify
+             * @returns `null` if valid, otherwise the reason why it is not
+             */
+            public static verify(message: { [k: string]: any }): (string|null);
+
+            /**
+             * Creates a ClientExitedGame message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns ClientExitedGame
+             */
+            public static fromObject(object: { [k: string]: any }): PB.MessageToClient.ClientExitedGame;
+
+            /**
+             * Creates a plain object from a ClientExitedGame message. Also converts values to other types if specified.
+             * @param message ClientExitedGame
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: PB.MessageToClient.ClientExitedGame, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this ClientExitedGame to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+        }
+
+        /** Properties of a GameSetupChanged. */
+        interface IGameSetupChanged {
+
+            /** GameSetupChanged gameDisplayNumber */
+            gameDisplayNumber?: (number|null);
+
+            /** GameSetupChanged gameSetupChange */
+            gameSetupChange?: (PB.IGameSetupChange|null);
+        }
+
+        /** Represents a GameSetupChanged. */
+        class GameSetupChanged implements IGameSetupChanged {
+
+            /**
+             * Constructs a new GameSetupChanged.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: PB.MessageToClient.IGameSetupChanged);
+
+            /** GameSetupChanged gameDisplayNumber. */
+            public gameDisplayNumber: number;
+
+            /** GameSetupChanged gameSetupChange. */
+            public gameSetupChange?: (PB.IGameSetupChange|null);
+
+            /**
+             * Creates a new GameSetupChanged instance using the specified properties.
+             * @param [properties] Properties to set
+             * @returns GameSetupChanged instance
+             */
+            public static create(properties?: PB.MessageToClient.IGameSetupChanged): PB.MessageToClient.GameSetupChanged;
+
+            /**
+             * Encodes the specified GameSetupChanged message. Does not implicitly {@link PB.MessageToClient.GameSetupChanged.verify|verify} messages.
+             * @param message GameSetupChanged message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encode(message: PB.MessageToClient.IGameSetupChanged, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Encodes the specified GameSetupChanged message, length delimited. Does not implicitly {@link PB.MessageToClient.GameSetupChanged.verify|verify} messages.
+             * @param message GameSetupChanged message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encodeDelimited(message: PB.MessageToClient.IGameSetupChanged, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Decodes a GameSetupChanged message from the specified reader or buffer.
+             * @param reader Reader or buffer to decode from
+             * @param [length] Message length if known beforehand
+             * @returns GameSetupChanged
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): PB.MessageToClient.GameSetupChanged;
+
+            /**
+             * Decodes a GameSetupChanged message from the specified reader or buffer, length delimited.
+             * @param reader Reader or buffer to decode from
+             * @returns GameSetupChanged
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): PB.MessageToClient.GameSetupChanged;
+
+            /**
+             * Verifies a GameSetupChanged message.
+             * @param message Plain object to verify
+             * @returns `null` if valid, otherwise the reason why it is not
+             */
+            public static verify(message: { [k: string]: any }): (string|null);
+
+            /**
+             * Creates a GameSetupChanged message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns GameSetupChanged
+             */
+            public static fromObject(object: { [k: string]: any }): PB.MessageToClient.GameSetupChanged;
+
+            /**
+             * Creates a plain object from a GameSetupChanged message. Also converts values to other types if specified.
+             * @param message GameSetupChanged
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: PB.MessageToClient.GameSetupChanged, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this GameSetupChanged to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+        }
+
+        /** Properties of a GameStarted. */
+        interface IGameStarted {
+
+            /** GameStarted gameDisplayNumber */
+            gameDisplayNumber?: (number|null);
+
+            /** GameStarted userIds */
+            userIds?: (number[]|null);
+        }
+
+        /** Represents a GameStarted. */
+        class GameStarted implements IGameStarted {
+
+            /**
+             * Constructs a new GameStarted.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: PB.MessageToClient.IGameStarted);
+
+            /** GameStarted gameDisplayNumber. */
+            public gameDisplayNumber: number;
+
+            /** GameStarted userIds. */
+            public userIds: number[];
+
+            /**
+             * Creates a new GameStarted instance using the specified properties.
+             * @param [properties] Properties to set
+             * @returns GameStarted instance
+             */
+            public static create(properties?: PB.MessageToClient.IGameStarted): PB.MessageToClient.GameStarted;
+
+            /**
+             * Encodes the specified GameStarted message. Does not implicitly {@link PB.MessageToClient.GameStarted.verify|verify} messages.
+             * @param message GameStarted message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encode(message: PB.MessageToClient.IGameStarted, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Encodes the specified GameStarted message, length delimited. Does not implicitly {@link PB.MessageToClient.GameStarted.verify|verify} messages.
+             * @param message GameStarted message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encodeDelimited(message: PB.MessageToClient.IGameStarted, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Decodes a GameStarted message from the specified reader or buffer.
+             * @param reader Reader or buffer to decode from
+             * @param [length] Message length if known beforehand
+             * @returns GameStarted
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): PB.MessageToClient.GameStarted;
+
+            /**
+             * Decodes a GameStarted message from the specified reader or buffer, length delimited.
+             * @param reader Reader or buffer to decode from
+             * @returns GameStarted
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): PB.MessageToClient.GameStarted;
+
+            /**
+             * Verifies a GameStarted message.
+             * @param message Plain object to verify
+             * @returns `null` if valid, otherwise the reason why it is not
+             */
+            public static verify(message: { [k: string]: any }): (string|null);
+
+            /**
+             * Creates a GameStarted message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns GameStarted
+             */
+            public static fromObject(object: { [k: string]: any }): PB.MessageToClient.GameStarted;
+
+            /**
+             * Creates a plain object from a GameStarted message. Also converts values to other types if specified.
+             * @param message GameStarted
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: PB.MessageToClient.GameStarted, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this GameStarted to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+        }
+
+        /** Properties of a GameActionDone. */
+        interface IGameActionDone {
+
+            /** GameActionDone gameDisplayNumber */
+            gameDisplayNumber?: (number|null);
+
+            /** GameActionDone gameStateData */
+            gameStateData?: (PB.IGameStateData|null);
+        }
+
+        /** Represents a GameActionDone. */
+        class GameActionDone implements IGameActionDone {
+
+            /**
+             * Constructs a new GameActionDone.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: PB.MessageToClient.IGameActionDone);
+
+            /** GameActionDone gameDisplayNumber. */
+            public gameDisplayNumber: number;
+
+            /** GameActionDone gameStateData. */
+            public gameStateData?: (PB.IGameStateData|null);
+
+            /**
+             * Creates a new GameActionDone instance using the specified properties.
+             * @param [properties] Properties to set
+             * @returns GameActionDone instance
+             */
+            public static create(properties?: PB.MessageToClient.IGameActionDone): PB.MessageToClient.GameActionDone;
+
+            /**
+             * Encodes the specified GameActionDone message. Does not implicitly {@link PB.MessageToClient.GameActionDone.verify|verify} messages.
+             * @param message GameActionDone message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encode(message: PB.MessageToClient.IGameActionDone, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Encodes the specified GameActionDone message, length delimited. Does not implicitly {@link PB.MessageToClient.GameActionDone.verify|verify} messages.
+             * @param message GameActionDone message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encodeDelimited(message: PB.MessageToClient.IGameActionDone, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Decodes a GameActionDone message from the specified reader or buffer.
+             * @param reader Reader or buffer to decode from
+             * @param [length] Message length if known beforehand
+             * @returns GameActionDone
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): PB.MessageToClient.GameActionDone;
+
+            /**
+             * Decodes a GameActionDone message from the specified reader or buffer, length delimited.
+             * @param reader Reader or buffer to decode from
+             * @returns GameActionDone
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): PB.MessageToClient.GameActionDone;
+
+            /**
+             * Verifies a GameActionDone message.
+             * @param message Plain object to verify
+             * @returns `null` if valid, otherwise the reason why it is not
+             */
+            public static verify(message: { [k: string]: any }): (string|null);
+
+            /**
+             * Creates a GameActionDone message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns GameActionDone
+             */
+            public static fromObject(object: { [k: string]: any }): PB.MessageToClient.GameActionDone;
+
+            /**
+             * Creates a plain object from a GameActionDone message. Also converts values to other types if specified.
+             * @param message GameActionDone
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: PB.MessageToClient.GameActionDone, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this GameActionDone to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+        }
+    }
+
+    /** Properties of a MessagesToClient. */
+    interface IMessagesToClient {
+
+        /** MessagesToClient messagesToClient */
+        messagesToClient?: (PB.IMessageToClient[]|null);
+    }
+
+    /** Represents a MessagesToClient. */
+    class MessagesToClient implements IMessagesToClient {
+
+        /**
+         * Constructs a new MessagesToClient.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: PB.IMessagesToClient);
+
+        /** MessagesToClient messagesToClient. */
+        public messagesToClient: PB.IMessageToClient[];
+
+        /**
+         * Creates a new MessagesToClient instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns MessagesToClient instance
+         */
+        public static create(properties?: PB.IMessagesToClient): PB.MessagesToClient;
+
+        /**
+         * Encodes the specified MessagesToClient message. Does not implicitly {@link PB.MessagesToClient.verify|verify} messages.
+         * @param message MessagesToClient message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: PB.IMessagesToClient, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified MessagesToClient message, length delimited. Does not implicitly {@link PB.MessagesToClient.verify|verify} messages.
+         * @param message MessagesToClient message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: PB.IMessagesToClient, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a MessagesToClient message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns MessagesToClient
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): PB.MessagesToClient;
+
+        /**
+         * Decodes a MessagesToClient message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns MessagesToClient
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): PB.MessagesToClient;
+
+        /**
+         * Verifies a MessagesToClient message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a MessagesToClient message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns MessagesToClient
+         */
+        public static fromObject(object: { [k: string]: any }): PB.MessagesToClient;
+
+        /**
+         * Creates a plain object from a MessagesToClient message. Also converts values to other types if specified.
+         * @param message MessagesToClient
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: PB.MessagesToClient, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this MessagesToClient to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
 }
