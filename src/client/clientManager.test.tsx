@@ -208,7 +208,7 @@ function sendsMessageWhenConnected(handlerCallback: (clientManager: ClientManage
 
   handlerCallback(clientManager);
 
-  expectMessageToServerDatasToEqual([expectedObject]);
+  expect(testWebSocket!.sentMessages).toEqual([expectedObject]);
 }
 
 function doesNotSendMessageWhenNotConnected(handlerCallback: (clientManager: ClientManager) => void) {
@@ -222,14 +222,6 @@ function doesNotSendMessageWhenNotConnected(handlerCallback: (clientManager: Cli
   handlerCallback(clientManager);
 
   expect(testWebSocket!.sentMessages.length).toBe(0);
-}
-
-function expectMessageToServerDatasToEqual(expectedObjects: any[]) {
-  expect(testWebSocket!.sentMessages.length).toBe(expectedObjects.length);
-
-  for (let i = 0; i < expectedObjects.length; i++) {
-    expect(testWebSocket!.sentMessages[i]).toEqual(expectedObjects[i]);
-  }
 }
 
 describe('onSubmitLoginForm', () => {
@@ -254,7 +246,7 @@ describe('onSubmitLoginForm', () => {
     testWebSocket!.triggerOpen();
 
     expect(renderMock.mock.calls.length).toBe(2);
-    expectMessageToServerDatasToEqual([{ login: { version: 0, username: 'username', password: 'password', gameDatas: [] } }]);
+    expect(testWebSocket!.sentMessages).toEqual([{ login: { version: 0, username: 'username', password: 'password', gameDatas: [] } }]);
   });
 
   test('goes back to login page upon fatal error followed by a closed connection', () => {
@@ -337,7 +329,7 @@ describe('onSubmitCreateGame', () => {
 
     clientManager.onSubmitCreateGame(GameMode.TEAMS_2_VS_2);
 
-    expectMessageToServerDatasToEqual([{ createGame: { gameMode: GameMode.TEAMS_2_VS_2 } }]);
+    expect(testWebSocket!.sentMessages).toEqual([{ createGame: { gameMode: GameMode.TEAMS_2_VS_2 } }]);
   });
 
   test('does not send CreateGame message when not connected', () => {
@@ -394,7 +386,7 @@ describe('onEnterClicked', () => {
 
     clientManager.gameDisplayNumberToGameData.get(1)!.onEnterClicked();
 
-    expectMessageToServerDatasToEqual([{ enterGame: { gameDisplayNumber: 1 } }]);
+    expect(testWebSocket!.sentMessages).toEqual([{ enterGame: { gameDisplayNumber: 1 } }]);
   });
 
   test('does not send EnterGame message when not connected', () => {
