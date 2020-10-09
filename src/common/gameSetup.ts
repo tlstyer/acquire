@@ -353,7 +353,7 @@ export class GameSetup {
       const position = positions[index];
       const userID = position.userId;
 
-      if (userID !== null && userID !== undefined && userID !== 0) {
+      if (userID !== 0) {
         const isHost = position.isHost;
         const approvesOfGameSetup = position.approvesOfGameSetup;
 

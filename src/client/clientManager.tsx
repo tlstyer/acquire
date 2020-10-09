@@ -550,7 +550,7 @@ export class ClientManager {
         const positions = gameSetupData.positions;
         for (let j = 0; j < positions.length; j++) {
           const userID = positions[j].userId;
-          if (userID !== null && userID !== undefined && userID !== 0) {
+          if (userID !== 0) {
             this.userIDToUser.get(userID)!.numGames++;
           }
         }
