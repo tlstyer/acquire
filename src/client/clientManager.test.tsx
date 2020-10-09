@@ -1607,7 +1607,7 @@ describe('MessageToClient.GameStarted and MessageToClient.GameActionDone', () =>
           gameDisplayNumber: 1,
           gameStateData: {
             gameAction: { startGame: {} },
-            timestamp: 1550799393,
+            timestamp: 1550799393696,
             revealedTileBagTiles: [65, 3, 34, 6, 46, 10, 78],
             playerIdWithPlayableTilePlusOne: 1,
           },

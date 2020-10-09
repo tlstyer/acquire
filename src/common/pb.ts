@@ -58,7 +58,7 @@ export interface PB_GameStateData {
      */
     gameAction?: PB_GameAction;
     /**
-     * @generated from protobuf field: int32 timestamp = 2;
+     * @generated from protobuf field: int64 timestamp = 2 [jstype = JS_STRING];
      */
     timestamp: number;
     /**
@@ -1093,7 +1093,7 @@ class PB_GameStateData$Type extends MessageType<PB_GameStateData> {
     constructor() {
         super("PB.GameStateData", [
             { no: 1, name: "game_action", kind: "message", T: () => PB_GameAction },
-            { no: 2, name: "timestamp", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 2, name: "timestamp", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 3, name: "revealed_tile_rack_tiles", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => PB_GameStateData_RevealedTileRackTile },
             { no: 4, name: "revealed_tile_bag_tiles", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ },
             { no: 5, name: "player_id_with_playable_tile_plus_one", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
@@ -1113,8 +1113,8 @@ class PB_GameStateData$Type extends MessageType<PB_GameStateData> {
                 case /* PB.GameAction game_action */ 1:
                     message.gameAction = PB_GameAction.internalBinaryRead(reader, reader.uint32(), options, message.gameAction);
                     break;
-                case /* int32 timestamp */ 2:
-                    message.timestamp = reader.int32();
+                case /* int64 timestamp = 2 [jstype = JS_STRING];*/ 2:
+                    message.timestamp = reader.int64().toNumber();
                     break;
                 case /* repeated PB.GameStateData.RevealedTileRackTile revealed_tile_rack_tiles */ 3:
                     message.revealedTileRackTiles.push(PB_GameStateData_RevealedTileRackTile.internalBinaryRead(reader, reader.uint32(), options));
@@ -1144,9 +1144,9 @@ class PB_GameStateData$Type extends MessageType<PB_GameStateData> {
         /* PB.GameAction game_action = 1; */
         if (message.gameAction)
             PB_GameAction.internalBinaryWrite(message.gameAction, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* int32 timestamp = 2; */
+        /* int64 timestamp = 2 [jstype = JS_STRING]; */
         if (message.timestamp !== 0)
-            writer.tag(2, WireType.Varint).int32(message.timestamp);
+            writer.tag(2, WireType.Varint).int64(message.timestamp);
         /* repeated PB.GameStateData.RevealedTileRackTile revealed_tile_rack_tiles = 3; */
         for (let i = 0; i < message.revealedTileRackTiles.length; i++)
             PB_GameStateData_RevealedTileRackTile.internalBinaryWrite(message.revealedTileRackTiles[i], writer.tag(3, WireType.LengthDelimited).fork(), options).join();
