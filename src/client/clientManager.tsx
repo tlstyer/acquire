@@ -450,6 +450,7 @@ export class ClientManager {
 
   connect = () => {
     this.socket = new WebSocket('ws://localhost:9999');
+    this.socket.binaryType = 'arraybuffer';
 
     this.socket.onopen = this.onSocketOpen;
     this.socket.onmessage = this.onSocketMessage;
@@ -461,7 +462,7 @@ export class ClientManager {
   };
 
   onSocketMessage = (e: MessageEvent) => {
-    const messages = PB_MessagesToClient.fromBinary(e.data).messagesToClient;
+    const messages = PB_MessagesToClient.fromBinary(new Uint8Array(e.data)).messagesToClient;
 
     for (let i = 0; i < messages.length; i++) {
       const message = messages[i];
