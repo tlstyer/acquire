@@ -4,7 +4,7 @@ import { List } from 'immutable';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { defaultGameBoard } from '../common/defaults';
-import { GameActionEnum, MessageToClientEnum, ScoreBoardIndexEnum } from '../common/enums';
+import { GameActionEnum, ScoreBoardIndexEnum } from '../common/enums';
 import { Game } from '../common/game';
 import { ActionDisposeOfShares } from '../common/gameActions/disposeOfShares';
 import { ActionGameOver } from '../common/gameActions/gameOver';
@@ -27,7 +27,23 @@ import { ScoreBoard } from './components/ScoreBoard';
 import { SelectChain, SelectChainTitle } from './components/SelectChain';
 import { TileRack } from './components/TileRack';
 import { GameBoardLabelMode, GameStatusEnum } from './enums';
-import { ErrorCode, GameBoardType, GameMode, PB_GameData, PB_GameSetupChange, PB_GameSetupData, PB_GameStateData, PlayerArrangementMode } from '../common/pb';
+import {
+  ErrorCode,
+  GameBoardType,
+  GameMode,
+  PB_MessagesToClient,
+  PB_MessageToClient_ClientConnected,
+  PB_MessageToClient_ClientDisconnected,
+  PB_MessageToClient_ClientEnteredGame,
+  PB_MessageToClient_ClientExitedGame,
+  PB_MessageToClient_FatalError,
+  PB_MessageToClient_GameActionDone,
+  PB_MessageToClient_GameCreated,
+  PB_MessageToClient_GameSetupChanged,
+  PB_MessageToClient_GameStarted,
+  PB_MessageToClient_Greetings,
+  PlayerArrangementMode,
+} from '../common/pb';
 import { encodeMessageToServer } from '../common/helpers';
 
 export enum ClientManagerPage {
@@ -54,7 +70,6 @@ export class ClientManager {
   password = '';
 
   renderPageFunctions: Map<ClientManagerPage, () => JSX.Element>;
-  onMessageFunctions: Map<MessageToClientEnum, (...params: any[]) => void>;
 
   myRequiredGameAction: GameActionEnum | null = null;
 
@@ -68,20 +83,6 @@ export class ClientManager {
       [ClientManagerPage.GameSetup, this.renderGameSetupPage],
       [ClientManagerPage.Game, this.renderGamePage],
     ]);
-
-    const mf: [number, (...params: any[]) => void][] = [
-      [MessageToClientEnum.FatalError, this.onMessageFatalError],
-      [MessageToClientEnum.Greetings, this.onMessageGreetings],
-      [MessageToClientEnum.ClientConnected, this.onMessageClientConnected],
-      [MessageToClientEnum.ClientDisconnected, this.onMessageClientDisconnected],
-      [MessageToClientEnum.GameCreated, this.onMessageGameCreated],
-      [MessageToClientEnum.ClientEnteredGame, this.onMessageClientEnteredGame],
-      [MessageToClientEnum.ClientExitedGame, this.onMessageClientExitedGame],
-      [MessageToClientEnum.GameSetupChanged, this.onMessageGameSetupChanged],
-      [MessageToClientEnum.GameStarted, this.onMessageGameStarted],
-      [MessageToClientEnum.GameActionDone, this.onMessageGameActionDone],
-    ];
-    this.onMessageFunctions = new Map(mf);
   }
 
   manage() {
@@ -460,74 +461,89 @@ export class ClientManager {
   };
 
   onSocketMessage = (e: MessageEvent) => {
-    const messages = JSON.parse(e.data);
+    const messages = PB_MessagesToClient.fromBinary(e.data).messagesToClient;
 
     for (let i = 0; i < messages.length; i++) {
       const message = messages[i];
-      const handler = this.onMessageFunctions.get(message[0])!;
-      handler.apply(this, message.slice(1));
+
+      if (message.fatalError) {
+        this.onMessageFatalError(message.fatalError);
+      } else if (message.greetings) {
+        this.onMessageGreetings(message.greetings);
+      } else if (message.clientConnected) {
+        this.onMessageClientConnected(message.clientConnected);
+      } else if (message.clientDisconnected) {
+        this.onMessageClientDisconnected(message.clientDisconnected);
+      } else if (message.gameCreated) {
+        this.onMessageGameCreated(message.gameCreated);
+      } else if (message.clientEnteredGame) {
+        this.onMessageClientEnteredGame(message.clientEnteredGame);
+      } else if (message.clientExitedGame) {
+        this.onMessageClientExitedGame(message.clientExitedGame);
+      } else if (message.gameSetupChanged) {
+        this.onMessageGameSetupChanged(message.gameSetupChanged);
+      } else if (message.gameStarted) {
+        this.onMessageGameStarted(message.gameStarted);
+      } else if (message.gameActionDone) {
+        this.onMessageGameActionDone(message.gameActionDone);
+      }
     }
 
     this.render();
   };
 
-  onMessageFatalError(errorCode: ErrorCode) {
-    this.errorCode = errorCode;
+  onMessageFatalError(message: PB_MessageToClient_FatalError) {
+    this.errorCode = message.errorCode;
   }
 
-  onMessageGreetings(myClientID: number, users: any[], games: any[]) {
+  onMessageGreetings(message: PB_MessageToClient_Greetings) {
     this.clientIDToClient.clear();
     this.userIDToUser.clear();
     this.gameIDToGameData.clear();
     this.gameDisplayNumberToGameData.clear();
 
+    const games = message.games;
     for (let i = 0; i < games.length; i++) {
-      const gameParams = games[i];
-      const gameID: number = gameParams[1];
-      const gameDisplayNumber: number = gameParams[2];
+      const gamePB = games[i];
 
-      const gameData = new GameData(gameID, gameDisplayNumber, this);
+      const gameData = new GameData(gamePB.gameId, gamePB.gameDisplayNumber, this);
 
-      this.gameIDToGameData.set(gameID, gameData);
-      this.gameDisplayNumberToGameData.set(gameDisplayNumber, gameData);
+      this.gameIDToGameData.set(gamePB.gameId, gameData);
+      this.gameDisplayNumberToGameData.set(gamePB.gameDisplayNumber, gameData);
     }
 
+    const users = message.users;
     for (let i = 0; i < users.length; i++) {
-      const [userID, username, clientDatas] = users[i];
+      const userPB = users[i];
 
-      const user = new User(userID, username);
-      this.userIDToUser.set(userID, user);
+      const user = new User(userPB.userId, userPB.username);
+      this.userIDToUser.set(userPB.userId, user);
 
-      if (clientDatas !== undefined) {
-        for (let j = 0; j < clientDatas.length; j++) {
-          const clientData = clientDatas[j];
-          const clientID: number = clientData[0];
-          const gameDisplayNumber: number | undefined = clientData[1];
+      const clients = userPB.clients;
+      for (let j = 0; j < clients.length; j++) {
+        const clientPB = clients[j];
 
-          const client = new Client(clientID, user);
-          user.clients.add(client);
-          if (gameDisplayNumber !== undefined) {
-            const gameData = this.gameDisplayNumberToGameData.get(gameDisplayNumber)!;
-            client.gameData = gameData;
-            gameData.clients.add(client);
-          }
-          this.clientIDToClient.set(clientID, client);
+        const client = new Client(clientPB.clientId, user);
+        user.clients.add(client);
+        if (clientPB.gameDisplayNumber !== 0) {
+          const gameData = this.gameDisplayNumberToGameData.get(clientPB.gameDisplayNumber)!;
+          client.gameData = gameData;
+          gameData.clients.add(client);
         }
+        this.clientIDToClient.set(clientPB.clientId, client);
       }
     }
 
-    this.myClient = this.clientIDToClient.get(myClientID)!;
+    this.myClient = this.clientIDToClient.get(message.clientId)!;
     const myUserID = this.myClient!.user.id;
 
     for (let i = 0; i < games.length; i++) {
-      const gameParams = games[i];
-      const isGameSetup = gameParams[0] === 0;
-      const gameID: number = gameParams[1];
+      const gamePB = games[i];
 
-      const gameData = this.gameIDToGameData.get(gameID)!;
+      const gameData = this.gameIDToGameData.get(gamePB.gameId)!;
 
-      if (isGameSetup) {
-        const gameSetupData: PB_GameSetupData = gameParams[3];
+      if (gamePB.gameSetupData) {
+        const gameSetupData = gamePB.gameSetupData;
 
         gameData.gameSetup = GameSetup.fromGameSetupData(gameSetupData, this.getUsernameForUserID);
 
@@ -538,8 +554,8 @@ export class ClientManager {
             this.userIDToUser.get(userID)!.numGames++;
           }
         }
-      } else {
-        const gameDataPB: PB_GameData = gameParams[3];
+      } else if (gamePB.gameData) {
+        const gameDataPB = gamePB.gameData;
 
         const userIDs: number[] = [];
         const usernames: string[] = [];
@@ -548,15 +564,14 @@ export class ClientManager {
         const positions = gameDataPB.positions;
         for (let j = 0; j < positions.length; j++) {
           const position = positions[j];
-          const userID = position.userId!;
 
-          userIDs.push(userID);
+          userIDs.push(position.userId);
 
-          this.userIDToUser.get(userID)!.numGames++;
-          usernames.push(this.getUsernameForUserID(userID));
+          this.userIDToUser.get(position.userId)!.numGames++;
+          usernames.push(this.getUsernameForUserID(position.userId));
 
           if (position.isHost) {
-            hostUserID = userID;
+            hostUserID = position.userId;
           }
         }
 
@@ -574,44 +589,44 @@ export class ClientManager {
     );
   }
 
-  onMessageClientConnected(clientID: number, userID: number, username?: string) {
+  onMessageClientConnected(message: PB_MessageToClient_ClientConnected) {
     let user: User;
-    if (username !== undefined) {
-      user = new User(userID, username);
-      this.userIDToUser.set(userID, user);
+    if (message.username !== '') {
+      user = new User(message.userId, message.username);
+      this.userIDToUser.set(message.userId, user);
     } else {
-      user = this.userIDToUser.get(userID)!;
+      user = this.userIDToUser.get(message.userId)!;
     }
 
-    const client = new Client(clientID, user);
+    const client = new Client(message.clientId, user);
     user.clients.add(client);
-    this.clientIDToClient.set(clientID, client);
+    this.clientIDToClient.set(message.clientId, client);
   }
 
-  onMessageClientDisconnected(clientID: number) {
-    const client = this.clientIDToClient.get(clientID)!;
+  onMessageClientDisconnected(message: PB_MessageToClient_ClientDisconnected) {
+    const client = this.clientIDToClient.get(message.clientId)!;
     const user = client.user;
 
-    this.clientIDToClient.delete(clientID);
+    this.clientIDToClient.delete(message.clientId);
     user.clients.delete(client);
     this.deleteUserIfItDoesNotHaveReferences(user);
   }
 
-  onMessageGameCreated(gameID: number, gameDisplayNumber: number, gameMode: GameMode, hostClientID: number) {
-    const hostClient = this.clientIDToClient.get(hostClientID)!;
+  onMessageGameCreated(message: PB_MessageToClient_GameCreated) {
+    const hostClient = this.clientIDToClient.get(message.hostClientId)!;
 
-    const gameData = new GameData(gameID, gameDisplayNumber, this);
-    gameData.gameSetup = new GameSetup(gameMode, PlayerArrangementMode.RANDOM_ORDER, hostClient.user.id, this.getUsernameForUserID);
+    const gameData = new GameData(message.gameId, message.gameDisplayNumber, this);
+    gameData.gameSetup = new GameSetup(message.gameMode, PlayerArrangementMode.RANDOM_ORDER, hostClient.user.id, this.getUsernameForUserID);
 
     hostClient.user.numGames++;
 
-    this.gameIDToGameData.set(gameID, gameData);
-    this.gameDisplayNumberToGameData.set(gameDisplayNumber, gameData);
+    this.gameIDToGameData.set(message.gameId, gameData);
+    this.gameDisplayNumberToGameData.set(message.gameDisplayNumber, gameData);
   }
 
-  onMessageClientEnteredGame(clientID: number, gameDisplayNumber: number) {
-    const client = this.clientIDToClient.get(clientID)!;
-    const gameData = this.gameDisplayNumberToGameData.get(gameDisplayNumber)!;
+  onMessageClientEnteredGame(message: PB_MessageToClient_ClientEnteredGame) {
+    const client = this.clientIDToClient.get(message.clientId)!;
+    const gameData = this.gameDisplayNumberToGameData.get(message.gameDisplayNumber)!;
 
     client.gameData = gameData;
     gameData.clients.add(client);
@@ -621,8 +636,8 @@ export class ClientManager {
     }
   }
 
-  onMessageClientExitedGame(clientID: number) {
-    const client = this.clientIDToClient.get(clientID)!;
+  onMessageClientExitedGame(message: PB_MessageToClient_ClientExitedGame) {
+    const client = this.clientIDToClient.get(message.clientId)!;
     const gameData = client.gameData!;
 
     client.gameData = null;
@@ -633,8 +648,10 @@ export class ClientManager {
     }
   }
 
-  onMessageGameSetupChanged(gameDisplayNumber: number, gameSetupChange: PB_GameSetupChange) {
-    const gameSetup = this.gameDisplayNumberToGameData.get(gameDisplayNumber)!.gameSetup!;
+  onMessageGameSetupChanged(message: PB_MessageToClient_GameSetupChanged) {
+    const gameSetup = this.gameDisplayNumberToGameData.get(message.gameDisplayNumber)!.gameSetup!;
+
+    const gameSetupChange = message.gameSetupChange!;
 
     gameSetup.processChange(gameSetupChange);
 
@@ -648,16 +665,16 @@ export class ClientManager {
     }
   }
 
-  onMessageGameStarted(gameDisplayNumber: number, userIDs: number[]) {
-    const gameData = this.gameDisplayNumberToGameData.get(gameDisplayNumber)!;
+  onMessageGameStarted(message: PB_MessageToClient_GameStarted) {
+    const gameData = this.gameDisplayNumberToGameData.get(message.gameDisplayNumber)!;
     const gameSetup = gameData.gameSetup!;
 
     const game = new Game(
       gameSetup.gameMode,
       gameSetup.playerArrangementMode,
       [],
-      List(userIDs),
-      List(userIDs.map(this.getUsernameForUserID)),
+      List(message.userIds),
+      List(message.userIds.map(this.getUsernameForUserID)),
       gameSetup.hostUserID,
       this.myClient!.user.id,
     );
@@ -670,11 +687,11 @@ export class ClientManager {
     }
   }
 
-  onMessageGameActionDone(gameDisplayNumber: number, gameStateData: PB_GameStateData) {
-    const gameData = this.gameDisplayNumberToGameData.get(gameDisplayNumber)!;
+  onMessageGameActionDone(message: PB_MessageToClient_GameActionDone) {
+    const gameData = this.gameDisplayNumberToGameData.get(message.gameDisplayNumber)!;
     const game = gameData.game!;
 
-    game.processGameStateData(gameStateData);
+    game.processGameStateData(message.gameStateData!);
 
     if (this.myClient!.gameData === gameData) {
       this.updateMyRequiredGameAction();

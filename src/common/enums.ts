@@ -1,16 +1,3 @@
-export enum MessageToClientEnum {
-  FatalError,
-  Greetings,
-  ClientConnected,
-  ClientDisconnected,
-  GameCreated,
-  ClientEnteredGame,
-  ClientExitedGame,
-  GameSetupChanged,
-  GameStarted,
-  GameActionDone,
-}
-
 export enum GameActionEnum {
   StartGame,
   PlayTile,
