@@ -315,10 +315,10 @@ export class GameSetup {
   }
 
   toGameSetupData(): PB_GameSetupData {
-    const gameSetupData = PB_GameSetupData.create();
-    gameSetupData.gameMode = this.gameMode;
-    gameSetupData.playerArrangementMode = this.playerArrangementMode;
-    gameSetupData.positions = [];
+    const gameSetupData = PB_GameSetupData.create({
+      gameMode: this.gameMode,
+      playerArrangementMode: this.playerArrangementMode,
+    });
 
     this.userIDs.forEach((userID, position) => {
       const positionData = PB_GameSetupData_Position.create();

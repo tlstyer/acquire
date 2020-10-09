@@ -226,43 +226,41 @@ function fromParameterStrings(gameActionEnum: GameActionEnum, strings: string[])
 
   switch (gameActionEnum) {
     case GameActionEnum.PlayTile: {
-      const playTile = PB_GameAction_PlayTile.create();
-      playTile.tile = fromTileString(strings[0]);
-      gameAction.playTile = playTile;
+      gameAction.playTile = PB_GameAction_PlayTile.create({
+        tile: fromTileString(strings[0]),
+      });
       break;
     }
     case GameActionEnum.SelectNewChain: {
-      const selectNewChain = PB_GameAction_SelectNewChain.create();
-      selectNewChain.chain = abbreviationToGameBoardType.get(strings[0])!;
-      gameAction.selectNewChain = selectNewChain;
+      gameAction.selectNewChain = PB_GameAction_SelectNewChain.create({
+        chain: abbreviationToGameBoardType.get(strings[0]),
+      });
       break;
     }
     case GameActionEnum.SelectMergerSurvivor: {
-      const selectMergerSurvivor = PB_GameAction_SelectMergerSurvivor.create();
-      selectMergerSurvivor.chain = abbreviationToGameBoardType.get(strings[0])!;
-      gameAction.selectMergerSurvivor = selectMergerSurvivor;
+      gameAction.selectMergerSurvivor = PB_GameAction_SelectMergerSurvivor.create({
+        chain: abbreviationToGameBoardType.get(strings[0]),
+      });
       break;
     }
     case GameActionEnum.SelectChainToDisposeOfNext: {
-      const selectChainToDisposeOfNext = PB_GameAction_SelectChainToDisposeOfNext.create();
-      selectChainToDisposeOfNext.chain = abbreviationToGameBoardType.get(strings[0])!;
-      gameAction.selectChainToDisposeOfNext = selectChainToDisposeOfNext;
+      gameAction.selectChainToDisposeOfNext = PB_GameAction_SelectChainToDisposeOfNext.create({
+        chain: abbreviationToGameBoardType.get(strings[0]),
+      });
       break;
     }
     case GameActionEnum.DisposeOfShares: {
-      const disposeOfShares = PB_GameAction_DisposeOfShares.create();
-      disposeOfShares.tradeAmount = parseInt(strings[0], 10);
-      disposeOfShares.sellAmount = parseInt(strings[1], 10);
-      gameAction.disposeOfShares = disposeOfShares;
+      gameAction.disposeOfShares = PB_GameAction_DisposeOfShares.create({
+        tradeAmount: parseInt(strings[0], 10),
+        sellAmount: parseInt(strings[1], 10),
+      });
       break;
     }
     case GameActionEnum.PurchaseShares: {
-      const purchaseShares = PB_GameAction_PurchaseShares.create();
-      if (strings[0] !== 'x') {
-        purchaseShares.chains = strings[0].split(',').map((s) => abbreviationToGameBoardType.get(s)!);
-      }
-      purchaseShares.endGame = strings[1] === '1';
-      gameAction.purchaseShares = purchaseShares;
+      gameAction.purchaseShares = PB_GameAction_PurchaseShares.create({
+        chains: strings[0] !== 'x' ? strings[0].split(',').map((s) => abbreviationToGameBoardType.get(s)!) : undefined,
+        endGame: strings[1] === '1',
+      });
       break;
     }
   }

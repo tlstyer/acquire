@@ -86,7 +86,7 @@ export class ServerManager {
         } else {
           let sanitizedMessage = message;
           if (message.login && message.login.password !== '') {
-            sanitizedMessage = PB_MessageToServer.create(message);
+            sanitizedMessage = PB_MessageToServer.clone(message);
             sanitizedMessage.login!.password = '***';
           }
 
