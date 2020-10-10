@@ -1,7 +1,7 @@
 import * as WebSocket from 'ws';
 import { TileEnum } from '../common/enums';
 import { setupTextDecoderAndTextEncoder } from '../common/nodeSpecificStuff';
-import { ErrorCode, GameMode, PB_MessagesToClient, PB_MessageToClient, PB_MessageToServer, PlayerArrangementMode } from '../common/pb';
+import { ErrorCode, GameMode, PB_GameAction, PB_MessagesToClient, PB_MessageToClient, PB_MessageToServer, PlayerArrangementMode } from '../common/pb';
 import { ConnectionState, GameData, ServerManager, User } from './serverManager';
 import { TestUserDataProvider } from './userDataProvider';
 
@@ -63,15 +63,15 @@ class TestWebSocket {
   }
 }
 
-function messageLogin(version: any, username: any, password: any) {
+function messageLogin(version: number, username: string, password: string) {
   return PB_MessageToServer.create({ login: { version, username, password } });
 }
 
-function messageCreateGame(gameMode: any) {
+function messageCreateGame(gameMode: GameMode) {
   return PB_MessageToServer.create({ createGame: { gameMode } });
 }
 
-function messageEnterGame(gameDisplayNumber: any) {
+function messageEnterGame(gameDisplayNumber: number) {
   return PB_MessageToServer.create({ enterGame: { gameDisplayNumber } });
 }
 
@@ -91,23 +91,23 @@ function messageApproveOfGameSetup() {
   return PB_MessageToServer.create({ doGameSetupAction: { approveOfGameSetup: {} } });
 }
 
-function messageChangeGameMode(gameMode: any) {
+function messageChangeGameMode(gameMode: GameMode) {
   return PB_MessageToServer.create({ doGameSetupAction: { changeGameMode: { gameMode } } });
 }
 
-function messageChangePlayerArrangementMode(playerArrangementMode: any) {
+function messageChangePlayerArrangementMode(playerArrangementMode: PlayerArrangementMode) {
   return PB_MessageToServer.create({ doGameSetupAction: { changePlayerArrangementMode: { playerArrangementMode } } });
 }
 
-function messageSwapPositions(position1: any, position2: any) {
+function messageSwapPositions(position1: number, position2: number) {
   return PB_MessageToServer.create({ doGameSetupAction: { swapPositions: { position1, position2 } } });
 }
 
-function messageKickUser(userId: any) {
+function messageKickUser(userId: number) {
   return PB_MessageToServer.create({ doGameSetupAction: { kickUser: { userId } } });
 }
 
-function messageDoGameAction(gameStateHistorySize: any, gameAction: any) {
+function messageDoGameAction(gameStateHistorySize: number, gameAction?: PB_GameAction) {
   return PB_MessageToServer.create({ doGameAction: { gameStateHistorySize, gameAction } });
 }
 
@@ -429,7 +429,7 @@ describe('when sending first message', () => {
     });
 
     test('after sending invalid username', async () => {
-      await getsKickedWithMessage(messageLogin(0, undefined, 'password'), ErrorCode.INVALID_USERNAME);
+      await getsKickedWithMessage(messageLogin(0, '', 'password'), ErrorCode.INVALID_USERNAME);
       await getsKickedWithMessage(messageLogin(0, '', 'password'), ErrorCode.INVALID_USERNAME);
       await getsKickedWithMessage(messageLogin(0, '123456789012345678901234567890123', 'password'), ErrorCode.INVALID_USERNAME);
       await getsKickedWithMessage(messageLogin(0, '▲', 'password'), ErrorCode.INVALID_USERNAME);
