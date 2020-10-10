@@ -1,8 +1,7 @@
 import * as WebSocket from 'ws';
 import { TileEnum } from '../common/enums';
-import { encodeMessageToServer } from '../common/helpers';
 import { setupTextDecoderAndTextEncoder } from '../common/nodeSpecificStuff';
-import { ErrorCode, GameMode, PB_MessagesToClient, PB_MessageToClient, PlayerArrangementMode } from '../common/pb';
+import { ErrorCode, GameMode, PB_MessagesToClient, PB_MessageToClient, PB_MessageToServer, PlayerArrangementMode } from '../common/pb';
 import { ConnectionState, GameData, ServerManager, User } from './serverManager';
 import { TestUserDataProvider } from './userDataProvider';
 
@@ -46,9 +45,9 @@ class TestWebSocket {
     this.receivedMessages.push(PB_MessagesToClient.fromBinary(message).messagesToClient);
   }
 
-  sendMessage(messageToServer: any) {
+  sendMessage(messageToServer: PB_MessageToServer) {
     if (this.dataListener) {
-      this.dataListener(encodeMessageToServer(messageToServer));
+      this.dataListener(PB_MessageToServer.toBinary(messageToServer));
     }
   }
 
@@ -65,51 +64,51 @@ class TestWebSocket {
 }
 
 function messageLogin(version: any, username: any, password: any) {
-  return { login: { version, username, password } };
+  return PB_MessageToServer.create({ login: { version, username, password } });
 }
 
 function messageCreateGame(gameMode: any) {
-  return { createGame: { gameMode } };
+  return PB_MessageToServer.create({ createGame: { gameMode } });
 }
 
 function messageEnterGame(gameDisplayNumber: any) {
-  return { enterGame: { gameDisplayNumber } };
+  return PB_MessageToServer.create({ enterGame: { gameDisplayNumber } });
 }
 
 function messageExitGame() {
-  return { exitGame: {} };
+  return PB_MessageToServer.create({ exitGame: {} });
 }
 
 function messageJoinGame() {
-  return { doGameSetupAction: { joinGame: {} } };
+  return PB_MessageToServer.create({ doGameSetupAction: { joinGame: {} } });
 }
 
 function messageUnjoinGame() {
-  return { doGameSetupAction: { unjoinGame: {} } };
+  return PB_MessageToServer.create({ doGameSetupAction: { unjoinGame: {} } });
 }
 
 function messageApproveOfGameSetup() {
-  return { doGameSetupAction: { approveOfGameSetup: {} } };
+  return PB_MessageToServer.create({ doGameSetupAction: { approveOfGameSetup: {} } });
 }
 
 function messageChangeGameMode(gameMode: any) {
-  return { doGameSetupAction: { changeGameMode: { gameMode } } };
+  return PB_MessageToServer.create({ doGameSetupAction: { changeGameMode: { gameMode } } });
 }
 
 function messageChangePlayerArrangementMode(playerArrangementMode: any) {
-  return { doGameSetupAction: { changePlayerArrangementMode: { playerArrangementMode } } };
+  return PB_MessageToServer.create({ doGameSetupAction: { changePlayerArrangementMode: { playerArrangementMode } } });
 }
 
 function messageSwapPositions(position1: any, position2: any) {
-  return { doGameSetupAction: { swapPositions: { position1, position2 } } };
+  return PB_MessageToServer.create({ doGameSetupAction: { swapPositions: { position1, position2 } } });
 }
 
 function messageKickUser(userId: any) {
-  return { doGameSetupAction: { kickUser: { userId } } };
+  return PB_MessageToServer.create({ doGameSetupAction: { kickUser: { userId } } });
 }
 
 function messageDoGameAction(gameStateHistorySize: any, gameAction: any) {
-  return { doGameAction: { gameStateHistorySize, gameAction } };
+  return PB_MessageToServer.create({ doGameAction: { gameStateHistorySize, gameAction } });
 }
 
 function getServerManagerAndStuff() {

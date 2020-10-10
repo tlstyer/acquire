@@ -42,9 +42,9 @@ import {
   PB_MessageToClient_GameSetupChanged,
   PB_MessageToClient_GameStarted,
   PB_MessageToClient_Greetings,
+  PB_MessageToServer,
   PlayerArrangementMode,
 } from '../common/pb';
-import { encodeMessageToServer } from '../common/helpers';
 
 export enum ClientManagerPage {
   Login,
@@ -175,7 +175,7 @@ export class ClientManager {
 
   onSubmitCreateGame = (gameMode: GameMode) => {
     if (this.isConnected()) {
-      this.socket!.send(encodeMessageToServer({ createGame: { gameMode } }));
+      this.sendMessage(PB_MessageToServer.create({ createGame: { gameMode } }));
     }
   };
 
@@ -223,49 +223,49 @@ export class ClientManager {
 
   onExitGameClicked = () => {
     if (this.isConnected()) {
-      this.socket!.send(encodeMessageToServer({ exitGame: {} }));
+      this.sendMessage(PB_MessageToServer.create({ exitGame: {} }));
     }
   };
 
   onJoinGame = () => {
     if (this.isConnected()) {
-      this.socket!.send(encodeMessageToServer({ doGameSetupAction: { joinGame: {} } }));
+      this.sendMessage(PB_MessageToServer.create({ doGameSetupAction: { joinGame: {} } }));
     }
   };
 
   onUnjoinGame = () => {
     if (this.isConnected()) {
-      this.socket!.send(encodeMessageToServer({ doGameSetupAction: { unjoinGame: {} } }));
+      this.sendMessage(PB_MessageToServer.create({ doGameSetupAction: { unjoinGame: {} } }));
     }
   };
 
   onApproveOfGameSetup = () => {
     if (this.isConnected()) {
-      this.socket!.send(encodeMessageToServer({ doGameSetupAction: { approveOfGameSetup: {} } }));
+      this.sendMessage(PB_MessageToServer.create({ doGameSetupAction: { approveOfGameSetup: {} } }));
     }
   };
 
   onChangeGameMode = (gameMode: GameMode) => {
     if (this.isConnected()) {
-      this.socket!.send(encodeMessageToServer({ doGameSetupAction: { changeGameMode: { gameMode } } }));
+      this.sendMessage(PB_MessageToServer.create({ doGameSetupAction: { changeGameMode: { gameMode } } }));
     }
   };
 
   onChangePlayerArrangementMode = (playerArrangementMode: PlayerArrangementMode) => {
     if (this.isConnected()) {
-      this.socket!.send(encodeMessageToServer({ doGameSetupAction: { changePlayerArrangementMode: { playerArrangementMode } } }));
+      this.sendMessage(PB_MessageToServer.create({ doGameSetupAction: { changePlayerArrangementMode: { playerArrangementMode } } }));
     }
   };
 
   onSwapPositions = (position1: number, position2: number) => {
     if (this.isConnected()) {
-      this.socket!.send(encodeMessageToServer({ doGameSetupAction: { swapPositions: { position1, position2 } } }));
+      this.sendMessage(PB_MessageToServer.create({ doGameSetupAction: { swapPositions: { position1, position2 } } }));
     }
   };
 
   onKickUser = (userID: number) => {
     if (this.isConnected()) {
-      this.socket!.send(encodeMessageToServer({ doGameSetupAction: { kickUser: { userId: userID } } }));
+      this.sendMessage(PB_MessageToServer.create({ doGameSetupAction: { kickUser: { userId: userID } } }));
     }
   };
 
@@ -395,7 +395,7 @@ export class ClientManager {
       const tileType = game.tileRackTypes.get(playerID)!.get(tileRackIndex)!;
 
       if (tileType !== GameBoardType.CANT_PLAY_EVER && tileType !== GameBoardType.CANT_PLAY_NOW) {
-        this.socket!.send(encodeMessageToServer({ doGameAction: { gameStateHistorySize: game.gameStateHistory.size, gameAction: { playTile: { tile } } } }));
+        this.sendMessage(PB_MessageToServer.create({ doGameAction: { gameStateHistorySize: game.gameStateHistory.size, gameAction: { playTile: { tile } } } }));
         this.myRequiredGameAction = null;
       }
     }
@@ -403,8 +403,8 @@ export class ClientManager {
 
   onChainSelected = (chain: GameBoardType) => {
     if (this.isConnected()) {
-      this.socket!.send(
-        encodeMessageToServer({
+      this.sendMessage(
+        PB_MessageToServer.create({
           doGameAction: {
             gameStateHistorySize: this.myClient!.gameData!.game!.gameStateHistory.size,
             gameAction: { [chainSelectionGameActionEnumToGameActionString.get(this.myRequiredGameAction!)!]: { chain } },
@@ -417,8 +417,8 @@ export class ClientManager {
 
   onSharesDisposed = (traded: number, sold: number) => {
     if (this.isConnected()) {
-      this.socket!.send(
-        encodeMessageToServer({
+      this.sendMessage(
+        PB_MessageToServer.create({
           doGameAction: {
             gameStateHistorySize: this.myClient!.gameData!.game!.gameStateHistory.size,
             gameAction: { disposeOfShares: { tradeAmount: traded, sellAmount: sold } },
@@ -431,8 +431,8 @@ export class ClientManager {
 
   onSharesPurchased = (chains: GameBoardType[], endGame: boolean) => {
     if (this.isConnected()) {
-      this.socket!.send(
-        encodeMessageToServer({
+      this.sendMessage(
+        PB_MessageToServer.create({
           doGameAction: {
             gameStateHistorySize: this.myClient!.gameData!.game!.gameStateHistory.size,
             gameAction: { purchaseShares: { chains, endGame } },
@@ -458,7 +458,7 @@ export class ClientManager {
   };
 
   onSocketOpen = () => {
-    this.socket!.send(encodeMessageToServer({ login: { version: 0, username: this.username, password: this.password } }));
+    this.sendMessage(PB_MessageToServer.create({ login: { version: 0, username: this.username, password: this.password } }));
   };
 
   onSocketMessage = (e: MessageEvent) => {
@@ -734,6 +734,10 @@ export class ClientManager {
     return this.socket !== null && this.socket.readyState === WebSocket.OPEN;
   }
 
+  sendMessage(message: PB_MessageToServer) {
+    this.socket?.send(PB_MessageToServer.toBinary(message));
+  }
+
   getUsernameForUserID = (userID: number) => {
     return this.userIDToUser.get(userID)!.name;
   };
@@ -769,7 +773,7 @@ export class GameData {
 
   onEnterClicked = () => {
     if (this.clientManager.isConnected()) {
-      this.clientManager.socket!.send(encodeMessageToServer({ enterGame: { gameDisplayNumber: this.displayNumber } }));
+      this.clientManager.sendMessage(PB_MessageToServer.create({ enterGame: { gameDisplayNumber: this.displayNumber } }));
     }
   };
 }
