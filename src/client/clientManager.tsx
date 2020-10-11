@@ -87,7 +87,7 @@ export class ClientManager {
   manage() {
     this.render();
 
-    window.addEventListener('resize', this.render, false);
+    window.addEventListener('resize', this.render.bind(this));
   }
 
   render() {
