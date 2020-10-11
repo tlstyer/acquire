@@ -1,7 +1,7 @@
 import { List } from 'immutable';
 import { GameActionEnum, TileEnum } from '../common/enums';
 import { setupTextDecoderAndTextEncoder } from '../common/nodeSpecificStuff';
-import { ErrorCode, GameMode, PB_MessagesToClient, PB_MessageToClient, PB_MessageToServer, PlayerArrangementMode } from '../common/pb';
+import { ErrorCode, GameMode, PB_Game, PB_MessagesToClient, PB_MessageToClient, PB_MessageToServer, PlayerArrangementMode } from '../common/pb';
 import { Client, ClientManager, ClientManagerPage, GameData, User } from './clientManager';
 
 setupTextDecoderAndTextEncoder();
@@ -372,11 +372,9 @@ describe('onEnterClicked', () => {
             {
               gameId: 10,
               gameDisplayNumber: 1,
-              gameSetupData: {
-                gameMode: GameMode.TEAMS_2_VS_2,
-                playerArrangementMode: PlayerArrangementMode.RANDOM_ORDER,
-                positions: [{ userId: 1, isHost: true }, {}, {}, {}],
-              },
+              gameMode: GameMode.TEAMS_2_VS_2,
+              playerArrangementMode: PlayerArrangementMode.RANDOM_ORDER,
+              positions: [{ userId: 1, isHost: true }, {}, {}, {}],
             },
           ],
         },
@@ -406,11 +404,9 @@ describe('onEnterClicked', () => {
             {
               gameId: 10,
               gameDisplayNumber: 1,
-              gameSetupData: {
-                gameMode: GameMode.TEAMS_2_VS_2,
-                playerArrangementMode: PlayerArrangementMode.RANDOM_ORDER,
-                positions: [{ userId: 1, isHost: true }, {}, {}, {}],
-              },
+              gameMode: GameMode.TEAMS_2_VS_2,
+              playerArrangementMode: PlayerArrangementMode.RANDOM_ORDER,
+              positions: [{ userId: 1, isHost: true }, {}, {}, {}],
             },
           ],
         },
@@ -515,7 +511,7 @@ describe('MessageToClient.Greetings', () => {
 
     clientManager.onSubmitLoginForm('me', '');
     testWebSocket!.triggerOpen();
-    const gameSetupData1 = {
+    const gamePB1 = PB_Game.create({
       gameMode: GameMode.TEAMS_3_VS_3,
       playerArrangementMode: PlayerArrangementMode.RANDOM_ORDER,
       positions: [
@@ -526,15 +522,15 @@ describe('MessageToClient.Greetings', () => {
         { userId: 0, isHost: false, approvesOfGameSetup: false },
         { userId: 0, isHost: false, approvesOfGameSetup: false },
       ],
-    };
-    const gameSetupData2 = {
+    });
+    const gamePB2 = PB_Game.create({
       gameMode: GameMode.SINGLES_2,
       playerArrangementMode: PlayerArrangementMode.EXACT_ORDER,
       positions: [
         { userId: 9, isHost: false, approvesOfGameSetup: false },
         { userId: 5, isHost: true, approvesOfGameSetup: true },
       ],
-    };
+    });
     testWebSocket!.triggerMessages([
       PB_MessageToClient.create({
         greetings: {
@@ -548,8 +544,8 @@ describe('MessageToClient.Greetings', () => {
             { userId: 9, username: 'user 9' },
           ],
           games: [
-            { gameId: 1, gameDisplayNumber: 1, gameSetupData: gameSetupData1 },
-            { gameId: 2, gameDisplayNumber: 3, gameSetupData: gameSetupData2 },
+            { ...gamePB1, gameId: 1, gameDisplayNumber: 1 },
+            { ...gamePB2, gameId: 2, gameDisplayNumber: 3 },
           ],
         },
       }),
@@ -562,8 +558,8 @@ describe('MessageToClient.Greetings', () => {
     expect(clientManager.userIDToUser.get(5)!.numGames).toBe(1);
     expect(clientManager.userIDToUser.get(9)!.numGames).toBe(1);
     expect(clientManager.myClient).toBe(clientManager.clientIDToClient.get(7));
-    expect(clientManager.gameIDToGameData.get(1)!.gameSetup!.toGameSetupData()).toEqual(gameSetupData1);
-    expect(clientManager.gameIDToGameData.get(2)!.gameSetup!.toGameSetupData()).toEqual(gameSetupData2);
+    expect(clientManager.gameIDToGameData.get(1)!.gameSetup!.toGameData()).toEqual(gamePB1);
+    expect(clientManager.gameIDToGameData.get(2)!.gameSetup!.toGameData()).toEqual(gamePB2);
     expectClientAndUserAndGameData(
       clientManager,
       [
@@ -596,31 +592,27 @@ describe('MessageToClient.Greetings', () => {
             {
               gameId: 10,
               gameDisplayNumber: 1,
-              gameSetupData: {
-                gameMode: GameMode.SINGLES_4,
-                playerArrangementMode: PlayerArrangementMode.RANDOM_ORDER,
-                positions: [{ userId: 1, isHost: true }, {}, {}, {}],
-              },
+              gameMode: GameMode.SINGLES_4,
+              playerArrangementMode: PlayerArrangementMode.RANDOM_ORDER,
+              positions: [{ userId: 1, isHost: true }, {}, {}, {}],
             },
             {
               gameId: 11,
               gameDisplayNumber: 2,
-              gameData: {
-                gameMode: GameMode.SINGLES_1,
-                playerArrangementMode: PlayerArrangementMode.RANDOM_ORDER,
-                positions: [{ userId: 2, isHost: true }],
-                gameStateDatas: [
-                  {
-                    gameAction: { startGame: {} },
-                    timestamp: 1234567894,
-                    revealedTileBagTiles: [89, 19, 29, 39, 49, 59, 69],
-                    playerIdWithPlayableTilePlusOne: 1,
-                  },
-                  { gameAction: { playTile: { tile: 19 } }, timestamp: 1, revealedTileBagTiles: [79], playerIdWithPlayableTilePlusOne: 1 },
-                  { gameAction: { playTile: { tile: 29 } }, timestamp: 1, revealedTileBagTiles: [0], playerIdWithPlayableTilePlusOne: 1 },
-                  { gameAction: { playTile: { tile: 39 } }, timestamp: 1, revealedTileBagTiles: [99], playerIdWithPlayableTilePlusOne: 1 },
-                ],
-              },
+              gameMode: GameMode.SINGLES_1,
+              playerArrangementMode: PlayerArrangementMode.RANDOM_ORDER,
+              positions: [{ userId: 2, isHost: true }],
+              gameStateDatas: [
+                {
+                  gameAction: { startGame: {} },
+                  timestamp: 1234567894,
+                  revealedTileBagTiles: [89, 19, 29, 39, 49, 59, 69],
+                  playerIdWithPlayableTilePlusOne: 1,
+                },
+                { gameAction: { playTile: { tile: 19 } }, timestamp: 1, revealedTileBagTiles: [79], playerIdWithPlayableTilePlusOne: 1 },
+                { gameAction: { playTile: { tile: 29 } }, timestamp: 1, revealedTileBagTiles: [0], playerIdWithPlayableTilePlusOne: 1 },
+                { gameAction: { playTile: { tile: 39 } }, timestamp: 1, revealedTileBagTiles: [99], playerIdWithPlayableTilePlusOne: 1 },
+              ],
             },
           ],
         },
@@ -1001,11 +993,9 @@ describe('MessageToClient.ClientExitedGame', () => {
             {
               gameId: 10,
               gameDisplayNumber: 1,
-              gameSetupData: {
-                gameMode: GameMode.TEAMS_2_VS_2,
-                playerArrangementMode: PlayerArrangementMode.RANDOM_ORDER,
-                positions: [{ userId: 1, isHost: true }, { userId: 2 }, {}, {}],
-              },
+              gameMode: GameMode.TEAMS_2_VS_2,
+              playerArrangementMode: PlayerArrangementMode.RANDOM_ORDER,
+              positions: [{ userId: 1, isHost: true }, { userId: 2 }, {}, {}],
             },
           ],
         },
@@ -1052,11 +1042,9 @@ describe('MessageToClient.ClientExitedGame', () => {
             {
               gameId: 10,
               gameDisplayNumber: 1,
-              gameSetupData: {
-                gameMode: GameMode.TEAMS_2_VS_2,
-                playerArrangementMode: PlayerArrangementMode.RANDOM_ORDER,
-                positions: [{ userId: 1, isHost: true }, { userId: 2 }, {}, {}],
-              },
+              gameMode: GameMode.TEAMS_2_VS_2,
+              playerArrangementMode: PlayerArrangementMode.RANDOM_ORDER,
+              positions: [{ userId: 1, isHost: true }, { userId: 2 }, {}, {}],
             },
           ],
         },
@@ -1105,11 +1093,9 @@ describe('MessageToClient.GameSetupChanged', () => {
             {
               gameId: 10,
               gameDisplayNumber: 1,
-              gameSetupData: {
-                gameMode: GameMode.TEAMS_2_VS_2,
-                playerArrangementMode: PlayerArrangementMode.RANDOM_ORDER,
-                positions: [{ userId: 1, isHost: true }, {}, {}, {}],
-              },
+              gameMode: GameMode.TEAMS_2_VS_2,
+              playerArrangementMode: PlayerArrangementMode.RANDOM_ORDER,
+              positions: [{ userId: 1, isHost: true }, {}, {}, {}],
             },
           ],
         },
@@ -1160,11 +1146,9 @@ describe('MessageToClient.GameSetupChanged', () => {
             {
               gameId: 10,
               gameDisplayNumber: 1,
-              gameSetupData: {
-                gameMode: GameMode.TEAMS_2_VS_2,
-                playerArrangementMode: PlayerArrangementMode.RANDOM_ORDER,
-                positions: [{ userId: 1, isHost: true }, { userId: 2 }, {}, {}],
-              },
+              gameMode: GameMode.TEAMS_2_VS_2,
+              playerArrangementMode: PlayerArrangementMode.RANDOM_ORDER,
+              positions: [{ userId: 1, isHost: true }, { userId: 2 }, {}, {}],
             },
           ],
         },
@@ -1215,11 +1199,9 @@ describe('MessageToClient.GameSetupChanged', () => {
             {
               gameId: 10,
               gameDisplayNumber: 1,
-              gameSetupData: {
-                gameMode: GameMode.SINGLES_2,
-                playerArrangementMode: PlayerArrangementMode.RANDOM_ORDER,
-                positions: [{ userId: 1, isHost: true }, { userId: 2 }],
-              },
+              gameMode: GameMode.SINGLES_2,
+              playerArrangementMode: PlayerArrangementMode.RANDOM_ORDER,
+              positions: [{ userId: 1, isHost: true }, { userId: 2 }],
             },
           ],
         },
@@ -1270,11 +1252,9 @@ describe('MessageToClient.GameSetupChanged', () => {
             {
               gameId: 10,
               gameDisplayNumber: 1,
-              gameSetupData: {
-                gameMode: GameMode.SINGLES_2,
-                playerArrangementMode: PlayerArrangementMode.RANDOM_ORDER,
-                positions: [{ userId: 1, isHost: true }, { userId: 2 }],
-              },
+              gameMode: GameMode.SINGLES_2,
+              playerArrangementMode: PlayerArrangementMode.RANDOM_ORDER,
+              positions: [{ userId: 1, isHost: true }, { userId: 2 }],
             },
           ],
         },
@@ -1325,11 +1305,9 @@ describe('MessageToClient.GameSetupChanged', () => {
             {
               gameId: 10,
               gameDisplayNumber: 1,
-              gameSetupData: {
-                gameMode: GameMode.SINGLES_2,
-                playerArrangementMode: PlayerArrangementMode.RANDOM_ORDER,
-                positions: [{ userId: 1, isHost: true }, { userId: 2 }],
-              },
+              gameMode: GameMode.SINGLES_2,
+              playerArrangementMode: PlayerArrangementMode.RANDOM_ORDER,
+              positions: [{ userId: 1, isHost: true }, { userId: 2 }],
             },
           ],
         },
@@ -1380,11 +1358,9 @@ describe('MessageToClient.GameSetupChanged', () => {
             {
               gameId: 10,
               gameDisplayNumber: 1,
-              gameSetupData: {
-                gameMode: GameMode.TEAMS_2_VS_2,
-                playerArrangementMode: PlayerArrangementMode.RANDOM_ORDER,
-                positions: [{ userId: 1, isHost: true }, { userId: 2 }, {}, {}],
-              },
+              gameMode: GameMode.TEAMS_2_VS_2,
+              playerArrangementMode: PlayerArrangementMode.RANDOM_ORDER,
+              positions: [{ userId: 1, isHost: true }, { userId: 2 }, {}, {}],
             },
           ],
         },
@@ -1436,11 +1412,9 @@ describe('MessageToClient.GameSetupChanged', () => {
             {
               gameId: 10,
               gameDisplayNumber: 1,
-              gameSetupData: {
-                gameMode: GameMode.TEAMS_2_VS_2,
-                playerArrangementMode: PlayerArrangementMode.RANDOM_ORDER,
-                positions: [{ userId: 1, isHost: true }, { userId: 2 }, {}, {}],
-              },
+              gameMode: GameMode.TEAMS_2_VS_2,
+              playerArrangementMode: PlayerArrangementMode.RANDOM_ORDER,
+              positions: [{ userId: 1, isHost: true }, { userId: 2 }, {}, {}],
             },
           ],
         },
@@ -1494,11 +1468,9 @@ describe('MessageToClient.GameStarted and MessageToClient.GameActionDone', () =>
             {
               gameId: 10,
               gameDisplayNumber: 1,
-              gameSetupData: {
-                gameMode: GameMode.SINGLES_2,
-                playerArrangementMode: PlayerArrangementMode.RANDOM_ORDER,
-                positions: [{ userId: 1, isHost: true }, { userId: 2 }],
-              },
+              gameMode: GameMode.SINGLES_2,
+              playerArrangementMode: PlayerArrangementMode.RANDOM_ORDER,
+              positions: [{ userId: 1, isHost: true }, { userId: 2 }],
             },
           ],
         },
@@ -1569,11 +1541,9 @@ describe('MessageToClient.GameStarted and MessageToClient.GameActionDone', () =>
             {
               gameId: 1,
               gameDisplayNumber: 1,
-              gameSetupData: {
-                gameMode: GameMode.SINGLES_1,
-                playerArrangementMode: PlayerArrangementMode.RANDOM_ORDER,
-                positions: [{ userId: 1, isHost: true }],
-              },
+              gameMode: GameMode.SINGLES_1,
+              playerArrangementMode: PlayerArrangementMode.RANDOM_ORDER,
+              positions: [{ userId: 1, isHost: true }],
             },
           ],
         },

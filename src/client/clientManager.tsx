@@ -543,26 +543,22 @@ export class ClientManager {
 
       const gameData = this.gameIDToGameData.get(gamePB.gameId)!;
 
-      if (gamePB.gameSetupData) {
-        const gameSetupData = gamePB.gameSetupData;
+      if (gamePB.gameStateDatas.length === 0) {
+        gameData.gameSetup = GameSetup.fromGameData(gamePB, this.getUsernameForUserID);
 
-        gameData.gameSetup = GameSetup.fromGameSetupData(gameSetupData, this.getUsernameForUserID);
-
-        const positions = gameSetupData.positions;
+        const positions = gamePB.positions;
         for (let j = 0; j < positions.length; j++) {
           const userID = positions[j].userId;
           if (userID !== 0) {
             this.userIDToUser.get(userID)!.numGames++;
           }
         }
-      } else if (gamePB.gameData) {
-        const gameDataPB = gamePB.gameData;
-
+      } else {
         const userIDs: number[] = [];
         const usernames: string[] = [];
         let hostUserID = 0;
 
-        const positions = gameDataPB.positions;
+        const positions = gamePB.positions;
         for (let j = 0; j < positions.length; j++) {
           const position = positions[j];
 
@@ -576,9 +572,9 @@ export class ClientManager {
           }
         }
 
-        gameData.game = new Game(gameDataPB.gameMode, gameDataPB.playerArrangementMode, [], List(userIDs), List(usernames), hostUserID, myUserID);
+        gameData.game = new Game(gamePB.gameMode, gamePB.playerArrangementMode, [], List(userIDs), List(usernames), hostUserID, myUserID);
 
-        const gameStateDatas = gameDataPB.gameStateDatas;
+        const gameStateDatas = gamePB.gameStateDatas;
         for (let j = 0; j < gameStateDatas.length; j++) {
           gameData.game.processGameStateData(gameStateDatas[j]);
         }

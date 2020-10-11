@@ -1,6 +1,6 @@
 import { List } from 'immutable';
 import { gameModeToNumPlayers, gameModeToTeamSize, shuffleArray } from './helpers';
-import { GameMode, PB_GameSetupChange, PB_GameSetupData, PB_GameSetupData_Position, PlayerArrangementMode } from './pb';
+import { GameMode, PB_Game, PB_Game_Position, PB_GameSetupChange, PlayerArrangementMode } from './pb';
 
 const defaultApprovals = new Map([
   [1, List([false])],
@@ -314,14 +314,14 @@ export class GameSetup {
     return [List(userIDs), List(usernames)];
   }
 
-  toGameSetupData(): PB_GameSetupData {
-    const gameSetupData = PB_GameSetupData.create({
+  toGameData(): PB_Game {
+    const gameSetupData = PB_Game.create({
       gameMode: this.gameMode,
       playerArrangementMode: this.playerArrangementMode,
     });
 
     this.userIDs.forEach((userID, position) => {
-      const positionData = PB_GameSetupData_Position.create();
+      const positionData = PB_Game_Position.create();
 
       if (userID !== null) {
         positionData.userId = userID;
@@ -339,8 +339,8 @@ export class GameSetup {
     return gameSetupData;
   }
 
-  static fromGameSetupData(gameSetupData: PB_GameSetupData, getUsernameForUserID: (userID: number) => string) {
-    const positions = gameSetupData.positions;
+  static fromGameData(gameData: PB_Game, getUsernameForUserID: (userID: number) => string) {
+    const positions = gameData.positions;
 
     const usernames: (string | null)[] = new Array(positions.length);
     const userIDsArray: (number | null)[] = new Array(positions.length);
@@ -375,7 +375,7 @@ export class GameSetup {
       }
     }
 
-    const gameSetup = new GameSetup(gameSetupData.gameMode, gameSetupData.playerArrangementMode, hostUserID, getUsernameForUserID);
+    const gameSetup = new GameSetup(gameData.gameMode, gameData.playerArrangementMode, hostUserID, getUsernameForUserID);
     gameSetup.usernames = List(usernames);
     gameSetup.userIDs = List(userIDsArray);
     gameSetup.userIDsSet = userIDsSet;

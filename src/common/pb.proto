@@ -54,16 +54,19 @@ enum PlayerArrangementMode {
 }
 
 message PB {
-  message GameSetupData {
+  message Game {
     message Position {
       int32 user_id = 1;
       bool is_host = 2;
       bool approves_of_game_setup = 3;
     }
 
-    GameMode game_mode = 1;
-    PlayerArrangementMode player_arrangement_mode = 2;
-    repeated Position positions = 3;
+    int32 game_id = 1;
+    int32 game_display_number = 2;
+    GameMode game_mode = 3;
+    PlayerArrangementMode player_arrangement_mode = 4;
+    repeated Position positions = 5;
+    repeated GameStateData game_state_datas = 6;
   }
 
   message GameStateData {
@@ -78,21 +81,6 @@ message PB {
     repeated int32 revealed_tile_bag_tiles = 4;
     // 1 more than actual player_id
     int32 player_id_with_playable_tile_plus_one = 5;
-  }
-
-  message GameData {
-    message Position {
-      int32 user_id = 1;
-      bool is_host = 2;
-    }
-
-    // these 3 entries are excluded if client knows about this game
-    GameMode game_mode = 1;
-    PlayerArrangementMode player_arrangement_mode = 2;
-    repeated Position positions = 3;
-
-    // skip game state datas client already knows
-    repeated GameStateData game_state_datas = 4;
   }
 
   message GameSetupAction {
@@ -232,13 +220,6 @@ message PB {
         int32 user_id = 1;
         string username = 2;
         repeated Client clients = 3;
-      }
-
-      message Game {
-        int32 game_id = 1;
-        int32 game_display_number = 2;
-        GameSetupData game_setup_data = 3; // included if game being set up
-        GameData game_data = 4;            // included if game has started
       }
 
       int32 client_id = 1;

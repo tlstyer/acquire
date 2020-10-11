@@ -5,8 +5,8 @@ import { gameModeToNumPlayers, getNewTileBag, isASCII } from '../common/helpers'
 import {
   ErrorCode,
   PB_GameAction,
-  PB_GameData,
-  PB_GameData_Position,
+  PB_Game,
+  PB_Game_Position,
   PB_GameSetupAction_ChangeGameMode,
   PB_GameSetupAction_ChangePlayerArrangementMode,
   PB_GameSetupAction_KickUser,
@@ -14,7 +14,6 @@ import {
   PB_GameStateData,
   PB_MessagesToClient,
   PB_MessageToClient,
-  PB_MessageToClient_Greetings_Game,
   PB_MessageToClient_Greetings_User,
   PB_MessageToClient_Greetings_User_Client,
   PB_MessageToServer,
@@ -697,10 +696,10 @@ export class ServerManager {
 
     const games: any[] = [];
     this.gameIDToGameData.forEach((gameData) => {
-      const gamePB = PB_MessageToClient_Greetings_Game.create({ gameId: gameData.id, gameDisplayNumber: gameData.displayNumber });
+      let gamePB: PB_Game;
 
       if (gameData.gameSetup !== null) {
-        gamePB.gameSetupData = gameData.gameSetup.toGameSetupData();
+        gamePB = gameData.gameSetup.toGameData();
       } else {
         const game = gameData.game!;
         const playerID = game.userIDs.indexOf(client.user.id);
@@ -714,9 +713,9 @@ export class ServerManager {
           }
         });
 
-        const positions: PB_GameData_Position[] = [];
+        const positions: PB_Game_Position[] = [];
         game.userIDs.forEach((userID) => {
-          const position = PB_GameData_Position.create({ userId: userID });
+          const position = PB_Game_Position.create({ userId: userID });
           if (userID === game.hostUserID) {
             position.isHost = true;
           }
@@ -724,10 +723,16 @@ export class ServerManager {
           positions.push(position);
         });
 
-        const gameDataPB = PB_GameData.create({ gameMode: game.gameMode, playerArrangementMode: game.playerArrangementMode, positions, gameStateDatas });
-
-        gamePB.gameData = gameDataPB;
+        gamePB = PB_Game.create({
+          gameMode: game.gameMode,
+          playerArrangementMode: game.playerArrangementMode,
+          positions,
+          gameStateDatas,
+        });
       }
+
+      gamePB.gameId = gameData.id;
+      gamePB.gameDisplayNumber = gameData.displayNumber;
 
       games.push(gamePB);
     });

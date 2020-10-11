@@ -16,26 +16,38 @@ import { MessageType } from "@protobuf-ts/runtime";
 export interface PB {
 }
 /**
- * @generated from protobuf message PB.GameSetupData
+ * @generated from protobuf message PB.Game
  */
-export interface PB_GameSetupData {
+export interface PB_Game {
     /**
-     * @generated from protobuf field: GameMode game_mode = 1;
+     * @generated from protobuf field: int32 game_id = 1;
+     */
+    gameId: number;
+    /**
+     * @generated from protobuf field: int32 game_display_number = 2;
+     */
+    gameDisplayNumber: number;
+    /**
+     * @generated from protobuf field: GameMode game_mode = 3;
      */
     gameMode: GameMode;
     /**
-     * @generated from protobuf field: PlayerArrangementMode player_arrangement_mode = 2;
+     * @generated from protobuf field: PlayerArrangementMode player_arrangement_mode = 4;
      */
     playerArrangementMode: PlayerArrangementMode;
     /**
-     * @generated from protobuf field: repeated PB.GameSetupData.Position positions = 3;
+     * @generated from protobuf field: repeated PB.Game.Position positions = 5;
      */
-    positions: PB_GameSetupData_Position[];
+    positions: PB_Game_Position[];
+    /**
+     * @generated from protobuf field: repeated PB.GameStateData game_state_datas = 6;
+     */
+    gameStateDatas: PB_GameStateData[];
 }
 /**
- * @generated from protobuf message PB.GameSetupData.Position
+ * @generated from protobuf message PB.Game.Position
  */
-export interface PB_GameSetupData_Position {
+export interface PB_Game_Position {
     /**
      * @generated from protobuf field: int32 user_id = 1;
      */
@@ -88,44 +100,6 @@ export interface PB_GameStateData_RevealedTileRackTile {
      * @generated from protobuf field: int32 player_id_belongs_to = 2;
      */
     playerIdBelongsTo: number;
-}
-/**
- * @generated from protobuf message PB.GameData
- */
-export interface PB_GameData {
-    /**
-     * these 3 entries are excluded if client knows about this game
-     *
-     * @generated from protobuf field: GameMode game_mode = 1;
-     */
-    gameMode: GameMode;
-    /**
-     * @generated from protobuf field: PlayerArrangementMode player_arrangement_mode = 2;
-     */
-    playerArrangementMode: PlayerArrangementMode;
-    /**
-     * @generated from protobuf field: repeated PB.GameData.Position positions = 3;
-     */
-    positions: PB_GameData_Position[];
-    /**
-     * skip game state datas client already knows
-     *
-     * @generated from protobuf field: repeated PB.GameStateData game_state_datas = 4;
-     */
-    gameStateDatas: PB_GameStateData[];
-}
-/**
- * @generated from protobuf message PB.GameData.Position
- */
-export interface PB_GameData_Position {
-    /**
-     * @generated from protobuf field: int32 user_id = 1;
-     */
-    userId: number;
-    /**
-     * @generated from protobuf field: bool is_host = 2;
-     */
-    isHost: boolean;
 }
 /**
  * @generated from protobuf message PB.GameSetupAction
@@ -590,9 +564,9 @@ export interface PB_MessageToClient_Greetings {
      */
     users: PB_MessageToClient_Greetings_User[];
     /**
-     * @generated from protobuf field: repeated PB.MessageToClient.Greetings.Game games = 3;
+     * @generated from protobuf field: repeated PB.Game games = 3;
      */
-    games: PB_MessageToClient_Greetings_Game[];
+    games: PB_Game[];
 }
 /**
  * @generated from protobuf message PB.MessageToClient.Greetings.User
@@ -623,27 +597,6 @@ export interface PB_MessageToClient_Greetings_User_Client {
      * @generated from protobuf field: int32 game_display_number = 2;
      */
     gameDisplayNumber: number; // excluded if not in a game
-}
-/**
- * @generated from protobuf message PB.MessageToClient.Greetings.Game
- */
-export interface PB_MessageToClient_Greetings_Game {
-    /**
-     * @generated from protobuf field: int32 game_id = 1;
-     */
-    gameId: number;
-    /**
-     * @generated from protobuf field: int32 game_display_number = 2;
-     */
-    gameDisplayNumber: number;
-    /**
-     * @generated from protobuf field: PB.GameSetupData game_setup_data = 3;
-     */
-    gameSetupData?: PB_GameSetupData; // included if game being set up
-    /**
-     * @generated from protobuf field: PB.GameData game_data = 4;
-     */
-    gameData?: PB_GameData; // included if game has started
 }
 /**
  * @generated from protobuf message PB.MessageToClient.ClientConnected
@@ -969,35 +922,47 @@ class PB$Type extends MessageType<PB> {
 }
 export const PB = new PB$Type();
 /**
- * Type for protobuf message PB.GameSetupData
+ * Type for protobuf message PB.Game
  */
-class PB_GameSetupData$Type extends MessageType<PB_GameSetupData> {
+class PB_Game$Type extends MessageType<PB_Game> {
     constructor() {
-        super("PB.GameSetupData", [
-            { no: 1, name: "game_mode", kind: "enum", T: () => ["GameMode", GameMode] },
-            { no: 2, name: "player_arrangement_mode", kind: "enum", T: () => ["PlayerArrangementMode", PlayerArrangementMode] },
-            { no: 3, name: "positions", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => PB_GameSetupData_Position }
+        super("PB.Game", [
+            { no: 1, name: "game_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 2, name: "game_display_number", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 3, name: "game_mode", kind: "enum", T: () => ["GameMode", GameMode] },
+            { no: 4, name: "player_arrangement_mode", kind: "enum", T: () => ["PlayerArrangementMode", PlayerArrangementMode] },
+            { no: 5, name: "positions", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => PB_Game_Position },
+            { no: 6, name: "game_state_datas", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => PB_GameStateData }
         ]);
     }
-    create(value?: PartialMessage<PB_GameSetupData>): PB_GameSetupData {
-        const message = { gameMode: 0, playerArrangementMode: 0, positions: [] };
+    create(value?: PartialMessage<PB_Game>): PB_Game {
+        const message = { gameId: 0, gameDisplayNumber: 0, gameMode: 0, playerArrangementMode: 0, positions: [], gameStateDatas: [] };
         if (value !== undefined)
-            reflectionMergePartial<PB_GameSetupData>(this, message, value);
+            reflectionMergePartial<PB_Game>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PB_GameSetupData): PB_GameSetupData {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PB_Game): PB_Game {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* GameMode game_mode */ 1:
+                case /* int32 game_id */ 1:
+                    message.gameId = reader.int32();
+                    break;
+                case /* int32 game_display_number */ 2:
+                    message.gameDisplayNumber = reader.int32();
+                    break;
+                case /* GameMode game_mode */ 3:
                     message.gameMode = reader.int32();
                     break;
-                case /* PlayerArrangementMode player_arrangement_mode */ 2:
+                case /* PlayerArrangementMode player_arrangement_mode */ 4:
                     message.playerArrangementMode = reader.int32();
                     break;
-                case /* repeated PB.GameSetupData.Position positions */ 3:
-                    message.positions.push(PB_GameSetupData_Position.internalBinaryRead(reader, reader.uint32(), options));
+                case /* repeated PB.Game.Position positions */ 5:
+                    message.positions.push(PB_Game_Position.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                case /* repeated PB.GameStateData game_state_datas */ 6:
+                    message.gameStateDatas.push(PB_GameStateData.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -1010,41 +975,50 @@ class PB_GameSetupData$Type extends MessageType<PB_GameSetupData> {
         }
         return message;
     }
-    internalBinaryWrite(message: PB_GameSetupData, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* GameMode game_mode = 1; */
+    internalBinaryWrite(message: PB_Game, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int32 game_id = 1; */
+        if (message.gameId !== 0)
+            writer.tag(1, WireType.Varint).int32(message.gameId);
+        /* int32 game_display_number = 2; */
+        if (message.gameDisplayNumber !== 0)
+            writer.tag(2, WireType.Varint).int32(message.gameDisplayNumber);
+        /* GameMode game_mode = 3; */
         if (message.gameMode !== 0)
-            writer.tag(1, WireType.Varint).int32(message.gameMode);
-        /* PlayerArrangementMode player_arrangement_mode = 2; */
+            writer.tag(3, WireType.Varint).int32(message.gameMode);
+        /* PlayerArrangementMode player_arrangement_mode = 4; */
         if (message.playerArrangementMode !== 0)
-            writer.tag(2, WireType.Varint).int32(message.playerArrangementMode);
-        /* repeated PB.GameSetupData.Position positions = 3; */
+            writer.tag(4, WireType.Varint).int32(message.playerArrangementMode);
+        /* repeated PB.Game.Position positions = 5; */
         for (let i = 0; i < message.positions.length; i++)
-            PB_GameSetupData_Position.internalBinaryWrite(message.positions[i], writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+            PB_Game_Position.internalBinaryWrite(message.positions[i], writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        /* repeated PB.GameStateData game_state_datas = 6; */
+        for (let i = 0; i < message.gameStateDatas.length; i++)
+            PB_GameStateData.internalBinaryWrite(message.gameStateDatas[i], writer.tag(6, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
         return writer;
     }
 }
-export const PB_GameSetupData = new PB_GameSetupData$Type();
+export const PB_Game = new PB_Game$Type();
 /**
- * Type for protobuf message PB.GameSetupData.Position
+ * Type for protobuf message PB.Game.Position
  */
-class PB_GameSetupData_Position$Type extends MessageType<PB_GameSetupData_Position> {
+class PB_Game_Position$Type extends MessageType<PB_Game_Position> {
     constructor() {
-        super("PB.GameSetupData.Position", [
+        super("PB.Game.Position", [
             { no: 1, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
             { no: 2, name: "is_host", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 3, name: "approves_of_game_setup", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
-    create(value?: PartialMessage<PB_GameSetupData_Position>): PB_GameSetupData_Position {
+    create(value?: PartialMessage<PB_Game_Position>): PB_Game_Position {
         const message = { userId: 0, isHost: false, approvesOfGameSetup: false };
         if (value !== undefined)
-            reflectionMergePartial<PB_GameSetupData_Position>(this, message, value);
+            reflectionMergePartial<PB_Game_Position>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PB_GameSetupData_Position): PB_GameSetupData_Position {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PB_Game_Position): PB_Game_Position {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -1069,7 +1043,7 @@ class PB_GameSetupData_Position$Type extends MessageType<PB_GameSetupData_Positi
         }
         return message;
     }
-    internalBinaryWrite(message: PB_GameSetupData_Position, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: PB_Game_Position, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* int32 user_id = 1; */
         if (message.userId !== 0)
             writer.tag(1, WireType.Varint).int32(message.userId);
@@ -1085,7 +1059,7 @@ class PB_GameSetupData_Position$Type extends MessageType<PB_GameSetupData_Positi
         return writer;
     }
 }
-export const PB_GameSetupData_Position = new PB_GameSetupData_Position$Type();
+export const PB_Game_Position = new PB_Game_Position$Type();
 /**
  * Type for protobuf message PB.GameStateData
  */
@@ -1219,124 +1193,6 @@ class PB_GameStateData_RevealedTileRackTile$Type extends MessageType<PB_GameStat
     }
 }
 export const PB_GameStateData_RevealedTileRackTile = new PB_GameStateData_RevealedTileRackTile$Type();
-/**
- * Type for protobuf message PB.GameData
- */
-class PB_GameData$Type extends MessageType<PB_GameData> {
-    constructor() {
-        super("PB.GameData", [
-            { no: 1, name: "game_mode", kind: "enum", T: () => ["GameMode", GameMode] },
-            { no: 2, name: "player_arrangement_mode", kind: "enum", T: () => ["PlayerArrangementMode", PlayerArrangementMode] },
-            { no: 3, name: "positions", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => PB_GameData_Position },
-            { no: 4, name: "game_state_datas", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => PB_GameStateData }
-        ]);
-    }
-    create(value?: PartialMessage<PB_GameData>): PB_GameData {
-        const message = { gameMode: 0, playerArrangementMode: 0, positions: [], gameStateDatas: [] };
-        if (value !== undefined)
-            reflectionMergePartial<PB_GameData>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PB_GameData): PB_GameData {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* GameMode game_mode */ 1:
-                    message.gameMode = reader.int32();
-                    break;
-                case /* PlayerArrangementMode player_arrangement_mode */ 2:
-                    message.playerArrangementMode = reader.int32();
-                    break;
-                case /* repeated PB.GameData.Position positions */ 3:
-                    message.positions.push(PB_GameData_Position.internalBinaryRead(reader, reader.uint32(), options));
-                    break;
-                case /* repeated PB.GameStateData game_state_datas */ 4:
-                    message.gameStateDatas.push(PB_GameStateData.internalBinaryRead(reader, reader.uint32(), options));
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: PB_GameData, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* GameMode game_mode = 1; */
-        if (message.gameMode !== 0)
-            writer.tag(1, WireType.Varint).int32(message.gameMode);
-        /* PlayerArrangementMode player_arrangement_mode = 2; */
-        if (message.playerArrangementMode !== 0)
-            writer.tag(2, WireType.Varint).int32(message.playerArrangementMode);
-        /* repeated PB.GameData.Position positions = 3; */
-        for (let i = 0; i < message.positions.length; i++)
-            PB_GameData_Position.internalBinaryWrite(message.positions[i], writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        /* repeated PB.GameStateData game_state_datas = 4; */
-        for (let i = 0; i < message.gameStateDatas.length; i++)
-            PB_GameStateData.internalBinaryWrite(message.gameStateDatas[i], writer.tag(4, WireType.LengthDelimited).fork(), options).join();
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-export const PB_GameData = new PB_GameData$Type();
-/**
- * Type for protobuf message PB.GameData.Position
- */
-class PB_GameData_Position$Type extends MessageType<PB_GameData_Position> {
-    constructor() {
-        super("PB.GameData.Position", [
-            { no: 1, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 2, name: "is_host", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
-        ]);
-    }
-    create(value?: PartialMessage<PB_GameData_Position>): PB_GameData_Position {
-        const message = { userId: 0, isHost: false };
-        if (value !== undefined)
-            reflectionMergePartial<PB_GameData_Position>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PB_GameData_Position): PB_GameData_Position {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* int32 user_id */ 1:
-                    message.userId = reader.int32();
-                    break;
-                case /* bool is_host */ 2:
-                    message.isHost = reader.bool();
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: PB_GameData_Position, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* int32 user_id = 1; */
-        if (message.userId !== 0)
-            writer.tag(1, WireType.Varint).int32(message.userId);
-        /* bool is_host = 2; */
-        if (message.isHost !== false)
-            writer.tag(2, WireType.Varint).bool(message.isHost);
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-export const PB_GameData_Position = new PB_GameData_Position$Type();
 /**
  * Type for protobuf message PB.GameSetupAction
  */
@@ -3051,7 +2907,7 @@ class PB_MessageToClient_Greetings$Type extends MessageType<PB_MessageToClient_G
         super("PB.MessageToClient.Greetings", [
             { no: 1, name: "client_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
             { no: 2, name: "users", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => PB_MessageToClient_Greetings_User },
-            { no: 3, name: "games", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => PB_MessageToClient_Greetings_Game }
+            { no: 3, name: "games", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => PB_Game }
         ]);
     }
     create(value?: PartialMessage<PB_MessageToClient_Greetings>): PB_MessageToClient_Greetings {
@@ -3071,8 +2927,8 @@ class PB_MessageToClient_Greetings$Type extends MessageType<PB_MessageToClient_G
                 case /* repeated PB.MessageToClient.Greetings.User users */ 2:
                     message.users.push(PB_MessageToClient_Greetings_User.internalBinaryRead(reader, reader.uint32(), options));
                     break;
-                case /* repeated PB.MessageToClient.Greetings.Game games */ 3:
-                    message.games.push(PB_MessageToClient_Greetings_Game.internalBinaryRead(reader, reader.uint32(), options));
+                case /* repeated PB.Game games */ 3:
+                    message.games.push(PB_Game.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -3092,9 +2948,9 @@ class PB_MessageToClient_Greetings$Type extends MessageType<PB_MessageToClient_G
         /* repeated PB.MessageToClient.Greetings.User users = 2; */
         for (let i = 0; i < message.users.length; i++)
             PB_MessageToClient_Greetings_User.internalBinaryWrite(message.users[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* repeated PB.MessageToClient.Greetings.Game games = 3; */
+        /* repeated PB.Game games = 3; */
         for (let i = 0; i < message.games.length; i++)
-            PB_MessageToClient_Greetings_Game.internalBinaryWrite(message.games[i], writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+            PB_Game.internalBinaryWrite(message.games[i], writer.tag(3, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -3213,72 +3069,6 @@ class PB_MessageToClient_Greetings_User_Client$Type extends MessageType<PB_Messa
     }
 }
 export const PB_MessageToClient_Greetings_User_Client = new PB_MessageToClient_Greetings_User_Client$Type();
-/**
- * Type for protobuf message PB.MessageToClient.Greetings.Game
- */
-class PB_MessageToClient_Greetings_Game$Type extends MessageType<PB_MessageToClient_Greetings_Game> {
-    constructor() {
-        super("PB.MessageToClient.Greetings.Game", [
-            { no: 1, name: "game_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 2, name: "game_display_number", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 3, name: "game_setup_data", kind: "message", T: () => PB_GameSetupData },
-            { no: 4, name: "game_data", kind: "message", T: () => PB_GameData }
-        ]);
-    }
-    create(value?: PartialMessage<PB_MessageToClient_Greetings_Game>): PB_MessageToClient_Greetings_Game {
-        const message = { gameId: 0, gameDisplayNumber: 0 };
-        if (value !== undefined)
-            reflectionMergePartial<PB_MessageToClient_Greetings_Game>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PB_MessageToClient_Greetings_Game): PB_MessageToClient_Greetings_Game {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* int32 game_id */ 1:
-                    message.gameId = reader.int32();
-                    break;
-                case /* int32 game_display_number */ 2:
-                    message.gameDisplayNumber = reader.int32();
-                    break;
-                case /* PB.GameSetupData game_setup_data */ 3:
-                    message.gameSetupData = PB_GameSetupData.internalBinaryRead(reader, reader.uint32(), options, message.gameSetupData);
-                    break;
-                case /* PB.GameData game_data */ 4:
-                    message.gameData = PB_GameData.internalBinaryRead(reader, reader.uint32(), options, message.gameData);
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: PB_MessageToClient_Greetings_Game, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* int32 game_id = 1; */
-        if (message.gameId !== 0)
-            writer.tag(1, WireType.Varint).int32(message.gameId);
-        /* int32 game_display_number = 2; */
-        if (message.gameDisplayNumber !== 0)
-            writer.tag(2, WireType.Varint).int32(message.gameDisplayNumber);
-        /* PB.GameSetupData game_setup_data = 3; */
-        if (message.gameSetupData)
-            PB_GameSetupData.internalBinaryWrite(message.gameSetupData, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        /* PB.GameData game_data = 4; */
-        if (message.gameData)
-            PB_GameData.internalBinaryWrite(message.gameData, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-export const PB_MessageToClient_Greetings_Game = new PB_MessageToClient_Greetings_Game$Type();
 /**
  * Type for protobuf message PB.MessageToClient.ClientConnected
  */
