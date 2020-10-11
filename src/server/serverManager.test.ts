@@ -688,7 +688,7 @@ describe('when sending first message', () => {
                 gameMode: GameMode.SINGLES_1,
                 playerArrangementMode: PlayerArrangementMode.RANDOM_ORDER,
                 positions: [{ userId: 2, isHost: true }],
-                gameStateDatas: [
+                gameStates: [
                   {
                     gameAction: { startGame: {} },
                     timestamp: 1234567903,
@@ -748,7 +748,7 @@ describe('when sending first message', () => {
                 gameMode: GameMode.SINGLES_1,
                 playerArrangementMode: PlayerArrangementMode.RANDOM_ORDER,
                 positions: [{ userId: 2, isHost: true }],
-                gameStateDatas: [
+                gameStates: [
                   {
                     gameAction: { startGame: {} },
                     timestamp: 1234567903,
@@ -1519,7 +1519,7 @@ describe('all approve of game setup', () => {
       PB_MessageToClient.create({
         gameActionDone: {
           gameDisplayNumber: 1,
-          gameStateData: {
+          gameState: {
             gameAction: { startGame: {} },
             timestamp: Date.now(),
             revealedTileBagTiles: [
@@ -1548,7 +1548,7 @@ describe('all approve of game setup', () => {
       PB_MessageToClient.create({
         gameActionDone: {
           gameDisplayNumber: 1,
-          gameStateData: {
+          gameState: {
             gameAction: { startGame: {} },
             timestamp: Date.now(),
             revealedTileBagTiles: [
@@ -1577,7 +1577,7 @@ describe('all approve of game setup', () => {
       PB_MessageToClient.create({
         gameActionDone: {
           gameDisplayNumber: 1,
-          gameStateData: {
+          gameState: {
             gameAction: { startGame: {} },
             timestamp: Date.now(),
             revealedTileBagTiles: [
@@ -1702,7 +1702,7 @@ describe('do game action', () => {
       PB_MessageToClient.create({
         gameActionDone: {
           gameDisplayNumber: 1,
-          gameStateData: {
+          gameState: {
             gameAction,
             timestamp: 1000,
             revealedTileRackTiles: [{ tile: 29, playerIdBelongsTo: 0 }],
@@ -1716,7 +1716,7 @@ describe('do game action', () => {
       PB_MessageToClient.create({
         gameActionDone: {
           gameDisplayNumber: 1,
-          gameStateData: {
+          gameState: {
             gameAction,
             timestamp: 1000,
             revealedTileBagTiles: [15],
@@ -1729,7 +1729,7 @@ describe('do game action', () => {
       PB_MessageToClient.create({
         gameActionDone: {
           gameDisplayNumber: 1,
-          gameStateData: {
+          gameState: {
             gameAction,
             timestamp: 1000,
             revealedTileRackTiles: [{ tile: 29, playerIdBelongsTo: 0 }],

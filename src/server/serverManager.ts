@@ -11,7 +11,7 @@ import {
   PB_GameSetupAction_ChangePlayerArrangementMode,
   PB_GameSetupAction_KickUser,
   PB_GameSetupAction_SwapPositions,
-  PB_GameStateData,
+  PB_GameState,
   PB_MessagesToClient,
   PB_MessageToClient,
   PB_MessageToClient_Greetings_User,
@@ -641,7 +641,7 @@ export class ServerManager {
     const game = gameData.game!;
     const gameState = game.gameStateHistory.get(game.gameStateHistory.size - 1)!;
 
-    gameState.createPlayerAndWatcherGameStateDatas();
+    gameState.createPlayerAndWatcherGameStates();
 
     const playerUserIDs = new Set<number>();
 
@@ -652,7 +652,7 @@ export class ServerManager {
         const gameActionDoneMessage = PB_MessageToClient.create({
           gameActionDone: {
             gameDisplayNumber: gameData.displayNumber,
-            gameStateData: gameState.playerGameStateDatas[playerID],
+            gameState: gameState.playerGameStates[playerID],
           },
         });
         user.clients.forEach((aClient) => {
@@ -667,7 +667,7 @@ export class ServerManager {
     const gameActionDoneMessage = PB_MessageToClient.create({
       gameActionDone: {
         gameDisplayNumber: gameData.displayNumber,
-        gameStateData: gameState.watcherGameStateData,
+        gameState: gameState.watcherGameState,
       },
     });
     this.webSocketToClient.forEach((aClient) => {
@@ -704,12 +704,12 @@ export class ServerManager {
         const game = gameData.game!;
         const playerID = game.userIDs.indexOf(client.user.id);
 
-        const gameStateDatas: PB_GameStateData[] = [];
+        const gameStates: PB_GameState[] = [];
         game.gameStateHistory.forEach((gameState) => {
           if (playerID >= 0) {
-            gameStateDatas.push(gameState.playerGameStateDatas[playerID]);
+            gameStates.push(gameState.playerGameStates[playerID]);
           } else {
-            gameStateDatas.push(gameState.watcherGameStateData);
+            gameStates.push(gameState.watcherGameState);
           }
         });
 
@@ -727,7 +727,7 @@ export class ServerManager {
           gameMode: game.gameMode,
           playerArrangementMode: game.playerArrangementMode,
           positions,
-          gameStateDatas,
+          gameStates,
         });
       }
 

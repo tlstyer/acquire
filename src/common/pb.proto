@@ -66,10 +66,10 @@ message PB {
     GameMode game_mode = 3;
     PlayerArrangementMode player_arrangement_mode = 4;
     repeated Position positions = 5;
-    repeated GameStateData game_state_datas = 6;
+    repeated GameState game_states = 6;
   }
 
-  message GameStateData {
+  message GameState {
     message RevealedTileRackTile {
       int32 tile = 1;
       int32 player_id_belongs_to = 2;
@@ -261,7 +261,7 @@ message PB {
 
     message GameActionDone {
       int32 game_display_number = 1;
-      GameStateData game_state_data = 2;
+      GameState game_state = 2;
     }
 
     FatalError fatal_error = 1;

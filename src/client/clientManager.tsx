@@ -543,7 +543,7 @@ export class ClientManager {
 
       const gameData = this.gameIDToGameData.get(gamePB.gameId)!;
 
-      if (gamePB.gameStateDatas.length === 0) {
+      if (gamePB.gameStates.length === 0) {
         gameData.gameSetup = GameSetup.fromGameData(gamePB, this.getUsernameForUserID);
 
         const positions = gamePB.positions;
@@ -574,9 +574,9 @@ export class ClientManager {
 
         gameData.game = new Game(gamePB.gameMode, gamePB.playerArrangementMode, [], List(userIDs), List(usernames), hostUserID, myUserID);
 
-        const gameStateDatas = gamePB.gameStateDatas;
-        for (let j = 0; j < gameStateDatas.length; j++) {
-          gameData.game.processGameStateData(gameStateDatas[j]);
+        const gameStates = gamePB.gameStates;
+        for (let j = 0; j < gameStates.length; j++) {
+          gameData.game.processGameState(gameStates[j]);
         }
       }
     }
@@ -688,7 +688,7 @@ export class ClientManager {
     const gameData = this.gameDisplayNumberToGameData.get(message.gameDisplayNumber)!;
     const game = gameData.game!;
 
-    game.processGameStateData(message.gameStateData!);
+    game.processGameState(message.gameState!);
 
     if (this.myClient!.gameData === gameData) {
       this.updateMyRequiredGameAction();

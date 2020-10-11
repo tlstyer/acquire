@@ -40,9 +40,9 @@ export interface PB_Game {
      */
     positions: PB_Game_Position[];
     /**
-     * @generated from protobuf field: repeated PB.GameStateData game_state_datas = 6;
+     * @generated from protobuf field: repeated PB.GameState game_states = 6;
      */
-    gameStateDatas: PB_GameStateData[];
+    gameStates: PB_GameState[];
 }
 /**
  * @generated from protobuf message PB.Game.Position
@@ -62,9 +62,9 @@ export interface PB_Game_Position {
     approvesOfGameSetup: boolean;
 }
 /**
- * @generated from protobuf message PB.GameStateData
+ * @generated from protobuf message PB.GameState
  */
-export interface PB_GameStateData {
+export interface PB_GameState {
     /**
      * @generated from protobuf field: PB.GameAction game_action = 1;
      */
@@ -74,9 +74,9 @@ export interface PB_GameStateData {
      */
     timestamp: number;
     /**
-     * @generated from protobuf field: repeated PB.GameStateData.RevealedTileRackTile revealed_tile_rack_tiles = 3;
+     * @generated from protobuf field: repeated PB.GameState.RevealedTileRackTile revealed_tile_rack_tiles = 3;
      */
-    revealedTileRackTiles: PB_GameStateData_RevealedTileRackTile[];
+    revealedTileRackTiles: PB_GameState_RevealedTileRackTile[];
     /**
      * @generated from protobuf field: repeated int32 revealed_tile_bag_tiles = 4;
      */
@@ -89,9 +89,9 @@ export interface PB_GameStateData {
     playerIdWithPlayableTilePlusOne: number;
 }
 /**
- * @generated from protobuf message PB.GameStateData.RevealedTileRackTile
+ * @generated from protobuf message PB.GameState.RevealedTileRackTile
  */
-export interface PB_GameStateData_RevealedTileRackTile {
+export interface PB_GameState_RevealedTileRackTile {
     /**
      * @generated from protobuf field: int32 tile = 1;
      */
@@ -702,9 +702,9 @@ export interface PB_MessageToClient_GameActionDone {
      */
     gameDisplayNumber: number;
     /**
-     * @generated from protobuf field: PB.GameStateData game_state_data = 2;
+     * @generated from protobuf field: PB.GameState game_state = 2;
      */
-    gameStateData?: PB_GameStateData;
+    gameState?: PB_GameState;
 }
 /**
  * @generated from protobuf message PB.MessagesToClient
@@ -932,11 +932,11 @@ class PB_Game$Type extends MessageType<PB_Game> {
             { no: 3, name: "game_mode", kind: "enum", T: () => ["GameMode", GameMode] },
             { no: 4, name: "player_arrangement_mode", kind: "enum", T: () => ["PlayerArrangementMode", PlayerArrangementMode] },
             { no: 5, name: "positions", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => PB_Game_Position },
-            { no: 6, name: "game_state_datas", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => PB_GameStateData }
+            { no: 6, name: "game_states", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => PB_GameState }
         ]);
     }
     create(value?: PartialMessage<PB_Game>): PB_Game {
-        const message = { gameId: 0, gameDisplayNumber: 0, gameMode: 0, playerArrangementMode: 0, positions: [], gameStateDatas: [] };
+        const message = { gameId: 0, gameDisplayNumber: 0, gameMode: 0, playerArrangementMode: 0, positions: [], gameStates: [] };
         if (value !== undefined)
             reflectionMergePartial<PB_Game>(this, message, value);
         return message;
@@ -961,8 +961,8 @@ class PB_Game$Type extends MessageType<PB_Game> {
                 case /* repeated PB.Game.Position positions */ 5:
                     message.positions.push(PB_Game_Position.internalBinaryRead(reader, reader.uint32(), options));
                     break;
-                case /* repeated PB.GameStateData game_state_datas */ 6:
-                    message.gameStateDatas.push(PB_GameStateData.internalBinaryRead(reader, reader.uint32(), options));
+                case /* repeated PB.GameState game_states */ 6:
+                    message.gameStates.push(PB_GameState.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -991,9 +991,9 @@ class PB_Game$Type extends MessageType<PB_Game> {
         /* repeated PB.Game.Position positions = 5; */
         for (let i = 0; i < message.positions.length; i++)
             PB_Game_Position.internalBinaryWrite(message.positions[i], writer.tag(5, WireType.LengthDelimited).fork(), options).join();
-        /* repeated PB.GameStateData game_state_datas = 6; */
-        for (let i = 0; i < message.gameStateDatas.length; i++)
-            PB_GameStateData.internalBinaryWrite(message.gameStateDatas[i], writer.tag(6, WireType.LengthDelimited).fork(), options).join();
+        /* repeated PB.GameState game_states = 6; */
+        for (let i = 0; i < message.gameStates.length; i++)
+            PB_GameState.internalBinaryWrite(message.gameStates[i], writer.tag(6, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -1061,25 +1061,25 @@ class PB_Game_Position$Type extends MessageType<PB_Game_Position> {
 }
 export const PB_Game_Position = new PB_Game_Position$Type();
 /**
- * Type for protobuf message PB.GameStateData
+ * Type for protobuf message PB.GameState
  */
-class PB_GameStateData$Type extends MessageType<PB_GameStateData> {
+class PB_GameState$Type extends MessageType<PB_GameState> {
     constructor() {
-        super("PB.GameStateData", [
+        super("PB.GameState", [
             { no: 1, name: "game_action", kind: "message", T: () => PB_GameAction },
             { no: 2, name: "timestamp", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 3, name: "revealed_tile_rack_tiles", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => PB_GameStateData_RevealedTileRackTile },
+            { no: 3, name: "revealed_tile_rack_tiles", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => PB_GameState_RevealedTileRackTile },
             { no: 4, name: "revealed_tile_bag_tiles", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ },
             { no: 5, name: "player_id_with_playable_tile_plus_one", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
         ]);
     }
-    create(value?: PartialMessage<PB_GameStateData>): PB_GameStateData {
+    create(value?: PartialMessage<PB_GameState>): PB_GameState {
         const message = { timestamp: 0, revealedTileRackTiles: [], revealedTileBagTiles: [], playerIdWithPlayableTilePlusOne: 0 };
         if (value !== undefined)
-            reflectionMergePartial<PB_GameStateData>(this, message, value);
+            reflectionMergePartial<PB_GameState>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PB_GameStateData): PB_GameStateData {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PB_GameState): PB_GameState {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -1090,8 +1090,8 @@ class PB_GameStateData$Type extends MessageType<PB_GameStateData> {
                 case /* int64 timestamp = 2 [jstype = JS_STRING];*/ 2:
                     message.timestamp = reader.int64().toNumber();
                     break;
-                case /* repeated PB.GameStateData.RevealedTileRackTile revealed_tile_rack_tiles */ 3:
-                    message.revealedTileRackTiles.push(PB_GameStateData_RevealedTileRackTile.internalBinaryRead(reader, reader.uint32(), options));
+                case /* repeated PB.GameState.RevealedTileRackTile revealed_tile_rack_tiles */ 3:
+                    message.revealedTileRackTiles.push(PB_GameState_RevealedTileRackTile.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 case /* repeated int32 revealed_tile_bag_tiles */ 4:
                     if (wireType === WireType.LengthDelimited)
@@ -1114,16 +1114,16 @@ class PB_GameStateData$Type extends MessageType<PB_GameStateData> {
         }
         return message;
     }
-    internalBinaryWrite(message: PB_GameStateData, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: PB_GameState, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* PB.GameAction game_action = 1; */
         if (message.gameAction)
             PB_GameAction.internalBinaryWrite(message.gameAction, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         /* int64 timestamp = 2 [jstype = JS_STRING]; */
         if (message.timestamp !== 0)
             writer.tag(2, WireType.Varint).int64(message.timestamp);
-        /* repeated PB.GameStateData.RevealedTileRackTile revealed_tile_rack_tiles = 3; */
+        /* repeated PB.GameState.RevealedTileRackTile revealed_tile_rack_tiles = 3; */
         for (let i = 0; i < message.revealedTileRackTiles.length; i++)
-            PB_GameStateData_RevealedTileRackTile.internalBinaryWrite(message.revealedTileRackTiles[i], writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+            PB_GameState_RevealedTileRackTile.internalBinaryWrite(message.revealedTileRackTiles[i], writer.tag(3, WireType.LengthDelimited).fork(), options).join();
         /* repeated int32 revealed_tile_bag_tiles = 4; */
         if (message.revealedTileBagTiles.length) {
             writer.tag(4, WireType.LengthDelimited).fork();
@@ -1140,24 +1140,24 @@ class PB_GameStateData$Type extends MessageType<PB_GameStateData> {
         return writer;
     }
 }
-export const PB_GameStateData = new PB_GameStateData$Type();
+export const PB_GameState = new PB_GameState$Type();
 /**
- * Type for protobuf message PB.GameStateData.RevealedTileRackTile
+ * Type for protobuf message PB.GameState.RevealedTileRackTile
  */
-class PB_GameStateData_RevealedTileRackTile$Type extends MessageType<PB_GameStateData_RevealedTileRackTile> {
+class PB_GameState_RevealedTileRackTile$Type extends MessageType<PB_GameState_RevealedTileRackTile> {
     constructor() {
-        super("PB.GameStateData.RevealedTileRackTile", [
+        super("PB.GameState.RevealedTileRackTile", [
             { no: 1, name: "tile", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
             { no: 2, name: "player_id_belongs_to", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
         ]);
     }
-    create(value?: PartialMessage<PB_GameStateData_RevealedTileRackTile>): PB_GameStateData_RevealedTileRackTile {
+    create(value?: PartialMessage<PB_GameState_RevealedTileRackTile>): PB_GameState_RevealedTileRackTile {
         const message = { tile: 0, playerIdBelongsTo: 0 };
         if (value !== undefined)
-            reflectionMergePartial<PB_GameStateData_RevealedTileRackTile>(this, message, value);
+            reflectionMergePartial<PB_GameState_RevealedTileRackTile>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PB_GameStateData_RevealedTileRackTile): PB_GameStateData_RevealedTileRackTile {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PB_GameState_RevealedTileRackTile): PB_GameState_RevealedTileRackTile {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -1179,7 +1179,7 @@ class PB_GameStateData_RevealedTileRackTile$Type extends MessageType<PB_GameStat
         }
         return message;
     }
-    internalBinaryWrite(message: PB_GameStateData_RevealedTileRackTile, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: PB_GameState_RevealedTileRackTile, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* int32 tile = 1; */
         if (message.tile !== 0)
             writer.tag(1, WireType.Varint).int32(message.tile);
@@ -1192,7 +1192,7 @@ class PB_GameStateData_RevealedTileRackTile$Type extends MessageType<PB_GameStat
         return writer;
     }
 }
-export const PB_GameStateData_RevealedTileRackTile = new PB_GameStateData_RevealedTileRackTile$Type();
+export const PB_GameState_RevealedTileRackTile = new PB_GameState_RevealedTileRackTile$Type();
 /**
  * Type for protobuf message PB.GameSetupAction
  */
@@ -3455,7 +3455,7 @@ class PB_MessageToClient_GameActionDone$Type extends MessageType<PB_MessageToCli
     constructor() {
         super("PB.MessageToClient.GameActionDone", [
             { no: 1, name: "game_display_number", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 2, name: "game_state_data", kind: "message", T: () => PB_GameStateData }
+            { no: 2, name: "game_state", kind: "message", T: () => PB_GameState }
         ]);
     }
     create(value?: PartialMessage<PB_MessageToClient_GameActionDone>): PB_MessageToClient_GameActionDone {
@@ -3472,8 +3472,8 @@ class PB_MessageToClient_GameActionDone$Type extends MessageType<PB_MessageToCli
                 case /* int32 game_display_number */ 1:
                     message.gameDisplayNumber = reader.int32();
                     break;
-                case /* PB.GameStateData game_state_data */ 2:
-                    message.gameStateData = PB_GameStateData.internalBinaryRead(reader, reader.uint32(), options, message.gameStateData);
+                case /* PB.GameState game_state */ 2:
+                    message.gameState = PB_GameState.internalBinaryRead(reader, reader.uint32(), options, message.gameState);
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -3490,9 +3490,9 @@ class PB_MessageToClient_GameActionDone$Type extends MessageType<PB_MessageToCli
         /* int32 game_display_number = 1; */
         if (message.gameDisplayNumber !== 0)
             writer.tag(1, WireType.Varint).int32(message.gameDisplayNumber);
-        /* PB.GameStateData game_state_data = 2; */
-        if (message.gameStateData)
-            PB_GameStateData.internalBinaryWrite(message.gameStateData, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* PB.GameState game_state = 2; */
+        if (message.gameState)
+            PB_GameState.internalBinaryWrite(message.gameState, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

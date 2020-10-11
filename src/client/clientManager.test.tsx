@@ -602,7 +602,7 @@ describe('MessageToClient.Greetings', () => {
               gameMode: GameMode.SINGLES_1,
               playerArrangementMode: PlayerArrangementMode.RANDOM_ORDER,
               positions: [{ userId: 2, isHost: true }],
-              gameStateDatas: [
+              gameStates: [
                 {
                   gameAction: { startGame: {} },
                   timestamp: 1234567894,
@@ -1486,7 +1486,7 @@ describe('MessageToClient.GameStarted and MessageToClient.GameActionDone', () =>
       PB_MessageToClient.create({
         gameActionDone: {
           gameDisplayNumber: 1,
-          gameStateData: {
+          gameState: {
             gameAction: { startGame: {} },
             timestamp: 123456789,
             revealedTileBagTiles: [
@@ -1567,7 +1567,7 @@ describe('MessageToClient.GameStarted and MessageToClient.GameActionDone', () =>
       PB_MessageToClient.create({
         gameActionDone: {
           gameDisplayNumber: 1,
-          gameStateData: {
+          gameState: {
             gameAction: { startGame: {} },
             timestamp: 1550799393696,
             revealedTileBagTiles: [65, 3, 34, 6, 46, 10, 78],

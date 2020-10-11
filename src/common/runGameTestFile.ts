@@ -19,8 +19,8 @@ import {
   PB_GameAction_SelectChainToDisposeOfNext,
   PB_GameAction_SelectMergerSurvivor,
   PB_GameAction_SelectNewChain,
-  PB_GameStateData,
-  PB_GameStateData_RevealedTileRackTile,
+  PB_GameState,
+  PB_GameState_RevealedTileRackTile,
   PlayerArrangementMode,
 } from './pb';
 
@@ -376,11 +376,11 @@ function getGameStateLines(gameState: GameState, revealedTilesPlayerID: number |
     }
 
     lines.push('  messages:');
-    gameState.createPlayerAndWatcherGameStateDatas();
-    for (let playerID = 0; playerID < gameState.playerGameStateDatas.length; playerID++) {
-      lines.push(`    ${playerID}: ${formatPlayerOrWatcherGameStateData(gameState.playerGameStateDatas[playerID])}`);
+    gameState.createPlayerAndWatcherGameStates();
+    for (let playerID = 0; playerID < gameState.playerGameStates.length; playerID++) {
+      lines.push(`    ${playerID}: ${formatPlayerOrWatcherGameState(gameState.playerGameStates[playerID])}`);
     }
-    lines.push(`    w: ${formatPlayerOrWatcherGameStateData(gameState.watcherGameStateData)}`);
+    lines.push(`    w: ${formatPlayerOrWatcherGameState(gameState.watcherGameState)}`);
 
     lines.push('  history messages:');
     gameState.gameHistoryMessages.forEach((ghm) => {
@@ -393,7 +393,7 @@ function getGameStateLines(gameState: GameState, revealedTilesPlayerID: number |
   return lines;
 }
 
-function getRevealedTileRackTilesStringForPlayer(revealedTileRackTiles: PB_GameStateData_RevealedTileRackTile[], playerID: number) {
+function getRevealedTileRackTilesStringForPlayer(revealedTileRackTiles: PB_GameState_RevealedTileRackTile[], playerID: number) {
   const parts: string[] = [];
 
   for (let i = 0; i < revealedTileRackTiles.length; i++) {
@@ -406,24 +406,24 @@ function getRevealedTileRackTilesStringForPlayer(revealedTileRackTiles: PB_GameS
   return parts.join(', ');
 }
 
-function formatPlayerOrWatcherGameStateData(gameStateData: PB_GameStateData) {
+function formatPlayerOrWatcherGameState(gameState: PB_GameState) {
   return JSON.stringify({
-    gameAction: gameStateData.gameAction,
-    timestamp: gameStateData.timestamp !== 0 ? gameStateData.timestamp : undefined,
-    revealedTileRackTiles: gameStateData.revealedTileRackTiles.length > 0 ? gameStateData.revealedTileRackTiles : undefined,
-    revealedTileBagTiles: gameStateData.revealedTileBagTiles.length > 0 ? gameStateData.revealedTileBagTiles : undefined,
-    playerIdWithPlayableTilePlusOne: gameStateData.playerIdWithPlayableTilePlusOne >= 1 ? gameStateData.playerIdWithPlayableTilePlusOne : undefined,
+    gameAction: gameState.gameAction,
+    timestamp: gameState.timestamp !== 0 ? gameState.timestamp : undefined,
+    revealedTileRackTiles: gameState.revealedTileRackTiles.length > 0 ? gameState.revealedTileRackTiles : undefined,
+    revealedTileBagTiles: gameState.revealedTileBagTiles.length > 0 ? gameState.revealedTileBagTiles : undefined,
+    playerIdWithPlayableTilePlusOne: gameState.playerIdWithPlayableTilePlusOne >= 1 ? gameState.playerIdWithPlayableTilePlusOne : undefined,
   });
 }
 
 function getArrayFromRevealedTileRackTilesString(revealedTileRackTilesString: string) {
   const strParts = revealedTileRackTilesString.split(', ');
-  const revealedTileRackTiles: PB_GameStateData_RevealedTileRackTile[] = new Array(strParts.length);
+  const revealedTileRackTiles: PB_GameState_RevealedTileRackTile[] = new Array(strParts.length);
 
   for (let i = 0; i < strParts.length; i++) {
     const [tileStr, playerIDStr] = strParts[i].split(':');
 
-    const revealedTileRackTile = PB_GameStateData_RevealedTileRackTile.create({
+    const revealedTileRackTile = PB_GameState_RevealedTileRackTile.create({
       tile: fromTileString(tileStr),
       playerIdBelongsTo: parseInt(playerIDStr, 10),
     });
