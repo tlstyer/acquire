@@ -1,7 +1,6 @@
 import 'normalize.css';
-import './global.scss';
-
 import { ClientManager } from './clientManager';
+import './global.scss';
 
 const clientManager = new ClientManager();
 

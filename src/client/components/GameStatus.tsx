@@ -1,5 +1,3 @@
-import * as style from './GameStatus.scss';
-
 import { List } from 'immutable';
 import * as React from 'react';
 import { GameActionEnum } from '../../common/enums';
@@ -11,8 +9,9 @@ import { ActionSelectChainToDisposeOfNext } from '../../common/gameActions/selec
 import { ActionSelectMergerSurvivor } from '../../common/gameActions/selectMergerSurvivor';
 import { ActionSelectNewChain } from '../../common/gameActions/selectNewChain';
 import { ActionStartGame } from '../../common/gameActions/startGame';
-import { gameBoardTypeToCSSClassName, gameBoardTypeToHotelInitial, getHotelNameSpan, getUsernameSpan } from '../helpers';
 import { GameBoardType } from '../../common/pb';
+import { gameBoardTypeToCSSClassName, gameBoardTypeToHotelInitial, getHotelNameSpan, getUsernameSpan } from '../helpers';
+import * as style from './GameStatus.scss';
 
 export interface GameStatusProps {
   usernames: List<string>;

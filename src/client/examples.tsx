@@ -1,13 +1,10 @@
-import 'normalize.css';
-import './global.scss';
-
-import * as style from './examples.scss';
-
 import { List } from 'immutable';
+import 'normalize.css';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { defaultGameBoard, defaultGameStateHistory } from '../common/defaults';
 import { Game } from '../common/game';
+import { ErrorCode, GameBoardType, GameMode } from '../common/pb';
 import { CreateGame, CreateGameProps } from './components/CreateGame';
 import { DisposeOfShares, DisposeOfSharesProps } from './components/DisposeOfShares';
 import { ExampleGameSetupMaster } from './components/ExampleGameSetupMaster';
@@ -24,6 +21,8 @@ import { TileRack, TileRackProps } from './components/TileRack';
 import { TileRackReadOnly, TileRackReadOnlyProps } from './components/TileRackReadOnly';
 import { GameBoardLabelMode, GameStatusEnum } from './enums';
 import { getDummyGameForGetGameHistory, getExampleNextGameActionsArray } from './exampleData';
+import * as style from './examples.scss';
+import './global.scss';
 import {
   disposeOfSharesKeyboardShortcutsDescription,
   gameBoardTypeToHotelInitial,
@@ -32,7 +31,6 @@ import {
   selectChainKeyboardShortcutsDescription,
   tileRackKeyboardShortcutsDescription,
 } from './helpers';
-import { ErrorCode, GameBoardType, GameMode } from '../common/pb';
 
 class AllDemoProps {
   loginFormProps: LoginFormProps[];

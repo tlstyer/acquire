@@ -1,9 +1,5 @@
-import 'normalize.css';
-import './global.scss';
-
-import * as style from './review.scss';
-
 import { List } from 'immutable';
+import 'normalize.css';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Game } from '../common/game';
@@ -14,6 +10,8 @@ import { GameStatus } from './components/GameStatus';
 import { ScoreBoard } from './components/ScoreBoard';
 import { TileRackReadOnly } from './components/TileRackReadOnly';
 import { GameBoardLabelMode } from './enums';
+import './global.scss';
+import * as style from './review.scss';
 
 function render() {
   const gameState = game.gameStateHistory.get(selectedMove)!;

@@ -1,5 +1,3 @@
-import * as style from './clientManager.scss';
-
 import { List } from 'immutable';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
@@ -13,20 +11,6 @@ import { ActionSelectChainToDisposeOfNext } from '../common/gameActions/selectCh
 import { ActionSelectMergerSurvivor } from '../common/gameActions/selectMergerSurvivor';
 import { ActionSelectNewChain } from '../common/gameActions/selectNewChain';
 import { GameSetup } from '../common/gameSetup';
-import { CreateGame } from './components/CreateGame';
-import { DisposeOfShares } from './components/DisposeOfShares';
-import { GameBoard } from './components/GameBoard';
-import { GameHistory } from './components/GameHistory';
-import { GameListing } from './components/GameListing';
-import { GameSetupUI } from './components/GameSetupUI';
-import { GameStatus } from './components/GameStatus';
-import { Header } from './components/Header';
-import { LoginForm } from './components/LoginForm';
-import { PurchaseShares } from './components/PurchaseShares';
-import { ScoreBoard } from './components/ScoreBoard';
-import { SelectChain, SelectChainTitle } from './components/SelectChain';
-import { TileRack } from './components/TileRack';
-import { GameBoardLabelMode, GameStatusEnum } from './enums';
 import {
   ErrorCode,
   GameBoardType,
@@ -45,6 +29,21 @@ import {
   PB_MessageToServer,
   PlayerArrangementMode,
 } from '../common/pb';
+import * as style from './clientManager.scss';
+import { CreateGame } from './components/CreateGame';
+import { DisposeOfShares } from './components/DisposeOfShares';
+import { GameBoard } from './components/GameBoard';
+import { GameHistory } from './components/GameHistory';
+import { GameListing } from './components/GameListing';
+import { GameSetupUI } from './components/GameSetupUI';
+import { GameStatus } from './components/GameStatus';
+import { Header } from './components/Header';
+import { LoginForm } from './components/LoginForm';
+import { PurchaseShares } from './components/PurchaseShares';
+import { ScoreBoard } from './components/ScoreBoard';
+import { SelectChain, SelectChainTitle } from './components/SelectChain';
+import { TileRack } from './components/TileRack';
+import { GameBoardLabelMode, GameStatusEnum } from './enums';
 
 export enum ClientManagerPage {
   Login,

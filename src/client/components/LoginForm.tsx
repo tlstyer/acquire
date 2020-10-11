@@ -1,9 +1,8 @@
-import * as style from './LoginForm.scss';
-
 import * as React from 'react';
 import { isASCII } from '../../common/helpers';
-import { hackDoNotInterfereWithKeyboardShortcuts } from '../helpers';
 import { ErrorCode } from '../../common/pb';
+import { hackDoNotInterfereWithKeyboardShortcuts } from '../helpers';
+import * as style from './LoginForm.scss';
 
 const errorCodeToMessage = new Map([
   [ErrorCode.NOT_USING_LATEST_VERSION, 'You are not using the latest version.'],

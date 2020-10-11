@@ -1,9 +1,8 @@
-import * as style from './MiniGameBoard.scss';
-
 import { List } from 'immutable';
 import * as React from 'react';
-import { gameBoardTypeToCSSClassName } from '../helpers';
 import { GameBoardType } from '../../common/pb';
+import { gameBoardTypeToCSSClassName } from '../helpers';
+import * as style from './MiniGameBoard.scss';
 
 interface MiniGameBoardProps {
   gameBoard: List<List<GameBoardType>>;

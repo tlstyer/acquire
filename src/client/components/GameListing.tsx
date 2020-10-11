@@ -1,12 +1,11 @@
-import * as style from './GameListing.scss';
-
 import { List } from 'immutable';
 import * as React from 'react';
 import { gameModeToNumPlayers, gameModeToTeamSize } from '../../common/helpers';
+import { GameBoardType, GameMode } from '../../common/pb';
 import { GameStatusEnum } from '../enums';
 import { gameModeToString, gameStatusToString, teamNumberToCSSClassName } from '../helpers';
+import * as style from './GameListing.scss';
 import { MiniGameBoard } from './MiniGameBoard';
-import { GameBoardType, GameMode } from '../../common/pb';
 
 export interface GameListingProps {
   gameBoard: List<List<GameBoardType>>;

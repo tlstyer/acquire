@@ -1,6 +1,6 @@
 import { List } from 'immutable';
 import { gameModeToNumPlayers, gameModeToTeamSize, shuffleArray } from './helpers';
-import { GameMode, PB_Game, PB_Game_Position, PB_GameSetupChange, PlayerArrangementMode } from './pb';
+import { GameMode, PB_Game, PB_GameSetupChange, PB_Game_Position, PlayerArrangementMode } from './pb';
 
 const defaultApprovals = new Map([
   [1, List([false])],

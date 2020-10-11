@@ -1,9 +1,8 @@
-import * as common from './common.scss';
-
 import * as React from 'react';
 import { TileEnum } from '../common/enums';
-import { GameStatusEnum } from './enums';
 import { GameBoardType, GameMode } from '../common/pb';
+import * as common from './common.scss';
+import { GameStatusEnum } from './enums';
 
 export const allChains = [
   GameBoardType.LUXOR,

@@ -4,14 +4,14 @@ import { GameSetup } from '../common/gameSetup';
 import { gameModeToNumPlayers, getNewTileBag, isASCII } from '../common/helpers';
 import {
   ErrorCode,
-  PB_GameAction,
   PB_Game,
-  PB_Game_Position,
+  PB_GameAction,
   PB_GameSetupAction_ChangeGameMode,
   PB_GameSetupAction_ChangePlayerArrangementMode,
   PB_GameSetupAction_KickUser,
   PB_GameSetupAction_SwapPositions,
   PB_GameState,
+  PB_Game_Position,
   PB_MessagesToClient,
   PB_MessageToClient,
   PB_MessageToClient_Greetings_User,

@@ -1,10 +1,9 @@
-import * as style from './GameBoard.scss';
-
 import { List } from 'immutable';
 import * as React from 'react';
+import { GameBoardType } from '../../common/pb';
 import { GameBoardLabelMode } from '../enums';
 import { gameBoardTypeToCSSClassName, gameBoardTypeToHotelInitial, getTileString } from '../helpers';
-import { GameBoardType } from '../../common/pb';
+import * as style from './GameBoard.scss';
 
 export interface GameBoardProps {
   gameBoard: List<List<GameBoardType>>;
