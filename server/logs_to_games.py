@@ -1587,8 +1587,8 @@ def make_acquire2_game_test_files(log_timestamp, output_dir):
 
                 lines = []
 
-                lines.append('game mode: ' + ('Singles' + str(len(game.player_id_to_username)) if game.mode == 'Singles' else 'Teams2vs2'))
-                lines.append('player arrangement mode: Version1')
+                lines.append('game mode: ' + ('SINGLES_' + str(len(game.player_id_to_username)) if game.mode == 'Singles' else 'TEAMS_2_VS_2'))
+                lines.append('player arrangement mode: VERSION_1')
                 tile_bag = game._get_initial_tile_bag()
                 lines.append('tile bag: ' + ', '.join(to_tile_string(t) for t in tile_bag[::-1]))
                 host_username = game.player_join_order[0]
