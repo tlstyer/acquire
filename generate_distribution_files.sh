@@ -5,8 +5,8 @@ mkdir -p dist/build/js dist/web/static dist/web/stats
 cp -a package.json yarn.lock requirements.txt dist
 
 # sass
-sass --style expanded --sourcemap=none --no-cache client/main/css/main.scss client/main/css/main.css
-sass --style expanded --sourcemap=none --no-cache client/stats/css/stats.scss client/stats/css/stats.css
+./node_modules/.bin/node-sass --style expanded --sourcemap=none --no-cache client/main/css/main.scss client/main/css/main.css
+./node_modules/.bin/node-sass --style expanded --sourcemap=none --no-cache client/stats/css/stats.scss client/stats/css/stats.css
 
 # favicon.ico
 cp -a ../tlstyer.com/favicon.ico dist/web
