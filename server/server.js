@@ -11,9 +11,8 @@
 
   var sockjs = require('sockjs');
   var sockjs_server = sockjs.createServer({
-    heartbeat_delay: 20000,
-    disconnect_delay: 35000,
     sockjs_url: '//cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.0/sockjs.min.js',
+    transports: ['websocket', 'websocket-raw'],
   });
 
   server.listen('javascript.sock');
