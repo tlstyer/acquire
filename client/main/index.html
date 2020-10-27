@@ -23,7 +23,6 @@
 
     <script src="js/main.js"></script>
   </head>
-
   <body>
     <div class="page" id="page-loading">
       <h1>Acquire</h1>
@@ -35,7 +34,8 @@
       <div id="login-error-message"></div>
       <form id="login-form">
         Username:
-        <input type="text" id="login-form-username" /> Password:
+        <input type="text" id="login-form-username" />
+        Password:
         <input type="password" id="login-form-password" />
         <input type="submit" value="Login" />
       </form>
@@ -44,7 +44,10 @@
       <div id="set-password-error-message"></div>
       <form id="set-password-form">
         Username:
-        <input type="text" id="set-password-form-username" /> Password: <input type="password" id="set-password-form-password" /> Repeat Password:
+        <input type="text" id="set-password-form-username" />
+        Password:
+        <input type="password" id="set-password-form-password" />
+        Repeat Password:
         <input type="password" id="set-password-form-password-repeat" />
         <input type="submit" value="Set Password" />
       </form>
@@ -68,8 +71,8 @@
         </li>
         <li>
           See the "How to Build a Leaderboard" section in an article about
-          <a href="http://research.microsoft.com/en-us/projects/trueskill/details.aspx">TrueSkill Details</a>
-          for the reasoning behind the ratings. I set "k" to 3, as suggested in that section.
+          <a href="http://research.microsoft.com/en-us/projects/trueskill/details.aspx">TrueSkill Details</a> for the reasoning behind the ratings. I set "k" to
+          3, as suggested in that section.
         </li>
       </ul>
       <p>Some non-obvious features:</p>
@@ -93,14 +96,8 @@
         </li>
         <li>The IP address of any player can be seen by hovering over their name in the lobby or on the game score sheet.</li>
       </ul>
-      <p>
-        See
-        <a href="https://github.com/tlstyer/acquire">my code</a> or <a href="https://trello.com/b/ddyGnH5l/acquire">my to-do list</a>.
-      </p>
-      <p>
-        You can
-        <a href="mailto:tlstyer@gmail.com">send me an email</a> with your questions or comments.
-      </p>
+      <p>See <a href="https://github.com/tlstyer/acquire">my code</a> or <a href="https://trello.com/b/ddyGnH5l/acquire">my to-do list</a>.</p>
+      <p>You can <a href="mailto:tlstyer@gmail.com">send me an email</a> with your questions or comments.</p>
     </div>
     <div class="page" id="page-connecting">
       <h1>Acquire</h1>
@@ -288,9 +285,8 @@
     <div id="lobby">
       <h1 id="lobby-header">Acquire</h1>
       <div class="lobby-section">
-        Players:
-        <span id="user-count-players">0</span>, Watchers: <span id="user-count-watchers">0</span>, In Lobby: <span id="user-count-in-lobby">0</span>, Total:
-        <span id="user-count-total">0</span>
+        Players: <span id="user-count-players">0</span>, Watchers: <span id="user-count-watchers">0</span>, In Lobby: <span id="user-count-in-lobby">0</span>,
+        Total: <span id="user-count-total">0</span>
       </div>
       <div class="lobby-section">
         <div class="header">Lobby</div>
@@ -394,11 +390,7 @@
       </form>
     </div>
     <div id="templates">
-      <div id="chat-message">
-        <span class="username"></span>
-        <b>&gt;</b>
-        <span class="chat-message-contents"></span>
-      </div>
+      <div id="chat-message"><span class="username"></span> <b>&gt;</b> <span class="chat-message-contents"></span></div>
       <div id="global-chat-add-client"><span class="username"></span> connected to the server.</div>
       <div id="global-chat-remove-client"><span class="username"></span> disconnected from the server.</div>
       <div id="game-chat-add-game-player"><span class="username"></span> entered the game.</div>
@@ -426,9 +418,7 @@
       </div>
       <div id="game-history-turn-began">
         <fieldset class="game-history-turn-began">
-          <legend>
-            <span class="username"></span>
-          </legend>
+          <legend><span class="username"></span></legend>
         </fieldset>
       </div>
       <div id="game-history-drew-position-tile"><span class="username"></span> drew position tile <span class="tile"></span>.</div>
@@ -442,15 +432,9 @@
       <div id="game-history-selected-chain-to-dispose-of-next">
         <span class="username"></span> selected <span class="chain"></span> as chain to dispose of next.
       </div>
-      <div id="game-history-received-bonus">
-        <span class="username"></span> received a $
-        <span class="amount"></span>
-        <span class="chain"></span> bonus.
-      </div>
+      <div id="game-history-received-bonus"><span class="username"></span> received a $<span class="amount"></span> <span class="chain"></span> bonus.</div>
       <div id="game-history-disposed-of-shares">
-        <span class="username"></span> traded <span class="trade-amount"></span> and sold
-        <span class="sell-amount"></span>
-        <span class="chain"></span> shares.
+        <span class="username"></span> traded <span class="trade-amount"></span> and sold <span class="sell-amount"></span> <span class="chain"></span> shares.
       </div>
       <div id="game-history-could-not-afford-any-shares"><span class="username"></span> could not afford any shares.</div>
       <div id="game-history-purchased-shares"><span class="username"></span> purchased <span class="chains"></span>.</div>
@@ -461,10 +445,10 @@
       <div id="game-history-all-tiles-played">All tiles have been played. Game end forced.</div>
       <div id="game-status-start-game">Waiting for <span class="username"></span> to start the game.</div>
       <div id="game-status-play-tile">Waiting for <span class="username"></span> to play a tile.</div>
-      <div id="game-status-select-new-chain">Waiting for <span class="username"></span> to select new chain ( <span class="chains"></span>).</div>
-      <div id="game-status-select-merger-survivor">Waiting for <span class="username"></span> to select merger survivor ( <span class="chains"></span>).</div>
+      <div id="game-status-select-new-chain">Waiting for <span class="username"></span> to select new chain (<span class="chains"></span>).</div>
+      <div id="game-status-select-merger-survivor">Waiting for <span class="username"></span> to select merger survivor (<span class="chains"></span>).</div>
       <div id="game-status-select-chain-to-dispose-of-next">
-        Waiting for <span class="username"></span> to select chain to dispose of next ( <span class="chains"></span>).
+        Waiting for <span class="username"></span> to select chain to dispose of next (<span class="chains"></span>).
       </div>
       <div id="game-status-dispose-of-shares">Waiting for <span class="username"></span> to dispose of <span class="chain"></span> shares.</div>
       <div id="game-status-purchase-shares">Waiting for <span class="username"></span> to purchase shares.</div>
