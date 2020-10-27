@@ -53,7 +53,7 @@ STATS_JS=$(sha1sum dist/build/stats2.js | awk '{ print $1 }').js
 cp dist/build/stats2.js dist/web/static/${STATS_JS}
 
 # index.html
-sed "s/<link rel=\"stylesheet\" href=\"css\/main.css\">/<link rel=\"stylesheet\" href=\"static\/${MAIN_CSS}\">/" client/main/index.html | \
+sed "s/<link rel=\"stylesheet\" href=\"css\/main.css\" \/>/<link rel=\"stylesheet\" href=\"static\/${MAIN_CSS}\" \/>/" client/main/index.html | \
 sed "s/<script src=\"js\/main.js\"><\/script>/<script src=\"static\/${MAIN_JS}\"><\/script>/" | \
 ./node_modules/html-minifier/cli.js \
 	--remove-comments --collapse-whitespace --conservative-collapse --collapse-boolean-attributes --remove-attribute-quotes --remove-redundant-attributes --remove-optional-tags | \
@@ -64,7 +64,7 @@ VERSION=$(sha1sum dist/build/index.html | awk '{ print $1 }')
 sed "s/data-version=VERSION/data-version=${VERSION}/" dist/build/index.html > dist/web/index.html
 
 # stats/index.html
-sed "s/<link rel=\"stylesheet\" href=\"css\/stats.css\">/<link rel=\"stylesheet\" href=\"\/static\/${STATS_CSS}\">/" client/stats/index.html | \
+sed "s/<link rel=\"stylesheet\" href=\"css\/stats.css\" \/>/<link rel=\"stylesheet\" href=\"\/static\/${STATS_CSS}\" \/>/" client/stats/index.html | \
 sed "s/<script src=\"js\/stats.js\"><\/script>/<script src=\"\/static\/${STATS_JS}\"><\/script>/" | \
 ./node_modules/html-minifier/cli.js \
 	--remove-comments --collapse-whitespace --conservative-collapse --collapse-boolean-attributes --remove-attribute-quotes --remove-redundant-attributes --remove-optional-tags | \
