@@ -9,7 +9,16 @@
     "clean-css": "^3.4.23",
     "html-minifier": "^3.2.3",
     "node-sass": "^4.2.0",
+    "prettier": "^2.1.2",
     "uglify-js": "^2.7.5",
     "webpack": "^1.14.0"
+  },
+  "scripts": {
+    "format": "prettier --write '{,!(.git|dist|node_modules)/**/}*.{css,html,js,json,md,scss}' --loglevel warn"
+  },
+  "prettier": {
+    "printWidth": 160,
+    "singleQuote": true,
+    "trailingComma": "all"
   }
 }

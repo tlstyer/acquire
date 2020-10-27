@@ -1,12 +1,11 @@
 <!DOCTYPE html>
 <html>
-
-<head>
-    <meta charset="utf-8">
+  <head>
+    <meta charset="utf-8" />
     <title>Acquire</title>
-    <meta name="description" content="Play Acquire Online">
+    <meta name="description" content="Play Acquire Online" />
 
-    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/main.css" />
 
     <script src="//cdnjs.cloudflare.com/ajax/libs/json3/3.3.2/json3.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
@@ -23,513 +22,456 @@
     -->
 
     <script src="js/main.js"></script>
-</head>
+  </head>
 
-<body>
+  <body>
     <div class="page" id="page-loading">
-        <h1>Acquire</h1>
-        <p>
-            Loading...
-        </p>
+      <h1>Acquire</h1>
+      <p>Loading...</p>
     </div>
     <div class="page" id="page-login" data-version="VERSION">
-        <h1>Acquire</h1>
-        <h2>Login</h2>
-        <div id="login-error-message"></div>
-        <form id="login-form">
-            Username:
-            <input type="text" id="login-form-username"> Password:
-            <input type="password" id="login-form-password">
-            <input type="submit" value="Login">
-        </form>
-        <h2>Set Password</h2>
-        <div id="set-password-success-message"></div>
-        <div id="set-password-error-message"></div>
-        <form id="set-password-form">
-            Username:
-            <input type="text" id="set-password-form-username"> Password:
-            <input type="password" id="set-password-form-password"> Repeat Password:
-            <input type="password" id="set-password-form-password-repeat">
-            <input type="submit" value="Set Password">
-        </form>
-        <h2>About</h2>
-        <p>
-            Here, you can play the Acquire board game. Many user interface and game play elements are based on Kensit's
-            <a href="http://www3.telus.net/kensit/NetAcquire/">NetAcquire</a> Windows application. Thank you Kensit for the great design!
-        </p>
-        <p>
-            Notes regarding passwords:
-        </p>
-        <ul>
-            <li>If you set a password for your username, then your password will be required in order to login.</li>
-            <li>If you don't set a password for your username, then leave the password field empty in order to login.</li>
-            <li>You'll probably want to set a password for your username so that only you can use your username.</li>
-        </ul>
-        <p>
-            Notes regarding statistics:
-        </p>
-        <ul>
-            <li>View
-                <a href="stats/">stats</a> calculated using the
-                <a href="http://research.microsoft.com/en-us/projects/trueskill/">TrueSkill</a> algorithm. Default parameters of a
-                <a href="http://trueskill.org/">TrueSkill library</a> are used except beta is set to sigma and the draw probabilities are set based on historical
-                game results.</li>
-            <li>See the "How to Build a Leaderboard" section in an article about
-                <a href="http://research.microsoft.com/en-us/projects/trueskill/details.aspx">TrueSkill Details</a>
-                for the reasoning behind the ratings. I set "k" to 3, as suggested in that section.</li>
-        </ul>
-        <p>
-            Some non-obvious features:
-        </p>
-        <ul>
-            <li>You can play a tile by clicking its associated location on the game board.</li>
-            <li>There are keyboard shortcuts, in addition to the normal Tab and Shift-Tab, for game actions:
-                <ul>
-                    <li>Play tile: press 1-6 to move to a tile, enter to play it.</li>
-                    <li>Select chain: press 1-7 or L,T,A,F,W,C,I to move to a chain, enter to select it.</li>
-                    <li>Dispose of shares: press 1-7 for the corresponding button (left-to-right), K for Keep All, T for Trade
-                        ▲, Shift-T for Trade ▼, S for Sell ▲, Shift-S for Sell ▼, 8 or O to move to the OK button, enter
-                        to press it.</li>
-                    <li>Purchase shares: press 1-7 or L,T,A,F,W,C,I to add a chain to the cart, Shift-1-7 or Shift-L,T,A,F,W,C,I
-                        to remove a chain from the cart, DELETE or MINUS to remove the right-most chain from the cart, E
-                        or ASTERISK to toggle the End Game checkbox, O to move to the OK button, enter to press it.</li>
-                </ul>
+      <h1>Acquire</h1>
+      <h2>Login</h2>
+      <div id="login-error-message"></div>
+      <form id="login-form">
+        Username:
+        <input type="text" id="login-form-username" /> Password:
+        <input type="password" id="login-form-password" />
+        <input type="submit" value="Login" />
+      </form>
+      <h2>Set Password</h2>
+      <div id="set-password-success-message"></div>
+      <div id="set-password-error-message"></div>
+      <form id="set-password-form">
+        Username:
+        <input type="text" id="set-password-form-username" /> Password: <input type="password" id="set-password-form-password" /> Repeat Password:
+        <input type="password" id="set-password-form-password-repeat" />
+        <input type="submit" value="Set Password" />
+      </form>
+      <h2>About</h2>
+      <p>
+        Here, you can play the Acquire board game. Many user interface and game play elements are based on Kensit's
+        <a href="http://www3.telus.net/kensit/NetAcquire/">NetAcquire</a> Windows application. Thank you Kensit for the great design!
+      </p>
+      <p>Notes regarding passwords:</p>
+      <ul>
+        <li>If you set a password for your username, then your password will be required in order to login.</li>
+        <li>If you don't set a password for your username, then leave the password field empty in order to login.</li>
+        <li>You'll probably want to set a password for your username so that only you can use your username.</li>
+      </ul>
+      <p>Notes regarding statistics:</p>
+      <ul>
+        <li>
+          View <a href="stats/">stats</a> calculated using the <a href="http://research.microsoft.com/en-us/projects/trueskill/">TrueSkill</a> algorithm.
+          Default parameters of a <a href="http://trueskill.org/">TrueSkill library</a> are used except beta is set to sigma and the draw probabilities are set
+          based on historical game results.
+        </li>
+        <li>
+          See the "How to Build a Leaderboard" section in an article about
+          <a href="http://research.microsoft.com/en-us/projects/trueskill/details.aspx">TrueSkill Details</a>
+          for the reasoning behind the ratings. I set "k" to 3, as suggested in that section.
+        </li>
+      </ul>
+      <p>Some non-obvious features:</p>
+      <ul>
+        <li>You can play a tile by clicking its associated location on the game board.</li>
+        <li>
+          There are keyboard shortcuts, in addition to the normal Tab and Shift-Tab, for game actions:
+          <ul>
+            <li>Play tile: press 1-6 to move to a tile, enter to play it.</li>
+            <li>Select chain: press 1-7 or L,T,A,F,W,C,I to move to a chain, enter to select it.</li>
+            <li>
+              Dispose of shares: press 1-7 for the corresponding button (left-to-right), K for Keep All, T for Trade ▲, Shift-T for Trade ▼, S for Sell ▲,
+              Shift-S for Sell ▼, 8 or O to move to the OK button, enter to press it.
             </li>
-            <li>The IP address of any player can be seen by hovering over their name in the lobby or on the game score sheet.</li>
-        </ul>
-        <p>
-            See
-            <a href="https://github.com/tlstyer/acquire">my code</a> or
-            <a href="https://trello.com/b/ddyGnH5l/acquire">my to-do list</a>.
-        </p>
-        <p>
-            You can
-            <a href="mailto:tlstyer@gmail.com">send me an email</a> with your questions or comments.
-        </p>
+            <li>
+              Purchase shares: press 1-7 or L,T,A,F,W,C,I to add a chain to the cart, Shift-1-7 or Shift-L,T,A,F,W,C,I to remove a chain from the cart, DELETE
+              or MINUS to remove the right-most chain from the cart, E or ASTERISK to toggle the End Game checkbox, O to move to the OK button, enter to press
+              it.
+            </li>
+          </ul>
+        </li>
+        <li>The IP address of any player can be seen by hovering over their name in the lobby or on the game score sheet.</li>
+      </ul>
+      <p>
+        See
+        <a href="https://github.com/tlstyer/acquire">my code</a> or <a href="https://trello.com/b/ddyGnH5l/acquire">my to-do list</a>.
+      </p>
+      <p>
+        You can
+        <a href="mailto:tlstyer@gmail.com">send me an email</a> with your questions or comments.
+      </p>
     </div>
     <div class="page" id="page-connecting">
-        <h1>Acquire</h1>
-        <p>
-            Connecting to the server...
-        </p>
+      <h1>Acquire</h1>
+      <p>Connecting to the server...</p>
     </div>
-    <div class="page" id="page-lobby">
-    </div>
+    <div class="page" id="page-lobby"></div>
     <div class="page" id="page-game">
-        <table id="game-board">
-            <tbody>
-                <!-- generated in game.js::initializeHtml() -->
-            </tbody>
-        </table>
-        <div id="game-buttons">
-            <input id="button-leave-game" type="button" value="Leave Game">
-            <span id="message-window-checkboxes">
-                <input id="show-lobby" type="checkbox">
-                <label for="show-lobby">Lobby</label>
-                <input id="show-options" type="checkbox">
-                <label for="show-options">Options</label>
-                <input id="show-global-chat" type="checkbox">
-                <label for="show-global-chat">Global Chat</label>
-                <input id="show-game-chat" type="checkbox">
-                <label for="show-game-chat">Game Chat</label>
-            </span>
+      <table id="game-board">
+        <tbody>
+          <!-- generated in game.js::initializeHtml() -->
+        </tbody>
+      </table>
+      <div id="game-buttons">
+        <input id="button-leave-game" type="button" value="Leave Game" />
+        <span id="message-window-checkboxes">
+          <input id="show-lobby" type="checkbox" />
+          <label for="show-lobby">Lobby</label>
+          <input id="show-options" type="checkbox" />
+          <label for="show-options">Options</label>
+          <input id="show-global-chat" type="checkbox" />
+          <label for="show-global-chat">Global Chat</label>
+          <input id="show-game-chat" type="checkbox" />
+          <label for="show-game-chat">Game Chat</label>
+        </span>
+      </div>
+      <table id="score-sheet">
+        <tbody>
+          <tr id="score-sheet-header">
+            <td class="name color-player">Player</td>
+            <td class="luxor color-luxor">L</td>
+            <td class="tower color-tower">T</td>
+            <td class="american color-american">A</td>
+            <td class="festival color-festival">F</td>
+            <td class="worldwide color-worldwide">W</td>
+            <td class="continental color-continental">C</td>
+            <td class="imperial color-imperial">I</td>
+            <td class="cash color-cash-net">Cash</td>
+            <td class="net color-cash-net">Net</td>
+          </tr>
+          <tr class="score-sheet-player">
+            <td class="name"></td>
+            <td class="luxor"></td>
+            <td class="tower"></td>
+            <td class="american"></td>
+            <td class="festival"></td>
+            <td class="worldwide"></td>
+            <td class="continental"></td>
+            <td class="imperial"></td>
+            <td class="cash">6000</td>
+            <td class="net">6000</td>
+          </tr>
+          <!-- generated in game.js::initializeHtml() -->
+          <tr id="score-sheet-available">
+            <td class="name">Available</td>
+            <td class="luxor">25</td>
+            <td class="tower">25</td>
+            <td class="american">25</td>
+            <td class="festival">25</td>
+            <td class="worldwide">25</td>
+            <td class="continental">25</td>
+            <td class="imperial">25</td>
+            <td class="teams team-empty"></td>
+            <td class="teams team-border-bottom"></td>
+          </tr>
+          <tr id="score-sheet-chain-size">
+            <td class="name">Chain Size</td>
+            <td class="luxor">-</td>
+            <td class="tower">-</td>
+            <td class="american">-</td>
+            <td class="festival">-</td>
+            <td class="worldwide">-</td>
+            <td class="continental">-</td>
+            <td class="imperial">-</td>
+            <td class="teams team-border-right">Team 1</td>
+            <td class="teams team-net" id="team1-net">12000</td>
+          </tr>
+          <tr id="score-sheet-price">
+            <td class="name">Price ($00)</td>
+            <td class="luxor">-</td>
+            <td class="tower">-</td>
+            <td class="american">-</td>
+            <td class="festival">-</td>
+            <td class="worldwide">-</td>
+            <td class="continental">-</td>
+            <td class="imperial">-</td>
+            <td class="teams team-border-right">Team 2</td>
+            <td class="teams team-net" id="team2-net">12000</td>
+          </tr>
+        </tbody>
+      </table>
+      <div id="game-tile-rack">
+        <input id="game-tile-0" data-index="0" type="button" value="x" class="button-hotel" />
+        <input id="game-tile-1" data-index="1" type="button" value="x" class="button-hotel" />
+        <input id="game-tile-2" data-index="2" type="button" value="x" class="button-hotel" />
+        <input id="game-tile-3" data-index="3" type="button" value="x" class="button-hotel" />
+        <input id="game-tile-4" data-index="4" type="button" value="x" class="button-hotel" />
+        <input id="game-tile-5" data-index="5" type="button" value="x" class="button-hotel" />
+      </div>
+      <div id="game-action">
+        <div id="game-action-start-game" class="game-action">
+          <input id="start-game" type="button" value="Start Game" />
         </div>
-        <table id="score-sheet">
-            <tbody>
-                <tr id="score-sheet-header">
-                    <td class="name color-player">Player</td>
-                    <td class="luxor color-luxor">L</td>
-                    <td class="tower color-tower">T</td>
-                    <td class="american color-american">A</td>
-                    <td class="festival color-festival">F</td>
-                    <td class="worldwide color-worldwide">W</td>
-                    <td class="continental color-continental">C</td>
-                    <td class="imperial color-imperial">I</td>
-                    <td class="cash color-cash-net">Cash</td>
-                    <td class="net color-cash-net">Net</td>
-                </tr>
-                <tr class="score-sheet-player">
-                    <td class="name"></td>
-                    <td class="luxor"></td>
-                    <td class="tower"></td>
-                    <td class="american"></td>
-                    <td class="festival"></td>
-                    <td class="worldwide"></td>
-                    <td class="continental"></td>
-                    <td class="imperial"></td>
-                    <td class="cash">6000</td>
-                    <td class="net">6000</td>
-                </tr>
-                <!-- generated in game.js::initializeHtml() -->
-                <tr id="score-sheet-available">
-                    <td class="name">Available</td>
-                    <td class="luxor">25</td>
-                    <td class="tower">25</td>
-                    <td class="american">25</td>
-                    <td class="festival">25</td>
-                    <td class="worldwide">25</td>
-                    <td class="continental">25</td>
-                    <td class="imperial">25</td>
-                    <td class="teams team-empty"></td>
-                    <td class="teams team-border-bottom"></td>
-                </tr>
-                <tr id="score-sheet-chain-size">
-                    <td class="name">Chain Size</td>
-                    <td class="luxor">-</td>
-                    <td class="tower">-</td>
-                    <td class="american">-</td>
-                    <td class="festival">-</td>
-                    <td class="worldwide">-</td>
-                    <td class="continental">-</td>
-                    <td class="imperial">-</td>
-                    <td class="teams team-border-right">Team 1</td>
-                    <td class="teams team-net" id="team1-net">12000</td>
-                </tr>
-                <tr id="score-sheet-price">
-                    <td class="name">Price ($00)</td>
-                    <td class="luxor">-</td>
-                    <td class="tower">-</td>
-                    <td class="american">-</td>
-                    <td class="festival">-</td>
-                    <td class="worldwide">-</td>
-                    <td class="continental">-</td>
-                    <td class="imperial">-</td>
-                    <td class="teams team-border-right">Team 2</td>
-                    <td class="teams team-net" id="team2-net">12000</td>
-                </tr>
-            </tbody>
-        </table>
-        <div id="game-tile-rack">
-            <input id="game-tile-0" data-index="0" type="button" value="x" class="button-hotel">
-            <input id="game-tile-1" data-index="1" type="button" value="x" class="button-hotel">
-            <input id="game-tile-2" data-index="2" type="button" value="x" class="button-hotel">
-            <input id="game-tile-3" data-index="3" type="button" value="x" class="button-hotel">
-            <input id="game-tile-4" data-index="4" type="button" value="x" class="button-hotel">
-            <input id="game-tile-5" data-index="5" type="button" value="x" class="button-hotel">
+        <div id="game-action-select-chain" class="game-action">
+          <fieldset>
+            <legend id="game-select-chain-instructions"></legend>
+            <input id="game-select-chain-0" data-index="0" type="button" value="L" class="button-hotel color-luxor" />
+            <input id="game-select-chain-1" data-index="1" type="button" value="T" class="button-hotel color-tower" />
+            <input id="game-select-chain-2" data-index="2" type="button" value="A" class="button-hotel color-american" />
+            <input id="game-select-chain-3" data-index="3" type="button" value="F" class="button-hotel color-festival" />
+            <input id="game-select-chain-4" data-index="4" type="button" value="W" class="button-hotel color-worldwide" />
+            <input id="game-select-chain-5" data-index="5" type="button" value="C" class="button-hotel color-continental" />
+            <input id="game-select-chain-6" data-index="6" type="button" value="I" class="button-hotel color-imperial" />
+          </fieldset>
         </div>
-        <div id="game-action">
-            <div id="game-action-start-game" class="game-action">
-                <input id="start-game" type="button" value="Start Game">
-            </div>
-            <div id="game-action-select-chain" class="game-action">
-                <fieldset>
-                    <legend id="game-select-chain-instructions"></legend>
-                    <input id="game-select-chain-0" data-index="0" type="button" value="L" class="button-hotel color-luxor">
-                    <input id="game-select-chain-1" data-index="1" type="button" value="T" class="button-hotel color-tower">
-                    <input id="game-select-chain-2" data-index="2" type="button" value="A" class="button-hotel color-american">
-                    <input id="game-select-chain-3" data-index="3" type="button" value="F" class="button-hotel color-festival">
-                    <input id="game-select-chain-4" data-index="4" type="button" value="W" class="button-hotel color-worldwide">
-                    <input id="game-select-chain-5" data-index="5" type="button" value="C" class="button-hotel color-continental">
-                    <input id="game-select-chain-6" data-index="6" type="button" value="I" class="button-hotel color-imperial">
-                </fieldset>
-            </div>
-            <div id="game-action-dispose-of-shares" class="game-action">
-                <fieldset id="dos-keep-fieldset">
-                    <legend>Keep</legend>
-                    <span id="dos-keep"></span>
-                    <input id="dos-keep-all" type="button" value="All">
-                </fieldset>
-                <fieldset id="dos-trade-fieldset">
-                    <legend>Trade</legend>
-                    <span id="dos-trade"></span>
-                    <input id="dos-trade-increment" type="button" value="▲">
-                    <input id="dos-trade-decrement" type="button" value="▼">
-                    <input id="dos-trade-maximum" type="button" value="Max">
-                </fieldset>
-                <fieldset id="dos-sell-fieldset">
-                    <legend>Sell</legend>
-                    <span id="dos-sell"></span>
-                    <input id="dos-sell-increment" type="button" value="▲">
-                    <input id="dos-sell-decrement" type="button" value="▼">
-                    <input id="dos-sell-maximum" type="button" value="Max">
-                </fieldset>
-                <input id="dos-ok" type="button" value="OK">
-            </div>
-            <div id="game-action-purchase-shares" class="game-action">
-                <div id="ps-row1">
-                    <fieldset id="ps-available">
-                        <legend>Available</legend>
-                        <input id="ps-available-0" data-index="0" type="button" value="L" class="button-hotel color-luxor">
-                        <input id="ps-available-1" data-index="1" type="button" value="T" class="button-hotel color-tower">
-                        <input id="ps-available-2" data-index="2" type="button" value="A" class="button-hotel color-american">
-                        <input id="ps-available-3" data-index="3" type="button" value="F" class="button-hotel color-festival">
-                        <input id="ps-available-4" data-index="4" type="button" value="W" class="button-hotel color-worldwide">
-                        <input id="ps-available-5" data-index="5" type="button" value="C" class="button-hotel color-continental">
-                        <input id="ps-available-6" data-index="6" type="button" value="I" class="button-hotel color-imperial">
-                    </fieldset>
-                    <fieldset>
-                        <legend>Cost</legend>
-                        <table id="ps-cost-table">
-                            <tbody>
-                                <tr>
-                                    <td>Total</td>
-                                    <td id="ps-total"></td>
-                                </tr>
-                                <tr>
-                                    <td>Left</td>
-                                    <td id="ps-left"></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </fieldset>
-                </div>
-                <div id="ps-row2">
-                    <fieldset id="ps-cart">
-                        <legend>Cart</legend>
-                        <input id="ps-cart-0" data-index="0" type="button" value="x" class="button-hotel">
-                        <input id="ps-cart-1" data-index="1" type="button" value="x" class="button-hotel">
-                        <input id="ps-cart-2" data-index="2" type="button" value="x" class="button-hotel">
-                    </fieldset>
-                    <input id="ps-end-game" type="checkbox">
-                    <label for="ps-end-game">End game</label>
-                    <input id="ps-ok" type="button" value="OK">
-                </div>
-            </div>
+        <div id="game-action-dispose-of-shares" class="game-action">
+          <fieldset id="dos-keep-fieldset">
+            <legend>Keep</legend>
+            <span id="dos-keep"></span>
+            <input id="dos-keep-all" type="button" value="All" />
+          </fieldset>
+          <fieldset id="dos-trade-fieldset">
+            <legend>Trade</legend>
+            <span id="dos-trade"></span>
+            <input id="dos-trade-increment" type="button" value="▲" />
+            <input id="dos-trade-decrement" type="button" value="▼" />
+            <input id="dos-trade-maximum" type="button" value="Max" />
+          </fieldset>
+          <fieldset id="dos-sell-fieldset">
+            <legend>Sell</legend>
+            <span id="dos-sell"></span>
+            <input id="dos-sell-increment" type="button" value="▲" />
+            <input id="dos-sell-decrement" type="button" value="▼" />
+            <input id="dos-sell-maximum" type="button" value="Max" />
+          </fieldset>
+          <input id="dos-ok" type="button" value="OK" />
         </div>
-        <div id="game-history">
+        <div id="game-action-purchase-shares" class="game-action">
+          <div id="ps-row1">
+            <fieldset id="ps-available">
+              <legend>Available</legend>
+              <input id="ps-available-0" data-index="0" type="button" value="L" class="button-hotel color-luxor" />
+              <input id="ps-available-1" data-index="1" type="button" value="T" class="button-hotel color-tower" />
+              <input id="ps-available-2" data-index="2" type="button" value="A" class="button-hotel color-american" />
+              <input id="ps-available-3" data-index="3" type="button" value="F" class="button-hotel color-festival" />
+              <input id="ps-available-4" data-index="4" type="button" value="W" class="button-hotel color-worldwide" />
+              <input id="ps-available-5" data-index="5" type="button" value="C" class="button-hotel color-continental" />
+              <input id="ps-available-6" data-index="6" type="button" value="I" class="button-hotel color-imperial" />
+            </fieldset>
+            <fieldset>
+              <legend>Cost</legend>
+              <table id="ps-cost-table">
+                <tbody>
+                  <tr>
+                    <td>Total</td>
+                    <td id="ps-total"></td>
+                  </tr>
+                  <tr>
+                    <td>Left</td>
+                    <td id="ps-left"></td>
+                  </tr>
+                </tbody>
+              </table>
+            </fieldset>
+          </div>
+          <div id="ps-row2">
+            <fieldset id="ps-cart">
+              <legend>Cart</legend>
+              <input id="ps-cart-0" data-index="0" type="button" value="x" class="button-hotel" />
+              <input id="ps-cart-1" data-index="1" type="button" value="x" class="button-hotel" />
+              <input id="ps-cart-2" data-index="2" type="button" value="x" class="button-hotel" />
+            </fieldset>
+            <input id="ps-end-game" type="checkbox" />
+            <label for="ps-end-game">End game</label>
+            <input id="ps-ok" type="button" value="OK" />
+          </div>
         </div>
-        <div id="game-history-new-messages">
-            <span class="singular">There is 1 new message.</span>
-            <span class="plural">There are
-                <span class="message-count"></span> new messages.</span>
-        </div>
-        <div id="game-status">
-        </div>
+      </div>
+      <div id="game-history"></div>
+      <div id="game-history-new-messages">
+        <span class="singular">There is 1 new message.</span>
+        <span class="plural">There are <span class="message-count"></span> new messages.</span>
+      </div>
+      <div id="game-status"></div>
     </div>
     <div id="lobby">
-        <h1 id="lobby-header">Acquire</h1>
-        <div class="lobby-section">
-            Players:
-            <span id="user-count-players">0</span>, Watchers:
-            <span id="user-count-watchers">0</span>, In Lobby:
-            <span id="user-count-in-lobby">0</span>, Total:
-            <span id="user-count-total">0</span>
-        </div>
-        <div class="lobby-section">
-            <div class="header">
-                Lobby
-            </div>
-            <div id="clients-in-lobby">
-            </div>
-        </div>
-        <div id="create-game-section" class="lobby-section">
-            <div class="header">
-                Create Game
-            </div>
-            <span id="cg-span-mode">
-                Mode:
-                <select id="cg-mode">
-                    <option value="Singles">Singles</option>
-                    <option value="Teams">Teams</option>
-                </select>
-            </span>
-            <span id="cg-span-max-players">
-                Max Players:
-                <select id="cg-max-players">
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                    <option value="5">5</option>
-                    <option value="6">6</option>
-                </select>
-            </span>
-            <input id="button-create-game" type="button" value="Create Game">
-        </div>
-        <div id="lobby-games">
-        </div>
+      <h1 id="lobby-header">Acquire</h1>
+      <div class="lobby-section">
+        Players:
+        <span id="user-count-players">0</span>, Watchers: <span id="user-count-watchers">0</span>, In Lobby: <span id="user-count-in-lobby">0</span>, Total:
+        <span id="user-count-total">0</span>
+      </div>
+      <div class="lobby-section">
+        <div class="header">Lobby</div>
+        <div id="clients-in-lobby"></div>
+      </div>
+      <div id="create-game-section" class="lobby-section">
+        <div class="header">Create Game</div>
+        <span id="cg-span-mode">
+          Mode:
+          <select id="cg-mode">
+            <option value="Singles">Singles</option>
+            <option value="Teams">Teams</option>
+          </select>
+        </span>
+        <span id="cg-span-max-players">
+          Max Players:
+          <select id="cg-max-players">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+          </select>
+        </span>
+        <input id="button-create-game" type="button" value="Create Game" />
+      </div>
+      <div id="lobby-games"></div>
     </div>
     <div id="options">
-        <div class="header">Options</div>
-        <div>
-            <input id="option-enable-page-title-notifications" type="checkbox">
-            <label for="option-enable-page-title-notifications">Enable page title notifications</label>
-        </div>
-        <div>
-            Sound:
-            <select id="option-sound">
-                <option value="beep">Beep</option>
-                <option value="cha-ching">Cha-Ching</option>
-            </select>
-        </div>
-        <div>
-            Volume:
-            <select id="option-volume">
-                <option value="100">100%</option>
-                <option value="90">90%</option>
-                <option value="80">80%</option>
-                <option value="70">70%</option>
-                <option value="60">60%</option>
-                <option value="50">50%</option>
-                <option value="40">40%</option>
-                <option value="30">30%</option>
-                <option value="20">20%</option>
-                <option value="10">10%</option>
-                <option value="0">0%</option>
-            </select>
-        </div>
-        <div>
-            <input id="option-enable-high-contrast-colors" type="checkbox">
-            <label for="option-enable-high-contrast-colors">Enable high contrast colors</label>
-        </div>
-        <div>
-            <input id="option-enable-text-background-colors" type="checkbox">
-            <label for="option-enable-text-background-colors">Enable text background colors</label>
-        </div>
-        <div>
-            Color scheme:
-            <select id="option-color-scheme">
-                <option value="netacquire">NetAcquire</option>
-                <option value="white">White</option>
-            </select>
-        </div>
-        <div>
-            Game board label mode:
-            <select id="option-game-board-label-mode">
-                <option value="nothing">Show nothing</option>
-                <option value="coordinates">Show coordinates</option>
-                <option value="hotel initials">Show hotel initials</option>
-            </select>
-        </div>
+      <div class="header">Options</div>
+      <div>
+        <input id="option-enable-page-title-notifications" type="checkbox" />
+        <label for="option-enable-page-title-notifications">Enable page title notifications</label>
+      </div>
+      <div>
+        Sound:
+        <select id="option-sound">
+          <option value="beep">Beep</option>
+          <option value="cha-ching">Cha-Ching</option>
+        </select>
+      </div>
+      <div>
+        Volume:
+        <select id="option-volume">
+          <option value="100">100%</option>
+          <option value="90">90%</option>
+          <option value="80">80%</option>
+          <option value="70">70%</option>
+          <option value="60">60%</option>
+          <option value="50">50%</option>
+          <option value="40">40%</option>
+          <option value="30">30%</option>
+          <option value="20">20%</option>
+          <option value="10">10%</option>
+          <option value="0">0%</option>
+        </select>
+      </div>
+      <div>
+        <input id="option-enable-high-contrast-colors" type="checkbox" />
+        <label for="option-enable-high-contrast-colors">Enable high contrast colors</label>
+      </div>
+      <div>
+        <input id="option-enable-text-background-colors" type="checkbox" />
+        <label for="option-enable-text-background-colors">Enable text background colors</label>
+      </div>
+      <div>
+        Color scheme:
+        <select id="option-color-scheme">
+          <option value="netacquire">NetAcquire</option>
+          <option value="white">White</option>
+        </select>
+      </div>
+      <div>
+        Game board label mode:
+        <select id="option-game-board-label-mode">
+          <option value="nothing">Show nothing</option>
+          <option value="coordinates">Show coordinates</option>
+          <option value="hotel initials">Show hotel initials</option>
+        </select>
+      </div>
     </div>
     <div id="global-chat">
-        <div class="chat-history"></div>
-        <div class="chat-history-new-messages">
-            <span class="singular">There is 1 new message.</span>
-            <span class="plural">There are
-                <span class="message-count"></span> new messages.</span>
-        </div>
-        <form class="chat-form" autocomplete="off">
-            <input class="chat-message" type="text" placeholder="Global Chat">
-        </form>
+      <div class="chat-history"></div>
+      <div class="chat-history-new-messages">
+        <span class="singular">There is 1 new message.</span>
+        <span class="plural">There are <span class="message-count"></span> new messages.</span>
+      </div>
+      <form class="chat-form" autocomplete="off">
+        <input class="chat-message" type="text" placeholder="Global Chat" />
+      </form>
     </div>
     <div id="game-chat">
-        <div class="chat-history"></div>
-        <div class="chat-history-new-messages">
-            <span class="singular">There is 1 new message.</span>
-            <span class="plural">There are
-                <span class="message-count"></span> new messages.</span>
-        </div>
-        <form class="chat-form" autocomplete="off">
-            <input class="chat-message" type="text" placeholder="Game Chat">
-        </form>
+      <div class="chat-history"></div>
+      <div class="chat-history-new-messages">
+        <span class="singular">There is 1 new message.</span>
+        <span class="plural">There are <span class="message-count"></span> new messages.</span>
+      </div>
+      <form class="chat-form" autocomplete="off">
+        <input class="chat-message" type="text" placeholder="Game Chat" />
+      </form>
     </div>
     <div id="templates">
-        <div id="chat-message">
+      <div id="chat-message">
+        <span class="username"></span>
+        <b>&gt;</b>
+        <span class="chat-message-contents"></span>
+      </div>
+      <div id="global-chat-add-client"><span class="username"></span> connected to the server.</div>
+      <div id="global-chat-remove-client"><span class="username"></span> disconnected from the server.</div>
+      <div id="game-chat-add-game-player"><span class="username"></span> entered the game.</div>
+      <div id="game-chat-remove-game-player"><span class="username"></span> exited the game.</div>
+      <div id="game-chat-add-game-watcher"><span class="username"></span> entered the game.</div>
+      <div id="game-chat-remove-game-watcher"><span class="username"></span> exited the game.</div>
+      <div class="lobby-section" id="lobby-game-template">
+        <div>
+          <span class="header"></span>
+          <span class="state"></span>
+          <span class="game-buttons">
+            <input class="button-join-game" type="button" value="Join" />
+            <input class="button-rejoin-game" type="button" value="Rejoin" />
+            <input class="button-watch-game" type="button" value="Watch" />
+          </span>
+        </div>
+        <div class="players">
+          <div class="player">&nbsp;</div>
+        </div>
+        <div class="watchers"></div>
+      </div>
+      <div class="game-state" id="game-state-template">
+        <span class="header"></span>
+        <span class="state"></span>
+      </div>
+      <div id="game-history-turn-began">
+        <fieldset class="game-history-turn-began">
+          <legend>
             <span class="username"></span>
-            <b>&gt;</b>
-            <span class="chat-message-contents"></span>
-        </div>
-        <div id="global-chat-add-client">
-            <span class="username"></span> connected to the server.</div>
-        <div id="global-chat-remove-client">
-            <span class="username"></span> disconnected from the server.</div>
-        <div id="game-chat-add-game-player">
-            <span class="username"></span> entered the game.</div>
-        <div id="game-chat-remove-game-player">
-            <span class="username"></span> exited the game.</div>
-        <div id="game-chat-add-game-watcher">
-            <span class="username"></span> entered the game.</div>
-        <div id="game-chat-remove-game-watcher">
-            <span class="username"></span> exited the game.</div>
-        <div class="lobby-section" id="lobby-game-template">
-            <div>
-                <span class="header"></span>
-                <span class="state"></span>
-                <span class="game-buttons">
-                    <input class="button-join-game" type="button" value="Join">
-                    <input class="button-rejoin-game" type="button" value="Rejoin">
-                    <input class="button-watch-game" type="button" value="Watch">
-                </span>
-            </div>
-            <div class="players">
-                <div class="player">
-                    &nbsp;
-                </div>
-            </div>
-            <div class="watchers"></div>
-        </div>
-        <div class="game-state" id="game-state-template">
-            <span class="header"></span>
-            <span class="state"></span>
-        </div>
-        <div id="game-history-turn-began">
-            <fieldset class="game-history-turn-began">
-                <legend>
-                    <span class="username"></span>
-                </legend>
-            </fieldset>
-        </div>
-        <div id="game-history-drew-position-tile">
-            <span class="username"></span> drew position tile
-            <span class="tile"></span>.</div>
-        <div id="game-history-started-game">
-            <span class="username"></span> started the game.</div>
-        <div id="game-history-drew-tile">You drew tile
-            <span class="tile"></span>.</div>
-        <div id="game-history-has-no-playable-tile">
-            <span class="username"></span> has no playable tile.</div>
-        <div id="game-history-played-tile">
-            <span class="username"></span> played tile
-            <span class="tile"></span>.</div>
-        <div id="game-history-formed-chain">
-            <span class="username"></span> formed
-            <span class="chain"></span>.</div>
-        <div id="game-history-merged-chains">
-            <span class="username"></span> merged
-            <span class="chains"></span>.</div>
-        <div id="game-history-selected-merger-survivor">
-            <span class="username"></span> selected
-            <span class="chain"></span> as merger survivor.</div>
-        <div id="game-history-selected-chain-to-dispose-of-next">
-            <span class="username"></span> selected
-            <span class="chain"></span> as chain to dispose of next.</div>
-        <div id="game-history-received-bonus">
-            <span class="username"></span> received a $
-            <span class="amount"></span>
-            <span class="chain"></span> bonus.</div>
-        <div id="game-history-disposed-of-shares">
-            <span class="username"></span> traded
-            <span class="trade-amount"></span> and sold
-            <span class="sell-amount"></span>
-            <span class="chain"></span> shares.</div>
-        <div id="game-history-could-not-afford-any-shares">
-            <span class="username"></span> could not afford any shares.</div>
-        <div id="game-history-purchased-shares">
-            <span class="username"></span> purchased
-            <span class="chains"></span>.</div>
-        <div id="game-history-drew-last-tile">
-            <span class="username"></span> drew the last tile from the tile bag.</div>
-        <div id="game-history-replaced-dead-tile">
-            <span class="username"></span> replaced dead tile
-            <span class="tile"></span>.</div>
-        <div id="game-history-ended-game">
-            <span class="username"></span> ended the game.</div>
-        <div id="game-history-no-tiles-played-for-entire-round">No tiles played for an entire round. Game end forced.</div>
-        <div id="game-history-all-tiles-played">All tiles have been played. Game end forced.</div>
-        <div id="game-status-start-game">Waiting for
-            <span class="username"></span> to start the game.</div>
-        <div id="game-status-play-tile">Waiting for
-            <span class="username"></span> to play a tile.</div>
-        <div id="game-status-select-new-chain">Waiting for
-            <span class="username"></span> to select new chain (
-            <span class="chains"></span>).</div>
-        <div id="game-status-select-merger-survivor">Waiting for
-            <span class="username"></span> to select merger survivor (
-            <span class="chains"></span>).</div>
-        <div id="game-status-select-chain-to-dispose-of-next">Waiting for
-            <span class="username"></span> to select chain to dispose of next (
-            <span class="chains"></span>).</div>
-        <div id="game-status-dispose-of-shares">Waiting for
-            <span class="username"></span> to dispose of
-            <span class="chain"></span> shares.</div>
-        <div id="game-status-purchase-shares">Waiting for
-            <span class="username"></span> to purchase shares.</div>
-        <div id="game-status-game-over">Game over.</div>
-        <audio src="static/beep3.mp3" id="beep"></audio>
-        <audio src="static/cha-ching1.mp3" id="cha-ching"></audio>
-        <img src="static/merge1.png" alt="">
+          </legend>
+        </fieldset>
+      </div>
+      <div id="game-history-drew-position-tile"><span class="username"></span> drew position tile <span class="tile"></span>.</div>
+      <div id="game-history-started-game"><span class="username"></span> started the game.</div>
+      <div id="game-history-drew-tile">You drew tile <span class="tile"></span>.</div>
+      <div id="game-history-has-no-playable-tile"><span class="username"></span> has no playable tile.</div>
+      <div id="game-history-played-tile"><span class="username"></span> played tile <span class="tile"></span>.</div>
+      <div id="game-history-formed-chain"><span class="username"></span> formed <span class="chain"></span>.</div>
+      <div id="game-history-merged-chains"><span class="username"></span> merged <span class="chains"></span>.</div>
+      <div id="game-history-selected-merger-survivor"><span class="username"></span> selected <span class="chain"></span> as merger survivor.</div>
+      <div id="game-history-selected-chain-to-dispose-of-next">
+        <span class="username"></span> selected <span class="chain"></span> as chain to dispose of next.
+      </div>
+      <div id="game-history-received-bonus">
+        <span class="username"></span> received a $
+        <span class="amount"></span>
+        <span class="chain"></span> bonus.
+      </div>
+      <div id="game-history-disposed-of-shares">
+        <span class="username"></span> traded <span class="trade-amount"></span> and sold
+        <span class="sell-amount"></span>
+        <span class="chain"></span> shares.
+      </div>
+      <div id="game-history-could-not-afford-any-shares"><span class="username"></span> could not afford any shares.</div>
+      <div id="game-history-purchased-shares"><span class="username"></span> purchased <span class="chains"></span>.</div>
+      <div id="game-history-drew-last-tile"><span class="username"></span> drew the last tile from the tile bag.</div>
+      <div id="game-history-replaced-dead-tile"><span class="username"></span> replaced dead tile <span class="tile"></span>.</div>
+      <div id="game-history-ended-game"><span class="username"></span> ended the game.</div>
+      <div id="game-history-no-tiles-played-for-entire-round">No tiles played for an entire round. Game end forced.</div>
+      <div id="game-history-all-tiles-played">All tiles have been played. Game end forced.</div>
+      <div id="game-status-start-game">Waiting for <span class="username"></span> to start the game.</div>
+      <div id="game-status-play-tile">Waiting for <span class="username"></span> to play a tile.</div>
+      <div id="game-status-select-new-chain">Waiting for <span class="username"></span> to select new chain ( <span class="chains"></span>).</div>
+      <div id="game-status-select-merger-survivor">Waiting for <span class="username"></span> to select merger survivor ( <span class="chains"></span>).</div>
+      <div id="game-status-select-chain-to-dispose-of-next">
+        Waiting for <span class="username"></span> to select chain to dispose of next ( <span class="chains"></span>).
+      </div>
+      <div id="game-status-dispose-of-shares">Waiting for <span class="username"></span> to dispose of <span class="chain"></span> shares.</div>
+      <div id="game-status-purchase-shares">Waiting for <span class="username"></span> to purchase shares.</div>
+      <div id="game-status-game-over">Game over.</div>
+      <audio src="static/beep3.mp3" id="beep"></audio>
+      <audio src="static/cha-ching1.mp3" id="cha-ching"></audio>
+      <img src="static/merge1.png" alt="" />
     </div>
-</body>
-
+  </body>
 </html>
