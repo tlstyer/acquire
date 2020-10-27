@@ -47,7 +47,7 @@
   app.use(
     body_parser.urlencoded({
       extended: false,
-    }),
+    })
   );
   app.post('/server/report-error', function (req, res) {
     var message = Object.prototype.hasOwnProperty.call(req.body, 'message') ? req.body.message.replace(/\n/g, '\n\t') : '<null>',
