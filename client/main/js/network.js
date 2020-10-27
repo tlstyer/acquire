@@ -23,7 +23,7 @@ function getServerUrl() {
 
 function connect(username, password) {
   if (socket === null) {
-    socket = new SockJS(server_url + '/sockjs');
+    socket = new SockJS(server_url + '/sockjs', undefined, { transports: 'websocket' });
 
     socket.onopen = function () {
       socket.send(JSON.stringify([version, username, password]));
