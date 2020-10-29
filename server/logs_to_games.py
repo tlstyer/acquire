@@ -1960,12 +1960,38 @@ def output_command_to_run_this_script_in_parallel_on_all_logs():
 
 
 def output_username_to_user_id():
-    usernames_set = set()
-    next_user_id = 1
+    re_log_timestamp = re.compile(r'^    # log_timestamp: (?P<timestamp>\d+)$')
 
     print('username_to_user_id = {')
 
-    for log_timestamp, filename in util.get_log_file_filenames('py', begin=1408905413):
+    last_completed_log_timestamp = None
+    last_completed_log_ending_user_id = None
+    last_log_timestamp = None
+    last_user_id = 0
+    lines_for_log = []
+
+    file = open('server/username_to_user_id.py')
+    for line in file:
+        line = line.rstrip()
+
+        if line.startswith('    '):
+            match = re_log_timestamp.match(line)
+            if match:
+                last_completed_log_timestamp = last_log_timestamp
+                last_completed_log_ending_user_id = last_user_id
+                last_log_timestamp = int(match.group('timestamp'))
+                for l in lines_for_log:
+                    print(l)
+                lines_for_log = []
+            else:
+                last_user_id += 1
+
+            lines_for_log.append(line)
+
+    usernames_set = set(username for username, user_id in username_to_user_id.items() if user_id <= last_completed_log_ending_user_id)
+    next_user_id = last_completed_log_ending_user_id + 1
+
+    for log_timestamp, filename in util.get_log_file_filenames('py', begin=last_completed_log_timestamp + 1):
         print('    # log_timestamp:', log_timestamp)
         with util.open_possibly_gzipped_file(filename) as file:
             log_parser = LogParser(log_timestamp, file)
