@@ -71,7 +71,7 @@
     "protobuf": "protoc --ts_out src/common --proto_path src/common src/common/pb.proto",
     "test": "jest",
     "lint": "eslint . --fix --ext .ts,.tsx",
-    "format": "prettier --write '{,!(.git|node_modules)/**/}*.{css,js,json,md,scss,ts,tsx}' --loglevel warn"
+    "format": "prettier --write '{,!(.git|node_modules)/**/}*.{css,html,js,json,md,scss,ts,tsx}' --loglevel warn"
   },
   "jest": {
     "transform": {
