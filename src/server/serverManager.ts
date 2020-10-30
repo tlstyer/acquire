@@ -342,7 +342,7 @@ export class ServerManager {
       gameCreated: {
         gameId: gameData.id,
         gameDisplayNumber: gameData.displayNumber,
-        gameMode: gameData.gameSetup!.gameMode,
+        gameMode: gameData.gameSetup.gameMode,
         hostClientId: client.id,
       },
     });

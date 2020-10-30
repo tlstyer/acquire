@@ -110,8 +110,8 @@ export class Game {
 
     for (let i = 0; i < entries.length; i++) {
       const entry = entries[i];
-      const tile = entry.tile!;
-      const playerIdBelongsTo = entry.playerIdBelongsTo!;
+      const tile = entry.tile;
+      const playerIdBelongsTo = entry.playerIdBelongsTo;
 
       let setTile = false;
 

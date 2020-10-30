@@ -248,19 +248,19 @@ export class GameSetup {
 
   processChange(gameSetupChange: PB_GameSetupChange) {
     if (gameSetupChange.userAdded) {
-      this.addUser(gameSetupChange.userAdded.userId!);
+      this.addUser(gameSetupChange.userAdded.userId);
     } else if (gameSetupChange.userRemoved) {
-      this.removeUser(gameSetupChange.userRemoved.userId!);
+      this.removeUser(gameSetupChange.userRemoved.userId);
     } else if (gameSetupChange.userApprovedOfGameSetup) {
-      this.approve(gameSetupChange.userApprovedOfGameSetup.userId!);
+      this.approve(gameSetupChange.userApprovedOfGameSetup.userId);
     } else if (gameSetupChange.gameModeChanged) {
-      this.changeGameMode(gameSetupChange.gameModeChanged.gameMode!);
+      this.changeGameMode(gameSetupChange.gameModeChanged.gameMode);
     } else if (gameSetupChange.playerArrangementModeChanged) {
-      this.changePlayerArrangementMode(gameSetupChange.playerArrangementModeChanged.playerArrangementMode!);
+      this.changePlayerArrangementMode(gameSetupChange.playerArrangementModeChanged.playerArrangementMode);
     } else if (gameSetupChange.positionsSwapped) {
-      this.swapPositions(gameSetupChange.positionsSwapped.position1!, gameSetupChange.positionsSwapped.position2!);
+      this.swapPositions(gameSetupChange.positionsSwapped.position1, gameSetupChange.positionsSwapped.position2);
     } else if (gameSetupChange.userKicked) {
-      this.kickUser(gameSetupChange.userKicked.userId!);
+      this.kickUser(gameSetupChange.userKicked.userId);
     }
   }
 

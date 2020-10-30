@@ -272,21 +272,21 @@ function toParameterStrings(gameAction: PB_GameAction) {
   const strings: any[] = [];
 
   if (gameAction.playTile) {
-    strings.push(toTileString(gameAction.playTile.tile!));
+    strings.push(toTileString(gameAction.playTile.tile));
   } else if (gameAction.selectNewChain) {
-    strings.push(gameBoardTypeToCharacter.get(gameAction.selectNewChain.chain!)!);
+    strings.push(gameBoardTypeToCharacter.get(gameAction.selectNewChain.chain)!);
   } else if (gameAction.selectMergerSurvivor) {
-    strings.push(gameBoardTypeToCharacter.get(gameAction.selectMergerSurvivor.chain!)!);
+    strings.push(gameBoardTypeToCharacter.get(gameAction.selectMergerSurvivor.chain)!);
   } else if (gameAction.selectChainToDisposeOfNext) {
-    strings.push(gameBoardTypeToCharacter.get(gameAction.selectChainToDisposeOfNext.chain!)!);
+    strings.push(gameBoardTypeToCharacter.get(gameAction.selectChainToDisposeOfNext.chain)!);
   } else if (gameAction.disposeOfShares) {
     strings.push(gameAction.disposeOfShares.tradeAmount?.toString());
     strings.push(gameAction.disposeOfShares.sellAmount?.toString());
   } else if (gameAction.purchaseShares) {
-    if (gameAction.purchaseShares.chains!.length === 0) {
+    if (gameAction.purchaseShares.chains.length === 0) {
       strings.push('x');
     } else {
-      strings.push(gameAction.purchaseShares.chains!.map((p: number) => gameBoardTypeToCharacter.get(p)).join(','));
+      strings.push(gameAction.purchaseShares.chains.map((p: number) => gameBoardTypeToCharacter.get(p)).join(','));
     }
     strings.push(gameAction.purchaseShares.endGame ? '1' : '0');
   }
