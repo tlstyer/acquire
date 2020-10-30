@@ -1957,7 +1957,7 @@ def output_command_to_run_this_script_in_parallel_on_all_logs():
 
     log_file_data.sort(reverse=True)
 
-    print('echo ' + ' '.join([str(d[1]) for d in log_file_data]) + ' | xargs -n 1 -P 4 python3 -u -OO server/logs_to_games.py make_acquire2_game_test_files')
+    print('echo ' + ' '.join([str(d[1]) for d in log_file_data]) + ' | xargs -n 1 -P 10 python3 -u -OO server/logs_to_games.py make_acquire2_game_test_files')
 
 
 def output_username_to_user_id():
