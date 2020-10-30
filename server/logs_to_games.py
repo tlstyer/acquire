@@ -1611,7 +1611,7 @@ def make_acquire2_game_test_files(log_timestamp, output_dir):
 
                 last_history_message_index = 0
 
-                for _, player_id_and_action_and_timestamp in enumerate(game.actions):
+                for game_action_index, player_id_and_action_and_timestamp in enumerate(game.actions):
                     player_id, action, timestamp = player_id_and_action_and_timestamp
 
                     game_action_id = action[0]
@@ -1642,22 +1642,23 @@ def make_acquire2_game_test_files(log_timestamp, output_dir):
                         acquire2_parameters = ' ' + ' '.join(acquire2_parameter_strings) if len(acquire2_parameter_strings) > 0 else ''
                         lines.append('action: ' + str(player_id) + ' ' + game_action.name + acquire2_parameters)
 
-                        game_board_lines = get_game_board_lines(server_game.game_board)
-                        turn_player_id = server_game.turn_player_id
-                        move_player_id = None if type(next_action) is server.ActionGameOver else next_action.player_id
-                        score_board_lines = get_score_board_lines(server_game.score_sheet, turn_player_id, move_player_id)
-                        for line in get_game_board_lines_next_to_score_board_lines(game_board_lines, score_board_lines):
-                            lines.append('  ' + line)
+                        if game_action_index == len(game.actions) - 1:
+                            game_board_lines = get_game_board_lines(server_game.game_board)
+                            turn_player_id = server_game.turn_player_id
+                            move_player_id = None if type(next_action) is server.ActionGameOver else next_action.player_id
+                            score_board_lines = get_score_board_lines(server_game.score_sheet, turn_player_id, move_player_id)
+                            for line in get_game_board_lines_next_to_score_board_lines(game_board_lines, score_board_lines):
+                                lines.append('  ' + line)
 
-                        lines.append('  tile racks:')
-                        for player_id, tile_rack in enumerate(server_game.tile_racks.racks):
-                            lines.append('    ' + str(player_id) + ': ' + get_tile_rack_string(tile_rack))
+                            lines.append('  tile racks:')
+                            for player_id, tile_rack in enumerate(server_game.tile_racks.racks):
+                                lines.append('    ' + str(player_id) + ': ' + get_tile_rack_string(tile_rack))
 
-                        lines.append('  history messages:')
-                        for history_message in server_game.history_messages[last_history_message_index:]:
-                            lines.append('    ' + get_game_history_message_string(server_game.score_sheet.username_to_player_id, history_message[1]))
+                            lines.append('  history messages:')
+                            for history_message in server_game.history_messages[last_history_message_index:]:
+                                lines.append('    ' + get_game_history_message_string(server_game.score_sheet.username_to_player_id, history_message[1]))
 
-                        lines.append('  next action: ' + get_next_action_string(next_action))
+                            lines.append('  next action: ' + get_next_action_string(next_action))
 
                         last_history_message_index = len(server_game.history_messages)
 
