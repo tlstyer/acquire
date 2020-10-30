@@ -430,7 +430,6 @@ describe('when sending first message', () => {
 
     test('after sending invalid username', async () => {
       await getsKickedWithMessage(messageLogin(0, '', 'password'), ErrorCode.INVALID_USERNAME);
-      await getsKickedWithMessage(messageLogin(0, '', 'password'), ErrorCode.INVALID_USERNAME);
       await getsKickedWithMessage(messageLogin(0, '123456789012345678901234567890123', 'password'), ErrorCode.INVALID_USERNAME);
       await getsKickedWithMessage(messageLogin(0, '▲', 'password'), ErrorCode.INVALID_USERNAME);
     });
