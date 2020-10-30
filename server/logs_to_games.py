@@ -2045,7 +2045,7 @@ def output_non_ascii_usernames_in_the_database():
 
 
 def main():
-    output_dir = '/home/tim/tmp/acquire'
+    output_dir = '/tmp/tim/acquire/gameTestFiles'
     output_logs_dir = output_dir + '/logs'
 
     # test_individual_game_log(output_dir)
