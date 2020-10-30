@@ -207,9 +207,6 @@ function getProductionConfig(APP) {
             },
             {
               loader: 'sass-loader',
-              options: {
-                sourceMap: true,
-              },
             },
           ],
         },
