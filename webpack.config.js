@@ -53,6 +53,11 @@ function getDevelopmentConfig(APP) {
           use: [
             {
               loader: 'style-loader',
+              options: {
+                modules: {
+                  namedExport: true,
+                },
+              },
             },
             {
               loader: 'dts-css-modules-loader',
@@ -65,6 +70,7 @@ function getDevelopmentConfig(APP) {
               options: {
                 modules: {
                   localIdentName: '[name]-[local]',
+                  namedExport: true,
                 },
                 sourceMap: true,
               },
@@ -167,7 +173,14 @@ function getProductionConfig(APP) {
         {
           test: /\.s?css$/,
           use: [
-            MiniCssExtractPlugin.loader,
+            {
+              loader: MiniCssExtractPlugin.loader,
+              options: {
+                modules: {
+                  namedExport: true,
+                },
+              },
+            },
             {
               loader: 'css-loader',
               options: {
@@ -180,6 +193,7 @@ function getProductionConfig(APP) {
                     }
                     return shortCSSName;
                   },
+                  namedExport: true,
                 },
               },
             },
