@@ -269,7 +269,7 @@ function fromParameterStrings(gameActionEnum: GameActionEnum, strings: string[])
 }
 
 function toParameterStrings(gameAction: PB_GameAction) {
-  const strings: any[] = [];
+  const strings: string[] = [];
 
   if (gameAction.playTile) {
     strings.push(toTileString(gameAction.playTile.tile));

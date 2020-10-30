@@ -694,7 +694,7 @@ export class ServerManager {
       users.push(userPB);
     });
 
-    const games: any[] = [];
+    const games: PB_Game[] = [];
     this.gameIDToGameData.forEach((gameData) => {
       let gamePB: PB_Game;
 
