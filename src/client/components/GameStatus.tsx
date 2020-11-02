@@ -9,7 +9,7 @@ import { ActionSelectChainToDisposeOfNext } from '../../common/gameActions/selec
 import { ActionSelectMergerSurvivor } from '../../common/gameActions/selectMergerSurvivor';
 import { ActionSelectNewChain } from '../../common/gameActions/selectNewChain';
 import { ActionStartGame } from '../../common/gameActions/startGame';
-import { GameBoardType } from '../../common/pb';
+import { PB_GameBoardType } from '../../common/pb';
 import { gameBoardTypeToCSSClassName, gameBoardTypeToHotelInitial, getHotelNameSpan, getUsernameSpan } from '../helpers';
 import * as style from './GameStatus.scss';
 
@@ -84,7 +84,7 @@ const gshl: [GameActionEnum, any][] = [
 ];
 const gameStatusHandlerLookup = new Map<GameActionEnum, (usernames: List<string>, action: ActionBase) => JSX.Element>(gshl);
 
-function getHotelInitialsList(chains: GameBoardType[]) {
+function getHotelInitialsList(chains: PB_GameBoardType[]) {
   const entries: (JSX.Element | string)[] = new Array(chains.length * 2 - 1);
 
   for (let i = 0; i < chains.length; i++) {

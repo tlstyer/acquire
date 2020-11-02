@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { GameBoardType } from '../../common/pb';
+import { PB_GameBoardType } from '../../common/pb';
 import * as commonStyle from '../common.scss';
 import { allChains, gameBoardTypeToCSSClassName, gameBoardTypeToHotelInitial } from '../helpers';
 import * as style from './SelectChain.scss';
@@ -12,10 +12,10 @@ export enum SelectChainTitle {
 
 export interface SelectChainProps {
   type: SelectChainTitle;
-  availableChains: GameBoardType[];
+  availableChains: PB_GameBoardType[];
   buttonSize: number;
   keyboardShortcutsEnabled: boolean;
-  onChainSelected: (chain: GameBoardType) => void;
+  onChainSelected: (chain: PB_GameBoardType) => void;
 }
 
 const typeToInstructions = new Map([

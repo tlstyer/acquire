@@ -1,15 +1,15 @@
 import * as React from 'react';
-import { GameMode } from '../../common/pb';
+import { PB_GameMode } from '../../common/pb';
 import { allGameModes, gameModeToString } from '../helpers';
 
 export interface CreateGameProps {
-  gameMode?: GameMode;
-  onSubmit: (gameMode: GameMode) => void;
+  gameMode?: PB_GameMode;
+  onSubmit: (gameMode: PB_GameMode) => void;
 }
 
 interface CreateGameState {
   props: CreateGameProps;
-  gameMode: GameMode;
+  gameMode: PB_GameMode;
 }
 
 export class CreateGame extends React.PureComponent<CreateGameProps, CreateGameState> {
@@ -22,7 +22,7 @@ export class CreateGame extends React.PureComponent<CreateGameProps, CreateGameS
   static _getDerivedStateFromProps(props: CreateGameProps): CreateGameState {
     return {
       props,
-      gameMode: props.gameMode !== undefined ? props.gameMode : GameMode.SINGLES_4,
+      gameMode: props.gameMode !== undefined ? props.gameMode : PB_GameMode.SINGLES_4,
     };
   }
 

@@ -1,12 +1,12 @@
 import { GameActionEnum, GameHistoryMessageEnum } from '../enums';
 import { UserInputError } from '../error';
 import { Game } from '../game';
-import { GameBoardType, PB_GameAction } from '../pb';
+import { PB_GameAction, PB_GameBoardType } from '../pb';
 import { ActionBase } from './base';
 import { ActionDisposeOfShares } from './disposeOfShares';
 
 export class ActionSelectChainToDisposeOfNext extends ActionBase {
-  constructor(game: Game, playerID: number, public defunctChains: GameBoardType[], public controllingChain: GameBoardType) {
+  constructor(game: Game, playerID: number, public defunctChains: PB_GameBoardType[], public controllingChain: PB_GameBoardType) {
     super(game, playerID, GameActionEnum.SelectChainToDisposeOfNext);
   }
 
@@ -23,7 +23,7 @@ export class ActionSelectChainToDisposeOfNext extends ActionBase {
       throw new UserInputError('selectChainToDisposeOfNext game action not provided');
     }
     const chain = gameAction.selectChainToDisposeOfNext.chain;
-    if (chain < GameBoardType.LUXOR || chain > GameBoardType.IMPERIAL) {
+    if (chain < PB_GameBoardType.LUXOR || chain > PB_GameBoardType.IMPERIAL) {
       throw new UserInputError('chain is not a valid chain');
     }
     if (this.defunctChains.indexOf(chain) === -1) {
@@ -35,7 +35,7 @@ export class ActionSelectChainToDisposeOfNext extends ActionBase {
     return this.completeAction(chain);
   }
 
-  protected completeAction(nextChain: GameBoardType) {
+  protected completeAction(nextChain: PB_GameBoardType) {
     const actions: ActionBase[] = [];
 
     const sharesOwned = this.game.getScoreBoardColumnArray(nextChain);

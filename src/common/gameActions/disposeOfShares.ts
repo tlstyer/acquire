@@ -1,14 +1,14 @@
 import { GameActionEnum, GameHistoryMessageEnum, ScoreBoardIndexEnum } from '../enums';
 import { UserInputError } from '../error';
 import { Game } from '../game';
-import { GameBoardType, PB_GameAction } from '../pb';
+import { PB_GameAction, PB_GameBoardType } from '../pb';
 import { ActionBase } from './base';
 
 export class ActionDisposeOfShares extends ActionBase {
   sharesOwnedInDefunctChain: number;
   sharesAvailableInControllingChain = 0;
 
-  constructor(game: Game, playerID: number, public defunctChain: GameBoardType, public controllingChain: GameBoardType) {
+  constructor(game: Game, playerID: number, public defunctChain: PB_GameBoardType, public controllingChain: PB_GameBoardType) {
     super(game, playerID, GameActionEnum.DisposeOfShares);
 
     this.sharesOwnedInDefunctChain = this.game.scoreBoard.get(playerID)!.get(defunctChain)!;
@@ -43,7 +43,7 @@ export class ActionDisposeOfShares extends ActionBase {
     }
 
     if (tradeAmount > 0 || sellAmount > 0) {
-      const adjustments: [GameBoardType | ScoreBoardIndexEnum, number][] = [[this.defunctChain, -tradeAmount - sellAmount]];
+      const adjustments: [PB_GameBoardType | ScoreBoardIndexEnum, number][] = [[this.defunctChain, -tradeAmount - sellAmount]];
       if (tradeAmount > 0) {
         adjustments.push([this.controllingChain, tradeAmount / 2]);
       }

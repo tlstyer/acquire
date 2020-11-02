@@ -11,11 +11,19 @@ import { ActionSelectMergerSurvivor } from '../common/gameActions/selectMergerSu
 import { ActionSelectNewChain } from '../common/gameActions/selectNewChain';
 import { ActionStartGame } from '../common/gameActions/startGame';
 import { getNewTileBag } from '../common/helpers';
-import { GameBoardType, GameMode, PB_GameAction, PlayerArrangementMode } from '../common/pb';
+import { PB_GameAction, PB_GameBoardType, PB_GameMode, PB_PlayerArrangementMode } from '../common/pb';
 import { allChains } from './helpers';
 
 export function getDummyGameForGetGameHistory() {
-  const game = new Game(GameMode.SINGLES_4, PlayerArrangementMode.EXACT_ORDER, getNewTileBag(), List([2, 3, 5, 8]), List(['Tim', 'Rita', 'Dad', 'Mom']), 8, 3);
+  const game = new Game(
+    PB_GameMode.SINGLES_4,
+    PB_PlayerArrangementMode.EXACT_ORDER,
+    getNewTileBag(),
+    List([2, 3, 5, 8]),
+    List(['Tim', 'Rita', 'Dad', 'Mom']),
+    8,
+    3,
+  );
   game.doGameAction(PB_GameAction.create({ startGame: {} }), null);
   game.gameStateHistory = defaultGameStateHistory;
 
@@ -117,8 +125,8 @@ export function getDummyGameForGetGameHistory() {
 
 export function getExampleNextGameActionsArray() {
   const game = new Game(
-    GameMode.SINGLES_5,
-    PlayerArrangementMode.RANDOM_ORDER,
+    PB_GameMode.SINGLES_5,
+    PB_PlayerArrangementMode.RANDOM_ORDER,
     [],
     List([1, 2, 3, 4, 5]),
     List(['Tim', 'Rita', 'Dad', 'Mom', 'REALLY, REALLY, REALLY, REALLY, REALLY LONG NAME']),
@@ -130,9 +138,9 @@ export function getExampleNextGameActionsArray() {
     new ActionStartGame(game, 0),
     new ActionPlayTile(game, 1),
     new ActionSelectNewChain(game, 2, allChains, 107),
-    new ActionSelectMergerSurvivor(game, 3, [GameBoardType.LUXOR, GameBoardType.FESTIVAL, GameBoardType.CONTINENTAL], 107),
-    new ActionSelectChainToDisposeOfNext(game, 0, [GameBoardType.TOWER, GameBoardType.AMERICAN], GameBoardType.CONTINENTAL),
-    new ActionDisposeOfShares(game, 1, GameBoardType.IMPERIAL, GameBoardType.LUXOR),
+    new ActionSelectMergerSurvivor(game, 3, [PB_GameBoardType.LUXOR, PB_GameBoardType.FESTIVAL, PB_GameBoardType.CONTINENTAL], 107),
+    new ActionSelectChainToDisposeOfNext(game, 0, [PB_GameBoardType.TOWER, PB_GameBoardType.AMERICAN], PB_GameBoardType.CONTINENTAL),
+    new ActionDisposeOfShares(game, 1, PB_GameBoardType.IMPERIAL, PB_GameBoardType.LUXOR),
     new ActionPurchaseShares(game, 2),
     new ActionGameOver(game, 3),
   ];

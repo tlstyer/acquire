@@ -12,9 +12,9 @@ import { ActionSelectMergerSurvivor } from '../common/gameActions/selectMergerSu
 import { ActionSelectNewChain } from '../common/gameActions/selectNewChain';
 import { GameSetup } from '../common/gameSetup';
 import {
-  ErrorCode,
-  GameBoardType,
-  GameMode,
+  PB_ErrorCode,
+  PB_GameBoardType,
+  PB_GameMode,
   PB_MessagesToClient,
   PB_MessageToClient_ClientConnected,
   PB_MessageToClient_ClientDisconnected,
@@ -27,7 +27,7 @@ import {
   PB_MessageToClient_GameStarted,
   PB_MessageToClient_Greetings,
   PB_MessageToServer,
-  PlayerArrangementMode,
+  PB_PlayerArrangementMode,
 } from '../common/pb';
 import * as style from './clientManager.scss';
 import { CreateGame } from './components/CreateGame';
@@ -54,7 +54,7 @@ export enum ClientManagerPage {
 }
 
 export class ClientManager {
-  errorCode: ErrorCode | null = null;
+  errorCode: PB_ErrorCode | null = null;
   page = ClientManagerPage.Login;
 
   socket: WebSocket | null = null;
@@ -172,7 +172,7 @@ export class ClientManager {
     );
   };
 
-  onSubmitCreateGame = (gameMode: GameMode) => {
+  onSubmitCreateGame = (gameMode: PB_GameMode) => {
     if (this.isConnected()) {
       this.sendMessage(PB_MessageToServer.create({ createGame: { gameMode } }));
     }
@@ -244,13 +244,13 @@ export class ClientManager {
     }
   };
 
-  onChangeGameMode = (gameMode: GameMode) => {
+  onChangeGameMode = (gameMode: PB_GameMode) => {
     if (this.isConnected()) {
       this.sendMessage(PB_MessageToServer.create({ doGameSetupAction: { changeGameMode: { gameMode } } }));
     }
   };
 
-  onChangePlayerArrangementMode = (playerArrangementMode: PlayerArrangementMode) => {
+  onChangePlayerArrangementMode = (playerArrangementMode: PB_PlayerArrangementMode) => {
     if (this.isConnected()) {
       this.sendMessage(PB_MessageToServer.create({ doGameSetupAction: { changePlayerArrangementMode: { playerArrangementMode } } }));
     }
@@ -393,14 +393,14 @@ export class ClientManager {
       const tileRackIndex = game.tileRacks.get(playerID)!.indexOf(tile);
       const tileType = game.tileRackTypes.get(playerID)!.get(tileRackIndex)!;
 
-      if (tileType !== GameBoardType.CANT_PLAY_EVER && tileType !== GameBoardType.CANT_PLAY_NOW) {
+      if (tileType !== PB_GameBoardType.CANT_PLAY_EVER && tileType !== PB_GameBoardType.CANT_PLAY_NOW) {
         this.sendMessage(PB_MessageToServer.create({ doGameAction: { gameStateHistorySize: game.gameStateHistory.size, gameAction: { playTile: { tile } } } }));
         this.myRequiredGameAction = null;
       }
     }
   };
 
-  onChainSelected = (chain: GameBoardType) => {
+  onChainSelected = (chain: PB_GameBoardType) => {
     if (this.isConnected()) {
       this.sendMessage(
         PB_MessageToServer.create({
@@ -428,7 +428,7 @@ export class ClientManager {
     }
   };
 
-  onSharesPurchased = (chains: GameBoardType[], endGame: boolean) => {
+  onSharesPurchased = (chains: PB_GameBoardType[], endGame: boolean) => {
     if (this.isConnected()) {
       this.sendMessage(
         PB_MessageToServer.create({
@@ -612,7 +612,7 @@ export class ClientManager {
     const hostClient = this.clientIDToClient.get(message.hostClientId)!;
 
     const gameData = new GameData(message.gameId, message.gameDisplayNumber, this);
-    gameData.gameSetup = new GameSetup(message.gameMode, PlayerArrangementMode.RANDOM_ORDER, hostClient.user.id, this.getUsernameForUserID);
+    gameData.gameSetup = new GameSetup(message.gameMode, PB_PlayerArrangementMode.RANDOM_ORDER, hostClient.user.id, this.getUsernameForUserID);
 
     hostClient.user.numGames++;
 
@@ -700,7 +700,7 @@ export class ClientManager {
     if (this.errorCode !== null) {
       this.setPage(ClientManagerPage.Login);
     } else if (this.page === ClientManagerPage.Connecting) {
-      this.errorCode = ErrorCode.COULD_NOT_CONNECT;
+      this.errorCode = PB_ErrorCode.COULD_NOT_CONNECT;
       this.setPage(ClientManagerPage.Login);
     }
 

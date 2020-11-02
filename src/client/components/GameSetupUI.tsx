@@ -1,20 +1,20 @@
 import { List } from 'immutable';
 import * as React from 'react';
 import { gameModeToNumPlayers, gameModeToTeamSize } from '../../common/helpers';
-import { GameMode, PlayerArrangementMode } from '../../common/pb';
+import { PB_GameMode, PB_PlayerArrangementMode } from '../../common/pb';
 import { allGameModes, gameModeToString, teamNumberToCSSClassName } from '../helpers';
 import * as style from './GameSetupUI.scss';
 
 interface GameSetupUIProps {
-  gameMode: GameMode;
-  playerArrangementMode: PlayerArrangementMode;
+  gameMode: PB_GameMode;
+  playerArrangementMode: PB_PlayerArrangementMode;
   usernames: List<string | null>;
   userIDs: List<number | null>;
   approvals: List<boolean>;
   hostUserID: number;
   myUserID: number;
-  onChangeGameMode?: (gameMode: GameMode) => void;
-  onChangePlayerArrangementMode?: (playerArrangementMode: PlayerArrangementMode) => void;
+  onChangeGameMode?: (gameMode: PB_GameMode) => void;
+  onChangePlayerArrangementMode?: (playerArrangementMode: PB_PlayerArrangementMode) => void;
   onSwapPositions?: (position1: number, position2: number) => void;
   onKickUser?: (userID: number) => void;
   onApprove?: () => void;
@@ -61,7 +61,7 @@ export class GameSetupUI extends React.PureComponent<GameSetupUIProps> {
             onChange={(event: React.FormEvent<HTMLSelectElement>) => onChangePlayerArrangementMode(parseInt(event.currentTarget.value, 10))}
           >
             {allPlayerArrangementModes.map((pam) =>
-              pam !== PlayerArrangementMode.SPECIFY_TEAMS || isTeamGame ? (
+              pam !== PB_PlayerArrangementMode.SPECIFY_TEAMS || isTeamGame ? (
                 <option key={pam} value={pam}>
                   {playerArrangementModeToString.get(pam)}
                 </option>
@@ -72,9 +72,9 @@ export class GameSetupUI extends React.PureComponent<GameSetupUIProps> {
           playerArrangementModeToString.get(playerArrangementMode)
         )}
         <br />
-        {playerArrangementMode === PlayerArrangementMode.RANDOM_ORDER
+        {playerArrangementMode === PB_PlayerArrangementMode.RANDOM_ORDER
           ? this.renderRandomOrder(gameIsFull)
-          : playerArrangementMode === PlayerArrangementMode.EXACT_ORDER
+          : playerArrangementMode === PB_PlayerArrangementMode.EXACT_ORDER
           ? this.renderExactOrder(gameIsFull)
           : this.renderSpecifyTeams(gameIsFull)}
       </div>
@@ -199,12 +199,12 @@ export class GameSetupUI extends React.PureComponent<GameSetupUIProps> {
 }
 
 const playerArrangementModeToString = new Map([
-  [PlayerArrangementMode.RANDOM_ORDER, 'Random Order'],
-  [PlayerArrangementMode.EXACT_ORDER, 'Exact Order'],
-  [PlayerArrangementMode.SPECIFY_TEAMS, 'Specify Teams'],
+  [PB_PlayerArrangementMode.RANDOM_ORDER, 'Random Order'],
+  [PB_PlayerArrangementMode.EXACT_ORDER, 'Exact Order'],
+  [PB_PlayerArrangementMode.SPECIFY_TEAMS, 'Specify Teams'],
 ]);
 
-const allPlayerArrangementModes = [PlayerArrangementMode.RANDOM_ORDER, PlayerArrangementMode.EXACT_ORDER, PlayerArrangementMode.SPECIFY_TEAMS];
+const allPlayerArrangementModes = [PB_PlayerArrangementMode.RANDOM_ORDER, PB_PlayerArrangementMode.EXACT_ORDER, PB_PlayerArrangementMode.SPECIFY_TEAMS];
 
 class SpecifyTeamsEntry {
   constructor(public index: number, public upIndex: number | null, public downIndex: number | null) {}
@@ -212,11 +212,11 @@ class SpecifyTeamsEntry {
 
 const teamGameModeToSpecifyTeamsEntries = new Map([
   [
-    GameMode.TEAMS_2_VS_2,
+    PB_GameMode.TEAMS_2_VS_2,
     [new SpecifyTeamsEntry(0, null, 2), new SpecifyTeamsEntry(2, 0, 1), null, new SpecifyTeamsEntry(1, 2, 3), new SpecifyTeamsEntry(3, 1, null)],
   ],
   [
-    GameMode.TEAMS_2_VS_2_VS_2,
+    PB_GameMode.TEAMS_2_VS_2_VS_2,
     [
       new SpecifyTeamsEntry(0, null, 3),
       new SpecifyTeamsEntry(3, 0, 1),
@@ -229,7 +229,7 @@ const teamGameModeToSpecifyTeamsEntries = new Map([
     ],
   ],
   [
-    GameMode.TEAMS_3_VS_3,
+    PB_GameMode.TEAMS_3_VS_3,
     [
       new SpecifyTeamsEntry(0, null, 2),
       new SpecifyTeamsEntry(2, 0, 4),

@@ -1,17 +1,17 @@
 import { List } from 'immutable';
 import * as React from 'react';
 import { gameModeToNumPlayers, gameModeToTeamSize } from '../../common/helpers';
-import { GameBoardType, GameMode } from '../../common/pb';
+import { PB_GameBoardType, PB_GameMode } from '../../common/pb';
 import { GameStatusEnum } from '../enums';
 import { gameModeToString, gameStatusToString, teamNumberToCSSClassName } from '../helpers';
 import * as style from './GameListing.scss';
 import { MiniGameBoard } from './MiniGameBoard';
 
 export interface GameListingProps {
-  gameBoard: List<List<GameBoardType>>;
+  gameBoard: List<List<PB_GameBoardType>>;
   usernames: List<string | null>;
   gameDisplayNumber: number;
-  gameMode: GameMode;
+  gameMode: PB_GameMode;
   gameStatus: GameStatusEnum;
   onEnterClicked: () => void;
 }

@@ -1,6 +1,6 @@
 import { List } from 'immutable';
 import { GameState } from './game';
-import { GameBoardType } from './pb';
+import { PB_GameBoardType } from './pb';
 
 export const defaultGameStateHistory = List<GameState>([]);
 
@@ -8,23 +8,23 @@ export const defaultTileRacks = List<List<number | null>>([]);
 
 export const defaultTileRack = List<number | null>([null, null, null, null, null, null]);
 
-export const defaultTileRackTypesList = List<List<GameBoardType | null>>([]);
+export const defaultTileRackTypesList = List<List<PB_GameBoardType | null>>([]);
 
-export const defaultTileRackTypes = List<GameBoardType | null>([null, null, null, null, null, null]);
+export const defaultTileRackTypes = List<PB_GameBoardType | null>([null, null, null, null, null, null]);
 
 const defaultGameBoardRow = List([
-  GameBoardType.NOTHING,
-  GameBoardType.NOTHING,
-  GameBoardType.NOTHING,
-  GameBoardType.NOTHING,
-  GameBoardType.NOTHING,
-  GameBoardType.NOTHING,
-  GameBoardType.NOTHING,
-  GameBoardType.NOTHING,
-  GameBoardType.NOTHING,
-  GameBoardType.NOTHING,
-  GameBoardType.NOTHING,
-  GameBoardType.NOTHING,
+  PB_GameBoardType.NOTHING,
+  PB_GameBoardType.NOTHING,
+  PB_GameBoardType.NOTHING,
+  PB_GameBoardType.NOTHING,
+  PB_GameBoardType.NOTHING,
+  PB_GameBoardType.NOTHING,
+  PB_GameBoardType.NOTHING,
+  PB_GameBoardType.NOTHING,
+  PB_GameBoardType.NOTHING,
+  PB_GameBoardType.NOTHING,
+  PB_GameBoardType.NOTHING,
+  PB_GameBoardType.NOTHING,
 ]);
 export const defaultGameBoard = List([
   defaultGameBoardRow,

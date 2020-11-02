@@ -1,30 +1,30 @@
 import * as React from 'react';
 import { isASCII } from '../../common/helpers';
-import { ErrorCode } from '../../common/pb';
+import { PB_ErrorCode } from '../../common/pb';
 import { hackDoNotInterfereWithKeyboardShortcuts } from '../helpers';
 import * as style from './LoginForm.scss';
 
 const errorCodeToMessage = new Map([
-  [ErrorCode.NOT_USING_LATEST_VERSION, 'You are not using the latest version.'],
-  [ErrorCode.INTERNAL_SERVER_ERROR, 'An error occurred during the processing of your request.'],
-  [ErrorCode.INVALID_MESSAGE_FORMAT, 'An error occurred during the processing of your request.'],
-  [ErrorCode.INVALID_USERNAME, 'Invalid username. Username must have between 1 and 32 ASCII characters.'],
-  [ErrorCode.MISSING_PASSWORD, 'Password is required.'],
-  [ErrorCode.PROVIDED_PASSWORD, 'Password is not set for this user.'],
-  [ErrorCode.INCORRECT_PASSWORD, 'Password is incorrect.'],
-  [ErrorCode.INVALID_MESSAGE, 'An error occurred.'],
-  [ErrorCode.COULD_NOT_CONNECT, 'Could not connect to the server.'],
+  [PB_ErrorCode.NOT_USING_LATEST_VERSION, 'You are not using the latest version.'],
+  [PB_ErrorCode.INTERNAL_SERVER_ERROR, 'An error occurred during the processing of your request.'],
+  [PB_ErrorCode.INVALID_MESSAGE_FORMAT, 'An error occurred during the processing of your request.'],
+  [PB_ErrorCode.INVALID_USERNAME, 'Invalid username. Username must have between 1 and 32 ASCII characters.'],
+  [PB_ErrorCode.MISSING_PASSWORD, 'Password is required.'],
+  [PB_ErrorCode.PROVIDED_PASSWORD, 'Password is not set for this user.'],
+  [PB_ErrorCode.INCORRECT_PASSWORD, 'Password is incorrect.'],
+  [PB_ErrorCode.INVALID_MESSAGE, 'An error occurred.'],
+  [PB_ErrorCode.COULD_NOT_CONNECT, 'Could not connect to the server.'],
 ]);
 
 export interface LoginFormProps {
-  errorCode?: ErrorCode;
+  errorCode?: PB_ErrorCode;
   username?: string;
   onSubmit: (username: string, password: string) => void;
 }
 
 interface LoginFormState {
   props: LoginFormProps;
-  errorCode?: ErrorCode;
+  errorCode?: PB_ErrorCode;
   username: string;
   password: string;
 }
@@ -81,7 +81,7 @@ export class LoginForm extends React.PureComponent<LoginFormProps, LoginFormStat
     const { username, password } = this.state;
 
     if (username.length === 0 || username.length > 32 || !isASCII(username)) {
-      this.setState({ errorCode: ErrorCode.INVALID_USERNAME });
+      this.setState({ errorCode: PB_ErrorCode.INVALID_USERNAME });
     } else {
       this.setState({ errorCode: undefined });
       this.props.onSubmit(username, password);

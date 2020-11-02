@@ -1,12 +1,12 @@
 import { List } from 'immutable';
 import * as React from 'react';
-import { GameBoardType } from '../../common/pb';
+import { PB_GameBoardType } from '../../common/pb';
 import { GameBoardLabelMode } from '../enums';
 import { gameBoardTypeToCSSClassName, gameBoardTypeToHotelInitial, getTileString } from '../helpers';
 import * as style from './GameBoard.scss';
 
 export interface GameBoardProps {
-  gameBoard: List<List<GameBoardType>>;
+  gameBoard: List<List<PB_GameBoardType>>;
   tileRack?: List<number | null>;
   labelMode: GameBoardLabelMode;
   cellSize: number;
@@ -49,7 +49,7 @@ export class GameBoard extends React.PureComponent<GameBoardProps> {
 
 interface GameBoardRowProps {
   y: number;
-  gameBoardRow: List<GameBoardType>;
+  gameBoardRow: List<PB_GameBoardType>;
   tileRackRowBitMask: number;
   labelMode: GameBoardLabelMode;
   onCellClicked?: (tile: number) => void;
@@ -63,7 +63,7 @@ class GameBoardRow extends React.PureComponent<GameBoardRowProps> {
       <tr>
         {gameBoardRow.map((gameBoardType, x) => {
           if (((tileRackRowBitMask >> x) & 1) === 1) {
-            gameBoardType = GameBoardType.I_HAVE_THIS;
+            gameBoardType = PB_GameBoardType.I_HAVE_THIS;
           }
 
           const tile = x * 9 + y;
@@ -72,15 +72,15 @@ class GameBoardRow extends React.PureComponent<GameBoardRowProps> {
           if (labelMode === GameBoardLabelMode.Coordinates) {
             label = getTileString(tile);
           } else if (labelMode === GameBoardLabelMode.HotelInitials) {
-            if (gameBoardType === GameBoardType.NOTHING || gameBoardType === GameBoardType.I_HAVE_THIS) {
+            if (gameBoardType === PB_GameBoardType.NOTHING || gameBoardType === PB_GameBoardType.I_HAVE_THIS) {
               label = getTileString(tile);
-            } else if (gameBoardType <= GameBoardType.IMPERIAL) {
+            } else if (gameBoardType <= PB_GameBoardType.IMPERIAL) {
               label = gameBoardTypeToHotelInitial.get(gameBoardType);
             } else {
               label = '\u00a0';
             }
           } else if (labelMode === GameBoardLabelMode.Nothing) {
-            if (gameBoardType === GameBoardType.NOTHING || gameBoardType === GameBoardType.I_HAVE_THIS) {
+            if (gameBoardType === PB_GameBoardType.NOTHING || gameBoardType === PB_GameBoardType.I_HAVE_THIS) {
               label = getTileString(tile);
             } else {
               label = '\u00a0';
@@ -90,7 +90,7 @@ class GameBoardRow extends React.PureComponent<GameBoardRowProps> {
           let className = gameBoardTypeToCSSClassName.get(gameBoardType)!;
 
           const optionalProps: { [key: string]: any } = {};
-          if (gameBoardType === GameBoardType.I_HAVE_THIS && onCellClicked) {
+          if (gameBoardType === PB_GameBoardType.I_HAVE_THIS && onCellClicked) {
             optionalProps.onClick = () => onCellClicked(tile);
             className = `${className} ${style.clickable}`;
           }

@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { GameBoardType } from '../../common/pb';
+import { PB_GameBoardType } from '../../common/pb';
 import { gameBoardTypeToCSSClassName } from '../helpers';
 import * as style from './DisposeOfShares.scss';
 
 export interface DisposeOfSharesProps {
-  defunctChain: GameBoardType;
-  controllingChain: GameBoardType;
+  defunctChain: PB_GameBoardType;
+  controllingChain: PB_GameBoardType;
   sharesOwnedInDefunctChain: number;
   sharesAvailableInControllingChain: number;
   buttonSize: number;

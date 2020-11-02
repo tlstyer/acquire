@@ -1,7 +1,7 @@
 import * as WebSocket from 'ws';
 import { TileEnum } from '../common/enums';
 import { setupTextDecoderAndTextEncoder } from '../common/nodeSpecificStuff';
-import { ErrorCode, GameMode, PB_GameAction, PB_MessagesToClient, PB_MessageToClient, PB_MessageToServer, PlayerArrangementMode } from '../common/pb';
+import { PB_ErrorCode, PB_GameAction, PB_GameMode, PB_MessagesToClient, PB_MessageToClient, PB_MessageToServer, PB_PlayerArrangementMode } from '../common/pb';
 import { ConnectionState, GameData, ServerManager, User } from './serverManager';
 import { TestUserDataProvider } from './userDataProvider';
 
@@ -67,7 +67,7 @@ function messageLogin(version: number, username: string, password: string) {
   return PB_MessageToServer.create({ login: { version, username, password } });
 }
 
-function messageCreateGame(gameMode: GameMode) {
+function messageCreateGame(gameMode: PB_GameMode) {
   return PB_MessageToServer.create({ createGame: { gameMode } });
 }
 
@@ -91,11 +91,11 @@ function messageApproveOfGameSetup() {
   return PB_MessageToServer.create({ doGameSetupAction: { approveOfGameSetup: {} } });
 }
 
-function messageChangeGameMode(gameMode: GameMode) {
+function messageChangeGameMode(gameMode: PB_GameMode) {
   return PB_MessageToServer.create({ doGameSetupAction: { changeGameMode: { gameMode } } });
 }
 
-function messageChangePlayerArrangementMode(playerArrangementMode: PlayerArrangementMode) {
+function messageChangePlayerArrangementMode(playerArrangementMode: PB_PlayerArrangementMode) {
   return PB_MessageToServer.create({ doGameSetupAction: { changePlayerArrangementMode: { playerArrangementMode } } });
 }
 
@@ -132,7 +132,7 @@ async function getServerManagerAndStuffAfterAllApprovedOfGameSetup() {
   const hostConnection = await connectToServer(server, 'host');
   const opponentConnection = await connectToServer(server, 'opponent');
   const anotherConnection = await connectToServer(server, 'another');
-  hostConnection.sendMessage(messageCreateGame(GameMode.SINGLES_2));
+  hostConnection.sendMessage(messageCreateGame(PB_GameMode.SINGLES_2));
   opponentConnection.sendMessage(messageEnterGame(1));
   opponentConnection.sendMessage(messageJoinGame());
 
@@ -313,7 +313,7 @@ function expectClientKickedDueToInvalidMessage(webSocket: TestWebSocket) {
   expect(webSocket.receivedMessages[0]).toEqual([
     PB_MessageToClient.create({
       fatalError: {
-        errorCode: ErrorCode.INVALID_MESSAGE,
+        errorCode: PB_ErrorCode.INVALID_MESSAGE,
       },
     }),
   ]);
@@ -397,7 +397,7 @@ describe('when not sending first message', () => {
 
 describe('when sending first message', () => {
   describe('gets kicked', () => {
-    async function getsKickedWithMessage(messageToServer: any, outputErrorCode: ErrorCode) {
+    async function getsKickedWithMessage(messageToServer: any, outputErrorCode: PB_ErrorCode) {
       const { server, userDataProvider } = getServerManagerAndStuff();
 
       await userDataProvider.createUser('has password', 'password');
@@ -421,41 +421,41 @@ describe('when sending first message', () => {
     }
 
     test('after sending invalid message', async () => {
-      await getsKickedWithMessage({}, ErrorCode.INVALID_MESSAGE_FORMAT);
+      await getsKickedWithMessage({}, PB_ErrorCode.INVALID_MESSAGE_FORMAT);
     });
 
     test('after sending wrong version', async () => {
-      await getsKickedWithMessage(messageLogin(-1, 'username', 'password'), ErrorCode.NOT_USING_LATEST_VERSION);
+      await getsKickedWithMessage(messageLogin(-1, 'username', 'password'), PB_ErrorCode.NOT_USING_LATEST_VERSION);
     });
 
     test('after sending invalid username', async () => {
-      await getsKickedWithMessage(messageLogin(0, '', 'password'), ErrorCode.INVALID_USERNAME);
-      await getsKickedWithMessage(messageLogin(0, '123456789012345678901234567890123', 'password'), ErrorCode.INVALID_USERNAME);
-      await getsKickedWithMessage(messageLogin(0, '▲', 'password'), ErrorCode.INVALID_USERNAME);
+      await getsKickedWithMessage(messageLogin(0, '', 'password'), PB_ErrorCode.INVALID_USERNAME);
+      await getsKickedWithMessage(messageLogin(0, '123456789012345678901234567890123', 'password'), PB_ErrorCode.INVALID_USERNAME);
+      await getsKickedWithMessage(messageLogin(0, '▲', 'password'), PB_ErrorCode.INVALID_USERNAME);
     });
 
     test('after not providing password', async () => {
-      await getsKickedWithMessage(messageLogin(0, 'has password', ''), ErrorCode.MISSING_PASSWORD);
+      await getsKickedWithMessage(messageLogin(0, 'has password', ''), PB_ErrorCode.MISSING_PASSWORD);
     });
 
     test('after providing incorrect password', async () => {
-      await getsKickedWithMessage(messageLogin(0, 'has password', 'not my password'), ErrorCode.INCORRECT_PASSWORD);
+      await getsKickedWithMessage(messageLogin(0, 'has password', 'not my password'), PB_ErrorCode.INCORRECT_PASSWORD);
     });
 
     test('after providing a password when test is not set', async () => {
-      await getsKickedWithMessage(messageLogin(0, 'does not have password', 'password'), ErrorCode.PROVIDED_PASSWORD);
+      await getsKickedWithMessage(messageLogin(0, 'does not have password', 'password'), PB_ErrorCode.PROVIDED_PASSWORD);
     });
 
     test('after providing a password when user data does not exist', async () => {
-      await getsKickedWithMessage(messageLogin(0, 'no user data', 'password'), ErrorCode.PROVIDED_PASSWORD);
+      await getsKickedWithMessage(messageLogin(0, 'no user data', 'password'), PB_ErrorCode.PROVIDED_PASSWORD);
     });
 
     test("after an error from user data provider's lookupUser()", async () => {
-      await getsKickedWithMessage(messageLogin(0, 'lookupUser error', 'password'), ErrorCode.INTERNAL_SERVER_ERROR);
+      await getsKickedWithMessage(messageLogin(0, 'lookupUser error', 'password'), PB_ErrorCode.INTERNAL_SERVER_ERROR);
     });
 
     test("after an error from user data provider's createUser()", async () => {
-      await getsKickedWithMessage(messageLogin(0, 'createUser error', ''), ErrorCode.INTERNAL_SERVER_ERROR);
+      await getsKickedWithMessage(messageLogin(0, 'createUser error', ''), PB_ErrorCode.INTERNAL_SERVER_ERROR);
     });
   });
 
@@ -597,9 +597,9 @@ describe('when sending first message', () => {
       const connection3 = await connectToServer(server, 'user 3');
       const connection4 = await connectToServer(server, 'user 4');
       await connectToServer(server, 'user 1');
-      connection3.sendMessage(messageCreateGame(GameMode.SINGLES_2));
+      connection3.sendMessage(messageCreateGame(PB_GameMode.SINGLES_2));
       connection3.close();
-      connection4.sendMessage(messageCreateGame(GameMode.TEAMS_3_VS_3));
+      connection4.sendMessage(messageCreateGame(PB_GameMode.TEAMS_3_VS_3));
 
       const connection = await connectToServer(server, 'me');
 
@@ -632,7 +632,7 @@ describe('when sending first message', () => {
       Math.random = () => 0.1;
 
       const connection1 = await connectToServer(server, '1');
-      connection1.sendMessage(messageCreateGame(GameMode.SINGLES_4));
+      connection1.sendMessage(messageCreateGame(PB_GameMode.SINGLES_4));
 
       const connection2 = await connectToServer(server, '2');
       expect(connection2.receivedMessages.length).toBe(1);
@@ -648,15 +648,15 @@ describe('when sending first message', () => {
               {
                 gameId: 10,
                 gameDisplayNumber: 1,
-                gameMode: GameMode.SINGLES_4,
-                playerArrangementMode: PlayerArrangementMode.RANDOM_ORDER,
+                gameMode: PB_GameMode.SINGLES_4,
+                playerArrangementMode: PB_PlayerArrangementMode.RANDOM_ORDER,
                 positions: [{ userId: 1, isHost: true }, {}, {}, {}],
               },
             ],
           },
         }),
       ]);
-      connection2.sendMessage(messageCreateGame(GameMode.SINGLES_1));
+      connection2.sendMessage(messageCreateGame(PB_GameMode.SINGLES_1));
       connection2.sendMessage(messageApproveOfGameSetup());
       connection2.sendMessage(messageDoGameAction(1, { playTile: { tile: 19 } }));
       connection2.sendMessage(messageDoGameAction(2, { playTile: { tile: 29 } }));
@@ -677,15 +677,15 @@ describe('when sending first message', () => {
               {
                 gameId: 10,
                 gameDisplayNumber: 1,
-                gameMode: GameMode.SINGLES_4,
-                playerArrangementMode: PlayerArrangementMode.RANDOM_ORDER,
+                gameMode: PB_GameMode.SINGLES_4,
+                playerArrangementMode: PB_PlayerArrangementMode.RANDOM_ORDER,
                 positions: [{ userId: 1, isHost: true }, {}, {}, {}],
               },
               {
                 gameId: 11,
                 gameDisplayNumber: 2,
-                gameMode: GameMode.SINGLES_1,
-                playerArrangementMode: PlayerArrangementMode.RANDOM_ORDER,
+                gameMode: PB_GameMode.SINGLES_1,
+                playerArrangementMode: PB_PlayerArrangementMode.RANDOM_ORDER,
                 positions: [{ userId: 2, isHost: true }],
                 gameStates: [
                   {
@@ -737,15 +737,15 @@ describe('when sending first message', () => {
               {
                 gameId: 10,
                 gameDisplayNumber: 1,
-                gameMode: GameMode.SINGLES_4,
-                playerArrangementMode: PlayerArrangementMode.RANDOM_ORDER,
+                gameMode: PB_GameMode.SINGLES_4,
+                playerArrangementMode: PB_PlayerArrangementMode.RANDOM_ORDER,
                 positions: [{ userId: 1, isHost: true }, {}, {}, {}],
               },
               {
                 gameId: 11,
                 gameDisplayNumber: 2,
-                gameMode: GameMode.SINGLES_1,
-                playerArrangementMode: PlayerArrangementMode.RANDOM_ORDER,
+                gameMode: PB_GameMode.SINGLES_1,
+                playerArrangementMode: PB_PlayerArrangementMode.RANDOM_ORDER,
                 positions: [{ userId: 2, isHost: true }],
                 gameStates: [
                   {
@@ -823,7 +823,7 @@ describe('create game', () => {
       [],
     );
 
-    connection2.sendMessage(messageCreateGame(GameMode.TEAMS_2_VS_2));
+    connection2.sendMessage(messageCreateGame(PB_GameMode.TEAMS_2_VS_2));
 
     expect(serverManager.userIDToUser.get(1)!.numGames).toBe(0);
     expect(serverManager.userIDToUser.get(2)!.numGames).toBe(1);
@@ -835,8 +835,8 @@ describe('create game', () => {
     );
 
     const gameSetup = serverManager.gameIDToGameData.get(10)!.gameSetup!;
-    expect(gameSetup.gameMode).toBe(GameMode.TEAMS_2_VS_2);
-    expect(gameSetup.playerArrangementMode).toBe(PlayerArrangementMode.RANDOM_ORDER);
+    expect(gameSetup.gameMode).toBe(PB_GameMode.TEAMS_2_VS_2);
+    expect(gameSetup.playerArrangementMode).toBe(PB_PlayerArrangementMode.RANDOM_ORDER);
     expect(gameSetup.hostUserID).toBe(2);
     expect(gameSetup.hostUsername).toBe('user 2');
 
@@ -848,7 +848,7 @@ describe('create game', () => {
         gameCreated: {
           gameId: 10,
           gameDisplayNumber: 1,
-          gameMode: GameMode.TEAMS_2_VS_2,
+          gameMode: PB_GameMode.TEAMS_2_VS_2,
           hostClientId: 2,
         },
       }),
@@ -868,11 +868,11 @@ describe('create game', () => {
 
     const connection1 = await connectToServer(server, 'user 1');
     const connection2 = await connectToServer(server, 'user 2');
-    connection2.sendMessage(messageCreateGame(GameMode.TEAMS_2_VS_2));
+    connection2.sendMessage(messageCreateGame(PB_GameMode.TEAMS_2_VS_2));
     connection1.clearReceivedMessages();
     connection2.clearReceivedMessages();
 
-    connection2.sendMessage(messageCreateGame(GameMode.TEAMS_2_VS_2));
+    connection2.sendMessage(messageCreateGame(PB_GameMode.TEAMS_2_VS_2));
 
     expect(serverManager.userIDToUser.get(2)!.numGames).toBe(1);
     expect(serverManager.gameIDToGameData.size).toBe(1);
@@ -892,7 +892,7 @@ describe('enter game', () => {
 
     const connection1 = await connectToServer(server, 'user 1');
     const connection2 = await connectToServer(server, 'user 2');
-    connection1.sendMessage(messageCreateGame(GameMode.TEAMS_2_VS_2));
+    connection1.sendMessage(messageCreateGame(PB_GameMode.TEAMS_2_VS_2));
     connection1.clearReceivedMessages();
     connection2.clearReceivedMessages();
 
@@ -931,8 +931,8 @@ describe('enter game', () => {
     const connection1 = await connectToServer(server, 'user 1');
     const connection2 = await connectToServer(server, 'user 2');
     const connection3 = await connectToServer(server, 'user 3');
-    connection1.sendMessage(messageCreateGame(GameMode.TEAMS_2_VS_2));
-    connection2.sendMessage(messageCreateGame(GameMode.SINGLES_3));
+    connection1.sendMessage(messageCreateGame(PB_GameMode.TEAMS_2_VS_2));
+    connection2.sendMessage(messageCreateGame(PB_GameMode.SINGLES_3));
     connection3.sendMessage(messageEnterGame(2));
     connection1.clearReceivedMessages();
     connection2.clearReceivedMessages();
@@ -960,7 +960,7 @@ describe('exit game', () => {
 
     const connection1 = await connectToServer(server, 'user 1');
     const connection2 = await connectToServer(server, 'user 2');
-    connection1.sendMessage(messageCreateGame(GameMode.TEAMS_2_VS_2));
+    connection1.sendMessage(messageCreateGame(PB_GameMode.TEAMS_2_VS_2));
     connection2.sendMessage(messageEnterGame(1));
     connection1.clearReceivedMessages();
     connection2.clearReceivedMessages();
@@ -998,7 +998,7 @@ describe('exit game', () => {
 
     const connection1 = await connectToServer(server, 'user 1');
     const connection2 = await connectToServer(server, 'user 2');
-    connection1.sendMessage(messageCreateGame(GameMode.TEAMS_2_VS_2));
+    connection1.sendMessage(messageCreateGame(PB_GameMode.TEAMS_2_VS_2));
     connection1.clearReceivedMessages();
     connection2.clearReceivedMessages();
 
@@ -1041,7 +1041,7 @@ describe('join game', () => {
 
     const hostConnection = await connectToServer(server, 'host');
     const otherConnection = await connectToServer(server, 'other');
-    hostConnection.sendMessage(messageCreateGame(GameMode.TEAMS_2_VS_2));
+    hostConnection.sendMessage(messageCreateGame(PB_GameMode.TEAMS_2_VS_2));
     otherConnection.sendMessage(messageEnterGame(1));
     hostConnection.clearReceivedMessages();
     otherConnection.clearReceivedMessages();
@@ -1098,7 +1098,7 @@ describe('unjoin game', () => {
 
     const hostConnection = await connectToServer(server, 'host');
     const otherConnection = await connectToServer(server, 'other');
-    hostConnection.sendMessage(messageCreateGame(GameMode.TEAMS_2_VS_2));
+    hostConnection.sendMessage(messageCreateGame(PB_GameMode.TEAMS_2_VS_2));
     otherConnection.sendMessage(messageEnterGame(1));
     otherConnection.sendMessage(messageJoinGame());
     hostConnection.clearReceivedMessages();
@@ -1156,7 +1156,7 @@ describe('approve of game setup', () => {
 
     const hostConnection = await connectToServer(server, 'host');
     const otherConnection = await connectToServer(server, 'other');
-    hostConnection.sendMessage(messageCreateGame(GameMode.SINGLES_2));
+    hostConnection.sendMessage(messageCreateGame(PB_GameMode.SINGLES_2));
     otherConnection.sendMessage(messageEnterGame(1));
     otherConnection.sendMessage(messageJoinGame());
     hostConnection.clearReceivedMessages();
@@ -1203,7 +1203,7 @@ describe('change game mode', () => {
     const connection = await connectToServer(server, 'user');
     connection.clearReceivedMessages();
 
-    connection.sendMessage(messageChangeGameMode(GameMode.SINGLES_3));
+    connection.sendMessage(messageChangeGameMode(PB_GameMode.SINGLES_3));
 
     expect(connection.receivedMessages.length).toBe(0);
     expect(connection.readyState).toBe(WebSocket.OPEN);
@@ -1214,12 +1214,12 @@ describe('change game mode', () => {
 
     const hostConnection = await connectToServer(server, 'host');
     const otherConnection = await connectToServer(server, 'other');
-    hostConnection.sendMessage(messageCreateGame(GameMode.SINGLES_2));
+    hostConnection.sendMessage(messageCreateGame(PB_GameMode.SINGLES_2));
     otherConnection.sendMessage(messageEnterGame(1));
     hostConnection.clearReceivedMessages();
     otherConnection.clearReceivedMessages();
 
-    otherConnection.sendMessage(messageChangeGameMode(GameMode.SINGLES_3));
+    otherConnection.sendMessage(messageChangeGameMode(PB_GameMode.SINGLES_3));
 
     expectClientKickedDueToInvalidMessage(otherConnection);
   });
@@ -1229,7 +1229,7 @@ describe('change game mode', () => {
 
     const hostConnection = await connectToServer(server, 'host');
     const otherConnection = await connectToServer(server, 'other');
-    hostConnection.sendMessage(messageCreateGame(GameMode.SINGLES_2));
+    hostConnection.sendMessage(messageCreateGame(PB_GameMode.SINGLES_2));
     otherConnection.sendMessage(messageEnterGame(1));
     otherConnection.sendMessage(messageJoinGame());
     hostConnection.clearReceivedMessages();
@@ -1241,7 +1241,7 @@ describe('change game mode', () => {
       [new GameDataData(10, 1, [1, 2])],
     );
 
-    hostConnection.sendMessage(messageChangeGameMode(GameMode.SINGLES_3));
+    hostConnection.sendMessage(messageChangeGameMode(PB_GameMode.SINGLES_3));
 
     expectClientAndUserAndGameData(
       serverManager,
@@ -1258,7 +1258,7 @@ describe('change game mode', () => {
           gameDisplayNumber: 1,
           gameSetupChange: {
             gameModeChanged: {
-              gameMode: GameMode.SINGLES_3,
+              gameMode: PB_GameMode.SINGLES_3,
             },
           },
         },
@@ -1276,7 +1276,7 @@ describe('change player arrangement mode', () => {
     const connection = await connectToServer(server, 'user');
     connection.clearReceivedMessages();
 
-    connection.sendMessage(messageChangePlayerArrangementMode(PlayerArrangementMode.EXACT_ORDER));
+    connection.sendMessage(messageChangePlayerArrangementMode(PB_PlayerArrangementMode.EXACT_ORDER));
 
     expect(connection.receivedMessages.length).toBe(0);
     expect(connection.readyState).toBe(WebSocket.OPEN);
@@ -1287,12 +1287,12 @@ describe('change player arrangement mode', () => {
 
     const hostConnection = await connectToServer(server, 'host');
     const otherConnection = await connectToServer(server, 'other');
-    hostConnection.sendMessage(messageCreateGame(GameMode.SINGLES_2));
+    hostConnection.sendMessage(messageCreateGame(PB_GameMode.SINGLES_2));
     otherConnection.sendMessage(messageEnterGame(1));
     hostConnection.clearReceivedMessages();
     otherConnection.clearReceivedMessages();
 
-    otherConnection.sendMessage(messageChangePlayerArrangementMode(PlayerArrangementMode.EXACT_ORDER));
+    otherConnection.sendMessage(messageChangePlayerArrangementMode(PB_PlayerArrangementMode.EXACT_ORDER));
 
     expectClientKickedDueToInvalidMessage(otherConnection);
   });
@@ -1302,7 +1302,7 @@ describe('change player arrangement mode', () => {
 
     const hostConnection = await connectToServer(server, 'host');
     const otherConnection = await connectToServer(server, 'other');
-    hostConnection.sendMessage(messageCreateGame(GameMode.SINGLES_4));
+    hostConnection.sendMessage(messageCreateGame(PB_GameMode.SINGLES_4));
     otherConnection.sendMessage(messageEnterGame(1));
     otherConnection.sendMessage(messageJoinGame());
     hostConnection.clearReceivedMessages();
@@ -1314,7 +1314,7 @@ describe('change player arrangement mode', () => {
       [new GameDataData(10, 1, [1, 2])],
     );
 
-    hostConnection.sendMessage(messageChangePlayerArrangementMode(PlayerArrangementMode.EXACT_ORDER));
+    hostConnection.sendMessage(messageChangePlayerArrangementMode(PB_PlayerArrangementMode.EXACT_ORDER));
 
     expectClientAndUserAndGameData(
       serverManager,
@@ -1331,7 +1331,7 @@ describe('change player arrangement mode', () => {
           gameDisplayNumber: 1,
           gameSetupChange: {
             playerArrangementModeChanged: {
-              playerArrangementMode: PlayerArrangementMode.EXACT_ORDER,
+              playerArrangementMode: PB_PlayerArrangementMode.EXACT_ORDER,
             },
           },
         },
@@ -1360,7 +1360,7 @@ describe('swap positions', () => {
 
     const hostConnection = await connectToServer(server, 'host');
     const otherConnection = await connectToServer(server, 'other');
-    hostConnection.sendMessage(messageCreateGame(GameMode.SINGLES_2));
+    hostConnection.sendMessage(messageCreateGame(PB_GameMode.SINGLES_2));
     otherConnection.sendMessage(messageEnterGame(1));
     hostConnection.clearReceivedMessages();
     otherConnection.clearReceivedMessages();
@@ -1375,7 +1375,7 @@ describe('swap positions', () => {
 
     const hostConnection = await connectToServer(server, 'host');
     const otherConnection = await connectToServer(server, 'other');
-    hostConnection.sendMessage(messageCreateGame(GameMode.SINGLES_4));
+    hostConnection.sendMessage(messageCreateGame(PB_GameMode.SINGLES_4));
     otherConnection.sendMessage(messageEnterGame(1));
     otherConnection.sendMessage(messageJoinGame());
     hostConnection.clearReceivedMessages();
@@ -1434,7 +1434,7 @@ describe('kick user', () => {
 
     const hostConnection = await connectToServer(server, 'host');
     const otherConnection = await connectToServer(server, 'other');
-    hostConnection.sendMessage(messageCreateGame(GameMode.SINGLES_2));
+    hostConnection.sendMessage(messageCreateGame(PB_GameMode.SINGLES_2));
     otherConnection.sendMessage(messageEnterGame(1));
     hostConnection.clearReceivedMessages();
     otherConnection.clearReceivedMessages();
@@ -1449,7 +1449,7 @@ describe('kick user', () => {
 
     const hostConnection = await connectToServer(server, 'host');
     const otherConnection = await connectToServer(server, 'other');
-    hostConnection.sendMessage(messageCreateGame(GameMode.SINGLES_4));
+    hostConnection.sendMessage(messageCreateGame(PB_GameMode.SINGLES_4));
     otherConnection.sendMessage(messageEnterGame(1));
     otherConnection.sendMessage(messageJoinGame());
     hostConnection.clearReceivedMessages();
@@ -1624,7 +1624,7 @@ describe('do game action', () => {
     const { server } = getServerManagerAndStuff();
 
     const connection = await connectToServer(server, 'user');
-    connection.sendMessage(messageCreateGame(GameMode.SINGLES_2));
+    connection.sendMessage(messageCreateGame(PB_GameMode.SINGLES_2));
     connection.clearReceivedMessages();
 
     connection.sendMessage(messageDoGameAction(2, {}));

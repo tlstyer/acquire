@@ -1,11 +1,11 @@
 import { List } from 'immutable';
 import * as React from 'react';
-import { GameBoardType } from '../../common/pb';
+import { PB_GameBoardType } from '../../common/pb';
 import { gameBoardTypeToCSSClassName } from '../helpers';
 import * as style from './MiniGameBoard.scss';
 
 interface MiniGameBoardProps {
-  gameBoard: List<List<GameBoardType>>;
+  gameBoard: List<List<PB_GameBoardType>>;
   cellSize: number;
 }
 
@@ -26,7 +26,7 @@ export class MiniGameBoard extends React.PureComponent<MiniGameBoardProps> {
 }
 
 interface MiniGameBoardRowProps {
-  gameBoardRow: List<GameBoardType>;
+  gameBoardRow: List<PB_GameBoardType>;
 }
 
 class MiniGameBoardRow extends React.PureComponent<MiniGameBoardRowProps> {

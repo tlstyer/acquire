@@ -1,13 +1,13 @@
 import { List } from 'immutable';
 import * as React from 'react';
-import { GameBoardType } from '../../common/pb';
+import { PB_GameBoardType } from '../../common/pb';
 import * as commonStyle from '../common.scss';
 import { gameBoardTypeToCSSClassName, getTileString } from '../helpers';
 import * as style from './TileRack.scss';
 
 export interface TileRackProps {
   tiles: List<number | null>;
-  types: List<GameBoardType | null>;
+  types: List<PB_GameBoardType | null>;
   buttonSize: number;
   keyboardShortcutsEnabled: boolean;
   onTileClicked: (tile: number) => void;
@@ -82,7 +82,7 @@ export class TileRack extends React.Component<TileRackProps> {
           const type = types.get(i, null);
 
           if (tile !== null && type !== null) {
-            const disabled = type === GameBoardType.CANT_PLAY_EVER || type === GameBoardType.CANT_PLAY_NOW;
+            const disabled = type === PB_GameBoardType.CANT_PLAY_EVER || type === PB_GameBoardType.CANT_PLAY_NOW;
             return (
               <input
                 key={i}

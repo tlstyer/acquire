@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { GameSetup } from '../../common/gameSetup';
-import { GameMode, PlayerArrangementMode } from '../../common/pb';
+import { PB_GameMode, PB_PlayerArrangementMode } from '../../common/pb';
 import { GameSetupUI } from './GameSetupUI';
 
 interface ExampleGameSetupMasterProps {}
@@ -16,7 +16,7 @@ export class ExampleGameSetupMaster extends React.Component<ExampleGameSetupMast
     super(props);
 
     this.state = {
-      gameSetup: new GameSetup(GameMode.SINGLES_4, PlayerArrangementMode.RANDOM_ORDER, 1, getUsernameForUserID),
+      gameSetup: new GameSetup(PB_GameMode.SINGLES_4, PB_PlayerArrangementMode.RANDOM_ORDER, 1, getUsernameForUserID),
       simulatedNetworkDelay: 250,
       nextUserId: 2,
     };
@@ -136,7 +136,7 @@ export class ExampleGameSetupMaster extends React.Component<ExampleGameSetupMast
     this.setState({ gameSetup, nextUserId: userID + 1 });
   };
 
-  handleChangeGameMode = (gameMode: GameMode) => {
+  handleChangeGameMode = (gameMode: PB_GameMode) => {
     setTimeout(() => {
       const { gameSetup } = this.state;
 
@@ -147,7 +147,7 @@ export class ExampleGameSetupMaster extends React.Component<ExampleGameSetupMast
     }, this.state.simulatedNetworkDelay);
   };
 
-  handleChangePlayerArrangementMode = (playerArrangementMode: PlayerArrangementMode) => {
+  handleChangePlayerArrangementMode = (playerArrangementMode: PB_PlayerArrangementMode) => {
     setTimeout(() => {
       const { gameSetup } = this.state;
 

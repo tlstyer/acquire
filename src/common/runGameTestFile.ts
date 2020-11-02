@@ -10,8 +10,6 @@ import { ActionSelectMergerSurvivor } from './gameActions/selectMergerSurvivor';
 import { ActionSelectNewChain } from './gameActions/selectNewChain';
 import { getValueOfKey, lowercaseFirstLetter } from './helpers';
 import {
-  GameBoardType,
-  GameMode,
   PB_GameAction,
   PB_GameAction_DisposeOfShares,
   PB_GameAction_PlayTile,
@@ -19,15 +17,17 @@ import {
   PB_GameAction_SelectChainToDisposeOfNext,
   PB_GameAction_SelectMergerSurvivor,
   PB_GameAction_SelectNewChain,
+  PB_GameBoardType,
+  PB_GameMode,
   PB_GameState,
   PB_GameState_RevealedTileRackTile,
-  PlayerArrangementMode,
+  PB_PlayerArrangementMode,
 } from './pb';
 
 export function runGameTestFile(inputLines: string[]) {
   let game: Game | null = null;
-  let gameMode = GameMode.SINGLES_1;
-  let playerArrangementMode = PlayerArrangementMode.VERSION_1;
+  let gameMode = PB_GameMode.SINGLES_1;
+  let playerArrangementMode = PB_PlayerArrangementMode.VERSION_1;
   let tileBag: number[] = [];
   const userIDs: number[] = [];
   const usernames: string[] = [];
@@ -50,11 +50,11 @@ export function runGameTestFile(inputLines: string[]) {
         switch (key) {
           case 'game mode':
             // @ts-ignore
-            gameMode = GameMode[value];
+            gameMode = PB_GameMode[value];
             break;
           case 'player arrangement mode':
             // @ts-ignore
-            playerArrangementMode = PlayerArrangementMode[value];
+            playerArrangementMode = PB_PlayerArrangementMode[value];
             break;
           case 'tile bag': {
             tileBag = fromTilesString(value);
@@ -82,8 +82,8 @@ export function runGameTestFile(inputLines: string[]) {
             break;
         }
       } else {
-        outputLines.push(`game mode: ${GameMode[gameMode]}`);
-        outputLines.push(`player arrangement mode: ${PlayerArrangementMode[playerArrangementMode]}`);
+        outputLines.push(`game mode: ${PB_GameMode[gameMode]}`);
+        outputLines.push(`player arrangement mode: ${PB_PlayerArrangementMode[playerArrangementMode]}`);
         if (tileBag.length > 0) {
           outputLines.push(`tile bag: ${toTilesString(tileBag)}`);
         }
@@ -212,13 +212,13 @@ function getDuplicatedTiles(tileBag: number[]) {
 }
 
 const abbreviationToGameBoardType = new Map([
-  ['L', GameBoardType.LUXOR],
-  ['T', GameBoardType.TOWER],
-  ['A', GameBoardType.AMERICAN],
-  ['F', GameBoardType.FESTIVAL],
-  ['W', GameBoardType.WORLDWIDE],
-  ['C', GameBoardType.CONTINENTAL],
-  ['I', GameBoardType.IMPERIAL],
+  ['L', PB_GameBoardType.LUXOR],
+  ['T', PB_GameBoardType.TOWER],
+  ['A', PB_GameBoardType.AMERICAN],
+  ['F', PB_GameBoardType.FESTIVAL],
+  ['W', PB_GameBoardType.WORLDWIDE],
+  ['C', PB_GameBoardType.CONTINENTAL],
+  ['I', PB_GameBoardType.IMPERIAL],
 ]);
 
 function fromParameterStrings(gameActionEnum: GameActionEnum, strings: string[]) {
@@ -447,24 +447,24 @@ function getRevealedTileBagTilesStringForPlayer(revealedTileBagTiles: GameStateT
 }
 
 const gameBoardTypeToCharacter = new Map([
-  [GameBoardType.LUXOR, 'L'],
-  [GameBoardType.TOWER, 'T'],
-  [GameBoardType.AMERICAN, 'A'],
-  [GameBoardType.FESTIVAL, 'F'],
-  [GameBoardType.WORLDWIDE, 'W'],
-  [GameBoardType.CONTINENTAL, 'C'],
-  [GameBoardType.IMPERIAL, 'I'],
-  [GameBoardType.NOTHING, '·'],
-  [GameBoardType.NOTHING_YET, 'O'],
-  [GameBoardType.CANT_PLAY_EVER, '█'],
-  [GameBoardType.I_HAVE_THIS, 'i'],
-  [GameBoardType.WILL_PUT_LONELY_TILE_DOWN, 'l'],
-  [GameBoardType.HAVE_NEIGHBORING_TILE_TOO, 'h'],
-  [GameBoardType.WILL_FORM_NEW_CHAIN, 'n'],
-  [GameBoardType.WILL_MERGE_CHAINS, 'm'],
-  [GameBoardType.CANT_PLAY_NOW, 'c'],
+  [PB_GameBoardType.LUXOR, 'L'],
+  [PB_GameBoardType.TOWER, 'T'],
+  [PB_GameBoardType.AMERICAN, 'A'],
+  [PB_GameBoardType.FESTIVAL, 'F'],
+  [PB_GameBoardType.WORLDWIDE, 'W'],
+  [PB_GameBoardType.CONTINENTAL, 'C'],
+  [PB_GameBoardType.IMPERIAL, 'I'],
+  [PB_GameBoardType.NOTHING, '·'],
+  [PB_GameBoardType.NOTHING_YET, 'O'],
+  [PB_GameBoardType.CANT_PLAY_EVER, '█'],
+  [PB_GameBoardType.I_HAVE_THIS, 'i'],
+  [PB_GameBoardType.WILL_PUT_LONELY_TILE_DOWN, 'l'],
+  [PB_GameBoardType.HAVE_NEIGHBORING_TILE_TOO, 'h'],
+  [PB_GameBoardType.WILL_FORM_NEW_CHAIN, 'n'],
+  [PB_GameBoardType.WILL_MERGE_CHAINS, 'm'],
+  [PB_GameBoardType.CANT_PLAY_NOW, 'c'],
 ]);
-function getGameBoardLines(gameBoard: List<List<GameBoardType>>) {
+function getGameBoardLines(gameBoard: List<List<PB_GameBoardType>>) {
   const lines: string[] = new Array(9);
   const chars: string[] = new Array(12);
   for (let y = 0; y < 9; y++) {
@@ -515,7 +515,7 @@ function formatScoreBoardLine(entries: string[]) {
   return lineParts.join(' ');
 }
 
-function getTileRackString(tiles: List<number | null>, tileTypes: List<GameBoardType | null>) {
+function getTileRackString(tiles: List<number | null>, tileTypes: List<PB_GameBoardType | null>) {
   return tiles
     .map((tile, tileIndex) => {
       if (tile === TileEnum.Unknown) {
@@ -570,19 +570,21 @@ const ghmshPlayerIDTile = (ghmd: GameHistoryMessageData) => {
   return [ghmd.playerID, GameHistoryMessageEnum[ghmd.gameHistoryMessage], toTileString(ghmd.parameters[0])].join(' ');
 };
 const ghmshPlayerIDType = (ghmd: GameHistoryMessageData) => {
-  return [ghmd.playerID, GameHistoryMessageEnum[ghmd.gameHistoryMessage], GameBoardType[ghmd.parameters[0]][0], ...ghmd.parameters.slice(1)].join(' ');
+  return [ghmd.playerID, GameHistoryMessageEnum[ghmd.gameHistoryMessage], PB_GameBoardType[ghmd.parameters[0]][0], ...ghmd.parameters.slice(1)].join(' ');
 };
 const ghmshMergedChains = (ghmd: GameHistoryMessageData) => {
-  return [ghmd.playerID, GameHistoryMessageEnum[ghmd.gameHistoryMessage], ghmd.parameters[0].map((x: GameBoardType) => GameBoardType[x][0]).join(',')].join(
-    ' ',
-  );
+  return [
+    ghmd.playerID,
+    GameHistoryMessageEnum[ghmd.gameHistoryMessage],
+    ghmd.parameters[0].map((x: PB_GameBoardType) => PB_GameBoardType[x][0]).join(','),
+  ].join(' ');
 };
 const ghmshPurchasedShares = (ghmd: GameHistoryMessageData) => {
   return [
     ghmd.playerID,
     GameHistoryMessageEnum[ghmd.gameHistoryMessage],
     ghmd.parameters[0].length > 0
-      ? ghmd.parameters[0].map(([type, count]: [ScoreBoardIndexEnum, number]) => `${count}${GameBoardType[type][0]}`).join(',')
+      ? ghmd.parameters[0].map(([type, count]: [ScoreBoardIndexEnum, number]) => `${count}${PB_GameBoardType[type][0]}`).join(',')
       : 'x',
   ].join(' ');
 };
@@ -619,13 +621,13 @@ function getNextActionString(action: ActionBase) {
   const parts = [nextPlayerID.toString(), nextActionName];
 
   if (action instanceof ActionSelectNewChain) {
-    parts.push(action.availableChains.map((x: GameBoardType) => GameBoardType[x][0]).join(','));
+    parts.push(action.availableChains.map((x: PB_GameBoardType) => PB_GameBoardType[x][0]).join(','));
   } else if (action instanceof ActionSelectMergerSurvivor) {
-    parts.push(action.chainsBySize[0].map((x: GameBoardType) => GameBoardType[x][0]).join(','));
+    parts.push(action.chainsBySize[0].map((x: PB_GameBoardType) => PB_GameBoardType[x][0]).join(','));
   } else if (action instanceof ActionSelectChainToDisposeOfNext) {
-    parts.push(action.defunctChains.map((x: GameBoardType) => GameBoardType[x][0]).join(','));
+    parts.push(action.defunctChains.map((x: PB_GameBoardType) => PB_GameBoardType[x][0]).join(','));
   } else if (action instanceof ActionDisposeOfShares) {
-    parts.push(GameBoardType[action.defunctChain][0]);
+    parts.push(PB_GameBoardType[action.defunctChain][0]);
   }
 
   return parts.join(' ');

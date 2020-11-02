@@ -3,7 +3,7 @@ import { Game } from '../common/game';
 import { GameSetup } from '../common/gameSetup';
 import { gameModeToNumPlayers, getNewTileBag, isASCII } from '../common/helpers';
 import {
-  ErrorCode,
+  PB_ErrorCode,
   PB_Game,
   PB_GameAction,
   PB_GameSetupAction_ChangeGameMode,
@@ -22,7 +22,7 @@ import {
   PB_MessageToServer_EnterGame,
   PB_MessageToServer_Login,
   PB_MessageToServer_Login_GameData,
-  PlayerArrangementMode,
+  PB_PlayerArrangementMode,
 } from '../common/pb';
 import { LogMessage } from './enums';
 import { ReuseIDManager } from './reuseIDManager';
@@ -75,7 +75,7 @@ export class ServerManager {
         } catch (error) {
           this.logMessage(LogMessage.InvalidMessage, webSocketID, rawMessage);
 
-          this.kickWithError(webSocket, ErrorCode.INVALID_MESSAGE_FORMAT);
+          this.kickWithError(webSocket, PB_ErrorCode.INVALID_MESSAGE_FORMAT);
           return;
         }
 
@@ -119,12 +119,12 @@ export class ServerManager {
             } else if (gameSetupAction.kickUser) {
               this.onMessageKickUser(client, gameSetupAction.kickUser);
             } else {
-              this.kickWithError(webSocket, ErrorCode.INVALID_MESSAGE);
+              this.kickWithError(webSocket, PB_ErrorCode.INVALID_MESSAGE);
             }
           } else if (message.doGameAction) {
             this.onMessageDoGameAction(client, message.doGameAction);
           } else {
-            this.kickWithError(webSocket, ErrorCode.INVALID_MESSAGE);
+            this.kickWithError(webSocket, PB_ErrorCode.INVALID_MESSAGE);
           }
 
           this.sendAllQueuedMessages();
@@ -135,7 +135,7 @@ export class ServerManager {
             // eslint-disable-next-line @typescript-eslint/no-floating-promises
             this.processFirstMessage(webSocket, message.login);
           } else {
-            this.kickWithError(webSocket, ErrorCode.INVALID_MESSAGE_FORMAT);
+            this.kickWithError(webSocket, PB_ErrorCode.INVALID_MESSAGE_FORMAT);
           }
         }
       });
@@ -201,7 +201,7 @@ export class ServerManager {
     }
   }
 
-  kickWithError(webSocket: WebSocket, errorCode: ErrorCode) {
+  kickWithError(webSocket: WebSocket, errorCode: PB_ErrorCode) {
     this.logMessage(LogMessage.KickedWithError, this.webSocketToID.get(webSocket), errorCode);
 
     webSocket.send(
@@ -221,13 +221,13 @@ export class ServerManager {
   async processFirstMessage(webSocket: WebSocket, message: PB_MessageToServer_Login) {
     const version = message.version;
     if (version !== 0) {
-      this.kickWithError(webSocket, ErrorCode.NOT_USING_LATEST_VERSION);
+      this.kickWithError(webSocket, PB_ErrorCode.NOT_USING_LATEST_VERSION);
       return;
     }
 
     const username = message.username;
     if (username.length === 0 || username.length > 32 || !isASCII(username)) {
-      this.kickWithError(webSocket, ErrorCode.INVALID_USERNAME);
+      this.kickWithError(webSocket, PB_ErrorCode.INVALID_USERNAME);
       return;
     }
 
@@ -239,7 +239,7 @@ export class ServerManager {
     try {
       userData = await this.userDataProvider.lookupUser(username);
     } catch (error) {
-      this.kickWithError(webSocket, ErrorCode.INTERNAL_SERVER_ERROR);
+      this.kickWithError(webSocket, PB_ErrorCode.INTERNAL_SERVER_ERROR);
       return;
     }
 
@@ -248,17 +248,17 @@ export class ServerManager {
     if (userData !== null) {
       if (userData.hasPassword) {
         if (password.length === 0) {
-          this.kickWithError(webSocket, ErrorCode.MISSING_PASSWORD);
+          this.kickWithError(webSocket, PB_ErrorCode.MISSING_PASSWORD);
           return;
         } else if (!userData.verifyPassword(password)) {
-          this.kickWithError(webSocket, ErrorCode.INCORRECT_PASSWORD);
+          this.kickWithError(webSocket, PB_ErrorCode.INCORRECT_PASSWORD);
           return;
         } else {
           userID = userData.userID;
         }
       } else {
         if (password.length > 0) {
-          this.kickWithError(webSocket, ErrorCode.PROVIDED_PASSWORD);
+          this.kickWithError(webSocket, PB_ErrorCode.PROVIDED_PASSWORD);
           return;
         } else {
           userID = userData.userID;
@@ -266,13 +266,13 @@ export class ServerManager {
       }
     } else {
       if (password.length > 0) {
-        this.kickWithError(webSocket, ErrorCode.PROVIDED_PASSWORD);
+        this.kickWithError(webSocket, PB_ErrorCode.PROVIDED_PASSWORD);
         return;
       } else {
         try {
           userID = await this.userDataProvider.createUser(username, null);
         } catch (error) {
-          this.kickWithError(webSocket, ErrorCode.INTERNAL_SERVER_ERROR);
+          this.kickWithError(webSocket, PB_ErrorCode.INTERNAL_SERVER_ERROR);
           return;
         }
       }
@@ -320,7 +320,7 @@ export class ServerManager {
   onMessageCreateGame(client: Client, message: PB_MessageToServer_CreateGame) {
     const gameMode = message.gameMode;
     if (!gameModeToNumPlayers.has(gameMode)) {
-      this.kickWithError(client.webSocket, ErrorCode.INVALID_MESSAGE);
+      this.kickWithError(client.webSocket, PB_ErrorCode.INVALID_MESSAGE);
       return;
     }
 
@@ -329,7 +329,7 @@ export class ServerManager {
     }
 
     const gameData = new GameData(this.nextGameID++, this.gameDisplayNumberManager.getID());
-    gameData.gameSetup = new GameSetup(gameMode, PlayerArrangementMode.RANDOM_ORDER, client.user.id, this.getUsernameForUserID);
+    gameData.gameSetup = new GameSetup(gameMode, PB_PlayerArrangementMode.RANDOM_ORDER, client.user.id, this.getUsernameForUserID);
     gameData.clients.add(client);
 
     client.gameData = gameData;
@@ -362,7 +362,7 @@ export class ServerManager {
     const gameDisplayNumber = message.gameDisplayNumber;
     const gameData = this.gameDisplayNumberToGameData.get(gameDisplayNumber);
     if (gameData === undefined) {
-      this.kickWithError(client.webSocket, ErrorCode.INVALID_MESSAGE);
+      this.kickWithError(client.webSocket, PB_ErrorCode.INVALID_MESSAGE);
       return;
     }
 
@@ -495,7 +495,7 @@ export class ServerManager {
     }
 
     if (client.user.id !== gameSetup.hostUserID) {
-      this.kickWithError(client.webSocket, ErrorCode.INVALID_MESSAGE);
+      this.kickWithError(client.webSocket, PB_ErrorCode.INVALID_MESSAGE);
       return;
     }
 
@@ -518,7 +518,7 @@ export class ServerManager {
     }
 
     if (client.user.id !== gameSetup.hostUserID) {
-      this.kickWithError(client.webSocket, ErrorCode.INVALID_MESSAGE);
+      this.kickWithError(client.webSocket, PB_ErrorCode.INVALID_MESSAGE);
       return;
     }
 
@@ -541,7 +541,7 @@ export class ServerManager {
     }
 
     if (client.user.id !== gameSetup.hostUserID) {
-      this.kickWithError(client.webSocket, ErrorCode.INVALID_MESSAGE);
+      this.kickWithError(client.webSocket, PB_ErrorCode.INVALID_MESSAGE);
       return;
     }
 
@@ -564,7 +564,7 @@ export class ServerManager {
     }
 
     if (client.user.id !== gameSetup.hostUserID) {
-      this.kickWithError(client.webSocket, ErrorCode.INVALID_MESSAGE);
+      this.kickWithError(client.webSocket, PB_ErrorCode.INVALID_MESSAGE);
       return;
     }
 
@@ -595,7 +595,7 @@ export class ServerManager {
     const gameStateHistorySize = message.gameStateHistorySize;
     const gameAction = message.gameAction;
     if (gameStateHistorySize < 0 || gameAction === undefined) {
-      this.kickWithError(client.webSocket, ErrorCode.INVALID_MESSAGE);
+      this.kickWithError(client.webSocket, PB_ErrorCode.INVALID_MESSAGE);
       return;
     }
 
@@ -612,7 +612,7 @@ export class ServerManager {
     try {
       game.doGameAction(gameAction, Date.now());
     } catch (e) {
-      this.kickWithError(client.webSocket, ErrorCode.INVALID_MESSAGE);
+      this.kickWithError(client.webSocket, PB_ErrorCode.INVALID_MESSAGE);
       return;
     }
 

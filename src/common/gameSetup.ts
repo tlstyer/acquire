@@ -1,6 +1,6 @@
 import { List } from 'immutable';
 import { gameModeToNumPlayers, gameModeToTeamSize, shuffleArray } from './helpers';
-import { GameMode, PB_Game, PB_GameSetupChange, PB_Game_Position, PlayerArrangementMode } from './pb';
+import { PB_Game, PB_GameMode, PB_GameSetupChange, PB_Game_Position, PB_PlayerArrangementMode } from './pb';
 
 const defaultApprovals = new Map([
   [1, List([false])],
@@ -21,8 +21,8 @@ export class GameSetup {
   history: PB_GameSetupChange[] = [];
 
   constructor(
-    public gameMode: GameMode,
-    public playerArrangementMode: PlayerArrangementMode,
+    public gameMode: PB_GameMode,
+    public playerArrangementMode: PB_PlayerArrangementMode,
     public hostUserID: number,
     public getUsernameForUserID: (userID: number) => string,
   ) {
@@ -116,7 +116,7 @@ export class GameSetup {
     this.approvedByEverybody = this.approvals.indexOf(false) === -1;
   }
 
-  changeGameMode(gameMode: GameMode) {
+  changeGameMode(gameMode: PB_GameMode) {
     if (gameMode === this.gameMode) {
       return;
     }
@@ -163,19 +163,19 @@ export class GameSetup {
     this.approvedByEverybody = false;
 
     const isTeamGame = gameModeToTeamSize.get(gameMode)! > 1;
-    if (!isTeamGame && this.playerArrangementMode === PlayerArrangementMode.SPECIFY_TEAMS) {
-      this.playerArrangementMode = PlayerArrangementMode.RANDOM_ORDER;
+    if (!isTeamGame && this.playerArrangementMode === PB_PlayerArrangementMode.SPECIFY_TEAMS) {
+      this.playerArrangementMode = PB_PlayerArrangementMode.RANDOM_ORDER;
     }
 
     this.gameMode = gameMode;
     this.history.push(PB_GameSetupChange.create({ gameModeChanged: { gameMode } }));
   }
 
-  changePlayerArrangementMode(playerArrangementMode: PlayerArrangementMode) {
+  changePlayerArrangementMode(playerArrangementMode: PB_PlayerArrangementMode) {
     if (
-      playerArrangementMode !== PlayerArrangementMode.RANDOM_ORDER &&
-      playerArrangementMode !== PlayerArrangementMode.EXACT_ORDER &&
-      playerArrangementMode !== PlayerArrangementMode.SPECIFY_TEAMS
+      playerArrangementMode !== PB_PlayerArrangementMode.RANDOM_ORDER &&
+      playerArrangementMode !== PB_PlayerArrangementMode.EXACT_ORDER &&
+      playerArrangementMode !== PB_PlayerArrangementMode.SPECIFY_TEAMS
     ) {
       return;
     }
@@ -185,7 +185,7 @@ export class GameSetup {
     }
 
     const isTeamGame = gameModeToTeamSize.get(this.gameMode)! > 1;
-    if (!isTeamGame && playerArrangementMode === PlayerArrangementMode.SPECIFY_TEAMS) {
+    if (!isTeamGame && playerArrangementMode === PB_PlayerArrangementMode.SPECIFY_TEAMS) {
       return;
     }
 
@@ -271,16 +271,16 @@ export class GameSetup {
   getFinalUserIDsAndUsernames(): [List<number>, List<string>] {
     const userIDs: number[] = this.userIDs.toJS();
 
-    if (this.playerArrangementMode === PlayerArrangementMode.RANDOM_ORDER) {
+    if (this.playerArrangementMode === PB_PlayerArrangementMode.RANDOM_ORDER) {
       shuffleArray(userIDs);
-    } else if (this.playerArrangementMode === PlayerArrangementMode.SPECIFY_TEAMS) {
+    } else if (this.playerArrangementMode === PB_PlayerArrangementMode.SPECIFY_TEAMS) {
       let teams: number[][];
-      if (this.gameMode === GameMode.TEAMS_2_VS_2) {
+      if (this.gameMode === PB_GameMode.TEAMS_2_VS_2) {
         teams = [
           [userIDs[0], userIDs[2]],
           [userIDs[1], userIDs[3]],
         ];
-      } else if (this.gameMode === GameMode.TEAMS_2_VS_2_VS_2) {
+      } else if (this.gameMode === PB_GameMode.TEAMS_2_VS_2_VS_2) {
         teams = [
           [userIDs[0], userIDs[3]],
           [userIDs[1], userIDs[4]],

@@ -1,6 +1,6 @@
 import { List } from 'immutable';
 import * as React from 'react';
-import { GameBoardType } from '../../common/pb';
+import { PB_GameBoardType } from '../../common/pb';
 import * as commonStyle from '../common.scss';
 import { allChains, gameBoardTypeToCSSClassName, gameBoardTypeToHotelInitial, getUniqueDOMElementID } from '../helpers';
 import * as style from './PurchaseShares.scss';
@@ -11,12 +11,12 @@ export interface PurchaseSharesProps {
   cash: number;
   buttonSize: number;
   keyboardShortcutsEnabled: boolean;
-  onSharesPurchased: (chains: GameBoardType[], endGame: boolean) => void;
+  onSharesPurchased: (chains: PB_GameBoardType[], endGame: boolean) => void;
 }
 
 interface PurchaseSharesState {
   props: PurchaseSharesProps;
-  cart: (GameBoardType | null)[];
+  cart: (PB_GameBoardType | null)[];
   endGame: boolean;
 }
 
@@ -302,7 +302,7 @@ export class PurchaseShares extends React.Component<PurchaseSharesProps, Purchas
   };
 
   handleOK = () => {
-    const chains: GameBoardType[] = [];
+    const chains: PB_GameBoardType[] = [];
     for (let i = 0; i < this.state.cart.length; i++) {
       const entry = this.state.cart[i];
       if (entry !== null) {

@@ -2,7 +2,7 @@ import { List } from 'immutable';
 import * as React from 'react';
 import { GameHistoryMessageEnum } from '../../common/enums';
 import { GameHistoryMessageData, GameState } from '../../common/game';
-import { GameBoardType } from '../../common/pb';
+import { PB_GameBoardType } from '../../common/pb';
 import { getHotelNameSpan, getTileString, getUsernameSpan } from '../helpers';
 import * as style from './GameHistory.scss';
 
@@ -209,7 +209,7 @@ const gameHistoryMessageHandlerLookup = new Map<GameHistoryMessageEnum, (key: nu
   [
     GameHistoryMessageEnum.PurchasedShares,
     (key, username, ghmd) => {
-      const chainsAndCounts: [GameBoardType, number][] = ghmd.parameters[0];
+      const chainsAndCounts: [PB_GameBoardType, number][] = ghmd.parameters[0];
       if (chainsAndCounts.length === 0) {
         return <div key={key}>{getUsernameSpan(username)} purchased nothing.</div>;
       } else if (chainsAndCounts.length === 1) {

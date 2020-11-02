@@ -1,13 +1,13 @@
 import { List } from 'immutable';
 import * as React from 'react';
-import { GameBoardType } from '../../common/pb';
+import { PB_GameBoardType } from '../../common/pb';
 import * as commonStyle from '../common.scss';
 import { gameBoardTypeToCSSClassName, getTileString } from '../helpers';
 import * as style from './TileRackReadOnly.scss';
 
 export interface TileRackReadOnlyProps {
   tiles: List<number | null>;
-  types: List<GameBoardType | null>;
+  types: List<PB_GameBoardType | null>;
   buttonSize: number;
 }
 

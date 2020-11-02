@@ -1,7 +1,7 @@
 import { List } from 'immutable';
 import { GameActionEnum, TileEnum } from '../common/enums';
 import { setupTextDecoderAndTextEncoder } from '../common/nodeSpecificStuff';
-import { ErrorCode, GameMode, PB_Game, PB_MessagesToClient, PB_MessageToClient, PB_MessageToServer, PlayerArrangementMode } from '../common/pb';
+import { PB_ErrorCode, PB_Game, PB_GameMode, PB_MessagesToClient, PB_MessageToClient, PB_MessageToServer, PB_PlayerArrangementMode } from '../common/pb';
 import { Client, ClientManager, ClientManagerPage, GameData, User } from './clientManager';
 
 setupTextDecoderAndTextEncoder();
@@ -259,18 +259,18 @@ describe('onSubmitLoginForm', () => {
     testWebSocket!.triggerMessages([
       PB_MessageToClient.create({
         fatalError: {
-          errorCode: ErrorCode.INCORRECT_PASSWORD,
+          errorCode: PB_ErrorCode.INCORRECT_PASSWORD,
         },
       }),
     ]);
 
-    expect(clientManager.errorCode).toBe(ErrorCode.INCORRECT_PASSWORD);
+    expect(clientManager.errorCode).toBe(PB_ErrorCode.INCORRECT_PASSWORD);
     expect(clientManager.page).toBe(ClientManagerPage.Connecting);
     expect(renderMock.mock.calls.length).toBe(3);
 
     testWebSocket!.triggerClose();
 
-    expect(clientManager.errorCode).toBe(ErrorCode.INCORRECT_PASSWORD);
+    expect(clientManager.errorCode).toBe(PB_ErrorCode.INCORRECT_PASSWORD);
     expect(clientManager.page).toBe(ClientManagerPage.Login);
     expect(renderMock.mock.calls.length).toBe(4);
   });
@@ -282,7 +282,7 @@ describe('onSubmitLoginForm', () => {
 
     testWebSocket!.triggerClose();
 
-    expect(clientManager.errorCode).toBe(ErrorCode.COULD_NOT_CONNECT);
+    expect(clientManager.errorCode).toBe(PB_ErrorCode.COULD_NOT_CONNECT);
     expect(clientManager.page).toBe(ClientManagerPage.Login);
     expect(renderMock.mock.calls.length).toBe(3);
   });
@@ -327,9 +327,9 @@ describe('onSubmitCreateGame', () => {
     ]);
     testWebSocket!.clearSentMessages();
 
-    clientManager.onSubmitCreateGame(GameMode.TEAMS_2_VS_2);
+    clientManager.onSubmitCreateGame(PB_GameMode.TEAMS_2_VS_2);
 
-    expect(testWebSocket!.sentMessages).toEqual([{ createGame: { gameMode: GameMode.TEAMS_2_VS_2 } }]);
+    expect(testWebSocket!.sentMessages).toEqual([{ createGame: { gameMode: PB_GameMode.TEAMS_2_VS_2 } }]);
   });
 
   test('does not send CreateGame message when not connected', () => {
@@ -348,7 +348,7 @@ describe('onSubmitCreateGame', () => {
     testWebSocket!.triggerClose();
     testWebSocket!.clearSentMessages();
 
-    clientManager.onSubmitCreateGame(GameMode.TEAMS_2_VS_2);
+    clientManager.onSubmitCreateGame(PB_GameMode.TEAMS_2_VS_2);
 
     expect(testWebSocket!.sentMessages.length).toBe(0);
   });
@@ -372,8 +372,8 @@ describe('onEnterClicked', () => {
             {
               gameId: 10,
               gameDisplayNumber: 1,
-              gameMode: GameMode.TEAMS_2_VS_2,
-              playerArrangementMode: PlayerArrangementMode.RANDOM_ORDER,
+              gameMode: PB_GameMode.TEAMS_2_VS_2,
+              playerArrangementMode: PB_PlayerArrangementMode.RANDOM_ORDER,
               positions: [{ userId: 1, isHost: true }, {}, {}, {}],
             },
           ],
@@ -404,8 +404,8 @@ describe('onEnterClicked', () => {
             {
               gameId: 10,
               gameDisplayNumber: 1,
-              gameMode: GameMode.TEAMS_2_VS_2,
-              playerArrangementMode: PlayerArrangementMode.RANDOM_ORDER,
+              gameMode: PB_GameMode.TEAMS_2_VS_2,
+              playerArrangementMode: PB_PlayerArrangementMode.RANDOM_ORDER,
               positions: [{ userId: 1, isHost: true }, {}, {}, {}],
             },
           ],
@@ -463,25 +463,25 @@ describe('onApproveOfGameSetup', () => {
 
 describe('onChangeGameMode', () => {
   test('sends ChangeGameMode message when connected', () => {
-    sendsMessageWhenConnected((clientManager) => clientManager.onChangeGameMode(GameMode.TEAMS_2_VS_2), {
-      doGameSetupAction: { changeGameMode: { gameMode: GameMode.TEAMS_2_VS_2 } },
+    sendsMessageWhenConnected((clientManager) => clientManager.onChangeGameMode(PB_GameMode.TEAMS_2_VS_2), {
+      doGameSetupAction: { changeGameMode: { gameMode: PB_GameMode.TEAMS_2_VS_2 } },
     });
   });
 
   test('does not send ChangeGameMode message when not connected', () => {
-    doesNotSendMessageWhenNotConnected((clientManager) => clientManager.onChangeGameMode(GameMode.TEAMS_2_VS_2));
+    doesNotSendMessageWhenNotConnected((clientManager) => clientManager.onChangeGameMode(PB_GameMode.TEAMS_2_VS_2));
   });
 });
 
 describe('onChangePlayerArrangementMode', () => {
   test('sends ChangePlayerArrangementMode message when connected', () => {
-    sendsMessageWhenConnected((clientManager) => clientManager.onChangePlayerArrangementMode(PlayerArrangementMode.EXACT_ORDER), {
-      doGameSetupAction: { changePlayerArrangementMode: { playerArrangementMode: PlayerArrangementMode.EXACT_ORDER } },
+    sendsMessageWhenConnected((clientManager) => clientManager.onChangePlayerArrangementMode(PB_PlayerArrangementMode.EXACT_ORDER), {
+      doGameSetupAction: { changePlayerArrangementMode: { playerArrangementMode: PB_PlayerArrangementMode.EXACT_ORDER } },
     });
   });
 
   test('does not send ChangePlayerArrangementMode message when not connected', () => {
-    doesNotSendMessageWhenNotConnected((clientManager) => clientManager.onChangePlayerArrangementMode(PlayerArrangementMode.EXACT_ORDER));
+    doesNotSendMessageWhenNotConnected((clientManager) => clientManager.onChangePlayerArrangementMode(PB_PlayerArrangementMode.EXACT_ORDER));
   });
 });
 
@@ -512,8 +512,8 @@ describe('MessageToClient.Greetings', () => {
     clientManager.onSubmitLoginForm('me', '');
     testWebSocket!.triggerOpen();
     const gamePB1 = PB_Game.create({
-      gameMode: GameMode.TEAMS_3_VS_3,
-      playerArrangementMode: PlayerArrangementMode.RANDOM_ORDER,
+      gameMode: PB_GameMode.TEAMS_3_VS_3,
+      playerArrangementMode: PB_PlayerArrangementMode.RANDOM_ORDER,
       positions: [
         { userId: 4, isHost: true, approvesOfGameSetup: false },
         { userId: 0, isHost: false, approvesOfGameSetup: false },
@@ -524,8 +524,8 @@ describe('MessageToClient.Greetings', () => {
       ],
     });
     const gamePB2 = PB_Game.create({
-      gameMode: GameMode.SINGLES_2,
-      playerArrangementMode: PlayerArrangementMode.EXACT_ORDER,
+      gameMode: PB_GameMode.SINGLES_2,
+      playerArrangementMode: PB_PlayerArrangementMode.EXACT_ORDER,
       positions: [
         { userId: 9, isHost: false, approvesOfGameSetup: false },
         { userId: 5, isHost: true, approvesOfGameSetup: true },
@@ -592,15 +592,15 @@ describe('MessageToClient.Greetings', () => {
             {
               gameId: 10,
               gameDisplayNumber: 1,
-              gameMode: GameMode.SINGLES_4,
-              playerArrangementMode: PlayerArrangementMode.RANDOM_ORDER,
+              gameMode: PB_GameMode.SINGLES_4,
+              playerArrangementMode: PB_PlayerArrangementMode.RANDOM_ORDER,
               positions: [{ userId: 1, isHost: true }, {}, {}, {}],
             },
             {
               gameId: 11,
               gameDisplayNumber: 2,
-              gameMode: GameMode.SINGLES_1,
-              playerArrangementMode: PlayerArrangementMode.RANDOM_ORDER,
+              gameMode: PB_GameMode.SINGLES_1,
+              playerArrangementMode: PB_PlayerArrangementMode.RANDOM_ORDER,
               positions: [{ userId: 2, isHost: true }],
               gameStates: [
                 {
@@ -625,11 +625,11 @@ describe('MessageToClient.Greetings', () => {
     expect(clientManager.myClient).toBe(clientManager.clientIDToClient.get(4));
     const game = clientManager.gameIDToGameData.get(11)!.game!;
     expect(game).toBeDefined();
-    expect(game.gameMode).toBe(GameMode.SINGLES_1);
+    expect(game.gameMode).toBe(PB_GameMode.SINGLES_1);
     expect(game.hostUserID).toBe(2);
     expect(game.gameStateHistory.size).toBe(4);
     expect(game.myUserID).toBe(2);
-    expect(game.playerArrangementMode).toBe(PlayerArrangementMode.RANDOM_ORDER);
+    expect(game.playerArrangementMode).toBe(PB_PlayerArrangementMode.RANDOM_ORDER);
     expect(game.userIDs).toEqual(List([2]));
     expect(game.usernames).toEqual(List(['2']));
     expectClientAndUserAndGameData(
@@ -812,7 +812,7 @@ describe('MessageToClient.ClientDisconnected', () => {
         gameCreated: {
           gameId: 10,
           gameDisplayNumber: 1,
-          gameMode: GameMode.TEAMS_2_VS_2,
+          gameMode: PB_GameMode.TEAMS_2_VS_2,
           hostClientId: 4,
         },
       }),
@@ -858,7 +858,7 @@ describe('MessageToClient.GameCreated', () => {
         gameCreated: {
           gameId: 10,
           gameDisplayNumber: 1,
-          gameMode: GameMode.TEAMS_2_VS_2,
+          gameMode: PB_GameMode.TEAMS_2_VS_2,
           hostClientId: 2,
         },
       }),
@@ -872,8 +872,8 @@ describe('MessageToClient.GameCreated', () => {
 
     expect(clientManager.userIDToUser.get(1)!.numGames).toBe(1);
     const gameSetup = clientManager.gameIDToGameData.get(10)!.gameSetup!;
-    expect(gameSetup.gameMode).toBe(GameMode.TEAMS_2_VS_2);
-    expect(gameSetup.playerArrangementMode).toBe(PlayerArrangementMode.RANDOM_ORDER);
+    expect(gameSetup.gameMode).toBe(PB_GameMode.TEAMS_2_VS_2);
+    expect(gameSetup.playerArrangementMode).toBe(PB_PlayerArrangementMode.RANDOM_ORDER);
     expect(gameSetup.hostUserID).toBe(1);
     expect(gameSetup.hostUsername).toBe('me');
   });
@@ -907,7 +907,7 @@ describe('MessageToClient.ClientEnteredGame', () => {
         gameCreated: {
           gameId: 10,
           gameDisplayNumber: 1,
-          gameMode: GameMode.TEAMS_2_VS_2,
+          gameMode: PB_GameMode.TEAMS_2_VS_2,
           hostClientId: 2,
         },
       }),
@@ -954,7 +954,7 @@ describe('MessageToClient.ClientEnteredGame', () => {
         gameCreated: {
           gameId: 10,
           gameDisplayNumber: 1,
-          gameMode: GameMode.TEAMS_2_VS_2,
+          gameMode: PB_GameMode.TEAMS_2_VS_2,
           hostClientId: 4,
         },
       }),
@@ -993,8 +993,8 @@ describe('MessageToClient.ClientExitedGame', () => {
             {
               gameId: 10,
               gameDisplayNumber: 1,
-              gameMode: GameMode.TEAMS_2_VS_2,
-              playerArrangementMode: PlayerArrangementMode.RANDOM_ORDER,
+              gameMode: PB_GameMode.TEAMS_2_VS_2,
+              playerArrangementMode: PB_PlayerArrangementMode.RANDOM_ORDER,
               positions: [{ userId: 1, isHost: true }, { userId: 2 }, {}, {}],
             },
           ],
@@ -1042,8 +1042,8 @@ describe('MessageToClient.ClientExitedGame', () => {
             {
               gameId: 10,
               gameDisplayNumber: 1,
-              gameMode: GameMode.TEAMS_2_VS_2,
-              playerArrangementMode: PlayerArrangementMode.RANDOM_ORDER,
+              gameMode: PB_GameMode.TEAMS_2_VS_2,
+              playerArrangementMode: PB_PlayerArrangementMode.RANDOM_ORDER,
               positions: [{ userId: 1, isHost: true }, { userId: 2 }, {}, {}],
             },
           ],
@@ -1093,8 +1093,8 @@ describe('MessageToClient.GameSetupChanged', () => {
             {
               gameId: 10,
               gameDisplayNumber: 1,
-              gameMode: GameMode.TEAMS_2_VS_2,
-              playerArrangementMode: PlayerArrangementMode.RANDOM_ORDER,
+              gameMode: PB_GameMode.TEAMS_2_VS_2,
+              playerArrangementMode: PB_PlayerArrangementMode.RANDOM_ORDER,
               positions: [{ userId: 1, isHost: true }, {}, {}, {}],
             },
           ],
@@ -1146,8 +1146,8 @@ describe('MessageToClient.GameSetupChanged', () => {
             {
               gameId: 10,
               gameDisplayNumber: 1,
-              gameMode: GameMode.TEAMS_2_VS_2,
-              playerArrangementMode: PlayerArrangementMode.RANDOM_ORDER,
+              gameMode: PB_GameMode.TEAMS_2_VS_2,
+              playerArrangementMode: PB_PlayerArrangementMode.RANDOM_ORDER,
               positions: [{ userId: 1, isHost: true }, { userId: 2 }, {}, {}],
             },
           ],
@@ -1199,8 +1199,8 @@ describe('MessageToClient.GameSetupChanged', () => {
             {
               gameId: 10,
               gameDisplayNumber: 1,
-              gameMode: GameMode.SINGLES_2,
-              playerArrangementMode: PlayerArrangementMode.RANDOM_ORDER,
+              gameMode: PB_GameMode.SINGLES_2,
+              playerArrangementMode: PB_PlayerArrangementMode.RANDOM_ORDER,
               positions: [{ userId: 1, isHost: true }, { userId: 2 }],
             },
           ],
@@ -1252,8 +1252,8 @@ describe('MessageToClient.GameSetupChanged', () => {
             {
               gameId: 10,
               gameDisplayNumber: 1,
-              gameMode: GameMode.SINGLES_2,
-              playerArrangementMode: PlayerArrangementMode.RANDOM_ORDER,
+              gameMode: PB_GameMode.SINGLES_2,
+              playerArrangementMode: PB_PlayerArrangementMode.RANDOM_ORDER,
               positions: [{ userId: 1, isHost: true }, { userId: 2 }],
             },
           ],
@@ -1273,7 +1273,7 @@ describe('MessageToClient.GameSetupChanged', () => {
           gameDisplayNumber: 1,
           gameSetupChange: {
             gameModeChanged: {
-              gameMode: GameMode.SINGLES_3,
+              gameMode: PB_GameMode.SINGLES_3,
             },
           },
         },
@@ -1285,7 +1285,7 @@ describe('MessageToClient.GameSetupChanged', () => {
       [new UserData(1, 'user 1', [new ClientData(1, 10)]), new UserData(2, 'me', [new ClientData(2, 10)])],
       [new GameDataData(10, 1, [1, 2])],
     );
-    expect(clientManager.gameIDToGameData.get(10)!.gameSetup!.gameMode).toEqual(GameMode.SINGLES_3);
+    expect(clientManager.gameIDToGameData.get(10)!.gameSetup!.gameMode).toEqual(PB_GameMode.SINGLES_3);
   });
 
   test('PlayerArrangementModeChanged message is processed correctly', () => {
@@ -1305,8 +1305,8 @@ describe('MessageToClient.GameSetupChanged', () => {
             {
               gameId: 10,
               gameDisplayNumber: 1,
-              gameMode: GameMode.SINGLES_2,
-              playerArrangementMode: PlayerArrangementMode.RANDOM_ORDER,
+              gameMode: PB_GameMode.SINGLES_2,
+              playerArrangementMode: PB_PlayerArrangementMode.RANDOM_ORDER,
               positions: [{ userId: 1, isHost: true }, { userId: 2 }],
             },
           ],
@@ -1326,7 +1326,7 @@ describe('MessageToClient.GameSetupChanged', () => {
           gameDisplayNumber: 1,
           gameSetupChange: {
             playerArrangementModeChanged: {
-              playerArrangementMode: PlayerArrangementMode.EXACT_ORDER,
+              playerArrangementMode: PB_PlayerArrangementMode.EXACT_ORDER,
             },
           },
         },
@@ -1338,7 +1338,7 @@ describe('MessageToClient.GameSetupChanged', () => {
       [new UserData(1, 'user 1', [new ClientData(1, 10)]), new UserData(2, 'me', [new ClientData(2, 10)])],
       [new GameDataData(10, 1, [1, 2])],
     );
-    expect(clientManager.gameIDToGameData.get(10)!.gameSetup!.playerArrangementMode).toEqual(PlayerArrangementMode.EXACT_ORDER);
+    expect(clientManager.gameIDToGameData.get(10)!.gameSetup!.playerArrangementMode).toEqual(PB_PlayerArrangementMode.EXACT_ORDER);
   });
 
   test('PositionsSwapped message is processed correctly', () => {
@@ -1358,8 +1358,8 @@ describe('MessageToClient.GameSetupChanged', () => {
             {
               gameId: 10,
               gameDisplayNumber: 1,
-              gameMode: GameMode.TEAMS_2_VS_2,
-              playerArrangementMode: PlayerArrangementMode.RANDOM_ORDER,
+              gameMode: PB_GameMode.TEAMS_2_VS_2,
+              playerArrangementMode: PB_PlayerArrangementMode.RANDOM_ORDER,
               positions: [{ userId: 1, isHost: true }, { userId: 2 }, {}, {}],
             },
           ],
@@ -1412,8 +1412,8 @@ describe('MessageToClient.GameSetupChanged', () => {
             {
               gameId: 10,
               gameDisplayNumber: 1,
-              gameMode: GameMode.TEAMS_2_VS_2,
-              playerArrangementMode: PlayerArrangementMode.RANDOM_ORDER,
+              gameMode: PB_GameMode.TEAMS_2_VS_2,
+              playerArrangementMode: PB_PlayerArrangementMode.RANDOM_ORDER,
               positions: [{ userId: 1, isHost: true }, { userId: 2 }, {}, {}],
             },
           ],
@@ -1468,8 +1468,8 @@ describe('MessageToClient.GameStarted and MessageToClient.GameActionDone', () =>
             {
               gameId: 10,
               gameDisplayNumber: 1,
-              gameMode: GameMode.SINGLES_2,
-              playerArrangementMode: PlayerArrangementMode.RANDOM_ORDER,
+              gameMode: PB_GameMode.SINGLES_2,
+              playerArrangementMode: PB_PlayerArrangementMode.RANDOM_ORDER,
               positions: [{ userId: 1, isHost: true }, { userId: 2 }],
             },
           ],
@@ -1522,8 +1522,8 @@ describe('MessageToClient.GameStarted and MessageToClient.GameActionDone', () =>
 
     expect(clientManager.userIDToUser.get(1)!.numGames).toBe(1);
     const game = clientManager.gameIDToGameData.get(10)!.game!;
-    expect(game.gameMode).toBe(GameMode.SINGLES_2);
-    expect(game.playerArrangementMode).toBe(PlayerArrangementMode.RANDOM_ORDER);
+    expect(game.gameMode).toBe(PB_GameMode.SINGLES_2);
+    expect(game.playerArrangementMode).toBe(PB_PlayerArrangementMode.RANDOM_ORDER);
     expect(game.hostUserID).toBe(1);
   });
 
@@ -1541,8 +1541,8 @@ describe('MessageToClient.GameStarted and MessageToClient.GameActionDone', () =>
             {
               gameId: 1,
               gameDisplayNumber: 1,
-              gameMode: GameMode.SINGLES_1,
-              playerArrangementMode: PlayerArrangementMode.RANDOM_ORDER,
+              gameMode: PB_GameMode.SINGLES_1,
+              playerArrangementMode: PB_PlayerArrangementMode.RANDOM_ORDER,
               positions: [{ userId: 1, isHost: true }],
             },
           ],
@@ -1584,8 +1584,8 @@ describe('MessageToClient.GameStarted and MessageToClient.GameActionDone', () =>
 
     expect(clientManager.userIDToUser.get(1)!.numGames).toBe(1);
     const game = clientManager.gameIDToGameData.get(1)!.game!;
-    expect(game.gameMode).toBe(GameMode.SINGLES_1);
-    expect(game.playerArrangementMode).toBe(PlayerArrangementMode.RANDOM_ORDER);
+    expect(game.gameMode).toBe(PB_GameMode.SINGLES_1);
+    expect(game.playerArrangementMode).toBe(PB_PlayerArrangementMode.RANDOM_ORDER);
     expect(game.hostUserID).toBe(1);
   });
 });

@@ -1,7 +1,7 @@
 import { GameActionEnum, GameHistoryMessageEnum, ScoreBoardIndexEnum } from '../enums';
 import { UserInputError } from '../error';
 import { Game } from '../game';
-import { GameBoardType, PB_GameAction } from '../pb';
+import { PB_GameAction, PB_GameBoardType } from '../pb';
 import { ActionBase } from './base';
 import { ActionGameOver } from './gameOver';
 import { ActionPlayTile } from './playTile';
@@ -16,7 +16,7 @@ export class ActionPurchaseShares extends ActionBase {
 
   prepare() {
     // set corresponding score board chain size to 0 if the game board doesn't have any cells of a given type
-    for (let type = 0; type <= GameBoardType.IMPERIAL; type++) {
+    for (let type = 0; type <= PB_GameBoardType.IMPERIAL; type++) {
       if (this.game.gameBoardTypeCounts[type] === 0 && this.game.scoreBoardChainSize.get(type)! > 0) {
         this.game.setChainSize(type, 0);
       }
@@ -30,7 +30,7 @@ export class ActionPurchaseShares extends ActionBase {
     let sharesAvailable = false;
     let canPurchaseShares = false;
     const cash = this.game.scoreBoard.get(this.playerID)!.get(ScoreBoardIndexEnum.Cash)!;
-    for (let type = 0; type <= GameBoardType.IMPERIAL; type++) {
+    for (let type = 0; type <= PB_GameBoardType.IMPERIAL; type++) {
       const chainSize = this.game.scoreBoardChainSize.get(type)!;
       if (chainSize > 0) {
         hasChainSize = true;
@@ -75,7 +75,7 @@ export class ActionPurchaseShares extends ActionBase {
     }
     for (let i = 0; i < chains.length; i++) {
       const chain = chains[i];
-      if (chain < GameBoardType.LUXOR || chain > GameBoardType.IMPERIAL) {
+      if (chain < PB_GameBoardType.LUXOR || chain > PB_GameBoardType.IMPERIAL) {
         throw new UserInputError('a chain is not a valid chain');
       }
     }
@@ -124,7 +124,7 @@ export class ActionPurchaseShares extends ActionBase {
   }
 
   protected completeAction(endGame: boolean): ActionBase[] {
-    let allTilesPlayed = this.game.gameBoardTypeCounts[GameBoardType.NOTHING] === 0;
+    let allTilesPlayed = this.game.gameBoardTypeCounts[PB_GameBoardType.NOTHING] === 0;
     const noTilesPlayedForEntireRound = this.game.numTurnsWithoutPlayedTiles === this.game.userIDs.size;
 
     if (endGame || allTilesPlayed || noTilesPlayedForEntireRound) {
@@ -142,7 +142,7 @@ export class ActionPurchaseShares extends ActionBase {
       this.game.determineTileRackTypesForPlayer(this.playerID);
       this.game.replaceDeadTiles(this.playerID);
 
-      allTilesPlayed = this.game.gameBoardTypeCounts[GameBoardType.NOTHING] === 0;
+      allTilesPlayed = this.game.gameBoardTypeCounts[PB_GameBoardType.NOTHING] === 0;
       if (allTilesPlayed) {
         this.game.getCurrentGameState().addGameHistoryMessage(GameHistoryMessageEnum.AllTilesPlayed, null, []);
         return [new ActionGameOver(this.game, this.playerID)];

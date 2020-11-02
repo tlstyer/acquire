@@ -4,7 +4,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { defaultGameBoard, defaultGameStateHistory } from '../common/defaults';
 import { Game } from '../common/game';
-import { ErrorCode, GameBoardType, GameMode } from '../common/pb';
+import { PB_ErrorCode, PB_GameBoardType, PB_GameMode } from '../common/pb';
 import { CreateGame, CreateGameProps } from './components/CreateGame';
 import { DisposeOfShares, DisposeOfSharesProps } from './components/DisposeOfShares';
 import { ExampleGameSetupMaster } from './components/ExampleGameSetupMaster';
@@ -58,7 +58,7 @@ class AllDemoProps {
     const gameJson2 = require('raw-loader!../common/gameTestFiles/other/all tiles played').default.split('\nGame JSON:\n')[1];
     const game2 = Game.fromJSON(JSON.parse(gameJson2));
 
-    this.loginFormProps = [{ onSubmit: onSubmitLoginForm }, { errorCode: ErrorCode.COULD_NOT_CONNECT, username: 'tlstyer', onSubmit: onSubmitLoginForm }];
+    this.loginFormProps = [{ onSubmit: onSubmitLoginForm }, { errorCode: PB_ErrorCode.COULD_NOT_CONNECT, username: 'tlstyer', onSubmit: onSubmitLoginForm }];
 
     this.headerProps = [
       { username: 'tlstyer', isConnected: true },
@@ -67,8 +67,8 @@ class AllDemoProps {
 
     this.createGameProps = [
       { onSubmit: onSubmitCreateGame },
-      { gameMode: GameMode.TEAMS_2_VS_2_VS_2, onSubmit: onSubmitCreateGame },
-      { gameMode: GameMode.SINGLES_1, onSubmit: onSubmitCreateGame },
+      { gameMode: PB_GameMode.TEAMS_2_VS_2_VS_2, onSubmit: onSubmitCreateGame },
+      { gameMode: PB_GameMode.SINGLES_1, onSubmit: onSubmitCreateGame },
     ];
 
     this.gameListingProps = [
@@ -76,7 +76,7 @@ class AllDemoProps {
         gameBoard: defaultGameBoard,
         usernames: List(['Host', null, 'User 2', null]),
         gameDisplayNumber: 1,
-        gameMode: GameMode.SINGLES_4,
+        gameMode: PB_GameMode.SINGLES_4,
         gameStatus: GameStatusEnum.SettingUp,
         onEnterClicked,
       },
@@ -84,7 +84,7 @@ class AllDemoProps {
         gameBoard: game1 !== null ? game1.gameBoard : defaultGameBoard,
         usernames: List(['Tim', 'Rita', 'Dad', 'Mom', 'REALLY, REALLY, REALLY, REALLY, REALLY LONG NAME', 'pgyqj,;']),
         gameDisplayNumber: 2,
-        gameMode: GameMode.TEAMS_2_VS_2_VS_2,
+        gameMode: PB_GameMode.TEAMS_2_VS_2_VS_2,
         gameStatus: GameStatusEnum.InProgress,
         onEnterClicked,
       },
@@ -92,7 +92,7 @@ class AllDemoProps {
         gameBoard: game2 !== null ? game2.gameBoard : defaultGameBoard,
         usernames: List(['player 1', 'player 2', 'player 3', 'player 4']),
         gameDisplayNumber: 3,
-        gameMode: GameMode.TEAMS_2_VS_2,
+        gameMode: PB_GameMode.TEAMS_2_VS_2,
         gameStatus: GameStatusEnum.Completed,
         onEnterClicked,
       },
@@ -131,7 +131,7 @@ class AllDemoProps {
         safeChains: List([false, false, true, false, false, false, true]),
         turnPlayerID: 1,
         movePlayerID: 0,
-        gameMode: GameMode.SINGLES_2,
+        gameMode: PB_GameMode.SINGLES_2,
         cellWidth: 30,
       },
       {
@@ -148,7 +148,7 @@ class AllDemoProps {
         safeChains: List([false, false, false, false, false, false, false]),
         turnPlayerID: 0,
         movePlayerID: 0,
-        gameMode: GameMode.SINGLES_4,
+        gameMode: PB_GameMode.SINGLES_4,
         cellWidth: 30,
       },
       {
@@ -165,7 +165,7 @@ class AllDemoProps {
         safeChains: List([false, false, false, true, false, true, false]),
         turnPlayerID: -1,
         movePlayerID: -1,
-        gameMode: GameMode.TEAMS_2_VS_2,
+        gameMode: PB_GameMode.TEAMS_2_VS_2,
         cellWidth: 30,
       },
       {
@@ -184,25 +184,25 @@ class AllDemoProps {
         safeChains: List([false, false, true, true, false, true, false]),
         turnPlayerID: -1,
         movePlayerID: -1,
-        gameMode: GameMode.TEAMS_2_VS_2_VS_2,
+        gameMode: PB_GameMode.TEAMS_2_VS_2_VS_2,
         cellWidth: 30,
       },
     ];
     this.scoreBoardProps.push({
       ...this.scoreBoardProps[3],
-      gameMode: GameMode.TEAMS_3_VS_3,
+      gameMode: PB_GameMode.TEAMS_3_VS_3,
     });
 
     this.tileRackProps = [
       {
         tiles: List([1, 28, 55, 82, 92, 40]),
         types: List([
-          GameBoardType.LUXOR,
-          GameBoardType.TOWER,
-          GameBoardType.AMERICAN,
-          GameBoardType.FESTIVAL,
-          GameBoardType.WORLDWIDE,
-          GameBoardType.CONTINENTAL,
+          PB_GameBoardType.LUXOR,
+          PB_GameBoardType.TOWER,
+          PB_GameBoardType.AMERICAN,
+          PB_GameBoardType.FESTIVAL,
+          PB_GameBoardType.WORLDWIDE,
+          PB_GameBoardType.CONTINENTAL,
         ]),
         buttonSize: 40,
         keyboardShortcutsEnabled: false,
@@ -211,12 +211,12 @@ class AllDemoProps {
       {
         tiles: List([71, null, 99, 12, 8, 17]),
         types: List([
-          GameBoardType.IMPERIAL,
+          PB_GameBoardType.IMPERIAL,
           null,
-          GameBoardType.WILL_MERGE_CHAINS,
-          GameBoardType.WILL_PUT_LONELY_TILE_DOWN,
-          GameBoardType.HAVE_NEIGHBORING_TILE_TOO,
-          GameBoardType.HAVE_NEIGHBORING_TILE_TOO,
+          PB_GameBoardType.WILL_MERGE_CHAINS,
+          PB_GameBoardType.WILL_PUT_LONELY_TILE_DOWN,
+          PB_GameBoardType.HAVE_NEIGHBORING_TILE_TOO,
+          PB_GameBoardType.HAVE_NEIGHBORING_TILE_TOO,
         ]),
         buttonSize: 40,
         keyboardShortcutsEnabled: false,
@@ -224,7 +224,7 @@ class AllDemoProps {
       },
       {
         tiles: List([null, 86, null, 38, null, 74]),
-        types: List([null, GameBoardType.CANT_PLAY_EVER, null, GameBoardType.WILL_FORM_NEW_CHAIN, null, GameBoardType.CANT_PLAY_NOW]),
+        types: List([null, PB_GameBoardType.CANT_PLAY_EVER, null, PB_GameBoardType.WILL_FORM_NEW_CHAIN, null, PB_GameBoardType.CANT_PLAY_NOW]),
         buttonSize: 40,
         keyboardShortcutsEnabled: false,
         onTileClicked,
@@ -259,8 +259,8 @@ class AllDemoProps {
 
     this.disposeOfSharesProps = [
       {
-        defunctChain: GameBoardType.AMERICAN,
-        controllingChain: GameBoardType.FESTIVAL,
+        defunctChain: PB_GameBoardType.AMERICAN,
+        controllingChain: PB_GameBoardType.FESTIVAL,
         sharesOwnedInDefunctChain: 10,
         sharesAvailableInControllingChain: 22,
         buttonSize: 40,
@@ -268,8 +268,8 @@ class AllDemoProps {
         onSharesDisposed,
       },
       {
-        defunctChain: GameBoardType.IMPERIAL,
-        controllingChain: GameBoardType.TOWER,
+        defunctChain: PB_GameBoardType.IMPERIAL,
+        controllingChain: PB_GameBoardType.TOWER,
         sharesOwnedInDefunctChain: 7,
         sharesAvailableInControllingChain: 2,
         buttonSize: 40,
@@ -277,8 +277,8 @@ class AllDemoProps {
         onSharesDisposed,
       },
       {
-        defunctChain: GameBoardType.CONTINENTAL,
-        controllingChain: GameBoardType.WORLDWIDE,
+        defunctChain: PB_GameBoardType.CONTINENTAL,
+        controllingChain: PB_GameBoardType.WORLDWIDE,
         sharesOwnedInDefunctChain: 1,
         sharesAvailableInControllingChain: 3,
         buttonSize: 40,
@@ -286,8 +286,8 @@ class AllDemoProps {
         onSharesDisposed,
       },
       {
-        defunctChain: GameBoardType.LUXOR,
-        controllingChain: GameBoardType.IMPERIAL,
+        defunctChain: PB_GameBoardType.LUXOR,
+        controllingChain: PB_GameBoardType.IMPERIAL,
         sharesOwnedInDefunctChain: 25,
         sharesAvailableInControllingChain: 10,
         buttonSize: 40,
@@ -463,7 +463,7 @@ function onSubmitLoginForm(username: string, password: string) {
   console.log('onSubmitLoginForm:', username, ',', password);
 }
 
-function onSubmitCreateGame(gameMode: GameMode) {
+function onSubmitCreateGame(gameMode: PB_GameMode) {
   console.log('onSubmitCreateGame:', gameMode);
 }
 
@@ -485,7 +485,7 @@ function onMoveClicked(index: number) {
   render(allDemoProps);
 }
 
-function onChainSelected(chain: GameBoardType) {
+function onChainSelected(chain: PB_GameBoardType) {
   console.log('onChainSelected:', gameBoardTypeToHotelInitial.get(chain));
 }
 
@@ -493,7 +493,7 @@ function onSharesDisposed(traded: number, sold: number) {
   console.log('onSharesDisposed', traded, sold);
 }
 
-function onSharesPurchased(chains: GameBoardType[], endGame: boolean) {
+function onSharesPurchased(chains: PB_GameBoardType[], endGame: boolean) {
   console.log('onSharesPurchased', chains, endGame);
 }
 

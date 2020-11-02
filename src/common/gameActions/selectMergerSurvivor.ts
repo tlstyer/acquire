@@ -2,17 +2,17 @@ import { GameActionEnum, GameHistoryMessageEnum, ScoreBoardIndexEnum } from '../
 import { UserInputError } from '../error';
 import { Game } from '../game';
 import { calculateBonuses } from '../helpers';
-import { GameBoardType, PB_GameAction } from '../pb';
+import { PB_GameAction, PB_GameBoardType } from '../pb';
 import { ActionBase } from './base';
 import { ActionSelectChainToDisposeOfNext } from './selectChainToDisposeOfNext';
 
 export class ActionSelectMergerSurvivor extends ActionBase {
-  chainsBySize: GameBoardType[][];
+  chainsBySize: PB_GameBoardType[][];
 
-  constructor(game: Game, playerID: number, public chains: GameBoardType[], public tile: number) {
+  constructor(game: Game, playerID: number, public chains: PB_GameBoardType[], public tile: number) {
     super(game, playerID, GameActionEnum.SelectMergerSurvivor);
 
-    const sizeToChains = new Map<number, GameBoardType[]>();
+    const sizeToChains = new Map<number, PB_GameBoardType[]>();
     const sizes: number[] = [];
     for (let i = 0; i < chains.length; i++) {
       const chain = chains[i];
@@ -30,7 +30,7 @@ export class ActionSelectMergerSurvivor extends ActionBase {
 
     sizes.sort((a, b) => b - a);
 
-    const chainsBySize: GameBoardType[][] = new Array(sizes.length);
+    const chainsBySize: PB_GameBoardType[][] = new Array(sizes.length);
     for (let i = 0; i < sizes.length; i++) {
       const size = sizes[i];
       chainsBySize[i] = sizeToChains.get(size)!;
@@ -45,7 +45,7 @@ export class ActionSelectMergerSurvivor extends ActionBase {
     if (this.chainsBySize[0].length === 1) {
       return this.completeAction(this.chainsBySize[0][0]);
     } else {
-      this.game.setGameBoardPosition(this.tile, GameBoardType.NOTHING_YET);
+      this.game.setGameBoardPosition(this.tile, PB_GameBoardType.NOTHING_YET);
       this.game.determineTileRackTypesForEverybody();
       return null;
     }
@@ -56,7 +56,7 @@ export class ActionSelectMergerSurvivor extends ActionBase {
       throw new UserInputError('selectMergerSurvivor game action not provided');
     }
     const chain = gameAction.selectMergerSurvivor.chain;
-    if (chain < GameBoardType.LUXOR || chain > GameBoardType.IMPERIAL) {
+    if (chain < PB_GameBoardType.LUXOR || chain > PB_GameBoardType.IMPERIAL) {
       throw new UserInputError('chain is not a valid chain');
     }
     if (this.chainsBySize[0].indexOf(chain) === -1) {
@@ -68,7 +68,7 @@ export class ActionSelectMergerSurvivor extends ActionBase {
     return this.completeAction(chain);
   }
 
-  protected completeAction(controllingChain: GameBoardType) {
+  protected completeAction(controllingChain: PB_GameBoardType) {
     const gameState = this.game.getCurrentGameState();
 
     this.game.fillCells(this.tile, controllingChain);

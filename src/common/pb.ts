@@ -28,13 +28,13 @@ export interface PB_Game {
      */
     gameDisplayNumber: number;
     /**
-     * @generated from protobuf field: GameMode game_mode = 3;
+     * @generated from protobuf field: PB.GameMode game_mode = 3;
      */
-    gameMode: GameMode;
+    gameMode: PB_GameMode;
     /**
-     * @generated from protobuf field: PlayerArrangementMode player_arrangement_mode = 4;
+     * @generated from protobuf field: PB.PlayerArrangementMode player_arrangement_mode = 4;
      */
-    playerArrangementMode: PlayerArrangementMode;
+    playerArrangementMode: PB_PlayerArrangementMode;
     /**
      * @generated from protobuf field: repeated PB.Game.Position positions = 5;
      */
@@ -154,18 +154,18 @@ export interface PB_GameSetupAction_ApproveOfGameSetup {
  */
 export interface PB_GameSetupAction_ChangeGameMode {
     /**
-     * @generated from protobuf field: GameMode game_mode = 1;
+     * @generated from protobuf field: PB.GameMode game_mode = 1;
      */
-    gameMode: GameMode;
+    gameMode: PB_GameMode;
 }
 /**
  * @generated from protobuf message PB.GameSetupAction.ChangePlayerArrangementMode
  */
 export interface PB_GameSetupAction_ChangePlayerArrangementMode {
     /**
-     * @generated from protobuf field: PlayerArrangementMode player_arrangement_mode = 1;
+     * @generated from protobuf field: PB.PlayerArrangementMode player_arrangement_mode = 1;
      */
-    playerArrangementMode: PlayerArrangementMode;
+    playerArrangementMode: PB_PlayerArrangementMode;
 }
 /**
  * @generated from protobuf message PB.GameSetupAction.SwapPositions
@@ -254,18 +254,18 @@ export interface PB_GameSetupChange_UserApprovedOfGameSetup {
  */
 export interface PB_GameSetupChange_GameModeChanged {
     /**
-     * @generated from protobuf field: GameMode game_mode = 1;
+     * @generated from protobuf field: PB.GameMode game_mode = 1;
      */
-    gameMode: GameMode;
+    gameMode: PB_GameMode;
 }
 /**
  * @generated from protobuf message PB.GameSetupChange.PlayerArrangementModeChanged
  */
 export interface PB_GameSetupChange_PlayerArrangementModeChanged {
     /**
-     * @generated from protobuf field: PlayerArrangementMode player_arrangement_mode = 1;
+     * @generated from protobuf field: PB.PlayerArrangementMode player_arrangement_mode = 1;
      */
-    playerArrangementMode: PlayerArrangementMode;
+    playerArrangementMode: PB_PlayerArrangementMode;
 }
 /**
  * @generated from protobuf message PB.GameSetupChange.PositionsSwapped
@@ -345,27 +345,27 @@ export interface PB_GameAction_PlayTile {
  */
 export interface PB_GameAction_SelectNewChain {
     /**
-     * @generated from protobuf field: GameBoardType chain = 1;
+     * @generated from protobuf field: PB.GameBoardType chain = 1;
      */
-    chain: GameBoardType;
+    chain: PB_GameBoardType;
 }
 /**
  * @generated from protobuf message PB.GameAction.SelectMergerSurvivor
  */
 export interface PB_GameAction_SelectMergerSurvivor {
     /**
-     * @generated from protobuf field: GameBoardType chain = 1;
+     * @generated from protobuf field: PB.GameBoardType chain = 1;
      */
-    chain: GameBoardType;
+    chain: PB_GameBoardType;
 }
 /**
  * @generated from protobuf message PB.GameAction.SelectChainToDisposeOfNext
  */
 export interface PB_GameAction_SelectChainToDisposeOfNext {
     /**
-     * @generated from protobuf field: GameBoardType chain = 1;
+     * @generated from protobuf field: PB.GameBoardType chain = 1;
      */
-    chain: GameBoardType;
+    chain: PB_GameBoardType;
 }
 /**
  * @generated from protobuf message PB.GameAction.DisposeOfShares
@@ -385,9 +385,9 @@ export interface PB_GameAction_DisposeOfShares {
  */
 export interface PB_GameAction_PurchaseShares {
     /**
-     * @generated from protobuf field: repeated GameBoardType chains = 1;
+     * @generated from protobuf field: repeated PB.GameBoardType chains = 1;
      */
-    chains: GameBoardType[];
+    chains: PB_GameBoardType[];
     /**
      * @generated from protobuf field: bool end_game = 2;
      */
@@ -466,9 +466,9 @@ export interface PB_MessageToServer_Login_GameData {
  */
 export interface PB_MessageToServer_CreateGame {
     /**
-     * @generated from protobuf field: GameMode game_mode = 1;
+     * @generated from protobuf field: PB.GameMode game_mode = 1;
      */
-    gameMode: GameMode;
+    gameMode: PB_GameMode;
 }
 /**
  * @generated from protobuf message PB.MessageToServer.EnterGame
@@ -547,9 +547,9 @@ export interface PB_MessageToClient {
  */
 export interface PB_MessageToClient_FatalError {
     /**
-     * @generated from protobuf field: ErrorCode error_code = 1;
+     * @generated from protobuf field: PB.ErrorCode error_code = 1;
      */
-    errorCode: ErrorCode;
+    errorCode: PB_ErrorCode;
 }
 /**
  * @generated from protobuf message PB.MessageToClient.Greetings
@@ -637,9 +637,9 @@ export interface PB_MessageToClient_GameCreated {
      */
     gameDisplayNumber: number;
     /**
-     * @generated from protobuf field: GameMode game_mode = 3;
+     * @generated from protobuf field: PB.GameMode game_mode = 3;
      */
-    gameMode: GameMode;
+    gameMode: PB_GameMode;
     /**
      * @generated from protobuf field: int32 host_client_id = 4;
      */
@@ -716,9 +716,9 @@ export interface PB_MessagesToClient {
     messagesToClient: PB_MessageToClient[];
 }
 /**
- * @generated from protobuf enum ErrorCode
+ * @generated from protobuf enum PB.ErrorCode
  */
-export enum ErrorCode {
+export enum PB_ErrorCode {
     /**
      * @generated from protobuf enum value: NOT_USING_LATEST_VERSION = 0;
      */
@@ -757,9 +757,9 @@ export enum ErrorCode {
     COULD_NOT_CONNECT = 8
 }
 /**
- * @generated from protobuf enum GameBoardType
+ * @generated from protobuf enum PB.GameBoardType
  */
-export enum GameBoardType {
+export enum PB_GameBoardType {
     /**
      * @generated from protobuf enum value: LUXOR = 0;
      */
@@ -830,9 +830,9 @@ export enum GameBoardType {
     MAX = 16
 }
 /**
- * @generated from protobuf enum GameMode
+ * @generated from protobuf enum PB.GameMode
  */
-export enum GameMode {
+export enum PB_GameMode {
     /**
      * not used, here because the first enum value must be zero in proto3
      *
@@ -877,9 +877,9 @@ export enum GameMode {
     TEAMS_3_VS_3 = 9
 }
 /**
- * @generated from protobuf enum PlayerArrangementMode
+ * @generated from protobuf enum PB.PlayerArrangementMode
  */
-export enum PlayerArrangementMode {
+export enum PB_PlayerArrangementMode {
     /**
      * @generated from protobuf enum value: VERSION_1 = 0;
      */
@@ -929,8 +929,8 @@ class PB_Game$Type extends MessageType<PB_Game> {
         super("PB.Game", [
             { no: 1, name: "game_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
             { no: 2, name: "game_display_number", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 3, name: "game_mode", kind: "enum", T: () => ["GameMode", GameMode] },
-            { no: 4, name: "player_arrangement_mode", kind: "enum", T: () => ["PlayerArrangementMode", PlayerArrangementMode] },
+            { no: 3, name: "game_mode", kind: "enum", T: () => ["PB.GameMode", PB_GameMode] },
+            { no: 4, name: "player_arrangement_mode", kind: "enum", T: () => ["PB.PlayerArrangementMode", PB_PlayerArrangementMode] },
             { no: 5, name: "positions", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => PB_Game_Position },
             { no: 6, name: "game_states", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => PB_GameState }
         ]);
@@ -952,10 +952,10 @@ class PB_Game$Type extends MessageType<PB_Game> {
                 case /* int32 game_display_number */ 2:
                     message.gameDisplayNumber = reader.int32();
                     break;
-                case /* GameMode game_mode */ 3:
+                case /* PB.GameMode game_mode */ 3:
                     message.gameMode = reader.int32();
                     break;
-                case /* PlayerArrangementMode player_arrangement_mode */ 4:
+                case /* PB.PlayerArrangementMode player_arrangement_mode */ 4:
                     message.playerArrangementMode = reader.int32();
                     break;
                 case /* repeated PB.Game.Position positions */ 5:
@@ -982,10 +982,10 @@ class PB_Game$Type extends MessageType<PB_Game> {
         /* int32 game_display_number = 2; */
         if (message.gameDisplayNumber !== 0)
             writer.tag(2, WireType.Varint).int32(message.gameDisplayNumber);
-        /* GameMode game_mode = 3; */
+        /* PB.GameMode game_mode = 3; */
         if (message.gameMode !== 0)
             writer.tag(3, WireType.Varint).int32(message.gameMode);
-        /* PlayerArrangementMode player_arrangement_mode = 4; */
+        /* PB.PlayerArrangementMode player_arrangement_mode = 4; */
         if (message.playerArrangementMode !== 0)
             writer.tag(4, WireType.Varint).int32(message.playerArrangementMode);
         /* repeated PB.Game.Position positions = 5; */
@@ -1358,7 +1358,7 @@ export const PB_GameSetupAction_ApproveOfGameSetup = new PB_GameSetupAction_Appr
 class PB_GameSetupAction_ChangeGameMode$Type extends MessageType<PB_GameSetupAction_ChangeGameMode> {
     constructor() {
         super("PB.GameSetupAction.ChangeGameMode", [
-            { no: 1, name: "game_mode", kind: "enum", T: () => ["GameMode", GameMode] }
+            { no: 1, name: "game_mode", kind: "enum", T: () => ["PB.GameMode", PB_GameMode] }
         ]);
     }
     create(value?: PartialMessage<PB_GameSetupAction_ChangeGameMode>): PB_GameSetupAction_ChangeGameMode {
@@ -1372,7 +1372,7 @@ class PB_GameSetupAction_ChangeGameMode$Type extends MessageType<PB_GameSetupAct
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* GameMode game_mode */ 1:
+                case /* PB.GameMode game_mode */ 1:
                     message.gameMode = reader.int32();
                     break;
                 default:
@@ -1387,7 +1387,7 @@ class PB_GameSetupAction_ChangeGameMode$Type extends MessageType<PB_GameSetupAct
         return message;
     }
     internalBinaryWrite(message: PB_GameSetupAction_ChangeGameMode, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* GameMode game_mode = 1; */
+        /* PB.GameMode game_mode = 1; */
         if (message.gameMode !== 0)
             writer.tag(1, WireType.Varint).int32(message.gameMode);
         let u = options.writeUnknownFields;
@@ -1403,7 +1403,7 @@ export const PB_GameSetupAction_ChangeGameMode = new PB_GameSetupAction_ChangeGa
 class PB_GameSetupAction_ChangePlayerArrangementMode$Type extends MessageType<PB_GameSetupAction_ChangePlayerArrangementMode> {
     constructor() {
         super("PB.GameSetupAction.ChangePlayerArrangementMode", [
-            { no: 1, name: "player_arrangement_mode", kind: "enum", T: () => ["PlayerArrangementMode", PlayerArrangementMode] }
+            { no: 1, name: "player_arrangement_mode", kind: "enum", T: () => ["PB.PlayerArrangementMode", PB_PlayerArrangementMode] }
         ]);
     }
     create(value?: PartialMessage<PB_GameSetupAction_ChangePlayerArrangementMode>): PB_GameSetupAction_ChangePlayerArrangementMode {
@@ -1417,7 +1417,7 @@ class PB_GameSetupAction_ChangePlayerArrangementMode$Type extends MessageType<PB
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* PlayerArrangementMode player_arrangement_mode */ 1:
+                case /* PB.PlayerArrangementMode player_arrangement_mode */ 1:
                     message.playerArrangementMode = reader.int32();
                     break;
                 default:
@@ -1432,7 +1432,7 @@ class PB_GameSetupAction_ChangePlayerArrangementMode$Type extends MessageType<PB
         return message;
     }
     internalBinaryWrite(message: PB_GameSetupAction_ChangePlayerArrangementMode, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* PlayerArrangementMode player_arrangement_mode = 1; */
+        /* PB.PlayerArrangementMode player_arrangement_mode = 1; */
         if (message.playerArrangementMode !== 0)
             writer.tag(1, WireType.Varint).int32(message.playerArrangementMode);
         let u = options.writeUnknownFields;
@@ -1767,7 +1767,7 @@ export const PB_GameSetupChange_UserApprovedOfGameSetup = new PB_GameSetupChange
 class PB_GameSetupChange_GameModeChanged$Type extends MessageType<PB_GameSetupChange_GameModeChanged> {
     constructor() {
         super("PB.GameSetupChange.GameModeChanged", [
-            { no: 1, name: "game_mode", kind: "enum", T: () => ["GameMode", GameMode] }
+            { no: 1, name: "game_mode", kind: "enum", T: () => ["PB.GameMode", PB_GameMode] }
         ]);
     }
     create(value?: PartialMessage<PB_GameSetupChange_GameModeChanged>): PB_GameSetupChange_GameModeChanged {
@@ -1781,7 +1781,7 @@ class PB_GameSetupChange_GameModeChanged$Type extends MessageType<PB_GameSetupCh
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* GameMode game_mode */ 1:
+                case /* PB.GameMode game_mode */ 1:
                     message.gameMode = reader.int32();
                     break;
                 default:
@@ -1796,7 +1796,7 @@ class PB_GameSetupChange_GameModeChanged$Type extends MessageType<PB_GameSetupCh
         return message;
     }
     internalBinaryWrite(message: PB_GameSetupChange_GameModeChanged, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* GameMode game_mode = 1; */
+        /* PB.GameMode game_mode = 1; */
         if (message.gameMode !== 0)
             writer.tag(1, WireType.Varint).int32(message.gameMode);
         let u = options.writeUnknownFields;
@@ -1812,7 +1812,7 @@ export const PB_GameSetupChange_GameModeChanged = new PB_GameSetupChange_GameMod
 class PB_GameSetupChange_PlayerArrangementModeChanged$Type extends MessageType<PB_GameSetupChange_PlayerArrangementModeChanged> {
     constructor() {
         super("PB.GameSetupChange.PlayerArrangementModeChanged", [
-            { no: 1, name: "player_arrangement_mode", kind: "enum", T: () => ["PlayerArrangementMode", PlayerArrangementMode] }
+            { no: 1, name: "player_arrangement_mode", kind: "enum", T: () => ["PB.PlayerArrangementMode", PB_PlayerArrangementMode] }
         ]);
     }
     create(value?: PartialMessage<PB_GameSetupChange_PlayerArrangementModeChanged>): PB_GameSetupChange_PlayerArrangementModeChanged {
@@ -1826,7 +1826,7 @@ class PB_GameSetupChange_PlayerArrangementModeChanged$Type extends MessageType<P
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* PlayerArrangementMode player_arrangement_mode */ 1:
+                case /* PB.PlayerArrangementMode player_arrangement_mode */ 1:
                     message.playerArrangementMode = reader.int32();
                     break;
                 default:
@@ -1841,7 +1841,7 @@ class PB_GameSetupChange_PlayerArrangementModeChanged$Type extends MessageType<P
         return message;
     }
     internalBinaryWrite(message: PB_GameSetupChange_PlayerArrangementModeChanged, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* PlayerArrangementMode player_arrangement_mode = 1; */
+        /* PB.PlayerArrangementMode player_arrangement_mode = 1; */
         if (message.playerArrangementMode !== 0)
             writer.tag(1, WireType.Varint).int32(message.playerArrangementMode);
         let u = options.writeUnknownFields;
@@ -2117,7 +2117,7 @@ export const PB_GameAction_PlayTile = new PB_GameAction_PlayTile$Type();
 class PB_GameAction_SelectNewChain$Type extends MessageType<PB_GameAction_SelectNewChain> {
     constructor() {
         super("PB.GameAction.SelectNewChain", [
-            { no: 1, name: "chain", kind: "enum", T: () => ["GameBoardType", GameBoardType] }
+            { no: 1, name: "chain", kind: "enum", T: () => ["PB.GameBoardType", PB_GameBoardType] }
         ]);
     }
     create(value?: PartialMessage<PB_GameAction_SelectNewChain>): PB_GameAction_SelectNewChain {
@@ -2131,7 +2131,7 @@ class PB_GameAction_SelectNewChain$Type extends MessageType<PB_GameAction_Select
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* GameBoardType chain */ 1:
+                case /* PB.GameBoardType chain */ 1:
                     message.chain = reader.int32();
                     break;
                 default:
@@ -2146,7 +2146,7 @@ class PB_GameAction_SelectNewChain$Type extends MessageType<PB_GameAction_Select
         return message;
     }
     internalBinaryWrite(message: PB_GameAction_SelectNewChain, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* GameBoardType chain = 1; */
+        /* PB.GameBoardType chain = 1; */
         if (message.chain !== 0)
             writer.tag(1, WireType.Varint).int32(message.chain);
         let u = options.writeUnknownFields;
@@ -2162,7 +2162,7 @@ export const PB_GameAction_SelectNewChain = new PB_GameAction_SelectNewChain$Typ
 class PB_GameAction_SelectMergerSurvivor$Type extends MessageType<PB_GameAction_SelectMergerSurvivor> {
     constructor() {
         super("PB.GameAction.SelectMergerSurvivor", [
-            { no: 1, name: "chain", kind: "enum", T: () => ["GameBoardType", GameBoardType] }
+            { no: 1, name: "chain", kind: "enum", T: () => ["PB.GameBoardType", PB_GameBoardType] }
         ]);
     }
     create(value?: PartialMessage<PB_GameAction_SelectMergerSurvivor>): PB_GameAction_SelectMergerSurvivor {
@@ -2176,7 +2176,7 @@ class PB_GameAction_SelectMergerSurvivor$Type extends MessageType<PB_GameAction_
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* GameBoardType chain */ 1:
+                case /* PB.GameBoardType chain */ 1:
                     message.chain = reader.int32();
                     break;
                 default:
@@ -2191,7 +2191,7 @@ class PB_GameAction_SelectMergerSurvivor$Type extends MessageType<PB_GameAction_
         return message;
     }
     internalBinaryWrite(message: PB_GameAction_SelectMergerSurvivor, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* GameBoardType chain = 1; */
+        /* PB.GameBoardType chain = 1; */
         if (message.chain !== 0)
             writer.tag(1, WireType.Varint).int32(message.chain);
         let u = options.writeUnknownFields;
@@ -2207,7 +2207,7 @@ export const PB_GameAction_SelectMergerSurvivor = new PB_GameAction_SelectMerger
 class PB_GameAction_SelectChainToDisposeOfNext$Type extends MessageType<PB_GameAction_SelectChainToDisposeOfNext> {
     constructor() {
         super("PB.GameAction.SelectChainToDisposeOfNext", [
-            { no: 1, name: "chain", kind: "enum", T: () => ["GameBoardType", GameBoardType] }
+            { no: 1, name: "chain", kind: "enum", T: () => ["PB.GameBoardType", PB_GameBoardType] }
         ]);
     }
     create(value?: PartialMessage<PB_GameAction_SelectChainToDisposeOfNext>): PB_GameAction_SelectChainToDisposeOfNext {
@@ -2221,7 +2221,7 @@ class PB_GameAction_SelectChainToDisposeOfNext$Type extends MessageType<PB_GameA
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* GameBoardType chain */ 1:
+                case /* PB.GameBoardType chain */ 1:
                     message.chain = reader.int32();
                     break;
                 default:
@@ -2236,7 +2236,7 @@ class PB_GameAction_SelectChainToDisposeOfNext$Type extends MessageType<PB_GameA
         return message;
     }
     internalBinaryWrite(message: PB_GameAction_SelectChainToDisposeOfNext, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* GameBoardType chain = 1; */
+        /* PB.GameBoardType chain = 1; */
         if (message.chain !== 0)
             writer.tag(1, WireType.Varint).int32(message.chain);
         let u = options.writeUnknownFields;
@@ -2304,7 +2304,7 @@ export const PB_GameAction_DisposeOfShares = new PB_GameAction_DisposeOfShares$T
 class PB_GameAction_PurchaseShares$Type extends MessageType<PB_GameAction_PurchaseShares> {
     constructor() {
         super("PB.GameAction.PurchaseShares", [
-            { no: 1, name: "chains", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["GameBoardType", GameBoardType] },
+            { no: 1, name: "chains", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["PB.GameBoardType", PB_GameBoardType] },
             { no: 2, name: "end_game", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
@@ -2319,7 +2319,7 @@ class PB_GameAction_PurchaseShares$Type extends MessageType<PB_GameAction_Purcha
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* repeated GameBoardType chains */ 1:
+                case /* repeated PB.GameBoardType chains */ 1:
                     if (wireType === WireType.LengthDelimited)
                         for (let e = reader.int32() + reader.pos; reader.pos < e;)
                             message.chains.push(reader.int32());
@@ -2341,7 +2341,7 @@ class PB_GameAction_PurchaseShares$Type extends MessageType<PB_GameAction_Purcha
         return message;
     }
     internalBinaryWrite(message: PB_GameAction_PurchaseShares, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated GameBoardType chains = 1; */
+        /* repeated PB.GameBoardType chains = 1; */
         if (message.chains.length) {
             writer.tag(1, WireType.LengthDelimited).fork();
             for (let i = 0; i < message.chains.length; i++)
@@ -2586,7 +2586,7 @@ export const PB_MessageToServer_Login_GameData = new PB_MessageToServer_Login_Ga
 class PB_MessageToServer_CreateGame$Type extends MessageType<PB_MessageToServer_CreateGame> {
     constructor() {
         super("PB.MessageToServer.CreateGame", [
-            { no: 1, name: "game_mode", kind: "enum", T: () => ["GameMode", GameMode] }
+            { no: 1, name: "game_mode", kind: "enum", T: () => ["PB.GameMode", PB_GameMode] }
         ]);
     }
     create(value?: PartialMessage<PB_MessageToServer_CreateGame>): PB_MessageToServer_CreateGame {
@@ -2600,7 +2600,7 @@ class PB_MessageToServer_CreateGame$Type extends MessageType<PB_MessageToServer_
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* GameMode game_mode */ 1:
+                case /* PB.GameMode game_mode */ 1:
                     message.gameMode = reader.int32();
                     break;
                 default:
@@ -2615,7 +2615,7 @@ class PB_MessageToServer_CreateGame$Type extends MessageType<PB_MessageToServer_
         return message;
     }
     internalBinaryWrite(message: PB_MessageToServer_CreateGame, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* GameMode game_mode = 1; */
+        /* PB.GameMode game_mode = 1; */
         if (message.gameMode !== 0)
             writer.tag(1, WireType.Varint).int32(message.gameMode);
         let u = options.writeUnknownFields;
@@ -2860,7 +2860,7 @@ export const PB_MessageToClient = new PB_MessageToClient$Type();
 class PB_MessageToClient_FatalError$Type extends MessageType<PB_MessageToClient_FatalError> {
     constructor() {
         super("PB.MessageToClient.FatalError", [
-            { no: 1, name: "error_code", kind: "enum", T: () => ["ErrorCode", ErrorCode] }
+            { no: 1, name: "error_code", kind: "enum", T: () => ["PB.ErrorCode", PB_ErrorCode] }
         ]);
     }
     create(value?: PartialMessage<PB_MessageToClient_FatalError>): PB_MessageToClient_FatalError {
@@ -2874,7 +2874,7 @@ class PB_MessageToClient_FatalError$Type extends MessageType<PB_MessageToClient_
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* ErrorCode error_code */ 1:
+                case /* PB.ErrorCode error_code */ 1:
                     message.errorCode = reader.int32();
                     break;
                 default:
@@ -2889,7 +2889,7 @@ class PB_MessageToClient_FatalError$Type extends MessageType<PB_MessageToClient_
         return message;
     }
     internalBinaryWrite(message: PB_MessageToClient_FatalError, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* ErrorCode error_code = 1; */
+        /* PB.ErrorCode error_code = 1; */
         if (message.errorCode !== 0)
             writer.tag(1, WireType.Varint).int32(message.errorCode);
         let u = options.writeUnknownFields;
@@ -3181,7 +3181,7 @@ class PB_MessageToClient_GameCreated$Type extends MessageType<PB_MessageToClient
         super("PB.MessageToClient.GameCreated", [
             { no: 1, name: "game_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
             { no: 2, name: "game_display_number", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 3, name: "game_mode", kind: "enum", T: () => ["GameMode", GameMode] },
+            { no: 3, name: "game_mode", kind: "enum", T: () => ["PB.GameMode", PB_GameMode] },
             { no: 4, name: "host_client_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
         ]);
     }
@@ -3202,7 +3202,7 @@ class PB_MessageToClient_GameCreated$Type extends MessageType<PB_MessageToClient
                 case /* int32 game_display_number */ 2:
                     message.gameDisplayNumber = reader.int32();
                     break;
-                case /* GameMode game_mode */ 3:
+                case /* PB.GameMode game_mode */ 3:
                     message.gameMode = reader.int32();
                     break;
                 case /* int32 host_client_id */ 4:
@@ -3226,7 +3226,7 @@ class PB_MessageToClient_GameCreated$Type extends MessageType<PB_MessageToClient
         /* int32 game_display_number = 2; */
         if (message.gameDisplayNumber !== 0)
             writer.tag(2, WireType.Varint).int32(message.gameDisplayNumber);
-        /* GameMode game_mode = 3; */
+        /* PB.GameMode game_mode = 3; */
         if (message.gameMode !== 0)
             writer.tag(3, WireType.Varint).int32(message.gameMode);
         /* int32 host_client_id = 4; */
