@@ -3,9 +3,3 @@ export enum GameBoardLabelMode {
   HotelInitials,
   Nothing,
 }
-
-export enum GameStatusEnum {
-  SettingUp,
-  InProgress,
-  Completed,
-}

@@ -42,6 +42,8 @@ message PB {
     VERSION_1 = 0; RANDOM_ORDER = 1; EXACT_ORDER = 2; SPECIFY_TEAMS = 3;
   }
 
+  enum GameStatus { SETTING_UP = 0; IN_PROGRESS = 1; COMPLETED = 2; }
+
   message Game {
     message Position {
       int32 user_id = 1;

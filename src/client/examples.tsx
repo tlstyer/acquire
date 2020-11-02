@@ -4,7 +4,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { defaultGameBoard, defaultGameStateHistory } from '../common/defaults';
 import { Game } from '../common/game';
-import { PB_ErrorCode, PB_GameBoardType, PB_GameMode } from '../common/pb';
+import { PB_ErrorCode, PB_GameBoardType, PB_GameMode, PB_GameStatus } from '../common/pb';
 import { CreateGame, CreateGameProps } from './components/CreateGame';
 import { DisposeOfShares, DisposeOfSharesProps } from './components/DisposeOfShares';
 import { ExampleGameSetupMaster } from './components/ExampleGameSetupMaster';
@@ -19,7 +19,7 @@ import { ScoreBoard, ScoreBoardProps } from './components/ScoreBoard';
 import { SelectChain, SelectChainProps, SelectChainTitle } from './components/SelectChain';
 import { TileRack, TileRackProps } from './components/TileRack';
 import { TileRackReadOnly, TileRackReadOnlyProps } from './components/TileRackReadOnly';
-import { GameBoardLabelMode, GameStatusEnum } from './enums';
+import { GameBoardLabelMode } from './enums';
 import { getDummyGameForGetGameHistory, getExampleNextGameActionsArray } from './exampleData';
 import * as style from './examples.scss';
 import './global.scss';
@@ -77,7 +77,7 @@ class AllDemoProps {
         usernames: List(['Host', null, 'User 2', null]),
         gameDisplayNumber: 1,
         gameMode: PB_GameMode.SINGLES_4,
-        gameStatus: GameStatusEnum.SettingUp,
+        gameStatus: PB_GameStatus.SETTING_UP,
         onEnterClicked,
       },
       {
@@ -85,7 +85,7 @@ class AllDemoProps {
         usernames: List(['Tim', 'Rita', 'Dad', 'Mom', 'REALLY, REALLY, REALLY, REALLY, REALLY LONG NAME', 'pgyqj,;']),
         gameDisplayNumber: 2,
         gameMode: PB_GameMode.TEAMS_2_VS_2_VS_2,
-        gameStatus: GameStatusEnum.InProgress,
+        gameStatus: PB_GameStatus.IN_PROGRESS,
         onEnterClicked,
       },
       {
@@ -93,7 +93,7 @@ class AllDemoProps {
         usernames: List(['player 1', 'player 2', 'player 3', 'player 4']),
         gameDisplayNumber: 3,
         gameMode: PB_GameMode.TEAMS_2_VS_2,
-        gameStatus: GameStatusEnum.Completed,
+        gameStatus: PB_GameStatus.COMPLETED,
         onEnterClicked,
       },
     ];

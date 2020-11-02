@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { TileEnum } from '../common/enums';
-import { PB_GameBoardType, PB_GameMode } from '../common/pb';
+import { PB_GameBoardType, PB_GameMode, PB_GameStatus } from '../common/pb';
 import * as common from './common.scss';
-import { GameStatusEnum } from './enums';
 
 export const allChains = [
   PB_GameBoardType.LUXOR,
@@ -98,9 +97,9 @@ export const gameModeToString = new Map([
 ]);
 
 export const gameStatusToString = new Map([
-  [GameStatusEnum.SettingUp, 'Setting Up'],
-  [GameStatusEnum.InProgress, 'In Progress'],
-  [GameStatusEnum.Completed, 'Completed'],
+  [PB_GameStatus.SETTING_UP, 'Setting Up'],
+  [PB_GameStatus.IN_PROGRESS, 'In Progress'],
+  [PB_GameStatus.COMPLETED, 'Completed'],
 ]);
 
 export function hackDoNotInterfereWithKeyboardShortcuts(event: React.KeyboardEvent<HTMLElement>) {

@@ -1,8 +1,7 @@
 import { List } from 'immutable';
 import * as React from 'react';
 import { gameModeToNumPlayers, gameModeToTeamSize } from '../../common/helpers';
-import { PB_GameBoardType, PB_GameMode } from '../../common/pb';
-import { GameStatusEnum } from '../enums';
+import { PB_GameBoardType, PB_GameMode, PB_GameStatus } from '../../common/pb';
 import { gameModeToString, gameStatusToString, teamNumberToCSSClassName } from '../helpers';
 import * as style from './GameListing.scss';
 import { MiniGameBoard } from './MiniGameBoard';
@@ -12,7 +11,7 @@ export interface GameListingProps {
   usernames: List<string | null>;
   gameDisplayNumber: number;
   gameMode: PB_GameMode;
-  gameStatus: GameStatusEnum;
+  gameStatus: PB_GameStatus;
   onEnterClicked: () => void;
 }
 

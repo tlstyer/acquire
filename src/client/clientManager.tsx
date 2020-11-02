@@ -15,6 +15,7 @@ import {
   PB_ErrorCode,
   PB_GameBoardType,
   PB_GameMode,
+  PB_GameStatus,
   PB_MessagesToClient,
   PB_MessageToClient_ClientConnected,
   PB_MessageToClient_ClientDisconnected,
@@ -43,7 +44,7 @@ import { PurchaseShares } from './components/PurchaseShares';
 import { ScoreBoard } from './components/ScoreBoard';
 import { SelectChain, SelectChainTitle } from './components/SelectChain';
 import { TileRack } from './components/TileRack';
-import { GameBoardLabelMode, GameStatusEnum } from './enums';
+import { GameBoardLabelMode } from './enums';
 
 export enum ClientManagerPage {
   Login,
@@ -149,7 +150,7 @@ export class ClientManager {
                 usernames={gameSetup.usernames}
                 gameDisplayNumber={gameData.displayNumber}
                 gameMode={gameSetup.gameMode}
-                gameStatus={GameStatusEnum.SettingUp}
+                gameStatus={PB_GameStatus.SETTING_UP}
                 onEnterClicked={gameData.onEnterClicked}
               />
             );
@@ -162,7 +163,7 @@ export class ClientManager {
                 usernames={game.usernames}
                 gameDisplayNumber={gameData.displayNumber}
                 gameMode={game.gameMode}
-                gameStatus={game.gameActionStack[0] instanceof ActionGameOver ? GameStatusEnum.Completed : GameStatusEnum.InProgress}
+                gameStatus={game.gameActionStack[0] instanceof ActionGameOver ? PB_GameStatus.COMPLETED : PB_GameStatus.IN_PROGRESS}
                 onEnterClicked={gameData.onEnterClicked}
               />
             );

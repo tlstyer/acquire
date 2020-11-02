@@ -898,6 +898,23 @@ export enum PB_PlayerArrangementMode {
     SPECIFY_TEAMS = 3
 }
 /**
+ * @generated from protobuf enum PB.GameStatus
+ */
+export enum PB_GameStatus {
+    /**
+     * @generated from protobuf enum value: SETTING_UP = 0;
+     */
+    SETTING_UP = 0,
+    /**
+     * @generated from protobuf enum value: IN_PROGRESS = 1;
+     */
+    IN_PROGRESS = 1,
+    /**
+     * @generated from protobuf enum value: COMPLETED = 2;
+     */
+    COMPLETED = 2
+}
+/**
  * Type for protobuf message PB
  */
 class PB$Type extends MessageType<PB> {
