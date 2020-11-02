@@ -3,6 +3,7 @@
     "jsx": "react",
     "module": "commonjs",
     "outDir": "dist/server",
+    "sourceMap": true,
     "strict": true,
     "target": "es6"
   },
