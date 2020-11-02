@@ -5,7 +5,8 @@
     "outDir": "dist/server",
     "sourceMap": true,
     "strict": true,
-    "target": "es6"
+    "target": "es6",
+    "lib": ["es2019", "DOM"]
   },
   "include": ["src/**/*"]
 }

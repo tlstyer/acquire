@@ -28,21 +28,25 @@ export interface PB_Game {
      */
     gameDisplayNumber: number;
     /**
-     * @generated from protobuf field: PB.GameMode game_mode = 3;
+     * @generated from protobuf field: PB.GameStatus game_status = 3;
+     */
+    gameStatus: PB_GameStatus;
+    /**
+     * @generated from protobuf field: PB.GameMode game_mode = 4;
      */
     gameMode: PB_GameMode;
     /**
-     * @generated from protobuf field: PB.PlayerArrangementMode player_arrangement_mode = 4;
+     * @generated from protobuf field: PB.PlayerArrangementMode player_arrangement_mode = 5;
      */
     playerArrangementMode: PB_PlayerArrangementMode;
     /**
-     * @generated from protobuf field: repeated PB.Game.Position positions = 5;
+     * @generated from protobuf field: repeated PB.Game.Position positions = 6;
      */
     positions: PB_Game_Position[];
     /**
-     * @generated from protobuf field: repeated PB.GameState game_states = 6;
+     * @generated from protobuf field: repeated int32 game_board = 7;
      */
-    gameStates: PB_GameState[];
+    gameBoard: number[];
 }
 /**
  * @generated from protobuf message PB.Game.Position
@@ -82,11 +86,9 @@ export interface PB_GameState {
      */
     revealedTileBagTiles: number[];
     /**
-     * 1 more than actual player_id
-     *
      * @generated from protobuf field: int32 player_id_with_playable_tile_plus_one = 5;
      */
-    playerIdWithPlayableTilePlusOne: number;
+    playerIdWithPlayableTilePlusOne: number; // 1 more than actual player_id
 }
 /**
  * @generated from protobuf message PB.GameState.RevealedTileRackTile
@@ -946,14 +948,15 @@ class PB_Game$Type extends MessageType<PB_Game> {
         super("PB.Game", [
             { no: 1, name: "game_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
             { no: 2, name: "game_display_number", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 3, name: "game_mode", kind: "enum", T: () => ["PB.GameMode", PB_GameMode] },
-            { no: 4, name: "player_arrangement_mode", kind: "enum", T: () => ["PB.PlayerArrangementMode", PB_PlayerArrangementMode] },
-            { no: 5, name: "positions", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => PB_Game_Position },
-            { no: 6, name: "game_states", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => PB_GameState }
+            { no: 3, name: "game_status", kind: "enum", T: () => ["PB.GameStatus", PB_GameStatus] },
+            { no: 4, name: "game_mode", kind: "enum", T: () => ["PB.GameMode", PB_GameMode] },
+            { no: 5, name: "player_arrangement_mode", kind: "enum", T: () => ["PB.PlayerArrangementMode", PB_PlayerArrangementMode] },
+            { no: 6, name: "positions", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => PB_Game_Position },
+            { no: 7, name: "game_board", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ }
         ]);
     }
     create(value?: PartialMessage<PB_Game>): PB_Game {
-        const message = { gameId: 0, gameDisplayNumber: 0, gameMode: 0, playerArrangementMode: 0, positions: [], gameStates: [] };
+        const message = { gameId: 0, gameDisplayNumber: 0, gameStatus: 0, gameMode: 0, playerArrangementMode: 0, positions: [], gameBoard: [] };
         if (value !== undefined)
             reflectionMergePartial<PB_Game>(this, message, value);
         return message;
@@ -969,17 +972,24 @@ class PB_Game$Type extends MessageType<PB_Game> {
                 case /* int32 game_display_number */ 2:
                     message.gameDisplayNumber = reader.int32();
                     break;
-                case /* PB.GameMode game_mode */ 3:
+                case /* PB.GameStatus game_status */ 3:
+                    message.gameStatus = reader.int32();
+                    break;
+                case /* PB.GameMode game_mode */ 4:
                     message.gameMode = reader.int32();
                     break;
-                case /* PB.PlayerArrangementMode player_arrangement_mode */ 4:
+                case /* PB.PlayerArrangementMode player_arrangement_mode */ 5:
                     message.playerArrangementMode = reader.int32();
                     break;
-                case /* repeated PB.Game.Position positions */ 5:
+                case /* repeated PB.Game.Position positions */ 6:
                     message.positions.push(PB_Game_Position.internalBinaryRead(reader, reader.uint32(), options));
                     break;
-                case /* repeated PB.GameState game_states */ 6:
-                    message.gameStates.push(PB_GameState.internalBinaryRead(reader, reader.uint32(), options));
+                case /* repeated int32 game_board */ 7:
+                    if (wireType === WireType.LengthDelimited)
+                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
+                            message.gameBoard.push(reader.int32());
+                    else
+                        message.gameBoard.push(reader.int32());
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -999,18 +1009,25 @@ class PB_Game$Type extends MessageType<PB_Game> {
         /* int32 game_display_number = 2; */
         if (message.gameDisplayNumber !== 0)
             writer.tag(2, WireType.Varint).int32(message.gameDisplayNumber);
-        /* PB.GameMode game_mode = 3; */
+        /* PB.GameStatus game_status = 3; */
+        if (message.gameStatus !== 0)
+            writer.tag(3, WireType.Varint).int32(message.gameStatus);
+        /* PB.GameMode game_mode = 4; */
         if (message.gameMode !== 0)
-            writer.tag(3, WireType.Varint).int32(message.gameMode);
-        /* PB.PlayerArrangementMode player_arrangement_mode = 4; */
+            writer.tag(4, WireType.Varint).int32(message.gameMode);
+        /* PB.PlayerArrangementMode player_arrangement_mode = 5; */
         if (message.playerArrangementMode !== 0)
-            writer.tag(4, WireType.Varint).int32(message.playerArrangementMode);
-        /* repeated PB.Game.Position positions = 5; */
+            writer.tag(5, WireType.Varint).int32(message.playerArrangementMode);
+        /* repeated PB.Game.Position positions = 6; */
         for (let i = 0; i < message.positions.length; i++)
-            PB_Game_Position.internalBinaryWrite(message.positions[i], writer.tag(5, WireType.LengthDelimited).fork(), options).join();
-        /* repeated PB.GameState game_states = 6; */
-        for (let i = 0; i < message.gameStates.length; i++)
-            PB_GameState.internalBinaryWrite(message.gameStates[i], writer.tag(6, WireType.LengthDelimited).fork(), options).join();
+            PB_Game_Position.internalBinaryWrite(message.positions[i], writer.tag(6, WireType.LengthDelimited).fork(), options).join();
+        /* repeated int32 game_board = 7; */
+        if (message.gameBoard.length) {
+            writer.tag(7, WireType.LengthDelimited).fork();
+            for (let i = 0; i < message.gameBoard.length; i++)
+                writer.int32(message.gameBoard[i]);
+            writer.join();
+        }
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

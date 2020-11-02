@@ -53,10 +53,11 @@ message PB {
 
     int32 game_id = 1;
     int32 game_display_number = 2;
-    GameMode game_mode = 3;
-    PlayerArrangementMode player_arrangement_mode = 4;
-    repeated Position positions = 5;
-    repeated GameState game_states = 6;
+    GameStatus game_status = 3;
+    GameMode game_mode = 4;
+    PlayerArrangementMode player_arrangement_mode = 5;
+    repeated Position positions = 6;
+    repeated int32 game_board = 7;
   }
 
   message GameState {

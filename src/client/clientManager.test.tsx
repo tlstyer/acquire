@@ -1,7 +1,17 @@
 import { List } from 'immutable';
 import { GameActionEnum, TileEnum } from '../common/enums';
 import { setupTextDecoderAndTextEncoder } from '../common/nodeSpecificStuff';
-import { PB_ErrorCode, PB_Game, PB_GameMode, PB_MessagesToClient, PB_MessageToClient, PB_MessageToServer, PB_PlayerArrangementMode } from '../common/pb';
+import {
+  PB_ErrorCode,
+  PB_Game,
+  PB_GameBoardType,
+  PB_GameMode,
+  PB_GameStatus,
+  PB_MessagesToClient,
+  PB_MessageToClient,
+  PB_MessageToServer,
+  PB_PlayerArrangementMode,
+} from '../common/pb';
 import { Client, ClientManager, ClientManagerPage, GameData, User } from './clientManager';
 
 setupTextDecoderAndTextEncoder();
@@ -183,8 +193,12 @@ function uncircularreferenceifyGameIDToGameData(gameIDToGameData: Map<number, Ga
     let userIDs: Set<number>;
     if (gameData.gameSetup !== null) {
       userIDs = gameData.gameSetup.userIDsSet;
+    } else if (gameData.game !== null) {
+      userIDs = new Set(gameData.game.userIDs);
+    } else if (gameData.gameSummary !== null) {
+      userIDs = new Set(gameData.gameSummary.userIDs);
     } else {
-      userIDs = new Set(gameData.game!.userIDs);
+      throw new Error('no game data field set');
     }
 
     const ucrGameData = new UCRGameData(gameData.id, gameData.displayNumber, userIDs);
@@ -577,6 +591,11 @@ describe('MessageToClient.Greetings', () => {
   test('message is processed correctly (2)', () => {
     const { clientManager } = getClientManagerAndStuff();
 
+    const gameBoard: PB_GameBoardType[] = new Array(108);
+    for (let i = 0; i < gameBoard.length; i++) {
+      gameBoard[i] = Math.floor(Math.random() * PB_GameBoardType.MAX);
+    }
+
     clientManager.onSubmitLoginForm('2', '');
     testWebSocket!.triggerOpen();
     testWebSocket!.triggerMessages([
@@ -592,6 +611,7 @@ describe('MessageToClient.Greetings', () => {
             {
               gameId: 10,
               gameDisplayNumber: 1,
+              gameStatus: PB_GameStatus.SETTING_UP,
               gameMode: PB_GameMode.SINGLES_4,
               playerArrangementMode: PB_PlayerArrangementMode.RANDOM_ORDER,
               positions: [{ userId: 1, isHost: true }, {}, {}, {}],
@@ -599,20 +619,11 @@ describe('MessageToClient.Greetings', () => {
             {
               gameId: 11,
               gameDisplayNumber: 2,
+              gameStatus: PB_GameStatus.IN_PROGRESS,
               gameMode: PB_GameMode.SINGLES_1,
               playerArrangementMode: PB_PlayerArrangementMode.RANDOM_ORDER,
               positions: [{ userId: 2, isHost: true }],
-              gameStates: [
-                {
-                  gameAction: { startGame: {} },
-                  timestamp: 1234567894,
-                  revealedTileBagTiles: [89, 19, 29, 39, 49, 59, 69],
-                  playerIdWithPlayableTilePlusOne: 1,
-                },
-                { gameAction: { playTile: { tile: 19 } }, timestamp: 1, revealedTileBagTiles: [79], playerIdWithPlayableTilePlusOne: 1 },
-                { gameAction: { playTile: { tile: 29 } }, timestamp: 1, revealedTileBagTiles: [0], playerIdWithPlayableTilePlusOne: 1 },
-                { gameAction: { playTile: { tile: 39 } }, timestamp: 1, revealedTileBagTiles: [99], playerIdWithPlayableTilePlusOne: 1 },
-              ],
+              gameBoard,
             },
           ],
         },
@@ -623,15 +634,14 @@ describe('MessageToClient.Greetings', () => {
     expect(clientManager.userIDToUser.get(2)!.numGames).toBe(1);
     expect(clientManager.userIDToUser.get(3)!.numGames).toBe(0);
     expect(clientManager.myClient).toBe(clientManager.clientIDToClient.get(4));
-    const game = clientManager.gameIDToGameData.get(11)!.game!;
-    expect(game).toBeDefined();
-    expect(game.gameMode).toBe(PB_GameMode.SINGLES_1);
-    expect(game.hostUserID).toBe(2);
-    expect(game.gameStateHistory.size).toBe(4);
-    expect(game.myUserID).toBe(2);
-    expect(game.playerArrangementMode).toBe(PB_PlayerArrangementMode.RANDOM_ORDER);
-    expect(game.userIDs).toEqual(List([2]));
-    expect(game.usernames).toEqual(List(['2']));
+    const gameSummary = clientManager.gameIDToGameData.get(11)!.gameSummary!;
+    expect(gameSummary).toBeDefined();
+    expect(gameSummary.gameMode).toBe(PB_GameMode.SINGLES_1);
+    expect(gameSummary.hostUserID).toBe(2);
+    expect(gameSummary.playerArrangementMode).toBe(PB_PlayerArrangementMode.RANDOM_ORDER);
+    expect(gameSummary.userIDs).toEqual(List([2]));
+    expect(gameSummary.usernames).toEqual(List(['2']));
+    expect(gameSummary.gameBoard.toJS().flat()).toEqual(gameBoard);
     expectClientAndUserAndGameData(
       clientManager,
       [

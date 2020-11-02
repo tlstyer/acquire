@@ -1,7 +1,16 @@
 import * as WebSocket from 'ws';
 import { TileEnum } from '../common/enums';
 import { setupTextDecoderAndTextEncoder } from '../common/nodeSpecificStuff';
-import { PB_ErrorCode, PB_GameAction, PB_GameMode, PB_MessagesToClient, PB_MessageToClient, PB_MessageToServer, PB_PlayerArrangementMode } from '../common/pb';
+import {
+  PB_ErrorCode,
+  PB_GameAction,
+  PB_GameMode,
+  PB_GameStatus,
+  PB_MessagesToClient,
+  PB_MessageToClient,
+  PB_MessageToServer,
+  PB_PlayerArrangementMode,
+} from '../common/pb';
 import { ConnectionState, GameData, ServerManager, User } from './serverManager';
 import { TestUserDataProvider } from './userDataProvider';
 
@@ -625,7 +634,7 @@ describe('when sending first message', () => {
     });
 
     test('MessageToClient.Greetings message is correct (2)', async () => {
-      const { server } = getServerManagerAndStuff();
+      const { serverManager, server } = getServerManagerAndStuff();
 
       let now = 1234567890;
       Date.now = () => now++;
@@ -677,6 +686,7 @@ describe('when sending first message', () => {
               {
                 gameId: 10,
                 gameDisplayNumber: 1,
+                gameStatus: PB_GameStatus.SETTING_UP,
                 gameMode: PB_GameMode.SINGLES_4,
                 playerArrangementMode: PB_PlayerArrangementMode.RANDOM_ORDER,
                 positions: [{ userId: 1, isHost: true }, {}, {}, {}],
@@ -684,38 +694,11 @@ describe('when sending first message', () => {
               {
                 gameId: 11,
                 gameDisplayNumber: 2,
+                gameStatus: PB_GameStatus.IN_PROGRESS,
                 gameMode: PB_GameMode.SINGLES_1,
                 playerArrangementMode: PB_PlayerArrangementMode.RANDOM_ORDER,
                 positions: [{ userId: 2, isHost: true }],
-                gameStates: [
-                  {
-                    gameAction: { startGame: {} },
-                    timestamp: 1234567903,
-                    revealedTileBagTiles: [89, TileEnum.Unknown, TileEnum.Unknown, TileEnum.Unknown, TileEnum.Unknown, TileEnum.Unknown, TileEnum.Unknown],
-                    playerIdWithPlayableTilePlusOne: 1,
-                  },
-                  {
-                    gameAction: { playTile: { tile: 19 } },
-                    timestamp: 2,
-                    revealedTileRackTiles: [{ tile: 19, playerIdBelongsTo: 0 }],
-                    revealedTileBagTiles: [TileEnum.Unknown],
-                    playerIdWithPlayableTilePlusOne: 1,
-                  },
-                  {
-                    gameAction: { playTile: { tile: 29 } },
-                    timestamp: 2,
-                    revealedTileRackTiles: [{ tile: 29, playerIdBelongsTo: 0 }],
-                    revealedTileBagTiles: [TileEnum.Unknown],
-                    playerIdWithPlayableTilePlusOne: 1,
-                  },
-                  {
-                    gameAction: { playTile: { tile: 39 } },
-                    timestamp: 2,
-                    revealedTileRackTiles: [{ tile: 39, playerIdBelongsTo: 0 }],
-                    revealedTileBagTiles: [TileEnum.Unknown],
-                    playerIdWithPlayableTilePlusOne: 1,
-                  },
-                ],
+                gameBoard: serverManager.gameIDToGameData.get(11)?.game?.gameBoard.toJS().flat(),
               },
             ],
           },
@@ -737,6 +720,7 @@ describe('when sending first message', () => {
               {
                 gameId: 10,
                 gameDisplayNumber: 1,
+                gameStatus: PB_GameStatus.SETTING_UP,
                 gameMode: PB_GameMode.SINGLES_4,
                 playerArrangementMode: PB_PlayerArrangementMode.RANDOM_ORDER,
                 positions: [{ userId: 1, isHost: true }, {}, {}, {}],
@@ -744,20 +728,11 @@ describe('when sending first message', () => {
               {
                 gameId: 11,
                 gameDisplayNumber: 2,
+                gameStatus: PB_GameStatus.IN_PROGRESS,
                 gameMode: PB_GameMode.SINGLES_1,
                 playerArrangementMode: PB_PlayerArrangementMode.RANDOM_ORDER,
                 positions: [{ userId: 2, isHost: true }],
-                gameStates: [
-                  {
-                    gameAction: { startGame: {} },
-                    timestamp: 1234567903,
-                    revealedTileBagTiles: [89, 19, 29, 39, 49, 59, 69],
-                    playerIdWithPlayableTilePlusOne: 1,
-                  },
-                  { gameAction: { playTile: { tile: 19 } }, timestamp: 2, revealedTileBagTiles: [79], playerIdWithPlayableTilePlusOne: 1 },
-                  { gameAction: { playTile: { tile: 29 } }, timestamp: 2, revealedTileBagTiles: [0], playerIdWithPlayableTilePlusOne: 1 },
-                  { gameAction: { playTile: { tile: 39 } }, timestamp: 2, revealedTileBagTiles: [99], playerIdWithPlayableTilePlusOne: 1 },
-                ],
+                gameBoard: serverManager.gameIDToGameData.get(11)?.game?.gameBoard.toJS().flat(),
               },
             ],
           },

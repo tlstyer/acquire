@@ -45,6 +45,7 @@ import { ScoreBoard } from './components/ScoreBoard';
 import { SelectChain, SelectChainTitle } from './components/SelectChain';
 import { TileRack } from './components/TileRack';
 import { GameBoardLabelMode } from './enums';
+import { GameSummary } from './gameSummary';
 
 export enum ClientManagerPage {
   Login,
@@ -154,16 +155,16 @@ export class ClientManager {
                 onEnterClicked={gameData.onEnterClicked}
               />
             );
-          } else {
-            const game = gameData.game!;
+          } else if (gameData.gameSummary !== null) {
+            const gameSummary = gameData.gameSummary;
             return (
               <GameListing
                 key={gameID}
-                gameBoard={game.gameBoard}
-                usernames={game.usernames}
+                gameBoard={gameSummary.gameBoard}
+                usernames={gameSummary.usernames}
                 gameDisplayNumber={gameData.displayNumber}
-                gameMode={game.gameMode}
-                gameStatus={game.gameActionStack[0] instanceof ActionGameOver ? PB_GameStatus.COMPLETED : PB_GameStatus.IN_PROGRESS}
+                gameMode={gameSummary.gameMode}
+                gameStatus={gameSummary.gameStatus}
                 onEnterClicked={gameData.onEnterClicked}
               />
             );
@@ -536,14 +537,13 @@ export class ClientManager {
     }
 
     this.myClient = this.clientIDToClient.get(message.clientId)!;
-    const myUserID = this.myClient!.user.id;
 
     for (let i = 0; i < games.length; i++) {
       const gamePB = games[i];
 
       const gameData = this.gameIDToGameData.get(gamePB.gameId)!;
 
-      if (gamePB.gameStates.length === 0) {
+      if (gamePB.gameStatus === PB_GameStatus.SETTING_UP) {
         gameData.gameSetup = GameSetup.fromGameData(gamePB, this.getUsernameForUserID);
 
         const positions = gamePB.positions;
@@ -572,12 +572,25 @@ export class ClientManager {
           }
         }
 
-        gameData.game = new Game(gamePB.gameMode, gamePB.playerArrangementMode, [], List(userIDs), List(usernames), hostUserID, myUserID);
-
-        const gameStates = gamePB.gameStates;
-        for (let j = 0; j < gameStates.length; j++) {
-          gameData.game.processGameState(gameStates[j]);
-        }
+        gameData.gameSummary = new GameSummary(
+          gamePB.gameMode,
+          gamePB.playerArrangementMode,
+          gamePB.gameStatus,
+          List(userIDs),
+          List(usernames),
+          hostUserID,
+          List([
+            List(gamePB.gameBoard.slice(0, 12)),
+            List(gamePB.gameBoard.slice(12, 24)),
+            List(gamePB.gameBoard.slice(24, 36)),
+            List(gamePB.gameBoard.slice(36, 48)),
+            List(gamePB.gameBoard.slice(48, 60)),
+            List(gamePB.gameBoard.slice(60, 72)),
+            List(gamePB.gameBoard.slice(72, 84)),
+            List(gamePB.gameBoard.slice(84, 96)),
+            List(gamePB.gameBoard.slice(96, 108)),
+          ]),
+        );
       }
     }
 
@@ -761,6 +774,7 @@ export class User {
 
 export class GameData {
   gameSetup: GameSetup | null = null;
+  gameSummary: GameSummary | null = null;
   game: Game | null = null;
 
   clients = new Set<Client>();

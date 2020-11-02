@@ -1,5 +1,6 @@
 import * as WebSocket from 'ws';
 import { Game } from '../common/game';
+import { ActionGameOver } from '../common/gameActions/gameOver';
 import { GameSetup } from '../common/gameSetup';
 import { gameModeToNumPlayers, getNewTileBag, isASCII } from '../common/helpers';
 import {
@@ -11,6 +12,7 @@ import {
   PB_GameSetupAction_KickUser,
   PB_GameSetupAction_SwapPositions,
   PB_GameState,
+  PB_GameStatus,
   PB_Game_Position,
   PB_MessagesToClient,
   PB_MessageToClient,
@@ -724,10 +726,11 @@ export class ServerManager {
         });
 
         gamePB = PB_Game.create({
+          gameStatus: game.gameActionStack[0] instanceof ActionGameOver ? PB_GameStatus.COMPLETED : PB_GameStatus.IN_PROGRESS,
           gameMode: game.gameMode,
           playerArrangementMode: game.playerArrangementMode,
           positions,
-          gameStates,
+          gameBoard: game.gameBoard.toJS().flat(),
         });
       }
 
