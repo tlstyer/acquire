@@ -265,13 +265,9 @@ message PB {
     }
 
     message GameBoardChanged {
-      message Change {
-        int32 tile = 1;
-        GameBoardType game_board_type = 2;
-      }
-
       int32 game_display_number = 1;
-      repeated Change changes = 2;
+      GameBoardType game_board_type = 2;
+      repeated int32 tiles = 3;
     }
 
     message GameActionDone {

@@ -708,22 +708,13 @@ export interface PB_MessageToClient_GameBoardChanged {
      */
     gameDisplayNumber: number;
     /**
-     * @generated from protobuf field: repeated PB.MessageToClient.GameBoardChanged.Change changes = 2;
-     */
-    changes: PB_MessageToClient_GameBoardChanged_Change[];
-}
-/**
- * @generated from protobuf message PB.MessageToClient.GameBoardChanged.Change
- */
-export interface PB_MessageToClient_GameBoardChanged_Change {
-    /**
-     * @generated from protobuf field: int32 tile = 1;
-     */
-    tile: number;
-    /**
      * @generated from protobuf field: PB.GameBoardType game_board_type = 2;
      */
     gameBoardType: PB_GameBoardType;
+    /**
+     * @generated from protobuf field: repeated int32 tiles = 3;
+     */
+    tiles: number[];
 }
 /**
  * @generated from protobuf message PB.MessageToClient.GameActionDone
@@ -3526,11 +3517,12 @@ class PB_MessageToClient_GameBoardChanged$Type extends MessageType<PB_MessageToC
     constructor() {
         super("PB.MessageToClient.GameBoardChanged", [
             { no: 1, name: "game_display_number", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 2, name: "changes", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => PB_MessageToClient_GameBoardChanged_Change }
+            { no: 2, name: "game_board_type", kind: "enum", T: () => ["PB.GameBoardType", PB_GameBoardType] },
+            { no: 3, name: "tiles", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ }
         ]);
     }
     create(value?: PartialMessage<PB_MessageToClient_GameBoardChanged>): PB_MessageToClient_GameBoardChanged {
-        const message = { gameDisplayNumber: 0, changes: [] };
+        const message = { gameDisplayNumber: 0, gameBoardType: 0, tiles: [] };
         if (value !== undefined)
             reflectionMergePartial<PB_MessageToClient_GameBoardChanged>(this, message, value);
         return message;
@@ -3543,8 +3535,15 @@ class PB_MessageToClient_GameBoardChanged$Type extends MessageType<PB_MessageToC
                 case /* int32 game_display_number */ 1:
                     message.gameDisplayNumber = reader.int32();
                     break;
-                case /* repeated PB.MessageToClient.GameBoardChanged.Change changes */ 2:
-                    message.changes.push(PB_MessageToClient_GameBoardChanged_Change.internalBinaryRead(reader, reader.uint32(), options));
+                case /* PB.GameBoardType game_board_type */ 2:
+                    message.gameBoardType = reader.int32();
+                    break;
+                case /* repeated int32 tiles */ 3:
+                    if (wireType === WireType.LengthDelimited)
+                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
+                            message.tiles.push(reader.int32());
+                    else
+                        message.tiles.push(reader.int32());
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -3561,9 +3560,16 @@ class PB_MessageToClient_GameBoardChanged$Type extends MessageType<PB_MessageToC
         /* int32 game_display_number = 1; */
         if (message.gameDisplayNumber !== 0)
             writer.tag(1, WireType.Varint).int32(message.gameDisplayNumber);
-        /* repeated PB.MessageToClient.GameBoardChanged.Change changes = 2; */
-        for (let i = 0; i < message.changes.length; i++)
-            PB_MessageToClient_GameBoardChanged_Change.internalBinaryWrite(message.changes[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* PB.GameBoardType game_board_type = 2; */
+        if (message.gameBoardType !== 0)
+            writer.tag(2, WireType.Varint).int32(message.gameBoardType);
+        /* repeated int32 tiles = 3; */
+        if (message.tiles.length) {
+            writer.tag(3, WireType.LengthDelimited).fork();
+            for (let i = 0; i < message.tiles.length; i++)
+                writer.int32(message.tiles[i]);
+            writer.join();
+        }
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -3571,58 +3577,6 @@ class PB_MessageToClient_GameBoardChanged$Type extends MessageType<PB_MessageToC
     }
 }
 export const PB_MessageToClient_GameBoardChanged = new PB_MessageToClient_GameBoardChanged$Type();
-/**
- * Type for protobuf message PB.MessageToClient.GameBoardChanged.Change
- */
-class PB_MessageToClient_GameBoardChanged_Change$Type extends MessageType<PB_MessageToClient_GameBoardChanged_Change> {
-    constructor() {
-        super("PB.MessageToClient.GameBoardChanged.Change", [
-            { no: 1, name: "tile", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 2, name: "game_board_type", kind: "enum", T: () => ["PB.GameBoardType", PB_GameBoardType] }
-        ]);
-    }
-    create(value?: PartialMessage<PB_MessageToClient_GameBoardChanged_Change>): PB_MessageToClient_GameBoardChanged_Change {
-        const message = { tile: 0, gameBoardType: 0 };
-        if (value !== undefined)
-            reflectionMergePartial<PB_MessageToClient_GameBoardChanged_Change>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PB_MessageToClient_GameBoardChanged_Change): PB_MessageToClient_GameBoardChanged_Change {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* int32 tile */ 1:
-                    message.tile = reader.int32();
-                    break;
-                case /* PB.GameBoardType game_board_type */ 2:
-                    message.gameBoardType = reader.int32();
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: PB_MessageToClient_GameBoardChanged_Change, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* int32 tile = 1; */
-        if (message.tile !== 0)
-            writer.tag(1, WireType.Varint).int32(message.tile);
-        /* PB.GameBoardType game_board_type = 2; */
-        if (message.gameBoardType !== 0)
-            writer.tag(2, WireType.Varint).int32(message.gameBoardType);
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-export const PB_MessageToClient_GameBoardChanged_Change = new PB_MessageToClient_GameBoardChanged_Change$Type();
 /**
  * Type for protobuf message PB.MessageToClient.GameActionDone
  */

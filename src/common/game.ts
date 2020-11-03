@@ -17,15 +17,7 @@ import { GameActionEnum, GameHistoryMessageEnum, ScoreBoardIndexEnum, TileEnum }
 import { ActionBase } from './gameActions/base';
 import { ActionStartGame } from './gameActions/startGame';
 import { calculateBonuses, neighboringTilesLookup } from './helpers';
-import {
-  PB_GameAction,
-  PB_GameBoardType,
-  PB_GameMode,
-  PB_GameState,
-  PB_GameState_RevealedTileRackTile,
-  PB_MessageToClient_GameBoardChanged_Change,
-  PB_PlayerArrangementMode,
-} from './pb';
+import { PB_GameAction, PB_GameBoardType, PB_GameMode, PB_GameState, PB_GameState_RevealedTileRackTile, PB_PlayerArrangementMode } from './pb';
 
 type GameJSON = [PB_GameMode, PB_PlayerArrangementMode, number | null, number, number[], string[], number, number[], ([any] | [any, number])[]];
 
@@ -600,7 +592,8 @@ export class GameState {
   playerGameStates = dummyPlayerGameStates;
   watcherGameState = dummyWatcherGameState;
 
-  gameBoardChanges: PB_MessageToClient_GameBoardChanged_Change[] = [];
+  gameBoardChangeGameBoardType: PB_GameBoardType | undefined = undefined;
+  gameBoardChangeTiles: number[] = [];
 
   constructor(public game: Game, public previousGameState: GameState | null) {
     // assign something to this.nextGameAction so it gets set in the constructor
@@ -633,7 +626,15 @@ export class GameState {
   }
 
   addGameBoardChange(tile: number, gameBoardType: PB_GameBoardType) {
-    this.gameBoardChanges.push(PB_MessageToClient_GameBoardChanged_Change.create({ tile, gameBoardType }));
+    if (this.gameBoardChangeGameBoardType !== undefined) {
+      if (gameBoardType !== this.gameBoardChangeGameBoardType) {
+        throw new Error('different gameBoardType than other game board changes for this game state');
+      }
+    } else {
+      this.gameBoardChangeGameBoardType = gameBoardType;
+    }
+
+    this.gameBoardChangeTiles.push(tile);
   }
 
   addGameHistoryMessage(gameHistoryMessage: GameHistoryMessageEnum, playerID: number | null, parameters: any[]) {

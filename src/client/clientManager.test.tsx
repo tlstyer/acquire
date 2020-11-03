@@ -1496,16 +1496,8 @@ describe('MessageToClient.GameStarted, MessageToClient.GameBoardChanged, and Mes
       PB_MessageToClient.create({
         gameBoardChanged: {
           gameDisplayNumber: 1,
-          changes: [
-            {
-              tile: 89,
-              gameBoardType: PB_GameBoardType.NOTHING_YET,
-            },
-            {
-              tile: 19,
-              gameBoardType: PB_GameBoardType.NOTHING_YET,
-            },
-          ],
+          gameBoardType: PB_GameBoardType.NOTHING_YET,
+          tiles: [89, 19],
         },
       }),
     ]);
@@ -1577,12 +1569,8 @@ describe('MessageToClient.GameStarted, MessageToClient.GameBoardChanged, and Mes
       PB_MessageToClient.create({
         gameBoardChanged: {
           gameDisplayNumber: 1,
-          changes: [
-            {
-              tile: 65,
-              gameBoardType: PB_GameBoardType.NOTHING_YET,
-            },
-          ],
+          gameBoardType: PB_GameBoardType.NOTHING_YET,
+          tiles: [65],
         },
       }),
       PB_MessageToClient.create({

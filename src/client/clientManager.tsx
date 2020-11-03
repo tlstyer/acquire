@@ -706,10 +706,11 @@ export class ClientManager {
     const gameData = this.gameDisplayNumberToGameData.get(message.gameDisplayNumber)!;
     const gameSummary = gameData.gameSummary!;
 
-    const changes = message.changes;
-    for (let i = 0; i < changes.length; i++) {
-      const change = changes[i];
-      gameSummary.setGameBoardPosition(change.tile, change.gameBoardType);
+    const gameBoardType = message.gameBoardType;
+    const tiles = message.tiles;
+    for (let i = 0; i < tiles.length; i++) {
+      const tile = tiles[i];
+      gameSummary.setGameBoardPosition(tile, gameBoardType);
     }
   }
 

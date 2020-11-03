@@ -644,11 +644,12 @@ export class ServerManager {
     const gameState = game.gameStateHistory.get(game.gameStateHistory.size - 1)!;
 
     // queue GameBoardChanged messages to all clients
-    if (gameState.gameBoardChanges.length > 0) {
+    if (gameState.gameBoardChangeGameBoardType !== undefined) {
       const gameBoardChanged = PB_MessageToClient.create({
         gameBoardChanged: {
           gameDisplayNumber: gameData.displayNumber,
-          changes: gameState.gameBoardChanges,
+          gameBoardType: gameState.gameBoardChangeGameBoardType,
+          tiles: gameState.gameBoardChangeTiles,
         },
       });
 

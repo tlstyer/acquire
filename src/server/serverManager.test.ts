@@ -1511,16 +1511,8 @@ describe('all approve of game setup', () => {
     const expectedGameBoardChangedMessage = PB_MessageToClient.create({
       gameBoardChanged: {
         gameDisplayNumber: 1,
-        changes: [
-          {
-            tile: 89,
-            gameBoardType: PB_GameBoardType.NOTHING_YET,
-          },
-          {
-            tile: 19,
-            gameBoardType: PB_GameBoardType.NOTHING_YET,
-          },
-        ],
+        gameBoardType: PB_GameBoardType.NOTHING_YET,
+        tiles: [89, 19],
       },
     });
     expect(hostConnection.receivedMessages[0]).toEqual([
@@ -1715,12 +1707,8 @@ describe('do game action', () => {
     const expectedGameBoardChangedMessage = PB_MessageToClient.create({
       gameBoardChanged: {
         gameDisplayNumber: 1,
-        changes: [
-          {
-            tile: 29,
-            gameBoardType: PB_GameBoardType.NOTHING_YET,
-          },
-        ],
+        gameBoardType: PB_GameBoardType.NOTHING_YET,
+        tiles: [29],
       },
     });
 
