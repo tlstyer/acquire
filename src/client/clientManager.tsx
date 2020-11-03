@@ -575,12 +575,15 @@ export class ClientManager {
           }
         }
 
+        const userIDsList = List(userIDs);
+        const usernamesList = List(usernames);
+
         gameData.gameSummary = new GameSummary(
           gamePB.gameMode,
           gamePB.playerArrangementMode,
           gamePB.gameStatus,
-          List(userIDs),
-          List(usernames),
+          userIDsList,
+          usernamesList,
           hostUserID,
           List([
             List(gamePB.gameBoard.slice(0, 12)),
@@ -594,6 +597,7 @@ export class ClientManager {
             List(gamePB.gameBoard.slice(96, 108)),
           ]),
         );
+        gameData.game = new Game(gamePB.gameMode, gamePB.playerArrangementMode, [], userIDsList, usernamesList, hostUserID, this.myClient!.user.id);
       }
     }
 

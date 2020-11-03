@@ -634,14 +634,27 @@ describe('MessageToClient.Greetings', () => {
     expect(clientManager.userIDToUser.get(2)!.numGames).toBe(1);
     expect(clientManager.userIDToUser.get(3)!.numGames).toBe(0);
     expect(clientManager.myClient).toBe(clientManager.clientIDToClient.get(4));
+
     const gameSummary = clientManager.gameIDToGameData.get(11)!.gameSummary!;
     expect(gameSummary).toBeDefined();
     expect(gameSummary.gameMode).toBe(PB_GameMode.SINGLES_1);
-    expect(gameSummary.hostUserID).toBe(2);
     expect(gameSummary.playerArrangementMode).toBe(PB_PlayerArrangementMode.RANDOM_ORDER);
+    expect(gameSummary.gameStatus).toBe(PB_GameStatus.IN_PROGRESS);
     expect(gameSummary.userIDs).toEqual(List([2]));
     expect(gameSummary.usernames).toEqual(List(['2']));
+    expect(gameSummary.hostUserID).toBe(2);
     expect(gameSummary.gameBoard.toJS().flat()).toEqual(gameBoard);
+
+    const game = clientManager.gameIDToGameData.get(11)!.game!;
+    expect(game).toBeDefined();
+    expect(game.gameMode).toBe(PB_GameMode.SINGLES_1);
+    expect(game.playerArrangementMode).toBe(PB_PlayerArrangementMode.RANDOM_ORDER);
+    expect(game.tileBag).toEqual([]);
+    expect(game.userIDs).toEqual(List([2]));
+    expect(game.usernames).toEqual(List(['2']));
+    expect(game.hostUserID).toBe(2);
+    expect(game.myUserID).toBe(2);
+
     expectClientAndUserAndGameData(
       clientManager,
       [
