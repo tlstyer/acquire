@@ -643,39 +643,34 @@ export class ServerManager {
     const game = gameData.game!;
     const gameState = game.gameStateHistory.get(game.gameStateHistory.size - 1)!;
 
+    // queue GameBoardChanged messages to all clients
+    if (gameState.gameBoardChanges.length > 0) {
+      const gameBoardChanged = PB_MessageToClient.create({
+        gameBoardChanged: {
+          gameDisplayNumber: gameData.displayNumber,
+          changes: gameState.gameBoardChanges,
+        },
+      });
+
+      this.webSocketToClient.forEach((aClient) => {
+        aClient.queueMessage(gameBoardChanged);
+      });
+    }
+
+    // queue GameActionDone player and watcher messages to clients in the game room
     gameState.createPlayerAndWatcherGameStates();
 
-    const playerUserIDs = new Set<number>();
+    gameData.clients.forEach((aClient) => {
+      const playerID = game.userIDs.indexOf(aClient.user.id);
 
-    // send player messages
-    game.userIDs.forEach((userID, playerID) => {
-      const user = this.userIDToUser.get(userID)!;
-      if (user.clients.size > 0) {
-        const gameActionDoneMessage = PB_MessageToClient.create({
+      aClient.queueMessage(
+        PB_MessageToClient.create({
           gameActionDone: {
             gameDisplayNumber: gameData.displayNumber,
-            gameState: gameState.playerGameStates[playerID],
+            gameState: playerID >= 0 ? gameState.playerGameStates[playerID] : gameState.watcherGameState,
           },
-        });
-        user.clients.forEach((aClient) => {
-          aClient.queueMessage(gameActionDoneMessage);
-        });
-      }
-
-      playerUserIDs.add(userID);
-    });
-
-    // send watcher messages to everybody else
-    const gameActionDoneMessage = PB_MessageToClient.create({
-      gameActionDone: {
-        gameDisplayNumber: gameData.displayNumber,
-        gameState: gameState.watcherGameState,
-      },
-    });
-    this.webSocketToClient.forEach((aClient) => {
-      if (!playerUserIDs.has(aClient.user.id)) {
-        aClient.queueMessage(gameActionDoneMessage);
-      }
+        }),
+      );
     });
   }
 

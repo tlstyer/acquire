@@ -23,6 +23,7 @@ import {
   PB_MessageToClient_ClientExitedGame,
   PB_MessageToClient_FatalError,
   PB_MessageToClient_GameActionDone,
+  PB_MessageToClient_GameBoardChanged,
   PB_MessageToClient_GameCreated,
   PB_MessageToClient_GameSetupChanged,
   PB_MessageToClient_GameStarted,
@@ -486,6 +487,8 @@ export class ClientManager {
         this.onMessageGameSetupChanged(message.gameSetupChanged);
       } else if (message.gameStarted) {
         this.onMessageGameStarted(message.gameStarted);
+      } else if (message.gameBoardChanged) {
+        this.onMessageGameBoardChanged(message.gameBoardChanged);
       } else if (message.gameActionDone) {
         this.onMessageGameActionDone(message.gameActionDone);
       }
@@ -679,21 +682,34 @@ export class ClientManager {
     const gameData = this.gameDisplayNumberToGameData.get(message.gameDisplayNumber)!;
     const gameSetup = gameData.gameSetup!;
 
-    const game = new Game(
-      gameSetup.gameMode,
-      gameSetup.playerArrangementMode,
-      [],
-      List(message.userIds),
-      List(message.userIds.map(this.getUsernameForUserID)),
-      gameSetup.hostUserID,
-      this.myClient!.user.id,
-    );
+    const userIDs = List(message.userIds);
+    const usernames = List(message.userIds.map(this.getUsernameForUserID));
 
     gameData.gameSetup = null;
-    gameData.game = game;
+    gameData.gameSummary = new GameSummary(
+      gameSetup.gameMode,
+      gameSetup.playerArrangementMode,
+      PB_GameStatus.IN_PROGRESS,
+      userIDs,
+      usernames,
+      gameSetup.hostUserID,
+      defaultGameBoard,
+    );
+    gameData.game = new Game(gameSetup.gameMode, gameSetup.playerArrangementMode, [], userIDs, usernames, gameSetup.hostUserID, this.myClient!.user.id);
 
     if (this.myClient!.gameData === gameData) {
       this.setPage(ClientManagerPage.Game);
+    }
+  }
+
+  onMessageGameBoardChanged(message: PB_MessageToClient_GameBoardChanged) {
+    const gameData = this.gameDisplayNumberToGameData.get(message.gameDisplayNumber)!;
+    const gameSummary = gameData.gameSummary!;
+
+    const changes = message.changes;
+    for (let i = 0; i < changes.length; i++) {
+      const change = changes[i];
+      gameSummary.setGameBoardPosition(change.tile, change.gameBoardType);
     }
   }
 

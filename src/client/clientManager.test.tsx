@@ -1,5 +1,5 @@
 import { List } from 'immutable';
-import { GameActionEnum, TileEnum } from '../common/enums';
+import { GameActionEnum } from '../common/enums';
 import { setupTextDecoderAndTextEncoder } from '../common/nodeSpecificStuff';
 import {
   PB_ErrorCode,
@@ -1459,7 +1459,7 @@ describe('MessageToClient.GameSetupChanged', () => {
   });
 });
 
-describe('MessageToClient.GameStarted and MessageToClient.GameActionDone', () => {
+describe('MessageToClient.GameStarted, MessageToClient.GameBoardChanged, and MessageToClient.GameActionDone', () => {
   test('messages are processed correctly when not in the game', () => {
     const { clientManager } = getClientManagerAndStuff();
 
@@ -1494,29 +1494,18 @@ describe('MessageToClient.GameStarted and MessageToClient.GameActionDone', () =>
         },
       }),
       PB_MessageToClient.create({
-        gameActionDone: {
+        gameBoardChanged: {
           gameDisplayNumber: 1,
-          gameState: {
-            gameAction: { startGame: {} },
-            timestamp: 123456789,
-            revealedTileBagTiles: [
-              89,
-              19,
-              TileEnum.Unknown,
-              TileEnum.Unknown,
-              TileEnum.Unknown,
-              TileEnum.Unknown,
-              TileEnum.Unknown,
-              TileEnum.Unknown,
-              TileEnum.Unknown,
-              TileEnum.Unknown,
-              TileEnum.Unknown,
-              TileEnum.Unknown,
-              TileEnum.Unknown,
-              TileEnum.Unknown,
-            ],
-            playerIdWithPlayableTilePlusOne: 1,
-          },
+          changes: [
+            {
+              tile: 89,
+              gameBoardType: PB_GameBoardType.NOTHING_YET,
+            },
+            {
+              tile: 19,
+              gameBoardType: PB_GameBoardType.NOTHING_YET,
+            },
+          ],
         },
       }),
     ]);
@@ -1531,6 +1520,17 @@ describe('MessageToClient.GameStarted and MessageToClient.GameActionDone', () =>
     );
 
     expect(clientManager.userIDToUser.get(1)!.numGames).toBe(1);
+
+    const gameSummary = clientManager.gameIDToGameData.get(10)!.gameSummary!;
+    expect(gameSummary.gameMode).toBe(PB_GameMode.SINGLES_2);
+    expect(gameSummary.playerArrangementMode).toBe(PB_PlayerArrangementMode.RANDOM_ORDER);
+    expect(gameSummary.hostUserID).toBe(1);
+    const expectedGameBoard: PB_GameBoardType[] = new Array(108);
+    expectedGameBoard.fill(PB_GameBoardType.NOTHING);
+    expectedGameBoard[14] = PB_GameBoardType.NOTHING_YET;
+    expectedGameBoard[105] = PB_GameBoardType.NOTHING_YET;
+    expect(gameSummary.gameBoard.toJS().flat()).toEqual(expectedGameBoard);
+
     const game = clientManager.gameIDToGameData.get(10)!.game!;
     expect(game.gameMode).toBe(PB_GameMode.SINGLES_2);
     expect(game.playerArrangementMode).toBe(PB_PlayerArrangementMode.RANDOM_ORDER);
@@ -1575,6 +1575,17 @@ describe('MessageToClient.GameStarted and MessageToClient.GameActionDone', () =>
         },
       }),
       PB_MessageToClient.create({
+        gameBoardChanged: {
+          gameDisplayNumber: 1,
+          changes: [
+            {
+              tile: 65,
+              gameBoardType: PB_GameBoardType.NOTHING_YET,
+            },
+          ],
+        },
+      }),
+      PB_MessageToClient.create({
         gameActionDone: {
           gameDisplayNumber: 1,
           gameState: {
@@ -1593,6 +1604,16 @@ describe('MessageToClient.GameStarted and MessageToClient.GameActionDone', () =>
     expectClientAndUserAndGameData(clientManager, [new UserData(1, 'user', [new ClientData(2, 1)])], [new GameDataData(1, 1, [1])]);
 
     expect(clientManager.userIDToUser.get(1)!.numGames).toBe(1);
+
+    const gameSummary = clientManager.gameIDToGameData.get(1)!.gameSummary!;
+    expect(gameSummary.gameMode).toBe(PB_GameMode.SINGLES_1);
+    expect(gameSummary.playerArrangementMode).toBe(PB_PlayerArrangementMode.RANDOM_ORDER);
+    expect(gameSummary.hostUserID).toBe(1);
+    const expectedGameBoard: PB_GameBoardType[] = new Array(108);
+    expectedGameBoard.fill(PB_GameBoardType.NOTHING);
+    expectedGameBoard[31] = PB_GameBoardType.NOTHING_YET;
+    expect(gameSummary.gameBoard.toJS().flat()).toEqual(expectedGameBoard);
+
     const game = clientManager.gameIDToGameData.get(1)!.game!;
     expect(game.gameMode).toBe(PB_GameMode.SINGLES_1);
     expect(game.playerArrangementMode).toBe(PB_PlayerArrangementMode.RANDOM_ORDER);

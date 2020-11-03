@@ -17,7 +17,15 @@ import { GameActionEnum, GameHistoryMessageEnum, ScoreBoardIndexEnum, TileEnum }
 import { ActionBase } from './gameActions/base';
 import { ActionStartGame } from './gameActions/startGame';
 import { calculateBonuses, neighboringTilesLookup } from './helpers';
-import { PB_GameAction, PB_GameBoardType, PB_GameMode, PB_GameState, PB_GameState_RevealedTileRackTile, PB_PlayerArrangementMode } from './pb';
+import {
+  PB_GameAction,
+  PB_GameBoardType,
+  PB_GameMode,
+  PB_GameState,
+  PB_GameState_RevealedTileRackTile,
+  PB_MessageToClient_GameBoardChanged_Change,
+  PB_PlayerArrangementMode,
+} from './pb';
 
 type GameJSON = [PB_GameMode, PB_PlayerArrangementMode, number | null, number, number[], string[], number, number[], ([any] | [any, number])[]];
 
@@ -340,6 +348,8 @@ export class Game {
       this.getCurrentGameState().addPlayedTile(tile, this.gameActionStack[this.gameActionStack.length - 1].playerID);
     }
 
+    this.getCurrentGameState().addGameBoardChange(tile, gameBoardType);
+
     this.gameBoardTypeCounts[previousGameBoardType]--;
     this.gameBoard = this.gameBoard.setIn([tile % 9, tile / 9], gameBoardType);
     this.gameBoardTypeCounts[gameBoardType]++;
@@ -590,6 +600,8 @@ export class GameState {
   playerGameStates = dummyPlayerGameStates;
   watcherGameState = dummyWatcherGameState;
 
+  gameBoardChanges: PB_MessageToClient_GameBoardChanged_Change[] = [];
+
   constructor(public game: Game, public previousGameState: GameState | null) {
     // assign something to this.nextGameAction so it gets set in the constructor
     this.nextGameAction = game.gameActionStack[game.gameActionStack.length - 1];
@@ -618,6 +630,10 @@ export class GameState {
       const revealedTileRackTile = PB_GameState_RevealedTileRackTile.create({ tile, playerIdBelongsTo: playerID });
       this.revealedTileRackTiles.push(revealedTileRackTile);
     }
+  }
+
+  addGameBoardChange(tile: number, gameBoardType: PB_GameBoardType) {
+    this.gameBoardChanges.push(PB_MessageToClient_GameBoardChanged_Change.create({ tile, gameBoardType }));
   }
 
   addGameHistoryMessage(gameHistoryMessage: GameHistoryMessageEnum, playerID: number | null, parameters: any[]) {

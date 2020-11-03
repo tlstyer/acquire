@@ -4,6 +4,7 @@ import { setupTextDecoderAndTextEncoder } from '../common/nodeSpecificStuff';
 import {
   PB_ErrorCode,
   PB_GameAction,
+  PB_GameBoardType,
   PB_GameMode,
   PB_GameStatus,
   PB_MessagesToClient,
@@ -140,15 +141,18 @@ async function getServerManagerAndStuffAfterAllApprovedOfGameSetup() {
 
   const hostConnection = await connectToServer(server, 'host');
   const opponentConnection = await connectToServer(server, 'opponent');
+  const watcherConnection = await connectToServer(server, 'watcher');
   const anotherConnection = await connectToServer(server, 'another');
   hostConnection.sendMessage(messageCreateGame(PB_GameMode.SINGLES_2));
   opponentConnection.sendMessage(messageEnterGame(1));
   opponentConnection.sendMessage(messageJoinGame());
+  watcherConnection.sendMessage(messageEnterGame(1));
 
   hostConnection.sendMessage(messageApproveOfGameSetup());
 
   hostConnection.clearReceivedMessages();
   opponentConnection.clearReceivedMessages();
+  watcherConnection.clearReceivedMessages();
   anotherConnection.clearReceivedMessages();
   opponentConnection.sendMessage(messageApproveOfGameSetup());
 
@@ -156,21 +160,30 @@ async function getServerManagerAndStuffAfterAllApprovedOfGameSetup() {
     serverManager,
     hostConnection,
     opponentConnection,
+    watcherConnection,
     anotherConnection,
   };
 }
 
 async function getServerManagerAndStuffAfterGameStarted() {
-  const { serverManager, hostConnection, opponentConnection, anotherConnection } = await getServerManagerAndStuffAfterAllApprovedOfGameSetup();
+  const {
+    serverManager,
+    hostConnection,
+    opponentConnection,
+    watcherConnection,
+    anotherConnection,
+  } = await getServerManagerAndStuffAfterAllApprovedOfGameSetup();
 
   hostConnection.clearReceivedMessages();
   opponentConnection.clearReceivedMessages();
+  watcherConnection.clearReceivedMessages();
   anotherConnection.clearReceivedMessages();
 
   return {
     serverManager,
     hostConnection,
     opponentConnection,
+    watcherConnection,
     anotherConnection,
   };
 }
@@ -1465,8 +1478,14 @@ describe('kick user', () => {
 });
 
 describe('all approve of game setup', () => {
-  test('sends MessageToClient.GameStarted and MessageToClient.GameActionDone', async () => {
-    const { serverManager, hostConnection, opponentConnection, anotherConnection } = await getServerManagerAndStuffAfterAllApprovedOfGameSetup();
+  test('sends MessageToClient.GameStarted, MessageToClient.GameBoardChanged, and MessageToClient.GameActionDone', async () => {
+    const {
+      serverManager,
+      hostConnection,
+      opponentConnection,
+      watcherConnection,
+      anotherConnection,
+    } = await getServerManagerAndStuffAfterAllApprovedOfGameSetup();
 
     expect(hostConnection.receivedMessages.length).toBe(1);
     expect(opponentConnection.receivedMessages.length).toBe(1);
@@ -1477,7 +1496,8 @@ describe('all approve of game setup', () => {
       [
         new UserData(1, 'host', [new ClientData(1, hostConnection, 10)]),
         new UserData(2, 'opponent', [new ClientData(2, opponentConnection, 10)]),
-        new UserData(3, 'another', [new ClientData(3, anotherConnection)]),
+        new UserData(3, 'watcher', [new ClientData(3, watcherConnection, 10)]),
+        new UserData(4, 'another', [new ClientData(4, anotherConnection)]),
       ],
       [new GameDataData(10, 1, [1, 2])],
     );
@@ -1488,8 +1508,24 @@ describe('all approve of game setup', () => {
         userIds: [2, 1],
       },
     });
+    const expectedGameBoardChangedMessage = PB_MessageToClient.create({
+      gameBoardChanged: {
+        gameDisplayNumber: 1,
+        changes: [
+          {
+            tile: 89,
+            gameBoardType: PB_GameBoardType.NOTHING_YET,
+          },
+          {
+            tile: 19,
+            gameBoardType: PB_GameBoardType.NOTHING_YET,
+          },
+        ],
+      },
+    });
     expect(hostConnection.receivedMessages[0]).toEqual([
       expectedGameStartedMessage,
+      expectedGameBoardChangedMessage,
       PB_MessageToClient.create({
         gameActionDone: {
           gameDisplayNumber: 1,
@@ -1519,6 +1555,7 @@ describe('all approve of game setup', () => {
     ]);
     expect(opponentConnection.receivedMessages[0]).toEqual([
       expectedGameStartedMessage,
+      expectedGameBoardChangedMessage,
       PB_MessageToClient.create({
         gameActionDone: {
           gameDisplayNumber: 1,
@@ -1546,8 +1583,9 @@ describe('all approve of game setup', () => {
         },
       }),
     ]);
-    expect(anotherConnection.receivedMessages[0]).toEqual([
+    expect(watcherConnection.receivedMessages[0]).toEqual([
       expectedGameStartedMessage,
+      expectedGameBoardChangedMessage,
       PB_MessageToClient.create({
         gameActionDone: {
           gameDisplayNumber: 1,
@@ -1575,6 +1613,7 @@ describe('all approve of game setup', () => {
         },
       }),
     ]);
+    expect(anotherConnection.receivedMessages[0]).toEqual([expectedGameStartedMessage, expectedGameBoardChangedMessage]);
 
     const gameData = serverManager.gameDisplayNumberToGameData.get(1)!;
     expect(gameData.gameSetup).toBe(null);
@@ -1660,7 +1699,7 @@ describe('do game action', () => {
   });
 
   test('does game action when providing valid game action parameters', async () => {
-    const { hostConnection, opponentConnection, anotherConnection } = await getServerManagerAndStuffAfterGameStarted();
+    const { hostConnection, opponentConnection, watcherConnection, anotherConnection } = await getServerManagerAndStuffAfterGameStarted();
 
     Date.now = () => 1234567890 + 1000;
 
@@ -1670,9 +1709,23 @@ describe('do game action', () => {
 
     expect(hostConnection.receivedMessages.length).toBe(1);
     expect(opponentConnection.receivedMessages.length).toBe(1);
+    expect(watcherConnection.receivedMessages.length).toBe(1);
     expect(anotherConnection.receivedMessages.length).toBe(1);
 
+    const expectedGameBoardChangedMessage = PB_MessageToClient.create({
+      gameBoardChanged: {
+        gameDisplayNumber: 1,
+        changes: [
+          {
+            tile: 29,
+            gameBoardType: PB_GameBoardType.NOTHING_YET,
+          },
+        ],
+      },
+    });
+
     expect(hostConnection.receivedMessages[0]).toEqual([
+      expectedGameBoardChangedMessage,
       PB_MessageToClient.create({
         gameActionDone: {
           gameDisplayNumber: 1,
@@ -1687,6 +1740,7 @@ describe('do game action', () => {
       }),
     ]);
     expect(opponentConnection.receivedMessages[0]).toEqual([
+      expectedGameBoardChangedMessage,
       PB_MessageToClient.create({
         gameActionDone: {
           gameDisplayNumber: 1,
@@ -1699,7 +1753,8 @@ describe('do game action', () => {
         },
       }),
     ]);
-    expect(anotherConnection.receivedMessages[0]).toEqual([
+    expect(watcherConnection.receivedMessages[0]).toEqual([
+      expectedGameBoardChangedMessage,
       PB_MessageToClient.create({
         gameActionDone: {
           gameDisplayNumber: 1,
@@ -1713,5 +1768,6 @@ describe('do game action', () => {
         },
       }),
     ]);
+    expect(anotherConnection.receivedMessages[0]).toEqual([expectedGameBoardChangedMessage]);
   });
 });

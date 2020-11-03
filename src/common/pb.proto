@@ -264,6 +264,16 @@ message PB {
       repeated int32 user_ids = 2;
     }
 
+    message GameBoardChanged {
+      message Change {
+        int32 tile = 1;
+        GameBoardType game_board_type = 2;
+      }
+
+      int32 game_display_number = 1;
+      repeated Change changes = 2;
+    }
+
     message GameActionDone {
       int32 game_display_number = 1;
       GameState game_state = 2;
@@ -278,7 +288,8 @@ message PB {
     ClientExitedGame client_exited_game = 7;
     GameSetupChanged game_setup_changed = 8;
     GameStarted game_started = 9;
-    GameActionDone game_action_done = 10;
+    GameBoardChanged game_board_changed = 10;
+    GameActionDone game_action_done = 11;
   }
 
   message MessagesToClient { repeated MessageToClient messages_to_client = 1; }
