@@ -1567,13 +1567,6 @@ describe('MessageToClient.GameStarted, MessageToClient.GameBoardChanged, and Mes
         },
       }),
       PB_MessageToClient.create({
-        gameBoardChanged: {
-          gameDisplayNumber: 1,
-          gameBoardType: PB_GameBoardType.NOTHING_YET,
-          tiles: [65],
-        },
-      }),
-      PB_MessageToClient.create({
         gameActionDone: {
           gameDisplayNumber: 1,
           gameState: {

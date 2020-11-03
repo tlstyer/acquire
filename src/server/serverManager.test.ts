@@ -1508,16 +1508,9 @@ describe('all approve of game setup', () => {
         userIds: [2, 1],
       },
     });
-    const expectedGameBoardChangedMessage = PB_MessageToClient.create({
-      gameBoardChanged: {
-        gameDisplayNumber: 1,
-        gameBoardType: PB_GameBoardType.NOTHING_YET,
-        tiles: [89, 19],
-      },
-    });
+
     expect(hostConnection.receivedMessages[0]).toEqual([
       expectedGameStartedMessage,
-      expectedGameBoardChangedMessage,
       PB_MessageToClient.create({
         gameActionDone: {
           gameDisplayNumber: 1,
@@ -1547,7 +1540,6 @@ describe('all approve of game setup', () => {
     ]);
     expect(opponentConnection.receivedMessages[0]).toEqual([
       expectedGameStartedMessage,
-      expectedGameBoardChangedMessage,
       PB_MessageToClient.create({
         gameActionDone: {
           gameDisplayNumber: 1,
@@ -1577,7 +1569,6 @@ describe('all approve of game setup', () => {
     ]);
     expect(watcherConnection.receivedMessages[0]).toEqual([
       expectedGameStartedMessage,
-      expectedGameBoardChangedMessage,
       PB_MessageToClient.create({
         gameActionDone: {
           gameDisplayNumber: 1,
@@ -1605,7 +1596,16 @@ describe('all approve of game setup', () => {
         },
       }),
     ]);
-    expect(anotherConnection.receivedMessages[0]).toEqual([expectedGameStartedMessage, expectedGameBoardChangedMessage]);
+    expect(anotherConnection.receivedMessages[0]).toEqual([
+      expectedGameStartedMessage,
+      PB_MessageToClient.create({
+        gameBoardChanged: {
+          gameDisplayNumber: 1,
+          gameBoardType: PB_GameBoardType.NOTHING_YET,
+          tiles: [89, 19],
+        },
+      }),
+    ]);
 
     const gameData = serverManager.gameDisplayNumberToGameData.get(1)!;
     expect(gameData.gameSetup).toBe(null);
@@ -1704,16 +1704,7 @@ describe('do game action', () => {
     expect(watcherConnection.receivedMessages.length).toBe(1);
     expect(anotherConnection.receivedMessages.length).toBe(1);
 
-    const expectedGameBoardChangedMessage = PB_MessageToClient.create({
-      gameBoardChanged: {
-        gameDisplayNumber: 1,
-        gameBoardType: PB_GameBoardType.NOTHING_YET,
-        tiles: [29],
-      },
-    });
-
     expect(hostConnection.receivedMessages[0]).toEqual([
-      expectedGameBoardChangedMessage,
       PB_MessageToClient.create({
         gameActionDone: {
           gameDisplayNumber: 1,
@@ -1728,7 +1719,6 @@ describe('do game action', () => {
       }),
     ]);
     expect(opponentConnection.receivedMessages[0]).toEqual([
-      expectedGameBoardChangedMessage,
       PB_MessageToClient.create({
         gameActionDone: {
           gameDisplayNumber: 1,
@@ -1742,7 +1732,6 @@ describe('do game action', () => {
       }),
     ]);
     expect(watcherConnection.receivedMessages[0]).toEqual([
-      expectedGameBoardChangedMessage,
       PB_MessageToClient.create({
         gameActionDone: {
           gameDisplayNumber: 1,
@@ -1756,6 +1745,14 @@ describe('do game action', () => {
         },
       }),
     ]);
-    expect(anotherConnection.receivedMessages[0]).toEqual([expectedGameBoardChangedMessage]);
+    expect(anotherConnection.receivedMessages[0]).toEqual([
+      PB_MessageToClient.create({
+        gameBoardChanged: {
+          gameDisplayNumber: 1,
+          gameBoardType: PB_GameBoardType.NOTHING_YET,
+          tiles: [29],
+        },
+      }),
+    ]);
   });
 });

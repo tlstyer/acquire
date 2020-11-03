@@ -643,7 +643,7 @@ export class ServerManager {
     const game = gameData.game!;
     const gameState = game.gameStateHistory.get(game.gameStateHistory.size - 1)!;
 
-    // queue GameBoardChanged messages to all clients
+    // queue GameBoardChanged messages to clients not in the game room
     if (gameState.gameBoardChangeGameBoardType !== undefined) {
       const gameBoardChanged = PB_MessageToClient.create({
         gameBoardChanged: {
@@ -654,7 +654,9 @@ export class ServerManager {
       });
 
       this.webSocketToClient.forEach((aClient) => {
-        aClient.queueMessage(gameBoardChanged);
+        if (!gameData.clients.has(aClient)) {
+          aClient.queueMessage(gameBoardChanged);
+        }
       });
     }
 

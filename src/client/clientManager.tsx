@@ -716,12 +716,17 @@ export class ClientManager {
 
   onMessageGameActionDone(message: PB_MessageToClient_GameActionDone) {
     const gameData = this.gameDisplayNumberToGameData.get(message.gameDisplayNumber)!;
+    const gameSummary = gameData.gameSummary!;
     const game = gameData.game!;
 
     game.processGameState(message.gameState!);
 
     if (this.myClient!.gameData === gameData) {
       this.updateMyRequiredGameAction();
+    }
+
+    if (game.gameBoard !== gameSummary.gameBoard) {
+      gameSummary.gameBoard = game.gameBoard;
     }
   }
 
