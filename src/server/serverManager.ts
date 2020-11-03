@@ -361,9 +361,8 @@ export class ServerManager {
   }
 
   onMessageEnterGame(client: Client, message: PB_MessageToServer_EnterGame) {
-    const gameDisplayNumber = message.gameDisplayNumber;
-    const gameData = this.gameDisplayNumberToGameData.get(gameDisplayNumber);
-    if (gameData === undefined) {
+    const gameData = this.gameDisplayNumberToGameData.get(message.gameDisplayNumber);
+    if (gameData === undefined || message.gameStateHistorySize < 0 || (gameData.game && message.gameStateHistorySize > gameData.game.gameStateHistory.size)) {
       this.kickWithError(client.webSocket, PB_ErrorCode.INVALID_MESSAGE);
       return;
     }
@@ -385,6 +384,22 @@ export class ServerManager {
     this.webSocketToClient.forEach((aClient) => {
       aClient.queueMessage(clientEnteredGameMessage);
     });
+
+    const game = gameData.game;
+    if (game) {
+      const gameStateHistory = game.gameStateHistory;
+      const playerID = game.userIDs.indexOf(client.user.id);
+
+      for (let gameStateHistoryIndex = message.gameStateHistorySize; gameStateHistoryIndex < gameStateHistory.size; gameStateHistoryIndex++) {
+        const gameState = gameStateHistory.get(gameStateHistoryIndex)!;
+
+        client.queueMessage(
+          PB_MessageToClient.create({
+            gameActionDone: playerID >= 0 ? gameState.playerGameStates[playerID] : gameState.watcherGameState,
+          }),
+        );
+      }
+    }
   }
 
   onMessageExitGame(client: Client) {

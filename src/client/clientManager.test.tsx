@@ -398,7 +398,7 @@ describe('onEnterClicked', () => {
 
     clientManager.gameDisplayNumberToGameData.get(1)!.onEnterClicked();
 
-    expect(testWebSocket!.sentMessages).toEqual([{ enterGame: { gameDisplayNumber: 1 } }]);
+    expect(testWebSocket!.sentMessages).toEqual([{ enterGame: { gameDisplayNumber: 1, gameStateHistorySize: 0 } }]);
   });
 
   test('does not send EnterGame message when not connected', () => {

@@ -17,6 +17,8 @@ import { TestUserDataProvider } from './userDataProvider';
 
 setupTextDecoderAndTextEncoder();
 
+Math.random = () => 0.1;
+
 class TestServer {
   connectionListener: ((conn: TestWebSocket) => any) | null = null;
 
@@ -81,8 +83,8 @@ function messageCreateGame(gameMode: PB_GameMode) {
   return PB_MessageToServer.create({ createGame: { gameMode } });
 }
 
-function messageEnterGame(gameDisplayNumber: number) {
-  return PB_MessageToServer.create({ enterGame: { gameDisplayNumber } });
+function messageEnterGame(gameDisplayNumber: number, gameStateHistorySize: number) {
+  return PB_MessageToServer.create({ enterGame: { gameDisplayNumber, gameStateHistorySize } });
 }
 
 function messageExitGame() {
@@ -144,9 +146,9 @@ async function getServerManagerAndStuffAfterAllApprovedOfGameSetup() {
   const watcherConnection = await connectToServer(server, 'watcher');
   const anotherConnection = await connectToServer(server, 'another');
   hostConnection.sendMessage(messageCreateGame(PB_GameMode.SINGLES_2));
-  opponentConnection.sendMessage(messageEnterGame(1));
+  opponentConnection.sendMessage(messageEnterGame(1, 0));
   opponentConnection.sendMessage(messageJoinGame());
-  watcherConnection.sendMessage(messageEnterGame(1));
+  watcherConnection.sendMessage(messageEnterGame(1, 0));
 
   hostConnection.sendMessage(messageApproveOfGameSetup());
 
@@ -346,6 +348,13 @@ async function expectKicksClientDueToInvalidMessage(message: any) {
   const { server } = getServerManagerAndStuff();
 
   const connection = await connectToServer(server, 'user 1');
+
+  Date.now = () => 1234567890 + 1000;
+  connection.sendMessage(messageCreateGame(PB_GameMode.SINGLES_1));
+  connection.sendMessage(messageApproveOfGameSetup());
+  connection.sendMessage(messageDoGameAction(1, { playTile: { tile: 29 } }));
+  connection.sendMessage(messageExitGame());
+
   connection.clearReceivedMessages();
 
   connection.sendMessage(message);
@@ -651,7 +660,6 @@ describe('when sending first message', () => {
 
       let now = 1234567890;
       Date.now = () => now++;
-      Math.random = () => 0.1;
 
       const connection1 = await connectToServer(server, '1');
       connection1.sendMessage(messageCreateGame(PB_GameMode.SINGLES_4));
@@ -871,8 +879,13 @@ describe('create game', () => {
 
 describe('enter game', () => {
   test('kicks client due to invalid message', async () => {
-    await expectKicksClientDueToInvalidMessage(messageEnterGame(0));
-    await expectKicksClientDueToInvalidMessage(messageEnterGame(-1));
+    // invalid gameDisplayNumber
+    await expectKicksClientDueToInvalidMessage(messageEnterGame(0, 0));
+    await expectKicksClientDueToInvalidMessage(messageEnterGame(-1, 0));
+
+    // invalid gameStateHistorySize
+    await expectKicksClientDueToInvalidMessage(messageEnterGame(1, -1));
+    await expectKicksClientDueToInvalidMessage(messageEnterGame(1, 3));
   });
 
   test('sends MessageToClient.ClientEnteredGame when successful', async () => {
@@ -890,7 +903,7 @@ describe('enter game', () => {
       [new GameDataData(10, 1, [1])],
     );
 
-    connection2.sendMessage(messageEnterGame(1));
+    connection2.sendMessage(messageEnterGame(1, 0));
 
     expectClientAndUserAndGameData(
       serverManager,
@@ -913,6 +926,92 @@ describe('enter game', () => {
     expect(connection2.receivedMessages[0]).toEqual(expectedMessage);
   });
 
+  test('GameActionDone messages are sent', async () => {
+    const { server } = getServerManagerAndStuff();
+
+    const connection1 = await connectToServer(server, 'user 1');
+
+    Date.now = () => 1234567890;
+    connection1.sendMessage(messageCreateGame(PB_GameMode.SINGLES_1));
+    connection1.sendMessage(messageApproveOfGameSetup());
+    connection1.sendMessage(messageDoGameAction(1, { playTile: { tile: 29 } }));
+    connection1.sendMessage(messageExitGame());
+
+    connection1.clearReceivedMessages();
+
+    const gameActions = [
+      PB_MessageToClient.create({
+        gameActionDone: {
+          timestamp: 1234567890,
+          revealedTileRackTiles: [],
+          revealedTileBagTiles: [89, TileEnum.Unknown, TileEnum.Unknown, TileEnum.Unknown, TileEnum.Unknown, TileEnum.Unknown, TileEnum.Unknown],
+          playerIdWithPlayableTilePlusOne: 1,
+          gameAction: {
+            startGame: {},
+          },
+        },
+      }),
+      PB_MessageToClient.create({
+        gameActionDone: {
+          timestamp: 0,
+          revealedTileRackTiles: [
+            {
+              tile: 29,
+              playerIdBelongsTo: 0,
+            },
+          ],
+          revealedTileBagTiles: [TileEnum.Unknown],
+          playerIdWithPlayableTilePlusOne: 1,
+          gameAction: {
+            playTile: {
+              tile: 29,
+            },
+          },
+        },
+      }),
+    ];
+
+    connection1.sendMessage(messageEnterGame(1, 2));
+    expect(connection1.receivedMessages.length).toBe(1);
+    expect(connection1.receivedMessages[0]).toEqual([
+      {
+        clientEnteredGame: {
+          clientId: 1,
+          gameDisplayNumber: 1,
+        },
+      },
+    ]);
+
+    connection1.clearReceivedMessages();
+
+    const connection2 = await connectToServer(server, 'user 2');
+    connection2.clearReceivedMessages();
+    connection2.sendMessage(messageEnterGame(1, 1));
+    expect(connection2.receivedMessages[0]).toEqual([
+      {
+        clientEnteredGame: {
+          clientId: 2,
+          gameDisplayNumber: 1,
+        },
+      },
+      gameActions[1],
+    ]);
+
+    const connection3 = await connectToServer(server, 'user 3');
+    connection3.clearReceivedMessages();
+    connection3.sendMessage(messageEnterGame(1, 0));
+    expect(connection3.receivedMessages[0]).toEqual([
+      {
+        clientEnteredGame: {
+          clientId: 3,
+          gameDisplayNumber: 1,
+        },
+      },
+      gameActions[0],
+      gameActions[1],
+    ]);
+  });
+
   test('disallows entering a game when currently in a game', async () => {
     const { server } = getServerManagerAndStuff();
 
@@ -921,17 +1020,17 @@ describe('enter game', () => {
     const connection3 = await connectToServer(server, 'user 3');
     connection1.sendMessage(messageCreateGame(PB_GameMode.TEAMS_2_VS_2));
     connection2.sendMessage(messageCreateGame(PB_GameMode.SINGLES_3));
-    connection3.sendMessage(messageEnterGame(2));
+    connection3.sendMessage(messageEnterGame(2, 0));
     connection1.clearReceivedMessages();
     connection2.clearReceivedMessages();
     connection3.clearReceivedMessages();
 
-    connection1.sendMessage(messageEnterGame(1));
-    connection1.sendMessage(messageEnterGame(2));
-    connection2.sendMessage(messageEnterGame(1));
-    connection2.sendMessage(messageEnterGame(2));
-    connection3.sendMessage(messageEnterGame(1));
-    connection3.sendMessage(messageEnterGame(2));
+    connection1.sendMessage(messageEnterGame(1, 0));
+    connection1.sendMessage(messageEnterGame(2, 0));
+    connection2.sendMessage(messageEnterGame(1, 0));
+    connection2.sendMessage(messageEnterGame(2, 0));
+    connection3.sendMessage(messageEnterGame(1, 0));
+    connection3.sendMessage(messageEnterGame(2, 0));
 
     expect(connection1.receivedMessages.length).toBe(0);
     expect(connection2.receivedMessages.length).toBe(0);
@@ -949,7 +1048,7 @@ describe('exit game', () => {
     const connection1 = await connectToServer(server, 'user 1');
     const connection2 = await connectToServer(server, 'user 2');
     connection1.sendMessage(messageCreateGame(PB_GameMode.TEAMS_2_VS_2));
-    connection2.sendMessage(messageEnterGame(1));
+    connection2.sendMessage(messageEnterGame(1, 0));
     connection1.clearReceivedMessages();
     connection2.clearReceivedMessages();
 
@@ -1030,7 +1129,7 @@ describe('join game', () => {
     const hostConnection = await connectToServer(server, 'host');
     const otherConnection = await connectToServer(server, 'other');
     hostConnection.sendMessage(messageCreateGame(PB_GameMode.TEAMS_2_VS_2));
-    otherConnection.sendMessage(messageEnterGame(1));
+    otherConnection.sendMessage(messageEnterGame(1, 0));
     hostConnection.clearReceivedMessages();
     otherConnection.clearReceivedMessages();
 
@@ -1087,7 +1186,7 @@ describe('unjoin game', () => {
     const hostConnection = await connectToServer(server, 'host');
     const otherConnection = await connectToServer(server, 'other');
     hostConnection.sendMessage(messageCreateGame(PB_GameMode.TEAMS_2_VS_2));
-    otherConnection.sendMessage(messageEnterGame(1));
+    otherConnection.sendMessage(messageEnterGame(1, 0));
     otherConnection.sendMessage(messageJoinGame());
     hostConnection.clearReceivedMessages();
     otherConnection.clearReceivedMessages();
@@ -1145,7 +1244,7 @@ describe('approve of game setup', () => {
     const hostConnection = await connectToServer(server, 'host');
     const otherConnection = await connectToServer(server, 'other');
     hostConnection.sendMessage(messageCreateGame(PB_GameMode.SINGLES_2));
-    otherConnection.sendMessage(messageEnterGame(1));
+    otherConnection.sendMessage(messageEnterGame(1, 0));
     otherConnection.sendMessage(messageJoinGame());
     hostConnection.clearReceivedMessages();
     otherConnection.clearReceivedMessages();
@@ -1203,7 +1302,7 @@ describe('change game mode', () => {
     const hostConnection = await connectToServer(server, 'host');
     const otherConnection = await connectToServer(server, 'other');
     hostConnection.sendMessage(messageCreateGame(PB_GameMode.SINGLES_2));
-    otherConnection.sendMessage(messageEnterGame(1));
+    otherConnection.sendMessage(messageEnterGame(1, 0));
     hostConnection.clearReceivedMessages();
     otherConnection.clearReceivedMessages();
 
@@ -1218,7 +1317,7 @@ describe('change game mode', () => {
     const hostConnection = await connectToServer(server, 'host');
     const otherConnection = await connectToServer(server, 'other');
     hostConnection.sendMessage(messageCreateGame(PB_GameMode.SINGLES_2));
-    otherConnection.sendMessage(messageEnterGame(1));
+    otherConnection.sendMessage(messageEnterGame(1, 0));
     otherConnection.sendMessage(messageJoinGame());
     hostConnection.clearReceivedMessages();
     otherConnection.clearReceivedMessages();
@@ -1276,7 +1375,7 @@ describe('change player arrangement mode', () => {
     const hostConnection = await connectToServer(server, 'host');
     const otherConnection = await connectToServer(server, 'other');
     hostConnection.sendMessage(messageCreateGame(PB_GameMode.SINGLES_2));
-    otherConnection.sendMessage(messageEnterGame(1));
+    otherConnection.sendMessage(messageEnterGame(1, 0));
     hostConnection.clearReceivedMessages();
     otherConnection.clearReceivedMessages();
 
@@ -1291,7 +1390,7 @@ describe('change player arrangement mode', () => {
     const hostConnection = await connectToServer(server, 'host');
     const otherConnection = await connectToServer(server, 'other');
     hostConnection.sendMessage(messageCreateGame(PB_GameMode.SINGLES_4));
-    otherConnection.sendMessage(messageEnterGame(1));
+    otherConnection.sendMessage(messageEnterGame(1, 0));
     otherConnection.sendMessage(messageJoinGame());
     hostConnection.clearReceivedMessages();
     otherConnection.clearReceivedMessages();
@@ -1349,7 +1448,7 @@ describe('swap positions', () => {
     const hostConnection = await connectToServer(server, 'host');
     const otherConnection = await connectToServer(server, 'other');
     hostConnection.sendMessage(messageCreateGame(PB_GameMode.SINGLES_2));
-    otherConnection.sendMessage(messageEnterGame(1));
+    otherConnection.sendMessage(messageEnterGame(1, 0));
     hostConnection.clearReceivedMessages();
     otherConnection.clearReceivedMessages();
 
@@ -1364,7 +1463,7 @@ describe('swap positions', () => {
     const hostConnection = await connectToServer(server, 'host');
     const otherConnection = await connectToServer(server, 'other');
     hostConnection.sendMessage(messageCreateGame(PB_GameMode.SINGLES_4));
-    otherConnection.sendMessage(messageEnterGame(1));
+    otherConnection.sendMessage(messageEnterGame(1, 0));
     otherConnection.sendMessage(messageJoinGame());
     hostConnection.clearReceivedMessages();
     otherConnection.clearReceivedMessages();
@@ -1423,7 +1522,7 @@ describe('kick user', () => {
     const hostConnection = await connectToServer(server, 'host');
     const otherConnection = await connectToServer(server, 'other');
     hostConnection.sendMessage(messageCreateGame(PB_GameMode.SINGLES_2));
-    otherConnection.sendMessage(messageEnterGame(1));
+    otherConnection.sendMessage(messageEnterGame(1, 0));
     hostConnection.clearReceivedMessages();
     otherConnection.clearReceivedMessages();
 
@@ -1438,7 +1537,7 @@ describe('kick user', () => {
     const hostConnection = await connectToServer(server, 'host');
     const otherConnection = await connectToServer(server, 'other');
     hostConnection.sendMessage(messageCreateGame(PB_GameMode.SINGLES_4));
-    otherConnection.sendMessage(messageEnterGame(1));
+    otherConnection.sendMessage(messageEnterGame(1, 0));
     otherConnection.sendMessage(messageJoinGame());
     hostConnection.clearReceivedMessages();
     otherConnection.clearReceivedMessages();

@@ -805,7 +805,9 @@ export class GameData {
 
   onEnterClicked = () => {
     if (this.clientManager.isConnected()) {
-      this.clientManager.sendMessage(PB_MessageToServer.create({ enterGame: { gameDisplayNumber: this.displayNumber } }));
+      this.clientManager.sendMessage(
+        PB_MessageToServer.create({ enterGame: { gameDisplayNumber: this.displayNumber, gameStateHistorySize: this.game?.gameStateHistory.size ?? 0 } }),
+      );
     }
   };
 }

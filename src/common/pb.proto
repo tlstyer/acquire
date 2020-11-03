@@ -195,7 +195,10 @@ message PB {
 
     message CreateGame { GameMode game_mode = 1; }
 
-    message EnterGame { int32 game_display_number = 1; }
+    message EnterGame {
+      int32 game_display_number = 1;
+      int32 game_state_history_size = 2;
+    }
 
     message ExitGame {}
 

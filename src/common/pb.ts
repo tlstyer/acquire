@@ -480,6 +480,10 @@ export interface PB_MessageToServer_EnterGame {
      * @generated from protobuf field: int32 game_display_number = 1;
      */
     gameDisplayNumber: number;
+    /**
+     * @generated from protobuf field: int32 game_state_history_size = 2;
+     */
+    gameStateHistorySize: number;
 }
 /**
  * @generated from protobuf message PB.MessageToServer.ExitGame
@@ -2673,11 +2677,12 @@ export const PB_MessageToServer_CreateGame = new PB_MessageToServer_CreateGame$T
 class PB_MessageToServer_EnterGame$Type extends MessageType<PB_MessageToServer_EnterGame> {
     constructor() {
         super("PB.MessageToServer.EnterGame", [
-            { no: 1, name: "game_display_number", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
+            { no: 1, name: "game_display_number", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 2, name: "game_state_history_size", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
         ]);
     }
     create(value?: PartialMessage<PB_MessageToServer_EnterGame>): PB_MessageToServer_EnterGame {
-        const message = { gameDisplayNumber: 0 };
+        const message = { gameDisplayNumber: 0, gameStateHistorySize: 0 };
         if (value !== undefined)
             reflectionMergePartial<PB_MessageToServer_EnterGame>(this, message, value);
         return message;
@@ -2689,6 +2694,9 @@ class PB_MessageToServer_EnterGame$Type extends MessageType<PB_MessageToServer_E
             switch (fieldNo) {
                 case /* int32 game_display_number */ 1:
                     message.gameDisplayNumber = reader.int32();
+                    break;
+                case /* int32 game_state_history_size */ 2:
+                    message.gameStateHistorySize = reader.int32();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -2705,6 +2713,9 @@ class PB_MessageToServer_EnterGame$Type extends MessageType<PB_MessageToServer_E
         /* int32 game_display_number = 1; */
         if (message.gameDisplayNumber !== 0)
             writer.tag(1, WireType.Varint).int32(message.gameDisplayNumber);
+        /* int32 game_state_history_size = 2; */
+        if (message.gameStateHistorySize !== 0)
+            writer.tag(2, WireType.Varint).int32(message.gameStateHistorySize);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
