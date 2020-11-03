@@ -270,11 +270,6 @@ message PB {
       repeated int32 tiles = 3;
     }
 
-    message GameActionDone {
-      int32 game_display_number = 1;
-      GameState game_state = 2;
-    }
-
     FatalError fatal_error = 1;
     Greetings greetings = 2;
     ClientConnected client_connected = 3;
@@ -285,7 +280,7 @@ message PB {
     GameSetupChanged game_setup_changed = 8;
     GameStarted game_started = 9;
     GameBoardChanged game_board_changed = 10;
-    GameActionDone game_action_done = 11;
+    GameState game_action_done = 11;
   }
 
   message MessagesToClient { repeated MessageToClient messages_to_client = 1; }

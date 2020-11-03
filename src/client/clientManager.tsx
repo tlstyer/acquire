@@ -15,6 +15,7 @@ import {
   PB_ErrorCode,
   PB_GameBoardType,
   PB_GameMode,
+  PB_GameState,
   PB_GameStatus,
   PB_MessagesToClient,
   PB_MessageToClient_ClientConnected,
@@ -22,7 +23,6 @@ import {
   PB_MessageToClient_ClientEnteredGame,
   PB_MessageToClient_ClientExitedGame,
   PB_MessageToClient_FatalError,
-  PB_MessageToClient_GameActionDone,
   PB_MessageToClient_GameBoardChanged,
   PB_MessageToClient_GameCreated,
   PB_MessageToClient_GameSetupChanged,
@@ -714,12 +714,12 @@ export class ClientManager {
     }
   }
 
-  onMessageGameActionDone(message: PB_MessageToClient_GameActionDone) {
-    const gameData = this.gameDisplayNumberToGameData.get(message.gameDisplayNumber)!;
+  onMessageGameActionDone(message: PB_GameState) {
+    const gameData = this.myClient!.gameData!;
     const gameSummary = gameData.gameSummary!;
     const game = gameData.game!;
 
-    game.processGameState(message.gameState!);
+    game.processGameState(message);
 
     if (this.myClient!.gameData === gameData) {
       this.updateMyRequiredGameAction();

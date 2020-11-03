@@ -668,10 +668,7 @@ export class ServerManager {
 
       aClient.queueMessage(
         PB_MessageToClient.create({
-          gameActionDone: {
-            gameDisplayNumber: gameData.displayNumber,
-            gameState: playerID >= 0 ? gameState.playerGameStates[playerID] : gameState.watcherGameState,
-          },
+          gameActionDone: playerID >= 0 ? gameState.playerGameStates[playerID] : gameState.watcherGameState,
         }),
       );
     });

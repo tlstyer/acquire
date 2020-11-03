@@ -1568,13 +1568,10 @@ describe('MessageToClient.GameStarted, MessageToClient.GameBoardChanged, and Mes
       }),
       PB_MessageToClient.create({
         gameActionDone: {
-          gameDisplayNumber: 1,
-          gameState: {
-            gameAction: { startGame: {} },
-            timestamp: 1550799393696,
-            revealedTileBagTiles: [65, 3, 34, 6, 46, 10, 78],
-            playerIdWithPlayableTilePlusOne: 1,
-          },
+          gameAction: { startGame: {} },
+          timestamp: 1550799393696,
+          revealedTileBagTiles: [65, 3, 34, 6, 46, 10, 78],
+          playerIdWithPlayableTilePlusOne: 1,
         },
       }),
     ]);
