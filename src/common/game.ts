@@ -620,7 +620,10 @@ export class GameState {
       this.revealedTileBagTilesLookup.get(tile)!.playerIDWithPermission = null;
     } else {
       // add it to the tile rack additions
-      const revealedTileRackTile = PB_GameState_RevealedTileRackTile.create({ tile, playerIdBelongsTo: playerID });
+      const revealedTileRackTile = PB_GameState_RevealedTileRackTile.create({
+        tile,
+        playerIdBelongsTo: playerID,
+      });
       this.revealedTileRackTiles.push(revealedTileRackTile);
     }
   }

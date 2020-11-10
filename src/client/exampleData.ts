@@ -24,7 +24,12 @@ export function getDummyGameForGetGameHistory() {
     8,
     3,
   );
-  game.doGameAction(PB_GameAction.create({ startGame: {} }), null);
+  game.doGameAction(
+    PB_GameAction.create({
+      startGame: {},
+    }),
+    null,
+  );
   game.gameStateHistory = defaultGameStateHistory;
 
   let gameState = game.getCurrentGameState();

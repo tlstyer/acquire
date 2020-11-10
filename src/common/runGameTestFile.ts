@@ -138,12 +138,16 @@ export function runGameTestFile(inputLines: string[]) {
             } catch (error) {
               expect(false).toBe(true);
             }
-            gameAction = PB_GameAction.create({ [lowercaseFirstLetter(actualGameActionName)]: parsedJson });
+            gameAction = PB_GameAction.create({
+              [lowercaseFirstLetter(actualGameActionName)]: parsedJson,
+            });
           } else {
             gameAction = fromParameterStrings(actualGameAction, actionParts.slice(2));
           }
         } else {
-          gameAction = PB_GameAction.create({ [lowercaseFirstLetter(actualGameActionName)]: {} });
+          gameAction = PB_GameAction.create({
+            [lowercaseFirstLetter(actualGameActionName)]: {},
+          });
         }
 
         outputLines.push('');

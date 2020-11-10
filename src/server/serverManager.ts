@@ -11,7 +11,6 @@ import {
   PB_GameSetupAction_ChangePlayerArrangementMode,
   PB_GameSetupAction_KickUser,
   PB_GameSetupAction_SwapPositions,
-  PB_GameState,
   PB_GameStatus,
   PB_Game_Position,
   PB_MessagesToClient,
@@ -299,11 +298,9 @@ export class ServerManager {
       clientConnected: {
         clientId: client.id,
         userId: client.user.id,
+        username: isNewUser ? client.user.name : undefined,
       },
     });
-    if (isNewUser) {
-      clientConnectedMessage.clientConnected!.username = client.user.name;
-    }
 
     this.webSocketToClient.forEach((otherClient) => {
       if (otherClient !== client) {
@@ -490,7 +487,12 @@ export class ServerManager {
         aClient.queueMessage(gameStartedMessage);
       });
 
-      game.doGameAction(PB_GameAction.create({ startGame: {} }), Date.now());
+      game.doGameAction(
+        PB_GameAction.create({
+          startGame: {},
+        }),
+        Date.now(),
+      );
       this.sendLastGameGameStateMessage(gameData);
     } else if (gameSetup.history.length > 0) {
       this.sendGameSetupChanges(gameData);
@@ -691,16 +693,21 @@ export class ServerManager {
     this.userIDToUser.forEach((user) => {
       const clients: PB_MessageToClient_Greetings_User_Client[] = [];
       user.clients.forEach((aClient) => {
-        const client = PB_MessageToClient_Greetings_User_Client.create({ clientId: aClient.id });
-        if (aClient.gameData !== null) {
-          client.gameDisplayNumber = aClient.gameData.displayNumber;
-        }
-        clients.push(client);
+        clients.push(
+          PB_MessageToClient_Greetings_User_Client.create({
+            clientId: aClient.id,
+            gameDisplayNumber: aClient.gameData !== null ? aClient.gameData.displayNumber : undefined,
+          }),
+        );
       });
 
-      const userPB = PB_MessageToClient_Greetings_User.create({ userId: user.id, username: user.name, clients });
-
-      users.push(userPB);
+      users.push(
+        PB_MessageToClient_Greetings_User.create({
+          userId: user.id,
+          username: user.name,
+          clients,
+        }),
+      );
     });
 
     const games: PB_Game[] = [];
@@ -711,25 +718,13 @@ export class ServerManager {
         gamePB = gameData.gameSetup.toGameData();
       } else {
         const game = gameData.game!;
-        const playerID = game.userIDs.indexOf(client.user.id);
 
-        const gameStates: PB_GameState[] = [];
-        game.gameStateHistory.forEach((gameState) => {
-          if (playerID >= 0) {
-            gameStates.push(gameState.playerGameStates[playerID]);
-          } else {
-            gameStates.push(gameState.watcherGameState);
-          }
-        });
-
-        const positions: PB_Game_Position[] = [];
-        game.userIDs.forEach((userID) => {
-          const position = PB_Game_Position.create({ userId: userID });
-          if (userID === game.hostUserID) {
-            position.isHost = true;
-          }
-
-          positions.push(position);
+        const positions: PB_Game_Position[] = new Array(game.userIDs.size);
+        game.userIDs.forEach((userID, i) => {
+          positions[i] = PB_Game_Position.create({
+            userId: userID,
+            isHost: userID === game.hostUserID,
+          });
         });
 
         gamePB = PB_Game.create({
