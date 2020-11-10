@@ -260,7 +260,7 @@ describe('onSubmitLoginForm', () => {
     testWebSocket!.triggerOpen();
 
     expect(renderMock.mock.calls.length).toBe(2);
-    expect(testWebSocket!.sentMessages).toEqual([{ login: { version: 0, username: 'username', password: 'password', gameDatas: [] } }]);
+    expect(testWebSocket!.sentMessages).toEqual([{ login: { version: 0, username: 'username', password: 'password' } }]);
   });
 
   test('goes back to login page upon fatal error followed by a closed connection', () => {

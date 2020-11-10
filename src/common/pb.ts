@@ -445,23 +445,6 @@ export interface PB_MessageToServer_Login {
      * @generated from protobuf field: string password = 3;
      */
     password: string;
-    /**
-     * @generated from protobuf field: repeated PB.MessageToServer.Login.GameData game_datas = 4;
-     */
-    gameDatas: PB_MessageToServer_Login_GameData[]; // int32 game_id_to_join = 5;
-}
-/**
- * @generated from protobuf message PB.MessageToServer.Login.GameData
- */
-export interface PB_MessageToServer_Login_GameData {
-    /**
-     * @generated from protobuf field: int32 game_id = 1;
-     */
-    gameId: number;
-    /**
-     * @generated from protobuf field: int32 game_state_history_size = 2;
-     */
-    gameStateHistorySize: number;
 }
 /**
  * @generated from protobuf message PB.MessageToServer.CreateGame
@@ -2516,12 +2499,11 @@ class PB_MessageToServer_Login$Type extends MessageType<PB_MessageToServer_Login
         super("PB.MessageToServer.Login", [
             { no: 1, name: "version", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
             { no: 2, name: "username", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 3, name: "password", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 4, name: "game_datas", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => PB_MessageToServer_Login_GameData }
+            { no: 3, name: "password", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
         ]);
     }
     create(value?: PartialMessage<PB_MessageToServer_Login>): PB_MessageToServer_Login {
-        const message = { version: 0, username: "", password: "", gameDatas: [] };
+        const message = { version: 0, username: "", password: "" };
         if (value !== undefined)
             reflectionMergePartial<PB_MessageToServer_Login>(this, message, value);
         return message;
@@ -2539,9 +2521,6 @@ class PB_MessageToServer_Login$Type extends MessageType<PB_MessageToServer_Login
                     break;
                 case /* string password */ 3:
                     message.password = reader.string();
-                    break;
-                case /* repeated PB.MessageToServer.Login.GameData game_datas */ 4:
-                    message.gameDatas.push(PB_MessageToServer_Login_GameData.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -2564,9 +2543,6 @@ class PB_MessageToServer_Login$Type extends MessageType<PB_MessageToServer_Login
         /* string password = 3; */
         if (message.password !== "")
             writer.tag(3, WireType.LengthDelimited).string(message.password);
-        /* repeated PB.MessageToServer.Login.GameData game_datas = 4; */
-        for (let i = 0; i < message.gameDatas.length; i++)
-            PB_MessageToServer_Login_GameData.internalBinaryWrite(message.gameDatas[i], writer.tag(4, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -2574,58 +2550,6 @@ class PB_MessageToServer_Login$Type extends MessageType<PB_MessageToServer_Login
     }
 }
 export const PB_MessageToServer_Login = new PB_MessageToServer_Login$Type();
-/**
- * Type for protobuf message PB.MessageToServer.Login.GameData
- */
-class PB_MessageToServer_Login_GameData$Type extends MessageType<PB_MessageToServer_Login_GameData> {
-    constructor() {
-        super("PB.MessageToServer.Login.GameData", [
-            { no: 1, name: "game_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 2, name: "game_state_history_size", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
-        ]);
-    }
-    create(value?: PartialMessage<PB_MessageToServer_Login_GameData>): PB_MessageToServer_Login_GameData {
-        const message = { gameId: 0, gameStateHistorySize: 0 };
-        if (value !== undefined)
-            reflectionMergePartial<PB_MessageToServer_Login_GameData>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PB_MessageToServer_Login_GameData): PB_MessageToServer_Login_GameData {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* int32 game_id */ 1:
-                    message.gameId = reader.int32();
-                    break;
-                case /* int32 game_state_history_size */ 2:
-                    message.gameStateHistorySize = reader.int32();
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: PB_MessageToServer_Login_GameData, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* int32 game_id = 1; */
-        if (message.gameId !== 0)
-            writer.tag(1, WireType.Varint).int32(message.gameId);
-        /* int32 game_state_history_size = 2; */
-        if (message.gameStateHistorySize !== 0)
-            writer.tag(2, WireType.Varint).int32(message.gameStateHistorySize);
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-export const PB_MessageToServer_Login_GameData = new PB_MessageToServer_Login_GameData$Type();
 /**
  * Type for protobuf message PB.MessageToServer.CreateGame
  */

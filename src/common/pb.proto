@@ -181,16 +181,9 @@ message PB {
 
   message MessageToServer {
     message Login {
-      message GameData {
-        int32 game_id = 1;
-        int32 game_state_history_size = 2;
-      }
-
       int32 version = 1;
       string username = 2;
       string password = 3;
-      repeated GameData game_datas = 4;
-      // int32 game_id_to_join = 5;
     }
 
     message CreateGame { GameMode game_mode = 1; }

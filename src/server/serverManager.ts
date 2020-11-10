@@ -23,7 +23,6 @@ import {
   PB_MessageToServer_DoGameAction,
   PB_MessageToServer_EnterGame,
   PB_MessageToServer_Login,
-  PB_MessageToServer_Login_GameData,
   PB_PlayerArrangementMode,
 } from '../common/pb';
 import { LogMessage } from './enums';
@@ -235,8 +234,6 @@ export class ServerManager {
 
     const password = message.password;
 
-    const gameDatas = message.gameDatas;
-
     let userData;
     try {
       userData = await this.userDataProvider.lookupUser(username);
@@ -296,7 +293,7 @@ export class ServerManager {
     this.webSocketToClient.set(webSocket, client);
     user.clients.add(client);
 
-    client.queueMessage(this.getGreetingsMessage(gameDatas, client));
+    client.queueMessage(this.getGreetingsMessage(client));
 
     const clientConnectedMessage = PB_MessageToClient.create({
       clientConnected: {
@@ -689,7 +686,7 @@ export class ServerManager {
     });
   }
 
-  getGreetingsMessage(gameDatas: PB_MessageToServer_Login_GameData[], client: Client) {
+  getGreetingsMessage(client: Client) {
     const users: PB_MessageToClient_Greetings_User[] = [];
     this.userIDToUser.forEach((user) => {
       const clients: PB_MessageToClient_Greetings_User_Client[] = [];
