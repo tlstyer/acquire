@@ -1,6 +1,6 @@
 import { List } from 'immutable';
 import { gameModeToNumPlayers, gameModeToTeamSize, shuffleArray } from './helpers';
-import { PB_Game, PB_GameMode, PB_GameSetupChange, PB_Game_Position, PB_PlayerArrangementMode } from './pb';
+import { PB_Game, PB_GameMode, PB_GameSetupChange, PB_GameStatus, PB_Game_Position, PB_PlayerArrangementMode } from './pb';
 
 const defaultApprovals = new Map([
   [1, List([false])],
@@ -368,6 +368,7 @@ export class GameSetup {
     });
 
     return PB_Game.create({
+      gameStatus: PB_GameStatus.SETTING_UP,
       gameMode: this.gameMode,
       playerArrangementMode: this.playerArrangementMode,
       positions,
