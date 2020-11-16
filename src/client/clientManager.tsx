@@ -767,7 +767,7 @@ export class ClientManager {
     gameSetup.processChange(gameSetupChange);
 
     if (gameSetupChange.userAdded) {
-      this.userIDToUser.get(gameSetupChange.userAdded.userId!)!.numGames++;
+      this.userIDToUser.get(gameSetupChange.userAdded.userId)!.numGames++;
     } else if (gameSetupChange.userRemoved || gameSetupChange.userKicked) {
       const userID = gameSetupChange.userRemoved ? gameSetupChange.userRemoved.userId! : gameSetupChange.userKicked!.userId!;
       const user = this.userIDToUser.get(userID)!;
@@ -819,9 +819,7 @@ export class ClientManager {
 
     game.processGameState(message);
 
-    if (this.myClient!.gameData === gameData) {
-      this.updateMyRequiredGameAction();
-    }
+    this.updateMyRequiredGameAction();
 
     if (game.gameBoard !== gameSummary.gameBoard) {
       gameSummary.gameBoard = game.gameBoard;
