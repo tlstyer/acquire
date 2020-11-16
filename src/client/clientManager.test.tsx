@@ -44,7 +44,11 @@ class TestWebSocket {
 
   triggerMessages(messages: PB_MessageToClient[]) {
     if (this.onmessage) {
-      this.onmessage({ data: PB_MessagesToClient.toBinary({ messagesToClient: messages }) });
+      this.onmessage({
+        data: PB_MessagesToClient.toBinary({
+          messagesToClient: messages,
+        }),
+      });
     }
   }
 

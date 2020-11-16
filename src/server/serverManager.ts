@@ -783,7 +783,11 @@ export class Client {
 
   sendQueuedMessages() {
     if (this.queuedMessages.length > 0) {
-      this.webSocket.send(PB_MessagesToClient.toBinary({ messagesToClient: this.queuedMessages }));
+      this.webSocket.send(
+        PB_MessagesToClient.toBinary({
+          messagesToClient: this.queuedMessages,
+        }),
+      );
       this.queuedMessages.length = 0;
     }
   }
