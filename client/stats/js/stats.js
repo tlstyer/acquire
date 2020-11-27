@@ -1,7 +1,6 @@
 $(function () {
   var user_id_to_username = null,
     username_to_user_id = null,
-    rating_type_to_ratings = null,
     rating_types = ['Singles2', 'Singles3', 'Singles4', 'Teams'],
     rating_type_to_dygraph = {
       Singles2: null,
@@ -30,23 +29,6 @@ $(function () {
   }
 
   function initialize() {
-    $.ajax({
-      url: 'data/ratings.json',
-      success: function (data) {
-        rating_type_to_ratings = data;
-
-        completeInitializationWhenReady();
-      },
-      error: function (jqXHR, textStatus, errorThrown) {
-        reportAjaxError(jqXHR, textStatus, errorThrown);
-
-        showPage('loading-error');
-      },
-      dataType: 'json',
-    });
-  }
-
-  function completeInitializationWhenReady() {
     if (document.readyState === 'complete' && typeof $ !== 'undefined' && typeof Dygraph !== 'undefined' && typeof History !== 'undefined') {
       initializeHistory();
 
@@ -60,7 +42,7 @@ $(function () {
 
       showPage('stats');
     } else {
-      setTimeout(completeInitializationWhenReady, 10);
+      setTimeout(initialize, 10);
     }
   }
 
@@ -454,15 +436,26 @@ $(function () {
   }
 
   function showRatings(rating_type) {
-    if (rating_type_to_ratings.hasOwnProperty(rating_type)) {
-      $('#user').hide();
-      $('#users').show();
-      $('#ratings-type').text(rating_type);
-      populateRatingsTable(rating_type_to_ratings[rating_type]);
-      setFormErrorMessage(null);
-    } else {
-      setFormErrorMessage('Invalid ratings type.');
-    }
+    $.ajax({
+      url: 'data/ratings.json',
+      success: function (data) {
+        if (data.hasOwnProperty(rating_type)) {
+          $('#user').hide();
+          $('#users').show();
+          $('#ratings-type').text(rating_type);
+          populateRatingsTable(data[rating_type]);
+          setFormErrorMessage(null);
+        } else {
+          setFormErrorMessage('Invalid ratings type.');
+        }
+      },
+      error: function (jqXHR, textStatus, errorThrown) {
+        reportAjaxError(jqXHR, textStatus, errorThrown);
+
+        showPage('loading-error');
+      },
+      dataType: 'json',
+    });
   }
 
   function formSubmitted() {
