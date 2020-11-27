@@ -102,12 +102,6 @@ body {
   margin: 0.5em;
 }
 
-.dygraph-legend {
-  left: 60px !important;
-  top: 25px !important;
-  width: 300px !important;
-}
-
 #games {
   div {
     display: inline-block;
@@ -133,8 +127,4 @@ body {
   tr.current_user :nth-child(1) {
     font-weight: bold;
   }
-}
-
-#games-links {
-  text-align: right;
 }

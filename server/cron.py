@@ -1,3 +1,4 @@
+import base64
 import collections
 import glob
 import orm
@@ -235,9 +236,14 @@ class StatsGen:
             rating.mu,
             rating.sigma
         from rating
+        join (
+            select max(rating_id) as rating_id
+            from rating
+            where rating.user_id = :user_id
+            group by rating_type_id
+        ) rating_summary on rating.rating_id = rating_summary.rating_id
         join rating_type on rating.rating_type_id = rating_type.rating_type_id
-        where rating.user_id = :user_id
-        order by rating.time asc, rating.rating_id asc
+        order by rating_type.name
     """
     )
     user_games_sql = sqlalchemy.sql.text(
@@ -245,7 +251,8 @@ class StatsGen:
         select distinct game.game_id,
             game.end_time,
             game.game_mode_id,
-            game_player.user_id,
+            game_player.player_index,
+            user.name,
             game_player.score
         from game
         join (
@@ -256,6 +263,7 @@ class StatsGen:
                 and game_player.score is not null
         ) game_ids on game.game_id = game_ids.game_id
         join game_player on game.game_id = game_player.game_id
+        join user on game_player.user_id = user.user_id
         order by game.end_time desc, game.game_id desc, game_player.player_index asc
     """
     )
@@ -279,26 +287,78 @@ class StatsGen:
 
         self.write_file("ratings", rating_type_to_ratings)
 
-    def output_user(self, user_id):
-        ratings = collections.defaultdict(list)
+    def output_user(self, user_id, username):
+        ratings = {}
         for row in self.session.execute(
             StatsGen.user_ratings_sql, {"user_id": user_id}
         ):
-            ratings[row.name].append([row.time, row.mu, row.sigma])
+            ratings[row.name.decode()] = [row.time, row.mu, row.sigma]
 
         games = []
         last_game_id = None
         for row in self.session.execute(StatsGen.user_games_sql, {"user_id": user_id}):
             if row.game_id != last_game_id:
                 games.append([row.game_mode_id, row.end_time, []])
-            games[-1][2].append([row.user_id, row.score])
+            games[-1][2].append([row.name.decode(), row.score])
             last_game_id = row.game_id
 
-        self.write_file("user" + str(user_id), {"ratings": ratings, "games": games})
+        records = get_records(username, games)
+
+        for record_key in records:
+            if record_key in ratings:
+                ratings[record_key].append(records[record_key])
+
+        self.write_file(
+            "users/"
+            + base64.b64encode(username.encode())
+            .decode()
+            .replace("=", "")
+            .replace("+", "-")
+            .replace("/", "_"),
+            {"ratings": ratings, "games": games[:100]},
+        )
 
     def write_file(self, filename_prefix, contents):
         with open(os.path.join(self.output_dir, filename_prefix + ".json"), "w") as f:
             f.write(ujson.dumps(contents))
+
+
+def get_records(username, games):
+    records = {
+        "Singles2": [0, 0],
+        "Singles3": [0, 0, 0],
+        "Singles4": [0, 0, 0, 0],
+        "Teams": [0, 0],
+    }
+
+    for game in games:
+        is_singles_game = game[0] == 1
+        result = [[x[0] == username, x[1]] for x in game[2]]
+
+        record_key = "Singles" + str(len(result)) if is_singles_game else "Teams"
+
+        if record_key not in records:
+            continue
+
+        if not is_singles_game:
+            result = [
+                [
+                    result[0][0] or result[2][0],
+                    result[0][1] + result[2][1],
+                ],
+                [
+                    result[1][0] or result[3][0],
+                    result[1][1] + result[3][1],
+                ],
+            ]
+
+        result.sort(key=lambda r: (-r[1], -1 if r[0] else 0))
+
+        place = [i for i, r in enumerate(result) if r[0]][0]
+
+        records[record_key][place] += 1
+
+    return records
 
 
 def main():
@@ -350,7 +410,7 @@ def main():
                     user_id_to_name[user.user_id] = user.name
                 statsgen.output_ratings()
                 for user in completed_game_users:
-                    statsgen.output_user(user.user_id)
+                    statsgen.output_user(user.user_id, user.username)
 
                 filenames = glob.glob("stats_temp/*.json")
                 if filenames:
@@ -372,5 +432,17 @@ def main():
         time.sleep(60)
 
 
+def output_all_stats_files():
+    with orm.session_scope() as session:
+        statsgen = StatsGen(session, "/tmp/tim/acquire/stats")
+        statsgen.output_ratings()
+        user_id_to_name = statsgen.get_user_id_to_name()
+        for user_id in sorted(user_id_to_name):
+            username = user_id_to_name[user_id]
+            print(user_id, username)
+            statsgen.output_user(user_id, username)
+
+
 if __name__ == "__main__":
     main()
+    # output_all_stats_files()

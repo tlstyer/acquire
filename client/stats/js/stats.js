@@ -1,21 +1,9 @@
 $(function () {
-  var user_id_to_username = null,
-    username_to_user_id = null,
-    rating_types = ['Singles2', 'Singles3', 'Singles4', 'Teams'],
-    rating_type_to_dygraph = {
-      Singles2: null,
-      Singles3: null,
-      Singles4: null,
-      Teams: null,
-    },
+  var rating_types = ['Singles2', 'Singles3', 'Singles4', 'Teams'],
     game_mode_id_to_name = {
       1: 'Singles',
       2: 'Teams',
-    },
-    games_user_id,
-    games,
-    games_length,
-    games_num_shown;
+    };
 
   function reportAjaxError(jqXHR, textStatus, errorThrown) {
     $.post('/server/report-error', {
@@ -29,7 +17,7 @@ $(function () {
   }
 
   function initialize() {
-    if (document.readyState === 'complete' && typeof $ !== 'undefined' && typeof Dygraph !== 'undefined' && typeof History !== 'undefined') {
+    if (document.readyState === 'complete' && typeof $ !== 'undefined' && typeof History !== 'undefined') {
       initializeHistory();
 
       History.Adapter.bind(window, 'statechange', onStateChange);
@@ -37,8 +25,6 @@ $(function () {
       $('#form input[type=button]').click(formButtonClicked);
       $('#form').submit(formSubmitted);
       $('#users, #games').on('click', 'tr :nth-child(2)', nameCellClicked);
-      $('#games-show-next-100').click(showNext100Clicked);
-      $('#games-show-remaining').click(showRemainingClicked);
 
       showPage('stats');
     } else {
@@ -104,10 +90,6 @@ $(function () {
     return date + ' ' + time;
   }
 
-  function formatDateMilliseconds(unix_timestamp_milliseconds) {
-    return formatDate(unix_timestamp_milliseconds / 1000);
-  }
-
   function populateRatingsTable(ratings) {
     var $tbody = $('#users tbody'),
       ratings_index,
@@ -131,166 +113,29 @@ $(function () {
     }
   }
 
-  function compareFuncResults(a, b) {
-    return b[1] - a[1];
-  }
-
-  function getRecords(user_id, games) {
-    var records,
-      game_index,
-      games_length = games.length,
-      game,
-      game_mode_name,
-      player_data,
-      player_data_length,
-      rating_type,
-      results,
-      player_index,
-      player_datum,
-      team_index,
-      results_length,
-      last_score,
-      score,
-      rank;
-
-    records = {
-      Singles2: [0, 0],
-      Singles3: [0, 0, 0],
-      Singles4: [0, 0, 0, 0],
-      Teams: [0, 0],
-    };
-
-    for (game_index = 0; game_index < games_length; game_index++) {
-      game = games[game_index];
-      game_mode_name = game_mode_id_to_name[game[0]];
-      player_data = game[2];
-      player_data_length = player_data.length;
-      rating_type = game_mode_name === 'Singles' ? game_mode_name + player_data_length : game_mode_name;
-
-      if (player_data_length === 1 || player_data_length > 4) {
-        continue;
-      }
-
-      if (rating_type === 'Teams') {
-        results = [
-          [0, 0],
-          [0, 0],
-        ];
-        for (player_index = 0; player_index < player_data_length; player_index++) {
-          player_datum = player_data[player_index];
-          team_index = player_index % 2;
-
-          if (player_datum[0] === user_id) {
-            results[team_index][0] = user_id;
-          }
-          results[team_index][1] += player_datum[1];
-        }
-      } else {
-        results = player_data.slice(0);
-      }
-
-      results.sort(compareFuncResults);
-      results_length = results.length;
-
-      last_score = -1;
-      for (player_index = 0; player_index < results_length; player_index++) {
-        player_datum = results[player_index];
-        score = player_datum[1];
-
-        if (score !== last_score) {
-          rank = player_index;
-          last_score = score;
-        }
-
-        if (player_datum[0] === user_id) {
-          records[rating_type][rank]++;
-          break;
-        }
-      }
-    }
-
-    return records;
-  }
-
-  function populateSummary(user_id, ratings, games) {
+  function populateSummary(ratings) {
     var $tbody = $('#user-summary tbody'),
-      records,
       rating_type_index,
-      rating_types_length = rating_types.length,
       rating_type,
-      num_ratings,
       rating,
       $tr;
 
     $tbody.empty();
 
-    records = getRecords(user_id, games);
-
-    for (rating_type_index = 0; rating_type_index < rating_types_length; rating_type_index++) {
+    for (rating_type_index = 0; rating_type_index < rating_types.length; rating_type_index++) {
       rating_type = rating_types[rating_type_index];
 
       if (ratings.hasOwnProperty(rating_type)) {
-        num_ratings = ratings[rating_type].length;
-        rating = ratings[rating_type][num_ratings - 1];
+        rating = ratings[rating_type];
 
         $tr = $('<tr/>');
         $tr.append($('<td/>').text(rating_type));
         $tr.append($('<td/>').text((rating[1] - rating[2] * 3).toFixed(2)));
         $tr.append($('<td/>').text(rating[1].toFixed(2) + ' ± ' + (rating[2] * 3).toFixed(2)));
-        $tr.append($('<td/>').text(num_ratings - 1));
-        $tr.append($('<td/>').text(records[rating_type].join(' - ')));
+        $tr.append($('<td/>').text(rating[3].reduce((a, b) => a + b)));
+        $tr.append($('<td/>').text(rating[3].join(' - ')));
         $tr.append($('<td/>').text(formatDate(rating[0])));
         $tbody.append($tr);
-      }
-    }
-  }
-
-  function populateRatings(ratings) {
-    var rating_type_index,
-      rating_types_length = rating_types.length,
-      rating_type,
-      $rating,
-      data,
-      data_length,
-      data_index,
-      datum,
-      dygraph_data;
-
-    for (rating_type_index = 0; rating_type_index < rating_types_length; rating_type_index++) {
-      rating_type = rating_types[rating_type_index];
-
-      if (rating_type_to_dygraph.hasOwnProperty(rating_type)) {
-        $rating = $('#rating-' + rating_type);
-
-        if (ratings.hasOwnProperty(rating_type)) {
-          $rating.show();
-
-          data = ratings[rating_type];
-          data_length = data.length;
-          dygraph_data = [];
-          for (data_index = 0; data_index < data_length; data_index++) {
-            datum = data[data_index];
-            dygraph_data.push([new Date(datum[0] * 1000), datum[1] - datum[2] * 3]);
-          }
-
-          if (rating_type_to_dygraph[rating_type] !== null) {
-            rating_type_to_dygraph[rating_type].destroy();
-            rating_type_to_dygraph[rating_type] = null;
-          }
-
-          rating_type_to_dygraph[rating_type] = new Dygraph(document.getElementById('rating-' + rating_type), dygraph_data, {
-            title: rating_type,
-            labels: ['Date', 'Rating'],
-            labelsUTC: true,
-            axes: {
-              x: {
-                valueFormatter: formatDateMilliseconds,
-              },
-            },
-          });
-        } else {
-          $rating.hide();
-        }
       }
     }
   }
@@ -341,10 +186,9 @@ $(function () {
     return ranks;
   }
 
-  function showMoreGames(num_games_to_add) {
+  function populateGames(games, games_username) {
     var $games = $('#games'),
       game_index,
-      game_index_cutoff = Math.min(games_num_shown + num_games_to_add, games_length),
       game,
       $div,
       game_mode_name,
@@ -355,12 +199,11 @@ $(function () {
       ranks,
       score_index,
       score,
-      $tr,
-      games_num_remaining,
-      $stats_games_show_next_100 = $('#games-show-next-100'),
-      $stats_games_show_remaining = $('#games-show-remaining');
+      $tr;
 
-    for (game_index = games_num_shown; game_index < game_index_cutoff; game_index++) {
+    $games.empty();
+
+    for (game_index = 0; game_index < games.length; game_index++) {
       game = games[game_index];
 
       $div = $('<div/>');
@@ -380,11 +223,11 @@ $(function () {
         score = scores[score_index];
 
         $tr = $('<tr/>');
-        if (score[0] === games_user_id) {
+        if (score[0] === games_username) {
           $tr.addClass('current_user');
         }
         $tr.append($('<td/>').text(ranks[score_index]));
-        $tr.append($('<td/>').text(user_id_to_username[score[0]]));
+        $tr.append($('<td/>').text(score[0]));
         $tr.append($('<td/>').text(score[1] * 100));
         if (game_mode_name === 'Teams') {
           $tr.append($('<td/>').text((score[1] + scores[(score_index + 2) % 4][1]) * 100));
@@ -392,30 +235,6 @@ $(function () {
         $tbody.append($tr);
       }
     }
-
-    games_num_shown = game_index_cutoff;
-
-    games_num_remaining = games_length - games_num_shown;
-    if (games_num_remaining > 100) {
-      $stats_games_show_next_100.show();
-    } else {
-      $stats_games_show_next_100.hide();
-    }
-    if (games_num_remaining > 0) {
-      $stats_games_show_remaining.show();
-    } else {
-      $stats_games_show_remaining.hide();
-    }
-  }
-
-  function populateGames(user_id, games_data) {
-    games_user_id = user_id;
-    games = games_data;
-    games_length = games_data.length;
-    games_num_shown = 0;
-
-    $('#games').empty();
-    showMoreGames(100);
   }
 
   function formButtonClicked() {
@@ -435,27 +254,37 @@ $(function () {
     ];
   }
 
+  var showRatings_data = null;
   function showRatings(rating_type) {
-    $.ajax({
-      url: 'data/ratings.json',
-      success: function (data) {
-        if (data.hasOwnProperty(rating_type)) {
-          $('#user').hide();
-          $('#users').show();
-          $('#ratings-type').text(rating_type);
-          populateRatingsTable(data[rating_type]);
-          setFormErrorMessage(null);
-        } else {
-          setFormErrorMessage('Invalid ratings type.');
-        }
-      },
-      error: function (jqXHR, textStatus, errorThrown) {
-        reportAjaxError(jqXHR, textStatus, errorThrown);
+    if (showRatings_data) {
+      showData();
+    } else {
+      $.ajax({
+        url: 'data/ratings.json',
+        success: function (data) {
+          showRatings_data = data;
+          showData();
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+          reportAjaxError(jqXHR, textStatus, errorThrown);
 
-        showPage('loading-error');
-      },
-      dataType: 'json',
-    });
+          showPage('loading-error');
+        },
+        dataType: 'json',
+      });
+    }
+
+    function showData() {
+      if (showRatings_data.hasOwnProperty(rating_type)) {
+        $('#user').hide();
+        $('#users').show();
+        $('#ratings-type').text(rating_type);
+        populateRatingsTable(showRatings_data[rating_type]);
+        setFormErrorMessage(null);
+      } else {
+        setFormErrorMessage('Invalid ratings type.');
+      }
+    }
   }
 
   function formSubmitted() {
@@ -477,26 +306,21 @@ $(function () {
   }
 
   function showUsername(username) {
-    var user_id;
-
-    if (username_to_user_id.hasOwnProperty(username)) {
-      user_id = username_to_user_id[username];
+    if (isValidUsername(username)) {
       setFormLoadingMessage('Loading stats for ' + username + '...');
       setFormErrorMessage(null);
 
       $.ajax({
-        url: 'data/user' + user_id + '.json',
+        url: 'data/users/' + btoa(username).replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_') + '.json',
         success: function (data) {
           $('#users').hide();
           $('#user').show();
           $('#user-name').text(username);
-          populateSummary(user_id, data.ratings, data.games);
-          populateRatings(data.ratings);
-          populateGames(user_id, data.games);
+          populateSummary(data.ratings);
+          populateGames(data.games, username);
         },
-        error: function (jqXHR, textStatus, errorThrown) {
-          reportAjaxError(jqXHR, textStatus, errorThrown);
-          setFormErrorMessage('Error while loading stats for ' + username + '.');
+        error: function () {
+          setFormErrorMessage('Cannot find ' + username + '.');
         },
         complete: function () {
           setFormLoadingMessage(null);
@@ -504,7 +328,7 @@ $(function () {
         dataType: 'json',
       });
     } else {
-      setFormErrorMessage('Cannot find ' + username + '.');
+      setFormErrorMessage('Invalid username.');
     }
   }
 
@@ -533,19 +357,25 @@ $(function () {
     formSubmitted();
   }
 
-  function showNext100Clicked() {
-    showMoreGames(100);
-    return false;
-  }
-
-  function showRemainingClicked() {
-    showMoreGames(games_length - games_num_shown);
-    return false;
-  }
-
   function showPage(page) {
     $('.page').hide();
     $('#page-' + page).show();
+  }
+
+  function isValidUsername(username) {
+    var i, char_code;
+
+    if (username.length === 0 || username.length > 32) {
+      return false;
+    }
+
+    for (i = 0; i < username.length; i++) {
+      char_code = username.charCodeAt(i);
+      if (char_code < 32 || char_code > 126) {
+        return false;
+      }
+    }
+    return true;
   }
 
   window.onerror = function (message, file, line_number) {
