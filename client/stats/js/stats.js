@@ -31,19 +31,9 @@ $(function () {
 
   function initialize() {
     $.ajax({
-      url: 'data/users.json',
+      url: 'data/ratings.json',
       success: function (data) {
-        var user_id;
-
-        user_id_to_username = data.users;
-        username_to_user_id = {};
-        for (user_id in user_id_to_username) {
-          if (user_id_to_username.hasOwnProperty(user_id)) {
-            username_to_user_id[user_id_to_username[user_id]] = parseInt(user_id, 10);
-          }
-        }
-
-        rating_type_to_ratings = data.ratings;
+        rating_type_to_ratings = data;
 
         completeInitializationWhenReady();
       },
@@ -150,7 +140,7 @@ $(function () {
 
       $tr = $('<tr/>');
       $tr.append($('<td/>').text(ratings_index + 1));
-      $tr.append($('<td/>').text(user_id_to_username[rating[0]]));
+      $tr.append($('<td/>').text(rating[0]));
       $tr.append($('<td/>').text((rating[2] - rating[3] * 3).toFixed(2)));
       $tr.append($('<td/>').text(rating[2].toFixed(2) + ' ± ' + (rating[3] * 3).toFixed(2)));
       $tr.append($('<td/>').text(rating[4]));

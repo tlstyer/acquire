@@ -209,7 +209,7 @@ class StatsGen:
     )
     ratings_sql = sqlalchemy.sql.text(
         """
-        select rating.user_id,
+        select user.name,
             rating_type.name as rating_type,
             rating.time,
             rating.mu,
@@ -223,6 +223,7 @@ class StatsGen:
             group by user_id, rating_type_id
         ) rating_summary on rating.rating_id = rating_summary.rating_id
         join rating_type on rating.rating_type_id = rating_type.rating_type_id
+        join user on rating.user_id = user.user_id
         where rating.time >= unix_timestamp() - 30 * 24 * 60 * 60
         order by rating.mu - rating.sigma * 3 desc, rating.mu desc, rating.time asc, rating.user_id asc
     """
@@ -269,16 +270,14 @@ class StatsGen:
             user_id_to_name[row.user_id] = row.name.decode()
         return user_id_to_name
 
-    def output_users(self, user_id_to_name):
+    def output_ratings(self):
         rating_type_to_ratings = collections.defaultdict(list)
         for row in self.session.execute(StatsGen.ratings_sql):
             rating_type_to_ratings[row.rating_type.decode()].append(
-                [row.user_id, row.time, row.mu, row.sigma, row.num_games]
+                [row.name, row.time, row.mu, row.sigma, row.num_games]
             )
 
-        self.write_file(
-            "users", {"users": user_id_to_name, "ratings": rating_type_to_ratings}
-        )
+        self.write_file("ratings", rating_type_to_ratings)
 
     def output_user(self, user_id):
         ratings = collections.defaultdict(list)
@@ -349,7 +348,7 @@ def main():
                     user_id_to_name = statsgen.get_user_id_to_name()
                 for user in completed_game_users:
                     user_id_to_name[user.user_id] = user.name
-                statsgen.output_users(user_id_to_name)
+                statsgen.output_ratings()
                 for user in completed_game_users:
                     statsgen.output_user(user.user_id)
 
