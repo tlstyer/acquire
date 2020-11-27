@@ -47,10 +47,9 @@ MAIN_JS=$(sha1sum dist/build/main2.js | awk '{ print $1 }').js
 cp dist/build/main2.js dist/web/static/${MAIN_JS}
 
 # stats.js
-sed "s/url: 'data\//url: '/" client/stats/js/stats.js > dist/build/stats1.js
-./node_modules/uglify-js/bin/uglifyjs client/misc/js/polyfill_string_trim.js dist/build/stats1.js -m -b indent-level=0 -o dist/build/stats2.js
-STATS_JS=$(sha1sum dist/build/stats2.js | awk '{ print $1 }').js
-cp dist/build/stats2.js dist/web/static/${STATS_JS}
+./node_modules/uglify-js/bin/uglifyjs client/misc/js/polyfill_string_trim.js client/stats/js/stats.js -m -b indent-level=0 -o dist/build/stats1.js
+STATS_JS=$(sha1sum dist/build/stats1.js | awk '{ print $1 }').js
+cp dist/build/stats1.js dist/web/static/${STATS_JS}
 
 # index.html
 sed "s/<link rel=\"stylesheet\" href=\"css\/main.css\" \/>/<link rel=\"stylesheet\" href=\"static\/${MAIN_CSS}\" \/>/" client/main/index.html | \
