@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 import server
 import time
 import unittest
