@@ -35,10 +35,10 @@ cp client/main/js/* server/server.js dist/build/js
 rm dist/build/js/main.js*
 
 # enums replacements in server.py and .js files
-./server/enumsgen.py replace dist/server.py dist/build/js/*.js
+./venv/bin/python server/enumsgen.py replace dist/server.py dist/build/js/*.js
 
 # finish main.js
-./server/enumsgen.py js release > dist/build/js/enums.js
+./venv/bin/python server/enumsgen.py js release > dist/build/js/enums.js
 
 ./node_modules/webpack/bin/webpack.js dist/build/js/app.js dist/build/main1.js
 
