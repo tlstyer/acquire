@@ -2593,7 +2593,7 @@ def get_actual_username(log_timestamp, username):
     return username
 
 
-def output_non_ascii_usernames_in_the_database():
+def punycode_non_ascii_usernames_in_the_database():
     query_for_user_names = sqlalchemy.sql.text(
         """
         select user_id, name
@@ -2606,7 +2606,13 @@ def output_non_ascii_usernames_in_the_database():
             user_id = row.user_id
             username = row.name.decode()
             if not is_ascii(username):
-                print(user_id, repr(username))
+                print(
+                    "update user set name = "
+                    + repr(username.encode("punycode").decode().strip())
+                    + " where user_id = "
+                    + str(user_id)
+                    + ";"
+                )
 
 
 def main():
@@ -2628,7 +2634,6 @@ def main():
     # output_server_game_file_for_game(1433241253, 510, output_dir)
     # output_chat_messages(1520848828)
     # compare_log_usernames_with_database_usernames(1408911415)
-    # output_non_ascii_usernames_in_the_database()
 
     command = sys.argv[1]
     if command == "output_username_to_user_id":
@@ -2637,6 +2642,8 @@ def main():
         output_command_to_run_this_script_in_parallel_on_all_logs()
     elif command == "make_acquire2_game_test_files":
         make_acquire2_game_test_files(int(sys.argv[2]), output_dir)
+    elif command == "punycode_non_ascii_usernames_in_the_database":
+        punycode_non_ascii_usernames_in_the_database()
 
 
 if __name__ == "__main__":
