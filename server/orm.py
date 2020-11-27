@@ -15,7 +15,8 @@ from sqlalchemy.orm import relationship, sessionmaker
 
 Base = declarative_base()
 engine = create_engine(
-    "mysql+mysqlconnector://acquire:acquire@localhost/acquire?unix_socket=/var/run/mysqld/mysqld.sock"
+    "mysql+mysqlconnector://acquire:acquire@localhost/acquire?unix_socket=/var/run/mysqld/mysqld.sock",
+    connect_args={"auth_plugin": "mysql_native_password"},
 )
 Session = sessionmaker(bind=engine)
 
