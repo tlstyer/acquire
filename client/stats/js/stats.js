@@ -132,7 +132,13 @@ $(function () {
         $tr.append($('<td/>').text(rating_type));
         $tr.append($('<td/>').text((rating[1] - rating[2] * 3).toFixed(2)));
         $tr.append($('<td/>').text(rating[1].toFixed(2) + ' ± ' + (rating[2] * 3).toFixed(2)));
-        $tr.append($('<td/>').text(rating[3].reduce((a, b) => a + b)));
+        $tr.append(
+          $('<td/>').text(
+            rating[3].reduce(function (a, b) {
+              return a + b;
+            })
+          )
+        );
         $tr.append($('<td/>').text(rating[3].join(' - ')));
         $tr.append($('<td/>').text(formatDate(rating[0])));
         $tbody.append($tr);
