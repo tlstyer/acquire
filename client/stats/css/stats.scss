@@ -33,12 +33,17 @@ body {
   background-color: $color-background-default;
   color: black;
   font-size: 16px;
+  padding-left: 0.5em;
+  padding-right: 0.5em;
+}
+
+.announcement {
+  color: red;
+  font-weight: bold;
 }
 
 .page {
   display: none;
-  padding-left: 0.5em;
-  padding-right: 0.5em;
 }
 #page-loading {
   display: block;
