@@ -201,6 +201,8 @@ $(function () {
       score,
       $tr;
 
+    $('#games-header').text(games.length === 100 ? 'Last 100 Games' : 'Games');
+
     $games.empty();
 
     for (game_index = 0; game_index < games.length; game_index++) {
