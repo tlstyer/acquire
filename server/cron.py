@@ -410,23 +410,36 @@ def main():
                     user_id_to_name[user.user_id] = user.name
                 statsgen.output_ratings()
                 for user in completed_game_users:
-                    statsgen.output_user(user.user_id, user.username)
+                    statsgen.output_user(user.user_id, user.name)
 
-                filenames = glob.glob("stats_temp/*.json")
-                if filenames:
-                    all_filenames = filenames + [x + ".gz" for x in filenames]
-
+                ratings_filenames = glob.glob("stats_temp/*.json")
+                users_filenames = glob.glob("stats_temp/users/*.json")
+                if ratings_filenames:
                     command = ["zopfli"]
-                    command.extend(filenames)
+                    command.extend(ratings_filenames)
+                    command.extend(users_filenames)
                     subprocess.call(command)
 
-                    command = ["touch", "-r", "stats_temp/users.json"]
-                    command.extend(all_filenames)
+                    ratings_filenames = ratings_filenames + [
+                        x + ".gz" for x in ratings_filenames
+                    ]
+                    users_filenames = users_filenames + [
+                        x + ".gz" for x in users_filenames
+                    ]
+
+                    command = ["touch", "-r", "stats_temp/ratings.json"]
+                    command.extend(ratings_filenames)
+                    command.extend(users_filenames)
                     subprocess.call(command)
 
                     command = ["mv"]
-                    command.extend(all_filenames)
-                    command.append("web/stats")
+                    command.extend(ratings_filenames)
+                    command.append("web/stats/data")
+                    subprocess.call(command)
+
+                    command = ["mv"]
+                    command.extend(users_filenames)
+                    command.append("web/stats/data/users")
                     subprocess.call(command)
 
         time.sleep(60)
