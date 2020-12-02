@@ -331,8 +331,6 @@ def get_records(username, games):
 
 
 def main():
-    user_id_to_name = None
-
     while True:
         with orm.session_scope() as session:
             lookup = orm.Lookup(session)
@@ -373,10 +371,6 @@ def main():
 
             if completed_game_users:
                 statsgen = StatsGen(session, "stats_temp")
-                if not user_id_to_name:
-                    user_id_to_name = statsgen.get_user_id_to_name()
-                for user in completed_game_users:
-                    user_id_to_name[user.user_id] = user.name
                 statsgen.output_ratings()
                 for user in completed_game_users:
                     statsgen.output_user(user.user_id, user.name)
