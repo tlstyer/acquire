@@ -9,6 +9,7 @@ import sqlalchemy.sql
 import sqlalchemy.types
 import subprocess
 import time
+import traceback
 import trueskill
 import ujson
 import util
@@ -330,82 +331,75 @@ def get_records(username, games):
     return records
 
 
-def main():
-    while True:
-        with orm.session_scope() as session:
-            lookup = orm.Lookup(session)
-            logs2db = Logs2DB(session, lookup)
+def process_logs():
+    with orm.session_scope() as session:
+        lookup = orm.Lookup(session)
+        logs2db = Logs2DB(session, lookup)
 
-            kv_last_log_timestamp = lookup.get_key_value("cron last log timestamp")
-            last_log_timestamp = (
-                1408905413
-                if kv_last_log_timestamp.value is None
-                else int(kv_last_log_timestamp.value)
-            )
-            kv_last_offset = lookup.get_key_value("cron last offset")
-            last_offset = (
-                0 if kv_last_offset.value is None else int(kv_last_offset.value)
-            )
+        kv_last_log_timestamp = lookup.get_key_value("cron last log timestamp")
+        last_log_timestamp = (
+            1408905413
+            if kv_last_log_timestamp.value is None
+            else int(kv_last_log_timestamp.value)
+        )
+        kv_last_offset = lookup.get_key_value("cron last offset")
+        last_offset = 0 if kv_last_offset.value is None else int(kv_last_offset.value)
 
-            completed_game_users = set()
-            for log_timestamp, filename in util.get_log_file_filenames(
-                "py", begin=last_log_timestamp
-            ):
-                if log_timestamp != last_log_timestamp:
-                    last_offset = 0
+        completed_game_users = set()
+        for log_timestamp, filename in util.get_log_file_filenames(
+            "py", begin=last_log_timestamp
+        ):
+            if log_timestamp != last_log_timestamp:
+                last_offset = 0
 
-                with util.open_possibly_gzipped_file(filename) as f:
-                    if last_offset:
-                        f.seek(last_offset)
-                    last_offset, new_completed_game_users = logs2db.process_logs(
-                        f, log_timestamp
-                    )
-                    completed_game_users.update(new_completed_game_users)
+            with util.open_possibly_gzipped_file(filename) as f:
+                if last_offset:
+                    f.seek(last_offset)
+                last_offset, new_completed_game_users = logs2db.process_logs(
+                    f, log_timestamp
+                )
+                completed_game_users.update(new_completed_game_users)
 
-                last_log_timestamp = log_timestamp
+            last_log_timestamp = log_timestamp
 
-            kv_last_log_timestamp.value = last_log_timestamp
-            kv_last_offset.value = last_offset
+        kv_last_log_timestamp.value = last_log_timestamp
+        kv_last_offset.value = last_offset
 
-            session.flush()
+        session.flush()
 
-            if completed_game_users:
-                statsgen = StatsGen(session, "stats_temp")
-                statsgen.output_ratings()
-                for user in completed_game_users:
-                    statsgen.output_user(user.user_id, user.name)
+        if completed_game_users:
+            statsgen = StatsGen(session, "stats_temp")
+            statsgen.output_ratings()
+            for user in completed_game_users:
+                statsgen.output_user(user.user_id, user.name)
 
-                ratings_filenames = glob.glob("stats_temp/*.json")
-                users_filenames = glob.glob("stats_temp/users/*.json")
-                if ratings_filenames:
-                    command = ["zopfli"]
-                    command.extend(ratings_filenames)
-                    command.extend(users_filenames)
-                    subprocess.call(command)
+            ratings_filenames = glob.glob("stats_temp/*.json")
+            users_filenames = glob.glob("stats_temp/users/*.json")
+            if ratings_filenames:
+                command = ["zopfli"]
+                command.extend(ratings_filenames)
+                command.extend(users_filenames)
+                subprocess.call(command)
 
-                    ratings_filenames = ratings_filenames + [
-                        x + ".gz" for x in ratings_filenames
-                    ]
-                    users_filenames = users_filenames + [
-                        x + ".gz" for x in users_filenames
-                    ]
+                ratings_filenames = ratings_filenames + [
+                    x + ".gz" for x in ratings_filenames
+                ]
+                users_filenames = users_filenames + [x + ".gz" for x in users_filenames]
 
-                    command = ["touch", "-r", "stats_temp/ratings.json"]
-                    command.extend(ratings_filenames)
-                    command.extend(users_filenames)
-                    subprocess.call(command)
+                command = ["touch", "-r", "stats_temp/ratings.json"]
+                command.extend(ratings_filenames)
+                command.extend(users_filenames)
+                subprocess.call(command)
 
-                    command = ["mv"]
-                    command.extend(ratings_filenames)
-                    command.append("web/stats/data")
-                    subprocess.call(command)
+                command = ["mv"]
+                command.extend(ratings_filenames)
+                command.append("web/stats/data")
+                subprocess.call(command)
 
-                    command = ["mv"]
-                    command.extend(users_filenames)
-                    command.append("web/stats/data/users")
-                    subprocess.call(command)
-
-        time.sleep(60)
+                command = ["mv"]
+                command.extend(users_filenames)
+                command.append("web/stats/data/users")
+                subprocess.call(command)
 
 
 def output_all_stats_files():
@@ -417,6 +411,16 @@ def output_all_stats_files():
             username = user_id_to_name[user_id]
             print(user_id, username)
             statsgen.output_user(user_id, username)
+
+
+def main():
+    while True:
+        try:
+            process_logs()
+        except:
+            print(traceback.format_exc())
+
+        time.sleep(60)
 
 
 if __name__ == "__main__":
