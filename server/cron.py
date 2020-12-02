@@ -30,7 +30,6 @@ class Logs2DB:
 
         self.method_lookup = {
             "game": self.process_game,
-            "game-import": self.process_game_import,
             "game-player": self.process_game_player,
             "game-result": self.process_game_result,
         }
@@ -72,36 +71,6 @@ class Logs2DB:
         if score:
             params["scores"] = score
             self.process_game_result(params)
-
-        game.imported = 0
-
-        game.completed_by_admin = 1 if params.get("used-log-data-overrides") else 0
-
-    def process_game_import(self, params):
-        game = orm.Game()
-        self.session.add(game)
-        game.log_time = params["end"] - 1000000000
-        game.number = len(params["scores"]) if params["mode"] == "Singles" else 5
-        game.begin_time = params["end"] - 300
-        game.end_time = params["end"]
-        game.game_state = self.lookup.get_game_state("Completed")
-        game.game_mode = self.lookup.get_game_mode(params["mode"])
-        game.imported = 1
-        game.completed_by_admin = 0
-
-        game_players = []
-        for player_index, name_and_score in enumerate(params["scores"]):
-            name, score = name_and_score
-            game_player = orm.GamePlayer()
-            self.session.add(game_player)
-            game_player.game = game
-            game_player.player_index = player_index
-            game_player.user = self.lookup.get_user(name)
-            game_player.score = score
-            game_players.append(game_player)
-            self.completed_game_users.add(game_player.user)
-
-        self.calculate_new_ratings(game, game_players)
 
     def process_game_player(self, params):
         game = self.lookup.get_game(params["log-time"], params["game-id"])

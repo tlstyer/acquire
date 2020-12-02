@@ -91,7 +91,6 @@ def recreate_some_games(server_):
             log_time,
             number
         from game
-        where completed_by_admin = 1
     """
     )
     with orm.session_scope() as session:

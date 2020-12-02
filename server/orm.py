@@ -47,8 +47,6 @@ class Game(Base):
     game_mode_id = Column(
         TINYINT(unsigned=True), ForeignKey("game_mode.game_mode_id"), nullable=False
     )
-    imported = Column(TINYINT(unsigned=True), nullable=False)
-    completed_by_admin = Column(TINYINT(unsigned=True), nullable=False)
     __table_args__ = (
         UniqueConstraint("log_time", "number"),
         Index("end_time", "end_time"),
@@ -66,11 +64,9 @@ class Game(Base):
             repr(self.end_time),
             repr(self.game_state_id),
             repr(self.game_mode_id),
-            repr(self.imported),
-            repr(self.completed_by_admin),
         )
         return (
-            "Game(game_id=%s, log_time=%s, number=%s, begin_time=%s, end_time=%s, game_state_id=%s, game_mode_id=%s, imported=%s, completed_by_admin=%s)"
+            "Game(game_id=%s, log_time=%s, number=%s, begin_time=%s, end_time=%s, game_state_id=%s, game_mode_id=%s)"
             % params
         )
 
