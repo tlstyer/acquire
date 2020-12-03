@@ -176,7 +176,7 @@ class StatsGen:
         select distinct user.user_id,
             user.name
         from user
-    """
+        """
     )
     ratings_sql = sqlalchemy.sql.text(
         """
@@ -197,7 +197,7 @@ class StatsGen:
         join user on rating.user_id = user.user_id
         where rating.time >= unix_timestamp() - 30 * 24 * 60 * 60
         order by rating.mu - rating.sigma * 3 desc, rating.mu desc, rating.time asc, rating.user_id asc
-    """
+        """
     )
     user_ratings_sql = sqlalchemy.sql.text(
         """
@@ -214,7 +214,7 @@ class StatsGen:
         ) rating_summary on rating.rating_id = rating_summary.rating_id
         join rating_type on rating.rating_type_id = rating_type.rating_type_id
         order by rating_type.name
-    """
+        """
     )
     user_games_sql = sqlalchemy.sql.text(
         """
@@ -235,7 +235,7 @@ class StatsGen:
         join game_player on game.game_id = game_player.game_id
         join user on game_player.user_id = user.user_id
         order by game.end_time desc, game.game_id desc, game_player.player_index asc
-    """
+        """
     )
 
     def __init__(self, session, output_dir):
