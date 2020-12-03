@@ -215,30 +215,37 @@ class Logs2DB:
                 record = self.lookup.get_record(user)
                 if record is None:
                     record = orm.Record(user=user, encoded="")
-                    unencoded = [
-                        [0, 0],  # Singles2
-                        [0, 0, 0],  # Singles3
-                        [0, 0, 0, 0],  # Singles4
-                        [0, 0],  # Teams
-                    ]
+                    decoded = get_empty_records()
                     self.lookup.add_record(record)
                     self.session.add(record)
                 else:
-                    unencoded = ujson.decode(record.encoded)
+                    decoded = ujson.decode(record.encoded)
 
-                unencoded[record_index][place] += 1
+                decoded[record_index][place] += 1
 
-                record.encoded = ujson.encode(unencoded)
+                record.encoded = ujson.encode(decoded)
+
+
+def get_empty_records():
+    return [
+        [0, 0],  # Singles2
+        [0, 0, 0],  # Singles3
+        [0, 0, 0, 0],  # Singles4
+        [0, 0],  # Teams
+    ]
 
 
 class StatsGen:
-    users_with_records_sql = sqlalchemy.sql.text(
+    users_with_completed_games_sql = sqlalchemy.sql.text(
         """
         select distinct user.user_id,
             user.name,
             record.encoded
         from user
-        join record on user.user_id = record.user_id
+        join game_player on user.user_id = game_player.user_id
+        join game on game_player.game_id = game.game_id
+        left join record on user.user_id = record.user_id
+        where game.end_time is not null
         order by user.user_id asc
         """
     )
@@ -308,13 +315,15 @@ class StatsGen:
         self.session = session
         self.output_dir = output_dir
 
-    def get_users_with_records(self):
-        users_with_records = []
-        for row in self.session.execute(StatsGen.users_with_records_sql):
-            users_with_records.append(
-                [row.user_id, row.name.decode(), ujson.decode(row.encoded)]
-            )
-        return users_with_records
+    def get_users_with_completed_games(self):
+        users_with_completed_games = []
+        for row in self.session.execute(StatsGen.users_with_completed_games_sql):
+            if row.encoded:
+                decoded = ujson.decode(row.encoded)
+            else:
+                decoded = get_empty_records()
+            users_with_completed_games.append([row.user_id, row.name.decode(), decoded])
+        return users_with_completed_games
 
     def output_ratings(self):
         rating_type_to_ratings = collections.defaultdict(list)
@@ -445,8 +454,8 @@ def output_all_stats_files():
     with orm.session_scope() as session:
         statsgen = StatsGen(session, "/tmp/tim/acquire/stats")
         statsgen.output_ratings()
-        users_with_records = statsgen.get_users_with_records()
-        for [user_id, username, records] in sorted(users_with_records):
+        users_with_completed_games = statsgen.get_users_with_completed_games()
+        for [user_id, username, records] in sorted(users_with_completed_games):
             print(user_id, username, records)
             statsgen.output_user(user_id, username, records)
 
