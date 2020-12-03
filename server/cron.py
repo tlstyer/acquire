@@ -282,7 +282,7 @@ class StatsGen:
     )
     user_games_sql = sqlalchemy.sql.text(
         """
-        select distinct game.game_id,
+        select game.game_id,
             game.end_time,
             game.game_mode_id,
             game_player.player_index,
@@ -295,6 +295,8 @@ class StatsGen:
             join game_player on game.game_id = game_player.game_id
             where game_player.user_id = :user_id
                 and game_player.score is not null
+            order by game.end_time desc, game.game_id desc
+            limit 100
         ) game_ids on game.game_id = game_ids.game_id
         join game_player on game.game_id = game_player.game_id
         join user on game_player.user_id = user.user_id
@@ -348,7 +350,7 @@ class StatsGen:
             .replace("=", "")
             .replace("+", "-")
             .replace("/", "_"),
-            {"ratings": ratings, "games": games[:100]},
+            {"ratings": ratings, "games": games},
         )
 
     def write_file(self, filename_prefix, contents):
