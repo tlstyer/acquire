@@ -172,6 +172,26 @@ class RatingType(Base):
         return "RatingType(rating_type_id=%s, name=%s)" % params
 
 
+class Record(Base):
+    __tablename__ = "record"
+    user_id = Column(
+        INTEGER(unsigned=True),
+        ForeignKey("user.user_id"),
+        primary_key=True,
+        nullable=False,
+    )
+    encoded = Column(String(255, convert_unicode="force"), nullable=False)
+
+    user = relationship("User")
+
+    def __repr__(self):
+        params = (
+            repr(self.user_id),
+            repr(self.encoded),
+        )
+        return "Record(user_id=%s, encoded=%s)" % params
+
+
 class User(Base):
     __tablename__ = "user"
     user_id = Column(INTEGER(unsigned=True), primary_key=True, nullable=False)
@@ -196,6 +216,7 @@ class Lookup:
         self.key_value_lookup = {}
         self.rating_lookup = collections.defaultdict(dict)
         self.rating_type_lookup = {}
+        self.record_lookup = {}
         self.user_lookup = {}
 
     def get_game(self, log_time, number):
@@ -300,6 +321,22 @@ class Lookup:
 
         self.rating_type_lookup[name] = rating_type
         return rating_type
+
+    def get_record(self, user):
+        record = self.record_lookup.get(user.name, None)
+        if record:
+            return record
+
+        if user.user_id:
+            record = self.session.query(Record).filter_by(user=user).limit(1).scalar()
+
+        if record:
+            self.record_lookup[user.name] = record
+
+        return record
+
+    def add_record(self, record):
+        self.record_lookup[record.user.name] = record
 
     def get_user(self, name):
         user = self.user_lookup.get(name, None)

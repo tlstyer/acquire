@@ -89,6 +89,7 @@ class Logs2DB:
             self.completed_game_users.add(game_player.user)
 
         self.calculate_new_ratings(game, game_players)
+        self.update_records(game, game_players)
 
     def calculate_new_ratings(self, game, game_players):
         game_mode_name = game.game_mode.name
@@ -168,6 +169,66 @@ class Logs2DB:
 
         self.trueskill_environment_lookup[rating_type.name] = trueskill_environment
         return trueskill_environment
+
+    def update_records(self, game, game_players):
+        record_index = None
+        game_mode_name = game.game_mode.name
+        if game_mode_name == "Singles":
+            if len(game_players) == 2:
+                record_index = 0
+            elif len(game_players) == 3:
+                record_index = 1
+            elif len(game_players) == 4:
+                record_index = 2
+        elif game_mode_name == "Teams":
+            record_index = 3
+
+        if record_index is None:
+            return
+
+        users_and_scores = [[[gp.user], gp.score] for gp in game_players]
+        if game_mode_name == "Teams":
+            users_and_scores = [
+                [
+                    [users_and_scores[0][0][0], users_and_scores[2][0][0]],
+                    users_and_scores[0][1] + users_and_scores[2][1],
+                ],
+                [
+                    [users_and_scores[1][0][0], users_and_scores[3][0][0]],
+                    users_and_scores[1][1] + users_and_scores[3][1],
+                ],
+            ]
+
+        users_and_scores.sort(key=lambda us: -us[1])
+
+        previous_score = -1
+        previous_place = -1
+        for index, [users, score] in enumerate(users_and_scores):
+            if score == previous_score:
+                place = previous_place
+            else:
+                place = index
+                previous_score = score
+                previous_place = index
+
+            for user in users:
+                record = self.lookup.get_record(user)
+                if record is None:
+                    record = orm.Record(user=user, encoded="")
+                    unencoded = [
+                        [0, 0],  # Singles2
+                        [0, 0, 0],  # Singles3
+                        [0, 0, 0, 0],  # Singles4
+                        [0, 0],  # Teams
+                    ]
+                    self.lookup.add_record(record)
+                    self.session.add(record)
+                else:
+                    unencoded = ujson.decode(record.encoded)
+
+                unencoded[record_index][place] += 1
+
+                record.encoded = ujson.encode(unencoded)
 
 
 class StatsGen:
