@@ -415,11 +415,12 @@ def process_logs(write_stats_files):
             statsgen = StatsGen(session, "stats_temp")
             statsgen.output_ratings()
             for user in completed_game_users:
-                statsgen.output_user(
-                    user.user_id,
-                    user.name,
-                    ujson.decode(lookup.get_record(user).encoded),
-                )
+                record = lookup.get_record(user)
+                if record:
+                    decoded = ujson.decode(record.encoded)
+                else:
+                    decoded = get_empty_records()
+                statsgen.output_user(user.user_id, user.name, decoded)
 
             ratings_filenames = glob.glob("stats_temp/*.json")
             users_filenames = glob.glob("stats_temp/users/*.json")
