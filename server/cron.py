@@ -331,7 +331,7 @@ def get_records(username, games):
     return records
 
 
-def process_logs():
+def process_logs(write_stats_files):
     with orm.session_scope() as session:
         lookup = orm.Lookup(session)
         logs2db = Logs2DB(session, lookup)
@@ -367,7 +367,7 @@ def process_logs():
 
         session.flush()
 
-        if completed_game_users:
+        if write_stats_files and completed_game_users:
             statsgen = StatsGen(session, "stats_temp")
             statsgen.output_ratings()
             for user in completed_game_users:
@@ -416,7 +416,7 @@ def output_all_stats_files():
 def main():
     while True:
         try:
-            process_logs()
+            process_logs(True)
         except:
             print(traceback.format_exc())
 
@@ -424,5 +424,6 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    # process_logs(False)
     # output_all_stats_files()
+    main()
