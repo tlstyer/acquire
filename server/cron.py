@@ -232,11 +232,14 @@ class Logs2DB:
 
 
 class StatsGen:
-    users_sql = sqlalchemy.sql.text(
+    users_with_records_sql = sqlalchemy.sql.text(
         """
         select distinct user.user_id,
-            user.name
+            user.name,
+            record.encoded
         from user
+        join record on user.user_id = record.user_id
+        order by user.user_id asc
         """
     )
     ratings_sql = sqlalchemy.sql.text(
@@ -303,11 +306,13 @@ class StatsGen:
         self.session = session
         self.output_dir = output_dir
 
-    def get_user_id_to_name(self):
-        user_id_to_name = {}
-        for row in self.session.execute(StatsGen.users_sql):
-            user_id_to_name[row.user_id] = row.name.decode()
-        return user_id_to_name
+    def get_users_with_records(self):
+        users_with_records = []
+        for row in self.session.execute(StatsGen.users_with_records_sql):
+            users_with_records.append(
+                [row.user_id, row.name.decode(), ujson.decode(row.encoded)]
+            )
+        return users_with_records
 
     def output_ratings(self):
         rating_type_to_ratings = collections.defaultdict(list)
@@ -318,7 +323,7 @@ class StatsGen:
 
         self.write_file("ratings", rating_type_to_ratings)
 
-    def output_user(self, user_id, username):
+    def output_user(self, user_id, username, records):
         ratings = {}
         for row in self.session.execute(
             StatsGen.user_ratings_sql, {"user_id": user_id}
@@ -333,11 +338,8 @@ class StatsGen:
             games[-1][2].append([row.name.decode(), row.score])
             last_game_id = row.game_id
 
-        records = get_records(username, games)
-
-        for record_key in records:
-            if record_key in ratings:
-                ratings[record_key].append(records[record_key])
+        for record_key in ratings:
+            ratings[record_key].append(records[record_key_to_record_index[record_key]])
 
         self.write_file(
             "users/"
@@ -354,42 +356,12 @@ class StatsGen:
             f.write(ujson.dumps(contents))
 
 
-def get_records(username, games):
-    records = {
-        "Singles2": [0, 0],
-        "Singles3": [0, 0, 0],
-        "Singles4": [0, 0, 0, 0],
-        "Teams": [0, 0],
-    }
-
-    for game in games:
-        is_singles_game = game[0] == 1
-        result = [[x[0] == username, x[1]] for x in game[2]]
-
-        record_key = "Singles" + str(len(result)) if is_singles_game else "Teams"
-
-        if record_key not in records:
-            continue
-
-        if not is_singles_game:
-            result = [
-                [
-                    result[0][0] or result[2][0],
-                    result[0][1] + result[2][1],
-                ],
-                [
-                    result[1][0] or result[3][0],
-                    result[1][1] + result[3][1],
-                ],
-            ]
-
-        result.sort(key=lambda r: (-r[1], -1 if r[0] else 0))
-
-        place = [i for i, r in enumerate(result) if r[0]][0]
-
-        records[record_key][place] += 1
-
-    return records
+record_key_to_record_index = {
+    "Singles2": 0,
+    "Singles3": 1,
+    "Singles4": 2,
+    "Teams": 3,
+}
 
 
 def process_logs(write_stats_files):
@@ -432,7 +404,11 @@ def process_logs(write_stats_files):
             statsgen = StatsGen(session, "stats_temp")
             statsgen.output_ratings()
             for user in completed_game_users:
-                statsgen.output_user(user.user_id, user.name)
+                statsgen.output_user(
+                    user.user_id,
+                    user.name,
+                    ujson.decode(lookup.get_record(user).encoded),
+                )
 
             ratings_filenames = glob.glob("stats_temp/*.json")
             users_filenames = glob.glob("stats_temp/users/*.json")
@@ -467,11 +443,10 @@ def output_all_stats_files():
     with orm.session_scope() as session:
         statsgen = StatsGen(session, "/tmp/tim/acquire/stats")
         statsgen.output_ratings()
-        user_id_to_name = statsgen.get_user_id_to_name()
-        for user_id in sorted(user_id_to_name):
-            username = user_id_to_name[user_id]
-            print(user_id, username)
-            statsgen.output_user(user_id, username)
+        users_with_records = statsgen.get_users_with_records()
+        for [user_id, username, records] in sorted(users_with_records):
+            print(user_id, username, records)
+            statsgen.output_user(user_id, username, records)
 
 
 def main():
