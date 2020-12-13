@@ -2450,7 +2450,7 @@ def compare_log_usernames_with_database_usernames(log_timestamp):
         join user on user.user_id = game_player.user_id
         where game.log_time = :log_timestamp and game.number = :internal_game_id
         order by game_player.player_index
-    """
+        """
     )
 
     with orm.session_scope() as session:
@@ -2598,7 +2598,7 @@ def punycode_non_ascii_usernames_in_the_database():
         """
         select user_id, name
         from user
-    """
+        """
     )
 
     with orm.session_scope() as session:

@@ -91,7 +91,7 @@ def recreate_some_games(server_):
             log_time,
             number
         from game
-    """
+        """
     )
     with orm.session_scope() as session:
         for row in session.execute(sql):
