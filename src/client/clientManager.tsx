@@ -1,7 +1,7 @@
 import { List } from 'immutable';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { defaultGameBoard } from '../common/defaults';
+import { defaultGameBoard, defaultScoreBoardAvailable, defaultScoreBoardPrice } from '../common/defaults';
 import { GameActionEnum, ScoreBoardIndexEnum } from '../common/enums';
 import { Game } from '../common/game';
 import { ActionDisposeOfShares } from '../common/gameActions/disposeOfShares';
@@ -389,59 +389,75 @@ export class ClientManager {
               cellWidth={scoreBoardCellWidth}
             />
             {tileRack !== undefined && tileRackTypes !== undefined ? (
-              <TileRack
-                tiles={tileRack}
-                types={tileRackTypes}
-                buttonSize={gameBoardCellSize}
-                keyboardShortcutsEnabled={!!this.myRequiredGameAction}
-                onTileClicked={this.onTileClicked}
-              />
+              <>
+                <TileRack
+                  tiles={tileRack}
+                  types={tileRackTypes}
+                  buttonSize={gameBoardCellSize}
+                  keyboardShortcutsEnabled={!!this.myRequiredGameAction}
+                  onTileClicked={this.onTileClicked}
+                />
+                <div>
+                  <div className={style.actionComponent}>
+                    {this.myRequiredGameAction &&
+                      (nextGameAction instanceof ActionSelectNewChain ? (
+                        <SelectChain
+                          type={SelectChainTitle.SelectNewChain}
+                          availableChains={nextGameAction.availableChains}
+                          buttonSize={gameBoardCellSize}
+                          keyboardShortcutsEnabled={true}
+                          onChainSelected={this.onChainSelected}
+                        />
+                      ) : nextGameAction instanceof ActionSelectMergerSurvivor ? (
+                        <SelectChain
+                          type={SelectChainTitle.SelectMergerSurvivor}
+                          availableChains={nextGameAction.chainsBySize[0]}
+                          buttonSize={gameBoardCellSize}
+                          keyboardShortcutsEnabled={true}
+                          onChainSelected={this.onChainSelected}
+                        />
+                      ) : nextGameAction instanceof ActionSelectChainToDisposeOfNext ? (
+                        <SelectChain
+                          type={SelectChainTitle.SelectChainToDisposeOfNext}
+                          availableChains={nextGameAction.defunctChains}
+                          buttonSize={gameBoardCellSize}
+                          keyboardShortcutsEnabled={true}
+                          onChainSelected={this.onChainSelected}
+                        />
+                      ) : nextGameAction instanceof ActionDisposeOfShares ? (
+                        <DisposeOfShares
+                          defunctChain={nextGameAction.defunctChain}
+                          controllingChain={nextGameAction.controllingChain}
+                          sharesOwnedInDefunctChain={nextGameAction.sharesOwnedInDefunctChain}
+                          sharesAvailableInControllingChain={nextGameAction.sharesAvailableInControllingChain}
+                          buttonSize={gameBoardCellSize}
+                          keyboardShortcutsEnabled={true}
+                          onSharesDisposed={this.onSharesDisposed}
+                        />
+                      ) : nextGameAction instanceof ActionPurchaseShares ? (
+                        <PurchaseShares
+                          scoreBoardAvailable={game.scoreBoardAvailable}
+                          scoreBoardPrice={game.scoreBoardPrice}
+                          cash={game.scoreBoard.get(playerID)!.get(ScoreBoardIndexEnum.Cash)!}
+                          buttonSize={gameBoardCellSize}
+                          keyboardShortcutsEnabled={true}
+                          onSharesPurchased={this.onSharesPurchased}
+                        />
+                      ) : undefined)}
+                  </div>
+                  <div className={style.claimSpaceForActionComponents}>
+                    <PurchaseShares
+                      scoreBoardAvailable={defaultScoreBoardAvailable}
+                      scoreBoardPrice={defaultScoreBoardPrice}
+                      cash={0}
+                      buttonSize={gameBoardCellSize}
+                      keyboardShortcutsEnabled={false}
+                      onSharesPurchased={this.onSharesPurchased}
+                    />
+                  </div>
+                </div>
+              </>
             ) : undefined}
-            {this.myRequiredGameAction &&
-              (nextGameAction instanceof ActionSelectNewChain ? (
-                <SelectChain
-                  type={SelectChainTitle.SelectNewChain}
-                  availableChains={nextGameAction.availableChains}
-                  buttonSize={gameBoardCellSize}
-                  keyboardShortcutsEnabled={true}
-                  onChainSelected={this.onChainSelected}
-                />
-              ) : nextGameAction instanceof ActionSelectMergerSurvivor ? (
-                <SelectChain
-                  type={SelectChainTitle.SelectMergerSurvivor}
-                  availableChains={nextGameAction.chainsBySize[0]}
-                  buttonSize={gameBoardCellSize}
-                  keyboardShortcutsEnabled={true}
-                  onChainSelected={this.onChainSelected}
-                />
-              ) : nextGameAction instanceof ActionSelectChainToDisposeOfNext ? (
-                <SelectChain
-                  type={SelectChainTitle.SelectChainToDisposeOfNext}
-                  availableChains={nextGameAction.defunctChains}
-                  buttonSize={gameBoardCellSize}
-                  keyboardShortcutsEnabled={true}
-                  onChainSelected={this.onChainSelected}
-                />
-              ) : nextGameAction instanceof ActionDisposeOfShares ? (
-                <DisposeOfShares
-                  defunctChain={nextGameAction.defunctChain}
-                  controllingChain={nextGameAction.controllingChain}
-                  sharesOwnedInDefunctChain={nextGameAction.sharesOwnedInDefunctChain}
-                  sharesAvailableInControllingChain={nextGameAction.sharesAvailableInControllingChain}
-                  buttonSize={gameBoardCellSize}
-                  keyboardShortcutsEnabled={true}
-                  onSharesDisposed={this.onSharesDisposed}
-                />
-              ) : nextGameAction instanceof ActionPurchaseShares ? (
-                <PurchaseShares
-                  scoreBoardAvailable={game.scoreBoardAvailable}
-                  scoreBoardPrice={game.scoreBoardPrice}
-                  cash={game.scoreBoard.get(playerID)!.get(ScoreBoardIndexEnum.Cash)!}
-                  buttonSize={gameBoardCellSize}
-                  keyboardShortcutsEnabled={true}
-                  onSharesPurchased={this.onSharesPurchased}
-                />
-              ) : undefined)}
             <GameHistory usernames={game.usernames} gameStateHistory={game.gameStateHistory} onMoveClicked={this.onMoveClicked} />
             <GameStatus usernames={game.usernames} nextGameAction={nextGameAction} />
           </div>
