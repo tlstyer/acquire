@@ -81,26 +81,22 @@ interface MoveHistoryProps {
   onMoveClicked: (index: number) => void;
 }
 
-class MoveHistory extends React.PureComponent<MoveHistoryProps> {
-  render() {
-    const { usernames, gameState, moveIndex, isSelected, onMoveClicked } = this.props;
-
-    const optionalProps: { [key: string]: any } = {};
-    if (gameState.timestamp !== null) {
-      const date = new Date(gameState.timestamp);
-      optionalProps.title = date.toString();
-    }
-
-    return (
-      <div className={style.move + (isSelected ? ` ${style.selected}` : '')} {...optionalProps} onClick={() => onMoveClicked(moveIndex)}>
-        {gameState.gameHistoryMessages.map((ghmd, index) => {
-          const username = ghmd.playerID === null ? '' : usernames.get(ghmd.playerID)!;
-          return gameHistoryMessageHandlerLookup.get(ghmd.gameHistoryMessage)!(index, username, ghmd);
-        })}
-      </div>
-    );
+const MoveHistory = React.memo(function MoveHistory({ usernames, gameState, moveIndex, isSelected, onMoveClicked }: MoveHistoryProps) {
+  const optionalProps: { [key: string]: any } = {};
+  if (gameState.timestamp !== null) {
+    const date = new Date(gameState.timestamp);
+    optionalProps.title = date.toString();
   }
-}
+
+  return (
+    <div className={style.move + (isSelected ? ` ${style.selected}` : '')} {...optionalProps} onClick={() => onMoveClicked(moveIndex)}>
+      {gameState.gameHistoryMessages.map((ghmd, index) => {
+        const username = ghmd.playerID === null ? '' : usernames.get(ghmd.playerID)!;
+        return gameHistoryMessageHandlerLookup.get(ghmd.gameHistoryMessage)!(index, username, ghmd);
+      })}
+    </div>
+  );
+});
 
 const gameHistoryMessageHandlerLookup = new Map<GameHistoryMessageEnum, (key: number, username: string, ghmd: GameHistoryMessageData) => JSX.Element>([
   [

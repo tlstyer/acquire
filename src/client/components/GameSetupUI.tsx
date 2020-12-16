@@ -20,78 +20,85 @@ interface GameSetupUIProps {
   onApprove?: () => void;
 }
 
-export class GameSetupUI extends React.PureComponent<GameSetupUIProps> {
-  render() {
-    const { gameMode, playerArrangementMode, usernames, onChangeGameMode, onChangePlayerArrangementMode } = this.props;
-
-    let numUsersInGame = 0;
-    for (let i = 0; i < usernames.size; i++) {
-      const username = usernames.get(i, null);
-      if (username !== null) {
-        numUsersInGame++;
-      }
+export const GameSetupUI = React.memo(function GameSetupUI({
+  gameMode,
+  playerArrangementMode,
+  usernames,
+  userIDs,
+  approvals,
+  hostUserID,
+  myUserID,
+  onChangeGameMode,
+  onChangePlayerArrangementMode,
+  onSwapPositions,
+  onKickUser,
+  onApprove,
+}: GameSetupUIProps) {
+  let numUsersInGame = 0;
+  for (let i = 0; i < usernames.size; i++) {
+    const username = usernames.get(i, null);
+    if (username !== null) {
+      numUsersInGame++;
     }
-
-    const gameIsFull = numUsersInGame === usernames.size;
-
-    const isTeamGame = gameModeToTeamSize.get(gameMode)! > 1;
-
-    return (
-      <div>
-        Game mode:{' '}
-        {onChangeGameMode !== undefined ? (
-          <select
-            defaultValue={gameMode.toString()}
-            onChange={(event: React.FormEvent<HTMLSelectElement>) => onChangeGameMode(parseInt(event.currentTarget.value, 10))}
-          >
-            {allGameModes.map((gm) => (
-              <option key={gm} value={gm} disabled={gameModeToNumPlayers.get(gm)! < numUsersInGame}>
-                {gameModeToString.get(gm)}
-              </option>
-            ))}
-          </select>
-        ) : (
-          gameModeToString.get(gameMode)
-        )}
-        <br />
-        Player arrangement mode:{' '}
-        {onChangePlayerArrangementMode !== undefined ? (
-          <select
-            defaultValue={playerArrangementMode.toString()}
-            onChange={(event: React.FormEvent<HTMLSelectElement>) => onChangePlayerArrangementMode(parseInt(event.currentTarget.value, 10))}
-          >
-            {allPlayerArrangementModes.map((pam) =>
-              pam !== PB_PlayerArrangementMode.SPECIFY_TEAMS || isTeamGame ? (
-                <option key={pam} value={pam}>
-                  {playerArrangementModeToString.get(pam)}
-                </option>
-              ) : undefined,
-            )}
-          </select>
-        ) : (
-          playerArrangementModeToString.get(playerArrangementMode)
-        )}
-        <br />
-        {playerArrangementMode === PB_PlayerArrangementMode.RANDOM_ORDER
-          ? this.renderRandomOrder(gameIsFull)
-          : playerArrangementMode === PB_PlayerArrangementMode.EXACT_ORDER
-          ? this.renderExactOrder(gameIsFull)
-          : this.renderSpecifyTeams(gameIsFull)}
-      </div>
-    );
   }
 
-  renderRandomOrder(showApprovals: boolean) {
-    const { usernames } = this.props;
+  const gameIsFull = numUsersInGame === usernames.size;
 
+  const isTeamGame = gameModeToTeamSize.get(gameMode)! > 1;
+
+  return (
+    <div>
+      Game mode:{' '}
+      {onChangeGameMode !== undefined ? (
+        <select
+          defaultValue={gameMode.toString()}
+          onChange={(event: React.FormEvent<HTMLSelectElement>) => onChangeGameMode(parseInt(event.currentTarget.value, 10))}
+        >
+          {allGameModes.map((gm) => (
+            <option key={gm} value={gm} disabled={gameModeToNumPlayers.get(gm)! < numUsersInGame}>
+              {gameModeToString.get(gm)}
+            </option>
+          ))}
+        </select>
+      ) : (
+        gameModeToString.get(gameMode)
+      )}
+      <br />
+      Player arrangement mode:{' '}
+      {onChangePlayerArrangementMode !== undefined ? (
+        <select
+          defaultValue={playerArrangementMode.toString()}
+          onChange={(event: React.FormEvent<HTMLSelectElement>) => onChangePlayerArrangementMode(parseInt(event.currentTarget.value, 10))}
+        >
+          {allPlayerArrangementModes.map((pam) =>
+            pam !== PB_PlayerArrangementMode.SPECIFY_TEAMS || isTeamGame ? (
+              <option key={pam} value={pam}>
+                {playerArrangementModeToString.get(pam)}
+              </option>
+            ) : undefined,
+          )}
+        </select>
+      ) : (
+        playerArrangementModeToString.get(playerArrangementMode)
+      )}
+      <br />
+      {playerArrangementMode === PB_PlayerArrangementMode.RANDOM_ORDER
+        ? renderRandomOrder(gameIsFull)
+        : playerArrangementMode === PB_PlayerArrangementMode.EXACT_ORDER
+        ? renderExactOrder(gameIsFull)
+        : renderSpecifyTeams(gameIsFull)}
+    </div>
+  );
+
+  function renderRandomOrder(showApprovals: boolean) {
     return (
       <table className={style.table}>
         <tbody>
           {usernames.map((username, i) => (
             <tr key={i}>
               <td className={style.user}>{username}</td>
-              {this.renderKickUserCell(i)}
-              {showApprovals ? this.renderApproveCell(i) : undefined}
+              {renderKickUserCell(i)}
+              {showApprovals ? renderApproveCell(i) : undefined}
             </tr>
           ))}
         </tbody>
@@ -99,9 +106,7 @@ export class GameSetupUI extends React.PureComponent<GameSetupUIProps> {
     );
   }
 
-  renderExactOrder(showApprovals: boolean) {
-    const { gameMode, usernames, onSwapPositions } = this.props;
-
+  function renderExactOrder(showApprovals: boolean) {
     const lastIndex = usernames.size - 1;
 
     const isTeamGame = gameModeToTeamSize.get(gameMode)! > 1;
@@ -119,8 +124,8 @@ export class GameSetupUI extends React.PureComponent<GameSetupUIProps> {
               {onSwapPositions !== undefined ? (
                 <td>{i < lastIndex ? <input type={'button'} value={'▼'} onClick={() => onSwapPositions(i, i + 1)} /> : undefined}</td>
               ) : undefined}
-              {this.renderKickUserCell(i)}
-              {showApprovals ? this.renderApproveCell(i) : undefined}
+              {renderKickUserCell(i)}
+              {showApprovals ? renderApproveCell(i) : undefined}
             </tr>
           ))}
         </tbody>
@@ -128,9 +133,7 @@ export class GameSetupUI extends React.PureComponent<GameSetupUIProps> {
     );
   }
 
-  renderSpecifyTeams(showApprovals: boolean) {
-    const { gameMode, usernames, onSwapPositions } = this.props;
-
+  function renderSpecifyTeams(showApprovals: boolean) {
     const specifyTeamsEntries = teamGameModeToSpecifyTeamsEntries.get(gameMode)!;
 
     return (
@@ -149,8 +152,8 @@ export class GameSetupUI extends React.PureComponent<GameSetupUIProps> {
                   {onSwapPositions !== undefined ? (
                     <td>{downIndex !== null ? <input type={'button'} value={'▼'} onClick={() => onSwapPositions(index, downIndex)} /> : undefined}</td>
                   ) : undefined}
-                  {this.renderKickUserCell(index)}
-                  {showApprovals ? this.renderApproveCell(index) : undefined}
+                  {renderKickUserCell(index)}
+                  {showApprovals ? renderApproveCell(index) : undefined}
                 </tr>
               );
             } else {
@@ -166,9 +169,7 @@ export class GameSetupUI extends React.PureComponent<GameSetupUIProps> {
     );
   }
 
-  renderKickUserCell(index: number) {
-    const { userIDs, hostUserID, onKickUser } = this.props;
-
+  function renderKickUserCell(index: number) {
     if (onKickUser !== undefined) {
       const userID = userIDs.get(index, null);
 
@@ -176,9 +177,7 @@ export class GameSetupUI extends React.PureComponent<GameSetupUIProps> {
     }
   }
 
-  renderApproveCell(index: number) {
-    const { userIDs, approvals, myUserID, onApprove } = this.props;
-
+  function renderApproveCell(index: number) {
     const approved = approvals.get(index)!;
 
     if (approved) {
@@ -196,7 +195,7 @@ export class GameSetupUI extends React.PureComponent<GameSetupUIProps> {
       }
     }
   }
-}
+});
 
 const playerArrangementModeToString = new Map([
   [PB_PlayerArrangementMode.RANDOM_ORDER, 'Random Order'],

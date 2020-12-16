@@ -6,16 +6,12 @@ export interface HeaderProps {
   isConnected: boolean;
 }
 
-export class Header extends React.PureComponent<HeaderProps> {
-  render() {
-    const { username, isConnected } = this.props;
-
-    return (
-      <div className={style.root}>
-        <span>Acquire</span>
-        <span>{username}</span>
-        {isConnected ? <span className={style.connected}>Connected</span> : <span className={style.reconnecting}>Reconnecting</span>}
-      </div>
-    );
-  }
-}
+export const Header = React.memo(function Header({ username, isConnected }: HeaderProps) {
+  return (
+    <div className={style.root}>
+      <span>Acquire</span>
+      <span>{username}</span>
+      {isConnected ? <span className={style.connected}>Connected</span> : <span className={style.reconnecting}>Reconnecting</span>}
+    </div>
+  );
+});

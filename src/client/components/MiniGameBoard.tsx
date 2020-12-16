@@ -9,36 +9,28 @@ interface MiniGameBoardProps {
   cellSize: number;
 }
 
-export class MiniGameBoard extends React.PureComponent<MiniGameBoardProps> {
-  render() {
-    const { gameBoard, cellSize } = this.props;
-
-    return (
-      <table className={style.root} style={{ width: cellSize * 12 + 1, height: cellSize * 9 + 1 }}>
-        <tbody>
-          {gameBoard.map((gameBoardRow, y) => (
-            <MiniGameBoardRow key={y} gameBoardRow={gameBoardRow} />
-          ))}
-        </tbody>
-      </table>
-    );
-  }
-}
+export const MiniGameBoard = React.memo(function MiniGameBoard({ gameBoard, cellSize }: MiniGameBoardProps) {
+  return (
+    <table className={style.root} style={{ width: cellSize * 12 + 1, height: cellSize * 9 + 1 }}>
+      <tbody>
+        {gameBoard.map((gameBoardRow, y) => (
+          <MiniGameBoardRow key={y} gameBoardRow={gameBoardRow} />
+        ))}
+      </tbody>
+    </table>
+  );
+});
 
 interface MiniGameBoardRowProps {
   gameBoardRow: List<PB_GameBoardType>;
 }
 
-class MiniGameBoardRow extends React.PureComponent<MiniGameBoardRowProps> {
-  render() {
-    const { gameBoardRow } = this.props;
-
-    return (
-      <tr>
-        {gameBoardRow.map((gameBoardType, x) => {
-          return <td key={x} className={gameBoardTypeToCSSClassName.get(gameBoardType)!} />;
-        })}
-      </tr>
-    );
-  }
-}
+const MiniGameBoardRow = React.memo(function MiniGameBoardRow({ gameBoardRow }: MiniGameBoardRowProps) {
+  return (
+    <tr>
+      {gameBoardRow.map((gameBoardType, x) => {
+        return <td key={x} className={gameBoardTypeToCSSClassName.get(gameBoardType)!} />;
+      })}
+    </tr>
+  );
+});

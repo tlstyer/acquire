@@ -18,13 +18,9 @@ export interface GameStatusProps {
   nextGameAction: ActionBase;
 }
 
-export class GameStatus extends React.PureComponent<GameStatusProps> {
-  render() {
-    const { usernames, nextGameAction } = this.props;
-
-    return gameStatusHandlerLookup.get(nextGameAction.gameAction)!(usernames, nextGameAction);
-  }
-}
+export const GameStatus = React.memo(function GameStatus({ usernames, nextGameAction }: GameStatusProps) {
+  return gameStatusHandlerLookup.get(nextGameAction.gameAction)!(usernames, nextGameAction);
+});
 
 const gshl: [GameActionEnum, any][] = [
   [
