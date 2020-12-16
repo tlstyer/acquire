@@ -32,7 +32,7 @@ function getDevelopmentConfig(APP) {
           test: /\.tsx?$/,
           use: [
             {
-              loader: 'awesome-typescript-loader',
+              loader: 'ts-loader',
               options: {
                 transpileOnly: true,
               },
@@ -162,10 +162,10 @@ function getProductionConfig(APP) {
           test: /\.tsx?$/,
           use: [
             {
-              loader: 'awesome-typescript-loader',
+              loader: 'ts-loader',
               options: {
-                configFileName: 'tsconfig.client.json',
-                errorsAsWarnings: true,
+                configFile: 'tsconfig.client.json',
+                transpileOnly: true,
               },
             },
           ],
