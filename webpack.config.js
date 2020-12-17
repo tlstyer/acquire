@@ -34,6 +34,7 @@ function getDevelopmentConfig(APP) {
             {
               loader: 'ts-loader',
               options: {
+                configFile: 'tsconfig.client.json',
                 transpileOnly: true,
               },
             },
