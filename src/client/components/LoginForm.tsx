@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { isASCII } from '../../common/helpers';
 import { PB_ErrorCode } from '../../common/pb';
 import { hackDoNotInterfereWithKeyboardShortcuts } from '../helpers';

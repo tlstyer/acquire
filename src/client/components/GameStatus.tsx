@@ -1,5 +1,5 @@
 import { List } from 'immutable';
-import * as React from 'react';
+import React from 'react';
 import { GameActionEnum } from '../../common/enums';
 import { ActionBase } from '../../common/gameActions/base';
 import { ActionDisposeOfShares } from '../../common/gameActions/disposeOfShares';

@@ -1,7 +1,7 @@
 import { List } from 'immutable';
 import 'normalize.css';
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+import React from 'react';
+import ReactDOM from 'react-dom';
 import { defaultGameBoard, defaultGameStateHistory } from '../common/defaults';
 import { Game } from '../common/game';
 import { PB_ErrorCode, PB_GameBoardType, PB_GameMode, PB_GameStatus } from '../common/pb';

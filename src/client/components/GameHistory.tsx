@@ -1,5 +1,5 @@
 import { List } from 'immutable';
-import * as React from 'react';
+import React from 'react';
 import { GameHistoryMessageEnum } from '../../common/enums';
 import { GameHistoryMessageData, GameState } from '../../common/game';
 import { PB_GameBoardType } from '../../common/pb';

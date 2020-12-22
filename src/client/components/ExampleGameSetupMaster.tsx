@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { GameSetup } from '../../common/gameSetup';
 import { PB_GameMode, PB_PlayerArrangementMode } from '../../common/pb';
 import { GameSetupUI } from './GameSetupUI';

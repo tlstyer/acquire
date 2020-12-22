@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { PB_GameMode } from '../../common/pb';
 import { allGameModes, gameModeToString } from '../helpers';
 

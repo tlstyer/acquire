@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import * as style from './Header.scss';
 
 export interface HeaderProps {

@@ -1,5 +1,5 @@
 import { List } from 'immutable';
-import * as React from 'react';
+import React from 'react';
 import { ScoreBoardIndexEnum } from '../../common/enums';
 import { gameModeToNumPlayers, gameModeToTeamSize } from '../../common/helpers';
 import { PB_GameMode } from '../../common/pb';

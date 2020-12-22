@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { PB_GameBoardType } from '../../common/pb';
 import * as commonStyle from '../common.scss';
 import { allChains, gameBoardTypeToCSSClassName, gameBoardTypeToHotelInitial } from '../helpers';

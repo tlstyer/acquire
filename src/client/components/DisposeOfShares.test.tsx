@@ -1,5 +1,5 @@
 import { shallow } from 'enzyme';
-import * as React from 'react';
+import React from 'react';
 import * as renderer from 'react-test-renderer';
 import { PB_GameBoardType } from '../../common/pb';
 import { configureEnzyme } from '../configureEnzyme';

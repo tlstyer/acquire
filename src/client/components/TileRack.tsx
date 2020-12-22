@@ -1,5 +1,5 @@
 import { List } from 'immutable';
-import * as React from 'react';
+import React from 'react';
 import { PB_GameBoardType } from '../../common/pb';
 import * as commonStyle from '../common.scss';
 import { gameBoardTypeToCSSClassName, getTileString } from '../helpers';

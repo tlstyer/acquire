@@ -1,5 +1,5 @@
 import { List } from 'immutable';
-import * as React from 'react';
+import React from 'react';
 import { gameModeToNumPlayers, gameModeToTeamSize } from '../../common/helpers';
 import { PB_GameMode, PB_PlayerArrangementMode } from '../../common/pb';
 import { allGameModes, gameModeToString, teamNumberToCSSClassName } from '../helpers';

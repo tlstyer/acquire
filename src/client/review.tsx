@@ -1,7 +1,7 @@
 import { List } from 'immutable';
 import 'normalize.css';
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+import React from 'react';
+import ReactDOM from 'react-dom';
 import { Game } from '../common/game';
 import { ActionGameOver } from '../common/gameActions/gameOver';
 import { GameBoard } from './components/GameBoard';

@@ -1,6 +1,6 @@
 import { List } from 'immutable';
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+import React from 'react';
+import ReactDOM from 'react-dom';
 import { defaultGameBoard, defaultScoreBoardAvailable, defaultScoreBoardPrice } from '../common/defaults';
 import { GameActionEnum, ScoreBoardIndexEnum } from '../common/enums';
 import { Game } from '../common/game';

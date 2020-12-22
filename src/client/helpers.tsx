@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { TileEnum } from '../common/enums';
 import { PB_GameBoardType, PB_GameMode, PB_GameStatus } from '../common/pb';
 import * as common from './common.scss';
