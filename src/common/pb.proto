@@ -89,13 +89,18 @@ message PB {
   }
 
   message GameSetupAction {
-    message JoinGame {}
+    message JoinGame {
+    }
 
-    message UnjoinGame {}
+    message UnjoinGame {
+    }
 
-    message ApproveOfGameSetup {}
+    message ApproveOfGameSetup {
+    }
 
-    message ChangeGameMode { GameMode game_mode = 1; }
+    message ChangeGameMode {
+      GameMode game_mode = 1;
+    }
 
     message ChangePlayerArrangementMode {
       PlayerArrangementMode player_arrangement_mode = 1;
@@ -106,7 +111,9 @@ message PB {
       int32 position2 = 2;
     }
 
-    message KickUser { int32 user_id = 1; }
+    message KickUser {
+      int32 user_id = 1;
+    }
 
     JoinGame join_game = 1;
     UnjoinGame unjoin_game = 2;
@@ -118,13 +125,21 @@ message PB {
   }
 
   message GameSetupChange {
-    message UserAdded { int32 user_id = 1; }
+    message UserAdded {
+      int32 user_id = 1;
+    }
 
-    message UserRemoved { int32 user_id = 1; }
+    message UserRemoved {
+      int32 user_id = 1;
+    }
 
-    message UserApprovedOfGameSetup { int32 user_id = 1; }
+    message UserApprovedOfGameSetup {
+      int32 user_id = 1;
+    }
 
-    message GameModeChanged { GameMode game_mode = 1; }
+    message GameModeChanged {
+      GameMode game_mode = 1;
+    }
 
     message PlayerArrangementModeChanged {
       PlayerArrangementMode player_arrangement_mode = 1;
@@ -135,7 +150,9 @@ message PB {
       int32 position2 = 2;
     }
 
-    message UserKicked { int32 user_id = 1; }
+    message UserKicked {
+      int32 user_id = 1;
+    }
 
     UserAdded user_added = 1;
     UserRemoved user_removed = 2;
@@ -147,15 +164,24 @@ message PB {
   }
 
   message GameAction {
-    message StartGame {}
+    message StartGame {
+    }
 
-    message PlayTile { int32 tile = 1; }
+    message PlayTile {
+      int32 tile = 1;
+    }
 
-    message SelectNewChain { GameBoardType chain = 1; }
+    message SelectNewChain {
+      GameBoardType chain = 1;
+    }
 
-    message SelectMergerSurvivor { GameBoardType chain = 1; }
+    message SelectMergerSurvivor {
+      GameBoardType chain = 1;
+    }
 
-    message SelectChainToDisposeOfNext { GameBoardType chain = 1; }
+    message SelectChainToDisposeOfNext {
+      GameBoardType chain = 1;
+    }
 
     message DisposeOfShares {
       int32 trade_amount = 1;
@@ -167,7 +193,8 @@ message PB {
       bool end_game = 2;
     }
 
-    message GameOver {}
+    message GameOver {
+    }
 
     StartGame start_game = 1;
     PlayTile play_tile = 2;
@@ -186,14 +213,17 @@ message PB {
       string password = 3;
     }
 
-    message CreateGame { GameMode game_mode = 1; }
+    message CreateGame {
+      GameMode game_mode = 1;
+    }
 
     message EnterGame {
       int32 game_display_number = 1;
       int32 game_state_history_size = 2;
     }
 
-    message ExitGame {}
+    message ExitGame {
+    }
 
     message DoGameAction {
       int32 game_state_history_size = 1;
@@ -209,7 +239,9 @@ message PB {
   }
 
   message MessageToClient {
-    message FatalError { ErrorCode error_code = 1; }
+    message FatalError {
+      ErrorCode error_code = 1;
+    }
 
     message Greetings {
       message User {
@@ -234,7 +266,9 @@ message PB {
       string username = 3; // excluded if already known
     }
 
-    message ClientDisconnected { int32 client_id = 1; }
+    message ClientDisconnected {
+      int32 client_id = 1;
+    }
 
     message GameCreated {
       int32 game_id = 1;
@@ -248,7 +282,9 @@ message PB {
       int32 game_display_number = 2;
     }
 
-    message ClientExitedGame { int32 client_id = 1; }
+    message ClientExitedGame {
+      int32 client_id = 1;
+    }
 
     message GameSetupChanged {
       int32 game_display_number = 1;
@@ -279,5 +315,7 @@ message PB {
     GameState game_action_done = 11;
   }
 
-  message MessagesToClient { repeated MessageToClient messages_to_client = 1; }
+  message MessagesToClient {
+    repeated MessageToClient messages_to_client = 1;
+  }
 }
