@@ -78,12 +78,12 @@ $(function () {
 
   function formatDate(unix_timestamp) {
     var date_obj = new Date(unix_timestamp * 1000),
-      year = date_obj.getUTCFullYear(),
-      month = date_obj.getUTCMonth() + 1,
-      day = date_obj.getUTCDate(),
-      hour = date_obj.getUTCHours(),
-      minute = date_obj.getUTCMinutes(),
-      second = date_obj.getUTCSeconds(),
+      year = date_obj.getFullYear(),
+      month = date_obj.getMonth() + 1,
+      day = date_obj.getDate(),
+      hour = date_obj.getHours(),
+      minute = date_obj.getMinutes(),
+      second = date_obj.getSeconds(),
       date = year + '-' + (month < 10 ? '0' : '') + month + '-' + (day < 10 ? '0' : '') + day,
       time = (hour < 10 ? '0' : '') + hour + ':' + (minute < 10 ? '0' : '') + minute + ':' + (second < 10 ? '0' : '') + second;
 
