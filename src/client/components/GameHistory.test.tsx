@@ -1,7 +1,7 @@
 // import { mount } from 'enzyme';
 import { List } from 'immutable';
 import React from 'react';
-import * as renderer from 'react-test-renderer';
+import renderer from 'react-test-renderer';
 import { configureEnzyme } from '../configureEnzyme';
 import { getDummyGameForGetGameHistory } from '../exampleData';
 import { GameHistory } from './GameHistory';

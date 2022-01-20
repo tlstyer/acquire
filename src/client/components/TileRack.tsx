@@ -45,11 +45,17 @@ export class TileRack extends React.Component<TileRackProps> {
   }
 
   componentDidMount() {
-    window.addEventListener('keydown', this.onWindowKeydown);
+    // do this check so tests pass
+    if (typeof window !== 'undefined') {
+      window.addEventListener('keydown', this.onWindowKeydown);
+    }
   }
 
   componentWillUnmount() {
-    window.removeEventListener('keydown', this.onWindowKeydown);
+    // do this check so tests pass
+    if (typeof window !== 'undefined') {
+      window.removeEventListener('keydown', this.onWindowKeydown);
+    }
   }
 
   onWindowKeydown = (event: KeyboardEvent) => {

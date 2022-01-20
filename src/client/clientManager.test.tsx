@@ -1,4 +1,5 @@
 import { List } from 'immutable';
+import WebSocket from 'ws';
 import { GameActionEnum } from '../common/enums';
 import { setupTextDecoderAndTextEncoder } from '../common/nodeSpecificStuff';
 import {
@@ -27,7 +28,7 @@ class TestWebSocket {
   onmessage: ((e: any) => any) | null = null;
   onclose: ((e: any) => any) | null = null;
 
-  readyState = WebSocket.CLOSED;
+  readyState: number = WebSocket.CLOSED;
 
   sentMessages: PB_MessageToServer[] = [];
 

@@ -55,9 +55,7 @@ function getDevelopmentConfig(APP) {
             {
               loader: 'style-loader',
               options: {
-                modules: {
-                  namedExport: true,
-                },
+                esModule: true,
               },
             },
             {
@@ -69,6 +67,7 @@ function getDevelopmentConfig(APP) {
             {
               loader: 'css-loader',
               options: {
+                esModule: true,
                 modules: {
                   localIdentName: '[name]-[local]',
                   namedExport: true,
@@ -176,15 +175,11 @@ function getProductionConfig(APP) {
           use: [
             {
               loader: MiniCssExtractPlugin.loader,
-              options: {
-                modules: {
-                  namedExport: true,
-                },
-              },
             },
             {
               loader: 'css-loader',
               options: {
+                esModule: true,
                 modules: {
                   getLocalIdent: (context, localIdentName, localName, options) => {
                     const key = context.resourcePath + '-' + localName;

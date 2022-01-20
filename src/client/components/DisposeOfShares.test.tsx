@@ -1,6 +1,6 @@
 import { shallow } from 'enzyme';
 import React from 'react';
-import * as renderer from 'react-test-renderer';
+import renderer from 'react-test-renderer';
 import { PB_GameBoardType } from '../../common/pb';
 import { configureEnzyme } from '../configureEnzyme';
 import { DisposeOfShares } from './DisposeOfShares';

@@ -147,8 +147,10 @@ export class GameSetup {
     const oldNumPlayers = gameModeToNumPlayers.get(this.gameMode)!;
 
     if (newNumPlayers !== oldNumPlayers) {
-      const usernames = this.usernames.toJS();
-      const userIDs = this.userIDs.toJS();
+      // @ts-expect-error
+      const usernames: (string | null)[] = this.usernames.toJS();
+      // @ts-expect-error
+      const userIDs: (number | null)[] = this.userIDs.toJS();
 
       if (newNumPlayers > oldNumPlayers) {
         const numSpotsToAdd = newNumPlayers - oldNumPlayers;
@@ -312,6 +314,7 @@ export class GameSetup {
   }
 
   getFinalUserIDsAndUsernames(): [List<number>, List<string>] {
+    // @ts-expect-error
     const userIDs: number[] = this.userIDs.toJS();
 
     if (this.playerArrangementMode === PB_PlayerArrangementMode.RANDOM_ORDER) {

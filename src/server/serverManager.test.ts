@@ -1,4 +1,4 @@
-import * as WebSocket from 'ws';
+import WebSocket from 'ws';
 import { TileEnum } from '../common/enums';
 import { setupTextDecoderAndTextEncoder } from '../common/nodeSpecificStuff';
 import {
@@ -39,7 +39,7 @@ class TestWebSocket {
   dataListener: ((message: Uint8Array) => any) | null = null;
   closeListener: (() => void) | null = null;
 
-  readyState = WebSocket.OPEN;
+  readyState: number = WebSocket.OPEN;
 
   receivedMessages: PB_MessageToClient[][] = [];
 
@@ -168,13 +168,8 @@ async function getServerManagerAndStuffAfterAllApprovedOfGameSetup() {
 }
 
 async function getServerManagerAndStuffAfterGameStarted() {
-  const {
-    serverManager,
-    hostConnection,
-    opponentConnection,
-    watcherConnection,
-    anotherConnection,
-  } = await getServerManagerAndStuffAfterAllApprovedOfGameSetup();
+  const { serverManager, hostConnection, opponentConnection, watcherConnection, anotherConnection } =
+    await getServerManagerAndStuffAfterAllApprovedOfGameSetup();
 
   hostConnection.clearReceivedMessages();
   opponentConnection.clearReceivedMessages();
@@ -719,6 +714,7 @@ describe('when sending first message', () => {
                 gameMode: PB_GameMode.SINGLES_1,
                 playerArrangementMode: PB_PlayerArrangementMode.RANDOM_ORDER,
                 positions: [{ userId: 2, isHost: true }],
+                // @ts-expect-error
                 gameBoard: serverManager.gameIDToGameData.get(11)?.game?.gameBoard.toJS().flat(),
               },
             ],
@@ -753,6 +749,7 @@ describe('when sending first message', () => {
                 gameMode: PB_GameMode.SINGLES_1,
                 playerArrangementMode: PB_PlayerArrangementMode.RANDOM_ORDER,
                 positions: [{ userId: 2, isHost: true }],
+                // @ts-expect-error
                 gameBoard: serverManager.gameIDToGameData.get(11)?.game?.gameBoard.toJS().flat(),
               },
             ],
@@ -1578,13 +1575,8 @@ describe('kick user', () => {
 
 describe('all approve of game setup', () => {
   test('sends MessageToClient.GameStarted, MessageToClient.GameBoardChanged, and MessageToClient.GameActionDone', async () => {
-    const {
-      serverManager,
-      hostConnection,
-      opponentConnection,
-      watcherConnection,
-      anotherConnection,
-    } = await getServerManagerAndStuffAfterAllApprovedOfGameSetup();
+    const { serverManager, hostConnection, opponentConnection, watcherConnection, anotherConnection } =
+      await getServerManagerAndStuffAfterAllApprovedOfGameSetup();
 
     expect(hostConnection.receivedMessages.length).toBe(1);
     expect(opponentConnection.receivedMessages.length).toBe(1);

@@ -90,7 +90,10 @@ export class ClientManager {
   manage() {
     this.render();
 
-    window.addEventListener('resize', this.render.bind(this));
+    // do this check so tests pass
+    if (typeof window !== 'undefined') {
+      window.addEventListener('resize', this.render.bind(this));
+    }
   }
 
   render() {

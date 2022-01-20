@@ -1,7 +1,7 @@
 import { shallow } from 'enzyme';
 import { List } from 'immutable';
 import React from 'react';
-import * as renderer from 'react-test-renderer';
+import renderer from 'react-test-renderer';
 import { PB_GameBoardType } from '../../common/pb';
 import { configureEnzyme } from '../configureEnzyme';
 import { TileRack } from './TileRack';

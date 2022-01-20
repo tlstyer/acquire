@@ -522,7 +522,9 @@ export class Game {
       null,
       // Time control increment amount (in seconds)
       0,
+      // @ts-expect-error
       this.userIDs.toJS(),
+      // @ts-expect-error
       this.usernames.toJS(),
       this.hostUserID,
       this.tileBag,

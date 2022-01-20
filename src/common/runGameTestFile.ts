@@ -176,6 +176,7 @@ export function runGameTestFile(inputLines: string[]) {
             outputLines.push(`  error: ${error.message}`);
           } else {
             outputLines.push(`line with unknown error: ${line}`);
+            // @ts-expect-error
             outputLines.push(`  unknown error: ${error.toString()}`);
             if (error instanceof Error) {
               outputLines.push(`  stack trace: ${error.stack}`);
@@ -638,17 +639,8 @@ function getNextActionString(action: ActionBase) {
 }
 
 function getFormattedGameJSONLines(game: Game) {
-  const [
-    gameMode,
-    playerArrangementMode,
-    timeControlStartingAmount,
-    timeControlIncrementAmount,
-    userIDs,
-    usernames,
-    hostUserID,
-    tileBag,
-    gameActions,
-  ] = game.toJSON();
+  const [gameMode, playerArrangementMode, timeControlStartingAmount, timeControlIncrementAmount, userIDs, usernames, hostUserID, tileBag, gameActions] =
+    game.toJSON();
 
   const lines: string[] = [];
 

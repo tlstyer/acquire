@@ -1,4 +1,4 @@
-import * as WebSocket from 'ws';
+import WebSocket from 'ws';
 import { Game } from '../common/game';
 import { ActionGameOver } from '../common/gameActions/gameOver';
 import { GameSetup } from '../common/gameSetup';
@@ -480,6 +480,7 @@ export class ServerManager {
       const gameStartedMessage = PB_MessageToClient.create({
         gameStarted: {
           gameDisplayNumber: gameData.displayNumber,
+          // @ts-expect-error
           userIds: userIDs.toJS(),
         },
       });
@@ -732,6 +733,7 @@ export class ServerManager {
           gameMode: game.gameMode,
           playerArrangementMode: game.playerArrangementMode,
           positions,
+          // @ts-expect-error
           gameBoard: game.gameBoard.toJS().flat(),
         });
       }

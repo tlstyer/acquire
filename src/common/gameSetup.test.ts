@@ -1,5 +1,5 @@
 import { List } from 'immutable';
-import * as seedrandom from 'seedrandom';
+import seedrandom from 'seedrandom';
 import { GameSetup } from './gameSetup';
 import { PB_GameMode, PB_GameSetupChange, PB_PlayerArrangementMode } from './pb';
 
