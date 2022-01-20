@@ -126,7 +126,7 @@ function messageDoGameAction(gameStateHistorySize: number, gameAction?: PB_GameA
 function getServerManagerAndStuff() {
   const server = new TestServer();
   const userDataProvider = new TestUserDataProvider();
-  // @ts-ignore
+  // @ts-expect-error
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const serverManager = new ServerManager(server, userDataProvider, 10, (message: string) => {
     // do nothing
@@ -234,7 +234,7 @@ function expectClientAndUserAndGameData(serverManager: ServerManager, userDatas:
     const clientIDs = new Set<number>();
 
     userData.clientDatas.forEach((clientData) => {
-      // @ts-ignore
+      // @ts-expect-error
       const webSocket: WebSocket = clientData.webSocket;
       const gameID = clientData.gameID !== undefined ? clientData.gameID : null;
 

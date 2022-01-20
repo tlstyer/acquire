@@ -70,7 +70,7 @@ export class ServerManager {
       webSocket.on('message', (rawMessage) => {
         let message: PB_MessageToServer;
         try {
-          // @ts-ignore
+          // @ts-expect-error
           message = PB_MessageToServer.fromBinary(rawMessage);
         } catch (error) {
           this.logMessage(LogMessage.InvalidMessage, webSocketID, rawMessage);

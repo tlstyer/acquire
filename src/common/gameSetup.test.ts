@@ -215,11 +215,11 @@ describe('changeGameMode', () => {
 
     expect(gameSetup.gameMode).toBe(PB_GameMode.TEAMS_2_VS_2);
 
-    // @ts-ignore
+    // @ts-expect-error
     gameSetup.changeGameMode('invalid mode');
-    // @ts-ignore
+    // @ts-expect-error
     gameSetup.changeGameMode(null);
-    // @ts-ignore
+    // @ts-expect-error
     gameSetup.changeGameMode({});
     gameSetup.changeGameMode(0);
     gameSetup.changeGameMode(10);
@@ -360,11 +360,11 @@ describe('changePlayerArrangementMode', () => {
 
     expect(gameSetup.playerArrangementMode).toBe(PB_PlayerArrangementMode.RANDOM_ORDER);
 
-    // @ts-ignore
+    // @ts-expect-error
     gameSetup.changePlayerArrangementMode('invalid mode');
-    // @ts-ignore
+    // @ts-expect-error
     gameSetup.changePlayerArrangementMode(null);
-    // @ts-ignore
+    // @ts-expect-error
     gameSetup.changePlayerArrangementMode({});
     gameSetup.changePlayerArrangementMode(-1);
     gameSetup.changePlayerArrangementMode(PB_PlayerArrangementMode.VERSION_1);
@@ -505,11 +505,11 @@ describe('kickUser', () => {
 
     expect(gameSetup.usernames.toJS()).toEqual(['user 1', 'user 2', 'user 3', 'user 4']);
 
-    // @ts-ignore
+    // @ts-expect-error
     gameSetup.kickUser('invalid user');
-    // @ts-ignore
+    // @ts-expect-error
     gameSetup.kickUser(null);
-    // @ts-ignore
+    // @ts-expect-error
     gameSetup.kickUser({});
     gameSetup.kickUser(-1);
 

@@ -1,7 +1,7 @@
 import util from 'util';
 
 export function setupTextDecoderAndTextEncoder() {
-  // @ts-ignore
+  // @ts-expect-error
   global.TextDecoder = util.TextDecoder;
   global.TextEncoder = util.TextEncoder;
 }

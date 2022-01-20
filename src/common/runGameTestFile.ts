@@ -49,11 +49,11 @@ export function runGameTestFile(inputLines: string[]) {
         const value = parts.slice(1).join(': ');
         switch (key) {
           case 'game mode':
-            // @ts-ignore
+            // @ts-expect-error
             gameMode = PB_GameMode[value];
             break;
           case 'player arrangement mode':
-            // @ts-ignore
+            // @ts-expect-error
             playerArrangementMode = PB_PlayerArrangementMode[value];
             break;
           case 'tile bag': {
@@ -123,7 +123,7 @@ export function runGameTestFile(inputLines: string[]) {
         const actionParts = lineParts[1].split(' ');
 
         const actualGameActionName = game.gameActionStack[game.gameActionStack.length - 1].constructor.name.slice(6);
-        // @ts-ignore actualGameActionName is in PB_GameAction
+        // @ts-expect-error actualGameActionName is in PB_GameAction
         const actualGameAction: GameActionEnum = GameActionEnum[actualGameActionName];
 
         let gameAction: PB_GameAction;

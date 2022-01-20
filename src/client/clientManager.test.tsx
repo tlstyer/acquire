@@ -67,7 +67,7 @@ class TestWebSocket {
 
 let testWebSocket: TestWebSocket | undefined;
 
-// @ts-ignore
+// @ts-expect-error
 global.WebSocket = TestWebSocket;
 
 function getClientManagerAndStuff() {
