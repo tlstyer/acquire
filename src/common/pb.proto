@@ -82,7 +82,7 @@ message PB {
     }
 
     GameAction game_action = 1;
-    int64 timestamp = 2 [jstype = JS_NUMBER];
+    int64 timestamp = 2 [ jstype = JS_NUMBER ];
     repeated RevealedTileRackTile revealed_tile_rack_tiles = 3;
     repeated int32 revealed_tile_bag_tiles = 4;
     int32 player_id_with_playable_tile_plus_one = 5; // 1 more than actual player_id
