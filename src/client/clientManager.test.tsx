@@ -21,6 +21,7 @@ class TestWebSocket {
   static OPEN = WebSocket.OPEN;
 
   constructor() {
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
     testWebSocket = this;
   }
 
