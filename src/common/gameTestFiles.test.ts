@@ -27,7 +27,7 @@ function processDirectory(base: string, dir: string) {
         processDirectory(dirPath, file);
       });
     } else if (stats.isFile()) {
-      test(file, () => {
+      test(file.slice(0, -4), () => {
         const inputLines = fs.readFileSync(filePath).toString().split('\n');
         const result = runGameTestFile(inputLines);
         const outputLines = result.outputLines;

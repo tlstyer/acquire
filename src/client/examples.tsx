@@ -51,11 +51,11 @@ class AllDemoProps {
 
   constructor() {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const gameJson1 = require('raw-loader!../common/gameTestFiles/other/no tiles played for entire round').default.split('\nGame JSON:\n')[1];
+    const gameJson1 = require('raw-loader!../common/gameTestFiles/other/no tiles played for entire round.txt').default.split('\nGame JSON:\n')[1];
     const game1 = Game.fromJSON(JSON.parse(gameJson1));
 
     // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const gameJson2 = require('raw-loader!../common/gameTestFiles/other/all tiles played').default.split('\nGame JSON:\n')[1];
+    const gameJson2 = require('raw-loader!../common/gameTestFiles/other/all tiles played.txt').default.split('\nGame JSON:\n')[1];
     const game2 = Game.fromJSON(JSON.parse(gameJson2));
 
     this.loginFormProps = [{ onSubmit: onSubmitLoginForm }, { errorCode: PB_ErrorCode.COULD_NOT_CONNECT, username: 'tlstyer', onSubmit: onSubmitLoginForm }];
