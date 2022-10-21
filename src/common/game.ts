@@ -596,6 +596,7 @@ export class GameState {
 
   gameBoardChangeGameBoardType: PB_GameBoardType | undefined = undefined;
   gameBoardChangeTiles: number[] = [];
+  gameBoardCantPlayEverTiles: number[] = [];
 
   constructor(public game: Game, public previousGameState: GameState | null) {
     // assign something to this.nextGameAction so it gets set in the constructor
@@ -631,15 +632,19 @@ export class GameState {
   }
 
   addGameBoardChange(tile: number, gameBoardType: PB_GameBoardType) {
-    if (this.gameBoardChangeGameBoardType !== undefined) {
-      if (gameBoardType !== this.gameBoardChangeGameBoardType) {
-        throw new Error('different gameBoardType than other game board changes for this game state');
-      }
+    if (gameBoardType === PB_GameBoardType.CANT_PLAY_EVER) {
+      this.gameBoardCantPlayEverTiles.push(tile);
     } else {
-      this.gameBoardChangeGameBoardType = gameBoardType;
-    }
+      if (this.gameBoardChangeGameBoardType !== undefined) {
+        if (gameBoardType !== this.gameBoardChangeGameBoardType) {
+          throw new Error('different gameBoardType than other game board changes for this game state');
+        }
+      } else {
+        this.gameBoardChangeGameBoardType = gameBoardType;
+      }
 
-    this.gameBoardChangeTiles.push(tile);
+      this.gameBoardChangeTiles.push(tile);
+    }
   }
 
   addGameHistoryMessage(gameHistoryMessage: GameHistoryMessageEnum, playerID: number | null, parameters: any[]) {

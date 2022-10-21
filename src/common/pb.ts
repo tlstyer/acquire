@@ -703,6 +703,10 @@ export interface PB_MessageToClient_GameBoardChanged {
      * @generated from protobuf field: repeated int32 tiles = 3;
      */
     tiles: number[];
+    /**
+     * @generated from protobuf field: repeated int32 cant_play_ever_tiles = 4;
+     */
+    cantPlayEverTiles: number[];
 }
 /**
  * @generated from protobuf message PB.MessagesToClient
@@ -3535,11 +3539,12 @@ class PB_MessageToClient_GameBoardChanged$Type extends MessageType<PB_MessageToC
         super("PB.MessageToClient.GameBoardChanged", [
             { no: 1, name: "game_display_number", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
             { no: 2, name: "game_board_type", kind: "enum", T: () => ["PB.GameBoardType", PB_GameBoardType] },
-            { no: 3, name: "tiles", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ }
+            { no: 3, name: "tiles", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ },
+            { no: 4, name: "cant_play_ever_tiles", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ }
         ]);
     }
     create(value?: PartialMessage<PB_MessageToClient_GameBoardChanged>): PB_MessageToClient_GameBoardChanged {
-        const message = { gameDisplayNumber: 0, gameBoardType: 0, tiles: [] };
+        const message = { gameDisplayNumber: 0, gameBoardType: 0, tiles: [], cantPlayEverTiles: [] };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<PB_MessageToClient_GameBoardChanged>(this, message, value);
@@ -3562,6 +3567,13 @@ class PB_MessageToClient_GameBoardChanged$Type extends MessageType<PB_MessageToC
                             message.tiles.push(reader.int32());
                     else
                         message.tiles.push(reader.int32());
+                    break;
+                case /* repeated int32 cant_play_ever_tiles */ 4:
+                    if (wireType === WireType.LengthDelimited)
+                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
+                            message.cantPlayEverTiles.push(reader.int32());
+                    else
+                        message.cantPlayEverTiles.push(reader.int32());
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -3586,6 +3598,13 @@ class PB_MessageToClient_GameBoardChanged$Type extends MessageType<PB_MessageToC
             writer.tag(3, WireType.LengthDelimited).fork();
             for (let i = 0; i < message.tiles.length; i++)
                 writer.int32(message.tiles[i]);
+            writer.join();
+        }
+        /* repeated int32 cant_play_ever_tiles = 4; */
+        if (message.cantPlayEverTiles.length) {
+            writer.tag(4, WireType.LengthDelimited).fork();
+            for (let i = 0; i < message.cantPlayEverTiles.length; i++)
+                writer.int32(message.cantPlayEverTiles[i]);
             writer.join();
         }
         let u = options.writeUnknownFields;

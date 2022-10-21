@@ -659,12 +659,13 @@ export class ServerManager {
     const gameState = game.gameStateHistory.get(game.gameStateHistory.size - 1)!;
 
     // queue GameBoardChanged messages to clients not in the game room
-    if (gameState.gameBoardChangeGameBoardType !== undefined) {
+    if (gameState.gameBoardChangeGameBoardType !== undefined || gameState.gameBoardCantPlayEverTiles.length > 0) {
       const gameBoardChanged = PB_MessageToClient.create({
         gameBoardChanged: {
           gameDisplayNumber: gameData.displayNumber,
           gameBoardType: gameState.gameBoardChangeGameBoardType,
           tiles: gameState.gameBoardChangeTiles,
+          cantPlayEverTiles: gameState.gameBoardCantPlayEverTiles,
         },
       });
 

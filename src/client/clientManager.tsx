@@ -829,6 +829,12 @@ export class ClientManager {
       const tile = tiles[i];
       gameSummary.setGameBoardPosition(tile, gameBoardType);
     }
+
+    const cantPlayEverTiles = message.cantPlayEverTiles;
+    for (let i = 0; i < cantPlayEverTiles.length; i++) {
+      const tile = cantPlayEverTiles[i];
+      gameSummary.setGameBoardPosition(tile, PB_GameBoardType.CANT_PLAY_EVER);
+    }
   }
 
   onMessageGameActionDone(message: PB_GameState) {

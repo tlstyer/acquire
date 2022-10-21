@@ -1,0 +1,411 @@
+game mode: SINGLES_1
+player arrangement mode: VERSION_1
+tile bag: 12F, 3G, 1B, 3B, 11A, 1E, 8C, 6D, 1H, 6I, 7E, 12I, 10G, 10C, 3E, 9A, 8I, 7B, 8H, 12E, 12B, 6E, 4E, 2H, 6B, 11C, 9C, 3D, 1G, 11H, 5H, 12C, 7A, 11E, 8F, 2C, 5D, 11F, 4I, 5F, 6G, 10I, 4D, 6H, 9I, 2E, 10H, 12D, 2B, 1I, 3A, 1C, 12G, 8G, 12A, 5C, 7D, 8D, 1A, 1D, 1F, 2A, 2D, 2F, 2G, 2I, 3C, 3F, 3H, 3I, 4A, 4B, 4C, 4F, 4G, 4H, 5A, 5B, 5E, 5G, 5I, 6A, 6C, 6F, 7C, 7F, 7G, 7H, 7I, 8A, 8B, 8E, 9B, 9D, 9E, 9F, 9G, 9H, 10A, 10B, 10D, 10E, 10F, 11B, 11D, 11G, 11I, 12H
+user: 11 Kim
+host: 11
+
+action: 0 StartGame
+
+action: 0 PlayTile 3G
+
+action: 0 PlayTile 1B
+
+action: 0 PlayTile 3B
+
+action: 0 PlayTile 11A
+
+action: 0 PlayTile 1E
+
+action: 0 PlayTile 8C
+
+action: 0 PlayTile 6D
+
+action: 0 PlayTile 1H
+
+action: 0 PlayTile 6I
+
+action: 0 PlayTile 7E
+
+action: 0 PlayTile 12I
+
+action: 0 PlayTile 10G
+
+action: 0 PlayTile 10C
+
+action: 0 PlayTile 3E
+
+action: 0 PlayTile 9A
+
+action: 0 PlayTile 8I
+
+action: 0 PlayTile 7B
+
+action: 0 PlayTile 8H
+
+action: 0 SelectNewChain L
+
+action: 0 PurchaseShares L,L,L 0
+
+action: 0 PlayTile 12E
+
+action: 0 SelectNewChain T
+
+action: 0 PurchaseShares T,T,T 0
+
+action: 0 PlayTile 12B
+
+action: 0 PurchaseShares T,T,T 0
+
+action: 0 PlayTile 6E
+
+action: 0 SelectNewChain C
+
+action: 0 PurchaseShares C,C,C 0
+
+action: 0 PlayTile 4E
+
+action: 0 SelectNewChain W
+
+action: 0 PurchaseShares W,W,W 0
+
+action: 0 PlayTile 2H
+
+action: 0 SelectNewChain F
+
+action: 0 PurchaseShares F,F,F 0
+
+action: 0 PlayTile 6B
+
+action: 0 SelectNewChain A
+
+action: 0 PurchaseShares A,A,A 0
+
+action: 0 PlayTile 11C
+
+action: 0 PlayTile 9C
+
+action: 0 PlayTile 3D
+
+action: 0 PlayTile 1G
+
+action: 0 PlayTile 11H
+
+action: 0 PlayTile 5H
+
+action: 0 PlayTile 12C
+
+action: 0 PlayTile 7A
+
+action: 0 PlayTile 11E
+
+action: 0 PlayTile 8F
+
+action: 0 PlayTile 2C
+
+action: 0 PlayTile 5D
+
+action: 0 PlayTile 11F
+
+action: 0 PlayTile 4I
+
+action: 0 PlayTile 5F
+
+action: 0 PlayTile 6G
+
+action: 0 PlayTile 10I
+
+action: 0 PlayTile 4D
+
+action: 0 DisposeOfShares 0 0
+
+action: 0 PurchaseShares I,I,I 0
+
+action: 0 PlayTile 6H
+
+action: 0 PurchaseShares L,L,L 0
+
+action: 0 PlayTile 9I
+
+action: 0 PurchaseShares I,I,I 0
+
+action: 0 PlayTile 2E
+
+action: 0 PurchaseShares W 0
+
+action: 0 PlayTile 10H
+
+action: 0 PlayTile 12D
+
+action: 0 DisposeOfShares 0 0
+
+action: 0 PurchaseShares I,I,I 0
+
+action: 0 PlayTile 2B
+
+action: 0 PurchaseShares I,I,I 0
+
+action: 0 PlayTile 1I
+
+action: 0 PurchaseShares W 0
+
+action: 0 PlayTile 3A
+
+action: 0 PlayTile 1C
+
+action: 0 PlayTile 12G
+
+action: 0 PlayTile 8G
+
+action: 0 PlayTile 12A
+
+action: 0 PlayTile 5C
+  ··T···A·O·II  P  L  T  A  F  W  C  I Cash  Net
+  TTT··AA····I  T  7  8  4  4  7  4 13    2  976
+  TT··C··IIIII  A 18 17 21 21 18 21 12
+  ··CCCC·····I  C  9  6  3  4  4 11 14
+  CCCC·CC···II  P  6  6  4  5  5  9  9
+  ····O··L··II
+  F·O··W·L·L·I
+  FF··WW·L·LL·
+  F··O·W·LLL·O
+  tile racks:
+    0: 2A(T) 7D(C) 8D(I) 1A(T) 1D(m) 1F(m)
+  revealed tile rack tiles: 5C:0
+  revealed tile bag tiles: 2A:0
+  player ID with playable tile: 0
+  messages:
+    0: {"gameAction":{"playTile":{"tile":38}},"revealedTileBagTiles":[9],"playerIdWithPlayableTilePlusOne":1}
+    w: {"gameAction":{"playTile":{"tile":38}},"revealedTileRackTiles":[{"tile":38,"playerIdBelongsTo":0}],"revealedTileBagTiles":[108],"playerIdWithPlayableTilePlusOne":1}
+  history messages:
+    0 PlayedTile 5C
+    0 CouldNotAffordAnyShares
+    0 DrewTile 2A
+    0 TurnBegan
+  next action: 0 PlayTile
+
+action: 0 PlayTile 7D
+  ··T···A·O·II  P  L  T  A  F  W  C  I Cash  Net
+  TTT··AA····I  T  7  8  4  4  7  4 13    2  976
+  TT··C··IIIII  A 18 17 21 21 18 21 12
+  ··CCCCC█···I  C  9  6  3  4  4 12 14
+  CCCC·CC···II  P  6  6  4  5  5  9  9
+  ····O··L··II
+  F·O··W·L·L·I
+  FF··WW·L·LL·
+  F··O·W·LLL·O
+  tile racks:
+    0: 2A(T) 2D(m) 2F(C) 1A(T) 1D(m) 1F(m)
+  revealed tile rack tiles: 7D:0, 8D:0
+  revealed tile bag tiles: 2D:0, 2F:0
+  player ID with playable tile: 0
+  messages:
+    0: {"gameAction":{"playTile":{"tile":57}},"revealedTileBagTiles":[12,14],"playerIdWithPlayableTilePlusOne":1}
+    w: {"gameAction":{"playTile":{"tile":57}},"revealedTileRackTiles":[{"tile":57,"playerIdBelongsTo":0},{"tile":66,"playerIdBelongsTo":0}],"revealedTileBagTiles":[108,108],"playerIdWithPlayableTilePlusOne":1}
+  history messages:
+    0 PlayedTile 7D
+    0 CouldNotAffordAnyShares
+    0 DrewTile 2D
+    0 ReplacedDeadTile 8D
+    0 DrewTile 2F
+    0 TurnBegan
+  next action: 0 PlayTile
+
+action: 0 PlayTile 1D
+
+action: 0 DisposeOfShares 8 0
+
+action: 0 PurchaseShares C,C,C 0
+
+action: 0 PlayTile 2D
+
+action: 0 PurchaseShares C,C,C 0
+
+action: 0 PlayTile 2A
+
+action: 0 PurchaseShares C,C,C 0
+
+action: 0 PlayTile 1A
+
+action: 0 PurchaseShares W 0
+
+action: 0 PlayTile 2G
+
+action: 0 PlayTile 2I
+
+action: 0 PlayTile 3C
+
+action: 0 PlayTile 3H
+
+action: 0 PlayTile 4A
+
+action: 0 PlayTile 4B
+
+action: 0 PlayTile 4C
+
+action: 0 PlayTile 4G
+
+action: 0 PlayTile 4H
+
+action: 0 DisposeOfShares 8 0
+  CCCC··A·O·II  P  L  T  A  F  W  C  I Cash  Net
+  CCCC·AA····I  T  7     4  8    17 13   78 1042
+  CCCCC··IIIII  A 18 25 21 17 25  8 12
+  CCCCCCC█···I  C  9  -  3 15  - 26 14
+  CCCC·CC···II  P  6  -  4  8  - 10  9
+  ····O··L··II
+  FFFF·F·L·L·I
+  FFFFFF·L·LL·
+  FF·F·F·LLL·O
+  tile racks:
+    0: none 3I(F) 2F(█) 3F(█) 4F(█) 1F(█)
+  messages:
+    0: {"gameAction":{"disposeOfShares":{"tradeAmount":8,"sellAmount":0}}}
+    w: {"gameAction":{"disposeOfShares":{"tradeAmount":8,"sellAmount":0}}}
+  history messages:
+    0 DisposedOfShares W 8 0
+  next action: 0 PurchaseShares
+
+action: 0 PurchaseShares C,C,C 0
+  CCCC··A·O·II  P  L  T  A  F  W  C  I Cash  Net
+  CCCC·AA····I  T  7     4  8    20 13   48 1042
+  CCCCC··IIIII  A 18 25 21 17 25  5 12
+  CCCCCCC█···I  C  9  -  3 15  - 26 14
+  CCCC·CC···II  P  6  -  4  8  - 10  9
+  ████O··L··II
+  FFFF·F·L·L·I
+  FFFFFF·L·LL·
+  FF·F·F·LLL·O
+  tile racks:
+    0: 5A(C) 3I(F) 5B(m) 5E(C) 5G(F) 5I(F)
+  revealed tile rack tiles: 2F:0, 3F:0, 4F:0, 1F:0
+  revealed tile bag tiles: 5A:0, 5B:0, 5E:0, 5G:0, 5I:0
+  player ID with playable tile: 0
+  messages:
+    0: {"gameAction":{"purchaseShares":{"chains":[5,5,5],"endGame":false}},"revealedTileBagTiles":[36,37,40,42,44],"playerIdWithPlayableTilePlusOne":1}
+    w: {"gameAction":{"purchaseShares":{"chains":[5,5,5],"endGame":false}},"revealedTileRackTiles":[{"tile":14,"playerIdBelongsTo":0},{"tile":23,"playerIdBelongsTo":0},{"tile":32,"playerIdBelongsTo":0},{"tile":5,"playerIdBelongsTo":0}],"revealedTileBagTiles":[108,108,108,108,108],"playerIdWithPlayableTilePlusOne":1}
+  history messages:
+    0 PurchasedShares 3C
+    0 DrewTile 5A
+    0 ReplacedDeadTile 2F
+    0 DrewTile 5B
+    0 ReplacedDeadTile 3F
+    0 DrewTile 5E
+    0 ReplacedDeadTile 4F
+    0 DrewTile 5G
+    0 ReplacedDeadTile 1F
+    0 DrewTile 5I
+    0 TurnBegan
+  next action: 0 PlayTile
+
+Game JSON:
+[
+  1,
+  0,
+  null,
+  0,
+  [11],
+  ["Kim"],
+  11,
+  [104,24,1,19,90,4,65,48,7,53,58,107,87,83,22,72,71,55,70,103,100,49,31,16,46,92,74,21,6,97,43,101,54,94,68,11,39,95,35,41,51,89,30,52,80,13,88,102,10,8,18,2,105,69,99,38,57,66,0,3,5,9,12,14,15,17,20,23,25,26,27,28,29,32,33,34,36,37,40,42,44,45,47,50,56,59,60,61,62,63,64,67,73,75,76,77,78,79,81,82,84,85,86,91,93,96,98,106],
+  [
+    [{"startGame":{}}],
+    [{"playTile":{"tile":24}}],
+    [{"playTile":{"tile":1}}],
+    [{"playTile":{"tile":19}}],
+    [{"playTile":{"tile":90}}],
+    [{"playTile":{"tile":4}}],
+    [{"playTile":{"tile":65}}],
+    [{"playTile":{"tile":48}}],
+    [{"playTile":{"tile":7}}],
+    [{"playTile":{"tile":53}}],
+    [{"playTile":{"tile":58}}],
+    [{"playTile":{"tile":107}}],
+    [{"playTile":{"tile":87}}],
+    [{"playTile":{"tile":83}}],
+    [{"playTile":{"tile":22}}],
+    [{"playTile":{"tile":72}}],
+    [{"playTile":{"tile":71}}],
+    [{"playTile":{"tile":55}}],
+    [{"playTile":{"tile":70}}],
+    [{"selectNewChain":{"chain":0}}],
+    [{"purchaseShares":{"chains":[0,0,0],"endGame":false}}],
+    [{"playTile":{"tile":103}}],
+    [{"selectNewChain":{"chain":1}}],
+    [{"purchaseShares":{"chains":[1,1,1],"endGame":false}}],
+    [{"playTile":{"tile":100}}],
+    [{"purchaseShares":{"chains":[1,1,1],"endGame":false}}],
+    [{"playTile":{"tile":49}}],
+    [{"selectNewChain":{"chain":5}}],
+    [{"purchaseShares":{"chains":[5,5,5],"endGame":false}}],
+    [{"playTile":{"tile":31}}],
+    [{"selectNewChain":{"chain":4}}],
+    [{"purchaseShares":{"chains":[4,4,4],"endGame":false}}],
+    [{"playTile":{"tile":16}}],
+    [{"selectNewChain":{"chain":3}}],
+    [{"purchaseShares":{"chains":[3,3,3],"endGame":false}}],
+    [{"playTile":{"tile":46}}],
+    [{"selectNewChain":{"chain":2}}],
+    [{"purchaseShares":{"chains":[2,2,2],"endGame":false}}],
+    [{"playTile":{"tile":92}}],
+    [{"playTile":{"tile":74}}],
+    [{"playTile":{"tile":21}}],
+    [{"playTile":{"tile":6}}],
+    [{"playTile":{"tile":97}}],
+    [{"playTile":{"tile":43}}],
+    [{"playTile":{"tile":101}}],
+    [{"playTile":{"tile":54}}],
+    [{"playTile":{"tile":94}}],
+    [{"playTile":{"tile":68}}],
+    [{"playTile":{"tile":11}}],
+    [{"playTile":{"tile":39}}],
+    [{"playTile":{"tile":95}}],
+    [{"playTile":{"tile":35}}],
+    [{"playTile":{"tile":41}}],
+    [{"playTile":{"tile":51}}],
+    [{"playTile":{"tile":89}}],
+    [{"playTile":{"tile":30}}],
+    [{"disposeOfShares":{"tradeAmount":0,"sellAmount":0}}],
+    [{"purchaseShares":{"chains":[6,6,6],"endGame":false}}],
+    [{"playTile":{"tile":52}}],
+    [{"purchaseShares":{"chains":[0,0,0],"endGame":false}}],
+    [{"playTile":{"tile":80}}],
+    [{"purchaseShares":{"chains":[6,6,6],"endGame":false}}],
+    [{"playTile":{"tile":13}}],
+    [{"purchaseShares":{"chains":[4],"endGame":false}}],
+    [{"playTile":{"tile":88}}],
+    [{"playTile":{"tile":102}}],
+    [{"disposeOfShares":{"tradeAmount":0,"sellAmount":0}}],
+    [{"purchaseShares":{"chains":[6,6,6],"endGame":false}}],
+    [{"playTile":{"tile":10}}],
+    [{"purchaseShares":{"chains":[6,6,6],"endGame":false}}],
+    [{"playTile":{"tile":8}}],
+    [{"purchaseShares":{"chains":[4],"endGame":false}}],
+    [{"playTile":{"tile":18}}],
+    [{"playTile":{"tile":2}}],
+    [{"playTile":{"tile":105}}],
+    [{"playTile":{"tile":69}}],
+    [{"playTile":{"tile":99}}],
+    [{"playTile":{"tile":38}}],
+    [{"playTile":{"tile":57}}],
+    [{"playTile":{"tile":3}}],
+    [{"disposeOfShares":{"tradeAmount":8,"sellAmount":0}}],
+    [{"purchaseShares":{"chains":[5,5,5],"endGame":false}}],
+    [{"playTile":{"tile":12}}],
+    [{"purchaseShares":{"chains":[5,5,5],"endGame":false}}],
+    [{"playTile":{"tile":9}}],
+    [{"purchaseShares":{"chains":[5,5,5],"endGame":false}}],
+    [{"playTile":{"tile":0}}],
+    [{"purchaseShares":{"chains":[4],"endGame":false}}],
+    [{"playTile":{"tile":15}}],
+    [{"playTile":{"tile":17}}],
+    [{"playTile":{"tile":20}}],
+    [{"playTile":{"tile":25}}],
+    [{"playTile":{"tile":27}}],
+    [{"playTile":{"tile":28}}],
+    [{"playTile":{"tile":29}}],
+    [{"playTile":{"tile":33}}],
+    [{"playTile":{"tile":34}}],
+    [{"disposeOfShares":{"tradeAmount":8,"sellAmount":0}}],
+    [{"purchaseShares":{"chains":[5,5,5],"endGame":false}}]
+  ]
+]

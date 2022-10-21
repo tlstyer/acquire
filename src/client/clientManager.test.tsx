@@ -1516,6 +1516,7 @@ describe('MessageToClient.GameStarted, MessageToClient.GameBoardChanged, and Mes
           gameDisplayNumber: 1,
           gameBoardType: PB_GameBoardType.NOTHING_YET,
           tiles: [89, 19],
+          cantPlayEverTiles: [45],
         },
       }),
     ]);
@@ -1537,6 +1538,7 @@ describe('MessageToClient.GameStarted, MessageToClient.GameBoardChanged, and Mes
     expect(gameSummary.hostUserID).toBe(1);
     const expectedGameBoard: PB_GameBoardType[] = new Array(108);
     expectedGameBoard.fill(PB_GameBoardType.NOTHING);
+    expectedGameBoard[5] = PB_GameBoardType.CANT_PLAY_EVER;
     expectedGameBoard[14] = PB_GameBoardType.NOTHING_YET;
     expectedGameBoard[105] = PB_GameBoardType.NOTHING_YET;
     expect(gameSummary.gameBoard.toJS().flat()).toEqual(expectedGameBoard);

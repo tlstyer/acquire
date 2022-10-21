@@ -1,3 +1,4 @@
+import seedrandom from 'seedrandom';
 import WebSocket from 'ws';
 import { TileEnum } from '../common/enums';
 import { setupTextDecoderAndTextEncoder } from '../common/nodeSpecificStuff';
@@ -1685,6 +1686,7 @@ describe('all approve of game setup', () => {
           gameDisplayNumber: 1,
           gameBoardType: PB_GameBoardType.NOTHING_YET,
           tiles: [89, 19],
+          cantPlayEverTiles: [],
         },
       }),
     ]);
@@ -1824,8 +1826,148 @@ describe('do game action', () => {
           gameDisplayNumber: 1,
           gameBoardType: PB_GameBoardType.NOTHING_YET,
           tiles: [29],
+          cantPlayEverTiles: [],
         },
       }),
+    ]);
+  });
+
+  test('gameBoardChanged message has cantPlayEverTiles array', async () => {
+    const { server } = getServerManagerAndStuff();
+
+    Date.now = () => 1234567890;
+    Math.random = seedrandom('seed2');
+
+    const playerConnection = await connectToServer(server, 'player');
+    const lobbyConnection = await connectToServer(server, 'lobby');
+
+    playerConnection.sendMessage(messageCreateGame(PB_GameMode.SINGLES_1));
+    playerConnection.sendMessage(messageApproveOfGameSetup());
+
+    playerConnection.sendMessage(messageDoGameAction(1, { playTile: { tile: 35 } }));
+    playerConnection.sendMessage(messageDoGameAction(2, { playTile: { tile: 70 } }));
+    playerConnection.sendMessage(messageDoGameAction(3, { playTile: { tile: 106 } }));
+    playerConnection.sendMessage(messageDoGameAction(4, { playTile: { tile: 103 } }));
+    playerConnection.sendMessage(messageDoGameAction(5, { playTile: { tile: 85 } }));
+    playerConnection.sendMessage(messageDoGameAction(6, { playTile: { tile: 54 } }));
+    playerConnection.sendMessage(messageDoGameAction(7, { playTile: { tile: 27 } }));
+    playerConnection.sendMessage(messageDoGameAction(8, { playTile: { tile: 48 } }));
+    playerConnection.sendMessage(messageDoGameAction(9, { playTile: { tile: 12 } }));
+    playerConnection.sendMessage(messageDoGameAction(10, { playTile: { tile: 6 } }));
+    playerConnection.sendMessage(messageDoGameAction(11, { playTile: { tile: 62 } }));
+    playerConnection.sendMessage(messageDoGameAction(12, { playTile: { tile: 52 } }));
+    playerConnection.sendMessage(messageDoGameAction(13, { playTile: { tile: 88 } }));
+    playerConnection.sendMessage(messageDoGameAction(14, { playTile: { tile: 93 } }));
+    playerConnection.sendMessage(messageDoGameAction(15, { playTile: { tile: 90 } }));
+    playerConnection.sendMessage(messageDoGameAction(16, { playTile: { tile: 1 } }));
+    playerConnection.sendMessage(messageDoGameAction(17, { playTile: { tile: 17 } }));
+    playerConnection.sendMessage(messageDoGameAction(18, { selectNewChain: { chain: 6 } }));
+    playerConnection.sendMessage(messageDoGameAction(19, { purchaseShares: { chains: [6, 6, 6], endGame: false } }));
+    playerConnection.sendMessage(messageDoGameAction(20, { playTile: { tile: 15 } }));
+    playerConnection.sendMessage(messageDoGameAction(21, { selectNewChain: { chain: 5 } }));
+    playerConnection.sendMessage(messageDoGameAction(22, { purchaseShares: { chains: [5, 5, 5], endGame: false } }));
+    playerConnection.sendMessage(messageDoGameAction(23, { playTile: { tile: 43 } }));
+    playerConnection.sendMessage(messageDoGameAction(24, { selectNewChain: { chain: 4 } }));
+    playerConnection.sendMessage(messageDoGameAction(25, { purchaseShares: { chains: [4, 4, 4], endGame: false } }));
+    playerConnection.sendMessage(messageDoGameAction(26, { playTile: { tile: 55 } }));
+    playerConnection.sendMessage(messageDoGameAction(27, { selectNewChain: { chain: 3 } }));
+    playerConnection.sendMessage(messageDoGameAction(28, { purchaseShares: { chains: [3, 3, 3], endGame: false } }));
+    playerConnection.sendMessage(messageDoGameAction(29, { playTile: { tile: 81 } }));
+    playerConnection.sendMessage(messageDoGameAction(30, { selectNewChain: { chain: 2 } }));
+    playerConnection.sendMessage(messageDoGameAction(31, { purchaseShares: { chains: [2, 2, 2], endGame: false } }));
+    playerConnection.sendMessage(messageDoGameAction(32, { playTile: { tile: 3 } }));
+    playerConnection.sendMessage(messageDoGameAction(33, { selectNewChain: { chain: 1 } }));
+    playerConnection.sendMessage(messageDoGameAction(34, { purchaseShares: { chains: [1, 1, 1], endGame: false } }));
+    playerConnection.sendMessage(messageDoGameAction(35, { playTile: { tile: 67 } }));
+    playerConnection.sendMessage(messageDoGameAction(36, { purchaseShares: { chains: [1], endGame: false } }));
+    playerConnection.sendMessage(messageDoGameAction(37, { playTile: { tile: 98 } }));
+    playerConnection.sendMessage(messageDoGameAction(38, { playTile: { tile: 9 } }));
+    playerConnection.sendMessage(messageDoGameAction(39, { playTile: { tile: 41 } }));
+    playerConnection.sendMessage(messageDoGameAction(40, { playTile: { tile: 60 } }));
+    playerConnection.sendMessage(messageDoGameAction(41, { playTile: { tile: 95 } }));
+    playerConnection.sendMessage(messageDoGameAction(42, { playTile: { tile: 20 } }));
+    playerConnection.sendMessage(messageDoGameAction(43, { playTile: { tile: 87 } }));
+    playerConnection.sendMessage(messageDoGameAction(44, { playTile: { tile: 53 } }));
+    playerConnection.sendMessage(messageDoGameAction(45, { playTile: { tile: 34 } }));
+    playerConnection.sendMessage(messageDoGameAction(46, { playTile: { tile: 21 } }));
+    playerConnection.sendMessage(messageDoGameAction(47, { playTile: { tile: 30 } }));
+    playerConnection.sendMessage(messageDoGameAction(48, { playTile: { tile: 45 } }));
+    playerConnection.sendMessage(messageDoGameAction(49, { playTile: { tile: 72 } }));
+    playerConnection.sendMessage(messageDoGameAction(50, { playTile: { tile: 23 } }));
+    playerConnection.sendMessage(messageDoGameAction(51, { playTile: { tile: 44 } }));
+    playerConnection.sendMessage(messageDoGameAction(52, { playTile: { tile: 79 } }));
+    playerConnection.sendMessage(messageDoGameAction(53, { playTile: { tile: 69 } }));
+    playerConnection.sendMessage(messageDoGameAction(54, { playTile: { tile: 86 } }));
+    playerConnection.sendMessage(messageDoGameAction(55, { playTile: { tile: 91 } }));
+    playerConnection.sendMessage(messageDoGameAction(56, { playTile: { tile: 7 } }));
+    playerConnection.sendMessage(messageDoGameAction(57, { selectMergerSurvivor: { chain: 6 } }));
+    playerConnection.sendMessage(messageDoGameAction(58, { disposeOfShares: { tradeAmount: 0, sellAmount: 0 } }));
+    playerConnection.sendMessage(messageDoGameAction(59, { purchaseShares: { chains: [6, 6, 6], endGame: false } }));
+    playerConnection.sendMessage(messageDoGameAction(60, { playTile: { tile: 5 } }));
+    playerConnection.sendMessage(messageDoGameAction(61, { purchaseShares: { chains: [6, 6, 6], endGame: false } }));
+    playerConnection.sendMessage(messageDoGameAction(62, { playTile: { tile: 66 } }));
+    playerConnection.sendMessage(messageDoGameAction(63, { purchaseShares: { chains: [6, 6], endGame: false } }));
+    playerConnection.sendMessage(messageDoGameAction(64, { playTile: { tile: 14 } }));
+    playerConnection.sendMessage(messageDoGameAction(65, { playTile: { tile: 83 } }));
+    playerConnection.sendMessage(messageDoGameAction(66, { playTile: { tile: 58 } }));
+    playerConnection.sendMessage(messageDoGameAction(67, { playTile: { tile: 11 } }));
+    playerConnection.sendMessage(messageDoGameAction(68, { playTile: { tile: 10 } }));
+    playerConnection.sendMessage(messageDoGameAction(69, { playTile: { tile: 19 } }));
+    playerConnection.sendMessage(messageDoGameAction(70, { playTile: { tile: 0 } }));
+    playerConnection.sendMessage(messageDoGameAction(71, { playTile: { tile: 73 } }));
+    playerConnection.sendMessage(messageDoGameAction(72, { playTile: { tile: 64 } }));
+    playerConnection.sendMessage(messageDoGameAction(73, { disposeOfShares: { tradeAmount: 0, sellAmount: 0 } }));
+    playerConnection.sendMessage(messageDoGameAction(74, { purchaseShares: { chains: [6, 6, 6], endGame: false } }));
+    playerConnection.sendMessage(messageDoGameAction(75, { playTile: { tile: 47 } }));
+    playerConnection.sendMessage(messageDoGameAction(76, { purchaseShares: { chains: [6, 6, 6], endGame: false } }));
+    playerConnection.sendMessage(messageDoGameAction(77, { playTile: { tile: 25 } }));
+    playerConnection.sendMessage(messageDoGameAction(78, { purchaseShares: { chains: [5, 5], endGame: false } }));
+    playerConnection.sendMessage(messageDoGameAction(79, { playTile: { tile: 104 } }));
+    playerConnection.sendMessage(messageDoGameAction(80, { playTile: { tile: 22 } }));
+    playerConnection.sendMessage(messageDoGameAction(81, { disposeOfShares: { tradeAmount: 18, sellAmount: 0 } }));
+    playerConnection.sendMessage(messageDoGameAction(82, { purchaseShares: { chains: [1, 1, 1], endGame: false } }));
+    playerConnection.sendMessage(messageDoGameAction(83, { playTile: { tile: 107 } }));
+    playerConnection.sendMessage(messageDoGameAction(84, { purchaseShares: { chains: [1, 1, 1], endGame: false } }));
+    playerConnection.sendMessage(messageDoGameAction(85, { playTile: { tile: 13 } }));
+    playerConnection.sendMessage(messageDoGameAction(86, { purchaseShares: { chains: [1, 1, 1], endGame: false } }));
+    playerConnection.sendMessage(messageDoGameAction(87, { playTile: { tile: 38 } }));
+    playerConnection.sendMessage(messageDoGameAction(88, { purchaseShares: { chains: [1, 1, 0], endGame: false } }));
+    playerConnection.sendMessage(messageDoGameAction(89, { playTile: { tile: 37 } }));
+    playerConnection.sendMessage(messageDoGameAction(90, { purchaseShares: { chains: [0, 0, 0], endGame: false } }));
+    playerConnection.sendMessage(messageDoGameAction(91, { playTile: { tile: 99 } }));
+    playerConnection.sendMessage(messageDoGameAction(92, { purchaseShares: { chains: [2, 3], endGame: false } }));
+
+    lobbyConnection.clearReceivedMessages();
+    playerConnection.sendMessage(messageDoGameAction(93, { playTile: { tile: 92 } }));
+    expect(lobbyConnection.receivedMessages).toEqual([
+      [
+        {
+          gameBoardChanged: {
+            gameDisplayNumber: 1,
+            gameBoardType: 2,
+            tiles: [92, 93, 83],
+            cantPlayEverTiles: [94],
+          },
+        },
+      ],
+    ]);
+
+    playerConnection.sendMessage(messageDoGameAction(94, { playTile: { tile: 61 } }));
+    playerConnection.sendMessage(messageDoGameAction(95, { disposeOfShares: { tradeAmount: 4, sellAmount: 0 } }));
+
+    lobbyConnection.clearReceivedMessages();
+    playerConnection.sendMessage(messageDoGameAction(96, { purchaseShares: { chains: [6, 5, 5], endGame: false } }));
+    expect(lobbyConnection.receivedMessages).toEqual([
+      [
+        {
+          gameBoardChanged: {
+            gameDisplayNumber: 1,
+            gameBoardType: 0,
+            tiles: [],
+            cantPlayEverTiles: [16],
+          },
+        },
+      ],
     ]);
   });
 });

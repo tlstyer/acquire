@@ -300,6 +300,7 @@ message PB {
       int32 game_display_number = 1;
       GameBoardType game_board_type = 2;
       repeated int32 tiles = 3;
+      repeated int32 cant_play_ever_tiles = 4;
     }
 
     FatalError fatal_error = 1;
