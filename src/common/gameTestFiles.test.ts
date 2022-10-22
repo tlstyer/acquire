@@ -49,7 +49,7 @@ function processDirectory(base: string, dir: string) {
             const gameMessage = playerID !== -1 ? gameState.playerGameStates[playerID] : gameState.watcherGameState;
             game2.processGameState(gameMessage);
 
-            const gameState2 = game2.gameStateHistory.get(game2.gameStateHistory.size - 1, null);
+            const gameState2 = game2.gameStateHistory[game2.gameStateHistory.length - 1];
             if (gameState2 !== null) {
               gameState2.createPlayerAndWatcherGameStates();
               const gameMessage2 = playerID !== -1 ? gameState2.playerGameStates[playerID] : gameState2.watcherGameState;

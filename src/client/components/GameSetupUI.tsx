@@ -1,4 +1,3 @@
-import { List } from 'immutable';
 import React from 'react';
 import { gameModeToNumPlayers, gameModeToTeamSize } from '../../common/helpers';
 import { PB_GameMode, PB_PlayerArrangementMode } from '../../common/pb';
@@ -8,9 +7,9 @@ import * as style from './GameSetupUI.scss';
 interface GameSetupUIProps {
   gameMode: PB_GameMode;
   playerArrangementMode: PB_PlayerArrangementMode;
-  usernames: List<string | null>;
-  userIDs: List<number | null>;
-  approvals: List<boolean>;
+  usernames: (string | null)[];
+  userIDs: (number | null)[];
+  approvals: boolean[];
   hostUserID: number;
   myUserID: number;
   onChangeGameMode?: (gameMode: PB_GameMode) => void;
@@ -35,14 +34,14 @@ export const GameSetupUI = React.memo(function GameSetupUI({
   onApprove,
 }: GameSetupUIProps) {
   let numUsersInGame = 0;
-  for (let i = 0; i < usernames.size; i++) {
-    const username = usernames.get(i, null);
+  for (let i = 0; i < usernames.length; i++) {
+    const username = usernames[i];
     if (username !== null) {
       numUsersInGame++;
     }
   }
 
-  const gameIsFull = numUsersInGame === usernames.size;
+  const gameIsFull = numUsersInGame === usernames.length;
 
   const isTeamGame = gameModeToTeamSize.get(gameMode)! > 1;
 
@@ -107,7 +106,7 @@ export const GameSetupUI = React.memo(function GameSetupUI({
   }
 
   function renderExactOrder(showApprovals: boolean) {
-    const lastIndex = usernames.size - 1;
+    const lastIndex = usernames.length - 1;
 
     const isTeamGame = gameModeToTeamSize.get(gameMode)! > 1;
     const numTeams = gameModeToNumPlayers.get(gameMode)! / gameModeToTeamSize.get(gameMode)!;
@@ -145,7 +144,7 @@ export const GameSetupUI = React.memo(function GameSetupUI({
 
               return (
                 <tr key={i}>
-                  <td className={style.user}>{usernames.get(index)}</td>
+                  <td className={style.user}>{usernames[index]}</td>
                   {onSwapPositions !== undefined ? (
                     <td>{upIndex !== null ? <input type={'button'} value={'▲'} onClick={() => onSwapPositions(index, upIndex)} /> : undefined}</td>
                   ) : undefined}
@@ -171,19 +170,19 @@ export const GameSetupUI = React.memo(function GameSetupUI({
 
   function renderKickUserCell(index: number) {
     if (onKickUser !== undefined) {
-      const userID = userIDs.get(index, null);
+      const userID = userIDs[index];
 
       return <td>{userID !== null && userID !== hostUserID ? <input type={'button'} value={'Kick'} onClick={() => onKickUser(userID)} /> : undefined}</td>;
     }
   }
 
   function renderApproveCell(index: number) {
-    const approved = approvals.get(index)!;
+    const approved = approvals[index];
 
     if (approved) {
       return <td className={style.ready}>Ready</td>;
     } else {
-      const userID = userIDs.get(index, null);
+      const userID = userIDs[index];
       if (userID === myUserID) {
         return (
           <td>

@@ -11,11 +11,11 @@ export class ActionDisposeOfShares extends ActionBase {
   constructor(game: Game, playerID: number, public defunctChain: PB_GameBoardType, public controllingChain: PB_GameBoardType) {
     super(game, playerID, GameActionEnum.DisposeOfShares);
 
-    this.sharesOwnedInDefunctChain = this.game.scoreBoard.get(playerID)!.get(defunctChain)!;
+    this.sharesOwnedInDefunctChain = this.game.scoreBoard[playerID][defunctChain];
   }
 
   prepare() {
-    this.sharesAvailableInControllingChain = this.game.scoreBoardAvailable.get(this.controllingChain)!;
+    this.sharesAvailableInControllingChain = this.game.scoreBoardAvailable[this.controllingChain];
 
     return null;
   }
@@ -48,7 +48,7 @@ export class ActionDisposeOfShares extends ActionBase {
         adjustments.push([this.controllingChain, tradeAmount / 2]);
       }
       if (sellAmount > 0) {
-        adjustments.push([ScoreBoardIndexEnum.Cash, sellAmount * this.game.scoreBoardPrice.get(this.defunctChain)!]);
+        adjustments.push([ScoreBoardIndexEnum.Cash, sellAmount * this.game.scoreBoardPrice[this.defunctChain]]);
       }
       this.game.adjustPlayerScoreBoardRow(this.playerID, adjustments);
     }

@@ -1,4 +1,3 @@
-import { List } from 'immutable';
 import React from 'react';
 import { ScoreBoardIndexEnum } from '../../common/enums';
 import { gameModeToNumPlayers, gameModeToTeamSize } from '../../common/helpers';
@@ -7,12 +6,12 @@ import { allChains, gameBoardTypeToCSSClassName, gameBoardTypeToHotelInitial, te
 import * as style from './ScoreBoard.scss';
 
 export interface ScoreBoardProps {
-  usernames: List<string>;
-  scoreBoard: List<List<number>>;
-  scoreBoardAvailable: List<number>;
-  scoreBoardChainSize: List<number>;
-  scoreBoardPrice: List<number>;
-  safeChains: List<boolean>;
+  usernames: string[];
+  scoreBoard: number[][];
+  scoreBoardAvailable: number[];
+  scoreBoardChainSize: number[];
+  scoreBoardPrice: number[];
+  safeChains: boolean[];
   turnPlayerID: number;
   movePlayerID: number;
   gameMode: PB_GameMode;
@@ -63,7 +62,7 @@ export const ScoreBoard = React.memo(function ScoreBoard({
             title={username}
             isPlayersTurn={playerID === turnPlayerID}
             isPlayersMove={playerID === movePlayerID}
-            scoreBoardRow={scoreBoard.get(playerID)!}
+            scoreBoardRow={scoreBoard[playerID]}
             safeChains={safeChains}
             defaultClassName={isTeamGame ? teamNumberToCSSClassName.get((playerID % numTeams) + 1)! : style.player}
             zeroValueReplacement={''}
@@ -110,10 +109,10 @@ export const ScoreBoard = React.memo(function ScoreBoard({
   );
 });
 
-function getTeamTotal(scoreBoard: List<List<number>>, numTeams: number, teamNumber: number) {
+function getTeamTotal(scoreBoard: number[][], numTeams: number, teamNumber: number) {
   let teamTotal = 0;
-  for (let playerID = teamNumber - 1; playerID < scoreBoard.size; playerID += numTeams) {
-    teamTotal += scoreBoard.get(playerID)!.get(ScoreBoardIndexEnum.Net)!;
+  for (let playerID = teamNumber - 1; playerID < scoreBoard.length; playerID += numTeams) {
+    teamTotal += scoreBoard[playerID][ScoreBoardIndexEnum.Net];
   }
   return teamTotal;
 }
@@ -138,8 +137,8 @@ interface ScoreBoardRowProps {
   title: string;
   isPlayersTurn: boolean;
   isPlayersMove: boolean;
-  scoreBoardRow: List<number>;
-  safeChains: List<boolean>;
+  scoreBoardRow: number[];
+  safeChains: boolean[];
   defaultClassName: string;
   zeroValueReplacement: string;
   teamNumber?: number;
@@ -173,20 +172,20 @@ const ScoreBoardRow = React.memo(function ScoreBoardRow({
         {title}
       </td>
       {safeChains.map((isSafe, chain) => {
-        const value = scoreBoardRow.get(chain)!;
+        const value = scoreBoardRow[chain];
         return (
           <td key={chain} className={isSafe ? style.safeChain : defaultClassName}>
             {value === 0 ? zeroValueReplacement : value}
           </td>
         );
       })}
-      {scoreBoardRow.size === ScoreBoardIndexEnum.Max ? (
-        <td className={defaultClassName}>{scoreBoardRow.get(ScoreBoardIndexEnum.Cash)! * 100}</td>
+      {scoreBoardRow.length === ScoreBoardIndexEnum.Max ? (
+        <td className={defaultClassName}>{scoreBoardRow[ScoreBoardIndexEnum.Cash] * 100}</td>
       ) : (
         <td className={style.bottomRightCells}>{teamNumber !== undefined ? `Team ${teamNumber}` : undefined}</td>
       )}
-      {scoreBoardRow.size === ScoreBoardIndexEnum.Max ? (
-        <td className={defaultClassName}>{scoreBoardRow.get(ScoreBoardIndexEnum.Net)! * 100}</td>
+      {scoreBoardRow.length === ScoreBoardIndexEnum.Max ? (
+        <td className={defaultClassName}>{scoreBoardRow[ScoreBoardIndexEnum.Net] * 100}</td>
       ) : (
         <td className={teamNumber !== undefined ? teamNumberToCSSClassName.get(teamNumber) : style.bottomRightCells}>
           {teamTotal !== undefined ? teamTotal * 100 : undefined}

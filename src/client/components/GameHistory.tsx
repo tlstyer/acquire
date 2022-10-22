@@ -1,4 +1,3 @@
-import { List } from 'immutable';
 import React from 'react';
 import { GameHistoryMessageEnum } from '../../common/enums';
 import { GameHistoryMessageData, GameState } from '../../common/game';
@@ -7,8 +6,8 @@ import { getHotelNameSpan, getTileString, getUsernameSpan } from '../helpers';
 import * as style from './GameHistory.scss';
 
 export interface GameHistoryProps {
-  usernames: List<string>;
-  gameStateHistory: List<GameState>;
+  usernames: string[];
+  gameStateHistory: GameState[];
   selectedMove?: number;
   onMoveClicked: (index: number) => void;
 }
@@ -74,7 +73,7 @@ export class GameHistory extends React.PureComponent<GameHistoryProps> {
 }
 
 interface MoveHistoryProps {
-  usernames: List<string>;
+  usernames: string[];
   gameState: GameState;
   moveIndex: number;
   isSelected: boolean;
@@ -91,7 +90,7 @@ const MoveHistory = React.memo(function MoveHistory({ usernames, gameState, move
   return (
     <div className={style.move + (isSelected ? ` ${style.selected}` : '')} {...optionalProps} onClick={() => onMoveClicked(moveIndex)}>
       {gameState.gameHistoryMessages.map((ghmd, index) => {
-        const username = ghmd.playerID === null ? '' : usernames.get(ghmd.playerID)!;
+        const username = ghmd.playerID === null ? '' : usernames[ghmd.playerID];
         return gameHistoryMessageHandlerLookup.get(ghmd.gameHistoryMessage)!(index, username, ghmd);
       })}
     </div>

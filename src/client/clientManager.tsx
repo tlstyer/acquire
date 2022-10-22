@@ -1,4 +1,3 @@
-import { List } from 'immutable';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { defaultGameBoard, defaultScoreBoardAvailable, defaultScoreBoardPrice } from '../common/defaults';
@@ -151,7 +150,7 @@ export class ClientManager {
             return (
               <GameListing
                 key={gameID}
-                gameBoard={defaultGameBoard}
+                gameBoard={defaultGameBoard()}
                 usernames={gameSetup.usernames}
                 gameDisplayNumber={gameData.displayNumber}
                 gameMode={gameSetup.gameMode}
@@ -337,11 +336,11 @@ export class ClientManager {
 
   renderGamePage = () => {
     const game = this.myClient!.gameData!.game!;
-    const selectedMove = game.gameStateHistory.size - 1;
+    const selectedMove = game.gameStateHistory.length - 1;
 
     const playerID = game.userIDs.indexOf(game.myUserID || -1);
 
-    const gameState = game.gameStateHistory.get(selectedMove)!;
+    const gameState = game.gameStateHistory[selectedMove];
     const nextGameAction = gameState.nextGameAction;
 
     let turnPlayerID = gameState.turnPlayerID;
@@ -351,8 +350,8 @@ export class ClientManager {
       movePlayerID = -1;
     }
 
-    const tileRack = gameState.tileRacks.get(playerID);
-    const tileRackTypes = gameState.tileRackTypes.get(playerID);
+    const tileRack = gameState.tileRacks[playerID];
+    const tileRackTypes = gameState.tileRackTypes[playerID];
 
     const windowWidth = window.innerWidth;
     const windowHeight = window.innerHeight;
@@ -372,7 +371,7 @@ export class ClientManager {
           <div className={style.leftSide}>
             <GameBoard
               gameBoard={gameState.gameBoard}
-              tileRack={gameState.tileRacks.get(playerID)}
+              tileRack={gameState.tileRacks[playerID]}
               labelMode={GameBoardLabelMode.Nothing}
               cellSize={gameBoardCellSize}
               onCellClicked={this.onTileClicked}
@@ -441,7 +440,7 @@ export class ClientManager {
                         <PurchaseShares
                           scoreBoardAvailable={game.scoreBoardAvailable}
                           scoreBoardPrice={game.scoreBoardPrice}
-                          cash={game.scoreBoard.get(playerID)!.get(ScoreBoardIndexEnum.Cash)!}
+                          cash={game.scoreBoard[playerID][ScoreBoardIndexEnum.Cash]}
                           buttonSize={gameBoardCellSize}
                           keyboardShortcutsEnabled={true}
                           onSharesPurchased={this.onSharesPurchased}
@@ -450,8 +449,8 @@ export class ClientManager {
                   </div>
                   <div className={style.claimSpaceForActionComponents}>
                     <PurchaseShares
-                      scoreBoardAvailable={defaultScoreBoardAvailable}
-                      scoreBoardPrice={defaultScoreBoardPrice}
+                      scoreBoardAvailable={defaultScoreBoardAvailable()}
+                      scoreBoardPrice={defaultScoreBoardPrice()}
                       cash={0}
                       buttonSize={gameBoardCellSize}
                       keyboardShortcutsEnabled={false}
@@ -473,14 +472,14 @@ export class ClientManager {
     if (this.isConnected() && this.myRequiredGameAction === GameActionEnum.PlayTile) {
       const game = this.myClient!.gameData!.game!;
       const playerID = game.userIDs.indexOf(game.myUserID || -1);
-      const tileRackIndex = game.tileRacks.get(playerID)!.indexOf(tile);
-      const tileType = game.tileRackTypes.get(playerID)!.get(tileRackIndex)!;
+      const tileRackIndex = game.tileRacks[playerID].indexOf(tile);
+      const tileType = game.tileRackTypes[playerID][tileRackIndex];
 
       if (tileType !== PB_GameBoardType.CANT_PLAY_EVER && tileType !== PB_GameBoardType.CANT_PLAY_NOW) {
         this.sendMessage(
           PB_MessageToServer.create({
             doGameAction: {
-              gameStateHistorySize: game.gameStateHistory.size,
+              gameStateHistorySize: game.gameStateHistory.length,
               gameAction: {
                 playTile: {
                   tile,
@@ -499,7 +498,7 @@ export class ClientManager {
       this.sendMessage(
         PB_MessageToServer.create({
           doGameAction: {
-            gameStateHistorySize: this.myClient!.gameData!.game!.gameStateHistory.size,
+            gameStateHistorySize: this.myClient!.gameData!.game!.gameStateHistory.length,
             gameAction: {
               [chainSelectionGameActionEnumToGameActionString.get(this.myRequiredGameAction!)!]: {
                 chain,
@@ -517,7 +516,7 @@ export class ClientManager {
       this.sendMessage(
         PB_MessageToServer.create({
           doGameAction: {
-            gameStateHistorySize: this.myClient!.gameData!.game!.gameStateHistory.size,
+            gameStateHistorySize: this.myClient!.gameData!.game!.gameStateHistory.length,
             gameAction: {
               disposeOfShares: {
                 tradeAmount: traded,
@@ -536,7 +535,7 @@ export class ClientManager {
       this.sendMessage(
         PB_MessageToServer.create({
           doGameAction: {
-            gameStateHistorySize: this.myClient!.gameData!.game!.gameStateHistory.size,
+            gameStateHistorySize: this.myClient!.gameData!.game!.gameStateHistory.length,
             gameAction: {
               purchaseShares: {
                 chains,
@@ -688,29 +687,18 @@ export class ClientManager {
           }
         }
 
-        const userIDsList = List(userIDs);
-        const usernamesList = List(usernames);
-
-        gameData.gameSummary = new GameSummary(
-          gamePB.gameMode,
-          gamePB.playerArrangementMode,
-          gamePB.gameStatus,
-          userIDsList,
-          usernamesList,
-          hostUserID,
-          List([
-            List(gamePB.gameBoard.slice(0, 12)),
-            List(gamePB.gameBoard.slice(12, 24)),
-            List(gamePB.gameBoard.slice(24, 36)),
-            List(gamePB.gameBoard.slice(36, 48)),
-            List(gamePB.gameBoard.slice(48, 60)),
-            List(gamePB.gameBoard.slice(60, 72)),
-            List(gamePB.gameBoard.slice(72, 84)),
-            List(gamePB.gameBoard.slice(84, 96)),
-            List(gamePB.gameBoard.slice(96, 108)),
-          ]),
-        );
-        gameData.game = new Game(gamePB.gameMode, gamePB.playerArrangementMode, [], userIDsList, usernamesList, hostUserID, this.myClient!.user.id);
+        gameData.gameSummary = new GameSummary(gamePB.gameMode, gamePB.playerArrangementMode, gamePB.gameStatus, userIDs, usernames, hostUserID, [
+          gamePB.gameBoard.slice(0, 12),
+          gamePB.gameBoard.slice(12, 24),
+          gamePB.gameBoard.slice(24, 36),
+          gamePB.gameBoard.slice(36, 48),
+          gamePB.gameBoard.slice(48, 60),
+          gamePB.gameBoard.slice(60, 72),
+          gamePB.gameBoard.slice(72, 84),
+          gamePB.gameBoard.slice(84, 96),
+          gamePB.gameBoard.slice(96, 108),
+        ]);
+        gameData.game = new Game(gamePB.gameMode, gamePB.playerArrangementMode, [], userIDs, usernames, hostUserID, this.myClient!.user.id);
       }
     }
 
@@ -799,8 +787,8 @@ export class ClientManager {
     const gameData = this.gameDisplayNumberToGameData.get(message.gameDisplayNumber)!;
     const gameSetup = gameData.gameSetup!;
 
-    const userIDs = List(message.userIds);
-    const usernames = List(message.userIds.map(this.getUsernameForUserID));
+    const userIDs = message.userIds;
+    const usernames = message.userIds.map(this.getUsernameForUserID);
 
     gameData.gameSetup = null;
     gameData.gameSummary = new GameSummary(
@@ -810,7 +798,7 @@ export class ClientManager {
       userIDs,
       usernames,
       gameSetup.hostUserID,
-      defaultGameBoard,
+      defaultGameBoard(),
     );
     gameData.game = new Game(gameSetup.gameMode, gameSetup.playerArrangementMode, [], userIDs, usernames, gameSetup.hostUserID, this.myClient!.user.id);
 
@@ -930,7 +918,7 @@ export class GameData {
         PB_MessageToServer.create({
           enterGame: {
             gameDisplayNumber: this.displayNumber,
-            gameStateHistorySize: this.game?.gameStateHistory.size ?? 0,
+            gameStateHistorySize: this.game?.gameStateHistory.length ?? 0,
           },
         }),
       );

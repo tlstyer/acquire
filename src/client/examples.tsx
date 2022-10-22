@@ -1,4 +1,3 @@
-import { List } from 'immutable';
 import 'normalize.css';
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -73,24 +72,24 @@ class AllDemoProps {
 
     this.gameListingProps = [
       {
-        gameBoard: defaultGameBoard,
-        usernames: List(['Host', null, 'User 2', null]),
+        gameBoard: defaultGameBoard(),
+        usernames: ['Host', null, 'User 2', null],
         gameDisplayNumber: 1,
         gameMode: PB_GameMode.SINGLES_4,
         gameStatus: PB_GameStatus.SETTING_UP,
         onEnterClicked,
       },
       {
-        gameBoard: game1 !== null ? game1.gameBoard : defaultGameBoard,
-        usernames: List(['Tim', 'Rita', 'Dad', 'Mom', 'REALLY, REALLY, REALLY, REALLY, REALLY LONG NAME', 'pgyqj,;']),
+        gameBoard: game1 !== null ? game1.gameBoard : defaultGameBoard(),
+        usernames: ['Tim', 'Rita', 'Dad', 'Mom', 'REALLY, REALLY, REALLY, REALLY, REALLY LONG NAME', 'pgyqj,;'],
         gameDisplayNumber: 2,
         gameMode: PB_GameMode.TEAMS_2_VS_2_VS_2,
         gameStatus: PB_GameStatus.IN_PROGRESS,
         onEnterClicked,
       },
       {
-        gameBoard: game2 !== null ? game2.gameBoard : defaultGameBoard,
-        usernames: List(['player 1', 'player 2', 'player 3', 'player 4']),
+        gameBoard: game2 !== null ? game2.gameBoard : defaultGameBoard(),
+        usernames: ['player 1', 'player 2', 'player 3', 'player 4'],
         gameDisplayNumber: 3,
         gameMode: PB_GameMode.TEAMS_2_VS_2,
         gameStatus: PB_GameStatus.COMPLETED,
@@ -99,18 +98,18 @@ class AllDemoProps {
     ];
 
     const gbp: GameBoardProps = {
-      gameBoard: List([
-        List([0, 0, 7, 1, 1, 7, 2, 2, 7, 3, 3, 7]),
-        List([7, 7, 8, 7, 7, 7, 7, 7, 7, 7, 7, 4]),
-        List([7, 7, 7, 8, 7, 7, 7, 8, 7, 7, 7, 4]),
-        List([7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7]),
-        List([7, 7, 7, 7, 7, 5, 5, 5, 5, 5, 5, 5]),
-        List([7, 7, 7, 7, 7, 7, 5, 5, 9, 7, 9, 5]),
-        List([7, 7, 8, 7, 7, 7, 5, 7, 6, 6, 6, 9]),
-        List([7, 7, 7, 7, 7, 8, 7, 7, 6, 6, 6, 6]),
-        List([7, 7, 7, 7, 7, 7, 7, 7, 6, 6, 6, 6]),
-      ]),
-      tileRack: List([8, 86, null, 40, 99, 12]),
+      gameBoard: [
+        [0, 0, 7, 1, 1, 7, 2, 2, 7, 3, 3, 7],
+        [7, 7, 8, 7, 7, 7, 7, 7, 7, 7, 7, 4],
+        [7, 7, 7, 8, 7, 7, 7, 8, 7, 7, 7, 4],
+        [7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7],
+        [7, 7, 7, 7, 7, 5, 5, 5, 5, 5, 5, 5],
+        [7, 7, 7, 7, 7, 7, 5, 5, 9, 7, 9, 5],
+        [7, 7, 8, 7, 7, 7, 5, 7, 6, 6, 6, 9],
+        [7, 7, 7, 7, 7, 8, 7, 7, 6, 6, 6, 6],
+        [7, 7, 7, 7, 7, 7, 7, 7, 6, 6, 6, 6],
+      ],
+      tileRack: [8, 86, null, 40, 99, 12],
       labelMode: GameBoardLabelMode.Coordinates,
       cellSize: 40,
       onCellClicked: onTileClicked,
@@ -123,65 +122,68 @@ class AllDemoProps {
 
     this.scoreBoardProps = [
       {
-        usernames: List(['winning player', 'losing player']),
-        scoreBoard: List([List([6, 1, 13, 10, 4, 4, 6, 207, 785]), List([1, 0, 11, 0, 3, 1, 1, 256, 533])]),
-        scoreBoardAvailable: List([18, 24, 1, 15, 18, 20, 18]),
-        scoreBoardChainSize: List([3, 0, 39, 5, 2, 4, 13]),
-        scoreBoardPrice: List([3, 0, 10, 6, 3, 6, 9]),
-        safeChains: List([false, false, true, false, false, false, true]),
+        usernames: ['winning player', 'losing player'],
+        scoreBoard: [
+          [6, 1, 13, 10, 4, 4, 6, 207, 785],
+          [1, 0, 11, 0, 3, 1, 1, 256, 533],
+        ],
+        scoreBoardAvailable: [18, 24, 1, 15, 18, 20, 18],
+        scoreBoardChainSize: [3, 0, 39, 5, 2, 4, 13],
+        scoreBoardPrice: [3, 0, 10, 6, 3, 6, 9],
+        safeChains: [false, false, true, false, false, false, true],
         turnPlayerID: 1,
         movePlayerID: 0,
         gameMode: PB_GameMode.SINGLES_2,
         cellWidth: 30,
       },
       {
-        usernames: List(['tlstyer', 'REALLY, REALLY, REALLY, REALLY, REALLY LONG NAME', 'Somebody Else', 'hi!']),
-        scoreBoard: List([
-          List([4, 0, 0, 0, 0, 0, 0, 74, 82]),
-          List([0, 4, 0, 0, 0, 0, 0, 74, 82]),
-          List([0, 0, 0, 0, 0, 4, 0, 88, 104]),
-          List([1, 1, 0, 0, 0, 1, 1, 92, 228]),
-        ]),
-        scoreBoardAvailable: List([20, 20, 25, 25, 25, 20, 24]),
-        scoreBoardChainSize: List([2, 2, 0, 0, 0, 2, 9]),
-        scoreBoardPrice: List([2, 2, 0, 0, 0, 4, 8]),
-        safeChains: List([false, false, false, false, false, false, false]),
+        usernames: ['tlstyer', 'REALLY, REALLY, REALLY, REALLY, REALLY LONG NAME', 'Somebody Else', 'hi!'],
+        scoreBoard: [
+          [4, 0, 0, 0, 0, 0, 0, 74, 82],
+          [0, 4, 0, 0, 0, 0, 0, 74, 82],
+          [0, 0, 0, 0, 0, 4, 0, 88, 104],
+          [1, 1, 0, 0, 0, 1, 1, 92, 228],
+        ],
+        scoreBoardAvailable: [20, 20, 25, 25, 25, 20, 24],
+        scoreBoardChainSize: [2, 2, 0, 0, 0, 2, 9],
+        scoreBoardPrice: [2, 2, 0, 0, 0, 4, 8],
+        safeChains: [false, false, false, false, false, false, false],
         turnPlayerID: 0,
         movePlayerID: 0,
         gameMode: PB_GameMode.SINGLES_4,
         cellWidth: 30,
       },
       {
-        usernames: List(['player 1', 'player 2', 'player 3', 'player 4']),
-        scoreBoard: List([
-          List([0, 0, 5, 9, 0, 13, 0, 0, 427]),
-          List([8, 1, 0, 13, 0, 12, 0, 63, 474]),
-          List([7, 1, 11, 0, 0, 0, 0, 107, 212]),
-          List([1, 3, 9, 3, 0, 0, 0, 213, 310]),
-        ]),
-        scoreBoardAvailable: List([9, 20, 0, 0, 25, 0, 25]),
-        scoreBoardChainSize: List([0, 0, 4, 27, 0, 42, 0]),
-        scoreBoardPrice: List([0, 0, 5, 9, 0, 12, 0]),
-        safeChains: List([false, false, false, true, false, true, false]),
+        usernames: ['player 1', 'player 2', 'player 3', 'player 4'],
+        scoreBoard: [
+          [0, 0, 5, 9, 0, 13, 0, 0, 427],
+          [8, 1, 0, 13, 0, 12, 0, 63, 474],
+          [7, 1, 11, 0, 0, 0, 0, 107, 212],
+          [1, 3, 9, 3, 0, 0, 0, 213, 310],
+        ],
+        scoreBoardAvailable: [9, 20, 0, 0, 25, 0, 25],
+        scoreBoardChainSize: [0, 0, 4, 27, 0, 42, 0],
+        scoreBoardPrice: [0, 0, 5, 9, 0, 12, 0],
+        safeChains: [false, false, false, true, false, true, false],
         turnPlayerID: -1,
         movePlayerID: -1,
         gameMode: PB_GameMode.TEAMS_2_VS_2,
         cellWidth: 30,
       },
       {
-        usernames: List(['player 1', 'player 2', 'player 3', 'player 4', 'player 5', 'player 6']),
-        scoreBoard: List([
-          List([1, 0, 0, 9, 2, 3, 0, 188, 386]),
-          List([0, 3, 7, 0, 0, 0, 0, 35, 121]),
-          List([0, 0, 7, 2, 0, 1, 0, 22, 135]),
-          List([0, 0, 0, 8, 0, 9, 0, 87, 375]),
-          List([0, 0, 8, 6, 0, 7, 0, 84, 408]),
-          List([0, 0, 3, 0, 0, 5, 0, 120, 192]),
-        ]),
-        scoreBoardAvailable: List([24, 22, 0, 0, 23, 0, 25]),
-        scoreBoardChainSize: List([0, 0, 22, 30, 0, 15, 0]),
-        scoreBoardPrice: List([0, 0, 9, 9, 0, 9, 0]),
-        safeChains: List([false, false, true, true, false, true, false]),
+        usernames: ['player 1', 'player 2', 'player 3', 'player 4', 'player 5', 'player 6'],
+        scoreBoard: [
+          [1, 0, 0, 9, 2, 3, 0, 188, 386],
+          [0, 3, 7, 0, 0, 0, 0, 35, 121],
+          [0, 0, 7, 2, 0, 1, 0, 22, 135],
+          [0, 0, 0, 8, 0, 9, 0, 87, 375],
+          [0, 0, 8, 6, 0, 7, 0, 84, 408],
+          [0, 0, 3, 0, 0, 5, 0, 120, 192],
+        ],
+        scoreBoardAvailable: [24, 22, 0, 0, 23, 0, 25],
+        scoreBoardChainSize: [0, 0, 22, 30, 0, 15, 0],
+        scoreBoardPrice: [0, 0, 9, 9, 0, 9, 0],
+        safeChains: [false, false, true, true, false, true, false],
         turnPlayerID: -1,
         movePlayerID: -1,
         gameMode: PB_GameMode.TEAMS_2_VS_2_VS_2,
@@ -195,36 +197,36 @@ class AllDemoProps {
 
     this.tileRackProps = [
       {
-        tiles: List([1, 28, 55, 82, 92, 40]),
-        types: List([
+        tiles: [1, 28, 55, 82, 92, 40],
+        types: [
           PB_GameBoardType.LUXOR,
           PB_GameBoardType.TOWER,
           PB_GameBoardType.AMERICAN,
           PB_GameBoardType.FESTIVAL,
           PB_GameBoardType.WORLDWIDE,
           PB_GameBoardType.CONTINENTAL,
-        ]),
+        ],
         buttonSize: 40,
         keyboardShortcutsEnabled: false,
         onTileClicked,
       },
       {
-        tiles: List([71, null, 99, 12, 8, 17]),
-        types: List([
+        tiles: [71, null, 99, 12, 8, 17],
+        types: [
           PB_GameBoardType.IMPERIAL,
           null,
           PB_GameBoardType.WILL_MERGE_CHAINS,
           PB_GameBoardType.WILL_PUT_LONELY_TILE_DOWN,
           PB_GameBoardType.HAVE_NEIGHBORING_TILE_TOO,
           PB_GameBoardType.HAVE_NEIGHBORING_TILE_TOO,
-        ]),
+        ],
         buttonSize: 40,
         keyboardShortcutsEnabled: false,
         onTileClicked,
       },
       {
-        tiles: List([null, 86, null, 38, null, 74]),
-        types: List([null, PB_GameBoardType.CANT_PLAY_EVER, null, PB_GameBoardType.WILL_FORM_NEW_CHAIN, null, PB_GameBoardType.CANT_PLAY_NOW]),
+        tiles: [null, 86, null, 38, null, 74],
+        types: [null, PB_GameBoardType.CANT_PLAY_EVER, null, PB_GameBoardType.WILL_FORM_NEW_CHAIN, null, PB_GameBoardType.CANT_PLAY_NOW],
         buttonSize: 40,
         keyboardShortcutsEnabled: false,
         onTileClicked,
@@ -298,24 +300,24 @@ class AllDemoProps {
 
     this.purchaseSharesProps = [
       {
-        scoreBoardAvailable: List([3, 3, 3, 3, 3, 3, 3]),
-        scoreBoardPrice: List([2, 3, 4, 5, 6, 7, 8]),
+        scoreBoardAvailable: [3, 3, 3, 3, 3, 3, 3],
+        scoreBoardPrice: [2, 3, 4, 5, 6, 7, 8],
         cash: 15,
         buttonSize: 40,
         keyboardShortcutsEnabled: false,
         onSharesPurchased,
       },
       {
-        scoreBoardAvailable: List([0, 1, 2, 3, 0, 1, 2]),
-        scoreBoardPrice: List([0, 3, 4, 5, 0, 6, 5]),
+        scoreBoardAvailable: [0, 1, 2, 3, 0, 1, 2],
+        scoreBoardPrice: [0, 3, 4, 5, 0, 6, 5],
         cash: 15,
         buttonSize: 40,
         keyboardShortcutsEnabled: false,
         onSharesPurchased,
       },
       {
-        scoreBoardAvailable: List([1, 23, 6, 1, 1, 4, 1]),
-        scoreBoardPrice: List([2, 0, 0, 5, 6, 0, 0]),
+        scoreBoardAvailable: [1, 23, 6, 1, 1, 4, 1],
+        scoreBoardPrice: [2, 0, 0, 5, 6, 0, 0],
         cash: 5,
         buttonSize: 40,
         keyboardShortcutsEnabled: false,
@@ -331,13 +333,13 @@ class AllDemoProps {
         onMoveClicked,
       },
       {
-        usernames: game1 !== null ? game1.usernames : List(),
-        gameStateHistory: game1 !== null ? game1.gameStateHistory : defaultGameStateHistory,
+        usernames: game1 !== null ? game1.usernames : [],
+        gameStateHistory: game1 !== null ? game1.gameStateHistory : defaultGameStateHistory(),
         onMoveClicked,
       },
       {
-        usernames: game2 !== null ? game2.usernames : List(),
-        gameStateHistory: game2 !== null ? game2.gameStateHistory : defaultGameStateHistory,
+        usernames: game2 !== null ? game2.usernames : [],
+        gameStateHistory: game2 !== null ? game2.gameStateHistory : defaultGameStateHistory(),
         onMoveClicked,
       },
     ];
@@ -450,9 +452,9 @@ function getPurchaseSharesDescription(props: PurchaseSharesProps) {
   const parts: string[] = [];
 
   for (let chain = 0; chain < 7; chain++) {
-    const numAvailable = props.scoreBoardAvailable.get(chain)!;
+    const numAvailable = props.scoreBoardAvailable[chain];
     if (numAvailable !== 0) {
-      parts.push(`${numAvailable}${gameBoardTypeToHotelInitial.get(chain)}@$${props.scoreBoardPrice.get(chain)! * 100}`);
+      parts.push(`${numAvailable}${gameBoardTypeToHotelInitial.get(chain)}@$${props.scoreBoardPrice[chain] * 100}`);
     }
   }
 
@@ -514,7 +516,7 @@ window.addEventListener('keydown', (event) => {
       selectedMove = 0;
     }
 
-    const lastMove = allDemoProps.gameHistoryProps[2].gameStateHistory.size - 1;
+    const lastMove = allDemoProps.gameHistoryProps[2].gameStateHistory.length - 1;
     if (selectedMove > lastMove) {
       selectedMove = lastMove;
     }

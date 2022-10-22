@@ -44,7 +44,7 @@ export class ActionSelectChainToDisposeOfNext extends ActionBase {
       if (sharesOwned[playerID] > 0) {
         actions.push(new ActionDisposeOfShares(this.game, playerID, nextChain, this.controllingChain));
       }
-      playerID = (playerID + 1) % this.game.userIDs.size;
+      playerID = (playerID + 1) % this.game.userIDs.length;
     } while (playerID !== this.playerID);
 
     const remainingDefunctChains = this.defunctChains.filter((c) => c !== nextChain);

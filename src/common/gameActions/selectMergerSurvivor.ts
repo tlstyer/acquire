@@ -76,7 +76,7 @@ export class ActionSelectMergerSurvivor extends ActionBase {
     this.game.determineTileRackTypesForEverybody();
 
     // pay bonuses
-    const bonuses: number[] = new Array(this.game.userIDs.size);
+    const bonuses: number[] = new Array(this.game.userIDs.length);
     for (let playerID = 0; playerID < bonuses.length; playerID++) {
       bonuses[playerID] = 0;
     }
@@ -84,7 +84,7 @@ export class ActionSelectMergerSurvivor extends ActionBase {
     for (let i = 0; i < this.chains.length; i++) {
       const chain = this.chains[i];
       if (chain !== controllingChain) {
-        const chainBonuses = calculateBonuses(this.game.getScoreBoardColumnArray(chain), this.game.scoreBoardPrice.get(chain)!);
+        const chainBonuses = calculateBonuses(this.game.getScoreBoardColumnArray(chain), this.game.scoreBoardPrice[chain]);
         for (let j = 0; j < chainBonuses.length; j++) {
           const chainBonus = chainBonuses[j];
           bonuses[chainBonus.playerID] += chainBonus.amount;

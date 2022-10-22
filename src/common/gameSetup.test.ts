@@ -1,9 +1,8 @@
-import { List } from 'immutable';
 import seedrandom from 'seedrandom';
 import { GameSetup } from './gameSetup';
 import { PB_GameMode, PB_GameSetupChange, PB_PlayerArrangementMode } from './pb';
 
-const dummyApprovals = List([true]);
+const dummyApprovals = [true];
 
 const userIDToUsername = new Map([
   [1, 'user 1'],
@@ -32,10 +31,10 @@ test('can construct', () => {
   expect(gameSetup.hostUserID).toBe(1);
   expect(gameSetup.getUsernameForUserID).toBe(getUsernameForUserID);
   expect(gameSetup.hostUsername).toBe('user 1');
-  expect(gameSetup.usernames.toJS()).toEqual(['user 1', null, null, null]);
-  expect(gameSetup.userIDs.toJS()).toEqual([1, null, null, null]);
+  expect(gameSetup.usernames).toEqual(['user 1', null, null, null]);
+  expect(gameSetup.userIDs).toEqual([1, null, null, null]);
   expect(gameSetup.userIDsSet).toEqual(new Set([1]));
-  expect(gameSetup.approvals.toJS()).toEqual([false, false, false, false]);
+  expect(gameSetup.approvals).toEqual([false, false, false, false]);
   expect(gameSetup.approvedByEverybody).toBe(false);
   expect(gameSetup.history).toEqual([]);
 });
@@ -49,8 +48,8 @@ describe('addUser', () => {
     gameSetup.addUser(4);
     gameSetup.addUser(5);
 
-    expect(gameSetup.usernames.toJS()).toEqual(['user 1', 'user 3', 'user 4']);
-    expect(gameSetup.userIDs.toJS()).toEqual([1, 3, 4]);
+    expect(gameSetup.usernames).toEqual(['user 1', 'user 3', 'user 4']);
+    expect(gameSetup.userIDs).toEqual([1, 3, 4]);
     expect(gameSetup.userIDsSet).toEqual(new Set([1, 3, 4]));
     expect(gameSetup.history).toEqual([PB_GameSetupChange.create({ userAdded: { userId: 3 } }), PB_GameSetupChange.create({ userAdded: { userId: 4 } })]);
   });
@@ -61,8 +60,8 @@ describe('addUser', () => {
     gameSetup.addUser(6);
     gameSetup.addUser(6);
 
-    expect(gameSetup.usernames.toJS()).toEqual(['user 1', 'user 6', null]);
-    expect(gameSetup.userIDs.toJS()).toEqual([1, 6, null]);
+    expect(gameSetup.usernames).toEqual(['user 1', 'user 6', null]);
+    expect(gameSetup.userIDs).toEqual([1, 6, null]);
     expect(gameSetup.userIDsSet).toEqual(new Set([1, 6]));
     expect(gameSetup.history).toEqual([PB_GameSetupChange.create({ userAdded: { userId: 6 } })]);
   });
@@ -74,7 +73,7 @@ describe('addUser', () => {
 
     gameSetup.addUser(3);
 
-    expect(gameSetup.approvals.toJS()).toEqual([false, false, false]);
+    expect(gameSetup.approvals).toEqual([false, false, false]);
     expect(gameSetup.approvedByEverybody).toBe(false);
   });
 });
@@ -88,15 +87,15 @@ describe('removeUser', () => {
 
     gameSetup.removeUser(7);
 
-    expect(gameSetup.usernames.toJS()).toEqual(['user 1', null, 'user 2']);
-    expect(gameSetup.userIDs.toJS()).toEqual([1, null, 2]);
+    expect(gameSetup.usernames).toEqual(['user 1', null, 'user 2']);
+    expect(gameSetup.userIDs).toEqual([1, null, 2]);
     expect(gameSetup.userIDsSet).toEqual(new Set([1, 2]));
     expect(gameSetup.history).toEqual([PB_GameSetupChange.create({ userRemoved: { userId: 7 } })]);
 
     gameSetup.removeUser(2);
 
-    expect(gameSetup.usernames.toJS()).toEqual(['user 1', null, null]);
-    expect(gameSetup.userIDs.toJS()).toEqual([1, null, null]);
+    expect(gameSetup.usernames).toEqual(['user 1', null, null]);
+    expect(gameSetup.userIDs).toEqual([1, null, null]);
     expect(gameSetup.userIDsSet).toEqual(new Set([1]));
     expect(gameSetup.history).toEqual([PB_GameSetupChange.create({ userRemoved: { userId: 7 } }), PB_GameSetupChange.create({ userRemoved: { userId: 2 } })]);
   });
@@ -108,8 +107,8 @@ describe('removeUser', () => {
 
     gameSetup.removeUser(1);
 
-    expect(gameSetup.usernames.toJS()).toEqual(['user 1', 'user 2', null]);
-    expect(gameSetup.userIDs.toJS()).toEqual([1, 2, null]);
+    expect(gameSetup.usernames).toEqual(['user 1', 'user 2', null]);
+    expect(gameSetup.userIDs).toEqual([1, 2, null]);
     expect(gameSetup.userIDsSet).toEqual(new Set([1, 2]));
     expect(gameSetup.history).toEqual([]);
   });
@@ -123,7 +122,7 @@ describe('removeUser', () => {
 
     gameSetup.removeUser(7);
 
-    expect(gameSetup.approvals.toJS()).toEqual([false, false, false]);
+    expect(gameSetup.approvals).toEqual([false, false, false]);
     expect(gameSetup.approvedByEverybody).toBe(false);
   });
 });
@@ -134,12 +133,12 @@ describe('approve', () => {
     gameSetup.addUser(2);
     gameSetup.clearHistory();
 
-    expect(gameSetup.approvals.toJS()).toEqual([false, false]);
+    expect(gameSetup.approvals).toEqual([false, false]);
     expect(gameSetup.approvedByEverybody).toBe(false);
 
     gameSetup.approve(3);
 
-    expect(gameSetup.approvals.toJS()).toEqual([false, false]);
+    expect(gameSetup.approvals).toEqual([false, false]);
     expect(gameSetup.approvedByEverybody).toBe(false);
     expect(gameSetup.history).toEqual([]);
   });
@@ -149,12 +148,12 @@ describe('approve', () => {
     gameSetup.addUser(2);
     gameSetup.clearHistory();
 
-    expect(gameSetup.approvals.toJS()).toEqual([false, false, false]);
+    expect(gameSetup.approvals).toEqual([false, false, false]);
     expect(gameSetup.approvedByEverybody).toBe(false);
 
     gameSetup.approve(2);
 
-    expect(gameSetup.approvals.toJS()).toEqual([false, false, false]);
+    expect(gameSetup.approvals).toEqual([false, false, false]);
     expect(gameSetup.approvedByEverybody).toBe(false);
     expect(gameSetup.history).toEqual([]);
   });
@@ -165,12 +164,12 @@ describe('approve', () => {
     gameSetup.approve(2);
     gameSetup.clearHistory();
 
-    expect(gameSetup.approvals.toJS()).toEqual([false, true]);
+    expect(gameSetup.approvals).toEqual([false, true]);
     expect(gameSetup.approvedByEverybody).toBe(false);
 
     gameSetup.approve(2);
 
-    expect(gameSetup.approvals.toJS()).toEqual([false, true]);
+    expect(gameSetup.approvals).toEqual([false, true]);
     expect(gameSetup.approvedByEverybody).toBe(false);
     expect(gameSetup.history).toEqual([]);
   });
@@ -180,12 +179,12 @@ describe('approve', () => {
     gameSetup.addUser(2);
     gameSetup.clearHistory();
 
-    expect(gameSetup.approvals.toJS()).toEqual([false, false]);
+    expect(gameSetup.approvals).toEqual([false, false]);
     expect(gameSetup.approvedByEverybody).toBe(false);
 
     gameSetup.approve(2);
 
-    expect(gameSetup.approvals.toJS()).toEqual([false, true]);
+    expect(gameSetup.approvals).toEqual([false, true]);
     expect(gameSetup.approvedByEverybody).toBe(false);
     expect(gameSetup.history).toEqual([PB_GameSetupChange.create({ userApprovedOfGameSetup: { userId: 2 } })]);
   });
@@ -198,12 +197,12 @@ describe('approve', () => {
     gameSetup.approve(3);
     gameSetup.clearHistory();
 
-    expect(gameSetup.approvals.toJS()).toEqual([true, false, true]);
+    expect(gameSetup.approvals).toEqual([true, false, true]);
     expect(gameSetup.approvedByEverybody).toBe(false);
 
     gameSetup.approve(2);
 
-    expect(gameSetup.approvals.toJS()).toEqual([true, true, true]);
+    expect(gameSetup.approvals).toEqual([true, true, true]);
     expect(gameSetup.approvedByEverybody).toBe(true);
     expect(gameSetup.history).toEqual([PB_GameSetupChange.create({ userApprovedOfGameSetup: { userId: 2 } })]);
   });
@@ -234,12 +233,12 @@ describe('changeGameMode', () => {
     gameSetup.clearHistory();
 
     expect(gameSetup.gameMode).toBe(PB_GameMode.TEAMS_2_VS_2);
-    expect(gameSetup.usernames.toJS()).toEqual(['user 1', 'user 2', null, null]);
+    expect(gameSetup.usernames).toEqual(['user 1', 'user 2', null, null]);
 
     gameSetup.changeGameMode(PB_GameMode.TEAMS_2_VS_2);
 
     expect(gameSetup.gameMode).toBe(PB_GameMode.TEAMS_2_VS_2);
-    expect(gameSetup.usernames.toJS()).toEqual(['user 1', 'user 2', null, null]);
+    expect(gameSetup.usernames).toEqual(['user 1', 'user 2', null, null]);
     expect(gameSetup.history).toEqual([]);
   });
 
@@ -252,12 +251,12 @@ describe('changeGameMode', () => {
     gameSetup.clearHistory();
 
     expect(gameSetup.gameMode).toBe(PB_GameMode.SINGLES_4);
-    expect(gameSetup.usernames.toJS()).toEqual(['user 1', 'user 2', null, 'user 4']);
+    expect(gameSetup.usernames).toEqual(['user 1', 'user 2', null, 'user 4']);
 
     gameSetup.changeGameMode(PB_GameMode.SINGLES_2);
 
     expect(gameSetup.gameMode).toBe(PB_GameMode.SINGLES_4);
-    expect(gameSetup.usernames.toJS()).toEqual(['user 1', 'user 2', null, 'user 4']);
+    expect(gameSetup.usernames).toEqual(['user 1', 'user 2', null, 'user 4']);
     expect(gameSetup.history).toEqual([]);
   });
 
@@ -267,12 +266,12 @@ describe('changeGameMode', () => {
     gameSetup.clearHistory();
 
     expect(gameSetup.gameMode).toBe(PB_GameMode.TEAMS_2_VS_2);
-    expect(gameSetup.usernames.toJS()).toEqual(['user 1', 'user 2', null, null]);
+    expect(gameSetup.usernames).toEqual(['user 1', 'user 2', null, null]);
 
     gameSetup.changeGameMode(PB_GameMode.SINGLES_4);
 
     expect(gameSetup.gameMode).toBe(PB_GameMode.SINGLES_4);
-    expect(gameSetup.usernames.toJS()).toEqual(['user 1', 'user 2', null, null]);
+    expect(gameSetup.usernames).toEqual(['user 1', 'user 2', null, null]);
     expect(gameSetup.history).toEqual([PB_GameSetupChange.create({ gameModeChanged: { gameMode: PB_GameMode.SINGLES_4 } })]);
   });
 
@@ -282,12 +281,12 @@ describe('changeGameMode', () => {
     gameSetup.clearHistory();
 
     expect(gameSetup.gameMode).toBe(PB_GameMode.SINGLES_2);
-    expect(gameSetup.usernames.toJS()).toEqual(['user 1', 'user 2']);
+    expect(gameSetup.usernames).toEqual(['user 1', 'user 2']);
 
     gameSetup.changeGameMode(PB_GameMode.SINGLES_4);
 
     expect(gameSetup.gameMode).toBe(PB_GameMode.SINGLES_4);
-    expect(gameSetup.usernames.toJS()).toEqual(['user 1', 'user 2', null, null]);
+    expect(gameSetup.usernames).toEqual(['user 1', 'user 2', null, null]);
     expect(gameSetup.history).toEqual([PB_GameSetupChange.create({ gameModeChanged: { gameMode: PB_GameMode.SINGLES_4 } })]);
   });
 
@@ -297,12 +296,12 @@ describe('changeGameMode', () => {
     gameSetup.clearHistory();
 
     expect(gameSetup.gameMode).toBe(PB_GameMode.SINGLES_4);
-    expect(gameSetup.usernames.toJS()).toEqual(['user 1', 'user 2', null, null]);
+    expect(gameSetup.usernames).toEqual(['user 1', 'user 2', null, null]);
 
     gameSetup.changeGameMode(PB_GameMode.SINGLES_2);
 
     expect(gameSetup.gameMode).toBe(PB_GameMode.SINGLES_2);
-    expect(gameSetup.usernames.toJS()).toEqual(['user 1', 'user 2']);
+    expect(gameSetup.usernames).toEqual(['user 1', 'user 2']);
     expect(gameSetup.history).toEqual([PB_GameSetupChange.create({ gameModeChanged: { gameMode: PB_GameMode.SINGLES_2 } })]);
   });
 
@@ -318,12 +317,12 @@ describe('changeGameMode', () => {
     gameSetup.clearHistory();
 
     expect(gameSetup.gameMode).toBe(PB_GameMode.TEAMS_3_VS_3);
-    expect(gameSetup.usernames.toJS()).toEqual(['user 1', null, 'user 3', null, 'user 5', 'user 6']);
+    expect(gameSetup.usernames).toEqual(['user 1', null, 'user 3', null, 'user 5', 'user 6']);
 
     gameSetup.changeGameMode(PB_GameMode.TEAMS_2_VS_2);
 
     expect(gameSetup.gameMode).toBe(PB_GameMode.TEAMS_2_VS_2);
-    expect(gameSetup.usernames.toJS()).toEqual(['user 1', 'user 5', 'user 3', 'user 6']);
+    expect(gameSetup.usernames).toEqual(['user 1', 'user 5', 'user 3', 'user 6']);
     expect(gameSetup.history).toEqual([PB_GameSetupChange.create({ gameModeChanged: { gameMode: PB_GameMode.TEAMS_2_VS_2 } })]);
   });
 
@@ -332,13 +331,13 @@ describe('changeGameMode', () => {
 
     expect(gameSetup.gameMode).toBe(PB_GameMode.TEAMS_2_VS_2);
     expect(gameSetup.playerArrangementMode).toBe(PB_PlayerArrangementMode.SPECIFY_TEAMS);
-    expect(gameSetup.usernames.toJS()).toEqual(['user 1', null, null, null]);
+    expect(gameSetup.usernames).toEqual(['user 1', null, null, null]);
 
     gameSetup.changeGameMode(PB_GameMode.SINGLES_4);
 
     expect(gameSetup.gameMode).toBe(PB_GameMode.SINGLES_4);
     expect(gameSetup.playerArrangementMode).toBe(PB_PlayerArrangementMode.RANDOM_ORDER);
-    expect(gameSetup.usernames.toJS()).toEqual(['user 1', null, null, null]);
+    expect(gameSetup.usernames).toEqual(['user 1', null, null, null]);
     expect(gameSetup.history).toEqual([PB_GameSetupChange.create({ gameModeChanged: { gameMode: PB_GameMode.SINGLES_4 } })]);
   });
 
@@ -349,7 +348,7 @@ describe('changeGameMode', () => {
 
     gameSetup.changeGameMode(PB_GameMode.SINGLES_4);
 
-    expect(gameSetup.approvals.toJS()).toEqual([false, false, false, false]);
+    expect(gameSetup.approvals).toEqual([false, false, false, false]);
     expect(gameSetup.approvedByEverybody).toBe(false);
   });
 });
@@ -416,7 +415,7 @@ describe('changePlayerArrangementMode', () => {
 
     gameSetup.changePlayerArrangementMode(PB_PlayerArrangementMode.EXACT_ORDER);
 
-    expect(gameSetup.approvals.toJS()).toEqual([false, false, false, false]);
+    expect(gameSetup.approvals).toEqual([false, false, false, false]);
     expect(gameSetup.approvedByEverybody).toBe(false);
   });
 });
@@ -429,7 +428,7 @@ describe('swapPositions', () => {
     gameSetup.addUser(4);
     gameSetup.clearHistory();
 
-    expect(gameSetup.usernames.toJS()).toEqual(['user 1', 'user 2', 'user 3', 'user 4']);
+    expect(gameSetup.usernames).toEqual(['user 1', 'user 2', 'user 3', 'user 4']);
 
     gameSetup.swapPositions(-1, 0);
     gameSetup.swapPositions(4, 0);
@@ -437,7 +436,7 @@ describe('swapPositions', () => {
     gameSetup.swapPositions(0, -1);
     gameSetup.swapPositions(0, 4);
 
-    expect(gameSetup.usernames.toJS()).toEqual(['user 1', 'user 2', 'user 3', 'user 4']);
+    expect(gameSetup.usernames).toEqual(['user 1', 'user 2', 'user 3', 'user 4']);
     expect(gameSetup.history).toEqual([]);
   });
 
@@ -447,11 +446,11 @@ describe('swapPositions', () => {
     gameSetup.addUser(3);
     gameSetup.clearHistory();
 
-    expect(gameSetup.usernames.toJS()).toEqual(['user 1', 'user 2', 'user 3']);
+    expect(gameSetup.usernames).toEqual(['user 1', 'user 2', 'user 3']);
 
     gameSetup.swapPositions(1, 1);
 
-    expect(gameSetup.usernames.toJS()).toEqual(['user 1', 'user 2', 'user 3']);
+    expect(gameSetup.usernames).toEqual(['user 1', 'user 2', 'user 3']);
     expect(gameSetup.history).toEqual([]);
   });
 
@@ -462,19 +461,19 @@ describe('swapPositions', () => {
     gameSetup.addUser(4);
     gameSetup.clearHistory();
 
-    expect(gameSetup.usernames.toJS()).toEqual(['user 1', 'user 2', 'user 3', 'user 4']);
+    expect(gameSetup.usernames).toEqual(['user 1', 'user 2', 'user 3', 'user 4']);
     gameSetup.swapPositions(0, 1);
-    expect(gameSetup.usernames.toJS()).toEqual(['user 2', 'user 1', 'user 3', 'user 4']);
+    expect(gameSetup.usernames).toEqual(['user 2', 'user 1', 'user 3', 'user 4']);
     expect(gameSetup.history).toEqual([PB_GameSetupChange.create({ positionsSwapped: { position1: 0, position2: 1 } })]);
     gameSetup.clearHistory();
 
     gameSetup.swapPositions(2, 3);
-    expect(gameSetup.usernames.toJS()).toEqual(['user 2', 'user 1', 'user 4', 'user 3']);
+    expect(gameSetup.usernames).toEqual(['user 2', 'user 1', 'user 4', 'user 3']);
     expect(gameSetup.history).toEqual([PB_GameSetupChange.create({ positionsSwapped: { position1: 2, position2: 3 } })]);
     gameSetup.clearHistory();
 
     gameSetup.swapPositions(0, 3);
-    expect(gameSetup.usernames.toJS()).toEqual(['user 3', 'user 1', 'user 4', 'user 2']);
+    expect(gameSetup.usernames).toEqual(['user 3', 'user 1', 'user 4', 'user 2']);
     expect(gameSetup.history).toEqual([PB_GameSetupChange.create({ positionsSwapped: { position1: 0, position2: 3 } })]);
     gameSetup.clearHistory();
   });
@@ -490,7 +489,7 @@ describe('swapPositions', () => {
 
     gameSetup.swapPositions(0, 1);
 
-    expect(gameSetup.approvals.toJS()).toEqual([false, false, false, false]);
+    expect(gameSetup.approvals).toEqual([false, false, false, false]);
     expect(gameSetup.approvedByEverybody).toBe(false);
   });
 });
@@ -503,7 +502,7 @@ describe('kickUser', () => {
     gameSetup.addUser(4);
     gameSetup.clearHistory();
 
-    expect(gameSetup.usernames.toJS()).toEqual(['user 1', 'user 2', 'user 3', 'user 4']);
+    expect(gameSetup.usernames).toEqual(['user 1', 'user 2', 'user 3', 'user 4']);
 
     // @ts-expect-error
     gameSetup.kickUser('invalid user');
@@ -513,7 +512,7 @@ describe('kickUser', () => {
     gameSetup.kickUser({});
     gameSetup.kickUser(-1);
 
-    expect(gameSetup.usernames.toJS()).toEqual(['user 1', 'user 2', 'user 3', 'user 4']);
+    expect(gameSetup.usernames).toEqual(['user 1', 'user 2', 'user 3', 'user 4']);
     expect(gameSetup.history).toEqual([]);
   });
 
@@ -523,11 +522,11 @@ describe('kickUser', () => {
     gameSetup.addUser(3);
     gameSetup.clearHistory();
 
-    expect(gameSetup.usernames.toJS()).toEqual(['user 1', 'user 2', 'user 3', null]);
+    expect(gameSetup.usernames).toEqual(['user 1', 'user 2', 'user 3', null]);
 
     gameSetup.kickUser(4);
 
-    expect(gameSetup.usernames.toJS()).toEqual(['user 1', 'user 2', 'user 3', null]);
+    expect(gameSetup.usernames).toEqual(['user 1', 'user 2', 'user 3', null]);
     expect(gameSetup.history).toEqual([]);
   });
 
@@ -537,11 +536,11 @@ describe('kickUser', () => {
     gameSetup.addUser(3);
     gameSetup.clearHistory();
 
-    expect(gameSetup.usernames.toJS()).toEqual(['user 1', 'user 2', 'user 3', null]);
+    expect(gameSetup.usernames).toEqual(['user 1', 'user 2', 'user 3', null]);
 
     gameSetup.kickUser(1);
 
-    expect(gameSetup.usernames.toJS()).toEqual(['user 1', 'user 2', 'user 3', null]);
+    expect(gameSetup.usernames).toEqual(['user 1', 'user 2', 'user 3', null]);
     expect(gameSetup.history).toEqual([]);
   });
 
@@ -551,14 +550,14 @@ describe('kickUser', () => {
     gameSetup.addUser(3);
     gameSetup.clearHistory();
 
-    expect(gameSetup.usernames.toJS()).toEqual(['user 1', 'user 2', 'user 3', null]);
-    expect(gameSetup.userIDs.toJS()).toEqual([1, 2, 3, null]);
+    expect(gameSetup.usernames).toEqual(['user 1', 'user 2', 'user 3', null]);
+    expect(gameSetup.userIDs).toEqual([1, 2, 3, null]);
     expect(gameSetup.userIDsSet).toEqual(new Set([1, 2, 3]));
 
     gameSetup.kickUser(2);
 
-    expect(gameSetup.usernames.toJS()).toEqual(['user 1', null, 'user 3', null]);
-    expect(gameSetup.userIDs.toJS()).toEqual([1, null, 3, null]);
+    expect(gameSetup.usernames).toEqual(['user 1', null, 'user 3', null]);
+    expect(gameSetup.userIDs).toEqual([1, null, 3, null]);
     expect(gameSetup.userIDsSet).toEqual(new Set([1, 3]));
     expect(gameSetup.history).toEqual([PB_GameSetupChange.create({ userKicked: { userId: 2 } })]);
   });
@@ -573,7 +572,7 @@ describe('kickUser', () => {
 
     gameSetup.kickUser(2);
 
-    expect(gameSetup.approvals.toJS()).toEqual([false, false, false, false]);
+    expect(gameSetup.approvals).toEqual([false, false, false, false]);
     expect(gameSetup.approvedByEverybody).toBe(false);
   });
 });
@@ -609,10 +608,10 @@ describe('processChange', () => {
     expect(gameSetup.hostUserID).toBe(1);
     expect(gameSetup.getUsernameForUserID).toBe(getUsernameForUserID);
     expect(gameSetup.hostUsername).toBe('user 1');
-    expect(gameSetup.usernames.toJS()).toEqual(['user 4', 'user 5', 'user 6', 'user 1']);
-    expect(gameSetup.userIDs.toJS()).toEqual([4, 5, 6, 1]);
+    expect(gameSetup.usernames).toEqual(['user 4', 'user 5', 'user 6', 'user 1']);
+    expect(gameSetup.userIDs).toEqual([4, 5, 6, 1]);
     expect(gameSetup.userIDsSet).toEqual(new Set([4, 5, 6, 1]));
-    expect(gameSetup.approvals.toJS()).toEqual([true, true, true, true]);
+    expect(gameSetup.approvals).toEqual([true, true, true, true]);
     expect(gameSetup.approvedByEverybody).toBe(true);
   });
 });
@@ -626,14 +625,14 @@ describe('getFinalUserIDsAndUsernames', () => {
       gameSetup.addUser(4);
       gameSetup.clearHistory();
 
-      expect(gameSetup.usernames.toJS()).toEqual(['user 1', 'user 2', 'user 3', 'user 4']);
+      expect(gameSetup.usernames).toEqual(['user 1', 'user 2', 'user 3', 'user 4']);
 
       Math.random = seedrandom('random');
 
       const [userIDs, usernames] = gameSetup.getFinalUserIDsAndUsernames();
 
-      expect(userIDs.toJS()).toEqual([3, 1, 4, 2]);
-      expect(usernames.toJS()).toEqual(['user 3', 'user 1', 'user 4', 'user 2']);
+      expect(userIDs).toEqual([3, 1, 4, 2]);
+      expect(usernames).toEqual(['user 3', 'user 1', 'user 4', 'user 2']);
     });
   });
 
@@ -645,12 +644,12 @@ describe('getFinalUserIDsAndUsernames', () => {
       gameSetup.addUser(4);
       gameSetup.clearHistory();
 
-      expect(gameSetup.usernames.toJS()).toEqual(['user 1', 'user 2', 'user 3', 'user 4']);
+      expect(gameSetup.usernames).toEqual(['user 1', 'user 2', 'user 3', 'user 4']);
 
       const [userIDs, usernames] = gameSetup.getFinalUserIDsAndUsernames();
 
-      expect(userIDs.toJS()).toEqual([1, 2, 3, 4]);
-      expect(usernames.toJS()).toEqual(['user 1', 'user 2', 'user 3', 'user 4']);
+      expect(userIDs).toEqual([1, 2, 3, 4]);
+      expect(usernames).toEqual(['user 1', 'user 2', 'user 3', 'user 4']);
     });
   });
 
@@ -662,14 +661,14 @@ describe('getFinalUserIDsAndUsernames', () => {
       gameSetup.addUser(4);
       gameSetup.clearHistory();
 
-      expect(gameSetup.usernames.toJS()).toEqual(['user 1', 'user 2', 'user 3', 'user 4']);
+      expect(gameSetup.usernames).toEqual(['user 1', 'user 2', 'user 3', 'user 4']);
 
       Math.random = seedrandom('random');
 
       const [userIDs, usernames] = gameSetup.getFinalUserIDsAndUsernames();
 
-      expect(userIDs.toJS()).toEqual([2, 3, 4, 1]);
-      expect(usernames.toJS()).toEqual(['user 2', 'user 3', 'user 4', 'user 1']);
+      expect(userIDs).toEqual([2, 3, 4, 1]);
+      expect(usernames).toEqual(['user 2', 'user 3', 'user 4', 'user 1']);
     });
 
     test('teams and players within teams are randomized when gameMode is Teams2vs2vs2', () => {
@@ -681,14 +680,14 @@ describe('getFinalUserIDsAndUsernames', () => {
       gameSetup.addUser(6);
       gameSetup.clearHistory();
 
-      expect(gameSetup.usernames.toJS()).toEqual(['user 1', 'user 2', 'user 3', 'user 4', 'user 5', 'user 6']);
+      expect(gameSetup.usernames).toEqual(['user 1', 'user 2', 'user 3', 'user 4', 'user 5', 'user 6']);
 
       Math.random = seedrandom('random');
 
       const [userIDs, usernames] = gameSetup.getFinalUserIDsAndUsernames();
 
-      expect(userIDs.toJS()).toEqual([4, 3, 2, 1, 6, 5]);
-      expect(usernames.toJS()).toEqual(['user 4', 'user 3', 'user 2', 'user 1', 'user 6', 'user 5']);
+      expect(userIDs).toEqual([4, 3, 2, 1, 6, 5]);
+      expect(usernames).toEqual(['user 4', 'user 3', 'user 2', 'user 1', 'user 6', 'user 5']);
     });
 
     test('teams and players within teams are randomized when gameMode is Teams3vs3', () => {
@@ -700,14 +699,14 @@ describe('getFinalUserIDsAndUsernames', () => {
       gameSetup.addUser(6);
       gameSetup.clearHistory();
 
-      expect(gameSetup.usernames.toJS()).toEqual(['user 1', 'user 2', 'user 3', 'user 4', 'user 5', 'user 6']);
+      expect(gameSetup.usernames).toEqual(['user 1', 'user 2', 'user 3', 'user 4', 'user 5', 'user 6']);
 
       Math.random = seedrandom('random!!!!');
 
       const [userIDs, usernames] = gameSetup.getFinalUserIDsAndUsernames();
 
-      expect(userIDs.toJS()).toEqual([5, 4, 1, 6, 3, 2]);
-      expect(usernames.toJS()).toEqual(['user 5', 'user 4', 'user 1', 'user 6', 'user 3', 'user 2']);
+      expect(userIDs).toEqual([5, 4, 1, 6, 3, 2]);
+      expect(usernames).toEqual(['user 5', 'user 4', 'user 1', 'user 6', 'user 3', 'user 2']);
     });
   });
 });

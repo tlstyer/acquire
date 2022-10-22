@@ -17,7 +17,7 @@ export class ActionPurchaseShares extends ActionBase {
   prepare() {
     // set corresponding score board chain size to 0 if the game board doesn't have any cells of a given type
     for (let type = 0; type <= PB_GameBoardType.IMPERIAL; type++) {
-      if (this.game.gameBoardTypeCounts[type] === 0 && this.game.scoreBoardChainSize.get(type)! > 0) {
+      if (this.game.gameBoardTypeCounts[type] === 0 && this.game.scoreBoardChainSize[type] > 0) {
         this.game.setChainSize(type, 0);
       }
     }
@@ -29,9 +29,9 @@ export class ActionPurchaseShares extends ActionBase {
     let hasChainSizeGreaterThan40 = false;
     let sharesAvailable = false;
     let canPurchaseShares = false;
-    const cash = this.game.scoreBoard.get(this.playerID)!.get(ScoreBoardIndexEnum.Cash)!;
+    const cash = this.game.scoreBoard[this.playerID][ScoreBoardIndexEnum.Cash];
     for (let type = 0; type <= PB_GameBoardType.IMPERIAL; type++) {
-      const chainSize = this.game.scoreBoardChainSize.get(type)!;
+      const chainSize = this.game.scoreBoardChainSize[type];
       if (chainSize > 0) {
         hasChainSize = true;
         if (chainSize < 11) {
@@ -41,11 +41,11 @@ export class ActionPurchaseShares extends ActionBase {
           hasChainSizeGreaterThan40 = true;
         }
 
-        const available = this.game.scoreBoardAvailable.get(type)!;
+        const available = this.game.scoreBoardAvailable[type];
         if (available > 0) {
           sharesAvailable = true;
 
-          const price = this.game.scoreBoardPrice.get(type)!;
+          const price = this.game.scoreBoardPrice[type];
           if (price <= cash) {
             canPurchaseShares = true;
           }
@@ -97,16 +97,16 @@ export class ActionPurchaseShares extends ActionBase {
     for (let i = 0; i < chainsAndCounts.length; i++) {
       const [chain, count] = chainsAndCounts[i];
 
-      if (this.game.scoreBoardChainSize.get(chain)! === 0) {
+      if (this.game.scoreBoardChainSize[chain] === 0) {
         throw new UserInputError('a requested chain does not exist on the board');
       }
-      if (count > this.game.scoreBoardAvailable.get(chain)!) {
+      if (count > this.game.scoreBoardAvailable[chain]) {
         throw new UserInputError('more shares requested for a chain than are available');
       }
 
-      cost += this.game.scoreBoardPrice.get(chain)! * count;
+      cost += this.game.scoreBoardPrice[chain] * count;
     }
-    if (cost > this.game.scoreBoard.get(this.playerID)!.get(ScoreBoardIndexEnum.Cash)!) {
+    if (cost > this.game.scoreBoard[this.playerID][ScoreBoardIndexEnum.Cash]) {
       throw new UserInputError('not enough cash to pay for requested shares');
     }
 
@@ -125,7 +125,7 @@ export class ActionPurchaseShares extends ActionBase {
 
   protected completeAction(endGame: boolean): ActionBase[] {
     let allTilesPlayed = this.game.gameBoardTypeCounts[PB_GameBoardType.NOTHING] === 0;
-    const noTilesPlayedForEntireRound = this.game.numTurnsWithoutPlayedTiles === this.game.userIDs.size;
+    const noTilesPlayedForEntireRound = this.game.numTurnsWithoutPlayedTiles === this.game.userIDs.length;
 
     if (endGame || allTilesPlayed || noTilesPlayedForEntireRound) {
       if (endGame) {
@@ -148,7 +148,7 @@ export class ActionPurchaseShares extends ActionBase {
         return [new ActionGameOver(this.game, this.playerID)];
       }
 
-      const nextPlayerID = (this.playerID + 1) % this.game.userIDs.size;
+      const nextPlayerID = (this.playerID + 1) % this.game.userIDs.length;
       return [new ActionPlayTile(this.game, nextPlayerID), new ActionPurchaseShares(this.game, nextPlayerID)];
     }
   }

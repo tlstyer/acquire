@@ -1,4 +1,3 @@
-import { List } from 'immutable';
 import React from 'react';
 import { PB_GameBoardType } from '../../common/pb';
 import * as commonStyle from '../common.scss';
@@ -6,8 +5,8 @@ import { gameBoardTypeToCSSClassName, getTileString } from '../helpers';
 import * as style from './TileRackReadOnly.scss';
 
 export interface TileRackReadOnlyProps {
-  tiles: List<number | null>;
-  types: List<PB_GameBoardType | null>;
+  tiles: (number | null)[];
+  types: (PB_GameBoardType | null)[];
   buttonSize: number;
 }
 
@@ -22,7 +21,7 @@ export const TileRackReadOnly = React.memo(function TileRackReadOnly({ tiles, ty
   return (
     <div className={style.root} style={{ fontSize: Math.floor(buttonSize * 0.4) }}>
       {tiles.map((tile, i) => {
-        const type = types.get(i, null);
+        const type = types[i];
 
         if (tile !== null && type !== null) {
           return (

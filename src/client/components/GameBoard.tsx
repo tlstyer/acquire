@@ -1,4 +1,3 @@
-import { List } from 'immutable';
 import React from 'react';
 import { PB_GameBoardType } from '../../common/pb';
 import { GameBoardLabelMode } from '../enums';
@@ -6,8 +5,8 @@ import { gameBoardTypeToCSSClassName, gameBoardTypeToHotelInitial, getTileString
 import * as style from './GameBoard.scss';
 
 export interface GameBoardProps {
-  gameBoard: List<List<PB_GameBoardType>>;
-  tileRack?: List<number | null>;
+  gameBoard: PB_GameBoardType[][];
+  tileRack?: (number | null)[];
   labelMode: GameBoardLabelMode;
   cellSize: number;
   onCellClicked?: (tile: number) => void;
@@ -45,7 +44,7 @@ export const GameBoard = React.memo(function GameBoard({ gameBoard, tileRack, la
 
 interface GameBoardRowProps {
   y: number;
-  gameBoardRow: List<PB_GameBoardType>;
+  gameBoardRow: PB_GameBoardType[];
   tileRackRowBitMask: number;
   labelMode: GameBoardLabelMode;
   onCellClicked?: (tile: number) => void;

@@ -136,11 +136,6 @@ function getProductionConfig(APP) {
       new HtmlWebpackExternalsPlugin({
         externals: [
           {
-            module: 'immutable',
-            global: 'Immutable',
-            entry: `https://unpkg.com/immutable@${packageVersionLookup['immutable']}/dist/immutable.min.js`,
-          },
-          {
             module: 'react',
             global: 'React',
             entry: `https://unpkg.com/react@${packageVersionLookup['react']}/umd/react.production.min.js`,

@@ -1,18 +1,27 @@
-import { List } from 'immutable';
 import { GameState } from './game';
 import { PB_GameBoardType } from './pb';
 
-export const defaultGameStateHistory = List<GameState>([]);
+export function defaultGameStateHistory(): GameState[] {
+  return [];
+}
 
-export const defaultTileRacks = List<List<number | null>>([]);
+export function defaultTileRacks(): (number | null)[][] {
+  return [];
+}
 
-export const defaultTileRack = List<number | null>([null, null, null, null, null, null]);
+export function defaultTileRack(): (number | null)[] {
+  return [null, null, null, null, null, null];
+}
 
-export const defaultTileRackTypesList = List<List<PB_GameBoardType | null>>([]);
+export function defaultTileRackTypesList(): (PB_GameBoardType | null)[][] {
+  return [];
+}
 
-export const defaultTileRackTypes = List<PB_GameBoardType | null>([null, null, null, null, null, null]);
+export function defaultTileRackTypes(): (PB_GameBoardType | null)[] {
+  return [null, null, null, null, null, null];
+}
 
-const defaultGameBoardRow = List([
+const defaultGameBoardRow = [
   PB_GameBoardType.NOTHING,
   PB_GameBoardType.NOTHING,
   PB_GameBoardType.NOTHING,
@@ -25,27 +34,41 @@ const defaultGameBoardRow = List([
   PB_GameBoardType.NOTHING,
   PB_GameBoardType.NOTHING,
   PB_GameBoardType.NOTHING,
-]);
-export const defaultGameBoard = List([
-  defaultGameBoardRow,
-  defaultGameBoardRow,
-  defaultGameBoardRow,
-  defaultGameBoardRow,
-  defaultGameBoardRow,
-  defaultGameBoardRow,
-  defaultGameBoardRow,
-  defaultGameBoardRow,
-  defaultGameBoardRow,
-]);
+];
+export function defaultGameBoard(): PB_GameBoardType[][] {
+  return [
+    [...defaultGameBoardRow],
+    [...defaultGameBoardRow],
+    [...defaultGameBoardRow],
+    [...defaultGameBoardRow],
+    [...defaultGameBoardRow],
+    [...defaultGameBoardRow],
+    [...defaultGameBoardRow],
+    [...defaultGameBoardRow],
+    [...defaultGameBoardRow],
+  ];
+}
 
-export const defaultScoreBoard = List<List<number>>([]);
+export function defaultScoreBoard(): number[][] {
+  return [];
+}
 
-export const defaultScoreBoardRow = List([0, 0, 0, 0, 0, 0, 0, 60, 60]);
+export function defaultScoreBoardRow(): number[] {
+  return [0, 0, 0, 0, 0, 0, 0, 60, 60];
+}
 
-export const defaultScoreBoardAvailable = List([25, 25, 25, 25, 25, 25, 25]);
+export function defaultScoreBoardAvailable(): number[] {
+  return [25, 25, 25, 25, 25, 25, 25];
+}
 
-export const defaultScoreBoardChainSize = List([0, 0, 0, 0, 0, 0, 0]);
+export function defaultScoreBoardChainSize(): number[] {
+  return [0, 0, 0, 0, 0, 0, 0];
+}
 
-export const defaultScoreBoardPrice = defaultScoreBoardChainSize;
+export function defaultScoreBoardPrice(): number[] {
+  return [0, 0, 0, 0, 0, 0, 0];
+}
 
-export const defaultSafeChains = List([false, false, false, false, false, false, false]);
+export function defaultSafeChains(): boolean[] {
+  return [false, false, false, false, false, false, false];
+}

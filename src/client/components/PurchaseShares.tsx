@@ -1,4 +1,3 @@
-import { List } from 'immutable';
 import React from 'react';
 import { PB_GameBoardType } from '../../common/pb';
 import * as commonStyle from '../common.scss';
@@ -6,8 +5,8 @@ import { allChains, gameBoardTypeToCSSClassName, gameBoardTypeToHotelInitial, ge
 import * as style from './PurchaseShares.scss';
 
 export interface PurchaseSharesProps {
-  scoreBoardAvailable: List<number>;
-  scoreBoardPrice: List<number>;
+  scoreBoardAvailable: number[];
+  scoreBoardPrice: number[];
   cash: number;
   buttonSize: number;
   keyboardShortcutsEnabled: boolean;
@@ -177,7 +176,7 @@ export class PurchaseShares extends React.Component<PurchaseSharesProps, Purchas
         const numSharesInCart = chainToNumSharesInCart.get(chain) || 0;
 
         chainToNumSharesInCart.set(chain, numSharesInCart + 1);
-        totalPrice += scoreBoardPrice.get(chain)!;
+        totalPrice += scoreBoardPrice[chain];
         numItemsInCart++;
       }
     }
@@ -201,8 +200,8 @@ export class PurchaseShares extends React.Component<PurchaseSharesProps, Purchas
           <fieldset>
             <legend>Available</legend>
             {allChains.map((chain) => {
-              const numAvailable = scoreBoardAvailable.get(chain)!;
-              const price = scoreBoardPrice.get(chain)!;
+              const numAvailable = scoreBoardAvailable[chain];
+              const price = scoreBoardPrice[chain];
 
               if (price > 0 && numAvailable > 0) {
                 const numRemaining = numAvailable - (chainToNumSharesInCart.get(chain) || 0);
@@ -276,7 +275,7 @@ export class PurchaseShares extends React.Component<PurchaseSharesProps, Purchas
                     type={'button'}
                     className={`${commonStyle.hotelButton} ${gameBoardTypeToCSSClassName.get(chain)}`}
                     style={cartButtonStyle}
-                    value={scoreBoardPrice.get(chain)! * 100}
+                    value={scoreBoardPrice[chain] * 100}
                     onClick={() => {
                       const cartCopy = [...cart];
                       cartCopy[i] = null;

@@ -30,7 +30,7 @@ export class ExampleGameSetupMaster extends React.Component<ExampleGameSetupMast
     const { gameSetup, simulatedNetworkDelay } = this.state;
 
     const numUsersInGame = gameSetup.userIDsSet.size;
-    const maxUsers = gameSetup.userIDs.size;
+    const maxUsers = gameSetup.userIDs.length;
 
     const userIDs = [...gameSetup.userIDsSet.values()].sort((a, b) => a - b);
 

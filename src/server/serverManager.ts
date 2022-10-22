@@ -356,7 +356,7 @@ export class ServerManager {
 
   onMessageEnterGame(client: Client, message: PB_MessageToServer_EnterGame) {
     const gameData = this.gameDisplayNumberToGameData.get(message.gameDisplayNumber);
-    if (gameData === undefined || message.gameStateHistorySize < 0 || (gameData.game && message.gameStateHistorySize > gameData.game.gameStateHistory.size)) {
+    if (gameData === undefined || message.gameStateHistorySize < 0 || (gameData.game && message.gameStateHistorySize > gameData.game.gameStateHistory.length)) {
       this.kickWithError(client.webSocket, PB_ErrorCode.INVALID_MESSAGE);
       return;
     }
@@ -384,8 +384,8 @@ export class ServerManager {
       const gameStateHistory = game.gameStateHistory;
       const playerID = game.userIDs.indexOf(client.user.id);
 
-      for (let gameStateHistoryIndex = message.gameStateHistorySize; gameStateHistoryIndex < gameStateHistory.size; gameStateHistoryIndex++) {
-        const gameState = gameStateHistory.get(gameStateHistoryIndex)!;
+      for (let gameStateHistoryIndex = message.gameStateHistorySize; gameStateHistoryIndex < gameStateHistory.length; gameStateHistoryIndex++) {
+        const gameState = gameStateHistory[gameStateHistoryIndex];
 
         client.queueMessage(
           PB_MessageToClient.create({
@@ -480,8 +480,7 @@ export class ServerManager {
       const gameStartedMessage = PB_MessageToClient.create({
         gameStarted: {
           gameDisplayNumber: gameData.displayNumber,
-          // @ts-expect-error
-          userIds: userIDs.toJS(),
+          userIds: userIDs,
         },
       });
       this.webSocketToClient.forEach((aClient) => {
@@ -616,7 +615,7 @@ export class ServerManager {
       return;
     }
 
-    if (gameStateHistorySize !== game.gameStateHistory.size) {
+    if (gameStateHistorySize !== game.gameStateHistory.length) {
       return;
     }
 
@@ -656,7 +655,7 @@ export class ServerManager {
 
   sendLastGameGameStateMessage(gameData: GameData) {
     const game = gameData.game!;
-    const gameState = game.gameStateHistory.get(game.gameStateHistory.size - 1)!;
+    const gameState = game.gameStateHistory[game.gameStateHistory.length - 1];
 
     // queue GameBoardChanged messages to clients not in the game room
     if (gameState.gameBoardChangeGameBoardType !== undefined || gameState.gameBoardCantPlayEverTiles.length > 0) {
@@ -721,7 +720,7 @@ export class ServerManager {
       } else {
         const game = gameData.game!;
 
-        const positions: PB_Game_Position[] = new Array(game.userIDs.size);
+        const positions: PB_Game_Position[] = new Array(game.userIDs.length);
         game.userIDs.forEach((userID, i) => {
           positions[i] = PB_Game_Position.create({
             userId: userID,
@@ -734,8 +733,7 @@ export class ServerManager {
           gameMode: game.gameMode,
           playerArrangementMode: game.playerArrangementMode,
           positions,
-          // @ts-expect-error
-          gameBoard: game.gameBoard.toJS().flat(),
+          gameBoard: game.gameBoard.flat(),
         });
       }
 

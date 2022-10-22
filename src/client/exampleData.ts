@@ -1,4 +1,3 @@
-import { List } from 'immutable';
 import { defaultGameStateHistory } from '../common/defaults';
 import { GameHistoryMessageEnum } from '../common/enums';
 import { Game } from '../common/game';
@@ -15,22 +14,14 @@ import { PB_GameAction, PB_GameBoardType, PB_GameMode, PB_PlayerArrangementMode 
 import { allChains } from './helpers';
 
 export function getDummyGameForGetGameHistory() {
-  const game = new Game(
-    PB_GameMode.SINGLES_4,
-    PB_PlayerArrangementMode.EXACT_ORDER,
-    getNewTileBag(),
-    List([2, 3, 5, 8]),
-    List(['Tim', 'Rita', 'Dad', 'Mom']),
-    8,
-    3,
-  );
+  const game = new Game(PB_GameMode.SINGLES_4, PB_PlayerArrangementMode.EXACT_ORDER, getNewTileBag(), [2, 3, 5, 8], ['Tim', 'Rita', 'Dad', 'Mom'], 8, 3);
   game.doGameAction(
     PB_GameAction.create({
       startGame: {},
     }),
     null,
   );
-  game.gameStateHistory = defaultGameStateHistory;
+  game.gameStateHistory = defaultGameStateHistory();
 
   let gameState = game.getCurrentGameState();
   gameState.addGameHistoryMessage(GameHistoryMessageEnum.TurnBegan, 0, []);
@@ -133,8 +124,8 @@ export function getExampleNextGameActionsArray() {
     PB_GameMode.SINGLES_5,
     PB_PlayerArrangementMode.RANDOM_ORDER,
     [],
-    List([1, 2, 3, 4, 5]),
-    List(['Tim', 'Rita', 'Dad', 'Mom', 'REALLY, REALLY, REALLY, REALLY, REALLY LONG NAME']),
+    [1, 2, 3, 4, 5],
+    ['Tim', 'Rita', 'Dad', 'Mom', 'REALLY, REALLY, REALLY, REALLY, REALLY LONG NAME'],
     1,
     6,
   );

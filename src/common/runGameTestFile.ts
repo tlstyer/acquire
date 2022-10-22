@@ -1,4 +1,3 @@
-import { List } from 'immutable';
 import { GameActionEnum, GameHistoryMessageEnum, ScoreBoardIndexEnum, TileEnum } from './enums';
 import { UserInputError } from './error';
 import { Game, GameHistoryMessageData, GameState, GameStateTileBagTile } from './game';
@@ -97,7 +96,7 @@ export function runGameTestFile(inputLines: string[]) {
           outputLines.push(`me: ${myUserID}`);
         }
 
-        game = new Game(gameMode, playerArrangementMode, tileBag, List(userIDs), List(usernames), hostUserID, myUserID);
+        game = new Game(gameMode, playerArrangementMode, tileBag, userIDs, usernames, hostUserID, myUserID);
 
         if (myUserID !== null) {
           myPlayerID = userIDs.indexOf(myUserID);
@@ -154,7 +153,7 @@ export function runGameTestFile(inputLines: string[]) {
 
         try {
           game.doGameAction(gameAction, timestamp);
-          lastGameState = game.gameStateHistory.get(game.gameStateHistory.size - 1, null);
+          lastGameState = game.gameStateHistory.length > 0 ? game.gameStateHistory[game.gameStateHistory.length - 1] : null;
         } catch (error) {
           if (error instanceof UserInputError) {
             let stringParameters = '';
@@ -171,7 +170,7 @@ export function runGameTestFile(inputLines: string[]) {
               outputLines.push(`timestamp: ${timestamp}`);
             }
             outputLines.push(
-              `action: ${game.gameStateHistory.get(game.gameStateHistory.size - 1)!.nextGameAction.playerID} ${actualGameActionName}${stringParameters}`,
+              `action: ${game.gameStateHistory[game.gameStateHistory.length - 1].nextGameAction.playerID} ${actualGameActionName}${stringParameters}`,
             );
             outputLines.push(`  error: ${error.message}`);
           } else {
@@ -354,7 +353,7 @@ function getGameStateLines(gameState: GameState, revealedTilesPlayerID: number |
 
     lines.push('  tile racks:');
     gameState.tileRacks.forEach((tileRack, playerID) => {
-      const tileTypes = gameState.tileRackTypes.get(playerID)!;
+      const tileTypes = gameState.tileRackTypes[playerID];
       lines.push(`    ${playerID}: ${getTileRackString(tileRack, tileTypes)}`);
     });
 
@@ -469,12 +468,12 @@ const gameBoardTypeToCharacter = new Map([
   [PB_GameBoardType.WILL_MERGE_CHAINS, 'm'],
   [PB_GameBoardType.CANT_PLAY_NOW, 'c'],
 ]);
-function getGameBoardLines(gameBoard: List<List<PB_GameBoardType>>) {
+function getGameBoardLines(gameBoard: PB_GameBoardType[][]) {
   const lines: string[] = new Array(9);
   const chars: string[] = new Array(12);
   for (let y = 0; y < 9; y++) {
     for (let x = 0; x < 12; x++) {
-      chars[x] = gameBoardTypeToCharacter.get(gameBoard.get(y)!.get(x)!)!;
+      chars[x] = gameBoardTypeToCharacter.get(gameBoard[y][x])!;
     }
     lines[y] = chars.join('');
   }
@@ -482,10 +481,10 @@ function getGameBoardLines(gameBoard: List<List<PB_GameBoardType>>) {
 }
 
 function getScoreBoardLines(
-  scoreBoard: List<List<number>>,
-  scoreBoardAvailable: List<number>,
-  scoreBoardChainSize: List<number>,
-  scoreBoardPrice: List<number>,
+  scoreBoard: number[][],
+  scoreBoardAvailable: number[],
+  scoreBoardChainSize: number[],
+  scoreBoardPrice: number[],
   turnPlayerID: number,
   movePlayerID: number,
 ) {
@@ -500,11 +499,11 @@ function getScoreBoardLines(
     } else {
       name = '';
     }
-    lines.push(formatScoreBoardLine([name, ...row.toArray().map((val, index) => (index <= ScoreBoardIndexEnum.Imperial && val === 0 ? '' : val.toString()))]));
+    lines.push(formatScoreBoardLine([name, ...row.map((val, index) => (index <= ScoreBoardIndexEnum.Imperial && val === 0 ? '' : val.toString()))]));
   });
-  lines.push(formatScoreBoardLine(['A', ...scoreBoardAvailable.toArray().map((val) => val.toString())]));
-  lines.push(formatScoreBoardLine(['C', ...scoreBoardChainSize.toArray().map((val) => (val === 0 ? '-' : val.toString()))]));
-  lines.push(formatScoreBoardLine(['P', ...scoreBoardPrice.toArray().map((val) => (val === 0 ? '-' : val.toString()))]));
+  lines.push(formatScoreBoardLine(['A', ...scoreBoardAvailable.map((val) => val.toString())]));
+  lines.push(formatScoreBoardLine(['C', ...scoreBoardChainSize.map((val) => (val === 0 ? '-' : val.toString()))]));
+  lines.push(formatScoreBoardLine(['P', ...scoreBoardPrice.map((val) => (val === 0 ? '-' : val.toString()))]));
   return lines;
 }
 
@@ -520,14 +519,14 @@ function formatScoreBoardLine(entries: string[]) {
   return lineParts.join(' ');
 }
 
-function getTileRackString(tiles: List<number | null>, tileTypes: List<PB_GameBoardType | null>) {
+function getTileRackString(tiles: (number | null)[], tileTypes: (PB_GameBoardType | null)[]) {
   return tiles
     .map((tile, tileIndex) => {
       if (tile === TileEnum.Unknown) {
         return '?';
       }
 
-      const tileType = tileTypes.get(tileIndex, null);
+      const tileType = tileTypes[tileIndex];
       if (tile !== null && tileType !== null) {
         return `${toTileString(tile)}(${gameBoardTypeToCharacter.get(tileType)})`;
       } else {

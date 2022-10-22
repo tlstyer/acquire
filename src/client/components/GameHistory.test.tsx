@@ -1,5 +1,4 @@
 // import { mount } from 'enzyme';
-import { List } from 'immutable';
 import React from 'react';
 import renderer from 'react-test-renderer';
 import { configureEnzyme } from '../configureEnzyme';
@@ -18,9 +17,7 @@ class TestDate {
 
 const onMoveClicked = jest.fn();
 const game = getDummyGameForGetGameHistory();
-const jsx = (
-  <GameHistory usernames={List(['Tim', 'Rita', 'Dad', 'Mom'])} gameStateHistory={game.gameStateHistory} selectedMove={1} onMoveClicked={onMoveClicked} />
-);
+const jsx = <GameHistory usernames={['Tim', 'Rita', 'Dad', 'Mom']} gameStateHistory={game.gameStateHistory} selectedMove={1} onMoveClicked={onMoveClicked} />;
 
 const dateNow = Date.now;
 // @ts-expect-error

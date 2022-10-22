@@ -1,4 +1,3 @@
-import { List } from 'immutable';
 import React from 'react';
 import { GameActionEnum } from '../../common/enums';
 import { ActionBase } from '../../common/gameActions/base';
@@ -14,7 +13,7 @@ import { gameBoardTypeToCSSClassName, gameBoardTypeToHotelInitial, getHotelNameS
 import * as style from './GameStatus.scss';
 
 export interface GameStatusProps {
-  usernames: List<string>;
+  usernames: string[];
   nextGameAction: ActionBase;
 }
 
@@ -25,60 +24,60 @@ export const GameStatus = React.memo(function GameStatus({ usernames, nextGameAc
 const gshl: [GameActionEnum, any][] = [
   [
     GameActionEnum.StartGame,
-    (usernames: List<string>, action: ActionStartGame) => (
-      <div className={style.root}>Waiting for {getUsernameSpan(usernames.get(action.playerID)!)} to start the game.</div>
+    (usernames: string[], action: ActionStartGame) => (
+      <div className={style.root}>Waiting for {getUsernameSpan(usernames[action.playerID])} to start the game.</div>
     ),
   ],
   [
     GameActionEnum.PlayTile,
-    (usernames: List<string>, action: ActionPlayTile) => (
-      <div className={style.root}>Waiting for {getUsernameSpan(usernames.get(action.playerID)!)} to play a tile.</div>
+    (usernames: string[], action: ActionPlayTile) => (
+      <div className={style.root}>Waiting for {getUsernameSpan(usernames[action.playerID])} to play a tile.</div>
     ),
   ],
   [
     GameActionEnum.SelectNewChain,
-    (usernames: List<string>, action: ActionSelectNewChain) => (
+    (usernames: string[], action: ActionSelectNewChain) => (
       <div className={style.root}>
-        Waiting for {getUsernameSpan(usernames.get(action.playerID)!)} to select new chain ({getHotelInitialsList(action.availableChains)}
+        Waiting for {getUsernameSpan(usernames[action.playerID])} to select new chain ({getHotelInitialsList(action.availableChains)}
         ).
       </div>
     ),
   ],
   [
     GameActionEnum.SelectMergerSurvivor,
-    (usernames: List<string>, action: ActionSelectMergerSurvivor) => (
+    (usernames: string[], action: ActionSelectMergerSurvivor) => (
       <div className={style.root}>
-        Waiting for {getUsernameSpan(usernames.get(action.playerID)!)} to select merger survivor ({getHotelInitialsList(action.chainsBySize[0])}
+        Waiting for {getUsernameSpan(usernames[action.playerID])} to select merger survivor ({getHotelInitialsList(action.chainsBySize[0])}
         ).
       </div>
     ),
   ],
   [
     GameActionEnum.SelectChainToDisposeOfNext,
-    (usernames: List<string>, action: ActionSelectChainToDisposeOfNext) => (
+    (usernames: string[], action: ActionSelectChainToDisposeOfNext) => (
       <div className={style.root}>
-        Waiting for {getUsernameSpan(usernames.get(action.playerID)!)} to select chain to dispose of next ({getHotelInitialsList(action.defunctChains)}
+        Waiting for {getUsernameSpan(usernames[action.playerID])} to select chain to dispose of next ({getHotelInitialsList(action.defunctChains)}
         ).
       </div>
     ),
   ],
   [
     GameActionEnum.DisposeOfShares,
-    (usernames: List<string>, action: ActionDisposeOfShares) => (
+    (usernames: string[], action: ActionDisposeOfShares) => (
       <div className={style.root}>
-        Waiting for {getUsernameSpan(usernames.get(action.playerID)!)} to dispose of {getHotelNameSpan(action.defunctChain)} shares.
+        Waiting for {getUsernameSpan(usernames[action.playerID])} to dispose of {getHotelNameSpan(action.defunctChain)} shares.
       </div>
     ),
   ],
   [
     GameActionEnum.PurchaseShares,
-    (usernames: List<string>, action: ActionPurchaseShares) => (
-      <div className={style.root}>Waiting for {getUsernameSpan(usernames.get(action.playerID)!)} to purchase shares.</div>
+    (usernames: string[], action: ActionPurchaseShares) => (
+      <div className={style.root}>Waiting for {getUsernameSpan(usernames[action.playerID])} to purchase shares.</div>
     ),
   ],
   [GameActionEnum.GameOver, () => <div className={style.root}>Game over.</div>],
 ];
-const gameStatusHandlerLookup = new Map<GameActionEnum, (usernames: List<string>, action: ActionBase) => JSX.Element>(gshl);
+const gameStatusHandlerLookup = new Map<GameActionEnum, (usernames: string[], action: ActionBase) => JSX.Element>(gshl);
 
 function getHotelInitialsList(chains: PB_GameBoardType[]) {
   const entries: (JSX.Element | string)[] = new Array(chains.length * 2 - 1);

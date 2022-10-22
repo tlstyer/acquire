@@ -1,4 +1,3 @@
-import { List } from 'immutable';
 import 'normalize.css';
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -14,7 +13,7 @@ import './global.scss';
 import * as style from './review.scss';
 
 function render() {
-  const gameState = game.gameStateHistory.get(selectedMove)!;
+  const gameState = game.gameStateHistory[selectedMove];
 
   let turnPlayerID = gameState.turnPlayerID;
   let movePlayerID = gameState.nextGameAction.playerID;
@@ -23,15 +22,15 @@ function render() {
     movePlayerID = -1;
   }
 
-  let gameBoardTileRack: List<number | null> | undefined;
-  if (game.userIDs.size > 1) {
+  let gameBoardTileRack: (number | null)[] | undefined;
+  if (game.userIDs.length > 1) {
     if (followedPlayerID !== null) {
-      gameBoardTileRack = gameState.tileRacks.get(followedPlayerID)!;
+      gameBoardTileRack = gameState.tileRacks[followedPlayerID];
     } else if (movePlayerID !== -1) {
-      gameBoardTileRack = gameState.tileRacks.get(movePlayerID)!;
+      gameBoardTileRack = gameState.tileRacks[movePlayerID];
     }
   } else {
-    gameBoardTileRack = gameState.tileRacks.get(0)!;
+    gameBoardTileRack = gameState.tileRacks[0];
   }
 
   const windowWidth = window.innerWidth;
@@ -64,14 +63,14 @@ function render() {
           cellWidth={scoreBoardCellWidth}
         />
         {game.userIDs.map((_, playerID) => {
-          const tileRack = gameState.tileRacks.get(playerID)!;
-          const tileRackTypes = gameState.tileRackTypes.get(playerID)!;
+          const tileRack = gameState.tileRacks[playerID];
+          const tileRackTypes = gameState.tileRackTypes[playerID];
           return (
             <div key={playerID}>
               <div className={style.tileRackWrapper}>
                 <TileRackReadOnly tiles={tileRack} types={tileRackTypes} buttonSize={gameBoardCellSize} />
               </div>
-              {game.userIDs.size > 1 ? (
+              {game.userIDs.length > 1 ? (
                 <div className={style.buttonWrapper} style={{ height: gameBoardCellSize }}>
                   {playerID === followedPlayerID ? (
                     <input type={'button'} value={'Unlock'} onClick={unfollowPlayer} />
@@ -121,7 +120,7 @@ window.addEventListener('keydown', (event) => {
       }
     } else {
       selectedMove++;
-      const lastMove = game.gameStateHistory.size - 1;
+      const lastMove = game.gameStateHistory.length - 1;
       if (selectedMove > lastMove) {
         selectedMove = lastMove;
       }
@@ -154,7 +153,7 @@ function main() {
   const gameJson = require('raw-loader!../common/gameTestFiles/other/no tiles played for entire round.txt').default.split('\nGame JSON:\n')[1];
 
   game = Game.fromJSON(JSON.parse(gameJson));
-  selectedMove = game.gameStateHistory.size - 1;
+  selectedMove = game.gameStateHistory.length - 1;
   periodicResizeCheck();
 }
 

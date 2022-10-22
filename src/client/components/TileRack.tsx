@@ -1,4 +1,3 @@
-import { List } from 'immutable';
 import React from 'react';
 import { PB_GameBoardType } from '../../common/pb';
 import * as commonStyle from '../common.scss';
@@ -6,8 +5,8 @@ import { gameBoardTypeToCSSClassName, getTileString } from '../helpers';
 import * as style from './TileRack.scss';
 
 export interface TileRackProps {
-  tiles: List<number | null>;
-  types: List<PB_GameBoardType | null>;
+  tiles: (number | null)[];
+  types: (PB_GameBoardType | null)[];
   buttonSize: number;
   keyboardShortcutsEnabled: boolean;
   onTileClicked: (tile: number) => void;
@@ -85,7 +84,7 @@ export class TileRack extends React.Component<TileRackProps> {
     return (
       <div className={style.root} style={{ fontSize: Math.floor(buttonSize * 0.4) }}>
         {tiles.map((tile, i) => {
-          const type = types.get(i, null);
+          const type = types[i];
 
           if (tile !== null && type !== null) {
             const disabled = type === PB_GameBoardType.CANT_PLAY_EVER || type === PB_GameBoardType.CANT_PLAY_NOW;

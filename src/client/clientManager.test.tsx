@@ -1,4 +1,3 @@
-import { List } from 'immutable';
 import WebSocket from 'ws';
 import { GameActionEnum } from '../common/enums';
 import { setupTextDecoderAndTextEncoder } from '../common/nodeSpecificStuff';
@@ -646,18 +645,18 @@ describe('MessageToClient.Greetings', () => {
     expect(gameSummary.gameMode).toBe(PB_GameMode.SINGLES_1);
     expect(gameSummary.playerArrangementMode).toBe(PB_PlayerArrangementMode.RANDOM_ORDER);
     expect(gameSummary.gameStatus).toBe(PB_GameStatus.IN_PROGRESS);
-    expect(gameSummary.userIDs).toEqual(List([2]));
-    expect(gameSummary.usernames).toEqual(List(['2']));
+    expect(gameSummary.userIDs).toEqual([2]);
+    expect(gameSummary.usernames).toEqual(['2']);
     expect(gameSummary.hostUserID).toBe(2);
-    expect(gameSummary.gameBoard.toJS().flat()).toEqual(gameBoard);
+    expect(gameSummary.gameBoard.flat()).toEqual(gameBoard);
 
     const game = clientManager.gameIDToGameData.get(11)!.game!;
     expect(game).toBeDefined();
     expect(game.gameMode).toBe(PB_GameMode.SINGLES_1);
     expect(game.playerArrangementMode).toBe(PB_PlayerArrangementMode.RANDOM_ORDER);
     expect(game.tileBag).toEqual([]);
-    expect(game.userIDs).toEqual(List([2]));
-    expect(game.usernames).toEqual(List(['2']));
+    expect(game.userIDs).toEqual([2]);
+    expect(game.usernames).toEqual(['2']);
     expect(game.hostUserID).toBe(2);
     expect(game.myUserID).toBe(2);
 
@@ -1155,7 +1154,7 @@ describe('MessageToClient.GameSetupChanged', () => {
       [new UserData(1, 'user 1', [new ClientData(1, 10)]), new UserData(2, 'me', [new ClientData(2, 10)])],
       [new GameDataData(10, 1, [1, 2])],
     );
-    expect(clientManager.gameIDToGameData.get(10)!.gameSetup!.userIDs.toJS()).toEqual([1, 2, null, null]);
+    expect(clientManager.gameIDToGameData.get(10)!.gameSetup!.userIDs).toEqual([1, 2, null, null]);
   });
 
   test('UserRemoved message is processed correctly', () => {
@@ -1208,7 +1207,7 @@ describe('MessageToClient.GameSetupChanged', () => {
       [new UserData(1, 'user 1', [new ClientData(1, 10)]), new UserData(2, 'me', [new ClientData(2, 10)])],
       [new GameDataData(10, 1, [1])],
     );
-    expect(clientManager.gameIDToGameData.get(10)!.gameSetup!.userIDs.toJS()).toEqual([1, null, null, null]);
+    expect(clientManager.gameIDToGameData.get(10)!.gameSetup!.userIDs).toEqual([1, null, null, null]);
   });
 
   test('UserApprovedOfGameSetup message is processed correctly', () => {
@@ -1261,7 +1260,7 @@ describe('MessageToClient.GameSetupChanged', () => {
       [new UserData(1, 'user 1', [new ClientData(1, 10)]), new UserData(2, 'me', [new ClientData(2, 10)])],
       [new GameDataData(10, 1, [1, 2])],
     );
-    expect(clientManager.gameIDToGameData.get(10)!.gameSetup!.approvals.toJS()).toEqual([false, true]);
+    expect(clientManager.gameIDToGameData.get(10)!.gameSetup!.approvals).toEqual([false, true]);
   });
 
   test('GameModeChanged message is processed correctly', () => {
@@ -1421,7 +1420,7 @@ describe('MessageToClient.GameSetupChanged', () => {
       [new UserData(1, 'user 1', [new ClientData(1, 10)]), new UserData(2, 'me', [new ClientData(2, 10)])],
       [new GameDataData(10, 1, [1, 2])],
     );
-    expect(clientManager.gameIDToGameData.get(10)!.gameSetup!.userIDs.toJS()).toEqual([2, 1, null, null]);
+    expect(clientManager.gameIDToGameData.get(10)!.gameSetup!.userIDs).toEqual([2, 1, null, null]);
   });
 
   test('UserKicked message is processed correctly', () => {
@@ -1474,7 +1473,7 @@ describe('MessageToClient.GameSetupChanged', () => {
       [new UserData(1, 'user 1', [new ClientData(1, 10)]), new UserData(2, 'me', [new ClientData(2, 10)])],
       [new GameDataData(10, 1, [1])],
     );
-    expect(clientManager.gameIDToGameData.get(10)!.gameSetup!.userIDs.toJS()).toEqual([1, null, null, null]);
+    expect(clientManager.gameIDToGameData.get(10)!.gameSetup!.userIDs).toEqual([1, null, null, null]);
   });
 });
 
@@ -1542,7 +1541,7 @@ describe('MessageToClient.GameStarted, MessageToClient.GameBoardChanged, and Mes
     expectedGameBoard[5] = PB_GameBoardType.CANT_PLAY_EVER;
     expectedGameBoard[14] = PB_GameBoardType.NOTHING_YET;
     expectedGameBoard[105] = PB_GameBoardType.NOTHING_YET;
-    expect(gameSummary.gameBoard.toJS().flat()).toEqual(expectedGameBoard);
+    expect(gameSummary.gameBoard.flat()).toEqual(expectedGameBoard);
 
     const game = clientManager.gameIDToGameData.get(10)!.game!;
     expect(game.gameMode).toBe(PB_GameMode.SINGLES_2);
@@ -1611,7 +1610,7 @@ describe('MessageToClient.GameStarted, MessageToClient.GameBoardChanged, and Mes
     const expectedGameBoard: PB_GameBoardType[] = new Array(108);
     expectedGameBoard.fill(PB_GameBoardType.NOTHING);
     expectedGameBoard[31] = PB_GameBoardType.NOTHING_YET;
-    expect(gameSummary.gameBoard.toJS().flat()).toEqual(expectedGameBoard);
+    expect(gameSummary.gameBoard.flat()).toEqual(expectedGameBoard);
 
     const game = clientManager.gameIDToGameData.get(1)!.game!;
     expect(game.gameMode).toBe(PB_GameMode.SINGLES_1);

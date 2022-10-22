@@ -715,8 +715,7 @@ describe('when sending first message', () => {
                 gameMode: PB_GameMode.SINGLES_1,
                 playerArrangementMode: PB_PlayerArrangementMode.RANDOM_ORDER,
                 positions: [{ userId: 2, isHost: true }],
-                // @ts-expect-error
-                gameBoard: serverManager.gameIDToGameData.get(11)?.game?.gameBoard.toJS().flat(),
+                gameBoard: serverManager.gameIDToGameData.get(11)?.game?.gameBoard.flat(),
               },
             ],
           },
@@ -750,8 +749,7 @@ describe('when sending first message', () => {
                 gameMode: PB_GameMode.SINGLES_1,
                 playerArrangementMode: PB_PlayerArrangementMode.RANDOM_ORDER,
                 positions: [{ userId: 2, isHost: true }],
-                // @ts-expect-error
-                gameBoard: serverManager.gameIDToGameData.get(11)?.game?.gameBoard.toJS().flat(),
+                gameBoard: serverManager.gameIDToGameData.get(11)?.game?.gameBoard.flat(),
               },
             ],
           },

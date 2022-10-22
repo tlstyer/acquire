@@ -1,4 +1,3 @@
-import { List } from 'immutable';
 import {
   defaultGameBoard,
   defaultGameStateHistory,
@@ -25,22 +24,22 @@ export class Game {
   nextTileBagIndex = 0;
   gameBoardTypeCounts: number[];
   protected currentGameState: GameState | null = null;
-  gameStateHistory = defaultGameStateHistory;
+  gameStateHistory = defaultGameStateHistory();
   gameActionStack: ActionBase[] = [];
   numTurnsWithoutPlayedTiles = 0;
 
   turnPlayerID = 0;
-  tileRacks = defaultTileRacks;
-  tileRackTypes = defaultTileRackTypesList;
-  gameBoard = defaultGameBoard;
-  scoreBoard = defaultScoreBoard;
-  scoreBoardAvailable = defaultScoreBoardAvailable;
-  scoreBoardChainSize = defaultScoreBoardChainSize;
-  scoreBoardPrice = defaultScoreBoardPrice;
-  safeChains = defaultSafeChains;
+  tileRacks = defaultTileRacks();
+  tileRackTypes = defaultTileRackTypesList();
+  gameBoard = defaultGameBoard();
+  scoreBoard = defaultScoreBoard();
+  scoreBoardAvailable = defaultScoreBoardAvailable();
+  scoreBoardChainSize = defaultScoreBoardChainSize();
+  scoreBoardPrice = defaultScoreBoardPrice();
+  safeChains = defaultSafeChains();
 
-  scoreBoardAtLastNetWorthsUpdate = defaultScoreBoard;
-  scoreBoardPriceAtLastNetWorthsUpdate = defaultScoreBoardPrice;
+  scoreBoardAtLastNetWorthsUpdate = defaultScoreBoard();
+  scoreBoardPriceAtLastNetWorthsUpdate = defaultScoreBoardPrice();
 
   playerIDWithPlayableTile: number | null = null;
 
@@ -48,8 +47,8 @@ export class Game {
     public gameMode: PB_GameMode,
     public playerArrangementMode: PB_PlayerArrangementMode,
     public tileBag: number[],
-    public userIDs: List<number>,
-    public usernames: List<string>,
+    public userIDs: number[],
+    public usernames: string[],
     public hostUserID: number,
     public myUserID: number | null,
   ) {
@@ -64,10 +63,10 @@ export class Game {
     this.gameActionStack.push(new ActionStartGame(this, userIDs.indexOf(hostUserID)));
 
     // initialize this.tileRacks, this.tileRackTypes, this.scoreBoard
-    for (let playerID = 0; playerID < userIDs.size; playerID++) {
-      this.tileRacks = this.tileRacks.push(defaultTileRack);
-      this.tileRackTypes = this.tileRacks.push(defaultTileRackTypes);
-      this.scoreBoard = this.scoreBoard.push(defaultScoreBoardRow);
+    for (let playerID = 0; playerID < userIDs.length; playerID++) {
+      this.tileRacks.push(defaultTileRack());
+      this.tileRackTypes.push(defaultTileRackTypes());
+      this.scoreBoard.push(defaultScoreBoardRow());
     }
 
     // initialize this.scoreBoardAtLastNetWorthsUpdate
@@ -81,7 +80,7 @@ export class Game {
     if (gameState.timestamp !== 0) {
       timestamp = gameState.timestamp;
       if (timestamp !== null) {
-        const previousGameState = this.gameStateHistory.get(this.gameStateHistory.size - 1, null);
+        const previousGameState = this.gameStateHistory.length > 0 ? this.gameStateHistory[this.gameStateHistory.length - 1] : null;
         if (previousGameState !== null && previousGameState.timestamp !== null) {
           timestamp += previousGameState.timestamp;
         }
@@ -106,7 +105,7 @@ export class Game {
   processRevealedTileRackTiles(entries: PB_GameState_RevealedTileRackTile[]) {
     const playerIDs: number[] = [];
 
-    this.tileRacks = this.tileRacks.asMutable();
+    this.tileRacks = [...this.tileRacks];
 
     for (let i = 0; i < entries.length; i++) {
       const entry = entries[i];
@@ -120,8 +119,10 @@ export class Game {
       }
 
       for (let tileIndex = 0; tileIndex < 6; tileIndex++) {
-        if (this.tileRacks.get(playerIdBelongsTo)!.get(tileIndex, null) === TileEnum.Unknown) {
-          this.tileRacks.setIn([playerIdBelongsTo, tileIndex], tile);
+        if (this.tileRacks[playerIdBelongsTo][tileIndex] === TileEnum.Unknown) {
+          this.tileRacks[playerIdBelongsTo] = [...this.tileRacks[playerIdBelongsTo]];
+          this.tileRacks[playerIdBelongsTo][tileIndex] = tile;
+
           setTile = true;
           break;
         }
@@ -131,8 +132,6 @@ export class Game {
         throw new Error('no unknown tile found in player tile rack');
       }
     }
-
-    this.tileRacks = this.tileRacks.asImmutable();
 
     for (let i = 0; i < playerIDs.length; i++) {
       const playerID = playerIDs[i];
@@ -167,10 +166,10 @@ export class Game {
   }
 
   drawTiles(playerID: number) {
-    const addDrewTileMessage = this.myUserID === null || this.myUserID === this.userIDs.get(playerID)!;
+    const addDrewTileMessage = this.myUserID === null || this.myUserID === this.userIDs[playerID];
 
     for (let i = 0; i < 6; i++) {
-      if (this.tileRacks.get(playerID)!.get(i, null) !== null) {
+      if (this.tileRacks[playerID][i] !== null) {
         continue;
       }
 
@@ -182,7 +181,10 @@ export class Game {
       }
 
       const tile = this.tileBag[this.nextTileBagIndex++];
-      this.tileRacks = this.tileRacks.setIn([playerID, i], tile);
+
+      this.tileRacks = [...this.tileRacks];
+      this.tileRacks[playerID] = [...this.tileRacks[playerID]];
+      this.tileRacks[playerID][i] = tile;
 
       this.getCurrentGameState().addTileBagTile(tile, playerID);
 
@@ -197,23 +199,28 @@ export class Game {
   }
 
   removeTile(playerID: number, tileIndex: number) {
-    this.tileRacks = this.tileRacks.setIn([playerID, tileIndex], null);
-    this.tileRackTypes = this.tileRackTypes.setIn([playerID, tileIndex], null);
+    this.tileRacks = [...this.tileRacks];
+    this.tileRacks[playerID] = [...this.tileRacks[playerID]];
+    this.tileRacks[playerID][tileIndex] = null;
+
+    this.tileRackTypes = [...this.tileRackTypes];
+    this.tileRackTypes[playerID] = [...this.tileRackTypes[playerID]];
+    this.tileRackTypes[playerID][tileIndex] = null;
   }
 
   replaceDeadTiles(playerID: number) {
     let replacedADeadTile = false;
     do {
       replacedADeadTile = false;
-      const tileRack = this.tileRacks.get(playerID)!;
-      const tileRackTypes = this.tileRackTypes.get(playerID)!;
+      const tileRack = this.tileRacks[playerID];
+      const tileRackTypes = this.tileRackTypes[playerID];
       for (let tileIndex = 0; tileIndex < 6; tileIndex++) {
-        const tile = tileRack.get(tileIndex, null);
+        const tile = tileRack[tileIndex];
         if (tile === null) {
           continue;
         }
 
-        const type = tileRackTypes.get(tileIndex, null);
+        const type = tileRackTypes[tileIndex];
         if (type !== PB_GameBoardType.CANT_PLAY_EVER) {
           continue;
         }
@@ -231,7 +238,7 @@ export class Game {
   }
 
   determineTileRackTypesForEverybody() {
-    for (let playerID = 0; playerID < this.userIDs.size; playerID++) {
+    for (let playerID = 0; playerID < this.userIDs.length; playerID++) {
       this.determineTileRackTypesForPlayer(playerID);
     }
   }
@@ -250,7 +257,7 @@ export class Game {
     }
 
     for (let tileIndex = 0; tileIndex < 6; tileIndex++) {
-      const tile = this.tileRacks.get(playerID)!.get(tileIndex, null);
+      const tile = this.tileRacks[playerID][tileIndex];
       let tileType = null;
 
       if (tile !== null && tile !== TileEnum.Unknown) {
@@ -260,7 +267,10 @@ export class Game {
         for (let i = 0; i < neighboringTiles.length; i++) {
           const neighboringTile = neighboringTiles[i];
           borderTiles.push(neighboringTile);
-          borderTypes.push(this.gameBoard.get(neighboringTile % 9)!.get(neighboringTile / 9)!);
+
+          const y = neighboringTile % 9;
+          const x = (neighboringTile - y) / 9;
+          borderTypes.push(this.gameBoard[y][x]);
         }
 
         borderTypes = borderTypes.filter((type, index) => {
@@ -318,7 +328,7 @@ export class Game {
 
         const tileType = tileTypes[tileIndex];
         if (tileType === PB_GameBoardType.WILL_PUT_LONELY_TILE_DOWN) {
-          const tile = this.tileRacks.get(playerID)!.get(tileIndex, null);
+          const tile = this.tileRacks[playerID][tileIndex];
           if (tile !== null && lonelyTileBorderTiles.has(tile)) {
             tileTypes[tileIndex] = PB_GameBoardType.HAVE_NEIGHBORING_TILE_TOO;
           }
@@ -326,15 +336,15 @@ export class Game {
       }
     }
 
-    const tileRackTypes = this.tileRackTypes.asMutable();
-    for (let tileIndex = 0; tileIndex < 6; tileIndex++) {
-      tileRackTypes.setIn([playerID, tileIndex], tileTypes[tileIndex]);
-    }
-    this.tileRackTypes = tileRackTypes.asImmutable();
+    this.tileRackTypes = [...this.tileRackTypes];
+    this.tileRackTypes[playerID] = tileTypes;
   }
 
   setGameBoardPosition(tile: number, gameBoardType: PB_GameBoardType) {
-    const previousGameBoardType = this.gameBoard.get(tile % 9)!.get(tile / 9)!;
+    const y = tile % 9;
+    const x = (tile - y) / 9;
+
+    const previousGameBoardType = this.gameBoard[y][x];
 
     if (previousGameBoardType === PB_GameBoardType.NOTHING) {
       this.getCurrentGameState().addPlayedTile(tile, this.gameActionStack[this.gameActionStack.length - 1].playerID);
@@ -343,7 +353,11 @@ export class Game {
     this.getCurrentGameState().addGameBoardChange(tile, gameBoardType);
 
     this.gameBoardTypeCounts[previousGameBoardType]--;
-    this.gameBoard = this.gameBoard.setIn([tile % 9, tile / 9], gameBoardType);
+
+    this.gameBoard = [...this.gameBoard];
+    this.gameBoard[y] = [...this.gameBoard[y]];
+    this.gameBoard[y][x] = gameBoardType;
+
     this.gameBoardTypeCounts[gameBoardType]++;
   }
 
@@ -352,8 +366,6 @@ export class Game {
     const found = new Set([tile]);
     const excludedTypes = new Set([PB_GameBoardType.NOTHING, PB_GameBoardType.CANT_PLAY_EVER, gameBoardType]);
 
-    this.gameBoard = this.gameBoard.asMutable();
-
     let t = pending.pop();
     while (t !== undefined) {
       this.setGameBoardPosition(t, gameBoardType);
@@ -361,7 +373,11 @@ export class Game {
       const neighboringTiles = neighboringTilesLookup[t];
       for (let i = 0; i < neighboringTiles.length; i++) {
         const neighboringTile = neighboringTiles[i];
-        if (!found.has(neighboringTile) && !excludedTypes.has(this.gameBoard.get(neighboringTile % 9)!.get(neighboringTile / 9)!)) {
+
+        const y = neighboringTile % 9;
+        const x = (neighboringTile - y) / 9;
+
+        if (!found.has(neighboringTile) && !excludedTypes.has(this.gameBoard[y][x])) {
           pending.push(neighboringTile);
           found.add(neighboringTile);
         }
@@ -369,67 +385,60 @@ export class Game {
 
       t = pending.pop();
     }
-
-    this.gameBoard = this.gameBoard.asImmutable();
   }
 
   getScoreBoardColumnArray(scoreBoardIndex: PB_GameBoardType | ScoreBoardIndexEnum) {
-    const column: number[] = new Array(this.userIDs.size);
-    for (let playerID = 0; playerID < this.userIDs.size; playerID++) {
-      column[playerID] = this.scoreBoard.get(playerID)!.get(scoreBoardIndex)!;
+    const column: number[] = new Array(this.userIDs.length);
+    for (let playerID = 0; playerID < this.userIDs.length; playerID++) {
+      column[playerID] = this.scoreBoard[playerID][scoreBoardIndex];
     }
     return column;
   }
 
   adjustPlayerScoreBoardRow(playerID: number, adjustments: [PB_GameBoardType | ScoreBoardIndexEnum, number][]) {
-    let scoreBoard = this.scoreBoard.asMutable();
-    let scoreBoardAvailable = this.scoreBoardAvailable.asMutable();
+    this.scoreBoard = [...this.scoreBoard];
+    this.scoreBoard[playerID] = [...this.scoreBoard[playerID]];
+    this.scoreBoardAvailable = [...this.scoreBoardAvailable];
 
     for (let i = 0; i < adjustments.length; i++) {
       const [scoreBoardIndex, change] = adjustments[i];
 
-      const value = scoreBoard.get(playerID)!.get(scoreBoardIndex)!;
-      scoreBoard = scoreBoard.setIn([playerID, scoreBoardIndex], value + change);
+      this.scoreBoard[playerID][scoreBoardIndex] += change;
 
       if (scoreBoardIndex <= ScoreBoardIndexEnum.Imperial) {
-        const available = scoreBoardAvailable.get(scoreBoardIndex)!;
-        scoreBoardAvailable = scoreBoardAvailable.set(scoreBoardIndex, available - change);
+        this.scoreBoardAvailable[scoreBoardIndex] -= change;
       }
     }
-
-    this.scoreBoard = scoreBoard.asImmutable();
-    this.scoreBoardAvailable = scoreBoardAvailable.asImmutable();
   }
 
   adjustScoreBoardColumn(scoreBoardIndex: ScoreBoardIndexEnum, adjustments: number[]) {
-    let scoreBoard = this.scoreBoard.asMutable();
+    this.scoreBoard = [...this.scoreBoard];
 
     for (let playerID = 0; playerID < adjustments.length; playerID++) {
       const change = adjustments[playerID];
       if (change !== 0) {
-        const value = scoreBoard.get(playerID)!.get(scoreBoardIndex)!;
-        scoreBoard = scoreBoard.setIn([playerID, scoreBoardIndex], value + change);
+        this.scoreBoard[playerID] = [...this.scoreBoard[playerID]];
+        this.scoreBoard[playerID][scoreBoardIndex] += change;
       }
     }
-
-    this.scoreBoard = scoreBoard.asImmutable();
   }
 
   setScoreBoardColumn(scoreBoardIndex: ScoreBoardIndexEnum, values: number[]) {
-    let scoreBoard = this.scoreBoard.asMutable();
+    this.scoreBoard = [...this.scoreBoard];
 
     for (let playerID = 0; playerID < values.length; playerID++) {
-      scoreBoard = scoreBoard.setIn([playerID, scoreBoardIndex], values[playerID]);
+      this.scoreBoard[playerID] = [...this.scoreBoard[playerID]];
+      this.scoreBoard[playerID][scoreBoardIndex] = values[playerID];
     }
-
-    this.scoreBoard = scoreBoard.asImmutable();
   }
 
   setChainSize(scoreBoardIndex: PB_GameBoardType | ScoreBoardIndexEnum, size: number) {
-    this.scoreBoardChainSize = this.scoreBoardChainSize.set(scoreBoardIndex, size);
+    this.scoreBoardChainSize = [...this.scoreBoardChainSize];
+    this.scoreBoardChainSize[scoreBoardIndex] = size;
 
     if (size >= 11) {
-      this.safeChains = this.safeChains.set(scoreBoardIndex, true);
+      this.safeChains = [...this.safeChains];
+      this.safeChains[scoreBoardIndex] = true;
     }
 
     let price = 0;
@@ -447,7 +456,8 @@ export class Game {
       }
     }
 
-    this.scoreBoardPrice = this.scoreBoardPrice.set(scoreBoardIndex, price);
+    this.scoreBoardPrice = [...this.scoreBoardPrice];
+    this.scoreBoardPrice[scoreBoardIndex] = price;
   }
 
   updateNetWorths() {
@@ -482,7 +492,7 @@ export class Game {
 
   getCurrentGameState() {
     if (this.currentGameState === null) {
-      this.currentGameState = new GameState(this, this.gameStateHistory.get(this.gameStateHistory.size - 1, null));
+      this.currentGameState = new GameState(this, this.gameStateHistory.length > 0 ? this.gameStateHistory[this.gameStateHistory.length - 1] : null);
     }
     return this.currentGameState;
   }
@@ -492,12 +502,12 @@ export class Game {
 
     this.currentGameState = this.getCurrentGameState();
     this.currentGameState.endMove();
-    this.gameStateHistory = this.gameStateHistory.push(this.currentGameState);
+    this.gameStateHistory = [...this.gameStateHistory, this.currentGameState];
     this.currentGameState = null;
   }
 
   toJSON(): GameJSON {
-    const gameActions = new Array(this.gameStateHistory.size);
+    const gameActions = new Array(this.gameStateHistory.length);
     let lastTimestamp: number | null = null;
     this.gameStateHistory.forEach((gameState, i) => {
       const gameActionData: any[] = [gameState.gameAction];
@@ -522,10 +532,8 @@ export class Game {
       null,
       // Time control increment amount (in seconds)
       0,
-      // @ts-expect-error
-      this.userIDs.toJS(),
-      // @ts-expect-error
-      this.usernames.toJS(),
+      this.userIDs,
+      this.usernames,
       this.hostUserID,
       this.tileBag,
       gameActions,
@@ -543,7 +551,7 @@ export class Game {
     const tileBag = json[7];
     const gameActions = json[8];
 
-    const game = new Game(gameMode, playerArrangementMode, tileBag, List(userIDs), List(usernames), hostUserID, null);
+    const game = new Game(gameMode, playerArrangementMode, tileBag, userIDs, usernames, hostUserID, null);
 
     let lastTimestamp: number | null = null;
     for (let i = 0; i < gameActions.length; i++) {
@@ -580,14 +588,14 @@ export class GameState {
   nextGameAction: ActionBase;
 
   turnPlayerID = 0;
-  tileRacks = defaultTileRacks;
-  tileRackTypes = defaultTileRackTypesList;
-  gameBoard = defaultGameBoard;
-  scoreBoard = defaultScoreBoard;
-  scoreBoardAvailable = defaultScoreBoardAvailable;
-  scoreBoardChainSize = defaultScoreBoardChainSize;
-  scoreBoardPrice = defaultScoreBoardPrice;
-  safeChains = defaultSafeChains;
+  tileRacks = defaultTileRacks();
+  tileRackTypes = defaultTileRackTypesList();
+  gameBoard = defaultGameBoard();
+  scoreBoard = defaultScoreBoard();
+  scoreBoardAvailable = defaultScoreBoardAvailable();
+  scoreBoardChainSize = defaultScoreBoardChainSize();
+  scoreBoardPrice = defaultScoreBoardPrice();
+  safeChains = defaultSafeChains();
 
   revealedTileBagTilesLookup = new Map<number, GameStateTileBagTile>();
 
@@ -674,7 +682,7 @@ export class GameState {
   }
 
   createPlayerAndWatcherGameStates() {
-    this.playerGameStates = new Array(this.game.userIDs.size);
+    this.playerGameStates = new Array(this.game.userIDs.length);
     for (let playerID = 0; playerID < this.playerGameStates.length; playerID++) {
       this.playerGameStates[playerID] = this.createGameState(playerID);
     }

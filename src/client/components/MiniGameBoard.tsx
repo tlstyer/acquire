@@ -1,11 +1,10 @@
-import { List } from 'immutable';
 import React from 'react';
 import { PB_GameBoardType } from '../../common/pb';
 import { gameBoardTypeToCSSClassName } from '../helpers';
 import * as style from './MiniGameBoard.scss';
 
 interface MiniGameBoardProps {
-  gameBoard: List<List<PB_GameBoardType>>;
+  gameBoard: PB_GameBoardType[][];
   cellSize: number;
 }
 
@@ -22,7 +21,7 @@ export const MiniGameBoard = React.memo(function MiniGameBoard({ gameBoard, cell
 });
 
 interface MiniGameBoardRowProps {
-  gameBoardRow: List<PB_GameBoardType>;
+  gameBoardRow: PB_GameBoardType[];
 }
 
 const MiniGameBoardRow = React.memo(function MiniGameBoardRow({ gameBoardRow }: MiniGameBoardRowProps) {

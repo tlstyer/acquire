@@ -23,9 +23,9 @@ export class ActionPlayTile extends ActionBase {
     if (this.playerID === this.game.playerIDWithPlayableTile) {
       hasAPlayableTile = true;
     } else {
-      const tileRackTypes = this.game.tileRackTypes.get(this.playerID)!;
+      const tileRackTypes = this.game.tileRackTypes[this.playerID];
       for (let i = 0; i < 6; i++) {
-        const tileType = tileRackTypes.get(i, null);
+        const tileType = tileRackTypes[i];
         if (tileType !== null && tileType !== PB_GameBoardType.CANT_PLAY_NOW && tileType !== PB_GameBoardType.CANT_PLAY_EVER) {
           hasAPlayableTile = true;
           break;
@@ -51,11 +51,11 @@ export class ActionPlayTile extends ActionBase {
     if (tile < 0 || tile >= 108) {
       throw new UserInputError('tile is not a valid tile');
     }
-    const tileRackIndex = this.game.tileRacks.get(this.playerID)!.indexOf(tile);
+    const tileRackIndex = this.game.tileRacks[this.playerID].indexOf(tile);
     if (tileRackIndex === -1) {
       throw new UserInputError('player does not have given tile');
     }
-    const tileType = this.game.tileRackTypes.get(this.playerID)!.get(tileRackIndex, null);
+    const tileType = this.game.tileRackTypes[this.playerID][tileRackIndex];
 
     let response: ActionBase[] = [];
     if (tileType !== null && tileType <= PB_GameBoardType.IMPERIAL) {
@@ -66,8 +66,8 @@ export class ActionPlayTile extends ActionBase {
     } else if (tileType === PB_GameBoardType.WILL_FORM_NEW_CHAIN) {
       const availableChains: PB_GameBoardType[] = [];
       const scoreBoardChainSize = this.game.scoreBoardChainSize;
-      for (let type = 0; type < scoreBoardChainSize.size; type++) {
-        if (scoreBoardChainSize.get(type)! === 0) {
+      for (let type = 0; type < scoreBoardChainSize.length; type++) {
+        if (scoreBoardChainSize[type] === 0) {
           availableChains.push(type);
         }
       }
@@ -90,7 +90,11 @@ export class ActionPlayTile extends ActionBase {
     const neighboringTiles = neighboringTilesLookup[tile];
     for (let i = 0; i < neighboringTiles.length; i++) {
       const neighboringTile = neighboringTiles[i];
-      const type = this.game.gameBoard.get(neighboringTile % 9)!.get(neighboringTile / 9)!;
+
+      const y = neighboringTile % 9;
+      const x = (neighboringTile - y) / 9;
+      const type = this.game.gameBoard[y][x];
+
       if (type <= PB_GameBoardType.IMPERIAL && chains.indexOf(type) === -1) {
         chains.push(type);
       }

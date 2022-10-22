@@ -1,4 +1,3 @@
-import { List } from 'immutable';
 import React from 'react';
 import { gameModeToNumPlayers, gameModeToTeamSize } from '../../common/helpers';
 import { PB_GameBoardType, PB_GameMode, PB_GameStatus } from '../../common/pb';
@@ -7,8 +6,8 @@ import * as style from './GameListing.scss';
 import { MiniGameBoard } from './MiniGameBoard';
 
 export interface GameListingProps {
-  gameBoard: List<List<PB_GameBoardType>>;
-  usernames: List<string | null>;
+  gameBoard: PB_GameBoardType[][];
+  usernames: (string | null)[];
   gameDisplayNumber: number;
   gameMode: PB_GameMode;
   gameStatus: PB_GameStatus;
