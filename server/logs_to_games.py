@@ -2484,7 +2484,7 @@ def compare_log_usernames_with_database_usernames(log_timestamp):
                             )
 
 
-def output_command_to_run_this_script_in_parallel_on_all_logs():
+def output_log_file_filenames_in_reverse_size_order():
     log_file_data = []
     for log_timestamp, filename in util.get_log_file_filenames("py", begin=1408905413):
         file_size = os.stat(filename).st_size
@@ -2495,11 +2495,8 @@ def output_command_to_run_this_script_in_parallel_on_all_logs():
 
     log_file_data.sort(reverse=True)
 
-    print(
-        "echo "
-        + " ".join([str(d[1]) for d in log_file_data])
-        + " | xargs -n 1 -P 10 python3 -u -OO server/logs_to_games.py make_acquire2_game_test_files"
-    )
+    for filename in log_file_data:
+        print(filename[1])
 
 
 def output_username_to_user_id():
@@ -2638,8 +2635,8 @@ def main():
     command = sys.argv[1]
     if command == "output_username_to_user_id":
         output_username_to_user_id()
-    elif command == "output_command_to_run_this_script_in_parallel_on_all_logs":
-        output_command_to_run_this_script_in_parallel_on_all_logs()
+    elif command == "output_log_file_filenames_in_reverse_size_order":
+        output_log_file_filenames_in_reverse_size_order()
     elif command == "make_acquire2_game_test_files":
         make_acquire2_game_test_files(int(sys.argv[2]), output_dir)
     elif command == "punycode_non_ascii_usernames_in_the_database":
