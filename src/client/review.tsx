@@ -3,6 +3,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Game } from '../common/game';
 import { ActionGameOver } from '../common/gameActions/gameOver';
+import { gameFromJSON } from '../common/gameSerialization';
 import { GameBoard } from './components/GameBoard';
 import { GameHistory } from './components/GameHistory';
 import { GameStatus } from './components/GameStatus';
@@ -152,7 +153,7 @@ function main() {
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   const gameJson = require('raw-loader!../common/gameTestFiles/other/no tiles played for entire round.txt').default.split('\nGame JSON:\n')[1];
 
-  game = Game.fromJSON(JSON.parse(gameJson));
+  game = gameFromJSON(JSON.parse(gameJson));
   selectedMove = game.gameStateHistory.length - 1;
   periodicResizeCheck();
 }

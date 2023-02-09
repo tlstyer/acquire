@@ -7,6 +7,7 @@ import { ActionGameOver } from './gameActions/gameOver';
 import { ActionSelectChainToDisposeOfNext } from './gameActions/selectChainToDisposeOfNext';
 import { ActionSelectMergerSurvivor } from './gameActions/selectMergerSurvivor';
 import { ActionSelectNewChain } from './gameActions/selectNewChain';
+import { gameToJSON } from './gameSerialization';
 import { getValueOfKey, lowercaseFirstLetter } from './helpers';
 import {
   PB_GameAction,
@@ -639,7 +640,7 @@ function getNextActionString(action: ActionBase) {
 
 function getFormattedGameJSONLines(game: Game) {
   const [gameMode, playerArrangementMode, timeControlStartingAmount, timeControlIncrementAmount, userIDs, usernames, hostUserID, tileBag, gameActions] =
-    game.toJSON();
+    gameToJSON(game);
 
   const lines: string[] = [];
 

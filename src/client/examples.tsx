@@ -2,7 +2,7 @@ import 'normalize.css';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { defaultGameBoard, defaultGameStateHistory } from '../common/defaults';
-import { Game } from '../common/game';
+import { gameFromJSON } from '../common/gameSerialization';
 import { PB_ErrorCode, PB_GameBoardType, PB_GameMode, PB_GameStatus } from '../common/pb';
 import { CreateGame, CreateGameProps } from './components/CreateGame';
 import { DisposeOfShares, DisposeOfSharesProps } from './components/DisposeOfShares';
@@ -51,11 +51,11 @@ class AllDemoProps {
   constructor() {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     const gameJson1 = require('raw-loader!../common/gameTestFiles/other/no tiles played for entire round.txt').default.split('\nGame JSON:\n')[1];
-    const game1 = Game.fromJSON(JSON.parse(gameJson1));
+    const game1 = gameFromJSON(JSON.parse(gameJson1));
 
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     const gameJson2 = require('raw-loader!../common/gameTestFiles/other/all tiles played.txt').default.split('\nGame JSON:\n')[1];
-    const game2 = Game.fromJSON(JSON.parse(gameJson2));
+    const game2 = gameFromJSON(JSON.parse(gameJson2));
 
     this.loginFormProps = [{ onSubmit: onSubmitLoginForm }, { errorCode: PB_ErrorCode.COULD_NOT_CONNECT, username: 'tlstyer', onSubmit: onSubmitLoginForm }];
 

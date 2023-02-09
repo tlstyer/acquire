@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { Game } from './game';
+import { gameFromJSON, gameToJSON } from './gameSerialization';
 import { runGameTestFile } from './runGameTestFile';
 
 const inputBasePath = `${__dirname}/gameTestFiles/`;
@@ -59,11 +60,11 @@ function processDirectory(base: string, dir: string) {
             }
           });
 
-          expect(game2.toJSON()).toEqual(game.toJSON());
+          expect(gameToJSON(game2)).toEqual(gameToJSON(game));
         } else {
-          const json = game.toJSON();
-          const game2 = Game.fromJSON(json);
-          const json2 = game2.toJSON();
+          const json = gameToJSON(game);
+          const game2 = gameFromJSON(json);
+          const json2 = gameToJSON(game2);
           expect(json2).toEqual(json);
         }
       });
