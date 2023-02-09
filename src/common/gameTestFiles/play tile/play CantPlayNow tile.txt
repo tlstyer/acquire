@@ -107,8 +107,6 @@ Game JSON:
 [
   2,
   1,
-  null,
-  0,
   [3,5],
   ["Erin","Alice"],
   5,

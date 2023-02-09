@@ -175,8 +175,6 @@ Game JSON:
 [
   7,
   0,
-  null,
-  0,
   [6,7,8,9],
   ["Greg","Bob","Dave","Charlie"],
   9,

@@ -639,8 +639,7 @@ function getNextActionString(action: ActionBase) {
 }
 
 function getFormattedGameJSONLines(game: Game) {
-  const [gameMode, playerArrangementMode, timeControlStartingAmount, timeControlIncrementAmount, userIDs, usernames, hostUserID, tileBag, gameActions] =
-    gameToJSON(game);
+  const [gameMode, playerArrangementMode, userIDs, usernames, hostUserID, tileBag, gameActions] = gameToJSON(game);
 
   const lines: string[] = [];
 
@@ -648,12 +647,12 @@ function getFormattedGameJSONLines(game: Game) {
 
   lines.push(`  ${JSON.stringify(gameMode)},`);
   lines.push(`  ${JSON.stringify(playerArrangementMode)},`);
-  lines.push(`  ${JSON.stringify(timeControlStartingAmount)},`);
-  lines.push(`  ${JSON.stringify(timeControlIncrementAmount)},`);
   lines.push(`  ${JSON.stringify(userIDs)},`);
   lines.push(`  ${JSON.stringify(usernames)},`);
   lines.push(`  ${JSON.stringify(hostUserID)},`);
   lines.push(`  ${JSON.stringify(tileBag)},`);
+  // lines.push(`  ${JSON.stringify(timeControlStartingAmount)},`);
+  // lines.push(`  ${JSON.stringify(timeControlIncrementAmount)},`);
 
   lines.push('  [');
 

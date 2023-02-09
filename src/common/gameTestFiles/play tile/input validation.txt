@@ -56,8 +56,6 @@ Game JSON:
 [
   2,
   1,
-  null,
-  0,
   [5,7],
   ["Alice","Bob"],
   7,

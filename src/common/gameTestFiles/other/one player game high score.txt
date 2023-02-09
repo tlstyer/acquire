@@ -602,8 +602,6 @@ Game JSON:
 [
   1,
   0,
-  null,
-  0,
   [2170],
   ["squidward"],
   2170,

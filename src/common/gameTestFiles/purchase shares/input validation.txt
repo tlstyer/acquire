@@ -168,8 +168,6 @@ Game JSON:
 [
   2,
   2,
-  null,
-  0,
   [2,1],
   ["Ingrid","James"],
   1,

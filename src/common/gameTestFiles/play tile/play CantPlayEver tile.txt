@@ -215,8 +215,6 @@ Game JSON:
 [
   2,
   0,
-  null,
-  0,
   [9,5],
   ["Charlie","Alice"],
   5,

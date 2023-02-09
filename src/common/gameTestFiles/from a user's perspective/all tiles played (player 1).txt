@@ -631,8 +631,6 @@ Game JSON:
 [
   2,
   0,
-  null,
-  0,
   [4,8],
   ["Frank","Dave"],
   8,
