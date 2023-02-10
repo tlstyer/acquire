@@ -319,4 +319,17 @@ message PB {
   message MessagesToClient {
     repeated MessageToClient messages_to_client = 1;
   }
+
+  message GameReview {
+    GameMode game_mode = 1;
+    PlayerArrangementMode player_arrangement_mode = 2;
+    repeated int32 user_ids = 3;
+    repeated string usernames = 4;
+    int32 host_user_id = 5;
+    repeated int32 tile_bag = 6;
+    repeated GameAction game_actions = 7;
+    int64 begin_timestamp = 8 [ jstype = JS_NUMBER ];
+    repeated int64 game_action_timestamp_offsets = 9 [ jstype = JS_NUMBER ];
+    int64 end_timestamp = 10 [ jstype = JS_NUMBER ];
+  }
 }

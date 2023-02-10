@@ -53,14 +53,14 @@ action: 0 PlayTile 7F
   error: player does not have given tile
 
 Game JSON:
-[
-  2,
-  1,
-  [5,7],
-  ["Alice","Bob"],
-  7,
-  [35,10,69,28,88,15,3,93,58,1,106,55,98,101],
-  [
-    [{"startGame":{}}]
+{
+  "gameMode": "SINGLES_2",
+  "playerArrangementMode": "RANDOM_ORDER",
+  "userIds": [5,7],
+  "usernames": ["Alice","Bob"],
+  "hostUserId": 7,
+  "tileBag": [35,10,69,28,88,15,3,93,58,1,106,55,98,101],
+  "gameActions": [
+    {"startGame":{}}
   ]
-]
+}

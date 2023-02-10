@@ -1,66 +1,100 @@
 import { Game } from './game';
-import { PB_GameMode, PB_PlayerArrangementMode } from './pb';
+import { ActionGameOver } from './gameActions/gameOver';
+import { PB_GameAction, PB_GameReview } from './pb';
 
-type GameJSON = [PB_GameMode, PB_PlayerArrangementMode, number[], string[], number, number[], ([any] | [any, number])[]];
+export function gameToJSON(game: Game): any {
+  return PB_GameReview.toJson(gameToProtocolBuffer(game));
+}
 
-export function gameToJSON(game: Game): GameJSON {
-  const gameActions = new Array(game.gameStateHistory.length);
-  let lastTimestamp: number | null = null;
-  game.gameStateHistory.forEach((gameState, i) => {
-    const gameActionData: any[] = [gameState.gameAction];
+export function gameFromJSON(json: any) {
+  return gameFromProtocolBuffer(PB_GameReview.fromJson(json));
+}
 
-    const currentTimestamp = gameState.timestamp;
-    if (currentTimestamp !== null) {
-      if (lastTimestamp === null) {
-        gameActionData.push(currentTimestamp);
+export function gameToProtocolBuffer(game: Game) {
+  const gameReview = PB_GameReview.create({
+    gameMode: game.gameMode,
+    playerArrangementMode: game.playerArrangementMode,
+    userIds: game.userIDs,
+    usernames: game.usernames,
+    hostUserId: game.hostUserID,
+    tileBag: game.tileBag,
+  });
+
+  if (game.gameStateHistory.length > 0) {
+    const gameActions: PB_GameAction[] = new Array(game.gameStateHistory.length);
+    const gameActionTimestampOffsets: number[] = new Array(game.gameStateHistory.length - 1);
+    let allGameStatesHaveTimestamps = true;
+    let lastTimestamp: number | null = null;
+    game.gameStateHistory.forEach((gameState, i) => {
+      gameActions[i] = gameState.gameAction;
+
+      const currentTimestamp = gameState.timestamp;
+      if (currentTimestamp !== null) {
+        if (lastTimestamp !== null) {
+          gameActionTimestampOffsets[i - 1] = currentTimestamp - lastTimestamp;
+        }
       } else {
-        gameActionData.push(currentTimestamp - lastTimestamp);
+        allGameStatesHaveTimestamps = false;
+      }
+
+      lastTimestamp = currentTimestamp;
+    });
+
+    gameReview.gameActions = gameActions;
+
+    const firstGameState = game.gameStateHistory[0];
+    if (firstGameState.timestamp) {
+      gameReview.beginTimestamp = firstGameState.timestamp;
+    }
+
+    if (allGameStatesHaveTimestamps) {
+      gameReview.gameActionTimestampOffsets = gameActionTimestampOffsets;
+    }
+
+    const lastGameState = game.gameStateHistory[game.gameStateHistory.length - 1];
+    if (lastGameState.timestamp && lastGameState.nextGameAction instanceof ActionGameOver) {
+      gameReview.endTimestamp = lastGameState.timestamp;
+    }
+  }
+
+  return gameReview;
+}
+
+export function gameFromProtocolBuffer(gameReview: PB_GameReview) {
+  const game = new Game(
+    gameReview.gameMode,
+    gameReview.playerArrangementMode,
+    gameReview.tileBag,
+    gameReview.userIds,
+    gameReview.usernames,
+    gameReview.hostUserId,
+    null,
+  );
+
+  const gameActions = gameReview.gameActions;
+  const hasGameActionTimestampOffsets = gameReview.gameActionTimestampOffsets.length > 0;
+  const lastGameActionIndex = gameActions.length - 1;
+  let lastTimestamp: number | null = null;
+
+  for (let i = 0; i < gameActions.length; i++) {
+    const gameAction = gameActions[i];
+
+    let currentTimestamp: number | null = null;
+    if (i === 0) {
+      if (gameReview.beginTimestamp) {
+        currentTimestamp = gameReview.beginTimestamp;
+      }
+    } else if (hasGameActionTimestampOffsets) {
+      if (lastTimestamp) {
+        currentTimestamp = lastTimestamp + gameReview.gameActionTimestampOffsets[i - 1];
+      }
+    } else if (i === lastGameActionIndex) {
+      if (gameReview.endTimestamp) {
+        currentTimestamp = gameReview.endTimestamp;
       }
     }
 
-    gameActions[i] = gameActionData;
-    lastTimestamp = currentTimestamp;
-  });
-
-  return [
-    game.gameMode,
-    game.playerArrangementMode,
-    game.userIDs,
-    game.usernames,
-    game.hostUserID,
-    game.tileBag,
-    gameActions,
-    // Time control starting amount (in seconds, null meaning infinite)
-    // null,
-    // Time control increment amount (in seconds)
-    // 0,
-  ];
-}
-
-export function gameFromJSON(json: GameJSON) {
-  const gameMode = json[0];
-  const playerArrangementMode = json[1];
-  const userIDs = json[2];
-  const usernames = json[3];
-  const hostUserID = json[4];
-  const tileBag = json[5];
-  const gameActions = json[6];
-  // const timeControlStartingAmount = json[7];
-  // const timeControlIncrementAmount = json[8];
-
-  const game = new Game(gameMode, playerArrangementMode, tileBag, userIDs, usernames, hostUserID, null);
-
-  let lastTimestamp: number | null = null;
-  for (let i = 0; i < gameActions.length; i++) {
-    const gameAction = gameActions[i];
-    const gameActionParameters = gameAction[0];
-
-    let currentTimestamp: number | null = gameAction.length >= 2 ? gameAction[1]! : null;
-    if (currentTimestamp !== null && lastTimestamp !== null) {
-      currentTimestamp += lastTimestamp;
-    }
-
-    game.doGameAction(gameActionParameters, currentTimestamp);
+    game.doGameAction(gameAction, currentTimestamp);
 
     lastTimestamp = currentTimestamp;
   }

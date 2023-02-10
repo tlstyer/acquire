@@ -639,36 +639,49 @@ function getNextActionString(action: ActionBase) {
 }
 
 function getFormattedGameJSONLines(game: Game) {
-  const [gameMode, playerArrangementMode, userIDs, usernames, hostUserID, tileBag, gameActions] = gameToJSON(game);
+  const json = gameToJSON(game)!;
 
-  const lines: string[] = [];
+  const entries: string[] = [];
 
-  lines.push('[');
+  if (json.gameMode) {
+    entries.push(`  "gameMode": ${JSON.stringify(json.gameMode)}`);
+  }
+  if (json.playerArrangementMode) {
+    entries.push(`  "playerArrangementMode": ${JSON.stringify(json.playerArrangementMode)}`);
+  }
+  if (json.userIds) {
+    entries.push(`  "userIds": ${JSON.stringify(json.userIds)}`);
+  }
+  if (json.usernames) {
+    entries.push(`  "usernames": ${JSON.stringify(json.usernames)}`);
+  }
+  if (json.hostUserId) {
+    entries.push(`  "hostUserId": ${JSON.stringify(json.hostUserId)}`);
+  }
+  if (json.tileBag) {
+    entries.push(`  "tileBag": ${JSON.stringify(json.tileBag)}`);
+  }
+  if (json.gameActions) {
+    const gameActions = json.gameActions;
+    const lastGameActionIndex = gameActions.length - 1;
 
-  lines.push(`  ${JSON.stringify(gameMode)},`);
-  lines.push(`  ${JSON.stringify(playerArrangementMode)},`);
-  lines.push(`  ${JSON.stringify(userIDs)},`);
-  lines.push(`  ${JSON.stringify(usernames)},`);
-  lines.push(`  ${JSON.stringify(hostUserID)},`);
-  lines.push(`  ${JSON.stringify(tileBag)},`);
-  // lines.push(`  ${JSON.stringify(timeControlStartingAmount)},`);
-  // lines.push(`  ${JSON.stringify(timeControlIncrementAmount)},`);
+    const lines = [`  "gameActions": [`];
+    for (let i = 0; i < gameActions.length; i++) {
+      lines.push(`    ${JSON.stringify(gameActions[i])}${i !== lastGameActionIndex ? ',' : ''}`);
+    }
+    lines.push('  ]');
 
-  lines.push('  [');
-
-  const lastGameActionIndex = gameActions.length - 1;
-  for (let i = 0; i < gameActions.length; i++) {
-    const gameAction = [...gameActions[i]];
-    gameAction[0] = PB_GameAction.create(gameAction[0]);
-
-    const json = JSON.stringify(gameAction);
-    const possibleTrailingComma = i !== lastGameActionIndex ? ',' : '';
-    lines.push(`    ${json}${possibleTrailingComma}`);
+    entries.push(lines.join('\n'));
+  }
+  if (json.beginTimestamp) {
+    entries.push(`  "beginTimestamp": ${JSON.stringify(json.beginTimestamp)}`);
+  }
+  if (json.gameActionTimestampOffsets) {
+    entries.push(`  "gameActionTimestampOffsets": ${JSON.stringify(json.gameActionTimestampOffsets)}`);
+  }
+  if (json.endTimestamp) {
+    entries.push(`  "endTimestamp": ${JSON.stringify(json.endTimestamp)}`);
   }
 
-  lines.push('  ]');
-
-  lines.push(']');
-
-  return lines;
+  return ['{', ...entries.join(',\n').split('\n'), '}'];
 }

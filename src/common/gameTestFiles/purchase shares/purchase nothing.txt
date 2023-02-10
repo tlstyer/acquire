@@ -62,20 +62,19 @@ action: 1 PurchaseShares x 0
   next action: 0 PlayTile
 
 Game JSON:
-[
-  2,
-  0,
-  [5,7],
-  ["Alice","Bob"],
-  7,
-  [11,10,3,13,58,55,98,101,21,12,70,88,15,69,90,28,0,26],
-  [
-    [{"startGame":{}}],
-    [{"playTile":{"tile":3}}],
-    [{"playTile":{"tile":21}}],
-    [{"playTile":{"tile":13}}],
-    [{"playTile":{"tile":12}}],
-    [{"selectNewChain":{"chain":0}}],
-    [{"purchaseShares":{"chains":[],"endGame":false}}]
+{
+  "gameMode": "SINGLES_2",
+  "userIds": [5,7],
+  "usernames": ["Alice","Bob"],
+  "hostUserId": 7,
+  "tileBag": [11,10,3,13,58,55,98,101,21,12,70,88,15,69,90,28,0,26],
+  "gameActions": [
+    {"startGame":{}},
+    {"playTile":{"tile":3}},
+    {"playTile":{"tile":21}},
+    {"playTile":{"tile":13}},
+    {"playTile":{"tile":12}},
+    {"selectNewChain":{}},
+    {"purchaseShares":{}}
   ]
-]
+}

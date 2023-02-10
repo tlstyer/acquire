@@ -110,28 +110,28 @@ action: 0 SelectChainToDisposeOfNext I
   error: cannot select chain as the next chain
 
 Game JSON:
-[
-  4,
-  2,
-  [6,7,8,9],
-  ["Greg","Bob","Dave","Charlie"],
-  9,
-  [24,51,41,43,33,42,29,38,5,69,44,82,1,98,18,80,60,96,84,30,6,17,40,106,89,70,23,97,12,32,74,39],
-  [
-    [{"startGame":{}}],
-    [{"playTile":{"tile":33}}],
-    [{"selectNewChain":{"chain":0}}],
-    [{"purchaseShares":{"chains":[0,0,0],"endGame":false}}],
-    [{"playTile":{"tile":44}}],
-    [{"selectNewChain":{"chain":1}}],
-    [{"purchaseShares":{"chains":[1,1,1],"endGame":false}}],
-    [{"playTile":{"tile":60}}],
-    [{"selectNewChain":{"chain":5}}],
-    [{"purchaseShares":{"chains":[5,5,5],"endGame":false}}],
-    [{"playTile":{"tile":40}}],
-    [{"selectNewChain":{"chain":6}}],
-    [{"purchaseShares":{"chains":[5,1,0],"endGame":false}}],
-    [{"playTile":{"tile":42}}],
-    [{"selectMergerSurvivor":{"chain":6}}]
+{
+  "gameMode": "SINGLES_4",
+  "playerArrangementMode": "EXACT_ORDER",
+  "userIds": [6,7,8,9],
+  "usernames": ["Greg","Bob","Dave","Charlie"],
+  "hostUserId": 9,
+  "tileBag": [24,51,41,43,33,42,29,38,5,69,44,82,1,98,18,80,60,96,84,30,6,17,40,106,89,70,23,97,12,32,74,39],
+  "gameActions": [
+    {"startGame":{}},
+    {"playTile":{"tile":33}},
+    {"selectNewChain":{}},
+    {"purchaseShares":{"chains":["LUXOR","LUXOR","LUXOR"]}},
+    {"playTile":{"tile":44}},
+    {"selectNewChain":{"chain":"TOWER"}},
+    {"purchaseShares":{"chains":["TOWER","TOWER","TOWER"]}},
+    {"playTile":{"tile":60}},
+    {"selectNewChain":{"chain":"CONTINENTAL"}},
+    {"purchaseShares":{"chains":["CONTINENTAL","CONTINENTAL","CONTINENTAL"]}},
+    {"playTile":{"tile":40}},
+    {"selectNewChain":{"chain":"IMPERIAL"}},
+    {"purchaseShares":{"chains":["CONTINENTAL","TOWER","LUXOR"]}},
+    {"playTile":{"tile":42}},
+    {"selectMergerSurvivor":{"chain":"IMPERIAL"}}
   ]
-]
+}

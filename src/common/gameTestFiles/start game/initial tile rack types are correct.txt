@@ -55,14 +55,14 @@ action: 1 StartGame
   next action: 0 PlayTile
 
 Game JSON:
-[
-  3,
-  0,
-  [5,7,9],
-  ["Alice","Bob","Charlie"],
-  7,
-  [20,39,58,0,9,36,45,90,99,100,101,103,104,106,107,19,21,11,29,95,60],
-  [
-    [{"startGame":{}},1524126264406]
-  ]
-]
+{
+  "gameMode": "SINGLES_3",
+  "userIds": [5,7,9],
+  "usernames": ["Alice","Bob","Charlie"],
+  "hostUserId": 7,
+  "tileBag": [20,39,58,0,9,36,45,90,99,100,101,103,104,106,107,19,21,11,29,95,60],
+  "gameActions": [
+    {"startGame":{}}
+  ],
+  "beginTimestamp": "1524126264406"
+}

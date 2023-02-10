@@ -70,15 +70,15 @@ action: 0 PlayTile 8G
   next action: 1 PlayTile
 
 Game JSON:
-[
-  2,
-  2,
-  [5,7],
-  ["Alice","Bob"],
-  7,
-  [35,10,69,70,88,15,3,93,58,1,106,55,98,101,0],
-  [
-    [{"startGame":{}}],
-    [{"playTile":{"tile":69}}]
+{
+  "gameMode": "SINGLES_2",
+  "playerArrangementMode": "EXACT_ORDER",
+  "userIds": [5,7],
+  "usernames": ["Alice","Bob"],
+  "hostUserId": 7,
+  "tileBag": [35,10,69,70,88,15,3,93,58,1,106,55,98,101,0],
+  "gameActions": [
+    {"startGame":{}},
+    {"playTile":{"tile":69}}
   ]
-]
+}
