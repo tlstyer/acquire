@@ -1,5 +1,6 @@
 <script>
   import GameStatusExamples from './GameStatusExamples.svelte';
+  import ScoreBoardExamples from './ScoreBoardExamples.svelte';
 </script>
 
 <div>
@@ -10,6 +11,7 @@
   <h1>GameSetupUI</h1>
   <h1>GameBoard</h1>
   <h1>ScoreBoard</h1>
+  <ScoreBoardExamples />
   <h1>TileRack</h1>
   <h1>TileRackReadOnly</h1>
   <h1>SelectChain</h1>

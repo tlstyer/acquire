@@ -92,6 +92,9 @@
   visibility: hidden;
 }
 
+// in svelte's global.css
+// BEGIN
+
 .team1 {
   background-color: #fff7e7;
 }
@@ -103,3 +106,5 @@
 .team3 {
   background-color: #ebffe7;
 }
+
+// END
