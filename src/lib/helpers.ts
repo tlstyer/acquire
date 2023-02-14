@@ -1,3 +1,4 @@
+import { TileEnum } from '../common/enums';
 import { PB_GameBoardType, PB_GameMode } from '../common/pb';
 
 export const allChains = [
@@ -78,3 +79,19 @@ export const gameModeToNumPlayers = new Map([
   [PB_GameMode.TEAMS_2_VS_2_VS_2, 6],
   [PB_GameMode.TEAMS_3_VS_3, 6],
 ]);
+
+export enum GameBoardLabelMode {
+  Coordinates,
+  HotelInitials,
+  Nothing,
+}
+
+const yTileNames = 'ABCDEFGHI';
+
+export function getTileString(tile: number) {
+  if (tile === TileEnum.Unknown) {
+    return '?';
+  } else {
+    return `${Math.floor(tile / 9) + 1}${yTileNames[tile % 9]}`;
+  }
+}
