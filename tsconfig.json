@@ -1,13 +1,17 @@
 {
+  "extends": "./.svelte-kit/tsconfig.json",
   "compilerOptions": {
+    "allowJs": true,
+    "checkJs": true,
     "esModuleInterop": true,
-    "jsx": "react",
-    "lib": ["ES2019", "DOM"],
-    "module": "commonjs",
-    "outDir": "dist",
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
     "sourceMap": true,
     "strict": true,
-    "target": "ES2018"
+
+    "jsx": "react",
+    "outDir": "dist"
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*", "*.js", "*.ts"]
 }

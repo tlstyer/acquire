@@ -1,4 +1,6 @@
+*.ignore.*
+/.svelte-kit
+/build
 /dist
 /node_modules
 /src/common/pb.ts
-*.ignore.*

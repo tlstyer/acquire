@@ -1,5 +1,7 @@
+*.ignore.*
+/.svelte-kit
+/.vscode
+/build
 /dist
 /node_modules
-/.vscode
 /yarn-error.log
-*.ignore.*
