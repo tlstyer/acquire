@@ -2,6 +2,7 @@
   import GameBoardExamples from './GameBoardExamples.svelte';
   import GameStatusExamples from './GameStatusExamples.svelte';
   import ScoreBoardExamples from './ScoreBoardExamples.svelte';
+  import TileRackExamples from './TileRackExamples.svelte';
 </script>
 
 <div>
@@ -15,6 +16,7 @@
   <h1>ScoreBoard</h1>
   <ScoreBoardExamples />
   <h1>TileRack</h1>
+  <TileRackExamples />
   <h1>TileRackReadOnly</h1>
   <h1>SelectChain</h1>
   <h1>DisposeOfShares</h1>

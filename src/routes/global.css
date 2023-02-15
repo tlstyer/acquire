@@ -80,7 +80,7 @@ fieldset {
 }
 
 .color-willMergeChains {
-  background: url(./merge.png);
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAIAQMAAAD+wSzIAAAAA3NCSVQICAjb4U/gAAAABlBMVEXd3d3///+uIkqAAAAAD0lEQVQI12P4wACB/BAIAC4AA/2aaHtfAAAAAElFTkSuQmCC);
 }
 
 .color-cantPlayNow {
@@ -98,4 +98,19 @@ fieldset {
 
 .color-team3 {
   background-color: #ebffe7;
+}
+
+/* misc. */
+
+.hotelButton {
+  font-weight: bold;
+  padding: 1px;
+}
+
+.hotelButton:focus {
+  box-shadow: 0px 0px 2px 0px #323232;
+}
+
+.invisible {
+  visibility: hidden;
 }
