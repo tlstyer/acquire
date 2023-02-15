@@ -33,16 +33,19 @@
 </script>
 
 {#each allSelectChainProps as selectChainProps}
-  <label>
-    <input type="checkbox" bind:checked={selectChainProps.keyboardShortcutsEnabled} />
-    Enable Keyboard Shortcuts
-  </label>
-  <SelectChain
-    type={selectChainProps.type}
-    availableChains={selectChainProps.availableChains}
-    buttonSize={selectChainProps.buttonSize}
-    keyboardShortcutsEnabled={selectChainProps.keyboardShortcutsEnabled}
-    onChainSelected={selectChainProps.onChainSelected}
-  />
-  <br />
+  <p>
+    <label>
+      <input type="checkbox" bind:checked={selectChainProps.keyboardShortcutsEnabled} />
+      Enable Keyboard Shortcuts
+    </label>
+  </p>
+  <p>
+    <SelectChain
+      type={selectChainProps.type}
+      availableChains={selectChainProps.availableChains}
+      buttonSize={selectChainProps.buttonSize}
+      keyboardShortcutsEnabled={selectChainProps.keyboardShortcutsEnabled}
+      onChainSelected={selectChainProps.onChainSelected}
+    />
+  </p>
 {/each}

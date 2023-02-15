@@ -36,6 +36,7 @@
 </script>
 
 {#each allTileRackReadOnlyProps as tileRackReadOnlyProps}
-  <TileRackReadOnly tiles={tileRackReadOnlyProps.tiles} types={tileRackReadOnlyProps.types} buttonSize={tileRackReadOnlyProps.buttonSize} />
-  <br />
+  <p>
+    <TileRackReadOnly tiles={tileRackReadOnlyProps.tiles} types={tileRackReadOnlyProps.types} buttonSize={tileRackReadOnlyProps.buttonSize} />
+  </p>
 {/each}

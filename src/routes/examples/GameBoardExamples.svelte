@@ -48,12 +48,13 @@
 </script>
 
 {#each allGameBoardProps as gameBoardProps}
-  <GameBoard
-    gameBoard={gameBoardProps.gameBoard}
-    tileRack={gameBoardProps.tileRack}
-    labelMode={gameBoardProps.labelMode}
-    cellSize={gameBoardProps.cellSize}
-    onCellClicked={gameBoardProps.onCellClicked}
-  />
-  <br />
+  <p>
+    <GameBoard
+      gameBoard={gameBoardProps.gameBoard}
+      tileRack={gameBoardProps.tileRack}
+      labelMode={gameBoardProps.labelMode}
+      cellSize={gameBoardProps.cellSize}
+      onCellClicked={gameBoardProps.onCellClicked}
+    />
+  </p>
 {/each}

@@ -47,16 +47,19 @@
 </script>
 
 {#each allTileRackProps as tileRackProps}
-  <label>
-    <input type="checkbox" bind:checked={tileRackProps.keyboardShortcutsEnabled} />
-    Enable Keyboard Shortcuts
-  </label>
-  <TileRack
-    tiles={tileRackProps.tiles}
-    types={tileRackProps.types}
-    buttonSize={tileRackProps.buttonSize}
-    keyboardShortcutsEnabled={tileRackProps.keyboardShortcutsEnabled}
-    onTileClicked={tileRackProps.onTileClicked}
-  />
-  <br />
+  <p>
+    <label>
+      <input type="checkbox" bind:checked={tileRackProps.keyboardShortcutsEnabled} />
+      Enable Keyboard Shortcuts
+    </label>
+  </p>
+  <p>
+    <TileRack
+      tiles={tileRackProps.tiles}
+      types={tileRackProps.types}
+      buttonSize={tileRackProps.buttonSize}
+      keyboardShortcutsEnabled={tileRackProps.keyboardShortcutsEnabled}
+      onTileClicked={tileRackProps.onTileClicked}
+    />
+  </p>
 {/each}

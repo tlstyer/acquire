@@ -35,6 +35,7 @@
 </script>
 
 {#each actions as action}
-  <GameStatus usernames={game.usernames} {action} />
-  <br />
+  <p>
+    <GameStatus usernames={game.usernames} {action} />
+  </p>
 {/each}

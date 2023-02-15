@@ -79,17 +79,18 @@
 </script>
 
 {#each scoreBoardProps as props}
-  <ScoreBoard
-    usernames={props.usernames}
-    scoreBoard={props.scoreBoard}
-    scoreBoardAvailable={props.scoreBoardAvailable}
-    scoreBoardChainSize={props.scoreBoardChainSize}
-    scoreBoardPrice={props.scoreBoardPrice}
-    safeChains={props.safeChains}
-    turnPlayerID={props.turnPlayerID}
-    movePlayerID={props.movePlayerID}
-    gameMode={props.gameMode}
-    cellWidth={props.cellWidth}
-  />
-  <br />
+  <p>
+    <ScoreBoard
+      usernames={props.usernames}
+      scoreBoard={props.scoreBoard}
+      scoreBoardAvailable={props.scoreBoardAvailable}
+      scoreBoardChainSize={props.scoreBoardChainSize}
+      scoreBoardPrice={props.scoreBoardPrice}
+      safeChains={props.safeChains}
+      turnPlayerID={props.turnPlayerID}
+      movePlayerID={props.movePlayerID}
+      gameMode={props.gameMode}
+      cellWidth={props.cellWidth}
+    />
+  </p>
 {/each}
