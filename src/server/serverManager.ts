@@ -1,4 +1,4 @@
-import WebSocket from 'ws';
+import type WebSocket from 'ws';
 import { Game } from '../common/game';
 import { ActionGameOver } from '../common/gameActions/gameOver';
 import { GameSetup } from '../common/gameSetup';
@@ -26,7 +26,7 @@ import {
 } from '../common/pb';
 import { LogMessage } from './enums';
 import { ReuseIDManager } from './reuseIDManager';
-import { UserDataProvider } from './userDataProvider';
+import type { UserDataProvider } from './userDataProvider';
 
 export enum ConnectionState {
   WaitingForFirstMessage,

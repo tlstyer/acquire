@@ -1,14 +1,14 @@
 import React from 'react';
 import { GameActionEnum } from '../../common/enums';
-import { ActionBase } from '../../common/gameActions/base';
-import { ActionDisposeOfShares } from '../../common/gameActions/disposeOfShares';
-import { ActionPlayTile } from '../../common/gameActions/playTile';
-import { ActionPurchaseShares } from '../../common/gameActions/purchaseShares';
-import { ActionSelectChainToDisposeOfNext } from '../../common/gameActions/selectChainToDisposeOfNext';
-import { ActionSelectMergerSurvivor } from '../../common/gameActions/selectMergerSurvivor';
-import { ActionSelectNewChain } from '../../common/gameActions/selectNewChain';
-import { ActionStartGame } from '../../common/gameActions/startGame';
-import { PB_GameBoardType } from '../../common/pb';
+import type { ActionBase } from '../../common/gameActions/base';
+import type { ActionDisposeOfShares } from '../../common/gameActions/disposeOfShares';
+import type { ActionPlayTile } from '../../common/gameActions/playTile';
+import type { ActionPurchaseShares } from '../../common/gameActions/purchaseShares';
+import type { ActionSelectChainToDisposeOfNext } from '../../common/gameActions/selectChainToDisposeOfNext';
+import type { ActionSelectMergerSurvivor } from '../../common/gameActions/selectMergerSurvivor';
+import type { ActionSelectNewChain } from '../../common/gameActions/selectNewChain';
+import type { ActionStartGame } from '../../common/gameActions/startGame';
+import type { PB_GameBoardType } from '../../common/pb';
 import { gameBoardTypeToCSSClassName, gameBoardTypeToHotelInitial, getHotelNameSpan, getUsernameSpan } from '../helpers';
 import * as style from './GameStatus.scss';
 

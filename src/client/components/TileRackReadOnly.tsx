@@ -1,5 +1,5 @@
 import React from 'react';
-import { PB_GameBoardType } from '../../common/pb';
+import type { PB_GameBoardType } from '../../common/pb';
 import * as commonStyle from '../common.scss';
 import { gameBoardTypeToCSSClassName, getTileString } from '../helpers';
 import * as style from './TileRackReadOnly.scss';

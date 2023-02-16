@@ -1,7 +1,7 @@
 import React from 'react';
 import { GameHistoryMessageEnum } from '../../common/enums';
-import { GameHistoryMessageData, GameState } from '../../common/game';
-import { PB_GameBoardType } from '../../common/pb';
+import type { GameHistoryMessageData, GameState } from '../../common/game';
+import type { PB_GameBoardType } from '../../common/pb';
 import { getHotelNameSpan, getTileString, getUsernameSpan } from '../helpers';
 import * as style from './GameHistory.scss';
 

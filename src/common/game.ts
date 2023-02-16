@@ -13,7 +13,7 @@ import {
   defaultTileRackTypesList,
 } from './defaults';
 import { GameActionEnum, GameHistoryMessageEnum, ScoreBoardIndexEnum, TileEnum } from './enums';
-import { ActionBase } from './gameActions/base';
+import type { ActionBase } from './gameActions/base';
 import { ActionStartGame } from './gameActions/startGame';
 import { calculateBonuses, neighboringTilesLookup } from './helpers';
 import { PB_GameAction, PB_GameBoardType, PB_GameMode, PB_GameState, PB_GameState_RevealedTileRackTile, PB_PlayerArrangementMode } from './pb';

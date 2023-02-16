@@ -1,6 +1,6 @@
-import { GameActionEnum } from '../enums';
-import { Game } from '../game';
-import { PB_GameAction } from '../pb';
+import type { GameActionEnum } from '../enums';
+import type { Game } from '../game';
+import type { PB_GameAction } from '../pb';
 
 export abstract class ActionBase {
   constructor(public game: Game, public playerID: number, public gameAction: GameActionEnum) {}

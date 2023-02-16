@@ -1,7 +1,7 @@
 import 'normalize.css';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Game } from '../common/game';
+import type { Game } from '../common/game';
 import { ActionGameOver } from '../common/gameActions/gameOver';
 import { gameFromJSON } from '../common/gameSerialization';
 import { GameBoard } from './components/GameBoard';

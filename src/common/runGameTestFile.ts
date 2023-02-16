@@ -1,7 +1,7 @@
 import { GameActionEnum, GameHistoryMessageEnum, ScoreBoardIndexEnum, TileEnum } from './enums';
 import { UserInputError } from './error';
 import { Game, GameHistoryMessageData, GameState, GameStateTileBagTile } from './game';
-import { ActionBase } from './gameActions/base';
+import type { ActionBase } from './gameActions/base';
 import { ActionDisposeOfShares } from './gameActions/disposeOfShares';
 import { ActionGameOver } from './gameActions/gameOver';
 import { ActionSelectChainToDisposeOfNext } from './gameActions/selectChainToDisposeOfNext';

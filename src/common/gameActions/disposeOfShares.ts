@@ -1,7 +1,7 @@
 import { GameActionEnum, GameHistoryMessageEnum, ScoreBoardIndexEnum } from '../enums';
 import { UserInputError } from '../error';
-import { Game } from '../game';
-import { PB_GameAction, PB_GameBoardType } from '../pb';
+import type { Game } from '../game';
+import type { PB_GameAction, PB_GameBoardType } from '../pb';
 import { ActionBase } from './base';
 
 export class ActionDisposeOfShares extends ActionBase {

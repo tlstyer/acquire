@@ -1,6 +1,6 @@
 import { GameActionEnum, GameHistoryMessageEnum } from '../enums';
 import { UserInputError } from '../error';
-import { Game } from '../game';
+import type { Game } from '../game';
 import { PB_GameAction, PB_GameBoardType } from '../pb';
 import { ActionBase } from './base';
 import { ActionDisposeOfShares } from './disposeOfShares';

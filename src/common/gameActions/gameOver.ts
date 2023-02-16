@@ -1,6 +1,6 @@
 import { GameActionEnum } from '../enums';
 import { UserInputError } from '../error';
-import { Game } from '../game';
+import type { Game } from '../game';
 import { ActionBase } from './base';
 
 export class ActionGameOver extends ActionBase {

@@ -1,4 +1,4 @@
-import { PB_GameBoardType, PB_GameMode, PB_GameStatus, PB_PlayerArrangementMode } from '../common/pb';
+import type { PB_GameBoardType, PB_GameMode, PB_GameStatus, PB_PlayerArrangementMode } from '../common/pb';
 
 export class GameSummary {
   constructor(

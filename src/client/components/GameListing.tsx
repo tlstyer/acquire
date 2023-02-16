@@ -1,6 +1,6 @@
 import React from 'react';
 import { gameModeToNumPlayers, gameModeToTeamSize } from '../../common/helpers';
-import { PB_GameBoardType, PB_GameMode, PB_GameStatus } from '../../common/pb';
+import type { PB_GameBoardType, PB_GameMode, PB_GameStatus } from '../../common/pb';
 import { gameModeToString, gameStatusToString, teamNumberToCSSClassName } from '../helpers';
 import * as style from './GameListing.scss';
 import { MiniGameBoard } from './MiniGameBoard';
