@@ -2,6 +2,7 @@
   import { getTileString } from '$lib/helpers';
   import TileRack from '$lib/TileRack.svelte';
   import { PB_GameBoardType } from '../../common/pb';
+  import EnableKeyboardShortcutsButton from './EnableKeyboardShortcutsButton.svelte';
 
   const allTileRackProps = [
     {
@@ -48,10 +49,7 @@
 
 {#each allTileRackProps as tileRackProps}
   <p>
-    <label>
-      <input type="checkbox" bind:checked={tileRackProps.keyboardShortcutsEnabled} />
-      Enable Keyboard Shortcuts
-    </label>
+    <EnableKeyboardShortcutsButton bind:enabled={tileRackProps.keyboardShortcutsEnabled} />
   </p>
   <p>
     <TileRack

@@ -2,6 +2,7 @@
   import { gameBoardTypeToHotelInitial } from '$lib/helpers';
   import SelectChain, { SelectChainTitle } from '$lib/SelectChain.svelte';
   import type { PB_GameBoardType } from '../../common/pb';
+  import EnableKeyboardShortcutsButton from './EnableKeyboardShortcutsButton.svelte';
 
   const allSelectChainProps = [
     {
@@ -34,10 +35,7 @@
 
 {#each allSelectChainProps as selectChainProps}
   <p>
-    <label>
-      <input type="checkbox" bind:checked={selectChainProps.keyboardShortcutsEnabled} />
-      Enable Keyboard Shortcuts
-    </label>
+    <EnableKeyboardShortcutsButton bind:enabled={selectChainProps.keyboardShortcutsEnabled} />
   </p>
   <p>
     <SelectChain
