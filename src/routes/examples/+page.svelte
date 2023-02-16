@@ -1,4 +1,5 @@
 <script>
+  import DisposeOfSharesExamples from './DisposeOfSharesExamples.svelte';
   import GameBoardExamples from './GameBoardExamples.svelte';
   import GameStatusExamples from './GameStatusExamples.svelte';
   import ScoreBoardExamples from './ScoreBoardExamples.svelte';
@@ -24,6 +25,7 @@
   <h1>SelectChain</h1>
   <SelectChainExamples />
   <h1>DisposeOfShares</h1>
+  <DisposeOfSharesExamples />
   <h1>PurchaseShares</h1>
   <h1>GameHistory</h1>
   <h1>GameStatus</h1>
