@@ -1,5 +1,5 @@
 import { TileEnum } from '../common/enums';
-import { PB_GameBoardType, PB_GameMode } from '../common/pb';
+import { PB_GameBoardType, PB_GameMode, PB_GameStatus } from '../common/pb';
 
 export const allChains = [
   PB_GameBoardType.LUXOR,
@@ -95,3 +95,21 @@ export function getTileString(tile: number) {
     return `${Math.floor(tile / 9) + 1}${yTileNames[tile % 9]}`;
   }
 }
+
+export const gameModeToString = new Map([
+  [PB_GameMode.SINGLES_1, 'Singles 1'],
+  [PB_GameMode.SINGLES_2, 'Singles 2'],
+  [PB_GameMode.SINGLES_3, 'Singles 3'],
+  [PB_GameMode.SINGLES_4, 'Singles 4'],
+  [PB_GameMode.SINGLES_5, 'Singles 5'],
+  [PB_GameMode.SINGLES_6, 'Singles 6'],
+  [PB_GameMode.TEAMS_2_VS_2, 'Teams 2 vs 2'],
+  [PB_GameMode.TEAMS_2_VS_2_VS_2, 'Teams 2 vs 2 vs 2'],
+  [PB_GameMode.TEAMS_3_VS_3, 'Teams 3 vs 3'],
+]);
+
+export const gameStatusToString = new Map([
+  [PB_GameStatus.SETTING_UP, 'Setting Up'],
+  [PB_GameStatus.IN_PROGRESS, 'In Progress'],
+  [PB_GameStatus.COMPLETED, 'Completed'],
+]);

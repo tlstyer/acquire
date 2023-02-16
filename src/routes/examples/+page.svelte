@@ -1,6 +1,7 @@
 <script>
   import DisposeOfSharesExamples from './DisposeOfSharesExamples.svelte';
   import GameBoardExamples from './GameBoardExamples.svelte';
+  import GameListingExamples from './GameListingExamples.svelte';
   import GameStatusExamples from './GameStatusExamples.svelte';
   import PurchaseSharesExamples from './PurchaseSharesExamples.svelte';
   import ScoreBoardExamples from './ScoreBoardExamples.svelte';
@@ -14,6 +15,7 @@
   <h1>Header</h1>
   <h1>CreateGame</h1>
   <h1>GameListing</h1>
+  <GameListingExamples />
   <h1>GameSetupUI</h1>
   <h1>GameBoard</h1>
   <GameBoardExamples />
