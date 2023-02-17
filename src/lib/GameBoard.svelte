@@ -2,7 +2,7 @@
 
 <script lang="ts">
   import type { PB_GameBoardType } from '../common/pb';
-  import GameBoardRow from './GameBoardRow.svelte';
+  import GameBoardRow from './children/GameBoardRow.svelte';
   import type { GameBoardLabelMode } from './helpers';
 
   export let gameBoard: PB_GameBoardType[][];

@@ -3,6 +3,7 @@
 <script lang="ts">
   import { ScoreBoardIndexEnum } from '../common/enums';
   import type { PB_GameMode } from '../common/pb';
+  import ScoreBoardRow from './children/ScoreBoardRow.svelte';
   import {
     allChains,
     gameBoardTypeToCSSClassName,
@@ -11,7 +12,6 @@
     gameModeToTeamSize,
     teamNumberToCSSClassName,
   } from './helpers';
-  import ScoreBoardRow from './ScoreBoardRow.svelte';
 
   export let usernames: string[];
   export let scoreBoard: number[][];

@@ -48,7 +48,7 @@
 
 <script lang="ts">
   import { PB_GameMode, PB_PlayerArrangementMode } from '../common/pb';
-  import GameSetupUIKickUserAndApproveCells from './GameSetupUIKickUserAndApproveCells.svelte';
+  import GameSetupUIKickUserAndApproveCells from './children/GameSetupUIKickUserAndApproveCells.svelte';
   import { allGameModes, gameModeToNumPlayers, gameModeToString, gameModeToTeamSize, teamNumberToCSSClassName } from './helpers';
 
   export let gameMode: PB_GameMode;

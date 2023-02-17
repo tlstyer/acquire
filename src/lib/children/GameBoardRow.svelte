@@ -1,9 +1,9 @@
 <svelte:options immutable />
 
 <script lang="ts">
-  import { PB_GameBoardType } from '../common/pb';
+  import { PB_GameBoardType } from '../../common/pb';
+  import type { GameBoardLabelMode } from '../helpers';
   import GameBoardCell from './GameBoardCell.svelte';
-  import type { GameBoardLabelMode } from './helpers';
 
   export let y: number;
   export let gameBoardRow: PB_GameBoardType[];

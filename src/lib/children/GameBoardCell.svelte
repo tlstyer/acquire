@@ -1,8 +1,8 @@
 <svelte:options immutable />
 
 <script lang="ts">
-  import { PB_GameBoardType } from '../common/pb';
-  import { GameBoardLabelMode, gameBoardTypeToCSSClassName, gameBoardTypeToHotelInitial, getTileString } from './helpers';
+  import { PB_GameBoardType } from '../../common/pb';
+  import { GameBoardLabelMode, gameBoardTypeToCSSClassName, gameBoardTypeToHotelInitial, getTileString } from '../helpers';
 
   export let tile: number;
   export let gameBoardType: PB_GameBoardType;
