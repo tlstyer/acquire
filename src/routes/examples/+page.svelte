@@ -2,6 +2,7 @@
   import CreateGameExamples from './CreateGameExamples.svelte';
   import DisposeOfSharesExamples from './DisposeOfSharesExamples.svelte';
   import GameBoardExamples from './GameBoardExamples.svelte';
+  import GameHistoryExamples from './GameHistoryExamples.svelte';
   import GameListingExamples from './GameListingExamples.svelte';
   import GameSetupUIExamples from './GameSetupUIExamples.svelte';
   import GameStatusExamples from './GameStatusExamples.svelte';
@@ -36,6 +37,7 @@
   <h1>PurchaseShares</h1>
   <PurchaseSharesExamples />
   <h1>GameHistory</h1>
+  <GameHistoryExamples />
   <h1>GameStatus</h1>
   <GameStatusExamples />
 </div>
@@ -44,9 +46,5 @@
   div {
     margin-left: 25px;
     width: 600px;
-  }
-
-  .gameHistoryWrapper > div {
-    height: 300px;
   }
 </style>
