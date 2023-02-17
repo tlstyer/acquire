@@ -1,4 +1,5 @@
 <script>
+  import CreateGameExamples from './CreateGameExamples.svelte';
   import DisposeOfSharesExamples from './DisposeOfSharesExamples.svelte';
   import GameBoardExamples from './GameBoardExamples.svelte';
   import GameListingExamples from './GameListingExamples.svelte';
@@ -15,6 +16,7 @@
   <h1>LoginForm</h1>
   <h1>Header</h1>
   <h1>CreateGame</h1>
+  <CreateGameExamples />
   <h1>GameListing</h1>
   <GameListingExamples />
   <h1>GameSetupUI</h1>
