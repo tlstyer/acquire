@@ -2,6 +2,7 @@
   import DisposeOfSharesExamples from './DisposeOfSharesExamples.svelte';
   import GameBoardExamples from './GameBoardExamples.svelte';
   import GameListingExamples from './GameListingExamples.svelte';
+  import GameSetupUIExamples from './GameSetupUIExamples.svelte';
   import GameStatusExamples from './GameStatusExamples.svelte';
   import PurchaseSharesExamples from './PurchaseSharesExamples.svelte';
   import ScoreBoardExamples from './ScoreBoardExamples.svelte';
@@ -17,6 +18,7 @@
   <h1>GameListing</h1>
   <GameListingExamples />
   <h1>GameSetupUI</h1>
+  <GameSetupUIExamples />
   <h1>GameBoard</h1>
   <GameBoardExamples />
   <h1>ScoreBoard</h1>
