@@ -1,24 +1,24 @@
 <svelte:options immutable />
 
 <script lang="ts" context="module">
-  const onlyEnabledSymbol = writable(Symbol());
+	const onlyEnabledSymbol = writable(Symbol());
 </script>
 
 <script lang="ts">
-  import { writable } from 'svelte/store';
+	import { writable } from 'svelte/store';
 
-  export let enabled = false;
+	export let enabled = false;
 
-  const symbol = Symbol();
+	const symbol = Symbol();
 
-  $: enabled = symbol === $onlyEnabledSymbol;
+	$: enabled = symbol === $onlyEnabledSymbol;
 </script>
 
 <input
-  type="button"
-  value={enabled ? 'Keyboard Shortcuts Enabled' : 'Enable Keyboard Shortcuts'}
-  disabled={enabled}
-  on:click={() => {
-    onlyEnabledSymbol.set(symbol);
-  }}
+	type="button"
+	value={enabled ? 'Keyboard Shortcuts Enabled' : 'Enable Keyboard Shortcuts'}
+	disabled={enabled}
+	on:click={() => {
+		onlyEnabledSymbol.set(symbol);
+	}}
 />

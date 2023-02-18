@@ -1,45 +1,45 @@
 export interface UserDataProvider {
-  createUser(username: string, password: string | null): Promise<number>;
-  lookupUser(username: string): Promise<UserData | null>;
+	createUser(username: string, password: string | null): Promise<number>;
+	lookupUser(username: string): Promise<UserData | null>;
 }
 
 interface UserData {
-  userID: number;
-  hasPassword: boolean;
-  verifyPassword(password: string): boolean;
+	userID: number;
+	hasPassword: boolean;
+	verifyPassword(password: string): boolean;
 }
 
 export class TestUserDataProvider implements UserDataProvider {
-  nextUserID = 1;
-  usernameToUserData = new Map<string, TestUserData>();
+	nextUserID = 1;
+	usernameToUserData = new Map<string, TestUserData>();
 
-  async createUser(username: string, password: string | null) {
-    if (username === 'createUser error') {
-      throw new Error('createUser error');
-    }
+	async createUser(username: string, password: string | null) {
+		if (username === 'createUser error') {
+			throw new Error('createUser error');
+		}
 
-    const userID = this.nextUserID++;
-    this.usernameToUserData.set(username, new TestUserData(userID, password));
-    return userID;
-  }
+		const userID = this.nextUserID++;
+		this.usernameToUserData.set(username, new TestUserData(userID, password));
+		return userID;
+	}
 
-  async lookupUser(username: string) {
-    if (username === 'lookupUser error') {
-      throw new Error('lookupUser error');
-    }
+	async lookupUser(username: string) {
+		if (username === 'lookupUser error') {
+			throw new Error('lookupUser error');
+		}
 
-    return this.usernameToUserData.get(username) || null;
-  }
+		return this.usernameToUserData.get(username) || null;
+	}
 }
 
 class TestUserData implements UserData {
-  hasPassword: boolean;
+	hasPassword: boolean;
 
-  constructor(public userID: number, private password: string | null) {
-    this.hasPassword = password !== null;
-  }
+	constructor(public userID: number, private password: string | null) {
+		this.hasPassword = password !== null;
+	}
 
-  verifyPassword(password: string) {
-    return password === this.password;
-  }
+	verifyPassword(password: string) {
+		return password === this.password;
+	}
 }

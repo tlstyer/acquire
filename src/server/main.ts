@@ -9,9 +9,9 @@ const server = http.createServer();
 const webSocketServer = new WebSocketServer({ noServer: true });
 
 server.on('upgrade', (request, socket, head) => {
-  webSocketServer.handleUpgrade(request, socket, head, (webSocket) => {
-    webSocketServer.emit('connection', webSocket, request);
-  });
+	webSocketServer.handleUpgrade(request, socket, head, (webSocket) => {
+		webSocketServer.emit('connection', webSocket, request);
+	});
 });
 
 const userDataProvider = new TestUserDataProvider();
