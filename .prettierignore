@@ -1,4 +1,5 @@
 /.svelte-kit
 /build
 /node_modules
-src/common/pb.ts
+/package
+/src/common/pb.ts

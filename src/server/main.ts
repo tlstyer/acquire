@@ -1,13 +1,12 @@
 import http from 'http';
-import WebSocket from 'ws';
+import { WebSocketServer } from 'ws';
 import { setupTextDecoderAndTextEncoder } from '../common/nodeSpecificStuff';
-import { ServerManager } from './serverManager';
 import { TestUserDataProvider } from './userDataProvider';
 
 setupTextDecoderAndTextEncoder();
 
 const server = http.createServer();
-const webSocketServer = new WebSocket.Server({ noServer: true });
+const webSocketServer = new WebSocketServer({ noServer: true });
 
 server.on('upgrade', (request, socket, head) => {
   webSocketServer.handleUpgrade(request, socket, head, (webSocket) => {
@@ -17,9 +16,5 @@ server.on('upgrade', (request, socket, head) => {
 
 const userDataProvider = new TestUserDataProvider();
 const nextGameID = 1;
-
-const serverManager = new ServerManager(webSocketServer, userDataProvider, nextGameID, console.log);
-
-serverManager.manage();
 
 server.listen(9999, '0.0.0.0');

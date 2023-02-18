@@ -1,4 +1,5 @@
 import seedrandom from 'seedrandom';
+import { describe, expect, test } from 'vitest';
 import { GameSetup } from './gameSetup';
 import { PB_GameMode, PB_GameSetupChange, PB_PlayerArrangementMode } from './pb';
 

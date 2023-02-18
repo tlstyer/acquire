@@ -1,7 +1,10 @@
+!.env.example
+.env
+.env.*
 *.ignore.*
 /.svelte-kit
 /.vscode
 /build
-/dist
 /node_modules
+/package
 /yarn-error.log

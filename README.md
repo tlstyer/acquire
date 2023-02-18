@@ -13,11 +13,3 @@ yarn
 ```
 
 See the `scripts` section in the `package.json` file for some things you can do.
-
-For example:
-
-```bash
-yarn examples # see examples of React components
-yarn review # review a game
-yarn test # run unit tests
-```

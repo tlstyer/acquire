@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import { describe, expect, test } from 'vitest';
 import { Game } from './game';
 import { gameFromJSON, gameToJSON } from './gameSerialization';
 import { runGameTestFile } from './runGameTestFile';

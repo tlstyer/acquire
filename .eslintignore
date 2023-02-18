@@ -1,6 +1,9 @@
+!.env.example
+.env
+.env.*
 *.ignore.*
 /.svelte-kit
 /build
-/dist
 /node_modules
+/package
 /src/common/pb.ts

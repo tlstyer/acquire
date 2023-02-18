@@ -8,10 +8,11 @@
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "sourceMap": true,
-    "strict": true,
-
-    "jsx": "react",
-    "outDir": "dist"
+    "strict": true
   },
-  "include": ["src/**/*", "*.js", "*.ts"]
+  "include": ["src/**/*", "*.js", "*.ts"],
+  "ts-node": {
+    "esm": true,
+    "experimentalSpecifierResolution": "node"
+  }
 }

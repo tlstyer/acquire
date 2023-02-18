@@ -1,3 +1,4 @@
+import { expect } from 'vitest';
 import { GameActionEnum, GameHistoryMessageEnum, ScoreBoardIndexEnum, TileEnum } from './enums';
 import { UserInputError } from './error';
 import { Game, GameHistoryMessageData, GameState, GameStateTileBagTile } from './game';

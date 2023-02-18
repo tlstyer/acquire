@@ -1,3 +1,4 @@
+import { expect, test } from 'vitest';
 import { ReuseIDManager } from './reuseIDManager';
 
 test('new IDs are sequential starting with 1', () => {
