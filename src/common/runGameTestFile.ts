@@ -1,4 +1,3 @@
-import { expect } from 'vitest';
 import { GameActionEnum, GameHistoryMessageEnum, ScoreBoardIndexEnum, TileEnum } from './enums';
 import { UserInputError } from './error';
 import { Game, GameHistoryMessageData, GameState, GameStateTileBagTile } from './game';
@@ -148,7 +147,7 @@ export function runGameTestFile(inputLines: string[]) {
 						try {
 							parsedJson = JSON.parse(json);
 						} catch (error) {
-							expect(false).toBe(true);
+							throw new Error('invalid action JSON');
 						}
 						gameAction = PB_GameAction.create({
 							[lowercaseFirstLetter(actualGameActionName)]: parsedJson,
