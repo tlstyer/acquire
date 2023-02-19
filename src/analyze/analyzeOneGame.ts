@@ -1,9 +1,9 @@
 import fs from 'fs';
-import path from 'path';
 import { GameHistoryMessageEnum } from '../common/enums';
 import { gameFromProtocolBuffer } from '../common/gameSerialization';
 import { PB_GameReview } from '../common/pb';
 import { getGameHistoryMessageString } from '../common/runGameTestFile';
+import { updateReviewGamePBBinary } from './misc';
 
 function main(gameFilePath: string) {
   const gameReviewFileContents = fs.readFileSync(gameFilePath);
@@ -36,17 +36,6 @@ function main(gameFilePath: string) {
   }
 
   updateReviewGamePBBinary(gameReviewFileContents);
-}
-
-function updateReviewGamePBBinary(gameReviewFileContents: Buffer) {
-  const pathToFile = path.join(__dirname, '../../src/client/reviewGamePBBinary.ts');
-
-  const currentContents = fs.readFileSync(pathToFile).toString();
-  const desiredContents = `export const reviewGamePBBinary = new Uint8Array(${JSON.stringify([...gameReviewFileContents])});\n`;
-
-  if (desiredContents !== currentContents) {
-    fs.writeFileSync(pathToFile, desiredContents);
-  }
 }
 
 main(process.argv[2]);
