@@ -1,9 +1,9 @@
 import fs from 'fs';
 import path from 'path';
-import { GameHistoryMessageEnum } from './enums';
-import { gameFromProtocolBuffer } from './gameSerialization';
-import { PB_GameReview } from './pb';
-import { getGameHistoryMessageString } from './runGameTestFile';
+import { GameHistoryMessageEnum } from '../common/enums';
+import { gameFromProtocolBuffer } from '../common/gameSerialization';
+import { PB_GameReview } from '../common/pb';
+import { getGameHistoryMessageString } from '../common/runGameTestFile';
 
 function main(gameFilePath: string) {
   const gameReviewFileContents = fs.readFileSync(gameFilePath);
