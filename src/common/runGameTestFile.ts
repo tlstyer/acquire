@@ -615,7 +615,7 @@ const gameHistoryMessageStringHandlers = new Map([
   [GameHistoryMessageEnum.NoTilesPlayedForEntireRound, ghmsh],
   [GameHistoryMessageEnum.AllTilesPlayed, ghmsh],
 ]);
-function getGameHistoryMessageString(gameHistoryMessage: GameHistoryMessageData) {
+export function getGameHistoryMessageString(gameHistoryMessage: GameHistoryMessageData) {
   return gameHistoryMessageStringHandlers.get(gameHistoryMessage.gameHistoryMessage)!(gameHistoryMessage);
 }
 

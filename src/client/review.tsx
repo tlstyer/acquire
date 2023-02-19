@@ -3,7 +3,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Game } from '../common/game';
 import { ActionGameOver } from '../common/gameActions/gameOver';
-import { gameFromJSON } from '../common/gameSerialization';
+import { gameFromProtocolBuffer } from '../common/gameSerialization';
+import { PB_GameReview } from '../common/pb';
 import { GameBoard } from './components/GameBoard';
 import { GameHistory } from './components/GameHistory';
 import { GameStatus } from './components/GameStatus';
@@ -12,6 +13,7 @@ import { TileRackReadOnly } from './components/TileRackReadOnly';
 import { GameBoardLabelMode } from './enums';
 import './global.scss';
 import * as style from './review.scss';
+import { reviewGamePBBinary } from './reviewGamePBBinary';
 
 function render() {
   const gameState = game.gameStateHistory[selectedMove];
@@ -150,10 +152,7 @@ let selectedMove: number;
 let followedPlayerID: number | null = null;
 
 function main() {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const gameJson = require('raw-loader!../common/gameTestFiles/other/no tiles played for entire round.txt').default.split('\nGame JSON:\n')[1];
-
-  game = gameFromJSON(JSON.parse(gameJson));
+  game = gameFromProtocolBuffer(PB_GameReview.fromBinary(reviewGamePBBinary));
   selectedMove = game.gameStateHistory.length - 1;
   periodicResizeCheck();
 }
