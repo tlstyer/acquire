@@ -20,7 +20,7 @@ export function* iterateGamesInDirectory(dirPath: string, completedGamesOnly = f
       const includeGame = completedGamesOnly ? game.gameActionStack.length === 1 && game.gameActionStack[0] instanceof ActionGameOver : true;
 
       if (includeGame) {
-        yield game;
+        yield { game, filePath };
       }
     }
   }
