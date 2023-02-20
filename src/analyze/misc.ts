@@ -2,7 +2,29 @@ import fs from 'fs';
 import path from 'path';
 import { ScoreBoardIndexEnum } from '../common/enums';
 import { Game } from '../common/game';
+import { ActionGameOver } from '../common/gameActions/gameOver';
+import { gameFromProtocolBuffer } from '../common/gameSerialization';
 import { gameModeToNumPlayers, gameModeToTeamSize } from '../common/helpers';
+import { PB_GameReview } from '../common/pb';
+
+export function* iterateGamesInDirectory(dirPath: string, completedGamesOnly = false) {
+  for (const file of fs.readdirSync(dirPath)) {
+    const filePath = path.join(dirPath, file);
+    const stats = fs.statSync(filePath);
+
+    if (stats.isDirectory()) {
+      iterateGamesInDirectory(filePath, completedGamesOnly);
+    } else if (stats.isFile()) {
+      const gameReviewFileContents = fs.readFileSync(filePath);
+      const game = gameFromProtocolBuffer(PB_GameReview.fromBinary(gameReviewFileContents));
+      const includeGame = completedGamesOnly ? game.gameActionStack.length === 1 && game.gameActionStack[0] instanceof ActionGameOver : true;
+
+      if (includeGame) {
+        yield game;
+      }
+    }
+  }
+}
 
 export function updateReviewGamePBBinary(gameReviewFileContents: Buffer) {
   const pathToFile = path.join(__dirname, '../../src/client/reviewGamePBBinary.ts');
