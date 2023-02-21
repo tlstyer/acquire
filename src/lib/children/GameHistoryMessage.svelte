@@ -16,9 +16,7 @@
 
 <div>
 	{#if gameHistoryMessageData.gameHistoryMessage === GameHistoryMessageEnum.TurnBegan}
-		<fieldset class="turnBegan">
-			<legend><Username {username} /></legend>
-		</fieldset>
+		<fieldset><legend><Username {username} /></legend></fieldset>
 	{:else if gameHistoryMessageData.gameHistoryMessage === GameHistoryMessageEnum.DrewPositionTile}
 		<Username {username} /> drew position tile {getTileString(
 			gameHistoryMessageData.parameters[0],
@@ -101,7 +99,7 @@
 </div>
 
 <style>
-	.turnBegan {
+	fieldset {
 		border-bottom: none;
 		border-left: none;
 		border-right: none;
