@@ -7,11 +7,35 @@
 	export let usernames: string[];
 	export let gameStateHistory: GameState[];
 	export let selectedMove: number | undefined = undefined;
+	export let keyboardShortcutsEnabled: boolean;
 	export let onMoveSelected: (index: number) => void;
 
 	$: lastMoveIndex = gameStateHistory.length - 1;
 	$: actualSelectedMove = selectedMove ?? lastMoveIndex;
+
+	function handleKeydown(event: KeyboardEvent) {
+		if (keyboardShortcutsEnabled) {
+			switch (event.key) {
+				case 'ArrowLeft': {
+					const nextSelectedMove = actualSelectedMove - 1;
+					if (nextSelectedMove >= 0) {
+						onMoveSelected(nextSelectedMove);
+					}
+					break;
+				}
+				case 'ArrowRight': {
+					const nextSelectedMove = actualSelectedMove + 1;
+					if (nextSelectedMove <= lastMoveIndex) {
+						onMoveSelected(nextSelectedMove);
+					}
+					break;
+				}
+			}
+		}
+	}
 </script>
+
+<svelte:window on:keydown={handleKeydown} />
 
 <div class="root">
 	<div>

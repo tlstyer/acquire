@@ -1,6 +1,7 @@
 <script lang="ts">
 	import GameHistory from '$lib/GameHistory.svelte';
 	import type { GameState } from '../../common/game';
+	import EnableKeyboardShortcutsButton from './EnableKeyboardShortcutsButton.svelte';
 	import { getExampleGame1, getExampleGame2, getExampleGameForGameHistory } from './games';
 
 	const gameForGameHistory = getExampleGameForGameHistory();
@@ -10,12 +11,14 @@
 	const allGameHistoryProps: {
 		usernames: string[];
 		gameStateHistory: GameState[];
+		keyboardShortcutsEnabled: boolean;
 		selectedMove?: number;
 		onMoveSelected: (index: number) => void;
 	}[] = [
 		{
 			usernames: gameForGameHistory.usernames,
 			gameStateHistory: gameForGameHistory.gameStateHistory,
+			keyboardShortcutsEnabled: false,
 			onMoveSelected(index: number) {
 				console.log('onMoveSelected:', index);
 				allGameHistoryProps[0].selectedMove = index;
@@ -24,6 +27,7 @@
 		{
 			usernames: game1.usernames,
 			gameStateHistory: game1.gameStateHistory,
+			keyboardShortcutsEnabled: false,
 			onMoveSelected(index: number) {
 				console.log('onMoveSelected:', index);
 				allGameHistoryProps[1].selectedMove = index;
@@ -32,6 +36,7 @@
 		{
 			usernames: game2.usernames,
 			gameStateHistory: game2.gameStateHistory,
+			keyboardShortcutsEnabled: false,
 			onMoveSelected(index: number) {
 				console.log('onMoveSelected:', index);
 				allGameHistoryProps[2].selectedMove = index;
@@ -40,6 +45,7 @@
 		{
 			usernames: gameForGameHistory.usernames,
 			gameStateHistory: [gameForGameHistory.gameStateHistory[0]],
+			keyboardShortcutsEnabled: false,
 			onMoveSelected(index: number) {
 				console.log('onMoveSelected:', index);
 				allGameHistoryProps[3].selectedMove = index;
@@ -50,17 +56,21 @@
 
 {#each allGameHistoryProps as gameHistoryProps}
 	<p>
+		<EnableKeyboardShortcutsButton bind:enabled={gameHistoryProps.keyboardShortcutsEnabled} />
+	</p>
+	<p class="gameHistoryWrapper">
 		<GameHistory
 			usernames={gameHistoryProps.usernames}
 			gameStateHistory={gameHistoryProps.gameStateHistory}
 			selectedMove={gameHistoryProps.selectedMove}
+			keyboardShortcutsEnabled={gameHistoryProps.keyboardShortcutsEnabled}
 			onMoveSelected={gameHistoryProps.onMoveSelected}
 		/>
 	</p>
 {/each}
 
 <style>
-	p {
+	.gameHistoryWrapper {
 		height: 300px;
 	}
 </style>
