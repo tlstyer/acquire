@@ -16,33 +16,36 @@
 		{
 			usernames: gameForGameHistory.usernames,
 			gameStateHistory: gameForGameHistory.gameStateHistory,
-			onMoveClicked,
+			onMoveClicked(index: number) {
+				console.log('onMoveClicked:', index);
+				allGameHistoryProps[0].selectedMove = index;
+			},
 		},
 		{
 			usernames: game1.usernames,
 			gameStateHistory: game1.gameStateHistory,
-			onMoveClicked,
+			onMoveClicked(index: number) {
+				console.log('onMoveClicked:', index);
+				allGameHistoryProps[1].selectedMove = index;
+			},
 		},
 		{
 			usernames: game2.usernames,
 			gameStateHistory: game2.gameStateHistory,
-			onMoveClicked,
+			onMoveClicked(index: number) {
+				console.log('onMoveClicked:', index);
+				allGameHistoryProps[2].selectedMove = index;
+			},
 		},
 		{
 			usernames: gameForGameHistory.usernames,
 			gameStateHistory: [gameForGameHistory.gameStateHistory[0]],
-			onMoveClicked,
+			onMoveClicked(index: number) {
+				console.log('onMoveClicked:', index);
+				allGameHistoryProps[3].selectedMove = index;
+			},
 		},
 	];
-
-	function onMoveClicked(index: number) {
-		console.log('onMoveClicked:', index);
-
-		allGameHistoryProps[0].selectedMove = index;
-		allGameHistoryProps[1].selectedMove = index;
-		allGameHistoryProps[2].selectedMove = index;
-		allGameHistoryProps[3].selectedMove = index;
-	}
 </script>
 
 {#each allGameHistoryProps as gameHistoryProps}
