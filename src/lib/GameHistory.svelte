@@ -7,7 +7,7 @@
 	export let usernames: string[];
 	export let gameStateHistory: GameState[];
 	export let selectedMove: number | undefined = undefined;
-	export let onMoveClicked: (index: number) => void;
+	export let onMoveSelected: (index: number) => void;
 
 	$: lastMoveIndex = gameStateHistory.length - 1;
 	$: actualSelectedMove = selectedMove ?? lastMoveIndex;
@@ -15,14 +15,14 @@
 
 <div class="root">
 	<div>
-		<button on:click={() => onMoveClicked(0)} disabled={actualSelectedMove === 0}>
+		<button on:click={() => onMoveSelected(0)} disabled={actualSelectedMove === 0}>
 			<!-- adapted from https://www.svgrepo.com/svg/391832/fast-backward -->
 			<svg viewBox="0 0 120 120">
 				<path d="M0,120V0h20v55L70,5v50l50-50v110L70,65v50L20,65v55H0z" />
 			</svg>
 		</button>
 		<button
-			on:click={() => onMoveClicked(Math.max(actualSelectedMove - 1, 0))}
+			on:click={() => onMoveSelected(Math.max(actualSelectedMove - 1, 0))}
 			disabled={actualSelectedMove === 0}
 		>
 			<!-- adapted from https://www.svgrepo.com/svg/391700/step-backward -->
@@ -31,7 +31,7 @@
 			</svg>
 		</button>
 		<button
-			on:click={() => onMoveClicked(Math.min(actualSelectedMove + 1, lastMoveIndex))}
+			on:click={() => onMoveSelected(Math.min(actualSelectedMove + 1, lastMoveIndex))}
 			disabled={actualSelectedMove === lastMoveIndex}
 		>
 			<!-- adapted from https://www.svgrepo.com/svg/391701/step-forward -->
@@ -40,7 +40,7 @@
 			</svg>
 		</button>
 		<button
-			on:click={() => onMoveClicked(lastMoveIndex)}
+			on:click={() => onMoveSelected(lastMoveIndex)}
 			disabled={actualSelectedMove === lastMoveIndex}
 		>
 			<!-- adapted from https://www.svgrepo.com/svg/391834/fast-forward -->
@@ -55,7 +55,7 @@
 				<div
 					class="move"
 					class:selected={moveIndex === selectedMove}
-					on:click={() => onMoveClicked(moveIndex)}
+					on:click={() => onMoveSelected(moveIndex)}
 					on:keydown={undefined}
 				>
 					{#each gameState.gameHistoryMessages as gameHistoryMessageData}

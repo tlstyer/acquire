@@ -11,37 +11,37 @@
 		usernames: string[];
 		gameStateHistory: GameState[];
 		selectedMove?: number;
-		onMoveClicked: (index: number) => void;
+		onMoveSelected: (index: number) => void;
 	}[] = [
 		{
 			usernames: gameForGameHistory.usernames,
 			gameStateHistory: gameForGameHistory.gameStateHistory,
-			onMoveClicked(index: number) {
-				console.log('onMoveClicked:', index);
+			onMoveSelected(index: number) {
+				console.log('onMoveSelected:', index);
 				allGameHistoryProps[0].selectedMove = index;
 			},
 		},
 		{
 			usernames: game1.usernames,
 			gameStateHistory: game1.gameStateHistory,
-			onMoveClicked(index: number) {
-				console.log('onMoveClicked:', index);
+			onMoveSelected(index: number) {
+				console.log('onMoveSelected:', index);
 				allGameHistoryProps[1].selectedMove = index;
 			},
 		},
 		{
 			usernames: game2.usernames,
 			gameStateHistory: game2.gameStateHistory,
-			onMoveClicked(index: number) {
-				console.log('onMoveClicked:', index);
+			onMoveSelected(index: number) {
+				console.log('onMoveSelected:', index);
 				allGameHistoryProps[2].selectedMove = index;
 			},
 		},
 		{
 			usernames: gameForGameHistory.usernames,
 			gameStateHistory: [gameForGameHistory.gameStateHistory[0]],
-			onMoveClicked(index: number) {
-				console.log('onMoveClicked:', index);
+			onMoveSelected(index: number) {
+				console.log('onMoveSelected:', index);
 				allGameHistoryProps[3].selectedMove = index;
 			},
 		},
@@ -54,7 +54,7 @@
 			usernames={gameHistoryProps.usernames}
 			gameStateHistory={gameHistoryProps.gameStateHistory}
 			selectedMove={gameHistoryProps.selectedMove}
-			onMoveClicked={gameHistoryProps.onMoveClicked}
+			onMoveSelected={gameHistoryProps.onMoveSelected}
 		/>
 	</p>
 {/each}
