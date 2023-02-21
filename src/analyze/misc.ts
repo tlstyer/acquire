@@ -5,7 +5,7 @@ import { Game } from '../common/game';
 import { ActionGameOver } from '../common/gameActions/gameOver';
 import { gameFromProtocolBuffer } from '../common/gameSerialization';
 import { gameModeToNumPlayers, gameModeToTeamSize } from '../common/helpers';
-import { PB_GameReview } from '../common/pb';
+import { PB_GameMode, PB_GameReview } from '../common/pb';
 
 export function* iterateGamesInDirectory(dirPath: string, completedGamesOnly = false) {
   for (const file of fs.readdirSync(dirPath)) {
@@ -37,14 +37,33 @@ export function updateReviewGamePBBinary(gameReviewFileContents: Buffer) {
   }
 }
 
-export function calculateFinalTeamScores(game: Game) {
-  const numTeams = gameModeToNumPlayers.get(game.gameMode)! / gameModeToTeamSize.get(game.gameMode)!;
+export function determineTeamUserIDs(gameMode: PB_GameMode, userIDs: number[]) {
+  const numTeams = gameModeToNumPlayers.get(gameMode)! / gameModeToTeamSize.get(gameMode)!;
+  const grouped: number[][] = new Array(numTeams);
+  for (let teamID = 0; teamID < grouped.length; teamID++) {
+    grouped[teamID] = [];
+  }
+
+  for (let playerID = 0; playerID < userIDs.length; playerID++) {
+    const teamID = playerID % numTeams;
+    grouped[teamID].push(userIDs[playerID]);
+  }
+
+  return grouped;
+}
+
+export function getFinalPlayerScores(game: Game) {
+  return game.scoreBoard.map((row) => row[ScoreBoardIndexEnum.Net]);
+}
+
+export function calculateFinalTeamScores(gameMode: PB_GameMode, finalPlayerScores: number[]) {
+  const numTeams = gameModeToNumPlayers.get(gameMode)! / gameModeToTeamSize.get(gameMode)!;
   const scores: number[] = new Array(numTeams);
   scores.fill(0);
 
-  for (let playerID = 0; playerID < game.scoreBoard.length; playerID++) {
+  for (let playerID = 0; playerID < finalPlayerScores.length; playerID++) {
     const teamID = playerID % numTeams;
-    scores[teamID] += game.scoreBoard[playerID][ScoreBoardIndexEnum.Net];
+    scores[teamID] += finalPlayerScores[playerID];
   }
 
   return scores;
