@@ -28,6 +28,11 @@
 			gameStateHistory: game2.gameStateHistory,
 			onMoveClicked,
 		},
+		{
+			usernames: gameForGameHistory.usernames,
+			gameStateHistory: [gameForGameHistory.gameStateHistory[0]],
+			onMoveClicked,
+		},
 	];
 
 	function onMoveClicked(index: number) {
@@ -36,6 +41,7 @@
 		allGameHistoryProps[0].selectedMove = index;
 		allGameHistoryProps[1].selectedMove = index;
 		allGameHistoryProps[2].selectedMove = index;
+		allGameHistoryProps[3].selectedMove = index;
 	}
 </script>
 
