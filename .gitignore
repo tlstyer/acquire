@@ -1,6 +1,6 @@
-!.env.example
 .env
 .env.*
+!.env.example
 *.ignore.*
 /.svelte-kit
 /.vscode
