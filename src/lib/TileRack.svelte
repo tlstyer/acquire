@@ -1,5 +1,3 @@
-<svelte:options immutable />
-
 <script lang="ts" context="module">
 	type TileData = {
 		tile: number;

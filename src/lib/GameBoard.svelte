@@ -1,5 +1,3 @@
-<svelte:options immutable />
-
 <script lang="ts">
 	import type { PB_GameBoardType } from '$common/pb';
 	import GameBoardRow from './children/GameBoardRow.svelte';
