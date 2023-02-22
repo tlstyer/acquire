@@ -2,8 +2,8 @@
 	import CreateGameExamples from './CreateGameExamples.svelte';
 	import DisposeOfSharesExamples from './DisposeOfSharesExamples.svelte';
 	import GameBoardExamples from './GameBoardExamples.svelte';
-	import GameHistoryExamples from './GameHistoryExamples.svelte';
 	import GameListingExamples from './GameListingExamples.svelte';
+	import GameNavigationButtonsAndGameHistoryExamples from './GameNavigationButtonsAndGameHistoryExamples.svelte';
 	import GameSetupUIExamples from './GameSetupUIExamples.svelte';
 	import GameStatusExamples from './GameStatusExamples.svelte';
 	import PurchaseSharesExamples from './PurchaseSharesExamples.svelte';
@@ -36,8 +36,8 @@
 	<DisposeOfSharesExamples />
 	<h1>PurchaseShares</h1>
 	<PurchaseSharesExamples />
-	<h1>GameHistory</h1>
-	<GameHistoryExamples />
+	<h1>GameNavigationButtons and GameHistory</h1>
+	<GameNavigationButtonsAndGameHistoryExamples />
 	<h1>GameStatus</h1>
 	<GameStatusExamples />
 </div>

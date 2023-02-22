@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { GameState } from '$common/gameState';
 	import GameHistory from '$lib/GameHistory.svelte';
+	import GameNavigationButtons from '$lib/GameNavigationButtons.svelte';
 	import EnableKeyboardShortcutsButton from './EnableKeyboardShortcutsButton.svelte';
 	import { getExampleGame1, getExampleGame2, getExampleGameForGameHistory } from './games';
 
@@ -58,7 +59,12 @@
 	<p>
 		<EnableKeyboardShortcutsButton bind:enabled={gameHistoryProps.keyboardShortcutsEnabled} />
 	</p>
-	<p class="gameHistoryWrapper">
+	<GameNavigationButtons
+		gameStateHistory={gameHistoryProps.gameStateHistory}
+		selectedMove={gameHistoryProps.selectedMove}
+		onMoveSelected={gameHistoryProps.onMoveSelected}
+	/>
+	<div>
 		<GameHistory
 			usernames={gameHistoryProps.usernames}
 			gameStateHistory={gameHistoryProps.gameStateHistory}
@@ -66,11 +72,11 @@
 			keyboardShortcutsEnabled={gameHistoryProps.keyboardShortcutsEnabled}
 			onMoveSelected={gameHistoryProps.onMoveSelected}
 		/>
-	</p>
+	</div>
 {/each}
 
 <style>
-	.gameHistoryWrapper {
+	div {
 		height: 300px;
 	}
 </style>
