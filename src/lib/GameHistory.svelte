@@ -2,7 +2,7 @@
 
 <script lang="ts">
 	import { afterUpdate } from 'svelte';
-	import type { GameState } from '../common/game';
+	import type { GameState } from '../common/gameState';
 	import GameHistoryMessage from './children/GameHistoryMessage.svelte';
 
 	export let usernames: string[];

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import GameHistory from '$lib/GameHistory.svelte';
-	import type { GameState } from '../../common/game';
+	import type { GameState } from '../../common/gameState';
 	import EnableKeyboardShortcutsButton from './EnableKeyboardShortcutsButton.svelte';
 	import { getExampleGame1, getExampleGame2, getExampleGameForGameHistory } from './games';
 

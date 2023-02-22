@@ -1,6 +1,6 @@
 import { GameActionEnum, GameHistoryMessageEnum, ScoreBoardIndexEnum, TileEnum } from './enums';
 import { UserInputError } from './error';
-import { Game, GameHistoryMessageData, GameState, GameStateTileBagTile } from './game';
+import { Game } from './game';
 import type { ActionBase } from './gameActions/base';
 import { ActionDisposeOfShares } from './gameActions/disposeOfShares';
 import { ActionGameOver } from './gameActions/gameOver';
@@ -8,6 +8,7 @@ import { ActionSelectChainToDisposeOfNext } from './gameActions/selectChainToDis
 import { ActionSelectMergerSurvivor } from './gameActions/selectMergerSurvivor';
 import { ActionSelectNewChain } from './gameActions/selectNewChain';
 import { gameToJSON } from './gameSerialization';
+import type { GameHistoryMessageData, GameState, GameStateTileBagTile } from './gameState';
 import { getValueOfKey, lowercaseFirstLetter } from './helpers';
 import {
 	PB_GameAction,

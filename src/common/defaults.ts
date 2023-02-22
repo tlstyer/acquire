@@ -1,4 +1,4 @@
-import type { GameState } from './game';
+import type { GameState } from './gameState';
 import { PB_GameBoardType } from './pb';
 
 export function defaultGameStateHistory(): GameState[] {

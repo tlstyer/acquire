@@ -5,7 +5,7 @@
 	import HotelName from '$lib/HotelName.svelte';
 	import Username from '$lib/Username.svelte';
 	import { GameHistoryMessageEnum } from '../../common/enums';
-	import type { GameHistoryMessageData } from '../../common/game';
+	import type { GameHistoryMessageData } from '../../common/gameState';
 
 	export let usernames: string[];
 	export let gameHistoryMessageData: GameHistoryMessageData;
