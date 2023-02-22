@@ -46,7 +46,7 @@
 		}
 	}
 
-	$: buttonStyle = `width: ${buttonSize}px; height: ${buttonSize}px;`;
+	$: buttonStyle = `width: ${buttonSize}px; height: ${buttonSize}px`;
 
 	function handleKeydown(event: KeyboardEvent) {
 		if (keyboardShortcutsEnabled) {

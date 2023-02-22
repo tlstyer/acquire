@@ -61,7 +61,7 @@
 	}
 </script>
 
-<table style="font-size: {Math.floor(cellWidth * 0.6)}px; width: {cellWidth * 18 + 2}px;">
+<table style="font-size: {Math.floor(cellWidth * 0.6)}px; width: {cellWidth * 18 + 2}px">
 	<tbody>
 		<tr>
 			<td class="playerHeader">Player</td>

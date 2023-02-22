@@ -44,7 +44,7 @@
 	const inputs: (HTMLInputElement | undefined)[] = new Array(allChains.length);
 	inputs.fill(undefined);
 
-	$: buttonStyle = `width: ${buttonSize}px; height: ${buttonSize}px;`;
+	$: buttonStyle = `width: ${buttonSize}px; height: ${buttonSize}px`;
 
 	function handleKeydown(event: KeyboardEvent) {
 		if (keyboardShortcutsEnabled) {

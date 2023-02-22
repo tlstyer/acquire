@@ -71,7 +71,7 @@
 
 <svelte:window on:keydown={handleKeydown} />
 
-<div style="font-size: {Math.floor(buttonSize * 0.4)}px;">
+<div style="font-size: {Math.floor(buttonSize * 0.4)}px">
 	<fieldset class={gameBoardTypeToCSSClassName.get(defunctChain)}>
 		<legend class={gameBoardTypeToCSSClassName.get(defunctChain)}>Keep</legend>
 		<span>{keep}</span>

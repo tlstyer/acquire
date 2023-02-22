@@ -35,7 +35,7 @@
 <table
 	style="width: {cellSize * 12 + 2}px; height: {cellSize * 9 + 2}px; font-size: {Math.floor(
 		cellSize * 0.4,
-	)}px;"
+	)}px"
 >
 	<tbody>
 		{#each gameBoard as gameBoardRow, y}

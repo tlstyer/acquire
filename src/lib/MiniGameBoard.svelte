@@ -8,7 +8,7 @@
 	export let cellSize: number;
 </script>
 
-<table style="width: {cellSize * 12 + 1}px; height: {cellSize * 9 + 1}px;">
+<table style="width: {cellSize * 12 + 1}px; height: {cellSize * 9 + 1}px">
 	<tbody>
 		{#each gameBoard as gameBoardRow}
 			<tr>

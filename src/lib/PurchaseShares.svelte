@@ -93,8 +93,8 @@
 	let endGameCheckbox: HTMLInputElement | undefined;
 	let okButton: HTMLInputElement | undefined;
 
-	$: buttonStyle = `width: ${buttonSize}px; height: ${buttonSize}px;`;
-	$: cartButtonStyle = `width: ${Math.floor(buttonSize * (4 / 3))}px; height: ${buttonSize}px;`;
+	$: buttonStyle = `width: ${buttonSize}px; height: ${buttonSize}px`;
+	$: cartButtonStyle = `width: ${Math.floor(buttonSize * (4 / 3))}px; height: ${buttonSize}px`;
 
 	function handleKeydown(event: KeyboardEvent) {
 		if (keyboardShortcutsEnabled) {

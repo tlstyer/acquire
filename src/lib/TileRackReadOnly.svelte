@@ -33,7 +33,7 @@
 		}
 	}
 
-	$: buttonStyle = `width: ${buttonSize}px; height: ${buttonSize}px;`;
+	$: buttonStyle = `width: ${buttonSize}px; height: ${buttonSize}px`;
 </script>
 
 <div class="root" style="font-size: {Math.floor(buttonSize * 0.4)}px">
