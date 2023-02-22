@@ -658,7 +658,7 @@ function fromTileString(str: string) {
 	}
 }
 
-function getGameHistoryMessageString(gameHistoryMessage: GameHistoryMessage) {
+export function getGameHistoryMessageString(gameHistoryMessage: GameHistoryMessage) {
 	let parts: (number | string)[];
 
 	if (gameHistoryMessage instanceof GameHistoryMessageTurnBegan) {
