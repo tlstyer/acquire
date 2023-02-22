@@ -1,7 +1,7 @@
 <script lang="ts">
+	import { PB_GameBoardType } from '$common/pb';
 	import { getTileString } from '$lib/helpers';
 	import TileRack from '$lib/TileRack.svelte';
-	import { PB_GameBoardType } from '../../common/pb';
 	import EnableKeyboardShortcutsButton from './EnableKeyboardShortcutsButton.svelte';
 
 	const allTileRackProps = [

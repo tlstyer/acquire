@@ -21,7 +21,7 @@
 </script>
 
 <script lang="ts">
-	import type { PB_GameBoardType } from '../common/pb';
+	import type { PB_GameBoardType } from '$common/pb';
 	import { gameBoardTypeToCSSClassName } from './helpers';
 
 	export let defunctChain: PB_GameBoardType;

@@ -1,7 +1,7 @@
 <svelte:options immutable />
 
 <script lang="ts">
-	import { PB_GameMode } from '../common/pb';
+	import { PB_GameMode } from '$common/pb';
 	import { allGameModes, gameModeToString } from './helpers';
 
 	export let gameMode: PB_GameMode = PB_GameMode.SINGLES_4;

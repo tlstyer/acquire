@@ -1,7 +1,7 @@
 <svelte:options immutable />
 
 <script lang="ts">
-	import { ScoreBoardIndexEnum } from '../../common/enums';
+	import { ScoreBoardIndexEnum } from '$common/enums';
 	import { teamNumberToCSSClassName } from '../helpers';
 
 	export let isPlayerRow: boolean;

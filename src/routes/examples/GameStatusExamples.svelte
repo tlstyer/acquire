@@ -1,16 +1,16 @@
 <script lang="ts">
+	import { Game } from '$common/game';
+	import { ActionDisposeOfShares } from '$common/gameActions/disposeOfShares';
+	import { ActionGameOver } from '$common/gameActions/gameOver';
+	import { ActionPlayTile } from '$common/gameActions/playTile';
+	import { ActionPurchaseShares } from '$common/gameActions/purchaseShares';
+	import { ActionSelectChainToDisposeOfNext } from '$common/gameActions/selectChainToDisposeOfNext';
+	import { ActionSelectMergerSurvivor } from '$common/gameActions/selectMergerSurvivor';
+	import { ActionSelectNewChain } from '$common/gameActions/selectNewChain';
+	import { ActionStartGame } from '$common/gameActions/startGame';
+	import { PB_GameBoardType, PB_GameMode, PB_PlayerArrangementMode } from '$common/pb';
 	import GameStatus from '$lib/GameStatus.svelte';
 	import { allChains } from '$lib/helpers';
-	import { Game } from '../../common/game';
-	import { ActionDisposeOfShares } from '../../common/gameActions/disposeOfShares';
-	import { ActionGameOver } from '../../common/gameActions/gameOver';
-	import { ActionPlayTile } from '../../common/gameActions/playTile';
-	import { ActionPurchaseShares } from '../../common/gameActions/purchaseShares';
-	import { ActionSelectChainToDisposeOfNext } from '../../common/gameActions/selectChainToDisposeOfNext';
-	import { ActionSelectMergerSurvivor } from '../../common/gameActions/selectMergerSurvivor';
-	import { ActionSelectNewChain } from '../../common/gameActions/selectNewChain';
-	import { ActionStartGame } from '../../common/gameActions/startGame';
-	import { PB_GameBoardType, PB_GameMode, PB_PlayerArrangementMode } from '../../common/pb';
 
 	const game = new Game(
 		PB_GameMode.SINGLES_5,

@@ -1,6 +1,6 @@
 <script lang="ts">
+	import { PB_GameMode } from '$common/pb';
 	import ScoreBoard from '$lib/ScoreBoard.svelte';
-	import { PB_GameMode } from '../../common/pb';
 
 	const scoreBoardProps = [
 		{

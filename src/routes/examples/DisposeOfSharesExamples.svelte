@@ -1,6 +1,6 @@
 <script lang="ts">
+	import { PB_GameBoardType } from '$common/pb';
 	import DisposeOfShares from '$lib/DisposeOfShares.svelte';
-	import { PB_GameBoardType } from '../../common/pb';
 	import EnableKeyboardShortcutsButton from './EnableKeyboardShortcutsButton.svelte';
 
 	const allDisposeOfSharesProps = [

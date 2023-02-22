@@ -1,8 +1,8 @@
 <svelte:options immutable />
 
 <script lang="ts">
-	import { ScoreBoardIndexEnum } from '../common/enums';
-	import type { PB_GameMode } from '../common/pb';
+	import { ScoreBoardIndexEnum } from '$common/enums';
+	import type { PB_GameMode } from '$common/pb';
 	import ScoreBoardRow from './children/ScoreBoardRow.svelte';
 	import {
 		allChains,

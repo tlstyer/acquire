@@ -1,15 +1,15 @@
 <svelte:options immutable />
 
 <script lang="ts">
-	import type { ActionBase } from '../common/gameActions/base';
-	import { ActionDisposeOfShares } from '../common/gameActions/disposeOfShares';
-	import { ActionGameOver } from '../common/gameActions/gameOver';
-	import { ActionPlayTile } from '../common/gameActions/playTile';
-	import { ActionPurchaseShares } from '../common/gameActions/purchaseShares';
-	import { ActionSelectChainToDisposeOfNext } from '../common/gameActions/selectChainToDisposeOfNext';
-	import { ActionSelectMergerSurvivor } from '../common/gameActions/selectMergerSurvivor';
-	import { ActionSelectNewChain } from '../common/gameActions/selectNewChain';
-	import { ActionStartGame } from '../common/gameActions/startGame';
+	import type { ActionBase } from '$common/gameActions/base';
+	import { ActionDisposeOfShares } from '$common/gameActions/disposeOfShares';
+	import { ActionGameOver } from '$common/gameActions/gameOver';
+	import { ActionPlayTile } from '$common/gameActions/playTile';
+	import { ActionPurchaseShares } from '$common/gameActions/purchaseShares';
+	import { ActionSelectChainToDisposeOfNext } from '$common/gameActions/selectChainToDisposeOfNext';
+	import { ActionSelectMergerSurvivor } from '$common/gameActions/selectMergerSurvivor';
+	import { ActionSelectNewChain } from '$common/gameActions/selectNewChain';
+	import { ActionStartGame } from '$common/gameActions/startGame';
 	import GameStatusHotelInitialsList from './children/GameStatusHotelInitialsList.svelte';
 	import HotelName from './HotelName.svelte';
 	import Username from './Username.svelte';

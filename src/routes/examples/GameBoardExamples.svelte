@@ -1,7 +1,7 @@
 <script lang="ts">
+	import type { PB_GameBoardType } from '$common/pb';
 	import GameBoard from '$lib/GameBoard.svelte';
 	import { GameBoardLabelMode, getTileString } from '$lib/helpers';
-	import type { PB_GameBoardType } from '../../common/pb';
 
 	const baseGameBoardProps = {
 		gameBoard: [

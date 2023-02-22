@@ -1,7 +1,7 @@
 <svelte:options immutable />
 
 <script lang="ts">
-	import type { PB_GameBoardType, PB_GameMode, PB_GameStatus } from '../common/pb';
+	import type { PB_GameBoardType, PB_GameMode, PB_GameStatus } from '$common/pb';
 	import {
 		gameModeToNumPlayers,
 		gameModeToString,

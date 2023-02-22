@@ -9,6 +9,10 @@ const config = {
 
 	kit: {
 		adapter: adapter(),
+		alias: {
+			$common: 'src/common',
+			'$common/*': 'src/common/*',
+		},
 	},
 };
 

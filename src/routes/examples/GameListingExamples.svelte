@@ -1,7 +1,7 @@
 <script lang="ts">
+	import { defaultGameBoard } from '$common/defaults';
+	import { PB_GameMode, PB_GameStatus } from '$common/pb';
 	import GameListing from '$lib/GameListing.svelte';
-	import { defaultGameBoard } from '../../common/defaults';
-	import { PB_GameMode, PB_GameStatus } from '../../common/pb';
 	import { getExampleGame1, getExampleGame2 } from './games';
 
 	const allGameListingProps = [
