@@ -1,6 +1,7 @@
-import { GameActionEnum, GameHistoryMessageEnum } from '../enums';
+import { GameActionEnum } from '../enums';
 import { UserInputError } from '../error';
-import type { Game } from '../game';
+import { ScoreBoardAdjustment, type Game } from '../game';
+import { GameHistoryMessageFormedChain } from '../gameHistoryMessage';
 import { PB_GameAction, PB_GameBoardType } from '../pb';
 import { ActionBase } from './base';
 
@@ -45,11 +46,11 @@ export class ActionSelectNewChain extends ActionBase {
 		this.game.fillCells(this.tile, chain);
 		this.game.setChainSize(chain, this.game.gameBoardTypeCounts[chain]);
 		if (this.game.scoreBoardAvailable[chain] > 0) {
-			this.game.adjustPlayerScoreBoardRow(this.playerID, [[chain, 1]]);
+			this.game.adjustPlayerScoreBoardRow(this.playerID, [new ScoreBoardAdjustment(chain, 1)]);
 		}
 
 		this.game
 			.getCurrentGameState()
-			.addGameHistoryMessage(GameHistoryMessageEnum.FormedChain, this.playerID, [chain]);
+			.addGameHistoryMessage(new GameHistoryMessageFormedChain(this.playerID, chain));
 	}
 }

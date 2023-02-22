@@ -117,8 +117,8 @@
 				on:click={() => onMoveSelected(moveIndex)}
 				on:keydown={undefined}
 			>
-				{#each gameState.gameHistoryMessages as gameHistoryMessageData}
-					<GameHistoryMessage {usernames} {gameHistoryMessageData} />
+				{#each gameState.gameHistoryMessages as gameHistoryMessage}
+					<GameHistoryMessage {usernames} {gameHistoryMessage} />
 				{/each}
 			</div>
 		{/each}

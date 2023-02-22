@@ -1,6 +1,11 @@
-import { GameActionEnum, GameHistoryMessageEnum } from '../enums';
+import { GameActionEnum } from '../enums';
 import { UserInputError } from '../error';
 import type { Game } from '../game';
+import {
+	GameHistoryMessageHasNoPlayableTile,
+	GameHistoryMessagePlayedTile,
+	GameHistoryMessageTurnBegan,
+} from '../gameHistoryMessage';
 import { neighboringTilesLookup } from '../helpers';
 import { PB_GameAction, PB_GameBoardType } from '../pb';
 import { ActionBase } from './base';
@@ -17,7 +22,7 @@ export class ActionPlayTile extends ActionBase {
 
 		this.game.turnPlayerID = this.playerID;
 
-		gameState.addGameHistoryMessage(GameHistoryMessageEnum.TurnBegan, this.playerID, []);
+		gameState.addGameHistoryMessage(new GameHistoryMessageTurnBegan(this.playerID));
 
 		let hasAPlayableTile = false;
 		if (this.playerID === this.game.playerIDWithPlayableTile) {
@@ -42,7 +47,7 @@ export class ActionPlayTile extends ActionBase {
 			return null;
 		} else {
 			this.game.numTurnsWithoutPlayedTiles++;
-			gameState.addGameHistoryMessage(GameHistoryMessageEnum.HasNoPlayableTile, this.playerID, []);
+			gameState.addGameHistoryMessage(new GameHistoryMessageHasNoPlayableTile(this.playerID));
 			return [];
 		}
 	}
@@ -91,7 +96,7 @@ export class ActionPlayTile extends ActionBase {
 
 		this.game
 			.getCurrentGameState()
-			.addGameHistoryMessage(GameHistoryMessageEnum.PlayedTile, this.playerID, [tile]);
+			.addGameHistoryMessage(new GameHistoryMessagePlayedTile(this.playerID, tile));
 
 		return response;
 	}

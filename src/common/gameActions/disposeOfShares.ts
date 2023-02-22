@@ -1,6 +1,7 @@
-import { GameActionEnum, GameHistoryMessageEnum, ScoreBoardIndexEnum } from '../enums';
+import { GameActionEnum, ScoreBoardIndexEnum } from '../enums';
 import { UserInputError } from '../error';
-import type { Game } from '../game';
+import { ScoreBoardAdjustment, type Game } from '../game';
+import { GameHistoryMessageDisposedOfShares } from '../gameHistoryMessage';
 import type { PB_GameAction, PB_GameBoardType } from '../pb';
 import { ActionBase } from './base';
 
@@ -48,28 +49,33 @@ export class ActionDisposeOfShares extends ActionBase {
 		}
 
 		if (tradeAmount > 0 || sellAmount > 0) {
-			const adjustments: [PB_GameBoardType | ScoreBoardIndexEnum, number][] = [
-				[this.defunctChain, -tradeAmount - sellAmount],
+			const adjustments: ScoreBoardAdjustment[] = [
+				new ScoreBoardAdjustment(this.defunctChain, -tradeAmount - sellAmount),
 			];
 			if (tradeAmount > 0) {
-				adjustments.push([this.controllingChain, tradeAmount / 2]);
+				adjustments.push(new ScoreBoardAdjustment(this.controllingChain, tradeAmount / 2));
 			}
 			if (sellAmount > 0) {
-				adjustments.push([
-					ScoreBoardIndexEnum.Cash,
-					sellAmount * this.game.scoreBoardPrice[this.defunctChain],
-				]);
+				adjustments.push(
+					new ScoreBoardAdjustment(
+						ScoreBoardIndexEnum.Cash,
+						sellAmount * this.game.scoreBoardPrice[this.defunctChain],
+					),
+				);
 			}
 			this.game.adjustPlayerScoreBoardRow(this.playerID, adjustments);
 		}
 
 		this.game
 			.getCurrentGameState()
-			.addGameHistoryMessage(GameHistoryMessageEnum.DisposedOfShares, this.playerID, [
-				this.defunctChain,
-				tradeAmount,
-				sellAmount,
-			]);
+			.addGameHistoryMessage(
+				new GameHistoryMessageDisposedOfShares(
+					this.playerID,
+					this.defunctChain,
+					tradeAmount,
+					sellAmount,
+				),
+			);
 
 		return [];
 	}

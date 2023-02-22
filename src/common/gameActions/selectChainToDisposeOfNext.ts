@@ -1,6 +1,7 @@
-import { GameActionEnum, GameHistoryMessageEnum } from '../enums';
+import { GameActionEnum } from '../enums';
 import { UserInputError } from '../error';
 import type { Game } from '../game';
+import { GameHistoryMessageSelectedChainToDisposeOfNext } from '../gameHistoryMessage';
 import { PB_GameAction, PB_GameBoardType } from '../pb';
 import { ActionBase } from './base';
 import { ActionDisposeOfShares } from './disposeOfShares';
@@ -37,9 +38,9 @@ export class ActionSelectChainToDisposeOfNext extends ActionBase {
 
 		this.game
 			.getCurrentGameState()
-			.addGameHistoryMessage(GameHistoryMessageEnum.SelectedChainToDisposeOfNext, this.playerID, [
-				chain,
-			]);
+			.addGameHistoryMessage(
+				new GameHistoryMessageSelectedChainToDisposeOfNext(this.playerID, chain),
+			);
 
 		return this.completeAction(chain);
 	}

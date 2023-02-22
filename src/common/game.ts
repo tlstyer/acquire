@@ -12,9 +12,14 @@ import {
 	defaultTileRackTypes,
 	defaultTileRackTypesList,
 } from './defaults';
-import { GameHistoryMessageEnum, ScoreBoardIndexEnum, TileEnum } from './enums';
+import { ScoreBoardIndexEnum, TileEnum } from './enums';
 import type { ActionBase } from './gameActions/base';
 import { ActionStartGame } from './gameActions/startGame';
+import {
+	GameHistoryMessageDrewLastTile,
+	GameHistoryMessageDrewTile,
+	GameHistoryMessageReplacedDeadTile,
+} from './gameHistoryMessage';
 import { GameState } from './gameState';
 import { calculateBonuses, neighboringTilesLookup } from './helpers';
 import {
@@ -204,17 +209,13 @@ export class Game {
 
 			if (addDrewTileMessage) {
 				this.getCurrentGameState().addGameHistoryMessage(
-					GameHistoryMessageEnum.DrewTile,
-					playerID,
-					[tile],
+					new GameHistoryMessageDrewTile(playerID, tile),
 				);
 			}
 
 			if (this.nextTileBagIndex === 108) {
 				this.getCurrentGameState().addGameHistoryMessage(
-					GameHistoryMessageEnum.DrewLastTile,
-					playerID,
-					[],
+					new GameHistoryMessageDrewLastTile(playerID),
 				);
 			}
 		}
@@ -250,9 +251,7 @@ export class Game {
 				this.removeTile(playerID, tileIndex);
 				this.setGameBoardPosition(tile, PB_GameBoardType.CANT_PLAY_EVER);
 				this.getCurrentGameState().addGameHistoryMessage(
-					GameHistoryMessageEnum.ReplacedDeadTile,
-					playerID,
-					[tile],
+					new GameHistoryMessageReplacedDeadTile(playerID, tile),
 				);
 				this.drawTiles(playerID);
 				this.determineTileRackTypesForPlayer(playerID);
@@ -428,21 +427,18 @@ export class Game {
 		return column;
 	}
 
-	adjustPlayerScoreBoardRow(
-		playerID: number,
-		adjustments: [PB_GameBoardType | ScoreBoardIndexEnum, number][],
-	) {
+	adjustPlayerScoreBoardRow(playerID: number, adjustments: ScoreBoardAdjustment[]) {
 		this.scoreBoard = [...this.scoreBoard];
 		this.scoreBoard[playerID] = [...this.scoreBoard[playerID]];
 		this.scoreBoardAvailable = [...this.scoreBoardAvailable];
 
 		for (let i = 0; i < adjustments.length; i++) {
-			const [scoreBoardIndex, change] = adjustments[i];
+			const adjustment = adjustments[i];
 
-			this.scoreBoard[playerID][scoreBoardIndex] += change;
+			this.scoreBoard[playerID][adjustment.scoreBoardIndex] += adjustment.change;
 
-			if (scoreBoardIndex <= ScoreBoardIndexEnum.Imperial) {
-				this.scoreBoardAvailable[scoreBoardIndex] -= change;
+			if (adjustment.scoreBoardIndex <= ScoreBoardIndexEnum.Imperial) {
+				this.scoreBoardAvailable[adjustment.scoreBoardIndex] -= adjustment.change;
 			}
 		}
 	}
@@ -549,4 +545,11 @@ export class Game {
 		this.gameStateHistory = [...this.gameStateHistory, this.currentGameState];
 		this.currentGameState = null;
 	}
+}
+
+export class ScoreBoardAdjustment {
+	constructor(
+		public scoreBoardIndex: PB_GameBoardType | ScoreBoardIndexEnum,
+		public change: number,
+	) {}
 }

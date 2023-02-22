@@ -9,28 +9,6 @@ export enum GameActionEnum {
 	GameOver,
 }
 
-export enum GameHistoryMessageEnum {
-	TurnBegan,
-	DrewPositionTile,
-	StartedGame,
-	DrewTile,
-	HasNoPlayableTile,
-	PlayedTile,
-	FormedChain,
-	MergedChains,
-	SelectedMergerSurvivor,
-	SelectedChainToDisposeOfNext,
-	ReceivedBonus,
-	DisposedOfShares,
-	CouldNotAffordAnyShares,
-	PurchasedShares,
-	DrewLastTile,
-	ReplacedDeadTile,
-	EndedGame,
-	NoTilesPlayedForEntireRound,
-	AllTilesPlayed,
-}
-
 export enum ScoreBoardIndexEnum {
 	Luxor,
 	Tower,

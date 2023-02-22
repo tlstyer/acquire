@@ -8,9 +8,10 @@ import {
 	defaultTileRacks,
 	defaultTileRackTypesList,
 } from './defaults';
-import { GameActionEnum, GameHistoryMessageEnum, TileEnum } from './enums';
+import { GameActionEnum, TileEnum } from './enums';
 import type { Game } from './game';
 import type { ActionBase } from './gameActions/base';
+import type { GameHistoryMessage } from './gameHistoryMessage';
 import {
 	PB_GameAction,
 	PB_GameBoardType,
@@ -30,7 +31,7 @@ export class GameState {
 	revealedTileRackTiles: PB_GameState_RevealedTileRackTile[] = [];
 	revealedTileBagTiles: GameStateTileBagTile[] = [];
 	playerIDWithPlayableTile: number | null = null;
-	gameHistoryMessages: GameHistoryMessageData[] = [];
+	gameHistoryMessages: GameHistoryMessage[] = [];
 	nextGameAction: ActionBase;
 
 	turnPlayerID = 0;
@@ -108,14 +109,8 @@ export class GameState {
 		}
 	}
 
-	addGameHistoryMessage(
-		gameHistoryMessage: GameHistoryMessageEnum,
-		playerID: number | null,
-		parameters: any[],
-	) {
-		this.gameHistoryMessages.push(
-			new GameHistoryMessageData(gameHistoryMessage, playerID, parameters),
-		);
+	addGameHistoryMessage(gameHistoryMessage: GameHistoryMessage) {
+		this.gameHistoryMessages.push(gameHistoryMessage);
 	}
 
 	endMove() {
@@ -196,14 +191,6 @@ export class GameState {
 
 		return gameState;
 	}
-}
-
-export class GameHistoryMessageData {
-	constructor(
-		public gameHistoryMessage: GameHistoryMessageEnum,
-		public playerID: number | null,
-		public parameters: any[],
-	) {}
 }
 
 export class GameStateTileBagTile {

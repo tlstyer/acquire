@@ -1,5 +1,9 @@
-import { GameActionEnum, GameHistoryMessageEnum } from '../enums';
+import { GameActionEnum } from '../enums';
 import type { Game } from '../game';
+import {
+	GameHistoryMessageDrewPositionTile,
+	GameHistoryMessageStartedGame,
+} from '../gameHistoryMessage';
 import { PB_GameBoardType } from '../pb';
 import { ActionBase } from './base';
 import { ActionPlayTile } from './playTile';
@@ -35,16 +39,14 @@ export class ActionStartGame extends ActionBase {
 			gameState.addTileBagTile(positionTile.tile, null);
 			this.game.setGameBoardPosition(positionTile.tile, PB_GameBoardType.NOTHING_YET);
 			gameState.addGameHistoryMessage(
-				GameHistoryMessageEnum.DrewPositionTile,
-				positionTile.playerID,
-				[positionTile.tile],
+				new GameHistoryMessageDrewPositionTile(positionTile.playerID, positionTile.tile),
 			);
 		}
 
 		this.game.nextTileBagIndex = this.game.userIDs.length;
 
 		// start game
-		gameState.addGameHistoryMessage(GameHistoryMessageEnum.StartedGame, this.playerID, []);
+		gameState.addGameHistoryMessage(new GameHistoryMessageStartedGame(this.playerID));
 		for (let playerID = 0; playerID < this.game.userIDs.length; playerID++) {
 			this.game.drawTiles(playerID);
 		}

@@ -1,6 +1,11 @@
-import { GameActionEnum, GameHistoryMessageEnum, ScoreBoardIndexEnum } from '../enums';
+import { GameActionEnum, ScoreBoardIndexEnum } from '../enums';
 import { UserInputError } from '../error';
 import type { Game } from '../game';
+import {
+	GameHistoryMessageMergedChains,
+	GameHistoryMessageReceivedBonus,
+	GameHistoryMessageSelectedMergerSurvivor,
+} from '../gameHistoryMessage';
 import { calculateBonuses } from '../helpers';
 import { PB_GameAction, PB_GameBoardType } from '../pb';
 import { ActionBase } from './base';
@@ -47,7 +52,7 @@ export class ActionSelectMergerSurvivor extends ActionBase {
 	prepare() {
 		this.game
 			.getCurrentGameState()
-			.addGameHistoryMessage(GameHistoryMessageEnum.MergedChains, this.playerID, [this.chains]);
+			.addGameHistoryMessage(new GameHistoryMessageMergedChains(this.playerID, this.chains));
 
 		if (this.chainsBySize[0].length === 1) {
 			return this.completeAction(this.chainsBySize[0][0]);
@@ -72,7 +77,7 @@ export class ActionSelectMergerSurvivor extends ActionBase {
 
 		this.game
 			.getCurrentGameState()
-			.addGameHistoryMessage(GameHistoryMessageEnum.SelectedMergerSurvivor, this.playerID, [chain]);
+			.addGameHistoryMessage(new GameHistoryMessageSelectedMergerSurvivor(this.playerID, chain));
 
 		return this.completeAction(chain);
 	}
@@ -101,9 +106,7 @@ export class ActionSelectMergerSurvivor extends ActionBase {
 					const chainBonus = chainBonuses[j];
 					bonuses[chainBonus.playerID] += chainBonus.amount;
 					gameState.addGameHistoryMessage(
-						GameHistoryMessageEnum.ReceivedBonus,
-						chainBonus.playerID,
-						[chain, chainBonus.amount],
+						new GameHistoryMessageReceivedBonus(chainBonus.playerID, chain, chainBonus.amount),
 					);
 				}
 			}

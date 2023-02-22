@@ -1,4 +1,4 @@
-import { GameActionEnum, GameHistoryMessageEnum, ScoreBoardIndexEnum, TileEnum } from './enums';
+import { GameActionEnum, ScoreBoardIndexEnum, TileEnum } from './enums';
 import { UserInputError } from './error';
 import { Game } from './game';
 import type { ActionBase } from './gameActions/base';
@@ -7,8 +7,30 @@ import { ActionGameOver } from './gameActions/gameOver';
 import { ActionSelectChainToDisposeOfNext } from './gameActions/selectChainToDisposeOfNext';
 import { ActionSelectMergerSurvivor } from './gameActions/selectMergerSurvivor';
 import { ActionSelectNewChain } from './gameActions/selectNewChain';
+import {
+	GameHistoryMessageAllTilesPlayed,
+	GameHistoryMessageCouldNotAffordAnyShares,
+	GameHistoryMessageDisposedOfShares,
+	GameHistoryMessageDrewLastTile,
+	GameHistoryMessageDrewPositionTile,
+	GameHistoryMessageDrewTile,
+	GameHistoryMessageEndedGame,
+	GameHistoryMessageFormedChain,
+	GameHistoryMessageHasNoPlayableTile,
+	GameHistoryMessageMergedChains,
+	GameHistoryMessageNoTilesPlayedForEntireRound,
+	GameHistoryMessagePlayedTile,
+	GameHistoryMessagePurchasedShares,
+	GameHistoryMessageReceivedBonus,
+	GameHistoryMessageReplacedDeadTile,
+	GameHistoryMessageSelectedChainToDisposeOfNext,
+	GameHistoryMessageSelectedMergerSurvivor,
+	GameHistoryMessageStartedGame,
+	GameHistoryMessageTurnBegan,
+	type GameHistoryMessage,
+} from './gameHistoryMessage';
 import { gameToJSON } from './gameSerialization';
-import type { GameHistoryMessageData, GameState, GameStateTileBagTile } from './gameState';
+import type { GameState, GameStateTileBagTile } from './gameState';
 import { getValueOfKey, lowercaseFirstLetter } from './helpers';
 import {
 	PB_GameAction,
@@ -636,74 +658,98 @@ function fromTileString(str: string) {
 	}
 }
 
-const ghmsh = (ghmd: GameHistoryMessageData) => {
-	return GameHistoryMessageEnum[ghmd.gameHistoryMessage];
-};
-const ghmshPlayerID = (ghmd: GameHistoryMessageData) => {
-	return [ghmd.playerID, GameHistoryMessageEnum[ghmd.gameHistoryMessage]].join(' ');
-};
-const ghmshPlayerIDTile = (ghmd: GameHistoryMessageData) => {
-	return [
-		ghmd.playerID,
-		GameHistoryMessageEnum[ghmd.gameHistoryMessage],
-		toTileString(ghmd.parameters[0]),
-	].join(' ');
-};
-const ghmshPlayerIDType = (ghmd: GameHistoryMessageData) => {
-	return [
-		ghmd.playerID,
-		GameHistoryMessageEnum[ghmd.gameHistoryMessage],
-		PB_GameBoardType[ghmd.parameters[0]][0],
-		...ghmd.parameters.slice(1),
-	].join(' ');
-};
-const ghmshMergedChains = (ghmd: GameHistoryMessageData) => {
-	return [
-		ghmd.playerID,
-		GameHistoryMessageEnum[ghmd.gameHistoryMessage],
-		ghmd.parameters[0].map((x: PB_GameBoardType) => PB_GameBoardType[x][0]).join(','),
-	].join(' ');
-};
-const ghmshPurchasedShares = (ghmd: GameHistoryMessageData) => {
-	return [
-		ghmd.playerID,
-		GameHistoryMessageEnum[ghmd.gameHistoryMessage],
-		ghmd.parameters[0].length > 0
-			? ghmd.parameters[0]
-					.map(
-						([type, count]: [ScoreBoardIndexEnum, number]) =>
-							`${count}${PB_GameBoardType[type][0]}`,
-					)
-					.join(',')
-			: 'x',
-	].join(' ');
-};
+function getGameHistoryMessageString(gameHistoryMessage: GameHistoryMessage) {
+	let parts: (number | string)[];
 
-const gameHistoryMessageStringHandlers = new Map([
-	[GameHistoryMessageEnum.TurnBegan, ghmshPlayerID],
-	[GameHistoryMessageEnum.DrewPositionTile, ghmshPlayerIDTile],
-	[GameHistoryMessageEnum.StartedGame, ghmshPlayerID],
-	[GameHistoryMessageEnum.DrewTile, ghmshPlayerIDTile],
-	[GameHistoryMessageEnum.HasNoPlayableTile, ghmshPlayerID],
-	[GameHistoryMessageEnum.PlayedTile, ghmshPlayerIDTile],
-	[GameHistoryMessageEnum.FormedChain, ghmshPlayerIDType],
-	[GameHistoryMessageEnum.MergedChains, ghmshMergedChains],
-	[GameHistoryMessageEnum.SelectedMergerSurvivor, ghmshPlayerIDType],
-	[GameHistoryMessageEnum.SelectedChainToDisposeOfNext, ghmshPlayerIDType],
-	[GameHistoryMessageEnum.ReceivedBonus, ghmshPlayerIDType],
-	[GameHistoryMessageEnum.DisposedOfShares, ghmshPlayerIDType],
-	[GameHistoryMessageEnum.CouldNotAffordAnyShares, ghmshPlayerID],
-	[GameHistoryMessageEnum.PurchasedShares, ghmshPurchasedShares],
-	[GameHistoryMessageEnum.DrewLastTile, ghmshPlayerID],
-	[GameHistoryMessageEnum.ReplacedDeadTile, ghmshPlayerIDTile],
-	[GameHistoryMessageEnum.EndedGame, ghmshPlayerID],
-	[GameHistoryMessageEnum.NoTilesPlayedForEntireRound, ghmsh],
-	[GameHistoryMessageEnum.AllTilesPlayed, ghmsh],
-]);
-function getGameHistoryMessageString(gameHistoryMessage: GameHistoryMessageData) {
-	return gameHistoryMessageStringHandlers.get(gameHistoryMessage.gameHistoryMessage)!(
-		gameHistoryMessage,
-	);
+	if (gameHistoryMessage instanceof GameHistoryMessageTurnBegan) {
+		parts = [gameHistoryMessage.playerID, 'TurnBegan'];
+	} else if (gameHistoryMessage instanceof GameHistoryMessageDrewPositionTile) {
+		parts = [
+			gameHistoryMessage.playerID,
+			'DrewPositionTile',
+			toTileString(gameHistoryMessage.tile),
+		];
+	} else if (gameHistoryMessage instanceof GameHistoryMessageStartedGame) {
+		parts = [gameHistoryMessage.playerID, 'StartedGame'];
+	} else if (gameHistoryMessage instanceof GameHistoryMessageDrewTile) {
+		parts = [gameHistoryMessage.playerID, 'DrewTile', toTileString(gameHistoryMessage.tile)];
+	} else if (gameHistoryMessage instanceof GameHistoryMessageHasNoPlayableTile) {
+		parts = [gameHistoryMessage.playerID, 'HasNoPlayableTile'];
+	} else if (gameHistoryMessage instanceof GameHistoryMessagePlayedTile) {
+		parts = [gameHistoryMessage.playerID, 'PlayedTile', toTileString(gameHistoryMessage.tile)];
+	} else if (gameHistoryMessage instanceof GameHistoryMessageFormedChain) {
+		parts = [
+			gameHistoryMessage.playerID,
+			'FormedChain',
+			PB_GameBoardType[gameHistoryMessage.chain][0],
+		];
+	} else if (gameHistoryMessage instanceof GameHistoryMessageMergedChains) {
+		parts = [
+			gameHistoryMessage.playerID,
+			'MergedChains',
+			gameHistoryMessage.chains.map((chain) => PB_GameBoardType[chain][0]).join(','),
+		];
+	} else if (gameHistoryMessage instanceof GameHistoryMessageSelectedMergerSurvivor) {
+		parts = [
+			gameHistoryMessage.playerID,
+			'SelectedMergerSurvivor',
+			PB_GameBoardType[gameHistoryMessage.chain][0],
+		];
+	} else if (gameHistoryMessage instanceof GameHistoryMessageSelectedChainToDisposeOfNext) {
+		parts = [
+			gameHistoryMessage.playerID,
+			'SelectedChainToDisposeOfNext',
+			PB_GameBoardType[gameHistoryMessage.chain][0],
+		];
+	} else if (gameHistoryMessage instanceof GameHistoryMessageReceivedBonus) {
+		parts = [
+			gameHistoryMessage.playerID,
+			'ReceivedBonus',
+			PB_GameBoardType[gameHistoryMessage.chain][0],
+			gameHistoryMessage.amount,
+		];
+	} else if (gameHistoryMessage instanceof GameHistoryMessageDisposedOfShares) {
+		parts = [
+			gameHistoryMessage.playerID,
+			'DisposedOfShares',
+			PB_GameBoardType[gameHistoryMessage.chain][0],
+			gameHistoryMessage.tradeAmount,
+			gameHistoryMessage.sellAmount,
+		];
+	} else if (gameHistoryMessage instanceof GameHistoryMessageCouldNotAffordAnyShares) {
+		parts = [gameHistoryMessage.playerID, 'CouldNotAffordAnyShares'];
+	} else if (gameHistoryMessage instanceof GameHistoryMessagePurchasedShares) {
+		parts = [
+			gameHistoryMessage.playerID,
+			'PurchasedShares',
+			gameHistoryMessage.chainsAndCounts.length > 0
+				? gameHistoryMessage.chainsAndCounts
+						.map(
+							(chainAndCount) =>
+								`${chainAndCount.count}${PB_GameBoardType[chainAndCount.chain][0]}`,
+						)
+						.join(',')
+				: 'x',
+		];
+	} else if (gameHistoryMessage instanceof GameHistoryMessageDrewLastTile) {
+		parts = [gameHistoryMessage.playerID, 'DrewLastTile'];
+	} else if (gameHistoryMessage instanceof GameHistoryMessageReplacedDeadTile) {
+		parts = [
+			gameHistoryMessage.playerID,
+			'ReplacedDeadTile',
+			toTileString(gameHistoryMessage.tile),
+		];
+	} else if (gameHistoryMessage instanceof GameHistoryMessageEndedGame) {
+		parts = [gameHistoryMessage.playerID, 'EndedGame'];
+	} else if (gameHistoryMessage instanceof GameHistoryMessageNoTilesPlayedForEntireRound) {
+		parts = ['NoTilesPlayedForEntireRound'];
+	} else if (gameHistoryMessage instanceof GameHistoryMessageAllTilesPlayed) {
+		parts = ['AllTilesPlayed'];
+	} else {
+		parts = [];
+	}
+
+	return parts.join(' ');
 }
 
 function getNextActionString(action: ActionBase) {
