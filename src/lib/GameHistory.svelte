@@ -75,17 +75,15 @@
 	</div>
 	<div class="messages">
 		{#each gameStateHistory as gameState, moveIndex}
-			<div>
-				<div
-					class="move"
-					class:selected={moveIndex === selectedMove}
-					on:click={() => onMoveSelected(moveIndex)}
-					on:keydown={undefined}
-				>
-					{#each gameState.gameHistoryMessages as gameHistoryMessageData}
-						<GameHistoryMessage {usernames} {gameHistoryMessageData} />
-					{/each}
-				</div>
+			<div
+				class="move"
+				class:selected={moveIndex === selectedMove}
+				on:click={() => onMoveSelected(moveIndex)}
+				on:keydown={undefined}
+			>
+				{#each gameState.gameHistoryMessages as gameHistoryMessageData}
+					<GameHistoryMessage {usernames} {gameHistoryMessageData} />
+				{/each}
 			</div>
 		{/each}
 	</div>
