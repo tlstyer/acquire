@@ -61,15 +61,10 @@
 </script>
 
 <script lang="ts">
+	import { gameModeToNumPlayers, gameModeToTeamSize } from '../common/helpers';
 	import { PB_GameMode, PB_PlayerArrangementMode } from '../common/pb';
 	import GameSetupUIKickUserAndApproveCells from './children/GameSetupUIKickUserAndApproveCells.svelte';
-	import {
-		allGameModes,
-		gameModeToNumPlayers,
-		gameModeToString,
-		gameModeToTeamSize,
-		teamNumberToCSSClassName,
-	} from './helpers';
+	import { allGameModes, gameModeToString, teamNumberToCSSClassName } from './helpers';
 
 	export let gameMode: PB_GameMode;
 	export let playerArrangementMode: PB_PlayerArrangementMode;

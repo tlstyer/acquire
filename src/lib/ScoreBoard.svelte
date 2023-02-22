@@ -2,14 +2,13 @@
 
 <script lang="ts">
 	import { ScoreBoardIndexEnum } from '../common/enums';
+	import { gameModeToNumPlayers, gameModeToTeamSize } from '../common/helpers';
 	import type { PB_GameMode } from '../common/pb';
 	import ScoreBoardRow from './children/ScoreBoardRow.svelte';
 	import {
 		allChains,
 		gameBoardTypeToCSSClassName,
 		gameBoardTypeToHotelInitial,
-		gameModeToNumPlayers,
-		gameModeToTeamSize,
 		teamNumberToCSSClassName,
 	} from './helpers';
 

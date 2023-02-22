@@ -56,30 +56,6 @@ export const teamNumberToCSSClassName = new Map([
 	[3, 'color-team3'],
 ]);
 
-export const gameModeToTeamSize = new Map([
-	[PB_GameMode.SINGLES_1, 1],
-	[PB_GameMode.SINGLES_2, 1],
-	[PB_GameMode.SINGLES_3, 1],
-	[PB_GameMode.SINGLES_4, 1],
-	[PB_GameMode.SINGLES_5, 1],
-	[PB_GameMode.SINGLES_6, 1],
-	[PB_GameMode.TEAMS_2_VS_2, 2],
-	[PB_GameMode.TEAMS_2_VS_2_VS_2, 2],
-	[PB_GameMode.TEAMS_3_VS_3, 3],
-]);
-
-export const gameModeToNumPlayers = new Map([
-	[PB_GameMode.SINGLES_1, 1],
-	[PB_GameMode.SINGLES_2, 2],
-	[PB_GameMode.SINGLES_3, 3],
-	[PB_GameMode.SINGLES_4, 4],
-	[PB_GameMode.SINGLES_5, 5],
-	[PB_GameMode.SINGLES_6, 6],
-	[PB_GameMode.TEAMS_2_VS_2, 4],
-	[PB_GameMode.TEAMS_2_VS_2_VS_2, 6],
-	[PB_GameMode.TEAMS_3_VS_3, 6],
-]);
-
 export enum GameBoardLabelMode {
 	Coordinates,
 	HotelInitials,

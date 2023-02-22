@@ -1,14 +1,9 @@
 <svelte:options immutable />
 
 <script lang="ts">
+	import { gameModeToNumPlayers, gameModeToTeamSize } from '../common/helpers';
 	import type { PB_GameBoardType, PB_GameMode, PB_GameStatus } from '../common/pb';
-	import {
-		gameModeToNumPlayers,
-		gameModeToString,
-		gameModeToTeamSize,
-		gameStatusToString,
-		teamNumberToCSSClassName,
-	} from './helpers';
+	import { gameModeToString, gameStatusToString, teamNumberToCSSClassName } from './helpers';
 	import MiniGameBoard from './MiniGameBoard.svelte';
 
 	export let gameBoard: PB_GameBoardType[][];
