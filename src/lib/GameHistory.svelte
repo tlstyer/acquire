@@ -1,6 +1,7 @@
 <svelte:options immutable />
 
 <script lang="ts">
+	import { afterUpdate } from 'svelte';
 	import type { GameState } from '../common/game';
 	import GameHistoryMessage from './children/GameHistoryMessage.svelte';
 
@@ -10,8 +11,42 @@
 	export let keyboardShortcutsEnabled: boolean;
 	export let onMoveSelected: (index: number) => void;
 
+	let parentElement: HTMLDivElement | undefined;
+	let moveElements: (HTMLDivElement | undefined)[] = [];
+
+	let lastSelectedMove = -1;
+
 	$: lastMoveIndex = gameStateHistory.length - 1;
 	$: actualSelectedMove = selectedMove ?? lastMoveIndex;
+
+	afterUpdate(() => {
+		if (actualSelectedMove !== lastSelectedMove) {
+			const selectedMoveElement = moveElements[actualSelectedMove];
+
+			if (parentElement && selectedMoveElement) {
+				// scroll so that selected move element is in view
+
+				const parentScrollTop = parentElement.scrollTop;
+				const parentScrollBottom = parentScrollTop + parentElement.clientHeight;
+
+				const selectedMoveRelativeOffsetTop =
+					selectedMoveElement.offsetTop - parentElement.offsetTop;
+				const selectedMoveRelativeOffsetBottom =
+					selectedMoveRelativeOffsetTop + selectedMoveElement.clientHeight;
+
+				if (
+					selectedMoveRelativeOffsetTop < parentScrollTop ||
+					selectedMoveElement.clientHeight > parentElement.clientHeight
+				) {
+					parentElement.scrollTop = selectedMoveRelativeOffsetTop;
+				} else if (selectedMoveRelativeOffsetBottom > parentScrollBottom) {
+					parentElement.scrollTop = selectedMoveRelativeOffsetBottom - parentElement.clientHeight;
+				}
+			}
+
+			lastSelectedMove = actualSelectedMove;
+		}
+	});
 
 	function handleKeydown(event: KeyboardEvent) {
 		if (keyboardShortcutsEnabled) {
@@ -73,11 +108,12 @@
 			</svg>
 		</button>
 	</div>
-	<div class="messages">
+	<div class="messages" bind:this={parentElement}>
 		{#each gameStateHistory as gameState, moveIndex}
 			<div
 				class="move"
 				class:selected={moveIndex === selectedMove}
+				bind:this={moveElements[moveIndex]}
 				on:click={() => onMoveSelected(moveIndex)}
 				on:keydown={undefined}
 			>
