@@ -67,7 +67,7 @@
 
 <svelte:window on:keydown={handleKeydown} />
 
-<div class="root" style="font-size: {Math.floor(buttonSize * 0.4)}">
+<div class="root" style="font-size: {Math.floor(buttonSize * 0.4)}px">
 	{#each allTileData as tileData}
 		{#if tileData}
 			<input

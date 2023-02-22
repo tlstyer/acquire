@@ -60,7 +60,7 @@
 <svelte:window on:keydown={handleKeydown} />
 
 <div>
-	<fieldset style="font-size: {Math.floor(buttonSize * 0.4)}">
+	<fieldset style="font-size: {Math.floor(buttonSize * 0.4)}px">
 		<legend>{typeToInstructions.get(type)}</legend>
 		{#each allChains as chain}
 			{#if availableChains.indexOf(chain) >= 0}
