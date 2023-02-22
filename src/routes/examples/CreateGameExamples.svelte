@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { PB_GameMode } from '$common/pb';
 	import CreateGame from '$lib/CreateGame.svelte';
+	import { PB_GameMode } from '../../common/pb';
 
 	const allCreateGameProps = [
 		{ onSubmit: onSubmitCreateGame },

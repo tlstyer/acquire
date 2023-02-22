@@ -1,7 +1,7 @@
 <svelte:options immutable />
 
 <script lang="ts">
-	import { PB_GameBoardType } from '$common/pb';
+	import { PB_GameBoardType } from '../../common/pb';
 	import {
 		GameBoardLabelMode,
 		gameBoardTypeToCSSClassName,

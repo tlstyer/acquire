@@ -1,6 +1,9 @@
 <svelte:options immutable />
 
 <script lang="ts">
+	import { getTileString } from '$lib/helpers';
+	import HotelName from '$lib/HotelName.svelte';
+	import Username from '$lib/Username.svelte';
 	import {
 		GameHistoryMessageAllTilesPlayed,
 		GameHistoryMessageCouldNotAffordAnyShares,
@@ -22,10 +25,7 @@
 		GameHistoryMessageStartedGame,
 		GameHistoryMessageTurnBegan,
 		type GameHistoryMessage,
-	} from '$common/gameHistoryMessage';
-	import { getTileString } from '$lib/helpers';
-	import HotelName from '$lib/HotelName.svelte';
-	import Username from '$lib/Username.svelte';
+	} from '../../common/gameHistoryMessage';
 
 	export let usernames: string[];
 	export let gameHistoryMessage: GameHistoryMessage;

@@ -1,7 +1,7 @@
 <script lang="ts">
-	import type { PB_GameBoardType } from '$common/pb';
 	import { gameBoardTypeToHotelInitial } from '$lib/helpers';
 	import PurchaseShares from '$lib/PurchaseShares.svelte';
+	import type { PB_GameBoardType } from '../../common/pb';
 	import EnableKeyboardShortcutsButton from './EnableKeyboardShortcutsButton.svelte';
 
 	const allPurchaseSharesProps = [

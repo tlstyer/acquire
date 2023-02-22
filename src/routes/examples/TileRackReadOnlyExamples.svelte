@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { PB_GameBoardType } from '$common/pb';
 	import TileRackReadOnly from '$lib/TileRackReadOnly.svelte';
+	import { PB_GameBoardType } from '../../common/pb';
 
 	const allTileRackReadOnlyProps = [
 		{

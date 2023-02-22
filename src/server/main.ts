@@ -1,6 +1,6 @@
-import { setupTextDecoderAndTextEncoder } from '$common/nodeSpecificStuff';
 import http from 'http';
 import { WebSocketServer } from 'ws';
+import { setupTextDecoderAndTextEncoder } from '../common/nodeSpecificStuff';
 import { TestUserDataProvider } from './userDataProvider';
 
 setupTextDecoderAndTextEncoder();

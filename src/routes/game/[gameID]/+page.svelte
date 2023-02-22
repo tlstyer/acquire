@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { gameFromProtocolBuffer } from '$common/gameSerialization';
-	import { PB_GameReview } from '$common/pb';
+	import { gameFromProtocolBuffer } from '../../../common/gameSerialization';
+	import { PB_GameReview } from '../../../common/pb';
 	import type { PageServerData } from './$types';
 	import Game from './Game.svelte';
 

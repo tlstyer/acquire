@@ -43,7 +43,7 @@
 </script>
 
 <script lang="ts">
-	import type { PB_GameBoardType } from '$common/pb';
+	import type { PB_GameBoardType } from '../common/pb';
 	import { allChains, gameBoardTypeToCSSClassName, gameBoardTypeToHotelInitial } from './helpers';
 
 	export let scoreBoardAvailable: number[];

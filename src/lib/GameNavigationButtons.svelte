@@ -1,7 +1,7 @@
 <svelte:options immutable />
 
 <script lang="ts">
-	import type { GameState } from '$common/gameState';
+	import type { GameState } from '../common/gameState';
 
 	export let gameStateHistory: GameState[];
 	export let selectedMove: number | undefined = undefined;

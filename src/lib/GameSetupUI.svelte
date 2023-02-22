@@ -61,7 +61,7 @@
 </script>
 
 <script lang="ts">
-	import { PB_GameMode, PB_PlayerArrangementMode } from '$common/pb';
+	import { PB_GameMode, PB_PlayerArrangementMode } from '../common/pb';
 	import GameSetupUIKickUserAndApproveCells from './children/GameSetupUIKickUserAndApproveCells.svelte';
 	import {
 		allGameModes,

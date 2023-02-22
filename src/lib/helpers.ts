@@ -1,5 +1,5 @@
-import { TileEnum } from '$common/enums';
-import { PB_GameBoardType, PB_GameMode, PB_GameStatus } from '$common/pb';
+import { TileEnum } from '../common/enums';
+import { PB_GameBoardType, PB_GameMode, PB_GameStatus } from '../common/pb';
 
 export const allChains = [
 	PB_GameBoardType.LUXOR,

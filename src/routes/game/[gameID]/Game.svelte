@@ -1,6 +1,4 @@
 <script lang="ts">
-	import type { Game } from '$common/game';
-	import { ActionGameOver } from '$common/gameActions/gameOver';
 	import GameBoard from '$lib/GameBoard.svelte';
 	import GameHistory from '$lib/GameHistory.svelte';
 	import GameNavigationButtons from '$lib/GameNavigationButtons.svelte';
@@ -8,6 +6,8 @@
 	import { GameBoardLabelMode } from '$lib/helpers';
 	import ScoreBoard from '$lib/ScoreBoard.svelte';
 	import TileRackReadOnly from '$lib/TileRackReadOnly.svelte';
+	import type { Game } from '../../../common/game';
+	import { ActionGameOver } from '../../../common/gameActions/gameOver';
 
 	export let game: Game;
 

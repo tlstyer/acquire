@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { GameSetup } from '$common/gameSetup';
-	import { PB_GameMode, PB_PlayerArrangementMode } from '$common/pb';
 	import GameSetupUI from '$lib/GameSetupUI.svelte';
+	import { GameSetup } from '../../common/gameSetup';
+	import { PB_GameMode, PB_PlayerArrangementMode } from '../../common/pb';
 
 	const hostUserID = 1;
 	let gameSetup = new GameSetup(

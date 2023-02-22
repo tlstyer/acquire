@@ -16,7 +16,7 @@
 </script>
 
 <script lang="ts">
-	import { PB_GameBoardType } from '$common/pb';
+	import { PB_GameBoardType } from '../common/pb';
 	import { gameBoardTypeToCSSClassName, getTileString } from './helpers';
 
 	export let tiles: (number | null)[];

@@ -1,8 +1,8 @@
 <svelte:options immutable />
 
 <script lang="ts">
-	import type { GameState } from '$common/gameState';
 	import { afterUpdate } from 'svelte';
+	import type { GameState } from '../common/gameState';
 	import GameHistoryMessage from './children/GameHistoryMessage.svelte';
 
 	export let usernames: string[];

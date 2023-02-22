@@ -1,7 +1,7 @@
 <svelte:options immutable />
 
 <script lang="ts">
-	import type { PB_GameBoardType } from '$common/pb';
+	import type { PB_GameBoardType } from '../../common/pb';
 	import { gameBoardTypeToCSSClassName, gameBoardTypeToHotelInitial } from '../helpers';
 
 	export let chains: PB_GameBoardType[] = [];
