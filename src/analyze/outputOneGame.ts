@@ -3,7 +3,6 @@ import { GameHistoryMessageReceivedBonus } from '../common/gameHistoryMessage';
 import { gameFromProtocolBuffer } from '../common/gameSerialization';
 import { PB_GameReview } from '../common/pb';
 import { getGameHistoryMessageString } from '../common/runGameTestFile';
-import { updateReviewGamePBBinary } from './misc';
 
 function main(gameFilePath: string) {
 	const gameReviewFileContents = fs.readFileSync(gameFilePath);
@@ -37,8 +36,6 @@ function main(gameFilePath: string) {
 			}
 		}
 	}
-
-	updateReviewGamePBBinary(gameReviewFileContents);
 }
 
 main(process.argv[2]);

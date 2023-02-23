@@ -28,19 +28,6 @@ export function* iterateGamesInDirectory(dirPath: string, completedGamesOnly = f
 	}
 }
 
-export function updateReviewGamePBBinary(gameReviewFileContents: Buffer) {
-	const pathToFile = path.join(__dirname, '../../src/client/reviewGamePBBinary.ts');
-
-	const currentContents = fs.readFileSync(pathToFile).toString();
-	const desiredContents = `export const reviewGamePBBinary = new Uint8Array(${JSON.stringify([
-		...gameReviewFileContents,
-	])});\n`;
-
-	if (desiredContents !== currentContents) {
-		fs.writeFileSync(pathToFile, desiredContents);
-	}
-}
-
 export function determineTeamUserIDs(gameMode: PB_GameMode, userIDs: number[]) {
 	const numTeams = gameModeToNumPlayers.get(gameMode)! / gameModeToTeamSize.get(gameMode)!;
 	const grouped: number[][] = new Array(numTeams);
