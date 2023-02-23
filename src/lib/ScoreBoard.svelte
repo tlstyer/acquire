@@ -27,20 +27,35 @@
 	const numTeams = gameModeToNumPlayers.get(gameMode)! / gameModeToTeamSize.get(gameMode)!;
 
 	const teamNumbers: (number | undefined)[] = new Array(3);
-	const teamTotals: (number | undefined)[] = new Array(3);
 	if (isTeamGame) {
 		if (numTeams === 2) {
 			teamNumbers[1] = 1;
 			teamNumbers[2] = 2;
-			teamTotals[1] = getTeamTotal(scoreBoard, numTeams, 1);
-			teamTotals[2] = getTeamTotal(scoreBoard, numTeams, 2);
 		} else {
 			teamNumbers[0] = 1;
 			teamNumbers[1] = 2;
 			teamNumbers[2] = 3;
-			teamTotals[0] = getTeamTotal(scoreBoard, numTeams, 1);
-			teamTotals[1] = getTeamTotal(scoreBoard, numTeams, 2);
-			teamTotals[2] = getTeamTotal(scoreBoard, numTeams, 3);
+		}
+	}
+
+	let teamTotals: (number | undefined)[] = new Array(3);
+	$: if (isTeamGame) {
+		const updatedTeamTotals = new Array(3);
+		if (numTeams === 2) {
+			updatedTeamTotals[1] = getTeamTotal(scoreBoard, 1);
+			updatedTeamTotals[2] = getTeamTotal(scoreBoard, 2);
+		} else {
+			updatedTeamTotals[0] = getTeamTotal(scoreBoard, 1);
+			updatedTeamTotals[1] = getTeamTotal(scoreBoard, 2);
+			updatedTeamTotals[2] = getTeamTotal(scoreBoard, 3);
+		}
+
+		if (
+			teamTotals[0] !== updatedTeamTotals[0] ||
+			teamTotals[1] !== updatedTeamTotals[1] ||
+			teamTotals[2] !== updatedTeamTotals[2]
+		) {
+			teamTotals = updatedTeamTotals;
 		}
 	}
 
@@ -51,7 +66,7 @@
 			: 'player';
 	}
 
-	function getTeamTotal(scoreBoard: number[][], numTeams: number, teamNumber: number) {
+	function getTeamTotal(scoreBoard: number[][], teamNumber: number) {
 		let teamTotal = 0;
 		for (let playerID = teamNumber - 1; playerID < scoreBoard.length; playerID += numTeams) {
 			teamTotal += scoreBoard[playerID][ScoreBoardIndexEnum.Net];
