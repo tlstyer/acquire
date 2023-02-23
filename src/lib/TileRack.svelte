@@ -2,7 +2,6 @@
 	type TileData = {
 		tile: number;
 		type: PB_GameBoardType;
-		element?: HTMLInputElement;
 	};
 
 	const keyboardShortcutToTileIndex = new Map([
@@ -28,6 +27,9 @@
 	let allTileData: (TileData | undefined)[] = new Array(6);
 	allTileData.fill(undefined);
 
+	let inputs: (HTMLInputElement | undefined)[] = new Array(6);
+	inputs.fill(undefined);
+
 	$: for (let i = 0; i < tiles.length; i++) {
 		const tile = tiles[i];
 		const type = types[i];
@@ -51,7 +53,7 @@
 			const tileIndex = keyboardShortcutToTileIndex.get(event.key);
 
 			if (tileIndex !== undefined) {
-				allTileData[tileIndex]?.element?.focus();
+				inputs[tileIndex]?.focus();
 			}
 		}
 	}
@@ -66,7 +68,7 @@
 <svelte:window on:keydown={handleKeydown} />
 
 <div class="root" style="font-size: {Math.floor(buttonSize * 0.4)}px">
-	{#each allTileData as tileData}
+	{#each allTileData as tileData, tileIndex}
 		{#if tileData}
 			<input
 				type="button"
@@ -76,7 +78,7 @@
 				disabled={tileData.type === PB_GameBoardType.CANT_PLAY_EVER ||
 					tileData.type === PB_GameBoardType.CANT_PLAY_NOW}
 				on:click={() => onClick(tileData)}
-				bind:this={tileData.element}
+				bind:this={inputs[tileIndex]}
 			/>
 		{:else}
 			<input type="button" class="invisible" style={buttonStyle} value="?" />
