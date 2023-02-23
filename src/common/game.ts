@@ -470,7 +470,7 @@ export class Game {
 		this.scoreBoardChainSize = [...this.scoreBoardChainSize];
 		this.scoreBoardChainSize[scoreBoardIndex] = size;
 
-		if (size >= 11) {
+		if (size >= 11 && !this.safeChains[scoreBoardIndex]) {
 			this.safeChains = [...this.safeChains];
 			this.safeChains[scoreBoardIndex] = true;
 		}
