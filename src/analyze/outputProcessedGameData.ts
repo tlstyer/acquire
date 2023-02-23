@@ -1,6 +1,9 @@
 import path from 'path';
-import { GameHistoryMessageEnum } from '../common/enums';
-import { Game } from '../common/game';
+import type { Game } from '../common/game';
+import {
+	GameHistoryMessageReceivedBonus,
+	GameHistoryMessageReplacedDeadTile,
+} from '../common/gameHistoryMessage';
 import {
 	calculateFinalTeamScores,
 	calculatePlacings,
@@ -33,7 +36,7 @@ function processGame(game: Game, filePath: string) {
 			return (
 				numMergersSoFar +
 				(gameState.gameHistoryMessages.filter(
-					(ghmd) => ghmd.gameHistoryMessage === GameHistoryMessageEnum.ReceivedBonus,
+					(gameHistoryMessage) => gameHistoryMessage instanceof GameHistoryMessageReceivedBonus,
 				).length > 0
 					? 1
 					: 0)
@@ -41,7 +44,7 @@ function processGame(game: Game, filePath: string) {
 		}, 0),
 		mostDeadTilesReplaced: game.gameStateHistory.reduce((mostDeadTilesReplacedSoFar, gameState) => {
 			const deadTilesReplaced = gameState.gameHistoryMessages.filter(
-				(ghmd) => ghmd.gameHistoryMessage === GameHistoryMessageEnum.ReplacedDeadTile,
+				(gameHistoryMessage) => gameHistoryMessage instanceof GameHistoryMessageReplacedDeadTile,
 			).length;
 			return deadTilesReplaced > mostDeadTilesReplacedSoFar
 				? deadTilesReplaced

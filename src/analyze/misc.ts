@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { ScoreBoardIndexEnum } from '../common/enums';
-import { Game } from '../common/game';
+import type { Game } from '../common/game';
 import { ActionGameOver } from '../common/gameActions/gameOver';
 import { gameFromProtocolBuffer } from '../common/gameSerialization';
 import { gameModeToNumPlayers, gameModeToTeamSize } from '../common/helpers';

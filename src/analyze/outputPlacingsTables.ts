@@ -1,7 +1,7 @@
 import fs from 'fs';
 import readline from 'readline';
 import { PB_GameMode } from '../common/pb';
-import { ProcessGameDataType } from './outputProcessedGameData';
+import type { ProcessGameDataType } from './outputProcessedGameData';
 
 async function main(processedGameDataFilePath: string) {
 	const gameModeToPlacingsForGameMode = new Map<PB_GameMode, PlacingsForGameMode>();

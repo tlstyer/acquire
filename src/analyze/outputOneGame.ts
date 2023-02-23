@@ -1,5 +1,5 @@
 import fs from 'fs';
-import { GameHistoryMessageEnum } from '../common/enums';
+import { GameHistoryMessageReceivedBonus } from '../common/gameHistoryMessage';
 import { gameFromProtocolBuffer } from '../common/gameSerialization';
 import { PB_GameReview } from '../common/pb';
 import { getGameHistoryMessageString } from '../common/runGameTestFile';
@@ -26,7 +26,7 @@ function main(gameFilePath: string) {
 		const gameState = game.gameStateHistory[i];
 		const mergedChains =
 			gameState.gameHistoryMessages.filter(
-				(m) => m.gameHistoryMessage === GameHistoryMessageEnum.ReceivedBonus,
+				(gameHistoryMessage) => gameHistoryMessage instanceof GameHistoryMessageReceivedBonus,
 			).length > 0;
 
 		if (mergedChains) {

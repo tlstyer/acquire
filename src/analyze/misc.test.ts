@@ -1,3 +1,4 @@
+import { describe, expect, test } from 'vitest';
 import { calculatePlacings } from './misc';
 
 describe('calculatePlacings', () => {
