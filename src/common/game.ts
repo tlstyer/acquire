@@ -459,8 +459,10 @@ export class Game {
 		this.scoreBoard = [...this.scoreBoard];
 
 		for (let playerID = 0; playerID < values.length; playerID++) {
-			this.scoreBoard[playerID] = [...this.scoreBoard[playerID]];
-			this.scoreBoard[playerID][scoreBoardIndex] = values[playerID];
+			if (this.scoreBoard[playerID][scoreBoardIndex] !== values[playerID]) {
+				this.scoreBoard[playerID] = [...this.scoreBoard[playerID]];
+				this.scoreBoard[playerID][scoreBoardIndex] = values[playerID];
+			}
 		}
 	}
 
