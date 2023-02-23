@@ -66,15 +66,17 @@ export class ActionPlayTile extends ActionBase {
 		}
 		const tileType = this.game.tileRackTypes[this.playerID][tileRackIndex];
 
-		let response: ActionBase[] = [];
+		let response: ActionBase[];
 		if (tileType !== null && tileType <= PB_GameBoardType.IMPERIAL) {
 			this.game.fillCells(tile, tileType);
 			this.game.setChainSize(tileType, this.game.gameBoardTypeCounts[tileType]);
+			response = [];
 		} else if (
 			tileType === PB_GameBoardType.WILL_PUT_LONELY_TILE_DOWN ||
 			tileType === PB_GameBoardType.HAVE_NEIGHBORING_TILE_TOO
 		) {
 			this.game.setGameBoardPosition(tile, PB_GameBoardType.NOTHING_YET);
+			response = [];
 		} else if (tileType === PB_GameBoardType.WILL_FORM_NEW_CHAIN) {
 			const availableChains: PB_GameBoardType[] = [];
 			const scoreBoardChainSize = this.game.scoreBoardChainSize;
