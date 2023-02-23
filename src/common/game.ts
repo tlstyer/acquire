@@ -65,9 +65,7 @@ export class Game {
 	) {
 		// initialize this.gameBoardTypeCounts
 		this.gameBoardTypeCounts = new Array(PB_GameBoardType.MAX);
-		for (let i = 0; i < PB_GameBoardType.MAX; i++) {
-			this.gameBoardTypeCounts[i] = 0;
-		}
+		this.gameBoardTypeCounts.fill(0);
 		this.gameBoardTypeCounts[PB_GameBoardType.NOTHING] = 108;
 
 		// initialize this.gameActionStack

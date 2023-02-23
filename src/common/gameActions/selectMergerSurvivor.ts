@@ -91,9 +91,7 @@ export class ActionSelectMergerSurvivor extends ActionBase {
 
 		// pay bonuses
 		const bonuses: number[] = new Array(this.game.userIDs.length);
-		for (let playerID = 0; playerID < bonuses.length; playerID++) {
-			bonuses[playerID] = 0;
-		}
+		bonuses.fill(0);
 
 		for (let i = 0; i < this.chains.length; i++) {
 			const chain = this.chains[i];

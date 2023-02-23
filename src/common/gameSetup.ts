@@ -33,16 +33,12 @@ export class GameSetup {
 		this.hostUsername = getUsernameForUserID(hostUserID);
 
 		const usernames: (string | null)[] = new Array(numPlayers);
-		for (let position = 0; position < numPlayers; position++) {
-			usernames[position] = null;
-		}
+		usernames.fill(null);
 		usernames[0] = this.hostUsername;
 		this.usernames = usernames;
 
 		const userIDs: (number | null)[] = new Array(numPlayers);
-		for (let position = 0; position < numPlayers; position++) {
-			userIDs[position] = null;
-		}
+		userIDs.fill(null);
 		userIDs[0] = hostUserID;
 		this.userIDs = userIDs;
 
