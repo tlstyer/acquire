@@ -26,7 +26,7 @@ function processGame(game: Game, filePath: string) {
 	return {
 		endTimestamp: game.gameStateHistory[game.gameStateHistory.length - 1].timestamp!,
 		gameMode: game.gameMode,
-		gameID: filePath.split(path.sep).slice(-2).join(path.sep),
+		gameID: filePath.split(path.sep).slice(-2).join('-'),
 		playerUserIDs: game.userIDs,
 		playerScores,
 		teamUserIDs: determineTeamUserIDs(game.gameMode, game.userIDs),
