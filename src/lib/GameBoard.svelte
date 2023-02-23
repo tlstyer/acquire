@@ -1,3 +1,5 @@
+<svelte:options immutable />
+
 <script lang="ts">
 	import type { PB_GameBoardType } from '../common/pb';
 	import GameBoardRow from './children/GameBoardRow.svelte';
@@ -9,24 +11,24 @@
 	export let cellSize: number;
 	export let onCellClicked: ((tile: number) => void) | undefined = undefined;
 
-	let tileRackRowBitMasks = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+	let tileRackRowBitMasks = new Array(9);
+	tileRackRowBitMasks.fill(0);
 
-	$: if (tileRack) {
+	$: {
+		tileRackRowBitMasks = new Array(9);
 		tileRackRowBitMasks.fill(0);
-		tileRackRowBitMasks = tileRackRowBitMasks; // invalidate
 
-		for (let i = 0; i < tileRack.length; i++) {
-			const tile = tileRack[i];
+		if (tileRack) {
+			for (let i = 0; i < tileRack.length; i++) {
+				const tile = tileRack[i];
 
-			if (tile !== null) {
-				const y = tile % 9;
-				const x = tile / 9;
-				tileRackRowBitMasks[y] |= 1 << x;
+				if (tile !== null) {
+					const y = tile % 9;
+					const x = tile / 9;
+					tileRackRowBitMasks[y] |= 1 << x;
+				}
 			}
 		}
-	} else {
-		tileRackRowBitMasks.fill(0);
-		tileRackRowBitMasks = tileRackRowBitMasks; // invalidate
 	}
 </script>
 
