@@ -10,9 +10,5 @@
 		"sourceMap": true,
 		"strict": true,
 		"outDir": "build"
-	},
-	"ts-node": {
-		"esm": true,
-		"experimentalSpecifierResolution": "node"
 	}
 }

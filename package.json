@@ -11,7 +11,7 @@
 		"format": "prettier --plugin-search-dir . --write .",
 		"protobuf": "protoc --ts_out src/common --proto_path src/common src/common/pb.proto",
 		"buildServer:watch": "mkdir -p build ; echo '{}' > build/package.json ; tsc --module commonjs --preserveValueImports false --watch",
-		"server": "nodemon --exec ts-node src/server/main.ts"
+		"server": "nodemon --trace-warnings --enable-source-maps build/src/server/main.js"
 	},
 	"dependencies": {
 		"@protobuf-ts/plugin": "^2.8.2",
@@ -38,7 +38,6 @@
 		"seedrandom": "^3.0.5",
 		"svelte": "^3.55.1",
 		"svelte-check": "^3.0.3",
-		"ts-node": "^10.9.1",
 		"tslib": "^2.5.0",
 		"typescript": "^4.9.5",
 		"vite": "^4.1.2",
