@@ -1,6 +1,7 @@
 import seedrandom from 'seedrandom';
 import { describe, expect, test } from 'vitest';
 import { GameSetup } from './gameSetup';
+import { gameSetupFromProtocolBuffer, gameSetupToProtocolBuffer } from './gameSetupSerialization';
 import { PB_GameMode, PB_GameSetupChange, PB_PlayerArrangementMode } from './pb';
 
 const dummyApprovals = [true];
@@ -21,7 +22,7 @@ function getUsernameForUserID(userID: number) {
 
 function expectEqualGameSetups(gameSetup1: GameSetup, gameSetup2: GameSetup) {
 	expect(gameSetup2).toEqual(gameSetup1);
-	expect(gameSetup2.toGameData()).toEqual(gameSetup1.toGameData());
+	expect(gameSetupToProtocolBuffer(gameSetup2)).toEqual(gameSetupToProtocolBuffer(gameSetup1));
 }
 
 test('can construct', () => {
@@ -976,7 +977,7 @@ describe('getFinalUserIDsAndUsernames', () => {
 	});
 });
 
-describe('toGameSetupData and fromGameSetupData', () => {
+describe('gameSetupToProtocolBuffer and gameSetupFromProtocolBuffer', () => {
 	test('just the host', () => {
 		const gameSetup = new GameSetup(
 			PB_GameMode.TEAMS_2_VS_2,
@@ -987,7 +988,10 @@ describe('toGameSetupData and fromGameSetupData', () => {
 		gameSetup.swapPositions(0, 2);
 		gameSetup.clearHistory();
 
-		const gameSetup2 = GameSetup.fromGameData(gameSetup.toGameData(), getUsernameForUserID);
+		const gameSetup2 = gameSetupFromProtocolBuffer(
+			gameSetupToProtocolBuffer(gameSetup),
+			getUsernameForUserID,
+		);
 		gameSetup2.clearHistory();
 
 		expectEqualGameSetups(gameSetup, gameSetup2);
@@ -1012,7 +1016,10 @@ describe('toGameSetupData and fromGameSetupData', () => {
 		gameSetup.clearHistory();
 		expect(gameSetup.approvedByEverybody).toBe(false);
 
-		const gameSetup2 = GameSetup.fromGameData(gameSetup.toGameData(), getUsernameForUserID);
+		const gameSetup2 = gameSetupFromProtocolBuffer(
+			gameSetupToProtocolBuffer(gameSetup),
+			getUsernameForUserID,
+		);
 		gameSetup2.clearHistory();
 
 		expectEqualGameSetups(gameSetup, gameSetup2);
@@ -1035,7 +1042,10 @@ describe('toGameSetupData and fromGameSetupData', () => {
 		gameSetup.clearHistory();
 		expect(gameSetup.approvedByEverybody).toBe(true);
 
-		const gameSetup2 = GameSetup.fromGameData(gameSetup.toGameData(), getUsernameForUserID);
+		const gameSetup2 = gameSetupFromProtocolBuffer(
+			gameSetupToProtocolBuffer(gameSetup),
+			getUsernameForUserID,
+		);
 		gameSetup2.clearHistory();
 
 		expectEqualGameSetups(gameSetup, gameSetup2);
