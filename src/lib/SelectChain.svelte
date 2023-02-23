@@ -41,8 +41,8 @@
 	export let keyboardShortcutsEnabled: boolean;
 	export let onChainSelected: (chain: PB_GameBoardType) => void;
 
-	const inputs: (HTMLInputElement | undefined)[] = new Array(allChains.length);
-	inputs.fill(undefined);
+	const inputs: (HTMLInputElement | null)[] = new Array(allChains.length);
+	inputs.fill(null);
 
 	$: buttonStyle = `width: ${buttonSize}px; height: ${buttonSize}px`;
 

@@ -39,8 +39,8 @@
 	let sellMax = 0;
 	updateValues(0, 0);
 
-	const inputs: (HTMLInputElement | undefined)[] = new Array(8);
-	inputs.fill(undefined);
+	const inputs: (HTMLInputElement | null)[] = new Array(8);
+	inputs.fill(null);
 
 	function updateValues(tradeChange: number, sellChange: number) {
 		trade = trade + tradeChange;

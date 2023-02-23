@@ -27,8 +27,8 @@
 	let allTileData: (TileData | undefined)[] = new Array(6);
 	allTileData.fill(undefined);
 
-	let inputs: (HTMLInputElement | undefined)[] = new Array(6);
-	inputs.fill(undefined);
+	let inputs: (HTMLInputElement | null)[] = new Array(6);
+	inputs.fill(null);
 
 	$: for (let i = 0; i < tiles.length; i++) {
 		const tile = tiles[i];

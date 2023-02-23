@@ -88,10 +88,10 @@
 		});
 	}
 
-	const availableButtons: (HTMLInputElement | undefined)[] = new Array(allChains.length);
-	availableButtons.fill(undefined);
-	let endGameCheckbox: HTMLInputElement | undefined;
-	let okButton: HTMLInputElement | undefined;
+	const availableButtons: (HTMLInputElement | null)[] = new Array(allChains.length);
+	availableButtons.fill(null);
+	let endGameCheckbox: HTMLInputElement | null = null;
+	let okButton: HTMLInputElement | null = null;
 
 	$: buttonStyle = `width: ${buttonSize}px; height: ${buttonSize}px`;
 	$: cartButtonStyle = `width: ${Math.floor(buttonSize * (4 / 3))}px; height: ${buttonSize}px`;

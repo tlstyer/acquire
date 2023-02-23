@@ -11,8 +11,8 @@
 	export let keyboardShortcutsEnabled: boolean;
 	export let onMoveSelected: (index: number) => void;
 
-	let parentElement: HTMLDivElement | undefined;
-	let moveElements: (HTMLDivElement | undefined)[] = [];
+	let parentElement: HTMLDivElement | null = null;
+	let moveElements: (HTMLDivElement | null)[] = [];
 
 	let lastSelectedMove = -1;
 
