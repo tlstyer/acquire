@@ -418,20 +418,19 @@ function getGameStateLines(
 
 		if (gameState.revealedTileRackTiles.length > 0) {
 			const str = gameState.revealedTileRackTiles
-				.map((trt) => {
-					return `${toTileString(trt.tile)}:${trt.playerIdBelongsTo.toString()}`;
-				})
+				.map((trt) => `${toTileString(trt.tile)}:${trt.playerIdBelongsTo.toString()}`)
 				.join(', ');
 			lines.push(`  revealed tile rack tiles: ${str}`);
 		}
 
 		if (gameState.revealedTileBagTiles.length > 0) {
 			const str = gameState.revealedTileBagTiles
-				.map((tbt) => {
-					return `${toTileString(tbt.tile)}:${
-						tbt.playerIDWithPermission === null ? 'all' : tbt.playerIDWithPermission.toString()
-					}`;
-				})
+				.map(
+					(tbt) =>
+						`${toTileString(tbt.tile)}:${
+							tbt.playerIDWithPermission === null ? 'all' : tbt.playerIDWithPermission.toString()
+						}`,
+				)
 				.join(', ');
 			lines.push(`  revealed tile bag tiles: ${str}`);
 		}

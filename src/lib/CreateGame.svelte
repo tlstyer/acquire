@@ -17,11 +17,5 @@
 			</option>
 		{/each}
 	</select>
-	<input
-		type="button"
-		value="Create Game"
-		on:click={() => {
-			onSubmit(gameMode);
-		}}
-	/>
+	<input type="button" value="Create Game" on:click={() => onSubmit(gameMode)} />
 </div>

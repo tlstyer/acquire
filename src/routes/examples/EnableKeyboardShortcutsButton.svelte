@@ -18,7 +18,5 @@
 	type="button"
 	value={enabled ? 'Keyboard Shortcuts Enabled' : 'Enable Keyboard Shortcuts'}
 	disabled={enabled}
-	on:click={() => {
-		onlyEnabledSymbol.set(symbol);
-	}}
+	on:click={() => onlyEnabledSymbol.set(symbol)}
 />
