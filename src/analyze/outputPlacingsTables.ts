@@ -64,4 +64,4 @@ class PlacingsForGameMode {
 	}
 }
 
-main(process.argv[2]);
+main(process.argv[2]).catch((reason) => console.log(reason));

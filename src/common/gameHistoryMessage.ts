@@ -94,13 +94,9 @@ export class GameHistoryMessageEndedGame {
 	constructor(public playerID: number) {}
 }
 
-export class GameHistoryMessageNoTilesPlayedForEntireRound {
-	constructor() {}
-}
+export class GameHistoryMessageNoTilesPlayedForEntireRound {}
 
-export class GameHistoryMessageAllTilesPlayed {
-	constructor() {}
-}
+export class GameHistoryMessageAllTilesPlayed {}
 
 export class ChainAndCount {
 	constructor(public chain: PB_GameBoardType, public count: number) {}

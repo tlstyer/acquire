@@ -16,7 +16,9 @@ export const load = (async ({ params }) => {
 					path.join(GAME_PROTOCOL_BUFFER_BINARIES_DIR, gameIDMatch[1], gameIDMatch[2]),
 				)),
 			];
-		} catch (error) {}
+		} catch (error) {
+			// ignore
+		}
 	}
 
 	return {
