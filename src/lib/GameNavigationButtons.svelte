@@ -11,21 +11,18 @@
 	$: lastMoveIndex = gameStateHistory.length - 1;
 	$: actualSelectedMove = selectedMove ?? lastMoveIndex;
 
+	let stepBackwardButton: HTMLButtonElement | undefined;
+	let stepForwardButton: HTMLButtonElement | undefined;
+
 	function handleKeydown(event: KeyboardEvent) {
 		if (keyboardShortcutsEnabled) {
 			switch (event.key) {
 				case 'ArrowLeft': {
-					const nextSelectedMove = actualSelectedMove - 1;
-					if (nextSelectedMove >= 0) {
-						onMoveSelected(nextSelectedMove);
-					}
+					stepBackwardButton?.click();
 					break;
 				}
 				case 'ArrowRight': {
-					const nextSelectedMove = actualSelectedMove + 1;
-					if (nextSelectedMove <= lastMoveIndex) {
-						onMoveSelected(nextSelectedMove);
-					}
+					stepForwardButton?.click();
 					break;
 				}
 			}
@@ -43,6 +40,7 @@
 		</svg>
 	</button>
 	<button
+		bind:this={stepBackwardButton}
 		on:click={() => onMoveSelected(Math.max(actualSelectedMove - 1, 0))}
 		disabled={actualSelectedMove === 0}
 	>
@@ -52,6 +50,7 @@
 		</svg>
 	</button>
 	<button
+		bind:this={stepForwardButton}
 		on:click={() => onMoveSelected(Math.min(actualSelectedMove + 1, lastMoveIndex))}
 		disabled={actualSelectedMove === lastMoveIndex}
 	>
