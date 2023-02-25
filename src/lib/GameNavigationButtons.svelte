@@ -11,18 +11,28 @@
 	$: lastMoveIndex = gameStateHistory.length - 1;
 	$: actualSelectedMove = selectedMove ?? lastMoveIndex;
 
+	let fastBackwardButton: HTMLButtonElement | undefined;
 	let stepBackwardButton: HTMLButtonElement | undefined;
 	let stepForwardButton: HTMLButtonElement | undefined;
+	let fastForwardButton: HTMLButtonElement | undefined;
 
 	function handleKeydown(event: KeyboardEvent) {
 		if (keyboardShortcutsEnabled) {
 			switch (event.key) {
+				case 'ArrowUp': {
+					fastBackwardButton?.click();
+					break;
+				}
 				case 'ArrowLeft': {
 					stepBackwardButton?.click();
 					break;
 				}
 				case 'ArrowRight': {
 					stepForwardButton?.click();
+					break;
+				}
+				case 'ArrowDown': {
+					fastForwardButton?.click();
 					break;
 				}
 			}
@@ -33,7 +43,11 @@
 <svelte:window on:keydown={handleKeydown} />
 
 <div>
-	<button on:click={() => onMoveSelected(0)} disabled={actualSelectedMove === 0}>
+	<button
+		bind:this={fastBackwardButton}
+		on:click={() => onMoveSelected(0)}
+		disabled={actualSelectedMove === 0}
+	>
 		<!-- adapted from https://www.svgrepo.com/svg/391832/fast-backward -->
 		<svg viewBox="0 0 120 120">
 			<path d="M0,120V0h20v55L70,5v50l50-50v110L70,65v50L20,65v55H0z" />
@@ -60,6 +74,7 @@
 		</svg>
 	</button>
 	<button
+		bind:this={fastForwardButton}
 		on:click={() => onMoveSelected(lastMoveIndex)}
 		disabled={actualSelectedMove === lastMoveIndex}
 	>
