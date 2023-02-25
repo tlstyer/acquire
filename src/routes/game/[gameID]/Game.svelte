@@ -112,6 +112,7 @@
 		<GameNavigationButtons
 			gameStateHistory={game.gameStateHistory}
 			{selectedMove}
+			keyboardShortcutsEnabled={true}
 			{onMoveSelected}
 		/>
 		<div>
@@ -119,7 +120,6 @@
 				usernames={game.usernames}
 				gameStateHistory={game.gameStateHistory}
 				{selectedMove}
-				keyboardShortcutsEnabled={true}
 				{onMoveSelected}
 			/>
 		</div>

@@ -62,6 +62,7 @@
 	<GameNavigationButtons
 		gameStateHistory={gameHistoryProps.gameStateHistory}
 		selectedMove={gameHistoryProps.selectedMove}
+		keyboardShortcutsEnabled={gameHistoryProps.keyboardShortcutsEnabled}
 		onMoveSelected={gameHistoryProps.onMoveSelected}
 	/>
 	<div>
@@ -69,7 +70,6 @@
 			usernames={gameHistoryProps.usernames}
 			gameStateHistory={gameHistoryProps.gameStateHistory}
 			selectedMove={gameHistoryProps.selectedMove}
-			keyboardShortcutsEnabled={gameHistoryProps.keyboardShortcutsEnabled}
 			onMoveSelected={gameHistoryProps.onMoveSelected}
 		/>
 	</div>
