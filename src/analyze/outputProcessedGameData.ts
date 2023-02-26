@@ -1,14 +1,12 @@
 import path from 'path';
 import type { Game } from '../common/game';
-import {
-	GameHistoryMessageReceivedBonus,
-	GameHistoryMessageReplacedDeadTile,
-} from '../common/gameHistoryMessage';
+import { GameHistoryMessageReplacedDeadTile } from '../common/gameHistoryMessage';
 import {
 	calculateFinalTeamScores,
 	calculatePlacings,
 	determineTeamUserIDs,
 	getFinalPlayerScores,
+	getGameHistoryMessageCounts,
 	iterateGamesInDirectory,
 } from './misc';
 
@@ -32,16 +30,6 @@ function processGame(game: Game, filePath: string) {
 		teamUserIDs: determineTeamUserIDs(game.gameMode, game.userIDs),
 		teamScores,
 		placings,
-		numMergers: game.gameStateHistory.reduce((numMergersSoFar, gameState) => {
-			return (
-				numMergersSoFar +
-				(gameState.gameHistoryMessages.filter(
-					(gameHistoryMessage) => gameHistoryMessage instanceof GameHistoryMessageReceivedBonus,
-				).length > 0
-					? 1
-					: 0)
-			);
-		}, 0),
 		mostDeadTilesReplaced: game.gameStateHistory.reduce((mostDeadTilesReplacedSoFar, gameState) => {
 			const deadTilesReplaced = gameState.gameHistoryMessages.filter(
 				(gameHistoryMessage) => gameHistoryMessage instanceof GameHistoryMessageReplacedDeadTile,
@@ -50,6 +38,7 @@ function processGame(game: Game, filePath: string) {
 				? deadTilesReplaced
 				: mostDeadTilesReplacedSoFar;
 		}, 0),
+		gameHistoryMessageCounts: getGameHistoryMessageCounts(game),
 	};
 }
 

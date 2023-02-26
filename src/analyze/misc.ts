@@ -3,6 +3,27 @@ import path from 'path';
 import { ScoreBoardIndexEnum } from '../common/enums';
 import type { Game } from '../common/game';
 import { ActionGameOver } from '../common/gameActions/gameOver';
+import {
+	GameHistoryMessageAllTilesPlayed,
+	GameHistoryMessageCouldNotAffordAnyShares,
+	GameHistoryMessageDisposedOfShares,
+	GameHistoryMessageDrewLastTile,
+	GameHistoryMessageDrewPositionTile,
+	GameHistoryMessageDrewTile,
+	GameHistoryMessageEndedGame,
+	GameHistoryMessageFormedChain,
+	GameHistoryMessageHasNoPlayableTile,
+	GameHistoryMessageMergedChains,
+	GameHistoryMessageNoTilesPlayedForEntireRound,
+	GameHistoryMessagePlayedTile,
+	GameHistoryMessagePurchasedShares,
+	GameHistoryMessageReceivedBonus,
+	GameHistoryMessageReplacedDeadTile,
+	GameHistoryMessageSelectedChainToDisposeOfNext,
+	GameHistoryMessageSelectedMergerSurvivor,
+	GameHistoryMessageStartedGame,
+	GameHistoryMessageTurnBegan,
+} from '../common/gameHistoryMessage';
 import { gameFromProtocolBuffer } from '../common/gameSerialization';
 import { gameModeToNumPlayers, gameModeToTeamSize } from '../common/helpers';
 import { PB_GameMode, PB_GameReview } from '../common/pb';
@@ -79,4 +100,74 @@ export function calculatePlacings(scores: number[]) {
 	const placings = placingAndTeamIDArray.map((placingAndTeamID) => placingAndTeamID[0]);
 
 	return placings;
+}
+
+export function getGameHistoryMessageCounts(game: Game) {
+	const gameHistoryMessageCounts = {
+		turnBegan: 0,
+		drewPositionTile: 0,
+		startedGame: 0,
+		drewTile: 0,
+		hasNoPlayableTile: 0,
+		playedTile: 0,
+		formedChain: 0,
+		mergedChains: 0,
+		selectedMergerSurvivor: 0,
+		selectedChainToDisposeOfNext: 0,
+		receivedBonus: 0,
+		disposedOfShares: 0,
+		couldNotAffordAnyShares: 0,
+		purchasedShares: 0,
+		drewLastTile: 0,
+		replacedDeadTile: 0,
+		endedGame: 0,
+		noTilesPlayedForEntireRound: 0,
+		allTilesPlayed: 0,
+	};
+
+	for (const gameState of game.gameStateHistory) {
+		for (const gameHistoryMessage of gameState.gameHistoryMessages) {
+			if (gameHistoryMessage instanceof GameHistoryMessageTurnBegan) {
+				gameHistoryMessageCounts.turnBegan++;
+			} else if (gameHistoryMessage instanceof GameHistoryMessageDrewPositionTile) {
+				gameHistoryMessageCounts.drewPositionTile++;
+			} else if (gameHistoryMessage instanceof GameHistoryMessageStartedGame) {
+				gameHistoryMessageCounts.startedGame++;
+			} else if (gameHistoryMessage instanceof GameHistoryMessageDrewTile) {
+				gameHistoryMessageCounts.drewTile++;
+			} else if (gameHistoryMessage instanceof GameHistoryMessageHasNoPlayableTile) {
+				gameHistoryMessageCounts.hasNoPlayableTile++;
+			} else if (gameHistoryMessage instanceof GameHistoryMessagePlayedTile) {
+				gameHistoryMessageCounts.playedTile++;
+			} else if (gameHistoryMessage instanceof GameHistoryMessageFormedChain) {
+				gameHistoryMessageCounts.formedChain++;
+			} else if (gameHistoryMessage instanceof GameHistoryMessageMergedChains) {
+				gameHistoryMessageCounts.mergedChains++;
+			} else if (gameHistoryMessage instanceof GameHistoryMessageSelectedMergerSurvivor) {
+				gameHistoryMessageCounts.selectedMergerSurvivor++;
+			} else if (gameHistoryMessage instanceof GameHistoryMessageSelectedChainToDisposeOfNext) {
+				gameHistoryMessageCounts.selectedChainToDisposeOfNext++;
+			} else if (gameHistoryMessage instanceof GameHistoryMessageReceivedBonus) {
+				gameHistoryMessageCounts.receivedBonus++;
+			} else if (gameHistoryMessage instanceof GameHistoryMessageDisposedOfShares) {
+				gameHistoryMessageCounts.disposedOfShares++;
+			} else if (gameHistoryMessage instanceof GameHistoryMessageCouldNotAffordAnyShares) {
+				gameHistoryMessageCounts.couldNotAffordAnyShares++;
+			} else if (gameHistoryMessage instanceof GameHistoryMessagePurchasedShares) {
+				gameHistoryMessageCounts.purchasedShares++;
+			} else if (gameHistoryMessage instanceof GameHistoryMessageDrewLastTile) {
+				gameHistoryMessageCounts.drewLastTile++;
+			} else if (gameHistoryMessage instanceof GameHistoryMessageReplacedDeadTile) {
+				gameHistoryMessageCounts.replacedDeadTile++;
+			} else if (gameHistoryMessage instanceof GameHistoryMessageEndedGame) {
+				gameHistoryMessageCounts.endedGame++;
+			} else if (gameHistoryMessage instanceof GameHistoryMessageNoTilesPlayedForEntireRound) {
+				gameHistoryMessageCounts.noTilesPlayedForEntireRound++;
+			} else if (gameHistoryMessage instanceof GameHistoryMessageAllTilesPlayed) {
+				gameHistoryMessageCounts.allTilesPlayed++;
+			}
+		}
+	}
+
+	return gameHistoryMessageCounts;
 }
