@@ -53,6 +53,9 @@
 		<div
 			class="move"
 			class:selected={moveIndex === selectedMove}
+			title={gameState.timestamp !== null
+				? new Date(gameState.timestamp).toLocaleString()
+				: undefined}
 			bind:this={moveElements[moveIndex]}
 			on:click={() => onMoveSelected(moveIndex)}
 			on:keydown={undefined}
