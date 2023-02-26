@@ -50,6 +50,23 @@ export function* iterateGamesInDirectory(dirPath: string, completedGamesOnly = f
 	}
 }
 
+function* iterateTurns(game: Game) {
+	let gameHistoryMessages: GameHistoryMessage[] = [];
+
+	for (const gameState of game.gameStateHistory) {
+		for (const gameHistoryMessage of gameState.gameHistoryMessages) {
+			if (gameHistoryMessage instanceof GameHistoryMessageTurnBegan) {
+				yield gameHistoryMessages;
+				gameHistoryMessages = [];
+			}
+
+			gameHistoryMessages.push(gameHistoryMessage);
+		}
+	}
+
+	yield gameHistoryMessages;
+}
+
 export function determineTeamUserIDs(gameMode: PB_GameMode, userIDs: number[]) {
 	const numTeams = gameModeToNumPlayers.get(gameMode)! / gameModeToTeamSize.get(gameMode)!;
 	const grouped: number[][] = new Array(numTeams);
@@ -111,6 +128,32 @@ export function getGameHistoryMessageCounts(game: Game) {
 	}
 
 	return gameHistoryMessageCounts;
+}
+
+export function getMaxGameHistoryMessageCountsPerTurn(game: Game) {
+	const maxGameHistoryMessageCountsPerTurn = new GameHistoryMessageCounts();
+
+	for (const gameHistoryMessages of iterateTurns(game)) {
+		const gameHistoryMessageCounts = new GameHistoryMessageCounts();
+		gameHistoryMessageCounts.ingestMessages(gameHistoryMessages);
+
+		maxGameHistoryMessageCountsPerTurn.setToMaxOfThisAndOther(gameHistoryMessageCounts);
+	}
+
+	return maxGameHistoryMessageCountsPerTurn;
+}
+
+export function getMaxGameHistoryMessageCountsPerMove(game: Game) {
+	const maxGameHistoryMessageCountsPerMove = new GameHistoryMessageCounts();
+
+	for (const gameState of game.gameStateHistory) {
+		const gameHistoryMessageCounts = new GameHistoryMessageCounts();
+		gameHistoryMessageCounts.ingestMessages(gameState.gameHistoryMessages);
+
+		maxGameHistoryMessageCountsPerMove.setToMaxOfThisAndOther(gameHistoryMessageCounts);
+	}
+
+	return maxGameHistoryMessageCountsPerMove;
 }
 
 class GameHistoryMessageCounts {
@@ -180,5 +223,39 @@ class GameHistoryMessageCounts {
 		for (let i = 0; i < gameHistoryMessages.length; i++) {
 			this.ingestMessage(gameHistoryMessages[i]);
 		}
+	}
+
+	setToMaxOfThisAndOther(other: GameHistoryMessageCounts) {
+		this.turnBegan = Math.max(this.turnBegan, other.turnBegan);
+		this.drewPositionTile = Math.max(this.drewPositionTile, other.drewPositionTile);
+		this.startedGame = Math.max(this.startedGame, other.startedGame);
+		this.drewTile = Math.max(this.drewTile, other.drewTile);
+		this.hasNoPlayableTile = Math.max(this.hasNoPlayableTile, other.hasNoPlayableTile);
+		this.playedTile = Math.max(this.playedTile, other.playedTile);
+		this.formedChain = Math.max(this.formedChain, other.formedChain);
+		this.mergedChains = Math.max(this.mergedChains, other.mergedChains);
+		this.selectedMergerSurvivor = Math.max(
+			this.selectedMergerSurvivor,
+			other.selectedMergerSurvivor,
+		);
+		this.selectedChainToDisposeOfNext = Math.max(
+			this.selectedChainToDisposeOfNext,
+			other.selectedChainToDisposeOfNext,
+		);
+		this.receivedBonus = Math.max(this.receivedBonus, other.receivedBonus);
+		this.disposedOfShares = Math.max(this.disposedOfShares, other.disposedOfShares);
+		this.couldNotAffordAnyShares = Math.max(
+			this.couldNotAffordAnyShares,
+			other.couldNotAffordAnyShares,
+		);
+		this.purchasedShares = Math.max(this.purchasedShares, other.purchasedShares);
+		this.drewLastTile = Math.max(this.drewLastTile, other.drewLastTile);
+		this.replacedDeadTile = Math.max(this.replacedDeadTile, other.replacedDeadTile);
+		this.endedGame = Math.max(this.endedGame, other.endedGame);
+		this.noTilesPlayedForEntireRound = Math.max(
+			this.noTilesPlayedForEntireRound,
+			other.noTilesPlayedForEntireRound,
+		);
+		this.allTilesPlayed = Math.max(this.allTilesPlayed, other.allTilesPlayed);
 	}
 }
