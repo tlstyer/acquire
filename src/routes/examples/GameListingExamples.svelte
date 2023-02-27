@@ -6,7 +6,7 @@
 
 	const allGameListingProps = [
 		{
-			gameBoard: defaultGameBoard(),
+			gameBoard: defaultGameBoard,
 			usernames: ['Host', null, 'User 2', null],
 			gameDisplayNumber: 1,
 			gameMode: PB_GameMode.SINGLES_4,

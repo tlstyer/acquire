@@ -35,22 +35,22 @@ export class Game {
 	nextTileBagIndex = 0;
 	gameBoardTypeCounts: number[];
 	protected currentGameState: GameState | null = null;
-	gameStateHistory = defaultGameStateHistory();
+	gameStateHistory = defaultGameStateHistory;
 	gameActionStack: ActionBase[] = [];
 	numTurnsWithoutPlayedTiles = 0;
 
 	turnPlayerID = 0;
-	tileRacks = defaultTileRacks();
-	tileRackTypes = defaultTileRackTypesList();
-	gameBoard = defaultGameBoard();
-	scoreBoard = defaultScoreBoard();
-	scoreBoardAvailable = defaultScoreBoardAvailable();
-	scoreBoardChainSize = defaultScoreBoardChainSize();
-	scoreBoardPrice = defaultScoreBoardPrice();
-	safeChains = defaultSafeChains();
+	tileRacks = defaultTileRacks;
+	tileRackTypes = defaultTileRackTypesList;
+	gameBoard = defaultGameBoard;
+	scoreBoard = defaultScoreBoard;
+	scoreBoardAvailable = defaultScoreBoardAvailable;
+	scoreBoardChainSize = defaultScoreBoardChainSize;
+	scoreBoardPrice = defaultScoreBoardPrice;
+	safeChains = defaultSafeChains;
 
-	scoreBoardAtLastNetWorthsUpdate = defaultScoreBoard();
-	scoreBoardPriceAtLastNetWorthsUpdate = defaultScoreBoardPrice();
+	scoreBoardAtLastNetWorthsUpdate = defaultScoreBoard;
+	scoreBoardPriceAtLastNetWorthsUpdate = defaultScoreBoardPrice;
 
 	playerIDWithPlayableTile: number | null = null;
 
@@ -72,10 +72,13 @@ export class Game {
 		this.gameActionStack.push(new ActionStartGame(this, userIDs.indexOf(hostUserID)));
 
 		// initialize this.tileRacks, this.tileRackTypes, this.scoreBoard
+		this.tileRacks = [];
+		this.tileRackTypes = [];
+		this.scoreBoard = [];
 		for (let playerID = 0; playerID < userIDs.length; playerID++) {
-			this.tileRacks.push(defaultTileRack());
-			this.tileRackTypes.push(defaultTileRackTypes());
-			this.scoreBoard.push(defaultScoreBoardRow());
+			this.tileRacks.push(defaultTileRack);
+			this.tileRackTypes.push(defaultTileRackTypes);
+			this.scoreBoard.push(defaultScoreBoardRow);
 		}
 
 		// initialize this.scoreBoardAtLastNetWorthsUpdate

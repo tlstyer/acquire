@@ -1,25 +1,22 @@
 import type { GameState } from './gameState';
 import { PB_GameBoardType } from './pb';
 
-export function defaultGameStateHistory(): GameState[] {
-	return [];
-}
+export const defaultGameStateHistory: GameState[] = [];
 
-export function defaultTileRacks(): (number | null)[][] {
-	return [];
-}
+export const defaultTileRacks: (number | null)[][] = [];
 
-export function defaultTileRack(): (number | null)[] {
-	return [null, null, null, null, null, null];
-}
+export const defaultTileRack: (number | null)[] = [null, null, null, null, null, null];
 
-export function defaultTileRackTypesList(): (PB_GameBoardType | null)[][] {
-	return [];
-}
+export const defaultTileRackTypesList: (PB_GameBoardType | null)[][] = [];
 
-export function defaultTileRackTypes(): (PB_GameBoardType | null)[] {
-	return [null, null, null, null, null, null];
-}
+export const defaultTileRackTypes: (PB_GameBoardType | null)[] = [
+	null,
+	null,
+	null,
+	null,
+	null,
+	null,
+];
 
 const defaultGameBoardRow = [
 	PB_GameBoardType.NOTHING,
@@ -35,40 +32,26 @@ const defaultGameBoardRow = [
 	PB_GameBoardType.NOTHING,
 	PB_GameBoardType.NOTHING,
 ];
-export function defaultGameBoard(): PB_GameBoardType[][] {
-	return [
-		[...defaultGameBoardRow],
-		[...defaultGameBoardRow],
-		[...defaultGameBoardRow],
-		[...defaultGameBoardRow],
-		[...defaultGameBoardRow],
-		[...defaultGameBoardRow],
-		[...defaultGameBoardRow],
-		[...defaultGameBoardRow],
-		[...defaultGameBoardRow],
-	];
-}
+export const defaultGameBoard: PB_GameBoardType[][] = [
+	defaultGameBoardRow,
+	defaultGameBoardRow,
+	defaultGameBoardRow,
+	defaultGameBoardRow,
+	defaultGameBoardRow,
+	defaultGameBoardRow,
+	defaultGameBoardRow,
+	defaultGameBoardRow,
+	defaultGameBoardRow,
+];
 
-export function defaultScoreBoard(): number[][] {
-	return [];
-}
+export const defaultScoreBoard: number[][] = [];
 
-export function defaultScoreBoardRow(): number[] {
-	return [0, 0, 0, 0, 0, 0, 0, 60, 60];
-}
+export const defaultScoreBoardRow: number[] = [0, 0, 0, 0, 0, 0, 0, 60, 60];
 
-export function defaultScoreBoardAvailable(): number[] {
-	return [25, 25, 25, 25, 25, 25, 25];
-}
+export const defaultScoreBoardAvailable: number[] = [25, 25, 25, 25, 25, 25, 25];
 
-export function defaultScoreBoardChainSize(): number[] {
-	return [0, 0, 0, 0, 0, 0, 0];
-}
+export const defaultScoreBoardChainSize: number[] = [0, 0, 0, 0, 0, 0, 0];
 
-export function defaultScoreBoardPrice(): number[] {
-	return [0, 0, 0, 0, 0, 0, 0];
-}
+export const defaultScoreBoardPrice: number[] = [0, 0, 0, 0, 0, 0, 0];
 
-export function defaultSafeChains(): boolean[] {
-	return [false, false, false, false, false, false, false];
-}
+export const defaultSafeChains: boolean[] = [false, false, false, false, false, false, false];

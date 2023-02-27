@@ -35,14 +35,14 @@ export class GameState {
 	nextGameAction: ActionBase;
 
 	turnPlayerID = 0;
-	tileRacks = defaultTileRacks();
-	tileRackTypes = defaultTileRackTypesList();
-	gameBoard = defaultGameBoard();
-	scoreBoard = defaultScoreBoard();
-	scoreBoardAvailable = defaultScoreBoardAvailable();
-	scoreBoardChainSize = defaultScoreBoardChainSize();
-	scoreBoardPrice = defaultScoreBoardPrice();
-	safeChains = defaultSafeChains();
+	tileRacks = defaultTileRacks;
+	tileRackTypes = defaultTileRackTypesList;
+	gameBoard = defaultGameBoard;
+	scoreBoard = defaultScoreBoard;
+	scoreBoardAvailable = defaultScoreBoardAvailable;
+	scoreBoardChainSize = defaultScoreBoardChainSize;
+	scoreBoardPrice = defaultScoreBoardPrice;
+	safeChains = defaultSafeChains;
 
 	revealedTileBagTilesLookup = new Map<number, GameStateTileBagTile>();
 

@@ -60,7 +60,7 @@ export function getExampleGameForGameHistory() {
 			}),
 			null,
 		);
-		gameForGameHistory.gameStateHistory = defaultGameStateHistory();
+		gameForGameHistory.gameStateHistory = defaultGameStateHistory;
 
 		let gameState = gameForGameHistory.getCurrentGameState();
 		gameState.addGameHistoryMessage(new GameHistoryMessageTurnBegan(0));
