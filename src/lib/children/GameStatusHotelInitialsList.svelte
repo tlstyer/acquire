@@ -6,16 +6,20 @@
 
 	export let chains: PB_GameBoardType[] = [];
 
-	let chainsData = chains.map((chain) => ({ chain, separator: ', ' }));
+	let chainsData: { chain: PB_GameBoardType; separator: string }[] = [];
 
-	if (chainsData.length > 0) {
-		chainsData[chainsData.length - 1].separator = '';
-	}
+	$: {
+		chainsData = chains.map((chain) => ({ chain, separator: ', ' }));
 
-	if (chainsData.length === 2) {
-		chainsData[0].separator = ' or ';
-	} else if (chainsData.length > 2) {
-		chainsData[chainsData.length - 2].separator = ', or ';
+		if (chainsData.length > 0) {
+			chainsData[chainsData.length - 1].separator = '';
+		}
+
+		if (chainsData.length === 2) {
+			chainsData[0].separator = ' or ';
+		} else if (chainsData.length > 2) {
+			chainsData[chainsData.length - 2].separator = ', or ';
+		}
 	}
 </script>
 
