@@ -24,10 +24,10 @@
 	export let keyboardShortcutsEnabled: boolean;
 	export let onTileClicked: (tile: number) => void;
 
-	let allTileData: (TileData | undefined)[] = new Array(6);
+	const allTileData: (TileData | undefined)[] = new Array(6);
 	allTileData.fill(undefined);
 
-	let inputs: (HTMLInputElement | null)[] = new Array(6);
+	const inputs: (HTMLInputElement | null)[] = new Array(6);
 	inputs.fill(null);
 
 	$: for (let i = 0; i < tiles.length; i++) {
@@ -72,7 +72,7 @@
 		{#if tileData}
 			<input
 				type="button"
-				class={`hotelButton ${gameBoardTypeToCSSClassName.get(tileData.type)}`}
+				class="hotelButton {gameBoardTypeToCSSClassName.get(tileData.type)}"
 				style={buttonStyle}
 				value={getTileString(tileData.tile)}
 				disabled={tileData.type === PB_GameBoardType.CANT_PLAY_EVER ||

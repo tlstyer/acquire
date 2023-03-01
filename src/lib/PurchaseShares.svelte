@@ -156,7 +156,7 @@
 			{#each availableButtonStatuses as availableButtonStatus, chain}
 				<input
 					type="button"
-					class={`hotelButton ${gameBoardTypeToCSSClassName.get(chain)}`}
+					class="hotelButton {gameBoardTypeToCSSClassName.get(chain)}"
 					class:invisible={availableButtonStatus === AvailableButtonStatus.Invisible}
 					disabled={availableButtonStatus !== AvailableButtonStatus.Enabled}
 					style={buttonStyle}
@@ -197,7 +197,7 @@
 			{#each cart as chain, i}
 				<input
 					type="button"
-					class={`hotelButton ${gameBoardTypeToCSSClassName.get(chain ?? 0)}`}
+					class="hotelButton {gameBoardTypeToCSSClassName.get(chain ?? 0)}"
 					class:invisible={chain === null}
 					style={cartButtonStyle}
 					value={scoreBoardPrice[chain ?? 0] * 100}
@@ -211,8 +211,8 @@
 		</fieldset>
 		<label>
 			<input type="checkbox" bind:checked={endGame} bind:this={endGameCheckbox} />
-			End game</label
-		>
+			End game
+		</label>
 		<input type="button" value="OK" bind:this={okButton} on:click={handleOK} />
 	</div>
 </div>

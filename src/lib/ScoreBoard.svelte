@@ -80,9 +80,9 @@
 		<tr>
 			<td class="playerHeader">Player</td>
 			{#each allChains as chain}
-				<td class={gameBoardTypeToCSSClassName.get(chain)}
-					>{gameBoardTypeToHotelInitial.get(chain)}</td
-				>
+				<td class={gameBoardTypeToCSSClassName.get(chain)}>
+					{gameBoardTypeToHotelInitial.get(chain)}
+				</td>
 			{/each}
 			<td class="cashAndNetHeader">Cash</td>
 			<td class="cashAndNetHeader">Net</td>

@@ -150,9 +150,9 @@
 		{:else if playerArrangementMode === PB_PlayerArrangementMode.EXACT_ORDER}
 			{#each usernames as username, index}
 				<tr>
-					<td class={isTeamGame ? teamNumberToCSSClassName.get((index % numTeams) + 1) : 'user'}
-						>{username !== null ? username : ''}</td
-					>
+					<td class={isTeamGame ? teamNumberToCSSClassName.get((index % numTeams) + 1) : 'user'}>
+						{username !== null ? username : ''}
+					</td>
 					{#if onSwapPositions !== undefined}
 						<td>
 							{#if index > 0}

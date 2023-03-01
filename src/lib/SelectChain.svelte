@@ -66,7 +66,7 @@
 			{#if availableChains.indexOf(chain) >= 0}
 				<input
 					type="button"
-					class={`hotelButton ${gameBoardTypeToCSSClassName.get(chain)}`}
+					class="hotelButton {gameBoardTypeToCSSClassName.get(chain)}"
 					style={buttonStyle}
 					value={gameBoardTypeToHotelInitial.get(chain)}
 					bind:this={inputs[chain]}

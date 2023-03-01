@@ -6,13 +6,7 @@
 	export let types: (PB_GameBoardType | null)[];
 	export let buttonSize: number;
 
-	let allTileData: (
-		| {
-				tile: number;
-				type: PB_GameBoardType;
-		  }
-		| undefined
-	)[] = new Array(6);
+	const allTileData: ({ tile: number; type: PB_GameBoardType } | undefined)[] = new Array(6);
 	allTileData.fill(undefined);
 
 	$: for (let i = 0; i < tiles.length; i++) {
@@ -37,7 +31,7 @@
 <div class="root" style="font-size: {Math.floor(buttonSize * 0.4)}px">
 	{#each allTileData as tileData}
 		{#if tileData}
-			<div class={`button ${gameBoardTypeToCSSClassName.get(tileData.type)}`} style={buttonStyle}>
+			<div class="button {gameBoardTypeToCSSClassName.get(tileData.type)}" style={buttonStyle}>
 				<div>{getTileString(tileData.tile)}</div>
 			</div>
 		{:else}

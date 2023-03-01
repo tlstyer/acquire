@@ -27,8 +27,9 @@
 				<tr>
 					<td
 						class={isTeamGame ? teamNumberToCSSClassName.get((playerID % numTeams) + 1) : 'player'}
-						>{username !== null ? username : ''}</td
 					>
+						{username !== null ? username : ''}
+					</td>
 				</tr>
 			{/each}
 		</tbody>
