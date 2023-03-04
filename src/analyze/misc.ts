@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import readline from 'readline';
 import { ScoreBoardIndexEnum } from '../common/enums';
 import type { Game } from '../common/game';
 import { ActionGameOver } from '../common/gameActions/gameOver';
@@ -28,6 +29,7 @@ import {
 import { gameFromProtocolBuffer } from '../common/gameSerialization';
 import { gameModeToNumPlayers, gameModeToTeamSize } from '../common/helpers';
 import { PB_GameMode, PB_GameReview } from '../common/pb';
+import type { ProcessGameDataType } from './outputProcessedGameData';
 
 export function* iterateGamesInDirectory(dirPath: string, completedGamesOnly = false) {
 	for (const file of fs.readdirSync(dirPath)) {
@@ -65,6 +67,19 @@ function* iterateTurns(game: Game) {
 	}
 
 	yield gameHistoryMessages;
+}
+
+export async function* iterateProcessedGameData(processedGameDataFilePath: string) {
+	const rl = readline.createInterface({
+		input: fs.createReadStream(processedGameDataFilePath),
+		crlfDelay: Infinity,
+	});
+
+	for await (const line of rl) {
+		const processedGameData: ProcessGameDataType = JSON.parse(line);
+
+		yield processedGameData;
+	}
 }
 
 export function determineTeamUserIDs(gameMode: PB_GameMode, userIDs: number[]) {

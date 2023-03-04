@@ -1,19 +1,10 @@
-import fs from 'fs';
-import readline from 'readline';
 import { PB_GameMode } from '../common/pb';
-import type { ProcessGameDataType } from './outputProcessedGameData';
+import { iterateProcessedGameData } from './misc';
 
 async function main(processedGameDataFilePath: string) {
 	const gameModeToPlacingsForGameMode = new Map<PB_GameMode, PlacingsForGameMode>();
 
-	const rl = readline.createInterface({
-		input: fs.createReadStream(processedGameDataFilePath),
-		crlfDelay: Infinity,
-	});
-
-	for await (const line of rl) {
-		const processedGameData: ProcessGameDataType = JSON.parse(line);
-
+	for await (const processedGameData of iterateProcessedGameData(processedGameDataFilePath)) {
 		if (!gameModeToPlacingsForGameMode.has(processedGameData.gameMode)) {
 			gameModeToPlacingsForGameMode.set(processedGameData.gameMode, new PlacingsForGameMode());
 		}
