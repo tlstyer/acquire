@@ -37,6 +37,6 @@ function processGame(game: Game, filePath: string) {
 	};
 }
 
-export type ProcessGameDataType = ReturnType<typeof processGame>;
+export type ProcessedGameDataType = ReturnType<typeof processGame>;
 
 main(process.argv[2]);

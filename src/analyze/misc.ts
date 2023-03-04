@@ -29,7 +29,7 @@ import {
 import { gameFromProtocolBuffer } from '../common/gameSerialization';
 import { gameModeToNumPlayers, gameModeToTeamSize } from '../common/helpers';
 import { PB_GameMode, PB_GameReview } from '../common/pb';
-import type { ProcessGameDataType } from './outputProcessedGameData';
+import type { ProcessedGameDataType } from './outputProcessedGameData';
 
 export function* iterateGamesInDirectory(dirPath: string, completedGamesOnly = false) {
 	for (const file of fs.readdirSync(dirPath)) {
@@ -76,7 +76,7 @@ export async function* iterateProcessedGameData(processedGameDataFilePath: strin
 	});
 
 	for await (const line of rl) {
-		const processedGameData: ProcessGameDataType = JSON.parse(line);
+		const processedGameData: ProcessedGameDataType = JSON.parse(line);
 
 		yield processedGameData;
 	}
