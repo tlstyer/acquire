@@ -5,6 +5,8 @@ html {
 	color: #000000;
 	font-family: sans-serif;
 	font-size: 16px;
+
+	--border-color: #f6f4f2;
 }
 
 * {

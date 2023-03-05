@@ -57,7 +57,7 @@
 	}
 
 	td {
-		border: 2px solid #f6f4f2;
+		border: 2px solid var(--border-color);
 		height: 22px;
 		max-width: 200px;
 		overflow: hidden;

@@ -27,6 +27,6 @@
 	}
 
 	td {
-		border: 1px solid #f6f4f2;
+		border: 1px solid var(--border-color);
 	}
 </style>

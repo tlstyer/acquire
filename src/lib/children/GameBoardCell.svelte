@@ -61,7 +61,7 @@
 
 <style>
 	td {
-		border: 2px solid #f6f4f2;
+		border: 2px solid var(--border-color);
 		overflow: hidden;
 	}
 
