@@ -11,10 +11,10 @@
 	$: lastMoveIndex = gameStateHistory.length - 1;
 	$: actualSelectedMove = selectedMove ?? lastMoveIndex;
 
-	let fastBackwardButton: HTMLButtonElement | undefined;
-	let stepBackwardButton: HTMLButtonElement | undefined;
-	let stepForwardButton: HTMLButtonElement | undefined;
-	let fastForwardButton: HTMLButtonElement | undefined;
+	let fastBackwardButton: HTMLButtonElement | null = null;
+	let stepBackwardButton: HTMLButtonElement | null = null;
+	let stepForwardButton: HTMLButtonElement | null = null;
+	let fastForwardButton: HTMLButtonElement | null = null;
 
 	function handleKeydown(event: KeyboardEvent) {
 		if (keyboardShortcutsEnabled) {
