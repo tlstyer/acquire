@@ -7,7 +7,7 @@
 
 	export let usernames: string[];
 	export let gameStateHistory: GameState[];
-	export let selectedMove: number | undefined = undefined;
+	export let selectedMove: number | undefined;
 	export let onMoveSelected: (index: number) => void;
 
 	let parentElement: HTMLDivElement | null = null;

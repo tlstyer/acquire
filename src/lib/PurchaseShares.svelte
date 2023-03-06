@@ -53,7 +53,7 @@
 	export let keyboardShortcutsEnabled: boolean;
 	export let onSharesPurchased: (chains: PB_GameBoardType[], endGame: boolean) => void;
 
-	let availableButtonStatuses: AvailableButtonStatus[] = [];
+	let availableButtonStatuses: AvailableButtonStatus[];
 	let costTotal = 0;
 	let costLeft = 0;
 	let cart: (number | null)[] = [null, null, null];

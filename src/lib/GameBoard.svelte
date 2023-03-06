@@ -11,9 +11,7 @@
 	export let cellSize: number;
 	export let onCellClicked: ((tile: number) => void) | undefined = undefined;
 
-	let tileRackRowBitMasks = new Array(9);
-	tileRackRowBitMasks.fill(0);
-
+	let tileRackRowBitMasks: number[];
 	$: {
 		tileRackRowBitMasks = new Array(9);
 		tileRackRowBitMasks.fill(0);

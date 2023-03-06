@@ -14,7 +14,7 @@
 	export let labelMode: GameBoardLabelMode;
 	export let onCellClicked: ((tile: number) => void) | undefined = undefined;
 
-	let label = '';
+	let label: string;
 	$: {
 		if (labelMode === GameBoardLabelMode.Coordinates) {
 			label = getTileString(tile);

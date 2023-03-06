@@ -4,7 +4,7 @@
 	import type { GameState } from '../common/gameState';
 
 	export let gameStateHistory: GameState[];
-	export let selectedMove: number | undefined = undefined;
+	export let selectedMove: number | undefined;
 	export let keyboardShortcutsEnabled: boolean;
 	export let onMoveSelected: (index: number) => void;
 

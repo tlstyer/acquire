@@ -6,8 +6,7 @@
 
 	export let chains: PB_GameBoardType[] = [];
 
-	let chainsData: { chain: PB_GameBoardType; separator: string }[] = [];
-
+	let chainsData: { chain: PB_GameBoardType; separator: string }[];
 	$: {
 		chainsData = chains.map((chain) => ({ chain, separator: ', ' }));
 
