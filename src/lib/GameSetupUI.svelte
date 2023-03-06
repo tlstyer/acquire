@@ -248,13 +248,14 @@
 	}
 
 	table :global(td) {
-		border: 2px solid var(--border-color);
+		border: 2px solid transparent;
 		height: 28px;
 		overflow: hidden;
 		white-space: nowrap;
 	}
 
 	td:nth-child(1) {
+		border-color: var(--border-color);
 		max-width: 300px;
 		padding-left: 3px;
 		text-align: left;

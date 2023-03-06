@@ -40,11 +40,13 @@
 		<td>{scoreBoardRow[ScoreBoardIndexEnum.Cash] * 100}</td>
 		<td>{scoreBoardRow[ScoreBoardIndexEnum.Net] * 100}</td>
 	{:else}
-		<td class="bottomRightCells">{teamNumber !== undefined ? `Team ${teamNumber}` : ''}</td>
+		<td class="notTeamScore">
+			{teamNumber !== undefined ? `Team ${teamNumber}` : ''}
+		</td>
 		<td
-			class={teamNumber !== undefined
-				? teamNumberToCSSClassName.get(teamNumber)
-				: 'bottomRightCells'}
+			class={teamNumber !== undefined ? teamNumberToCSSClassName.get(teamNumber) : undefined}
+			class:teamScore={teamNumber !== undefined}
+			class:notTeamScore={teamNumber === undefined}
 		>
 			{teamTotal !== undefined ? teamTotal * 100 : ''}
 		</td>
@@ -64,7 +66,13 @@
 		background-color: #ffc080;
 	}
 
-	.bottomRightCells {
-		background-color: #f6f4f2;
+	.notTeamScore {
+		background-color: var(--main-background-color);
+		border-color: var(--main-background-color);
+	}
+
+	.teamScore {
+		border-color: var(--border-color);
+		border-style: double;
 	}
 </style>

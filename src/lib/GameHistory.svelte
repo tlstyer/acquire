@@ -69,7 +69,7 @@
 
 <style>
 	.root {
-		background-color: #c0c0ff;
+		background-color: var(--scrolling-div-background-color);
 		height: 100%;
 		overflow-y: scroll;
 	}
