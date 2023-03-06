@@ -3,7 +3,7 @@
 	import { PB_GameMode } from '../../common/pb';
 
 	const allCreateGameProps = [
-		{ onSubmit: onSubmitCreateGame },
+		{ gameMode: PB_GameMode.SINGLES_4, onSubmit: onSubmitCreateGame },
 		{ gameMode: PB_GameMode.TEAMS_2_VS_2_VS_2, onSubmit: onSubmitCreateGame },
 		{ gameMode: PB_GameMode.SINGLES_1, onSubmit: onSubmitCreateGame },
 	];

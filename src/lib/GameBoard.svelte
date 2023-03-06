@@ -6,10 +6,10 @@
 	import type { GameBoardLabelMode } from './helpers';
 
 	export let gameBoard: PB_GameBoardType[][];
-	export let tileRack: (number | null)[] | undefined = undefined;
+	export let tileRack: (number | null)[] | undefined;
 	export let labelMode: GameBoardLabelMode;
 	export let cellSize: number;
-	export let onCellClicked: ((tile: number) => void) | undefined = undefined;
+	export let onCellClicked: ((tile: number) => void) | undefined;
 
 	let tileRackRowBitMasks: number[];
 	$: {

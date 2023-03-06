@@ -72,6 +72,7 @@
 			tileRack={gameBoardTileRack}
 			labelMode={GameBoardLabelMode.Nothing}
 			cellSize={gameBoardCellSize}
+			onCellClicked={undefined}
 		/>
 	</div>
 	<div class="rightSide">
