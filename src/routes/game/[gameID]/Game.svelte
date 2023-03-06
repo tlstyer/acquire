@@ -133,9 +133,8 @@
 		display: flex;
 		flex-direction: row;
 		column-gap: 2px;
-		position: absolute;
-		height: calc(100vh);
-		width: calc(100vw);
+		height: calc(100vh - var(--header-height));
+		width: 100vw;
 	}
 
 	.root > :nth-child(2) {
