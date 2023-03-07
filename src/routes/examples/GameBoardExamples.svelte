@@ -16,7 +16,7 @@
 			[7, 7, 7, 7, 7, 7, 7, 7, 6, 6, 6, 6],
 		],
 		tileRack: [8, 86, null, 40, 99, 12],
-		labelMode: GameBoardLabelMode.Coordinates,
+		labelMode: GameBoardLabelMode.Nothing,
 		cellSize: 40,
 		onCellClicked: onTileClicked,
 	};
@@ -31,13 +31,13 @@
 		baseGameBoardProps,
 		{
 			gameBoard: baseGameBoardProps.gameBoard,
-			labelMode: GameBoardLabelMode.HotelInitials,
+			labelMode: GameBoardLabelMode.Coordinates,
 			cellSize: baseGameBoardProps.cellSize,
 		},
 		{
 			gameBoard: baseGameBoardProps.gameBoard,
 			tileRack: baseGameBoardProps.tileRack,
-			labelMode: GameBoardLabelMode.Nothing,
+			labelMode: GameBoardLabelMode.HotelInitials,
 			cellSize: baseGameBoardProps.cellSize,
 		},
 	];

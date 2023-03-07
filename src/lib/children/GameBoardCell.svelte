@@ -16,7 +16,16 @@
 
 	let label: string;
 	$: {
-		if (labelMode === GameBoardLabelMode.Coordinates) {
+		if (labelMode === GameBoardLabelMode.Nothing) {
+			if (
+				gameBoardType === PB_GameBoardType.NOTHING ||
+				gameBoardType === PB_GameBoardType.I_HAVE_THIS
+			) {
+				label = getTileString(tile);
+			} else {
+				label = '\u00a0';
+			}
+		} else if (labelMode === GameBoardLabelMode.Coordinates) {
 			label = getTileString(tile);
 		} else if (labelMode === GameBoardLabelMode.HotelInitials) {
 			if (
@@ -26,15 +35,6 @@
 				label = getTileString(tile);
 			} else if (gameBoardType <= PB_GameBoardType.IMPERIAL) {
 				label = gameBoardTypeToHotelInitial.get(gameBoardType)!;
-			} else {
-				label = '\u00a0';
-			}
-		} else if (labelMode === GameBoardLabelMode.Nothing) {
-			if (
-				gameBoardType === PB_GameBoardType.NOTHING ||
-				gameBoardType === PB_GameBoardType.I_HAVE_THIS
-			) {
-				label = getTileString(tile);
 			} else {
 				label = '\u00a0';
 			}

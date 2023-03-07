@@ -57,9 +57,9 @@ export const teamNumberToCSSClassName = new Map([
 ]);
 
 export enum GameBoardLabelMode {
+	Nothing,
 	Coordinates,
 	HotelInitials,
-	Nothing,
 }
 
 const yTileNames = 'ABCDEFGHI';
