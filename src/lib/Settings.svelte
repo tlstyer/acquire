@@ -33,7 +33,7 @@
 	}
 
 	const colorSchemeWritable = newSetting('ColorScheme', (localStorageValue) =>
-		localStorageValue === 'White' ? localStorageValue : 'NetAcquire',
+		localStorageValue === 'white' ? localStorageValue : 'netacquire',
 	);
 	export const colorScheme = { subscribe: colorSchemeWritable.subscribe };
 
@@ -65,8 +65,8 @@
 		<label>
 			Color Scheme:
 			<select bind:value={$colorSchemeWritable}>
-				<option value="NetAcquire">NetAcquire</option>
-				<option value="White">White</option>
+				<option value="netacquire">NetAcquire</option>
+				<option value="white">White</option>
 			</select>
 		</label>
 	</p>

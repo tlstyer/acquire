@@ -7,14 +7,13 @@
 
 	colorScheme.subscribe((cs) => {
 		if (browser) {
-			const csLC = cs.toLowerCase();
 			document.documentElement.style.setProperty(
 				'--main-background-color',
-				`var(--main-background-color-${csLC})`,
+				`var(--main-background-color-${cs})`,
 			);
 			document.documentElement.style.setProperty(
 				'--scrolling-div-background-color',
-				`var(--scrolling-div-background-color-${csLC})`,
+				`var(--scrolling-div-background-color-${cs})`,
 			);
 		}
 	});
