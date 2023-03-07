@@ -1,7 +1,23 @@
 <script>
+	import { browser } from '$app/environment';
 	import Header from '$lib/Header.svelte';
+	import { colorScheme } from '$lib/Settings.svelte';
 	import 'normalize.css';
 	import './global.css';
+
+	colorScheme.subscribe((cs) => {
+		if (browser) {
+			const csLC = cs.toLowerCase();
+			document.documentElement.style.setProperty(
+				'--main-background-color',
+				`var(--main-background-color-${csLC})`,
+			);
+			document.documentElement.style.setProperty(
+				'--scrolling-div-background-color',
+				`var(--scrolling-div-background-color-${csLC})`,
+			);
+		}
+	});
 </script>
 
 <Header />
