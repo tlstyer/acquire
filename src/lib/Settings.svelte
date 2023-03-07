@@ -45,10 +45,16 @@
 		return gblmStr && gblm.toString() === localStorageValue ? gblm : GameBoardLabelMode.Nothing;
 	});
 	export const gameBoardLabelMode = { subscribe: gameBoardLabelModeSetting.subscribe };
+
+	const settingsDialogIsVisibleStore = writable(false);
+	export const settingsDialogIsVisible = { subscribe: settingsDialogIsVisibleStore.subscribe };
 </script>
 
 <script lang="ts">
-	export const show = () => dialog?.showModal();
+	export const show = () => {
+		settingsDialogIsVisibleStore.set(true);
+		dialog?.showModal();
+	};
 
 	let dialog: HTMLDialogElement | null = null;
 </script>
@@ -74,5 +80,12 @@
 			</select>
 		</label>
 	</p>
-	<button on:click={() => dialog?.close()}>Close</button>
+	<button
+		on:click={() => {
+			dialog?.close();
+			settingsDialogIsVisibleStore.set(false);
+		}}
+	>
+		Close
+	</button>
 </dialog>
