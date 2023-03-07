@@ -21,7 +21,7 @@
 		left: 0;
 		height: var(--header-height);
 		width: 100%;
-		padding: 2px;
+		padding: 2px 12px;
 		background-color: #e6e6e6;
 
 		display: flex;
