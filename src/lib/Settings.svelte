@@ -41,23 +41,9 @@
 	export const show = () => dialog?.showModal();
 
 	let dialog: HTMLDialogElement | null = null;
-
-	function onClick(event: MouseEvent) {
-		if (dialog) {
-			const rect = dialog.getBoundingClientRect();
-			const isInDialog =
-				rect.top <= event.clientY &&
-				event.clientY <= rect.top + rect.height &&
-				rect.left <= event.clientX &&
-				event.clientX <= rect.left + rect.width;
-			if (!isInDialog) {
-				dialog.close();
-			}
-		}
-	}
 </script>
 
-<dialog bind:this={dialog} on:click={onClick} on:keydown={undefined}>
+<dialog bind:this={dialog}>
 	<h3>Settings</h3>
 	<p>
 		<label>
