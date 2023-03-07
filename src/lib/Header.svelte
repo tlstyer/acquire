@@ -1,10 +1,18 @@
 <svelte:options immutable />
 
+<script lang="ts">
+	import Settings from './Settings.svelte';
+
+	let showSettings: (() => void) | undefined;
+</script>
+
 <div>
 	<span class="name">Acquire</span>
 	<span class="middle" />
-	<span>⚙</span>
+	<span class="settings" on:click={showSettings} on:keydown={undefined}>⚙</span>
 </div>
+
+<Settings bind:show={showSettings} />
 
 <style>
 	div {
@@ -31,5 +39,10 @@
 	.middle {
 		flex-grow: 1;
 		cursor: initial;
+	}
+
+	.settings:hover {
+		cursor: pointer;
+		font-weight: bold;
 	}
 </style>
