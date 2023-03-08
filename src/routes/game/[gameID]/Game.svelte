@@ -3,10 +3,10 @@
 	import GameHistory from '$lib/GameHistory.svelte';
 	import GameNavigationButtons from '$lib/GameNavigationButtons.svelte';
 	import GameStatus from '$lib/GameStatus.svelte';
-	import { keyboardShortcutsEnabled } from '$lib/keyboardShortcutsEnabled';
 	import ScoreBoard from '$lib/ScoreBoard.svelte';
 	import { gameBoardLabelMode } from '$lib/Settings.svelte';
 	import TileRackReadOnly from '$lib/TileRackReadOnly.svelte';
+	import { keyboardShortcutsEnabled } from '../../+layout.svelte';
 	import type { Game } from '../../../common/game';
 	import { ActionGameOver } from '../../../common/gameActions/gameOver';
 

@@ -1,3 +1,13 @@
+<script lang="ts" context="module">
+	import { settingsDialogIsVisible } from '$lib/Settings.svelte';
+	import { derived } from 'svelte/store';
+
+	export const keyboardShortcutsEnabled = derived(
+		settingsDialogIsVisible,
+		($settingsDialogIsVisible) => !$settingsDialogIsVisible,
+	);
+</script>
+
 <script>
 	import { browser } from '$app/environment';
 	import Header from '$lib/Header.svelte';
