@@ -14,8 +14,6 @@
 </script>
 
 <div>
-	<h1>LoginForm</h1>
-	<h1>Header</h1>
 	<h1>CreateGame</h1>
 	<CreateGameExamples />
 	<h1>GameListing</h1>
