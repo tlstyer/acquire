@@ -11,7 +11,6 @@
 			gameDisplayNumber: 1,
 			gameMode: PB_GameMode.SINGLES_4,
 			gameStatus: PB_GameStatus.SETTING_UP,
-			onEnterClicked,
 		},
 		{
 			gameBoard: getExampleGame1().gameBoard,
@@ -26,7 +25,6 @@
 			gameDisplayNumber: 2,
 			gameMode: PB_GameMode.TEAMS_2_VS_2_VS_2,
 			gameStatus: PB_GameStatus.IN_PROGRESS,
-			onEnterClicked,
 		},
 		{
 			gameBoard: getExampleGame2().gameBoard,
@@ -34,13 +32,8 @@
 			gameDisplayNumber: 3,
 			gameMode: PB_GameMode.TEAMS_2_VS_2,
 			gameStatus: PB_GameStatus.COMPLETED,
-			onEnterClicked,
 		},
 	];
-
-	function onEnterClicked() {
-		console.log('onEnterClicked');
-	}
 </script>
 
 {#each allGameListingProps as gameListingProps}
@@ -51,7 +44,6 @@
 			gameDisplayNumber={gameListingProps.gameDisplayNumber}
 			gameMode={gameListingProps.gameMode}
 			gameStatus={gameListingProps.gameStatus}
-			onEnterClicked={gameListingProps.onEnterClicked}
 		/>
 	</p>
 {/each}

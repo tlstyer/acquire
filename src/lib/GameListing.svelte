@@ -11,7 +11,6 @@
 	export let gameDisplayNumber: number;
 	export let gameMode: PB_GameMode;
 	export let gameStatus: PB_GameStatus;
-	export let onEnterClicked: () => void;
 
 	$: isTeamGame = gameModeToTeamSize.get(gameMode)! > 1;
 	$: numTeams = gameModeToNumPlayers.get(gameMode)! / gameModeToTeamSize.get(gameMode)!;
@@ -38,9 +37,6 @@
 		<div>Game #{gameDisplayNumber}</div>
 		<div>{gameModeToString.get(gameMode)}</div>
 		<div>{gameStatusToString.get(gameStatus)}</div>
-		<div>
-			<input type="button" value="Enter" on:click={onEnterClicked} />
-		</div>
 	</div>
 </div>
 
