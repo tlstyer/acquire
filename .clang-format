@@ -1,0 +1,5 @@
+BasedOnStyle: Google
+AllowShortFunctionsOnASingleLine: None
+ColumnLimit: 1000
+SpacesBeforeTrailingComments: 1
+SpacesInContainerLiterals: true
