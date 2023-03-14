@@ -609,14 +609,35 @@ describe('swapPositions', () => {
 			getUsernameForUserID,
 		);
 		gameSetup.addUser(2);
-		gameSetup.addUser(3);
 		gameSetup.clearHistory();
 
-		expect(gameSetup.usernames).toEqual(['user 1', 'user 2', 'user 3']);
+		expect(gameSetup.usernames).toEqual(['user 1', 'user 2', null]);
 
 		gameSetup.swapPositions(1, 1);
 
-		expect(gameSetup.usernames).toEqual(['user 1', 'user 2', 'user 3']);
+		expect(gameSetup.usernames).toEqual(['user 1', 'user 2', null]);
+		expect(gameSetup.history).toEqual([]);
+
+		gameSetup.swapPositions(2, 2);
+
+		expect(gameSetup.usernames).toEqual(['user 1', 'user 2', null]);
+		expect(gameSetup.history).toEqual([]);
+	});
+
+	test('cannot swap empty positions', () => {
+		const gameSetup = new GameSetup(
+			PB_GameMode.SINGLES_3,
+			PB_PlayerArrangementMode.EXACT_ORDER,
+			1,
+			getUsernameForUserID,
+		);
+		gameSetup.clearHistory();
+
+		expect(gameSetup.usernames).toEqual(['user 1', null, null]);
+
+		gameSetup.swapPositions(1, 2);
+
+		expect(gameSetup.usernames).toEqual(['user 1', null, null]);
 		expect(gameSetup.history).toEqual([]);
 	});
 

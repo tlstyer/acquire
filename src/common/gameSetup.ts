@@ -240,7 +240,7 @@ export class GameSetup {
 			return;
 		}
 
-		if (position1 === position2) {
+		if (this.userIDs[position1] === this.userIDs[position2]) {
 			return;
 		}
 

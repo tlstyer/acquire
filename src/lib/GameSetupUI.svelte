@@ -159,6 +159,7 @@
 								<input
 									type="button"
 									value="▲"
+									disabled={userIDs[index] === userIDs[index - 1]}
 									on:click={() => onSwapPositions?.(index, index - 1)}
 								/>
 							{/if}
@@ -168,6 +169,7 @@
 								<input
 									type="button"
 									value="▼"
+									disabled={userIDs[index] === userIDs[index + 1]}
 									on:click={() => onSwapPositions?.(index, index + 1)}
 								/>
 							{/if}
@@ -195,6 +197,7 @@
 									<input
 										type="button"
 										value="▲"
+										disabled={userIDs[entry.index] === userIDs[entry.upIndex]}
 										on:click={() => {
 											if (entry && entry.upIndex !== null) {
 												onSwapPositions?.(entry.index, entry.upIndex);
@@ -208,6 +211,7 @@
 									<input
 										type="button"
 										value="▼"
+										disabled={userIDs[entry.index] === userIDs[entry.downIndex]}
 										on:click={() => {
 											if (entry && entry.downIndex !== null) {
 												onSwapPositions?.(entry.index, entry.downIndex);
