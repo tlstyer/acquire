@@ -196,7 +196,7 @@
 										type="button"
 										value="▲"
 										on:click={() => {
-											if (entry && entry.index !== null && entry.upIndex !== null) {
+											if (entry && entry.upIndex !== null) {
 												onSwapPositions?.(entry.index, entry.upIndex);
 											}
 										}}
@@ -209,7 +209,7 @@
 										type="button"
 										value="▼"
 										on:click={() => {
-											if (entry && entry.index !== null && entry.downIndex !== null) {
+											if (entry && entry.downIndex !== null) {
 												onSwapPositions?.(entry.index, entry.downIndex);
 											}
 										}}
