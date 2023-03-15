@@ -30,31 +30,23 @@ export function gameSetupFromProtocolBuffer(
 	const userIDsSet = new Set<number>();
 	let hostUserID = 0;
 	const approvals: boolean[] = new Array(positions.length);
-	let approvedByEverybody = true;
 
 	for (let index = 0; index < positions.length; index++) {
 		const position = positions[index];
 		const userID = position.userId;
 
 		if (userID !== 0) {
-			const isHost = position.isHost;
-			const approvesOfGameSetup = position.approvesOfGameSetup;
-
 			usernames[index] = getUsernameForUserID(userID);
 			userIDsArray[index] = userID;
 			userIDsSet.add(userID);
-			if (isHost) {
+			if (position.isHost) {
 				hostUserID = userID;
 			}
-			approvals[index] = approvesOfGameSetup ? true : false;
-			if (!approvesOfGameSetup) {
-				approvedByEverybody = false;
-			}
+			approvals[index] = position.approvesOfGameSetup;
 		} else {
 			usernames[index] = null;
 			userIDsArray[index] = null;
 			approvals[index] = false;
-			approvedByEverybody = false;
 		}
 	}
 
@@ -68,7 +60,6 @@ export function gameSetupFromProtocolBuffer(
 	gameSetup.userIDs = userIDsArray;
 	gameSetup.userIDsSet = userIDsSet;
 	gameSetup.approvals = approvals;
-	gameSetup.approvedByEverybody = approvedByEverybody;
 
 	return gameSetup;
 }

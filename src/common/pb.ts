@@ -251,6 +251,14 @@ export interface PB_GameSetupChange_UserApprovedOfGameSetup {
      * @generated from protobuf field: int32 user_id = 1;
      */
     userId: number;
+    /**
+     * @generated from protobuf field: bool approved_by_everybody = 2;
+     */
+    approvedByEverybody: boolean;
+    /**
+     * @generated from protobuf field: repeated int32 final_user_ids = 3;
+     */
+    finalUserIds: number[];
 }
 /**
  * @generated from protobuf message PB.GameSetupChange.GameModeChanged
@@ -1831,11 +1839,13 @@ export const PB_GameSetupChange_UserRemoved = new PB_GameSetupChange_UserRemoved
 class PB_GameSetupChange_UserApprovedOfGameSetup$Type extends MessageType<PB_GameSetupChange_UserApprovedOfGameSetup> {
     constructor() {
         super("PB.GameSetupChange.UserApprovedOfGameSetup", [
-            { no: 1, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
+            { no: 1, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 2, name: "approved_by_everybody", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 3, name: "final_user_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ }
         ]);
     }
     create(value?: PartialMessage<PB_GameSetupChange_UserApprovedOfGameSetup>): PB_GameSetupChange_UserApprovedOfGameSetup {
-        const message = { userId: 0 };
+        const message = { userId: 0, approvedByEverybody: false, finalUserIds: [] };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<PB_GameSetupChange_UserApprovedOfGameSetup>(this, message, value);
@@ -1848,6 +1858,16 @@ class PB_GameSetupChange_UserApprovedOfGameSetup$Type extends MessageType<PB_Gam
             switch (fieldNo) {
                 case /* int32 user_id */ 1:
                     message.userId = reader.int32();
+                    break;
+                case /* bool approved_by_everybody */ 2:
+                    message.approvedByEverybody = reader.bool();
+                    break;
+                case /* repeated int32 final_user_ids */ 3:
+                    if (wireType === WireType.LengthDelimited)
+                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
+                            message.finalUserIds.push(reader.int32());
+                    else
+                        message.finalUserIds.push(reader.int32());
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -1864,6 +1884,16 @@ class PB_GameSetupChange_UserApprovedOfGameSetup$Type extends MessageType<PB_Gam
         /* int32 user_id = 1; */
         if (message.userId !== 0)
             writer.tag(1, WireType.Varint).int32(message.userId);
+        /* bool approved_by_everybody = 2; */
+        if (message.approvedByEverybody !== false)
+            writer.tag(2, WireType.Varint).bool(message.approvedByEverybody);
+        /* repeated int32 final_user_ids = 3; */
+        if (message.finalUserIds.length) {
+            writer.tag(3, WireType.LengthDelimited).fork();
+            for (let i = 0; i < message.finalUserIds.length; i++)
+                writer.int32(message.finalUserIds[i]);
+            writer.join();
+        }
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

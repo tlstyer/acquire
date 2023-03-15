@@ -135,6 +135,8 @@ message PB {
 
     message UserApprovedOfGameSetup {
       int32 user_id = 1;
+      bool approved_by_everybody = 2;
+      repeated int32 final_user_ids = 3;
     }
 
     message GameModeChanged {
