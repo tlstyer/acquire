@@ -14,12 +14,13 @@
 		"server": "nodemon --trace-warnings --enable-source-maps build/src/server/main.js"
 	},
 	"dependencies": {
-		"@protobuf-ts/plugin": "^2.8.2",
+		"@protobuf-ts/runtime": "^2.8.2",
 		"bufferutil": "^4.0.7",
 		"typescript-collections": "^1.3.3",
 		"ws": "^8.13.0"
 	},
 	"devDependencies": {
+		"@protobuf-ts/plugin": "^2.8.2",
 		"@sveltejs/adapter-auto": "^2.0.0",
 		"@sveltejs/kit": "^1.12.0",
 		"@types/node": "^18.15.3",
