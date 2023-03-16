@@ -101,3 +101,48 @@ export const allGameModes = [
 	PB_GameMode.TEAMS_2_VS_2_VS_2,
 	PB_GameMode.TEAMS_3_VS_3,
 ];
+
+export const KEY_ALT = 1;
+export const KEY_CTRL = 2;
+export const KEY_META = 4;
+export const KEY_SHIFT = 8;
+
+export function keyboardEventToKeysAlsoPressed(event: KeyboardEvent) {
+	return (
+		(event.altKey ? KEY_ALT : 0) +
+		(event.ctrlKey ? KEY_CTRL : 0) +
+		(event.metaKey ? KEY_META : 0) +
+		(event.shiftKey ? KEY_SHIFT : 0)
+	);
+}
+
+export const keyboardEventCodeToGameBoardType = new Map([
+	// Luxor
+	['KeyL', PB_GameBoardType.LUXOR],
+	['Digit1', PB_GameBoardType.LUXOR],
+	['Numpad1', PB_GameBoardType.LUXOR],
+	// Tower
+	['KeyT', PB_GameBoardType.TOWER],
+	['Digit2', PB_GameBoardType.TOWER],
+	['Numpad2', PB_GameBoardType.TOWER],
+	// American
+	['KeyA', PB_GameBoardType.AMERICAN],
+	['Digit3', PB_GameBoardType.AMERICAN],
+	['Numpad3', PB_GameBoardType.AMERICAN],
+	// Festival
+	['KeyF', PB_GameBoardType.FESTIVAL],
+	['Digit4', PB_GameBoardType.FESTIVAL],
+	['Numpad4', PB_GameBoardType.FESTIVAL],
+	// Worldwide
+	['KeyW', PB_GameBoardType.WORLDWIDE],
+	['Digit5', PB_GameBoardType.WORLDWIDE],
+	['Numpad5', PB_GameBoardType.WORLDWIDE],
+	// Continental
+	['KeyC', PB_GameBoardType.CONTINENTAL],
+	['Digit6', PB_GameBoardType.CONTINENTAL],
+	['Numpad6', PB_GameBoardType.CONTINENTAL],
+	// Imperial
+	['KeyI', PB_GameBoardType.IMPERIAL],
+	['Digit7', PB_GameBoardType.IMPERIAL],
+	['Numpad7', PB_GameBoardType.IMPERIAL],
+]);

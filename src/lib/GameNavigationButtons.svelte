@@ -2,6 +2,7 @@
 
 <script lang="ts">
 	import type { GameState } from '../common/gameState';
+	import { keyboardEventToKeysAlsoPressed } from './helpers';
 
 	export let gameStateHistory: GameState[];
 	export let selectedMove: number | undefined;
@@ -18,22 +19,19 @@
 
 	function handleKeydown(event: KeyboardEvent) {
 		if (keyboardShortcutsEnabled) {
-			switch (event.key) {
-				case 'ArrowUp': {
+			if (keyboardEventToKeysAlsoPressed(event) === 0) {
+				if (event.code === 'ArrowUp' || event.code === 'Home') {
 					fastBackwardButton?.click();
-					break;
-				}
-				case 'ArrowLeft': {
+					event.preventDefault();
+				} else if (event.code === 'ArrowLeft') {
 					stepBackwardButton?.click();
-					break;
-				}
-				case 'ArrowRight': {
+					event.preventDefault();
+				} else if (event.code === 'ArrowRight') {
 					stepForwardButton?.click();
-					break;
-				}
-				case 'ArrowDown': {
+					event.preventDefault();
+				} else if (event.code === 'ArrowDown' || event.code === 'End') {
 					fastForwardButton?.click();
-					break;
+					event.preventDefault();
 				}
 			}
 		}

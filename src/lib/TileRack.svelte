@@ -4,19 +4,29 @@
 		type: PB_GameBoardType;
 	};
 
-	const keyboardShortcutToTileIndex = new Map([
-		['1', 0],
-		['2', 1],
-		['3', 2],
-		['4', 3],
-		['5', 4],
-		['6', 5],
+	export const keyboardEventCodeToTileIndex = new Map([
+		['Digit1', 0],
+		['Numpad1', 0],
+		['Digit2', 1],
+		['Numpad2', 1],
+		['Digit3', 2],
+		['Numpad3', 2],
+		['Digit4', 3],
+		['Numpad4', 3],
+		['Digit5', 4],
+		['Numpad5', 4],
+		['Digit6', 5],
+		['Numpad6', 5],
 	]);
 </script>
 
 <script lang="ts">
 	import { PB_GameBoardType } from '../common/pb';
-	import { gameBoardTypeToCSSClassName, getTileString } from './helpers';
+	import {
+		gameBoardTypeToCSSClassName,
+		getTileString,
+		keyboardEventToKeysAlsoPressed,
+	} from './helpers';
 
 	export let tiles: (number | null)[];
 	export let types: (PB_GameBoardType | null)[];
@@ -50,10 +60,12 @@
 
 	function handleKeydown(event: KeyboardEvent) {
 		if (keyboardShortcutsEnabled) {
-			const tileIndex = keyboardShortcutToTileIndex.get(event.key);
+			const tileIndex = keyboardEventCodeToTileIndex.get(event.code);
 
-			if (tileIndex !== undefined) {
+			if (tileIndex !== undefined && keyboardEventToKeysAlsoPressed(event) === 0) {
 				inputs[tileIndex]?.focus();
+
+				event.preventDefault();
 			}
 		}
 	}

@@ -6,45 +6,18 @@
 		Disabled,
 		Invisible,
 	}
-
-	const keyboardShortcutToAddedChain = new Map([
-		['1', 0],
-		['l', 0],
-		['2', 1],
-		['t', 1],
-		['3', 2],
-		['a', 2],
-		['4', 3],
-		['f', 3],
-		['5', 4],
-		['w', 4],
-		['6', 5],
-		['c', 5],
-		['7', 6],
-		['i', 6],
-	]);
-
-	const keyboardShortcutToRemovedChain = new Map([
-		['!', 0],
-		['L', 0],
-		['@', 1],
-		['T', 1],
-		['#', 2],
-		['A', 2],
-		['$', 3],
-		['F', 3],
-		['%', 4],
-		['W', 4],
-		['^', 5],
-		['C', 5],
-		['&', 6],
-		['I', 6],
-	]);
 </script>
 
 <script lang="ts">
 	import type { PB_GameBoardType } from '../common/pb';
-	import { allChains, gameBoardTypeToCSSClassName, gameBoardTypeToHotelInitial } from './helpers';
+	import {
+		allChains,
+		gameBoardTypeToCSSClassName,
+		gameBoardTypeToHotelInitial,
+		keyboardEventCodeToGameBoardType,
+		keyboardEventToKeysAlsoPressed,
+		KEY_SHIFT,
+	} from './helpers';
 
 	export let scoreBoardAvailable: number[];
 	export let scoreBoardPrice: number[];
@@ -98,38 +71,60 @@
 
 	function handleKeydown(event: KeyboardEvent) {
 		if (keyboardShortcutsEnabled) {
-			const key = event.key;
+			const keysAlsoPressed = keyboardEventToKeysAlsoPressed(event);
+			const gameBoardType = keyboardEventCodeToGameBoardType.get(event.code);
 
-			const addedChain = keyboardShortcutToAddedChain.get(key);
-			const removedChain = keyboardShortcutToRemovedChain.get(key);
+			if (keysAlsoPressed === 0) {
+				if (gameBoardType !== undefined) {
+					const button = availableButtons[gameBoardType];
+					if (button) {
+						button.focus();
+						button.click();
+					}
 
-			if (addedChain !== undefined) {
-				const button = availableButtons[addedChain];
-				if (button) {
-					button.focus();
-					button.click();
-				}
-			} else if (removedChain !== undefined) {
-				for (let i = cart.length - 1; i >= 0; i--) {
-					if (cart[i] === removedChain) {
-						cart = [...cart];
-						cart[i] = null;
-						break;
+					event.preventDefault();
+				} else if (
+					event.code === 'Backspace' ||
+					event.code === 'Delete' ||
+					event.code === 'NumpadSubtract'
+				) {
+					for (let i = cart.length - 1; i >= 0; i--) {
+						if (cart[i] !== null) {
+							cart = [...cart];
+							cart[i] = null;
+							break;
+						}
 					}
+
+					event.preventDefault();
+				} else if (event.code === 'KeyE' || event.code === 'NumpadMultiply') {
+					endGameCheckbox?.focus();
+					endGameCheckbox?.click();
+
+					event.preventDefault();
+				} else if (
+					event.code === 'KeyO' ||
+					event.code === 'Digit0' ||
+					event.code === 'Numpad0' ||
+					event.code === 'Digit8' ||
+					event.code === 'Numpad8'
+				) {
+					okButton?.focus();
+
+					event.preventDefault();
 				}
-			} else if (key === 'Backspace' || key === '-') {
-				for (let i = cart.length - 1; i >= 0; i--) {
-					if (cart[i] !== null) {
-						cart = [...cart];
-						cart[i] = null;
-						break;
+			} else if (keysAlsoPressed === KEY_SHIFT) {
+				if (gameBoardType !== undefined) {
+					for (let i = cart.length - 1; i >= 0; i--) {
+						if (cart[i] === gameBoardType) {
+							cart = [...cart];
+							cart[i] = null;
+							break;
+						}
 					}
+
+					event.preventDefault();
 				}
-			} else if (key === 'e' || key === '*') {
-				endGame = !endGame;
-				endGameCheckbox?.focus();
-			} else if (key === '0' || key === '8' || key === 'o') {
-				okButton?.focus();
 			}
 		}
 	}

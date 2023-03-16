@@ -12,28 +12,17 @@
 		[SelectChainTitle.SelectMergerSurvivor, 'Merger survivor'],
 		[SelectChainTitle.SelectChainToDisposeOfNext, 'Chain to dispose of next'],
 	]);
-
-	const keyboardShortcutToChain = new Map([
-		['1', 0],
-		['l', 0],
-		['2', 1],
-		['t', 1],
-		['3', 2],
-		['a', 2],
-		['4', 3],
-		['f', 3],
-		['5', 4],
-		['w', 4],
-		['6', 5],
-		['c', 5],
-		['7', 6],
-		['i', 6],
-	]);
 </script>
 
 <script lang="ts">
 	import type { PB_GameBoardType } from '../common/pb';
-	import { allChains, gameBoardTypeToCSSClassName, gameBoardTypeToHotelInitial } from './helpers';
+	import {
+		allChains,
+		gameBoardTypeToCSSClassName,
+		gameBoardTypeToHotelInitial,
+		keyboardEventCodeToGameBoardType,
+		keyboardEventToKeysAlsoPressed,
+	} from './helpers';
 
 	export let type: SelectChainTitle;
 	export let availableChains: PB_GameBoardType[];
@@ -48,10 +37,12 @@
 
 	function handleKeydown(event: KeyboardEvent) {
 		if (keyboardShortcutsEnabled) {
-			const chain = keyboardShortcutToChain.get(event.key);
+			const gameBoardType = keyboardEventCodeToGameBoardType.get(event.code);
 
-			if (chain !== undefined) {
-				inputs[chain]?.focus();
+			if (gameBoardType !== undefined && keyboardEventToKeysAlsoPressed(event) === 0) {
+				inputs[gameBoardType]?.focus();
+
+				event.preventDefault();
 			}
 		}
 	}

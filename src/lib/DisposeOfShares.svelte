@@ -1,28 +1,63 @@
 <svelte:options immutable />
 
 <script lang="ts" context="module">
-	const keyboardShortcutToButtonIndex = new Map([
-		['1', 0],
-		['k', 0],
-		['2', 1],
-		['t', 1],
-		['3', 2],
-		['T', 2],
-		['4', 3],
-		['5', 4],
-		['s', 4],
-		['6', 5],
-		['S', 5],
-		['7', 6],
-		['0', 7],
-		['8', 7],
-		['o', 7],
+	export const keyboardEventCodeToButtonIndex = new Map([
+		// Keep All
+		['KeyK', 0],
+		['Digit1', 0],
+		['Numpad1', 0],
+		// Trade ▲
+		['KeyT', 1],
+		['Digit2', 1],
+		['Numpad2', 1],
+		// Trade ▼
+		['Digit3', 2],
+		['Numpad3', 2],
+		// Trade Max
+		['Digit4', 3],
+		['Numpad4', 3],
+		// Sell ▲
+		['KeyS', 4],
+		['Digit5', 4],
+		['Numpad5', 4],
+		// Sell ▼
+		['Digit6', 5],
+		['Numpad6', 5],
+		// Sell Max
+		['Digit7', 6],
+		['Numpad7', 6],
+		// OK
+		['KeyO', 7],
+		['Digit0', 7],
+		['Numpad0', 7],
+		['Digit8', 7],
+		['Numpad8', 7],
 	]);
+
+	function keyboardShortcutToButtonIndex(event: KeyboardEvent) {
+		const keysAlsoPressed = keyboardEventToKeysAlsoPressed(event);
+
+		if (keysAlsoPressed === 0) {
+			return keyboardEventCodeToButtonIndex.get(event.code);
+		} else if (keysAlsoPressed === KEY_SHIFT) {
+			if (event.code === 'KeyT') {
+				// Trade ▼
+				return 2;
+			} else if (event.code === 'KeyS') {
+				// Sell ▼
+				return 5;
+			}
+		}
+	}
 </script>
 
 <script lang="ts">
 	import type { PB_GameBoardType } from '../common/pb';
-	import { gameBoardTypeToCSSClassName } from './helpers';
+	import {
+		gameBoardTypeToCSSClassName,
+		keyboardEventToKeysAlsoPressed,
+		KEY_SHIFT,
+	} from './helpers';
 
 	export let defunctChain: PB_GameBoardType;
 	export let controllingChain: PB_GameBoardType;
@@ -53,7 +88,7 @@
 
 	function handleKeydown(event: KeyboardEvent) {
 		if (keyboardShortcutsEnabled) {
-			const buttonIndex = keyboardShortcutToButtonIndex.get(event.key);
+			const buttonIndex = keyboardShortcutToButtonIndex(event);
 
 			if (buttonIndex !== undefined) {
 				const button = inputs[buttonIndex];
@@ -64,6 +99,8 @@
 						button.click();
 					}
 				}
+
+				event.preventDefault();
 			}
 		}
 	}
