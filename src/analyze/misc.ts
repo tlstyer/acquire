@@ -274,3 +274,24 @@ class GameHistoryMessageCounts {
 		this.allTilesPlayed = Math.max(this.allTilesPlayed, other.allTilesPlayed);
 	}
 }
+
+export class MovingAverage {
+	slidingWindow: number[];
+	nextEntryIndex = 0;
+	sum = 0;
+
+	constructor(public length: number) {
+		this.slidingWindow = new Array(length);
+		this.slidingWindow.fill(0);
+	}
+
+	includeNewEntry(entry: number) {
+		this.sum += entry - this.slidingWindow[this.nextEntryIndex];
+		this.slidingWindow[this.nextEntryIndex] = entry;
+		this.nextEntryIndex = (this.nextEntryIndex + 1) % this.length;
+	}
+
+	getAverage() {
+		return this.sum / this.length;
+	}
+}
