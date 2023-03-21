@@ -53,7 +53,7 @@ message PB {
     SPECIFY_TEAMS = 3;
   }
 
-  message Game {
+  message GameSetup {
     message Position {
       int32 user_id = 1;
       bool is_host = 2;
@@ -252,7 +252,7 @@ message PB {
 
       int32 client_id = 1;
       repeated User users = 2;
-      repeated Game games = 3;
+      repeated GameSetup games = 3;
     }
 
     message ClientConnected {

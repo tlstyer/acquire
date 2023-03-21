@@ -1,17 +1,17 @@
 import { GameSetup } from './gameSetup';
-import { PB_Game, PB_Game_Position } from './pb';
+import { PB_GameSetup, PB_GameSetup_Position } from './pb';
 
-export function gameSetupToProtocolBuffer(gameSetup: GameSetup): PB_Game {
-	const positions: PB_Game_Position[] = new Array(gameSetup.userIDs.length);
+export function gameSetupToProtocolBuffer(gameSetup: GameSetup): PB_GameSetup {
+	const positions: PB_GameSetup_Position[] = new Array(gameSetup.userIDs.length);
 	gameSetup.userIDs.forEach((userID, i) => {
-		positions[i] = PB_Game_Position.create({
+		positions[i] = PB_GameSetup_Position.create({
 			userId: userID !== null ? userID : undefined,
 			isHost: userID === gameSetup.hostUserID,
 			approvesOfGameSetup: gameSetup.approvals[i],
 		});
 	});
 
-	return PB_Game.create({
+	return PB_GameSetup.create({
 		gameMode: gameSetup.gameMode,
 		playerArrangementMode: gameSetup.playerArrangementMode,
 		positions,
@@ -19,10 +19,10 @@ export function gameSetupToProtocolBuffer(gameSetup: GameSetup): PB_Game {
 }
 
 export function gameSetupFromProtocolBuffer(
-	gameData: PB_Game,
+	gameSetupData: PB_GameSetup,
 	getUsernameForUserID: (userID: number) => string,
 ) {
-	const positions = gameData.positions;
+	const positions = gameSetupData.positions;
 
 	const usernames: (string | null)[] = new Array(positions.length);
 	const userIDsArray: (number | null)[] = new Array(positions.length);
@@ -50,8 +50,8 @@ export function gameSetupFromProtocolBuffer(
 	}
 
 	const gameSetup = new GameSetup(
-		gameData.gameMode,
-		gameData.playerArrangementMode,
+		gameSetupData.gameMode,
+		gameSetupData.playerArrangementMode,
 		hostUserID,
 		getUsernameForUserID,
 	);
