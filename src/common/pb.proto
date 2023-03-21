@@ -53,12 +53,6 @@ message PB {
     SPECIFY_TEAMS = 3;
   }
 
-  enum GameStatus {
-    SETTING_UP = 0;
-    IN_PROGRESS = 1;
-    COMPLETED = 2;
-  }
-
   message Game {
     message Position {
       int32 user_id = 1;
@@ -68,7 +62,6 @@ message PB {
 
     int32 game_id = 1;
     int32 game_display_number = 2;
-    GameStatus game_status = 3;
     GameMode game_mode = 4;
     PlayerArrangementMode player_arrangement_mode = 5;
     repeated Position positions = 6;

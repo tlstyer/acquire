@@ -1,5 +1,5 @@
 import { GameSetup } from './gameSetup';
-import { PB_Game, PB_GameStatus, PB_Game_Position } from './pb';
+import { PB_Game, PB_Game_Position } from './pb';
 
 export function gameSetupToProtocolBuffer(gameSetup: GameSetup): PB_Game {
 	const positions: PB_Game_Position[] = new Array(gameSetup.userIDs.length);
@@ -12,7 +12,6 @@ export function gameSetupToProtocolBuffer(gameSetup: GameSetup): PB_Game {
 	});
 
 	return PB_Game.create({
-		gameStatus: PB_GameStatus.SETTING_UP,
 		gameMode: gameSetup.gameMode,
 		playerArrangementMode: gameSetup.playerArrangementMode,
 		positions,

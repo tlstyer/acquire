@@ -1,7 +1,8 @@
 <script lang="ts">
 	import GameListing from '$lib/GameListing.svelte';
+	import { GameStatus } from '$lib/helpers';
 	import { defaultGameBoard } from '../../common/defaults';
-	import { PB_GameMode, PB_GameStatus } from '../../common/pb';
+	import { PB_GameMode } from '../../common/pb';
 	import { getExampleGame1, getExampleGame2 } from './games';
 
 	const allGameListingProps = [
@@ -10,7 +11,7 @@
 			usernames: ['Host', null, 'User 2', null],
 			gameDisplayNumber: 1,
 			gameMode: PB_GameMode.SINGLES_4,
-			gameStatus: PB_GameStatus.SETTING_UP,
+			gameStatus: GameStatus.SETTING_UP,
 		},
 		{
 			gameBoard: getExampleGame1().gameBoard,
@@ -24,14 +25,14 @@
 			],
 			gameDisplayNumber: 2,
 			gameMode: PB_GameMode.TEAMS_2_VS_2_VS_2,
-			gameStatus: PB_GameStatus.IN_PROGRESS,
+			gameStatus: GameStatus.IN_PROGRESS,
 		},
 		{
 			gameBoard: getExampleGame2().gameBoard,
 			usernames: ['player 1', 'player 2', 'player 3', 'player 4'],
 			gameDisplayNumber: 3,
 			gameMode: PB_GameMode.TEAMS_2_VS_2,
-			gameStatus: PB_GameStatus.COMPLETED,
+			gameStatus: GameStatus.COMPLETED,
 		},
 	];
 </script>

@@ -29,10 +29,6 @@ export interface PB_Game {
      */
     gameDisplayNumber: number;
     /**
-     * @generated from protobuf field: PB.GameStatus game_status = 3;
-     */
-    gameStatus: PB_GameStatus;
-    /**
      * @generated from protobuf field: PB.GameMode game_mode = 4;
      */
     gameMode: PB_GameMode;
@@ -952,23 +948,6 @@ export enum PB_PlayerArrangementMode {
      */
     SPECIFY_TEAMS = 3
 }
-/**
- * @generated from protobuf enum PB.GameStatus
- */
-export enum PB_GameStatus {
-    /**
-     * @generated from protobuf enum value: SETTING_UP = 0;
-     */
-    SETTING_UP = 0,
-    /**
-     * @generated from protobuf enum value: IN_PROGRESS = 1;
-     */
-    IN_PROGRESS = 1,
-    /**
-     * @generated from protobuf enum value: COMPLETED = 2;
-     */
-    COMPLETED = 2
-}
 // @generated message type with reflection information, may provide speed optimized methods
 class PB$Type extends MessageType<PB> {
     constructor() {
@@ -1001,7 +980,6 @@ class PB_Game$Type extends MessageType<PB_Game> {
         super("PB.Game", [
             { no: 1, name: "game_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
             { no: 2, name: "game_display_number", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 3, name: "game_status", kind: "enum", T: () => ["PB.GameStatus", PB_GameStatus] },
             { no: 4, name: "game_mode", kind: "enum", T: () => ["PB.GameMode", PB_GameMode] },
             { no: 5, name: "player_arrangement_mode", kind: "enum", T: () => ["PB.PlayerArrangementMode", PB_PlayerArrangementMode] },
             { no: 6, name: "positions", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => PB_Game_Position },
@@ -1009,7 +987,7 @@ class PB_Game$Type extends MessageType<PB_Game> {
         ]);
     }
     create(value?: PartialMessage<PB_Game>): PB_Game {
-        const message = { gameId: 0, gameDisplayNumber: 0, gameStatus: 0, gameMode: 0, playerArrangementMode: 0, positions: [], gameBoard: [] };
+        const message = { gameId: 0, gameDisplayNumber: 0, gameMode: 0, playerArrangementMode: 0, positions: [], gameBoard: [] };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<PB_Game>(this, message, value);
@@ -1025,9 +1003,6 @@ class PB_Game$Type extends MessageType<PB_Game> {
                     break;
                 case /* int32 game_display_number */ 2:
                     message.gameDisplayNumber = reader.int32();
-                    break;
-                case /* PB.GameStatus game_status */ 3:
-                    message.gameStatus = reader.int32();
                     break;
                 case /* PB.GameMode game_mode */ 4:
                     message.gameMode = reader.int32();
@@ -1063,9 +1038,6 @@ class PB_Game$Type extends MessageType<PB_Game> {
         /* int32 game_display_number = 2; */
         if (message.gameDisplayNumber !== 0)
             writer.tag(2, WireType.Varint).int32(message.gameDisplayNumber);
-        /* PB.GameStatus game_status = 3; */
-        if (message.gameStatus !== 0)
-            writer.tag(3, WireType.Varint).int32(message.gameStatus);
         /* PB.GameMode game_mode = 4; */
         if (message.gameMode !== 0)
             writer.tag(4, WireType.Varint).int32(message.gameMode);

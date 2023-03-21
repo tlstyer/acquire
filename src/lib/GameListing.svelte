@@ -2,15 +2,20 @@
 
 <script lang="ts">
 	import { gameModeToNumPlayers, gameModeToTeamSize } from '../common/helpers';
-	import type { PB_GameBoardType, PB_GameMode, PB_GameStatus } from '../common/pb';
-	import { gameModeToString, gameStatusToString, teamNumberToCSSClassName } from './helpers';
+	import type { PB_GameBoardType, PB_GameMode } from '../common/pb';
+	import {
+		gameModeToString,
+		GameStatus,
+		gameStatusToString,
+		teamNumberToCSSClassName,
+	} from './helpers';
 	import MiniGameBoard from './MiniGameBoard.svelte';
 
 	export let gameBoard: PB_GameBoardType[][];
 	export let usernames: (string | null)[];
 	export let gameDisplayNumber: number;
 	export let gameMode: PB_GameMode;
-	export let gameStatus: PB_GameStatus;
+	export let gameStatus: GameStatus;
 
 	$: isTeamGame = gameModeToTeamSize.get(gameMode)! > 1;
 	$: numTeams = gameModeToNumPlayers.get(gameMode)! / gameModeToTeamSize.get(gameMode)!;

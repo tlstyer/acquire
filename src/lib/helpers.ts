@@ -1,5 +1,5 @@
 import { TileEnum } from '../common/enums';
-import { PB_GameBoardType, PB_GameMode, PB_GameStatus } from '../common/pb';
+import { PB_GameBoardType, PB_GameMode } from '../common/pb';
 
 export const allChains = [
 	PB_GameBoardType.LUXOR,
@@ -84,10 +84,16 @@ export const gameModeToString = new Map([
 	[PB_GameMode.TEAMS_3_VS_3, 'Teams 3 vs 3'],
 ]);
 
+export enum GameStatus {
+	SETTING_UP,
+	IN_PROGRESS,
+	COMPLETED,
+}
+
 export const gameStatusToString = new Map([
-	[PB_GameStatus.SETTING_UP, 'Setting Up'],
-	[PB_GameStatus.IN_PROGRESS, 'In Progress'],
-	[PB_GameStatus.COMPLETED, 'Completed'],
+	[GameStatus.SETTING_UP, 'Setting Up'],
+	[GameStatus.IN_PROGRESS, 'In Progress'],
+	[GameStatus.COMPLETED, 'Completed'],
 ]);
 
 export const allGameModes = [
