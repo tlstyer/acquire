@@ -125,7 +125,7 @@
 				{onMoveSelected}
 			/>
 		</div>
-		<NextGameAction usernames={game.usernames} action={gameState.nextGameAction} />
+		<NextGameAction action={gameState.nextGameAction} />
 	</div>
 </div>
 

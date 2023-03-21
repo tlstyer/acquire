@@ -46,6 +46,6 @@
 
 {#each actions as action}
 	<p>
-		<NextGameAction usernames={game.usernames} {action} />
+		<NextGameAction {action} />
 	</p>
 {/each}
