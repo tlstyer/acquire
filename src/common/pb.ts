@@ -414,6 +414,23 @@ export interface PB_MessageToServer {
  * @generated from protobuf message PB.MessageToClient
  */
 export interface PB_MessageToClient {
+    /**
+     * @generated from protobuf field: PB.MessageToClient.Initial initial = 15;
+     */
+    initial?: PB_MessageToClient_Initial;
+}
+/**
+ * @generated from protobuf message PB.MessageToClient.Initial
+ */
+export interface PB_MessageToClient_Initial {
+    /**
+     * @generated from protobuf field: int32 version = 1;
+     */
+    version: number;
+    /**
+     * @generated from protobuf field: int32 log_time = 2;
+     */
+    logTime: number;
 }
 /**
  * @generated from protobuf message PB.MessagesToClient
@@ -2255,7 +2272,9 @@ export const PB_MessageToServer = new PB_MessageToServer$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class PB_MessageToClient$Type extends MessageType<PB_MessageToClient> {
     constructor() {
-        super("PB.MessageToClient", []);
+        super("PB.MessageToClient", [
+            { no: 15, name: "initial", kind: "message", T: () => PB_MessageToClient_Initial }
+        ]);
     }
     create(value?: PartialMessage<PB_MessageToClient>): PB_MessageToClient {
         const message = {};
@@ -2265,9 +2284,28 @@ class PB_MessageToClient$Type extends MessageType<PB_MessageToClient> {
         return message;
     }
     internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PB_MessageToClient): PB_MessageToClient {
-        return target ?? this.create();
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* PB.MessageToClient.Initial initial */ 15:
+                    message.initial = PB_MessageToClient_Initial.internalBinaryRead(reader, reader.uint32(), options, message.initial);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
     }
     internalBinaryWrite(message: PB_MessageToClient, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* PB.MessageToClient.Initial initial = 15; */
+        if (message.initial)
+            PB_MessageToClient_Initial.internalBinaryWrite(message.initial, writer.tag(15, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -2278,6 +2316,60 @@ class PB_MessageToClient$Type extends MessageType<PB_MessageToClient> {
  * @generated MessageType for protobuf message PB.MessageToClient
  */
 export const PB_MessageToClient = new PB_MessageToClient$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class PB_MessageToClient_Initial$Type extends MessageType<PB_MessageToClient_Initial> {
+    constructor() {
+        super("PB.MessageToClient.Initial", [
+            { no: 1, name: "version", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 2, name: "log_time", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
+        ]);
+    }
+    create(value?: PartialMessage<PB_MessageToClient_Initial>): PB_MessageToClient_Initial {
+        const message = { version: 0, logTime: 0 };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<PB_MessageToClient_Initial>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PB_MessageToClient_Initial): PB_MessageToClient_Initial {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* int32 version */ 1:
+                    message.version = reader.int32();
+                    break;
+                case /* int32 log_time */ 2:
+                    message.logTime = reader.int32();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: PB_MessageToClient_Initial, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int32 version = 1; */
+        if (message.version !== 0)
+            writer.tag(1, WireType.Varint).int32(message.version);
+        /* int32 log_time = 2; */
+        if (message.logTime !== 0)
+            writer.tag(2, WireType.Varint).int32(message.logTime);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message PB.MessageToClient.Initial
+ */
+export const PB_MessageToClient_Initial = new PB_MessageToClient_Initial$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class PB_MessagesToClient$Type extends MessageType<PB_MessagesToClient> {
     constructor() {

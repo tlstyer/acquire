@@ -152,3 +152,8 @@ export const keyboardEventCodeToGameBoardType = new Map([
 	['Digit7', PB_GameBoardType.IMPERIAL],
 	['Numpad7', PB_GameBoardType.IMPERIAL],
 ]);
+
+// here so it can be spied on and mocked in tests
+export function reloadWindow() {
+	window.location.reload();
+}

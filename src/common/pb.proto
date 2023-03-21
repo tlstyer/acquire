@@ -205,6 +205,12 @@ message PB {
   }
 
   message MessageToClient {
+    message Initial {
+      int32 version = 1;
+      int32 log_time = 2;
+    }
+
+    Initial initial = 15;
   }
 
   message MessagesToClient {

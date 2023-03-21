@@ -10,6 +10,7 @@
 
 <script>
 	import { browser } from '$app/environment';
+	import { PUBLIC_VERSION } from '$env/static/public';
 	import { Client } from '$lib/client';
 	import { WebSocketClientCommunication } from '$lib/clientCommunication';
 	import Header from '$lib/Header.svelte';
@@ -33,7 +34,7 @@
 
 	if (browser) {
 		const clientConnection = new WebSocketClientCommunication();
-		const client = new Client(clientConnection);
+		const client = new Client(clientConnection, parseInt(PUBLIC_VERSION, 10));
 		clientConnection.begin();
 
 		onDestroy(() => {
