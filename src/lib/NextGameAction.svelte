@@ -10,7 +10,7 @@
 	import { ActionSelectMergerSurvivor } from '../common/gameActions/selectMergerSurvivor';
 	import { ActionSelectNewChain } from '../common/gameActions/selectNewChain';
 	import { ActionStartGame } from '../common/gameActions/startGame';
-	import GameStatusHotelInitialsList from './children/GameStatusHotelInitialsList.svelte';
+	import NextGameActionHotelInitialsList from './children/NextGameActionHotelInitialsList.svelte';
 	import HotelName from './HotelName.svelte';
 	import Username from './Username.svelte';
 
@@ -24,20 +24,20 @@
 	<div>Waiting for <Username username={usernames[action.playerID]} /> to play a tile.</div>
 {:else if action instanceof ActionSelectNewChain}
 	<div>
-		Waiting for <Username username={usernames[action.playerID]} /> to select new chain (<GameStatusHotelInitialsList
+		Waiting for <Username username={usernames[action.playerID]} /> to select new chain (<NextGameActionHotelInitialsList
 			chains={action.availableChains}
 		/>).
 	</div>
 {:else if action instanceof ActionSelectMergerSurvivor}
 	<div>
-		Waiting for <Username username={usernames[action.playerID]} /> to select merger survivor (<GameStatusHotelInitialsList
+		Waiting for <Username username={usernames[action.playerID]} /> to select merger survivor (<NextGameActionHotelInitialsList
 			chains={action.chainsBySize[0]}
 		/>).
 	</div>
 {:else if action instanceof ActionSelectChainToDisposeOfNext}
 	<div>
 		Waiting for <Username username={usernames[action.playerID]} /> to select chain to dispose of next
-		(<GameStatusHotelInitialsList chains={action.defunctChains} />).
+		(<NextGameActionHotelInitialsList chains={action.defunctChains} />).
 	</div>
 {:else if action instanceof ActionDisposeOfShares}
 	<div>

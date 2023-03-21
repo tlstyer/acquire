@@ -5,7 +5,7 @@
 	import GameListingExamples from './GameListingExamples.svelte';
 	import GameNavigationButtonsAndGameHistoryExamples from './GameNavigationButtonsAndGameHistoryExamples.svelte';
 	import GameSetupUIExamples from './GameSetupUIExamples.svelte';
-	import GameStatusExamples from './GameStatusExamples.svelte';
+	import NextGameActionExamples from './NextGameActionExamples.svelte';
 	import PurchaseSharesExamples from './PurchaseSharesExamples.svelte';
 	import ScoreBoardExamples from './ScoreBoardExamples.svelte';
 	import SelectChainExamples from './SelectChainExamples.svelte';
@@ -36,8 +36,8 @@
 	<PurchaseSharesExamples />
 	<h1>GameNavigationButtons and GameHistory</h1>
 	<GameNavigationButtonsAndGameHistoryExamples />
-	<h1>GameStatus</h1>
-	<GameStatusExamples />
+	<h1>NextGameAction</h1>
+	<NextGameActionExamples />
 </div>
 
 <style>

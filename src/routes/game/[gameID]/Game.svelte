@@ -2,7 +2,7 @@
 	import GameBoard from '$lib/GameBoard.svelte';
 	import GameHistory from '$lib/GameHistory.svelte';
 	import GameNavigationButtons from '$lib/GameNavigationButtons.svelte';
-	import GameStatus from '$lib/GameStatus.svelte';
+	import NextGameAction from '$lib/NextGameAction.svelte';
 	import ScoreBoard from '$lib/ScoreBoard.svelte';
 	import { gameBoardLabelMode } from '$lib/Settings.svelte';
 	import TileRackReadOnly from '$lib/TileRackReadOnly.svelte';
@@ -125,7 +125,7 @@
 				{onMoveSelected}
 			/>
 		</div>
-		<GameStatus usernames={game.usernames} action={gameState.nextGameAction} />
+		<NextGameAction usernames={game.usernames} action={gameState.nextGameAction} />
 	</div>
 </div>
 

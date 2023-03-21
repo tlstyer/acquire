@@ -1,6 +1,6 @@
 <script lang="ts">
-	import GameStatus from '$lib/GameStatus.svelte';
 	import { allChains } from '$lib/helpers';
+	import NextGameAction from '$lib/NextGameAction.svelte';
 	import { Game } from '../../common/game';
 	import { ActionDisposeOfShares } from '../../common/gameActions/disposeOfShares';
 	import { ActionGameOver } from '../../common/gameActions/gameOver';
@@ -46,6 +46,6 @@
 
 {#each actions as action}
 	<p>
-		<GameStatus usernames={game.usernames} {action} />
+		<NextGameAction usernames={game.usernames} {action} />
 	</p>
 {/each}
