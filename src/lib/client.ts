@@ -13,11 +13,11 @@ export class Client {
 		);
 	}
 
-	onConnect() {}
+	private onConnect() {}
 
-	onDisconnect() {}
+	private onDisconnect() {}
 
-	onMessage(message: Uint8Array) {
+	private onMessage(message: Uint8Array) {
 		const messages = PB_MessagesToClient.fromBinary(message).messagesToClient;
 
 		for (const message of messages) {
@@ -27,7 +27,7 @@ export class Client {
 		}
 	}
 
-	onMessage_Initial(message: PB_MessageToClient_Initial) {
+	private onMessage_Initial(message: PB_MessageToClient_Initial) {
 		if (message.version !== this.version) {
 			reloadWindow();
 		}

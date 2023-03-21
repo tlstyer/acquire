@@ -23,11 +23,11 @@ export class Server {
 		});
 	}
 
-	onConnect(clientID: number) {
+	private onConnect(clientID: number) {
 		this.serverCommunication.sendMessage(clientID, this.initialMessage);
 	}
 
-	onDisconnect(clientID: number) {}
+	private onDisconnect(clientID: number) {}
 
-	onMessage(clientID: number, message: Uint8Array) {}
+	private onMessage(clientID: number, message: Uint8Array) {}
 }
