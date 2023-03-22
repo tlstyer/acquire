@@ -1,5 +1,6 @@
 import http from 'http';
 import { WebSocket, WebSocketServer } from 'ws';
+import { PB_MessagesToClient, PB_MessageToServer } from '../common/pb';
 import type { TestClientCommunication } from '../lib/clientCommunication';
 import { ReuseIDManager } from './reuseIDManager';
 
@@ -76,6 +77,8 @@ export class TestServerCommunication extends ServerCommunication {
 	clientIDToClientCommunication = new Map<number, TestClientCommunication>();
 	clientCommunicationToClientID = new Map<TestClientCommunication, number>();
 
+	communicatedMessages: TestServerCommunicatedMessage[] = [];
+
 	connect(clientCommunication: TestClientCommunication) {
 		if (!this.clientCommunicationToClientID.has(clientCommunication)) {
 			const clientID = this.nextClientID++;
@@ -99,11 +102,55 @@ export class TestServerCommunication extends ServerCommunication {
 	receiveMessage(clientCommunication: TestClientCommunication, message: Uint8Array) {
 		const clientID = this.clientCommunicationToClientID.get(clientCommunication);
 		if (clientID !== undefined) {
+			this.communicatedMessages.push(new TestServerCommunicatedMessage(false, clientID, message));
 			this.onMessage(clientID, message);
 		}
 	}
 
 	sendMessage(clientID: number, message: Uint8Array) {
+		this.communicatedMessages.push(new TestServerCommunicatedMessage(true, clientID, message));
 		this.clientIDToClientCommunication.get(clientID)?.receiveMessage(message);
+	}
+
+	logAndEmptyCommunicatedMessages() {
+		if (this.communicatedMessages.length > 0) {
+			for (const communicatedMessage of this.communicatedMessages) {
+				communicatedMessage.log();
+			}
+			this.communicatedMessages.length = 0;
+		}
+	}
+}
+
+class TestServerCommunicatedMessage {
+	sentMessage: PB_MessagesToClient | undefined;
+	receivedMessage: PB_MessageToServer | undefined;
+
+	constructor(public sent: boolean, public clientID: number, public message: Uint8Array) {
+		if (sent) {
+			this.sentMessage = PB_MessagesToClient.fromBinary(this.message);
+		} else {
+			this.receivedMessage = PB_MessageToServer.fromBinary(this.message);
+		}
+	}
+
+	log() {
+		if (this.sent) {
+			console.log(
+				'Sent:',
+				this.clientID,
+				Buffer.from(this.message).toString('hex'),
+				`(${this.message.length} bytes)`,
+			);
+			console.log(JSON.stringify(this.sentMessage, null, 2));
+		} else {
+			console.log(
+				'Received:',
+				this.clientID,
+				Buffer.from(this.message).toString('hex'),
+				`(${this.message.length} bytes)`,
+			);
+			console.log(JSON.stringify(this.receivedMessage, null, 2));
+		}
 	}
 }

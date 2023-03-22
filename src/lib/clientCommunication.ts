@@ -1,3 +1,4 @@
+import { PB_MessagesToClient, PB_MessageToServer } from '../common/pb';
 import type { TestServerCommunication } from '../server/serverCommunication';
 
 export abstract class ClientCommunication {
@@ -90,6 +91,8 @@ export class WebSocketClientCommunication extends ClientCommunication {
 }
 
 export class TestClientCommunication extends ClientCommunication {
+	communicatedMessages: TestClientCommunicatedMessage[] = [];
+
 	constructor(private serverCommunication: TestServerCommunication) {
 		super();
 	}
@@ -105,10 +108,52 @@ export class TestClientCommunication extends ClientCommunication {
 	}
 
 	sendMessage(message: Uint8Array) {
+		this.communicatedMessages.push(new TestClientCommunicatedMessage(true, message));
 		this.serverCommunication.receiveMessage(this, message);
 	}
 
 	receiveMessage(message: Uint8Array) {
+		this.communicatedMessages.push(new TestClientCommunicatedMessage(false, message));
 		this.onMessage(message);
+	}
+
+	logAndEmptyCommunicatedMessages() {
+		if (this.communicatedMessages.length > 0) {
+			for (const communicatedMessage of this.communicatedMessages) {
+				communicatedMessage.log();
+			}
+			this.communicatedMessages.length = 0;
+		}
+	}
+}
+
+class TestClientCommunicatedMessage {
+	sentMessage: PB_MessageToServer | undefined;
+	receivedMessage: PB_MessagesToClient | undefined;
+
+	constructor(public sent: boolean, public message: Uint8Array) {
+		if (sent) {
+			this.sentMessage = PB_MessageToServer.fromBinary(this.message);
+		} else {
+			this.receivedMessage = PB_MessagesToClient.fromBinary(this.message);
+		}
+	}
+
+	log() {
+		if (this.sent) {
+			console.log(
+				'Sent:',
+				Buffer.from(this.message).toString('hex'),
+				`(${this.message.length} bytes)`,
+			);
+			console.log(JSON.stringify(this.sentMessage, null, 2));
+		} else {
+			console.log(
+				'Received:',
+				Buffer.from(this.message).toString('hex'),
+				`(${this.message.length} bytes)`,
+			);
+			console.log(JSON.stringify(this.receivedMessage, null, 2));
+		}
 	}
 }
