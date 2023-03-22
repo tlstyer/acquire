@@ -409,6 +409,75 @@ export interface PB_GameAction_GameOver {
  * @generated from protobuf message PB.MessageToServer
  */
 export interface PB_MessageToServer {
+    /**
+     * @generated from protobuf field: PB.MessageToServer.LoginLogout login_logout = 1;
+     */
+    loginLogout?: PB_MessageToServer_LoginLogout;
+}
+/**
+ * @generated from protobuf message PB.MessageToServer.LoginLogout
+ */
+export interface PB_MessageToServer_LoginLogout {
+    /**
+     * @generated from protobuf field: PB.MessageToServer.LoginLogout.LoginWithPassword login_with_password = 1;
+     */
+    loginWithPassword?: PB_MessageToServer_LoginLogout_LoginWithPassword;
+    /**
+     * @generated from protobuf field: PB.MessageToServer.LoginLogout.LoginWithToken login_with_token = 2;
+     */
+    loginWithToken?: PB_MessageToServer_LoginLogout_LoginWithToken;
+    /**
+     * @generated from protobuf field: PB.MessageToServer.LoginLogout.CreateUserAndLogin create_user_and_login = 3;
+     */
+    createUserAndLogin?: PB_MessageToServer_LoginLogout_CreateUserAndLogin;
+    /**
+     * @generated from protobuf field: PB.MessageToServer.LoginLogout.Logout logout = 4;
+     */
+    logout?: PB_MessageToServer_LoginLogout_Logout;
+}
+/**
+ * @generated from protobuf message PB.MessageToServer.LoginLogout.LoginWithPassword
+ */
+export interface PB_MessageToServer_LoginLogout_LoginWithPassword {
+    /**
+     * @generated from protobuf field: string username = 1;
+     */
+    username: string;
+    /**
+     * @generated from protobuf field: string password = 2;
+     */
+    password: string;
+}
+/**
+ * @generated from protobuf message PB.MessageToServer.LoginLogout.LoginWithToken
+ */
+export interface PB_MessageToServer_LoginLogout_LoginWithToken {
+    /**
+     * @generated from protobuf field: string username = 1;
+     */
+    username: string;
+    /**
+     * @generated from protobuf field: string token = 2;
+     */
+    token: string;
+}
+/**
+ * @generated from protobuf message PB.MessageToServer.LoginLogout.CreateUserAndLogin
+ */
+export interface PB_MessageToServer_LoginLogout_CreateUserAndLogin {
+    /**
+     * @generated from protobuf field: string username = 1;
+     */
+    username: string;
+    /**
+     * @generated from protobuf field: string password = 2;
+     */
+    password: string;
+}
+/**
+ * @generated from protobuf message PB.MessageToServer.LoginLogout.Logout
+ */
+export interface PB_MessageToServer_LoginLogout_Logout {
 }
 /**
  * @generated from protobuf message PB.MessageToClient
@@ -418,6 +487,10 @@ export interface PB_MessageToClient {
      * @generated from protobuf field: PB.MessageToClient.Initial initial = 15;
      */
     initial?: PB_MessageToClient_Initial;
+    /**
+     * @generated from protobuf field: PB.MessageToClient.LoginLogout login_logout = 1;
+     */
+    loginLogout?: PB_MessageToClient_LoginLogout;
 }
 /**
  * @generated from protobuf message PB.MessageToClient.Initial
@@ -431,6 +504,64 @@ export interface PB_MessageToClient_Initial {
      * @generated from protobuf field: int32 log_time = 2;
      */
     logTime: number;
+}
+/**
+ * @generated from protobuf message PB.MessageToClient.LoginLogout
+ */
+export interface PB_MessageToClient_LoginLogout {
+    /**
+     * @generated from protobuf field: PB.MessageToClient.LoginLogout.ResponseCode response_code = 1;
+     */
+    responseCode: PB_MessageToClient_LoginLogout_ResponseCode;
+    /**
+     * @generated from protobuf field: string username = 2;
+     */
+    username: string;
+    /**
+     * @generated from protobuf field: int32 user_id = 3;
+     */
+    userId: number;
+    /**
+     * @generated from protobuf field: string token = 4;
+     */
+    token: string;
+}
+/**
+ * @generated from protobuf enum PB.MessageToClient.LoginLogout.ResponseCode
+ */
+export enum PB_MessageToClient_LoginLogout_ResponseCode {
+    /**
+     * @generated from protobuf enum value: SUCCESS = 0;
+     */
+    SUCCESS = 0,
+    /**
+     * @generated from protobuf enum value: GENERIC_ERROR = 1;
+     */
+    GENERIC_ERROR = 1,
+    /**
+     * @generated from protobuf enum value: USER_NOT_FOUND = 2;
+     */
+    USER_NOT_FOUND = 2,
+    /**
+     * @generated from protobuf enum value: INCORRECT_PASSWORD = 3;
+     */
+    INCORRECT_PASSWORD = 3,
+    /**
+     * @generated from protobuf enum value: INVALID_TOKEN = 4;
+     */
+    INVALID_TOKEN = 4,
+    /**
+     * @generated from protobuf enum value: INVALID_USERNAME = 5;
+     */
+    INVALID_USERNAME = 5,
+    /**
+     * @generated from protobuf enum value: INVALID_PASSWORD = 6;
+     */
+    INVALID_PASSWORD = 6,
+    /**
+     * @generated from protobuf enum value: USER_EXISTS = 7;
+     */
+    USER_EXISTS = 7
 }
 /**
  * @generated from protobuf message PB.MessagesToClient
@@ -485,47 +616,6 @@ export interface PB_GameReview {
      * @generated from protobuf field: int64 end_timestamp = 10 [jstype = JS_NUMBER];
      */
     endTimestamp: number;
-}
-/**
- * @generated from protobuf enum PB.ErrorCode
- */
-export enum PB_ErrorCode {
-    /**
-     * @generated from protobuf enum value: NOT_USING_LATEST_VERSION = 0;
-     */
-    NOT_USING_LATEST_VERSION = 0,
-    /**
-     * @generated from protobuf enum value: INTERNAL_SERVER_ERROR = 1;
-     */
-    INTERNAL_SERVER_ERROR = 1,
-    /**
-     * @generated from protobuf enum value: INVALID_MESSAGE_FORMAT = 2;
-     */
-    INVALID_MESSAGE_FORMAT = 2,
-    /**
-     * @generated from protobuf enum value: INVALID_USERNAME = 3;
-     */
-    INVALID_USERNAME = 3,
-    /**
-     * @generated from protobuf enum value: MISSING_PASSWORD = 4;
-     */
-    MISSING_PASSWORD = 4,
-    /**
-     * @generated from protobuf enum value: PROVIDED_PASSWORD = 5;
-     */
-    PROVIDED_PASSWORD = 5,
-    /**
-     * @generated from protobuf enum value: INCORRECT_PASSWORD = 6;
-     */
-    INCORRECT_PASSWORD = 6,
-    /**
-     * @generated from protobuf enum value: INVALID_MESSAGE = 7;
-     */
-    INVALID_MESSAGE = 7,
-    /**
-     * @generated from protobuf enum value: COULD_NOT_CONNECT = 8;
-     */
-    COULD_NOT_CONNECT = 8
 }
 /**
  * @generated from protobuf enum PB.GameBoardType
@@ -2246,7 +2336,9 @@ export const PB_GameAction_GameOver = new PB_GameAction_GameOver$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class PB_MessageToServer$Type extends MessageType<PB_MessageToServer> {
     constructor() {
-        super("PB.MessageToServer", []);
+        super("PB.MessageToServer", [
+            { no: 1, name: "login_logout", kind: "message", T: () => PB_MessageToServer_LoginLogout }
+        ]);
     }
     create(value?: PartialMessage<PB_MessageToServer>): PB_MessageToServer {
         const message = {};
@@ -2256,9 +2348,28 @@ class PB_MessageToServer$Type extends MessageType<PB_MessageToServer> {
         return message;
     }
     internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PB_MessageToServer): PB_MessageToServer {
-        return target ?? this.create();
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* PB.MessageToServer.LoginLogout login_logout */ 1:
+                    message.loginLogout = PB_MessageToServer_LoginLogout.internalBinaryRead(reader, reader.uint32(), options, message.loginLogout);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
     }
     internalBinaryWrite(message: PB_MessageToServer, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* PB.MessageToServer.LoginLogout login_logout = 1; */
+        if (message.loginLogout)
+            PB_MessageToServer_LoginLogout.internalBinaryWrite(message.loginLogout, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -2270,10 +2381,267 @@ class PB_MessageToServer$Type extends MessageType<PB_MessageToServer> {
  */
 export const PB_MessageToServer = new PB_MessageToServer$Type();
 // @generated message type with reflection information, may provide speed optimized methods
+class PB_MessageToServer_LoginLogout$Type extends MessageType<PB_MessageToServer_LoginLogout> {
+    constructor() {
+        super("PB.MessageToServer.LoginLogout", [
+            { no: 1, name: "login_with_password", kind: "message", T: () => PB_MessageToServer_LoginLogout_LoginWithPassword },
+            { no: 2, name: "login_with_token", kind: "message", T: () => PB_MessageToServer_LoginLogout_LoginWithToken },
+            { no: 3, name: "create_user_and_login", kind: "message", T: () => PB_MessageToServer_LoginLogout_CreateUserAndLogin },
+            { no: 4, name: "logout", kind: "message", T: () => PB_MessageToServer_LoginLogout_Logout }
+        ]);
+    }
+    create(value?: PartialMessage<PB_MessageToServer_LoginLogout>): PB_MessageToServer_LoginLogout {
+        const message = {};
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<PB_MessageToServer_LoginLogout>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PB_MessageToServer_LoginLogout): PB_MessageToServer_LoginLogout {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* PB.MessageToServer.LoginLogout.LoginWithPassword login_with_password */ 1:
+                    message.loginWithPassword = PB_MessageToServer_LoginLogout_LoginWithPassword.internalBinaryRead(reader, reader.uint32(), options, message.loginWithPassword);
+                    break;
+                case /* PB.MessageToServer.LoginLogout.LoginWithToken login_with_token */ 2:
+                    message.loginWithToken = PB_MessageToServer_LoginLogout_LoginWithToken.internalBinaryRead(reader, reader.uint32(), options, message.loginWithToken);
+                    break;
+                case /* PB.MessageToServer.LoginLogout.CreateUserAndLogin create_user_and_login */ 3:
+                    message.createUserAndLogin = PB_MessageToServer_LoginLogout_CreateUserAndLogin.internalBinaryRead(reader, reader.uint32(), options, message.createUserAndLogin);
+                    break;
+                case /* PB.MessageToServer.LoginLogout.Logout logout */ 4:
+                    message.logout = PB_MessageToServer_LoginLogout_Logout.internalBinaryRead(reader, reader.uint32(), options, message.logout);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: PB_MessageToServer_LoginLogout, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* PB.MessageToServer.LoginLogout.LoginWithPassword login_with_password = 1; */
+        if (message.loginWithPassword)
+            PB_MessageToServer_LoginLogout_LoginWithPassword.internalBinaryWrite(message.loginWithPassword, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* PB.MessageToServer.LoginLogout.LoginWithToken login_with_token = 2; */
+        if (message.loginWithToken)
+            PB_MessageToServer_LoginLogout_LoginWithToken.internalBinaryWrite(message.loginWithToken, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* PB.MessageToServer.LoginLogout.CreateUserAndLogin create_user_and_login = 3; */
+        if (message.createUserAndLogin)
+            PB_MessageToServer_LoginLogout_CreateUserAndLogin.internalBinaryWrite(message.createUserAndLogin, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* PB.MessageToServer.LoginLogout.Logout logout = 4; */
+        if (message.logout)
+            PB_MessageToServer_LoginLogout_Logout.internalBinaryWrite(message.logout, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message PB.MessageToServer.LoginLogout
+ */
+export const PB_MessageToServer_LoginLogout = new PB_MessageToServer_LoginLogout$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class PB_MessageToServer_LoginLogout_LoginWithPassword$Type extends MessageType<PB_MessageToServer_LoginLogout_LoginWithPassword> {
+    constructor() {
+        super("PB.MessageToServer.LoginLogout.LoginWithPassword", [
+            { no: 1, name: "username", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "password", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+        ]);
+    }
+    create(value?: PartialMessage<PB_MessageToServer_LoginLogout_LoginWithPassword>): PB_MessageToServer_LoginLogout_LoginWithPassword {
+        const message = { username: "", password: "" };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<PB_MessageToServer_LoginLogout_LoginWithPassword>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PB_MessageToServer_LoginLogout_LoginWithPassword): PB_MessageToServer_LoginLogout_LoginWithPassword {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string username */ 1:
+                    message.username = reader.string();
+                    break;
+                case /* string password */ 2:
+                    message.password = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: PB_MessageToServer_LoginLogout_LoginWithPassword, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string username = 1; */
+        if (message.username !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.username);
+        /* string password = 2; */
+        if (message.password !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.password);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message PB.MessageToServer.LoginLogout.LoginWithPassword
+ */
+export const PB_MessageToServer_LoginLogout_LoginWithPassword = new PB_MessageToServer_LoginLogout_LoginWithPassword$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class PB_MessageToServer_LoginLogout_LoginWithToken$Type extends MessageType<PB_MessageToServer_LoginLogout_LoginWithToken> {
+    constructor() {
+        super("PB.MessageToServer.LoginLogout.LoginWithToken", [
+            { no: 1, name: "username", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "token", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+        ]);
+    }
+    create(value?: PartialMessage<PB_MessageToServer_LoginLogout_LoginWithToken>): PB_MessageToServer_LoginLogout_LoginWithToken {
+        const message = { username: "", token: "" };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<PB_MessageToServer_LoginLogout_LoginWithToken>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PB_MessageToServer_LoginLogout_LoginWithToken): PB_MessageToServer_LoginLogout_LoginWithToken {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string username */ 1:
+                    message.username = reader.string();
+                    break;
+                case /* string token */ 2:
+                    message.token = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: PB_MessageToServer_LoginLogout_LoginWithToken, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string username = 1; */
+        if (message.username !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.username);
+        /* string token = 2; */
+        if (message.token !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.token);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message PB.MessageToServer.LoginLogout.LoginWithToken
+ */
+export const PB_MessageToServer_LoginLogout_LoginWithToken = new PB_MessageToServer_LoginLogout_LoginWithToken$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class PB_MessageToServer_LoginLogout_CreateUserAndLogin$Type extends MessageType<PB_MessageToServer_LoginLogout_CreateUserAndLogin> {
+    constructor() {
+        super("PB.MessageToServer.LoginLogout.CreateUserAndLogin", [
+            { no: 1, name: "username", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "password", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+        ]);
+    }
+    create(value?: PartialMessage<PB_MessageToServer_LoginLogout_CreateUserAndLogin>): PB_MessageToServer_LoginLogout_CreateUserAndLogin {
+        const message = { username: "", password: "" };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<PB_MessageToServer_LoginLogout_CreateUserAndLogin>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PB_MessageToServer_LoginLogout_CreateUserAndLogin): PB_MessageToServer_LoginLogout_CreateUserAndLogin {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string username */ 1:
+                    message.username = reader.string();
+                    break;
+                case /* string password */ 2:
+                    message.password = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: PB_MessageToServer_LoginLogout_CreateUserAndLogin, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string username = 1; */
+        if (message.username !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.username);
+        /* string password = 2; */
+        if (message.password !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.password);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message PB.MessageToServer.LoginLogout.CreateUserAndLogin
+ */
+export const PB_MessageToServer_LoginLogout_CreateUserAndLogin = new PB_MessageToServer_LoginLogout_CreateUserAndLogin$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class PB_MessageToServer_LoginLogout_Logout$Type extends MessageType<PB_MessageToServer_LoginLogout_Logout> {
+    constructor() {
+        super("PB.MessageToServer.LoginLogout.Logout", []);
+    }
+    create(value?: PartialMessage<PB_MessageToServer_LoginLogout_Logout>): PB_MessageToServer_LoginLogout_Logout {
+        const message = {};
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<PB_MessageToServer_LoginLogout_Logout>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PB_MessageToServer_LoginLogout_Logout): PB_MessageToServer_LoginLogout_Logout {
+        return target ?? this.create();
+    }
+    internalBinaryWrite(message: PB_MessageToServer_LoginLogout_Logout, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message PB.MessageToServer.LoginLogout.Logout
+ */
+export const PB_MessageToServer_LoginLogout_Logout = new PB_MessageToServer_LoginLogout_Logout$Type();
+// @generated message type with reflection information, may provide speed optimized methods
 class PB_MessageToClient$Type extends MessageType<PB_MessageToClient> {
     constructor() {
         super("PB.MessageToClient", [
-            { no: 15, name: "initial", kind: "message", T: () => PB_MessageToClient_Initial }
+            { no: 15, name: "initial", kind: "message", T: () => PB_MessageToClient_Initial },
+            { no: 1, name: "login_logout", kind: "message", T: () => PB_MessageToClient_LoginLogout }
         ]);
     }
     create(value?: PartialMessage<PB_MessageToClient>): PB_MessageToClient {
@@ -2291,6 +2659,9 @@ class PB_MessageToClient$Type extends MessageType<PB_MessageToClient> {
                 case /* PB.MessageToClient.Initial initial */ 15:
                     message.initial = PB_MessageToClient_Initial.internalBinaryRead(reader, reader.uint32(), options, message.initial);
                     break;
+                case /* PB.MessageToClient.LoginLogout login_logout */ 1:
+                    message.loginLogout = PB_MessageToClient_LoginLogout.internalBinaryRead(reader, reader.uint32(), options, message.loginLogout);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -2306,6 +2677,9 @@ class PB_MessageToClient$Type extends MessageType<PB_MessageToClient> {
         /* PB.MessageToClient.Initial initial = 15; */
         if (message.initial)
             PB_MessageToClient_Initial.internalBinaryWrite(message.initial, writer.tag(15, WireType.LengthDelimited).fork(), options).join();
+        /* PB.MessageToClient.LoginLogout login_logout = 1; */
+        if (message.loginLogout)
+            PB_MessageToClient_LoginLogout.internalBinaryWrite(message.loginLogout, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -2370,6 +2744,74 @@ class PB_MessageToClient_Initial$Type extends MessageType<PB_MessageToClient_Ini
  * @generated MessageType for protobuf message PB.MessageToClient.Initial
  */
 export const PB_MessageToClient_Initial = new PB_MessageToClient_Initial$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class PB_MessageToClient_LoginLogout$Type extends MessageType<PB_MessageToClient_LoginLogout> {
+    constructor() {
+        super("PB.MessageToClient.LoginLogout", [
+            { no: 1, name: "response_code", kind: "enum", T: () => ["PB.MessageToClient.LoginLogout.ResponseCode", PB_MessageToClient_LoginLogout_ResponseCode] },
+            { no: 2, name: "username", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 3, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 4, name: "token", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+        ]);
+    }
+    create(value?: PartialMessage<PB_MessageToClient_LoginLogout>): PB_MessageToClient_LoginLogout {
+        const message = { responseCode: 0, username: "", userId: 0, token: "" };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<PB_MessageToClient_LoginLogout>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PB_MessageToClient_LoginLogout): PB_MessageToClient_LoginLogout {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* PB.MessageToClient.LoginLogout.ResponseCode response_code */ 1:
+                    message.responseCode = reader.int32();
+                    break;
+                case /* string username */ 2:
+                    message.username = reader.string();
+                    break;
+                case /* int32 user_id */ 3:
+                    message.userId = reader.int32();
+                    break;
+                case /* string token */ 4:
+                    message.token = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: PB_MessageToClient_LoginLogout, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* PB.MessageToClient.LoginLogout.ResponseCode response_code = 1; */
+        if (message.responseCode !== 0)
+            writer.tag(1, WireType.Varint).int32(message.responseCode);
+        /* string username = 2; */
+        if (message.username !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.username);
+        /* int32 user_id = 3; */
+        if (message.userId !== 0)
+            writer.tag(3, WireType.Varint).int32(message.userId);
+        /* string token = 4; */
+        if (message.token !== "")
+            writer.tag(4, WireType.LengthDelimited).string(message.token);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message PB.MessageToClient.LoginLogout
+ */
+export const PB_MessageToClient_LoginLogout = new PB_MessageToClient_LoginLogout$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class PB_MessagesToClient$Type extends MessageType<PB_MessagesToClient> {
     constructor() {

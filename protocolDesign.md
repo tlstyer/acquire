@@ -17,30 +17,30 @@ If server's version is different from client's version, then client should reloa
 
 One of:
 
-- login using login form
+- login with password (using login form)
   - username
-  - password (keep optional?)
-- login when there's a token in local storage
+  - password
+- login with token (when there's a token in local storage)
   - username
   - token
 - create user and login
   - username
-  - password (keep optional?)
+  - password
 - logout
 
 ### Receive
 
-- response status, one of:
+- response code, one of:
   - Success
   - GenericError - An error occurred during the processing of your request.
+  - UserNotFound - User not found.
+  - IncorrectPassword - Password is incorrect.
+  - InvalidToken - (I guess don't show an error and be not logged in.)
   - InvalidUsername - Invalid username. Username must have between 1 and 32 ASCII characters.
   - InvalidPassword - Invalid password. Password must have at least 8 characters.
-  - MissingPassword - Password is required.
-  - ProvidedPassword - Password is not set for this user.
-  - IncorrectPassword - Password is incorrect.
-  - ExistingPassword - Password already exists for this username.
-  - InvalidToken - (I guess don't show an error and be not logged in.)
+  - UserExists - User already exists.
 - username (empty if error or just logged out)
+- user ID (empty if error or just logged out)
 - token (empty if error or just logged out)
 
 # Lobby page

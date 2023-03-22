@@ -1,45 +1,76 @@
+import { SHA256 } from 'crypto-js';
+import { PB_MessageToClient_LoginLogout_ResponseCode } from '../common/pb';
+
 export interface UserDataProvider {
-	createUser(username: string, password: string | null): Promise<number>;
-	lookupUser(username: string): Promise<UserData | null>;
+	createUser(username: string, password: string): Promise<UserDataProviderResponse>;
+	lookupUser(username: string): Promise<UserDataProviderResponse>;
 }
 
-interface UserData {
+export class UserDataProviderResponse {
+	constructor(
+		public userData: UserData | undefined,
+		public errorCode: PB_MessageToClient_LoginLogout_ResponseCode | undefined,
+	) {}
+}
+
+export interface UserData {
+	username: string;
 	userID: number;
-	hasPassword: boolean;
+	passwordHash: string;
 	verifyPassword(password: string): boolean;
+	verifyToken(token: string): boolean;
 }
 
 export class TestUserDataProvider implements UserDataProvider {
 	nextUserID = 1;
 	usernameToUserData = new Map<string, TestUserData>();
 
-	async createUser(username: string, password: string | null) {
+	async createUser(username: string, password: string) {
 		if (username === 'createUser error') {
-			throw new Error('createUser error');
+			return new UserDataProviderResponse(
+				undefined,
+				PB_MessageToClient_LoginLogout_ResponseCode.GENERIC_ERROR,
+			);
+		}
+
+		if (this.usernameToUserData.has(username)) {
+			return new UserDataProviderResponse(
+				undefined,
+				PB_MessageToClient_LoginLogout_ResponseCode.USER_EXISTS,
+			);
 		}
 
 		const userID = this.nextUserID++;
-		this.usernameToUserData.set(username, new TestUserData(userID, password));
-		return userID;
+		const userData = new TestUserData(username, userID, getPasswordHash(username, password));
+		this.usernameToUserData.set(username, userData);
+
+		return new UserDataProviderResponse(userData, undefined);
 	}
 
 	async lookupUser(username: string) {
 		if (username === 'lookupUser error') {
-			throw new Error('lookupUser error');
+			return new UserDataProviderResponse(
+				undefined,
+				PB_MessageToClient_LoginLogout_ResponseCode.GENERIC_ERROR,
+			);
 		}
 
-		return this.usernameToUserData.get(username) || null;
+		return new UserDataProviderResponse(this.usernameToUserData.get(username), undefined);
 	}
 }
 
-class TestUserData implements UserData {
-	hasPassword: boolean;
-
-	constructor(public userID: number, private password: string | null) {
-		this.hasPassword = password !== null;
-	}
+export class TestUserData implements UserData {
+	constructor(public username: string, public userID: number, public passwordHash: string) {}
 
 	verifyPassword(password: string) {
-		return password === this.password;
+		return getPasswordHash(this.username, password) === this.passwordHash;
 	}
+
+	verifyToken(token: string) {
+		return token === this.passwordHash;
+	}
+}
+
+export function getPasswordHash(username: string, password: string) {
+	return SHA256('acquire ' + username + ' ' + password).toString();
 }

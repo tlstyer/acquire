@@ -1,4 +1,8 @@
-import { PB_GameMode } from './pb';
+import {
+	PB_GameMode,
+	PB_MessagesToClient,
+	PB_MessageToClient_LoginLogout_ResponseCode,
+} from './pb';
 
 export function getNewTileBag() {
 	const tileBag: number[] = new Array(108);
@@ -122,6 +126,14 @@ export function isASCII(str: string) {
 	return true;
 }
 
+export function isValidUsername(username: string) {
+	return username.length > 0 && username.length <= 32 && isASCII(username);
+}
+
+export function isValidPassword(password: string) {
+	return password.length >= 8;
+}
+
 export const gameModeToNumPlayers = new Map([
 	[PB_GameMode.SINGLES_1, 1],
 	[PB_GameMode.SINGLES_2, 2],
@@ -156,4 +168,24 @@ export function getValueOfKey(obj: any) {
 			return obj[key];
 		}
 	}
+}
+
+export function createLoginLogoutMessage(
+	responseCode: PB_MessageToClient_LoginLogout_ResponseCode,
+	username?: string,
+	userID?: number,
+	token?: string,
+) {
+	return PB_MessagesToClient.create({
+		messagesToClient: [
+			{
+				loginLogout: {
+					responseCode,
+					username: username !== undefined ? username : '',
+					userId: userID !== undefined ? userID : 0,
+					token: token !== undefined ? token : '',
+				},
+			},
+		],
+	});
 }
