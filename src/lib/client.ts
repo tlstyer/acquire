@@ -5,7 +5,6 @@ import {
 	PB_MessageToServer,
 } from '../common/pb';
 import type { ClientCommunication } from './clientCommunication';
-import { reloadWindow } from './helpers';
 
 export class Client {
 	logTime = 0;
@@ -89,7 +88,7 @@ export class Client {
 
 	private onMessage_Initial(message: PB_MessageToClient_Initial) {
 		if (message.version !== this.version) {
-			reloadWindow();
+			window.location.reload();
 		}
 
 		this.logTime = message.logTime;

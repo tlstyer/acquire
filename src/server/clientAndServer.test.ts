@@ -1,6 +1,5 @@
 import { Client } from '$lib/client';
 import { TestClientCommunication } from '$lib/clientCommunication';
-import * as libHelpers from '$lib/helpers';
 import { describe, expect, test, vi } from 'vitest';
 import { createLoginLogoutMessage } from '../common/helpers';
 import { PB_MessagesToClient, PB_MessageToClient_LoginLogout_ResponseCode } from '../common/pb';
@@ -10,7 +9,9 @@ import { getPasswordHash, TestUserData, TestUserDataProvider } from './userDataP
 
 describe('Connect', () => {
 	test('client should reload window when version is different', () => {
-		const spy = vi.spyOn(libHelpers, 'reloadWindow').mockReturnValue();
+		const mock = vi.fn();
+		// @ts-expect-error
+		global.window = { location: { reload: mock } };
 
 		const serverCommunication = new TestServerCommunication();
 		const userDataProvider = new TestUserDataProvider();
@@ -23,17 +24,19 @@ describe('Connect', () => {
 
 		expectInitialMessageToBeCorrect(clientCommunication, serverCommunication);
 
-		expect(spy).toHaveBeenCalledOnce();
+		expect(mock).toHaveBeenCalledOnce();
 	});
 
 	test('client should not reload window when version is the same', () => {
-		const spy = vi.spyOn(libHelpers, 'reloadWindow').mockReturnValue();
+		const mock = vi.fn();
+		// @ts-expect-error
+		global.window = { location: { reload: mock } };
 
 		const { clientCommunication, serverCommunication } = createOneClientConnectedToOneServer();
 
 		expectInitialMessageToBeCorrect(clientCommunication, serverCommunication);
 
-		expect(spy).not.toHaveBeenCalled();
+		expect(mock).not.toHaveBeenCalled();
 	});
 
 	test("client's logTime is set to server's logTime", () => {
