@@ -1,5 +1,8 @@
 import { PB_MessagesToClient, PB_MessageToServer } from '../common/pb';
-import type { TestServerCommunication } from '../server/serverCommunication';
+import {
+	TestServerCommunicatedMessage,
+	type TestServerCommunication,
+} from '../server/serverCommunication';
 
 export abstract class ClientCommunication {
 	protected onConnect = () => {};
@@ -108,12 +111,23 @@ export class TestClientCommunication extends ClientCommunication {
 	}
 
 	sendMessage(message: Uint8Array) {
-		this.communicatedMessages.push(new TestClientCommunicatedMessage(true, message));
-		this.serverCommunication.receiveMessage(this, message);
+		const clientID = this.serverCommunication.clientCommunicationToClientID.get(this);
+
+		if (clientID !== undefined) {
+			const decoded = PB_MessageToServer.fromBinary(message);
+
+			this.communicatedMessages.push(
+				new TestClientCommunicatedMessage(true, message, decoded, undefined),
+			);
+			this.serverCommunication.communicatedMessages.push(
+				new TestServerCommunicatedMessage(false, clientID, message, undefined, decoded),
+			);
+
+			this.serverCommunication.receiveMessage(clientID, message);
+		}
 	}
 
 	receiveMessage(message: Uint8Array) {
-		this.communicatedMessages.push(new TestClientCommunicatedMessage(false, message));
 		this.onMessage(message);
 	}
 
@@ -127,17 +141,13 @@ export class TestClientCommunication extends ClientCommunication {
 	}
 }
 
-class TestClientCommunicatedMessage {
-	sentMessage: PB_MessageToServer | undefined;
-	receivedMessage: PB_MessagesToClient | undefined;
-
-	constructor(public sent: boolean, public message: Uint8Array) {
-		if (sent) {
-			this.sentMessage = PB_MessageToServer.fromBinary(this.message);
-		} else {
-			this.receivedMessage = PB_MessagesToClient.fromBinary(this.message);
-		}
-	}
+export class TestClientCommunicatedMessage {
+	constructor(
+		public sent: boolean,
+		public message: Uint8Array,
+		public sentMessage: PB_MessageToServer | undefined,
+		public receivedMessage: PB_MessagesToClient | undefined,
+	) {}
 
 	log() {
 		if (this.sent) {

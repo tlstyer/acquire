@@ -1,7 +1,10 @@
 import http from 'http';
 import { WebSocket, WebSocketServer } from 'ws';
 import { PB_MessagesToClient, PB_MessageToServer } from '../common/pb';
-import type { TestClientCommunication } from '../lib/clientCommunication';
+import {
+	TestClientCommunicatedMessage,
+	type TestClientCommunication,
+} from '../lib/clientCommunication';
 import { ReuseIDManager } from './reuseIDManager';
 
 export abstract class ServerCommunication {
@@ -99,17 +102,25 @@ export class TestServerCommunication extends ServerCommunication {
 		}
 	}
 
-	receiveMessage(clientCommunication: TestClientCommunication, message: Uint8Array) {
-		const clientID = this.clientCommunicationToClientID.get(clientCommunication);
-		if (clientID !== undefined) {
-			this.communicatedMessages.push(new TestServerCommunicatedMessage(false, clientID, message));
-			this.onMessage(clientID, message);
+	sendMessage(clientID: number, message: Uint8Array) {
+		const clientCommunication = this.clientIDToClientCommunication.get(clientID);
+
+		if (clientCommunication) {
+			const decoded = PB_MessagesToClient.fromBinary(message);
+
+			this.communicatedMessages.push(
+				new TestServerCommunicatedMessage(true, clientID, message, decoded, undefined),
+			);
+			clientCommunication.communicatedMessages.push(
+				new TestClientCommunicatedMessage(false, message, undefined, decoded),
+			);
+
+			clientCommunication.receiveMessage(message);
 		}
 	}
 
-	sendMessage(clientID: number, message: Uint8Array) {
-		this.communicatedMessages.push(new TestServerCommunicatedMessage(true, clientID, message));
-		this.clientIDToClientCommunication.get(clientID)?.receiveMessage(message);
+	receiveMessage(clientID: number, message: Uint8Array) {
+		this.onMessage(clientID, message);
 	}
 
 	logAndEmptyCommunicatedMessages() {
@@ -122,17 +133,14 @@ export class TestServerCommunication extends ServerCommunication {
 	}
 }
 
-class TestServerCommunicatedMessage {
-	sentMessage: PB_MessagesToClient | undefined;
-	receivedMessage: PB_MessageToServer | undefined;
-
-	constructor(public sent: boolean, public clientID: number, public message: Uint8Array) {
-		if (sent) {
-			this.sentMessage = PB_MessagesToClient.fromBinary(this.message);
-		} else {
-			this.receivedMessage = PB_MessageToServer.fromBinary(this.message);
-		}
-	}
+export class TestServerCommunicatedMessage {
+	constructor(
+		public sent: boolean,
+		public clientID: number,
+		public message: Uint8Array,
+		public sentMessage: PB_MessagesToClient | undefined,
+		public receivedMessage: PB_MessageToServer | undefined,
+	) {}
 
 	log() {
 		if (this.sent) {
