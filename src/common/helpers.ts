@@ -1,8 +1,4 @@
-import {
-	PB_GameMode,
-	PB_MessagesToClient,
-	PB_MessageToClient_LoginLogout_ResponseCode,
-} from './pb';
+import { PB_GameMode, PB_MessageToClient, PB_MessageToClient_LoginLogout_ResponseCode } from './pb';
 
 export function getNewTileBag() {
 	const tileBag: number[] = new Array(108);
@@ -176,16 +172,12 @@ export function createLoginLogoutMessage(
 	userID?: number,
 	token?: string,
 ) {
-	return PB_MessagesToClient.create({
-		messagesToClient: [
-			{
-				loginLogout: {
-					responseCode,
-					username: username !== undefined ? username : '',
-					userId: userID !== undefined ? userID : 0,
-					token: token !== undefined ? token : '',
-				},
-			},
-		],
+	return PB_MessageToClient.create({
+		loginLogout: {
+			responseCode,
+			username: username !== undefined ? username : '',
+			userId: userID !== undefined ? userID : 0,
+			token: token !== undefined ? token : '',
+		},
 	});
 }

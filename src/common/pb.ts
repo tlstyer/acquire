@@ -564,15 +564,6 @@ export enum PB_MessageToClient_LoginLogout_ResponseCode {
     USER_EXISTS = 7
 }
 /**
- * @generated from protobuf message PB.MessagesToClient
- */
-export interface PB_MessagesToClient {
-    /**
-     * @generated from protobuf field: repeated PB.MessageToClient messages_to_client = 1;
-     */
-    messagesToClient: PB_MessageToClient[];
-}
-/**
  * @generated from protobuf message PB.GameReview
  */
 export interface PB_GameReview {
@@ -2812,53 +2803,6 @@ class PB_MessageToClient_LoginLogout$Type extends MessageType<PB_MessageToClient
  * @generated MessageType for protobuf message PB.MessageToClient.LoginLogout
  */
 export const PB_MessageToClient_LoginLogout = new PB_MessageToClient_LoginLogout$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class PB_MessagesToClient$Type extends MessageType<PB_MessagesToClient> {
-    constructor() {
-        super("PB.MessagesToClient", [
-            { no: 1, name: "messages_to_client", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => PB_MessageToClient }
-        ]);
-    }
-    create(value?: PartialMessage<PB_MessagesToClient>): PB_MessagesToClient {
-        const message = { messagesToClient: [] };
-        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
-        if (value !== undefined)
-            reflectionMergePartial<PB_MessagesToClient>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PB_MessagesToClient): PB_MessagesToClient {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* repeated PB.MessageToClient messages_to_client */ 1:
-                    message.messagesToClient.push(PB_MessageToClient.internalBinaryRead(reader, reader.uint32(), options));
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: PB_MessagesToClient, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated PB.MessageToClient messages_to_client = 1; */
-        for (let i = 0; i < message.messagesToClient.length; i++)
-            PB_MessageToClient.internalBinaryWrite(message.messagesToClient[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message PB.MessagesToClient
- */
-export const PB_MessagesToClient = new PB_MessagesToClient$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class PB_GameReview$Type extends MessageType<PB_GameReview> {
     constructor() {

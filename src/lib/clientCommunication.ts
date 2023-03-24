@@ -1,4 +1,4 @@
-import { PB_MessagesToClient, PB_MessageToServer } from '../common/pb';
+import { PB_MessageToClient, PB_MessageToServer } from '../common/pb';
 import {
 	TestServerCommunicatedMessage,
 	type TestServerCommunication,
@@ -116,13 +116,13 @@ export class TestClientCommunication extends ClientCommunication {
 		const clientID = this.serverCommunication.clientCommunicationToClientID.get(this);
 
 		if (clientID !== undefined) {
-			const decoded = PB_MessageToServer.fromBinary(message);
+			const messageToServer = PB_MessageToServer.fromBinary(message);
 
 			this.communicatedMessages.push(
-				new TestClientCommunicatedMessage(true, message, decoded, undefined),
+				new TestClientCommunicatedMessage(true, message, messageToServer, undefined),
 			);
 			this.serverCommunication.communicatedMessages.push(
-				new TestServerCommunicatedMessage(false, clientID, message, undefined, decoded),
+				new TestServerCommunicatedMessage(false, clientID, message, undefined, messageToServer),
 			);
 
 			this.serverCommunication.receiveMessage(clientID, message);
@@ -148,7 +148,7 @@ export class TestClientCommunicatedMessage {
 		public sent: boolean,
 		public message: Uint8Array,
 		public sentMessage: PB_MessageToServer | undefined,
-		public receivedMessage: PB_MessagesToClient | undefined,
+		public receivedMessage: PB_MessageToClient | undefined,
 	) {}
 
 	log() {

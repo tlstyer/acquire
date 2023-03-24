@@ -1,6 +1,6 @@
 import http from 'http';
 import { WebSocket, WebSocketServer } from 'ws';
-import { PB_MessagesToClient, PB_MessageToServer } from '../common/pb';
+import { PB_MessageToClient, PB_MessageToServer } from '../common/pb';
 import {
 	TestClientCommunicatedMessage,
 	type TestClientCommunication,
@@ -114,13 +114,13 @@ export class TestServerCommunication extends ServerCommunication {
 		const clientCommunication = this.clientIDToClientCommunication.get(clientID);
 
 		if (clientCommunication) {
-			const decoded = PB_MessagesToClient.fromBinary(message);
+			const messageToClient = PB_MessageToClient.fromBinary(message);
 
 			this.communicatedMessages.push(
-				new TestServerCommunicatedMessage(true, clientID, message, decoded, undefined),
+				new TestServerCommunicatedMessage(true, clientID, message, messageToClient, undefined),
 			);
 			clientCommunication.communicatedMessages.push(
-				new TestClientCommunicatedMessage(false, message, undefined, decoded),
+				new TestClientCommunicatedMessage(false, message, undefined, messageToClient),
 			);
 
 			clientCommunication.receiveMessage(message);
@@ -146,7 +146,7 @@ export class TestServerCommunicatedMessage {
 		public sent: boolean,
 		public clientID: number,
 		public message: Uint8Array,
-		public sentMessage: PB_MessagesToClient | undefined,
+		public sentMessage: PB_MessageToClient | undefined,
 		public receivedMessage: PB_MessageToServer | undefined,
 	) {}
 

@@ -1,5 +1,5 @@
 import {
-	PB_MessagesToClient,
+	PB_MessageToClient,
 	PB_MessageToClient_Initial,
 	PB_MessageToClient_LoginLogout,
 	PB_MessageToServer,
@@ -75,14 +75,12 @@ export class Client {
 	private onDisconnect() {}
 
 	private onMessage(message: Uint8Array) {
-		const messages = PB_MessagesToClient.fromBinary(message).messagesToClient;
+		const messageToClient = PB_MessageToClient.fromBinary(message);
 
-		for (const message of messages) {
-			if (message.initial) {
-				this.onMessage_Initial(message.initial);
-			} else if (message.loginLogout) {
-				this.onMessage_LoginLogout(message.loginLogout);
-			}
+		if (messageToClient.initial) {
+			this.onMessage_Initial(messageToClient.initial);
+		} else if (messageToClient.loginLogout) {
+			this.onMessage_LoginLogout(messageToClient.loginLogout);
 		}
 	}
 

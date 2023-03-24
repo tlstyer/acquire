@@ -2,7 +2,7 @@ import { Client } from '$lib/client';
 import { TestClientCommunication } from '$lib/clientCommunication';
 import { describe, expect, test, vi } from 'vitest';
 import { createLoginLogoutMessage } from '../common/helpers';
-import { PB_MessagesToClient, PB_MessageToClient_LoginLogout_ResponseCode } from '../common/pb';
+import { PB_MessageToClient, PB_MessageToClient_LoginLogout_ResponseCode } from '../common/pb';
 import { Server } from './server';
 import { TestServerCommunication } from './serverCommunication';
 import { getPasswordHash, TestUserData, TestUserDataProvider } from './userDataProvider';
@@ -52,15 +52,11 @@ describe('Connect', () => {
 		clientCommunication: TestClientCommunication,
 		serverCommunication: TestServerCommunication,
 	) {
-		const message = PB_MessagesToClient.create({
-			messagesToClient: [
-				{
-					initial: {
-						version: 2,
-						logTime: 123,
-					},
-				},
-			],
+		const message = PB_MessageToClient.create({
+			initial: {
+				version: 2,
+				logTime: 123,
+			},
 		});
 
 		expect(clientCommunication.communicatedMessages.length).toBe(1);
@@ -288,7 +284,7 @@ describe('Login / Create User / Logout', () => {
 	function testLogin(
 		name: string,
 		login: (client: Client) => void,
-		expectedMessagesToClient: PB_MessagesToClient,
+		expectedMessageToClient: PB_MessageToClient,
 		clientIDToUserIDSize: number,
 	) {
 		test(name, async () => {
@@ -301,10 +297,10 @@ describe('Login / Create User / Logout', () => {
 
 			expect(clientCommunication.communicatedMessages.length).toBe(2);
 			expect(clientCommunication.communicatedMessages[1].receivedMessage).toEqual(
-				expectedMessagesToClient,
+				expectedMessageToClient,
 			);
 
-			const loginLogoutMessage = expectedMessagesToClient.messagesToClient[0].loginLogout!;
+			const loginLogoutMessage = expectedMessageToClient.loginLogout!;
 			expect(client.myUsername).toEqual(
 				loginLogoutMessage.username !== '' ? loginLogoutMessage.username : undefined,
 			);

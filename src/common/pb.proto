@@ -246,10 +246,6 @@ message PB {
     LoginLogout login_logout = 1;
   }
 
-  message MessagesToClient {
-    repeated MessageToClient messages_to_client = 1;
-  }
-
   message GameReview {
     GameMode game_mode = 1;
     PlayerArrangementMode player_arrangement_mode = 2;

@@ -1,6 +1,6 @@
 import { createLoginLogoutMessage, isValidPassword, isValidUsername } from '../common/helpers';
 import {
-	PB_MessagesToClient,
+	PB_MessageToClient,
 	PB_MessageToClient_LoginLogout_ResponseCode,
 	PB_MessageToServer,
 	PB_MessageToServer_LoginLogout,
@@ -31,15 +31,11 @@ export class Server {
 			this.onMessage.bind(this),
 		);
 
-		this.initialMessage = PB_MessagesToClient.toBinary({
-			messagesToClient: [
-				{
-					initial: {
-						version,
-						logTime,
-					},
-				},
-			],
+		this.initialMessage = PB_MessageToClient.toBinary({
+			initial: {
+				version,
+				logTime,
+			},
 		});
 	}
 
@@ -231,7 +227,7 @@ export class Server {
 	) {
 		this.serverCommunication.sendMessage(
 			clientID,
-			PB_MessagesToClient.toBinary(createLoginLogoutMessage(responseCode, username, userID, token)),
+			PB_MessageToClient.toBinary(createLoginLogoutMessage(responseCode, username, userID, token)),
 		);
 	}
 }
