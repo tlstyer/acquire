@@ -89,6 +89,10 @@ export class TestServerCommunication extends ServerCommunication {
 			this.clientCommunicationToClientID.set(clientCommunication, clientID);
 
 			this.onConnect(clientID);
+
+			return true;
+		} else {
+			return false;
 		}
 	}
 
@@ -99,6 +103,10 @@ export class TestServerCommunication extends ServerCommunication {
 			this.clientCommunicationToClientID.delete(clientCommunication);
 
 			this.onDisconnect(clientID);
+
+			return true;
+		} else {
+			return false;
 		}
 	}
 

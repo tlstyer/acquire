@@ -101,13 +101,15 @@ export class TestClientCommunication extends ClientCommunication {
 	}
 
 	connect() {
-		this.serverCommunication.connect(this);
-		this.onConnect();
+		if (this.serverCommunication.connect(this)) {
+			this.onConnect();
+		}
 	}
 
 	disconnect() {
-		this.serverCommunication.disconnect(this);
-		this.onDisconnect();
+		if (this.serverCommunication.disconnect(this)) {
+			this.onDisconnect();
+		}
 	}
 
 	sendMessage(message: Uint8Array) {
