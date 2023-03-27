@@ -1,3 +1,4 @@
+import { writable } from 'svelte/store';
 import {
 	PB_MessageToClient,
 	PB_MessageToClient_Initial,
@@ -12,6 +13,9 @@ export class Client {
 	myUsername: string | undefined;
 	myUserID: number | undefined;
 	myToken: string | undefined;
+
+	private isConnectedWritable = writable(false);
+	isConnected = { subscribe: this.isConnectedWritable.subscribe };
 
 	constructor(private clientCommunication: ClientCommunication, private version: number) {
 		clientCommunication.setCallbacks(
@@ -70,9 +74,13 @@ export class Client {
 		);
 	}
 
-	private onConnect() {}
+	private onConnect() {
+		this.isConnectedWritable.set(true);
+	}
 
-	private onDisconnect() {}
+	private onDisconnect() {
+		this.isConnectedWritable.set(false);
+	}
 
 	private onMessage(message: Uint8Array) {
 		const messageToClient = PB_MessageToClient.fromBinary(message);

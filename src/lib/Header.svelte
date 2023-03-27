@@ -1,7 +1,13 @@
 <svelte:options immutable />
 
 <script lang="ts">
+	import { getContext } from 'svelte';
+	import type { Client } from './client';
 	import Settings from './Settings.svelte';
+
+	const client: Client = getContext('client');
+
+	const isConnected = client.isConnected;
 
 	let showSettings: (() => void) | undefined;
 </script>
@@ -9,6 +15,7 @@
 <div>
 	<span class="name">Acquire</span>
 	<span class="middle" />
+	<span>{$isConnected ? 'Connected' : 'Connecting...'}</span>
 	<span class="settings" on:click={showSettings} on:keydown={undefined}>⚙</span>
 </div>
 

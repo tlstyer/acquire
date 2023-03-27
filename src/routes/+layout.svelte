@@ -8,15 +8,20 @@
 	);
 </script>
 
-<script>
+<script lang="ts">
 	import { browser } from '$app/environment';
 	import { PUBLIC_VERSION } from '$env/static/public';
 	import { Client } from '$lib/client';
-	import { WebSocketClientCommunication } from '$lib/clientCommunication';
+	import {
+		ClientCommunication,
+		TestClientCommunication,
+		WebSocketClientCommunication,
+	} from '$lib/clientCommunication';
 	import Header from '$lib/Header.svelte';
 	import { colorScheme } from '$lib/Settings.svelte';
 	import 'normalize.css';
-	import { onDestroy } from 'svelte';
+	import { onDestroy, setContext } from 'svelte';
+	import { TestServerCommunication } from '../server/serverCommunication';
 	import './global.css';
 
 	colorScheme.subscribe((cs) => {
@@ -32,15 +37,24 @@
 		}
 	});
 
+	let clientCommunication: ClientCommunication;
 	if (browser) {
-		const clientConnection = new WebSocketClientCommunication();
-		const client = new Client(clientConnection, parseInt(PUBLIC_VERSION, 10));
-		clientConnection.begin();
+		const webSocketClientCommunication = new WebSocketClientCommunication();
+		webSocketClientCommunication.begin();
 
 		onDestroy(() => {
-			clientConnection.end();
+			webSocketClientCommunication.end();
 		});
+
+		clientCommunication = webSocketClientCommunication;
+	} else {
+		const serverCommunication = new TestServerCommunication();
+
+		clientCommunication = new TestClientCommunication(serverCommunication);
 	}
+
+	const client = new Client(clientCommunication, parseInt(PUBLIC_VERSION, 10));
+	setContext('client', client);
 </script>
 
 <Header />
