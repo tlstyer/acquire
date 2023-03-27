@@ -45,47 +45,30 @@
 		return gblmStr && gblm.toString() === localStorageValue ? gblm : GameBoardLabelMode.Nothing;
 	});
 	export const gameBoardLabelMode = { subscribe: gameBoardLabelModeWritable.subscribe };
-
-	const settingsDialogIsVisibleWritable = writable(false);
-	export const settingsDialogIsVisible = { subscribe: settingsDialogIsVisibleWritable.subscribe };
 </script>
 
-<script lang="ts">
-	export const show = () => {
-		settingsDialogIsVisibleWritable.set(true);
-		dialog?.showModal();
-	};
+<div>
+	<label>
+		Color Scheme:
+		<select bind:value={$colorSchemeWritable}>
+			<option value="netacquire">NetAcquire</option>
+			<option value="white">White</option>
+		</select>
+	</label>
+</div>
+<div>
+	<label>
+		Game Board Label Mode:
+		<select bind:value={$gameBoardLabelModeWritable}>
+			<option value={GameBoardLabelMode.Nothing}>Nothing</option>
+			<option value={GameBoardLabelMode.Coordinates}>Coordinates</option>
+			<option value={GameBoardLabelMode.HotelInitials}>Hotel Initials</option>
+		</select>
+	</label>
+</div>
 
-	let dialog: HTMLDialogElement | null = null;
-</script>
-
-<dialog bind:this={dialog}>
-	<h3>Settings</h3>
-	<p>
-		<label>
-			Color Scheme:
-			<select bind:value={$colorSchemeWritable}>
-				<option value="netacquire">NetAcquire</option>
-				<option value="white">White</option>
-			</select>
-		</label>
-	</p>
-	<p>
-		<label>
-			Game Board Label Mode:
-			<select bind:value={$gameBoardLabelModeWritable}>
-				<option value={GameBoardLabelMode.Nothing}>Nothing</option>
-				<option value={GameBoardLabelMode.Coordinates}>Coordinates</option>
-				<option value={GameBoardLabelMode.HotelInitials}>Hotel Initials</option>
-			</select>
-		</label>
-	</p>
-	<button
-		on:click={() => {
-			dialog?.close();
-			settingsDialogIsVisibleWritable.set(false);
-		}}
-	>
-		Close
-	</button>
-</dialog>
+<style>
+	div {
+		margin-top: 8px;
+	}
+</style>

@@ -1,25 +1,31 @@
 <svelte:options immutable />
 
 <script lang="ts">
+	import type { ComponentType, SvelteComponentTyped } from 'svelte';
 	import { getContext } from 'svelte';
 	import type { Client } from './client';
+	import Dialog from './Dialog.svelte';
 	import Settings from './Settings.svelte';
 
 	const client: Client = getContext('client');
 
 	const isConnected = client.isConnected;
 
-	let showSettings: (() => void) | undefined;
+	let openDialog:
+		| ((title: string, component: ComponentType<SvelteComponentTyped>) => void)
+		| undefined;
 </script>
 
 <div>
 	<span class="name">Acquire</span>
 	<span class="middle" />
 	<span>{$isConnected ? 'Connected' : 'Connecting...'}</span>
-	<span class="settings" on:click={showSettings} on:keydown={undefined}>⚙</span>
+	<span class="settings" on:click={() => openDialog?.('Settings', Settings)} on:keydown={undefined}>
+		⚙
+	</span>
 </div>
 
-<Settings bind:show={showSettings} />
+<Dialog bind:open={openDialog} />
 
 <style>
 	div {
