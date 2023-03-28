@@ -24,8 +24,8 @@
 	import { TestServerCommunication } from '../server/serverCommunication';
 	import './global.css';
 
-	colorSchemeStore.subscribe((cs) => {
-		if (browser) {
+	if (browser) {
+		colorSchemeStore.subscribe((cs) => {
 			document.documentElement.style.setProperty(
 				'--main-background-color',
 				`var(--main-background-color-${cs})`,
@@ -34,8 +34,8 @@
 				'--scrolling-div-background-color',
 				`var(--scrolling-div-background-color-${cs})`,
 			);
-		}
-	});
+		});
+	}
 
 	let clientCommunication: ClientCommunication;
 	if (browser) {
