@@ -15,13 +15,18 @@
 <div>
 	<span class="name">Acquire</span>
 	<span class="middle" />
-	<span>{$isConnected ? 'Connected' : 'Connecting...'}</span>
 	<span class="dialog" on:click={() => openDialog?.(DialogType.Login)} on:keydown={undefined}>
 		Login
 	</span>
 	<span class="dialog" on:click={() => openDialog?.(DialogType.Settings)} on:keydown={undefined}>
 		⚙
 	</span>
+	<span
+		class="connection"
+		class:connected={$isConnected}
+		class:connecting={!$isConnected}
+		title={$isConnected ? 'Connected' : 'Connecting...'}
+	/>
 </div>
 
 <Dialog bind:open={openDialog} />
@@ -56,5 +61,33 @@
 	.dialog:hover {
 		cursor: pointer;
 		text-shadow: 0px 0px 1px black;
+	}
+
+	.connection {
+		width: calc(var(--header-height) - 4px);
+		height: calc(var(--header-height) - 4px);
+		border-radius: 50%;
+		border: 1px solid black;
+	}
+
+	.connected {
+		background-color: #0c0;
+	}
+
+	.connecting {
+		animation-name: connecting;
+		animation-duration: 1.5s;
+		animation-iteration-count: infinite;
+		animation-direction: alternate;
+		animation-timing-function: linear;
+	}
+
+	@keyframes connecting {
+		from {
+			background-color: #ff0;
+		}
+		to {
+			background-color: #aa0;
+		}
 	}
 </style>
