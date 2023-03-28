@@ -1,26 +1,25 @@
 <svelte:options immutable />
 
 <script lang="ts">
-	import type { ComponentType, SvelteComponentTyped } from 'svelte';
 	import { getContext } from 'svelte';
 	import type { Client } from './client';
-	import Dialog from './Dialog.svelte';
-	import Settings from './Settings.svelte';
+	import Dialog, { DialogType } from './Dialog.svelte';
 
 	const client: Client = getContext('client');
 
 	const isConnected = client.isConnected;
 
-	let openDialog:
-		| ((title: string, component: ComponentType<SvelteComponentTyped>) => void)
-		| undefined;
+	let openDialog: ((dialogType: DialogType) => void) | undefined;
 </script>
 
 <div>
 	<span class="name">Acquire</span>
 	<span class="middle" />
 	<span>{$isConnected ? 'Connected' : 'Connecting...'}</span>
-	<span class="settings" on:click={() => openDialog?.('Settings', Settings)} on:keydown={undefined}>
+	<span class="dialog" on:click={() => openDialog?.(DialogType.Login)} on:keydown={undefined}>
+		Login
+	</span>
+	<span class="dialog" on:click={() => openDialog?.(DialogType.Settings)} on:keydown={undefined}>
 		⚙
 	</span>
 </div>
@@ -42,7 +41,7 @@
 	}
 
 	span:nth-last-child(n + 2) {
-		margin-right: 8px;
+		margin-right: 1em;
 	}
 
 	.name {
@@ -54,8 +53,8 @@
 		cursor: initial;
 	}
 
-	.settings:hover {
+	.dialog:hover {
 		cursor: pointer;
-		font-weight: bold;
+		text-shadow: 0px 0px 1px black;
 	}
 </style>

@@ -1,29 +1,35 @@
 <svelte:options immutable />
 
 <script lang="ts" context="module">
-	import type { ComponentType, SvelteComponentTyped } from 'svelte';
 	import { writable } from 'svelte/store';
+
+	export const enum DialogType {
+		Login,
+		CreateUser,
+		Settings,
+	}
 
 	const dialogIsVisibleWritable = writable(false);
 	export const dialogIsVisible = { subscribe: dialogIsVisibleWritable.subscribe };
 </script>
 
 <script lang="ts">
-	export const open = function open(title: string, component: ComponentType<SvelteComponentTyped>) {
-		dialogTitle = title;
-		dialogComponent = component;
+	import LoginOrCreateUser from './LoginOrCreateUser.svelte';
+	import Settings from './Settings.svelte';
+
+	export const open = function open(dialogType: DialogType) {
+		selectedDialogType = dialogType;
 		earliestTimeToCloseByClickingOutside = Date.now() + 100;
 		dialogIsVisibleWritable.set(true);
 	};
 
-	let dialogTitle: string;
-	let dialogComponent: ComponentType<SvelteComponentTyped> | null;
+	let selectedDialogType: DialogType | undefined;
 	let earliestTimeToCloseByClickingOutside = 0; // HACK: don't close dialog immediately
 
 	let dialogDiv: HTMLDivElement | null = null;
 
 	function close() {
-		dialogComponent = null;
+		selectedDialogType = undefined;
 		dialogIsVisibleWritable.set(false);
 	}
 </script>
@@ -41,13 +47,25 @@
 	}}
 />
 
-{#if dialogComponent}
+{#if selectedDialogType !== undefined}
 	<div bind:this={dialogDiv} class="root">
 		<div class="header">
-			<span class="title">{dialogTitle}</span>
+			<span class="title">
+				{selectedDialogType === DialogType.Login
+					? 'Login'
+					: selectedDialogType === DialogType.CreateUser
+					? 'Create User'
+					: 'Settings'}
+			</span>
 			<span class="close" on:click={close} on:keydown={undefined}>&nbsp;x&nbsp;</span>
 		</div>
-		<svelte:component this={dialogComponent} />
+		{#if selectedDialogType === DialogType.Login}
+			<LoginOrCreateUser loginMode={true} onSwitch={() => open(DialogType.CreateUser)} />
+		{:else if selectedDialogType === DialogType.CreateUser}
+			<LoginOrCreateUser loginMode={false} onSwitch={() => open(DialogType.Login)} />
+		{:else}
+			<Settings />
+		{/if}
 	</div>
 {/if}
 
