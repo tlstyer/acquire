@@ -1,9 +1,9 @@
 <script lang="ts" context="module">
-	import { dialogIsVisible } from '$lib/Dialog.svelte';
+	import { dialogIsVisibleStore } from '$lib/Dialog.svelte';
 	import { derived } from 'svelte/store';
 
-	export const keyboardShortcutsEnabled = derived(
-		dialogIsVisible,
+	export const keyboardShortcutsEnabledStore = derived(
+		dialogIsVisibleStore,
 		($dialogIsVisible) => !$dialogIsVisible,
 	);
 </script>
@@ -18,13 +18,13 @@
 		WebSocketClientCommunication,
 	} from '$lib/clientCommunication';
 	import Header from '$lib/Header.svelte';
-	import { colorScheme } from '$lib/Settings.svelte';
+	import { colorSchemeStore } from '$lib/Settings.svelte';
 	import 'normalize.css';
 	import { onDestroy, setContext } from 'svelte';
 	import { TestServerCommunication } from '../server/serverCommunication';
 	import './global.css';
 
-	colorScheme.subscribe((cs) => {
+	colorSchemeStore.subscribe((cs) => {
 		if (browser) {
 			document.documentElement.style.setProperty(
 				'--main-background-color',

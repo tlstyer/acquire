@@ -9,8 +9,8 @@
 		Settings,
 	}
 
-	const dialogIsVisibleWritable = writable(false);
-	export const dialogIsVisible = { subscribe: dialogIsVisibleWritable.subscribe };
+	const dialogIsVisibleWritableStore = writable(false);
+	export const dialogIsVisibleStore = { subscribe: dialogIsVisibleWritableStore.subscribe };
 </script>
 
 <script lang="ts">
@@ -20,7 +20,7 @@
 	export const open = function open(dialogType: DialogType) {
 		selectedDialogType = dialogType;
 		earliestTimeToCloseByClickingOutside = Date.now() + 100;
-		dialogIsVisibleWritable.set(true);
+		dialogIsVisibleWritableStore.set(true);
 	};
 
 	let selectedDialogType: DialogType | undefined;
@@ -30,7 +30,7 @@
 
 	function close() {
 		selectedDialogType = undefined;
-		dialogIsVisibleWritable.set(false);
+		dialogIsVisibleWritableStore.set(false);
 	}
 </script>
 

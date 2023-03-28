@@ -4,9 +4,9 @@
 	import GameNavigationButtons from '$lib/GameNavigationButtons.svelte';
 	import NextGameAction from '$lib/NextGameAction.svelte';
 	import ScoreBoard from '$lib/ScoreBoard.svelte';
-	import { gameBoardLabelMode } from '$lib/Settings.svelte';
+	import { gameBoardLabelModeStore } from '$lib/Settings.svelte';
 	import TileRackReadOnly from '$lib/TileRackReadOnly.svelte';
-	import { keyboardShortcutsEnabled } from '../../+layout.svelte';
+	import { keyboardShortcutsEnabledStore } from '../../+layout.svelte';
 	import type { Game } from '../../../common/game';
 	import { ActionGameOver } from '../../../common/gameActions/gameOver';
 
@@ -71,7 +71,7 @@
 		<GameBoard
 			gameBoard={gameState.gameBoard}
 			tileRack={gameBoardTileRack}
-			labelMode={$gameBoardLabelMode}
+			labelMode={$gameBoardLabelModeStore}
 			cellSize={gameBoardCellSize}
 			onCellClicked={undefined}
 		/>
@@ -114,7 +114,7 @@
 		<GameNavigationButtons
 			gameStateHistory={game.gameStateHistory}
 			{selectedMove}
-			keyboardShortcutsEnabled={$keyboardShortcutsEnabled}
+			keyboardShortcutsEnabled={$keyboardShortcutsEnabledStore}
 			{onMoveSelected}
 		/>
 		<div>

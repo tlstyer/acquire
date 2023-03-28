@@ -14,8 +14,8 @@ export class Client {
 	myUserID: number | undefined;
 	myToken: string | undefined;
 
-	private isConnectedWritable = writable(false);
-	isConnected = { subscribe: this.isConnectedWritable.subscribe };
+	private isConnectedWritableStore = writable(false);
+	isConnectedStore = { subscribe: this.isConnectedWritableStore.subscribe };
 
 	constructor(private clientCommunication: ClientCommunication, private version: number) {
 		clientCommunication.setCallbacks(
@@ -75,11 +75,11 @@ export class Client {
 	}
 
 	private onConnect() {
-		this.isConnectedWritable.set(true);
+		this.isConnectedWritableStore.set(true);
 	}
 
 	private onDisconnect() {
-		this.isConnectedWritable.set(false);
+		this.isConnectedWritableStore.set(false);
 	}
 
 	private onMessage(message: Uint8Array) {

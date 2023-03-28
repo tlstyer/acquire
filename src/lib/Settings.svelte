@@ -32,25 +32,25 @@
 		};
 	}
 
-	const colorSchemeWritable = newSetting('ColorScheme', (localStorageValue) =>
+	const colorSchemeWritableStore = newSetting('ColorScheme', (localStorageValue) =>
 		localStorageValue === 'white' ? localStorageValue : 'netacquire',
 	);
-	export const colorScheme = { subscribe: colorSchemeWritable.subscribe };
+	export const colorSchemeStore = { subscribe: colorSchemeWritableStore.subscribe };
 
-	const gameBoardLabelModeWritable = newSetting('GameBoardLabelMode', (localStorageValue) => {
+	const gameBoardLabelModeWritableStore = newSetting('GameBoardLabelMode', (localStorageValue) => {
 		const gblm: GameBoardLabelMode = localStorageValue
 			? parseInt(localStorageValue, 10)
 			: GameBoardLabelMode.Nothing;
 		const gblmStr = GameBoardLabelMode[gblm];
 		return gblmStr && gblm.toString() === localStorageValue ? gblm : GameBoardLabelMode.Nothing;
 	});
-	export const gameBoardLabelMode = { subscribe: gameBoardLabelModeWritable.subscribe };
+	export const gameBoardLabelModeStore = { subscribe: gameBoardLabelModeWritableStore.subscribe };
 </script>
 
 <div>
 	<label>
 		Color Scheme:
-		<select bind:value={$colorSchemeWritable}>
+		<select bind:value={$colorSchemeWritableStore}>
 			<option value="netacquire">NetAcquire</option>
 			<option value="white">White</option>
 		</select>
@@ -59,7 +59,7 @@
 <div>
 	<label>
 		Game Board Label Mode:
-		<select bind:value={$gameBoardLabelModeWritable}>
+		<select bind:value={$gameBoardLabelModeWritableStore}>
 			<option value={GameBoardLabelMode.Nothing}>Nothing</option>
 			<option value={GameBoardLabelMode.Coordinates}>Coordinates</option>
 			<option value={GameBoardLabelMode.HotelInitials}>Hotel Initials</option>

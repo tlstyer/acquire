@@ -7,7 +7,7 @@
 
 	const client: Client = getContext('client');
 
-	const isConnected = client.isConnected;
+	const isConnectedStore = client.isConnectedStore;
 
 	let openDialog: ((dialogType: DialogType) => void) | undefined;
 </script>
@@ -23,9 +23,9 @@
 	</span>
 	<span
 		class="connection"
-		class:connected={$isConnected}
-		class:connecting={!$isConnected}
-		title={$isConnected ? 'Connected' : 'Connecting...'}
+		class:connected={$isConnectedStore}
+		class:connecting={!$isConnectedStore}
+		title={$isConnectedStore ? 'Connected' : 'Connecting...'}
 	/>
 </div>
 
