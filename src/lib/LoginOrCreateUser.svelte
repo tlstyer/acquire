@@ -36,7 +36,7 @@
 		otherTitle = 'Create User';
 
 		validateUsername() {
-			this.username = this.username.replace(/\s+/g, ' ').trim();
+			this.username = cleanUpWhitespaceInUsername(this.username);
 			if (this.username.length > 0) {
 				this.usernameError = '';
 			} else {
@@ -64,7 +64,7 @@
 		otherTitle = 'Login';
 
 		validateUsername() {
-			this.username = this.username.replace(/\s+/g, ' ').trim();
+			this.username = cleanUpWhitespaceInUsername(this.username);
 			if (isValidUsername(this.username)) {
 				this.usernameError = '';
 			} else {
@@ -97,7 +97,7 @@
 
 <script lang="ts">
 	import { getContext } from 'svelte';
-	import { isValidPassword, isValidUsername } from '../common/helpers';
+	import { cleanUpWhitespaceInUsername, isValidPassword, isValidUsername } from '../common/helpers';
 	import type { Client } from './client';
 
 	export let loginMode: boolean;

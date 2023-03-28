@@ -1,4 +1,9 @@
-import { createLoginLogoutMessage, isValidPassword, isValidUsername } from '../common/helpers';
+import {
+	cleanUpWhitespaceInUsername,
+	createLoginLogoutMessage,
+	isValidPassword,
+	isValidUsername,
+} from '../common/helpers';
 import {
 	PB_MessageToClient,
 	PB_MessageToClient_LoginLogout_ResponseCode,
@@ -87,7 +92,9 @@ export class Server {
 			return;
 		}
 
-		const userDataProviderResponse = await this.userDataProvider.lookupUser(message.username);
+		const username = cleanUpWhitespaceInUsername(message.username);
+
+		const userDataProviderResponse = await this.userDataProvider.lookupUser(username);
 
 		if (userDataProviderResponse.errorCode !== undefined) {
 			this.sendLoginLogoutMessage(clientID, userDataProviderResponse.errorCode);
@@ -122,7 +129,9 @@ export class Server {
 			return;
 		}
 
-		const userDataProviderResponse = await this.userDataProvider.lookupUser(message.username);
+		const username = cleanUpWhitespaceInUsername(message.username);
+
+		const userDataProviderResponse = await this.userDataProvider.lookupUser(username);
 
 		if (userDataProviderResponse.errorCode !== undefined) {
 			this.sendLoginLogoutMessage(clientID, userDataProviderResponse.errorCode);
@@ -157,7 +166,9 @@ export class Server {
 			return;
 		}
 
-		if (!isValidUsername(message.username)) {
+		const username = cleanUpWhitespaceInUsername(message.username);
+
+		if (!isValidUsername(username)) {
 			this.sendLoginLogoutMessage(
 				clientID,
 				PB_MessageToClient_LoginLogout_ResponseCode.INVALID_USERNAME,
@@ -174,7 +185,7 @@ export class Server {
 		}
 
 		const userDataProviderResponse = await this.userDataProvider.createUser(
-			message.username,
+			username,
 			message.password,
 		);
 

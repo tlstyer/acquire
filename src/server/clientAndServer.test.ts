@@ -103,6 +103,18 @@ describe('Login / Create User / Logout', () => {
 			1,
 		);
 
+		testLogin(
+			'correct password and is logged in after whitespace in username is cleaned up',
+			(client) => client.loginWithPassword('\t user\n \t\v1\v ', 'password'),
+			createLoginLogoutMessage(
+				PB_MessageToClient_LoginLogout_ResponseCode.SUCCESS,
+				'user 1',
+				1,
+				userIDToCorrectToken[1],
+			),
+			1,
+		);
+
 		test('no reply when trying to login with password while already logged in', async () => {
 			const { client, clientCommunication, server } = createOneClientConnectedToOneServer();
 
@@ -154,6 +166,18 @@ describe('Login / Create User / Logout', () => {
 			1,
 		);
 
+		testLogin(
+			'correct password and is logged in after whitespace in username is cleaned up',
+			(client) => client.loginWithToken('\t user\n \t\v1\v ', userIDToCorrectToken[1]),
+			createLoginLogoutMessage(
+				PB_MessageToClient_LoginLogout_ResponseCode.SUCCESS,
+				'user 1',
+				1,
+				userIDToCorrectToken[1],
+			),
+			1,
+		);
+
 		test('no reply when trying to login with token while already logged in', async () => {
 			const { client, clientCommunication, server } = createOneClientConnectedToOneServer();
 
@@ -194,6 +218,13 @@ describe('Login / Create User / Logout', () => {
 		);
 
 		testLogin(
+			'username with just spaces is an invalid username',
+			(client) => client.createUserAndLogin('    ', 'password'),
+			createLoginLogoutMessage(PB_MessageToClient_LoginLogout_ResponseCode.INVALID_USERNAME),
+			0,
+		);
+
+		testLogin(
 			'password of length 7 is an invalid password',
 			(client) => client.createUserAndLogin('username', '1234567'),
 			createLoginLogoutMessage(PB_MessageToClient_LoginLogout_ResponseCode.INVALID_PASSWORD),
@@ -222,6 +253,18 @@ describe('Login / Create User / Logout', () => {
 				'username',
 				numTestUsers + 1,
 				getPasswordHash('username', 'super secret password'),
+			),
+			1,
+		);
+
+		testLogin(
+			'can create a new user and be logged in after whitespace in username is cleaned up',
+			(client) => client.createUserAndLogin('\t user\n \t\vname\v ', 'super secret password'),
+			createLoginLogoutMessage(
+				PB_MessageToClient_LoginLogout_ResponseCode.SUCCESS,
+				'user name',
+				numTestUsers + 1,
+				getPasswordHash('user name', 'super secret password'),
 			),
 			1,
 		);

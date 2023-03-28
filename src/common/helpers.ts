@@ -181,3 +181,7 @@ export function createLoginLogoutMessage(
 		},
 	});
 }
+
+export function cleanUpWhitespaceInUsername(username: string) {
+	return username.replace(/\s+/g, ' ').trim();
+}
