@@ -17,6 +17,13 @@ export class Client {
 	private isConnectedWritableStore = writable(false);
 	isConnectedStore = { subscribe: this.isConnectedWritableStore.subscribe };
 
+	loginMessage: Uint8Array | undefined;
+
+	private usernameWritableStore = writable<string>('');
+	usernameStore = { subscribe: this.usernameWritableStore.subscribe };
+	private loginStateWritableStore = writable(LoginState.LoggedOut);
+	loginStateStore = { subscribe: this.loginStateWritableStore.subscribe };
+
 	constructor(private clientCommunication: ClientCommunication, private version: number) {
 		clientCommunication.setCallbacks(
 			this.onConnect.bind(this),
@@ -26,45 +33,71 @@ export class Client {
 	}
 
 	loginWithPassword(username: string, password: string) {
-		this.clientCommunication.sendMessage(
-			PB_MessageToServer.toBinary({
-				loginLogout: {
-					loginWithPassword: {
-						username,
-						password,
-					},
+		if (this.loginMessage !== undefined) {
+			return;
+		}
+
+		this.loginMessage = PB_MessageToServer.toBinary({
+			loginLogout: {
+				loginWithPassword: {
+					username,
+					password,
 				},
-			}),
-		);
+			},
+		});
+
+		this.loginStateWritableStore.set(LoginState.TryingToLogIn);
+
+		this.clientCommunication.sendMessage(this.loginMessage);
 	}
 
 	loginWithToken(username: string, token: string) {
-		this.clientCommunication.sendMessage(
-			PB_MessageToServer.toBinary({
-				loginLogout: {
-					loginWithToken: {
-						username,
-						token,
-					},
+		if (this.loginMessage !== undefined) {
+			return;
+		}
+
+		this.loginMessage = PB_MessageToServer.toBinary({
+			loginLogout: {
+				loginWithToken: {
+					username,
+					token,
 				},
-			}),
-		);
+			},
+		});
+
+		this.loginStateWritableStore.set(LoginState.TryingToLogIn);
+
+		this.clientCommunication.sendMessage(this.loginMessage);
 	}
 
 	createUserAndLogin(username: string, password: string) {
-		this.clientCommunication.sendMessage(
-			PB_MessageToServer.toBinary({
-				loginLogout: {
-					createUserAndLogin: {
-						username,
-						password,
-					},
+		if (this.loginMessage !== undefined) {
+			return;
+		}
+
+		this.loginMessage = PB_MessageToServer.toBinary({
+			loginLogout: {
+				createUserAndLogin: {
+					username,
+					password,
 				},
-			}),
-		);
+			},
+		});
+
+		this.loginStateWritableStore.set(LoginState.TryingToLogIn);
+
+		this.clientCommunication.sendMessage(this.loginMessage);
 	}
 
 	logout() {
+		if (this.loginMessage === undefined) {
+			return;
+		}
+
+		this.loginMessage = undefined;
+
+		this.loginStateWritableStore.set(LoginState.TryingToLogOut);
+
 		this.clientCommunication.sendMessage(
 			PB_MessageToServer.toBinary({
 				loginLogout: {
@@ -76,6 +109,10 @@ export class Client {
 
 	private onConnect() {
 		this.isConnectedWritableStore.set(true);
+
+		if (this.loginMessage !== undefined) {
+			this.clientCommunication.sendMessage(this.loginMessage);
+		}
 	}
 
 	private onDisconnect() {
@@ -101,8 +138,38 @@ export class Client {
 	}
 
 	private onMessage_LoginLogout(message: PB_MessageToClient_LoginLogout) {
-		this.myUsername = message.username !== '' ? message.username : undefined;
-		this.myUserID = message.userId !== 0 ? message.userId : undefined;
-		this.myToken = message.token !== '' ? message.token : undefined;
+		if (message.username && message.userId && message.token) {
+			this.myUsername = message.username;
+			this.myUserID = message.userId;
+			this.myToken = message.token;
+
+			this.loginMessage = PB_MessageToServer.toBinary({
+				loginLogout: {
+					loginWithToken: {
+						username: message.username,
+						token: message.token,
+					},
+				},
+			});
+
+			this.usernameWritableStore.set(message.username);
+			this.loginStateWritableStore.set(LoginState.LoggedIn);
+		} else {
+			this.myUsername = undefined;
+			this.myUserID = undefined;
+			this.myToken = undefined;
+
+			this.loginMessage = undefined;
+
+			this.usernameWritableStore.set('');
+			this.loginStateWritableStore.set(LoginState.LoggedOut);
+		}
 	}
+}
+
+export const enum LoginState {
+	LoggedOut,
+	TryingToLogIn,
+	LoggedIn,
+	TryingToLogOut,
 }

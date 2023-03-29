@@ -2,7 +2,11 @@ import { Client } from '$lib/client';
 import { TestClientCommunication } from '$lib/clientCommunication';
 import { describe, expect, test, vi } from 'vitest';
 import { createLoginLogoutMessage } from '../common/helpers';
-import { PB_MessageToClient, PB_MessageToClient_LoginLogout_ResponseCode } from '../common/pb';
+import {
+	PB_MessageToClient,
+	PB_MessageToClient_LoginLogout_ResponseCode,
+	PB_MessageToServer,
+} from '../common/pb';
 import { Server } from './server';
 import { TestServerCommunication } from './serverCommunication';
 import { getPasswordHash, TestUserData, TestUserDataProvider } from './userDataProvider';
@@ -115,7 +119,7 @@ describe('Login / Create User / Logout', () => {
 			1,
 		);
 
-		test('no reply when trying to login with password while already logged in', async () => {
+		test('no message sent when trying to login with password while already logged in', async () => {
 			const { client, clientCommunication, server } = createOneClientConnectedToOneServer();
 
 			client.loginWithPassword('user 1', 'password');
@@ -124,6 +128,31 @@ describe('Login / Create User / Logout', () => {
 			clientCommunication.communicatedMessages.length = 0;
 
 			client.loginWithPassword('user 1', 'password');
+			await waitForAsyncServerStuff();
+
+			expect(clientCommunication.communicatedMessages.length).toBe(0);
+
+			expect(server.clientIDToUserID.size).toBe(1);
+		});
+
+		test('no reply when trying to login with password while already logged in when sending message client would not send', async () => {
+			const { client, clientCommunication, server } = createOneClientConnectedToOneServer();
+
+			client.loginWithPassword('user 1', 'password');
+			await waitForAsyncServerStuff();
+
+			clientCommunication.communicatedMessages.length = 0;
+
+			clientCommunication.sendMessage(
+				PB_MessageToServer.toBinary({
+					loginLogout: {
+						loginWithPassword: {
+							username: 'user 1',
+							password: 'password',
+						},
+					},
+				}),
+			);
 			await waitForAsyncServerStuff();
 
 			expect(clientCommunication.communicatedMessages.length).toBe(1);
@@ -178,7 +207,7 @@ describe('Login / Create User / Logout', () => {
 			1,
 		);
 
-		test('no reply when trying to login with token while already logged in', async () => {
+		test('no message sent when trying to login with token while already logged in', async () => {
 			const { client, clientCommunication, server } = createOneClientConnectedToOneServer();
 
 			client.loginWithToken('user 1', userIDToCorrectToken[1]);
@@ -187,6 +216,31 @@ describe('Login / Create User / Logout', () => {
 			clientCommunication.communicatedMessages.length = 0;
 
 			client.loginWithToken('user 1', userIDToCorrectToken[1]);
+			await waitForAsyncServerStuff();
+
+			expect(clientCommunication.communicatedMessages.length).toBe(0);
+
+			expect(server.clientIDToUserID.size).toBe(1);
+		});
+
+		test('no reply when trying to login with token while already logged in when sending message client would not send', async () => {
+			const { client, clientCommunication, server } = createOneClientConnectedToOneServer();
+
+			client.loginWithToken('user 1', userIDToCorrectToken[1]);
+			await waitForAsyncServerStuff();
+
+			clientCommunication.communicatedMessages.length = 0;
+
+			clientCommunication.sendMessage(
+				PB_MessageToServer.toBinary({
+					loginLogout: {
+						loginWithToken: {
+							username: 'user 1',
+							token: userIDToCorrectToken[1],
+						},
+					},
+				}),
+			);
 			await waitForAsyncServerStuff();
 
 			expect(clientCommunication.communicatedMessages.length).toBe(1);
@@ -269,7 +323,7 @@ describe('Login / Create User / Logout', () => {
 			1,
 		);
 
-		test('no reply when trying to create user and login while already logged in', async () => {
+		test('no message sent when trying to create user and login while already logged in', async () => {
 			const { client, clientCommunication, server } = createOneClientConnectedToOneServer();
 
 			client.createUserAndLogin('username', 'super secret password');
@@ -278,6 +332,31 @@ describe('Login / Create User / Logout', () => {
 			clientCommunication.communicatedMessages.length = 0;
 
 			client.createUserAndLogin('username', 'super secret password');
+			await waitForAsyncServerStuff();
+
+			expect(clientCommunication.communicatedMessages.length).toBe(0);
+
+			expect(server.clientIDToUserID.size).toBe(1);
+		});
+
+		test('no reply when trying to create user and login while already logged in when sending message client would not send', async () => {
+			const { client, clientCommunication, server } = createOneClientConnectedToOneServer();
+
+			client.createUserAndLogin('username', 'super secret password');
+			await waitForAsyncServerStuff();
+
+			clientCommunication.communicatedMessages.length = 0;
+
+			clientCommunication.sendMessage(
+				PB_MessageToServer.toBinary({
+					loginLogout: {
+						createUserAndLogin: {
+							username: 'username',
+							password: 'super secret password',
+						},
+					},
+				}),
+			);
 			await waitForAsyncServerStuff();
 
 			expect(clientCommunication.communicatedMessages.length).toBe(1);
@@ -310,12 +389,31 @@ describe('Login / Create User / Logout', () => {
 			expect(server.clientIDToUserID.size).toBe(0);
 		});
 
-		test('no reply when trying to log out while already logged out', async () => {
+		test('no message sent when trying to log out while already logged out', async () => {
 			const { client, clientCommunication, server } = createOneClientConnectedToOneServer();
 
 			clientCommunication.communicatedMessages.length = 0;
 
 			client.logout();
+			await waitForAsyncServerStuff();
+
+			expect(clientCommunication.communicatedMessages.length).toBe(0);
+
+			expect(server.clientIDToUserID.size).toBe(0);
+		});
+
+		test('no reply when trying to log out while already logged out when sending message client would not send', async () => {
+			const { client, clientCommunication, server } = createOneClientConnectedToOneServer();
+
+			clientCommunication.communicatedMessages.length = 0;
+
+			clientCommunication.sendMessage(
+				PB_MessageToServer.toBinary({
+					loginLogout: {
+						logout: {},
+					},
+				}),
+			);
 			await waitForAsyncServerStuff();
 
 			expect(clientCommunication.communicatedMessages.length).toBe(1);

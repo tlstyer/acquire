@@ -2,25 +2,42 @@
 
 <script lang="ts">
 	import { getContext } from 'svelte';
-	import type { Client } from './client';
+	import { LoginState, type Client } from './client';
 	import Dialog, { DialogType } from './Dialog.svelte';
+	import Username from './Username.svelte';
 
 	const client: Client = getContext('client');
 
 	const isConnectedStore = client.isConnectedStore;
+	const usernameStore = client.usernameStore;
+	const loginStateStore = client.loginStateStore;
 
 	let openDialog: ((dialogType: DialogType) => void) | undefined;
 </script>
 
 <div>
 	<span class="name">Acquire</span>
+
 	<span class="middle" />
-	<span class="dialog" on:click={() => openDialog?.(DialogType.Login)} on:keydown={undefined}>
-		Login
-	</span>
+
+	{#if $loginStateStore === LoginState.LoggedOut}
+		<span class="dialog" on:click={() => openDialog?.(DialogType.Login)} on:keydown={undefined}>
+			Login
+		</span>
+	{:else if $loginStateStore === LoginState.TryingToLogIn}
+		<span>Logging in...</span>
+	{:else if $loginStateStore === LoginState.LoggedIn}
+		<span><Username username={$usernameStore} /></span>
+		<span>Logout</span>
+	{:else if $loginStateStore === LoginState.TryingToLogOut}
+		<span><Username username={$usernameStore} /></span>
+		<span>Logging out...</span>
+	{/if}
+
 	<span class="dialog" on:click={() => openDialog?.(DialogType.Settings)} on:keydown={undefined}>
 		⚙
 	</span>
+
 	<span
 		class="connection"
 		class:connected={$isConnectedStore}
