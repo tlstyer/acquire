@@ -6,6 +6,7 @@
 	export const enum DialogType {
 		Login,
 		CreateUser,
+		Logout,
 		Settings,
 	}
 
@@ -15,6 +16,7 @@
 
 <script lang="ts">
 	import LoginOrCreateUser from './LoginOrCreateUser.svelte';
+	import Logout from './Logout.svelte';
 	import Settings from './Settings.svelte';
 
 	export const open = function open(dialogType: DialogType) {
@@ -55,6 +57,8 @@
 					? 'Login'
 					: selectedDialogType === DialogType.CreateUser
 					? 'Create User'
+					: selectedDialogType === DialogType.Logout
+					? 'Logout'
 					: 'Settings'}
 			</span>
 			<span class="close" on:click={close} on:keydown={undefined}>&nbsp;x&nbsp;</span>
@@ -63,6 +67,8 @@
 			<LoginOrCreateUser loginMode={true} onSwitch={() => open(DialogType.CreateUser)} />
 		{:else if selectedDialogType === DialogType.CreateUser}
 			<LoginOrCreateUser loginMode={false} onSwitch={() => open(DialogType.Login)} />
+		{:else if selectedDialogType === DialogType.Logout}
+			<Logout />
 		{:else}
 			<Settings />
 		{/if}

@@ -28,7 +28,9 @@
 		<span>Logging in...</span>
 	{:else if $loginStateStore === LoginState.LoggedIn}
 		<span><Username username={$usernameStore} /></span>
-		<span>Logout</span>
+		<span class="dialog" on:click={() => openDialog?.(DialogType.Logout)} on:keydown={undefined}>
+			Logout
+		</span>
 	{:else if $loginStateStore === LoginState.TryingToLogOut}
 		<span><Username username={$usernameStore} /></span>
 		<span>Logging out...</span>
