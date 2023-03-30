@@ -15,6 +15,7 @@ export class Client {
 	myUserID: number | undefined;
 	myToken: string | undefined;
 
+	isConnected = false;
 	private isConnectedWritableStore = writable(false);
 	isConnectedStore = { subscribe: this.isConnectedWritableStore.subscribe };
 
@@ -102,21 +103,26 @@ export class Client {
 			return;
 		}
 
-		this.loginMessage = undefined;
+		if (this.isConnected) {
+			this.loginMessage = undefined;
 
-		this.loginStateWritableStore.set(LoginState.TryingToLogOut);
-		this.loginLogoutResponseCodeWritableStore.set(undefined);
+			this.loginStateWritableStore.set(LoginState.TryingToLogOut);
+			this.loginLogoutResponseCodeWritableStore.set(undefined);
 
-		this.clientCommunication.sendMessage(
-			PB_MessageToServer.toBinary({
-				loginLogout: {
-					logout: {},
-				},
-			}),
-		);
+			this.clientCommunication.sendMessage(
+				PB_MessageToServer.toBinary({
+					loginLogout: {
+						logout: {},
+					},
+				}),
+			);
+		} else {
+			this.logoutWhenNotConnected();
+		}
 	}
 
 	private onConnect() {
+		this.isConnected = true;
 		this.isConnectedWritableStore.set(true);
 
 		if (this.loginMessage !== undefined) {
@@ -125,7 +131,12 @@ export class Client {
 	}
 
 	private onDisconnect() {
+		this.isConnected = false;
 		this.isConnectedWritableStore.set(false);
+
+		if (this.loginMessage === undefined) {
+			this.logoutWhenNotConnected();
+		}
 	}
 
 	private onMessage(message: Uint8Array) {
@@ -164,17 +175,29 @@ export class Client {
 			this.usernameWritableStore.set(message.username);
 			this.loginStateWritableStore.set(LoginState.LoggedIn);
 		} else {
-			this.myUsername = undefined;
-			this.myUserID = undefined;
-			this.myToken = undefined;
-
-			this.loginMessage = undefined;
-
-			this.usernameWritableStore.set('');
-			this.loginStateWritableStore.set(LoginState.LoggedOut);
+			this.makeLoggedOutDataChanges();
 		}
 
 		this.loginLogoutResponseCodeWritableStore.set(message.responseCode);
+	}
+
+	private logoutWhenNotConnected() {
+		this.makeLoggedOutDataChanges();
+
+		this.loginLogoutResponseCodeWritableStore.set(
+			PB_MessageToClient_LoginLogout_ResponseCode.SUCCESS,
+		);
+	}
+
+	private makeLoggedOutDataChanges() {
+		this.myUsername = undefined;
+		this.myUserID = undefined;
+		this.myToken = undefined;
+
+		this.loginMessage = undefined;
+
+		this.usernameWritableStore.set('');
+		this.loginStateWritableStore.set(LoginState.LoggedOut);
 	}
 }
 
