@@ -1,5 +1,9 @@
 import { TileEnum } from '../common/enums';
-import { PB_GameBoardType, PB_GameMode } from '../common/pb';
+import {
+	PB_GameBoardType,
+	PB_GameMode,
+	PB_MessageToClient_LoginLogout_ResponseCode,
+} from '../common/pb';
 
 export const allChains = [
 	PB_GameBoardType.LUXOR,
@@ -151,4 +155,27 @@ export const keyboardEventCodeToGameBoardType = new Map([
 	['KeyI', PB_GameBoardType.IMPERIAL],
 	['Digit7', PB_GameBoardType.IMPERIAL],
 	['Numpad7', PB_GameBoardType.IMPERIAL],
+]);
+
+export const loginLogoutResponseCodeToString = new Map<
+	PB_MessageToClient_LoginLogout_ResponseCode,
+	string
+>([
+	[PB_MessageToClient_LoginLogout_ResponseCode.SUCCESS, 'Success!'],
+	[
+		PB_MessageToClient_LoginLogout_ResponseCode.GENERIC_ERROR,
+		'An error occurred during the processing of your request.',
+	],
+	[PB_MessageToClient_LoginLogout_ResponseCode.USER_NOT_FOUND, 'User not found.'],
+	[PB_MessageToClient_LoginLogout_ResponseCode.INCORRECT_PASSWORD, 'Password is incorrect.'],
+	[PB_MessageToClient_LoginLogout_ResponseCode.INVALID_TOKEN, 'Invalid token.'],
+	[
+		PB_MessageToClient_LoginLogout_ResponseCode.INVALID_USERNAME,
+		'Invalid username. Username must have between 1 and 32 ASCII characters.',
+	],
+	[
+		PB_MessageToClient_LoginLogout_ResponseCode.INVALID_PASSWORD,
+		'Invalid password. Password must have at least 8 characters.',
+	],
+	[PB_MessageToClient_LoginLogout_ResponseCode.USER_EXISTS, 'User already exists.'],
 ]);

@@ -3,6 +3,7 @@ import {
 	PB_MessageToClient,
 	PB_MessageToClient_Initial,
 	PB_MessageToClient_LoginLogout,
+	PB_MessageToClient_LoginLogout_ResponseCode,
 	PB_MessageToServer,
 } from '../common/pb';
 import type { ClientCommunication } from './clientCommunication';
@@ -23,6 +24,10 @@ export class Client {
 	usernameStore = { subscribe: this.usernameWritableStore.subscribe };
 	private loginStateWritableStore = writable(LoginState.LoggedOut);
 	loginStateStore = { subscribe: this.loginStateWritableStore.subscribe };
+	private loginLogoutResponseCodeWritableStore = writable<
+		PB_MessageToClient_LoginLogout_ResponseCode | undefined
+	>(undefined);
+	loginLogoutResponseCodeStore = { subscribe: this.loginLogoutResponseCodeWritableStore.subscribe };
 
 	constructor(private clientCommunication: ClientCommunication, private version: number) {
 		clientCommunication.setCallbacks(
@@ -47,6 +52,7 @@ export class Client {
 		});
 
 		this.loginStateWritableStore.set(LoginState.TryingToLogIn);
+		this.loginLogoutResponseCodeWritableStore.set(undefined);
 
 		this.clientCommunication.sendMessage(this.loginMessage);
 	}
@@ -66,6 +72,7 @@ export class Client {
 		});
 
 		this.loginStateWritableStore.set(LoginState.TryingToLogIn);
+		this.loginLogoutResponseCodeWritableStore.set(undefined);
 
 		this.clientCommunication.sendMessage(this.loginMessage);
 	}
@@ -85,6 +92,7 @@ export class Client {
 		});
 
 		this.loginStateWritableStore.set(LoginState.TryingToLogIn);
+		this.loginLogoutResponseCodeWritableStore.set(undefined);
 
 		this.clientCommunication.sendMessage(this.loginMessage);
 	}
@@ -97,6 +105,7 @@ export class Client {
 		this.loginMessage = undefined;
 
 		this.loginStateWritableStore.set(LoginState.TryingToLogOut);
+		this.loginLogoutResponseCodeWritableStore.set(undefined);
 
 		this.clientCommunication.sendMessage(
 			PB_MessageToServer.toBinary({
@@ -164,6 +173,8 @@ export class Client {
 			this.usernameWritableStore.set('');
 			this.loginStateWritableStore.set(LoginState.LoggedOut);
 		}
+
+		this.loginLogoutResponseCodeWritableStore.set(message.responseCode);
 	}
 }
 

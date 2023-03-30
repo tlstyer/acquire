@@ -3,6 +3,7 @@
 		abstract submitButtonTitle: string;
 		abstract otherIntro: string;
 		abstract otherTitle: string;
+		abstract submittedMessage: string;
 
 		username = '';
 		usernameError = '';
@@ -10,6 +11,8 @@
 		passwordError = '';
 		confirmPassword = '';
 		confirmPasswordError = '';
+
+		submitted = false;
 
 		constructor(public client: Client) {}
 
@@ -27,13 +30,16 @@
 			return !this.usernameError && !this.passwordError && !this.confirmPasswordError;
 		}
 
-		submit() {}
+		submit() {
+			this.submitted = true;
+		}
 	}
 
 	class LoginStuff extends BaseStuff {
 		submitButtonTitle = 'Login';
 		otherIntro = 'If you have not created a user:';
 		otherTitle = 'Create User';
+		submittedMessage = 'Logging in...';
 
 		validateUsername() {
 			this.username = cleanUpWhitespaceInUsername(this.username);
@@ -62,6 +68,7 @@
 		submitButtonTitle = 'Create User';
 		otherIntro = 'If you already created a user:';
 		otherTitle = 'Login';
+		submittedMessage = 'Creating user...';
 
 		validateUsername() {
 			this.username = cleanUpWhitespaceInUsername(this.username);
@@ -98,12 +105,17 @@
 <script lang="ts">
 	import { getContext } from 'svelte';
 	import { cleanUpWhitespaceInUsername, isValidPassword, isValidUsername } from '../common/helpers';
-	import type { Client } from './client';
+	import { PB_MessageToClient_LoginLogout_ResponseCode } from '../common/pb';
+	import { LoginState, type Client } from './client';
+	import { loginLogoutResponseCodeToString } from './helpers';
 
 	export let loginMode: boolean;
 	export let onSwitch: () => void;
 
 	const client: Client = getContext('client');
+
+	const loginStateStore = client.loginStateStore;
+	const loginLogoutResponseCodeStore = client.loginLogoutResponseCodeStore;
 
 	let stuff: BaseStuff = loginMode ? new LoginStuff(client) : new CreateUserStuff(client);
 </script>
@@ -125,7 +137,7 @@
 		<label>
 			Username:
 			<input
-				class:error={stuff.usernameError}
+				class:inputError={stuff.usernameError}
 				type="text"
 				bind:value={stuff.username}
 				on:blur={() => {
@@ -140,7 +152,7 @@
 		<label>
 			Password:
 			<input
-				class:error={stuff.passwordError}
+				class:inputError={stuff.passwordError}
 				type="password"
 				bind:value={stuff.password}
 				on:blur={() => {
@@ -156,7 +168,7 @@
 			<label>
 				Confirm Password:
 				<input
-					class:error={stuff.confirmPasswordError}
+					class:inputError={stuff.confirmPasswordError}
 					type="password"
 					bind:value={stuff.confirmPassword}
 					on:blur={() => {
@@ -169,7 +181,23 @@
 		</div>
 	{/if}
 	<div>
-		<button type="submit">{stuff.submitButtonTitle}</button>
+		<button type="submit" disabled={$loginStateStore !== LoginState.LoggedOut}>
+			{stuff.submitButtonTitle}
+		</button>
+		{#if stuff.submitted}
+			{#if $loginLogoutResponseCodeStore === undefined}
+				{stuff.submittedMessage}
+			{:else}
+				<span
+					class:success={$loginLogoutResponseCodeStore ===
+						PB_MessageToClient_LoginLogout_ResponseCode.SUCCESS}
+					class:error={$loginLogoutResponseCodeStore !==
+						PB_MessageToClient_LoginLogout_ResponseCode.SUCCESS}
+				>
+					{loginLogoutResponseCodeToString.get($loginLogoutResponseCodeStore)}
+				</span>
+			{/if}
+		{/if}
 	</div>
 </form>
 
@@ -177,7 +205,7 @@
 
 <div>
 	{stuff.otherIntro}
-	<button on:click={onSwitch}>
+	<button disabled={$loginStateStore !== LoginState.LoggedOut} on:click={onSwitch}>
 		{stuff.otherTitle}
 	</button>
 </div>
@@ -191,12 +219,16 @@
 		margin: 1em 0;
 	}
 
-	input.error {
+	.inputError {
 		border-color: red;
 		border-style: solid;
 	}
 
-	div.error {
+	.success {
+		color: green;
+	}
+
+	.error {
 		color: red;
 	}
 </style>

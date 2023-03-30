@@ -2,9 +2,16 @@
 
 <script lang="ts">
 	import { getContext } from 'svelte';
-	import type { Client } from './client';
+	import { PB_MessageToClient_LoginLogout_ResponseCode } from '../common/pb';
+	import { LoginState, type Client } from './client';
+	import { loginLogoutResponseCodeToString } from './helpers';
 
 	const client: Client = getContext('client');
+
+	const loginStateStore = client.loginStateStore;
+	const loginLogoutResponseCodeStore = client.loginLogoutResponseCodeStore;
+
+	let submitted = false;
 </script>
 
 <form
@@ -12,14 +19,40 @@
 		event.preventDefault();
 
 		client.logout();
+
+		submitted = true;
 	}}
 >
 	<div>Are you sure you want to log out?</div>
-	<div><button type="submit">Logout</button></div>
+	<div>
+		<button type="submit" disabled={$loginStateStore !== LoginState.LoggedIn}>Logout</button>
+		{#if submitted}
+			{#if $loginLogoutResponseCodeStore === undefined}
+				Logging out...
+			{:else}
+				<span
+					class:success={$loginLogoutResponseCodeStore ===
+						PB_MessageToClient_LoginLogout_ResponseCode.SUCCESS}
+					class:error={$loginLogoutResponseCodeStore !==
+						PB_MessageToClient_LoginLogout_ResponseCode.SUCCESS}
+				>
+					{loginLogoutResponseCodeToString.get($loginLogoutResponseCodeStore)}
+				</span>
+			{/if}
+		{/if}
+	</div>
 </form>
 
 <style>
 	div {
 		margin-top: 8px;
+	}
+
+	.success {
+		color: green;
+	}
+
+	.error {
+		color: red;
 	}
 </style>
