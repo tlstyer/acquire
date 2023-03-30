@@ -30,6 +30,8 @@
 		</span>
 	{:else if $loginStateStore === LoginState.TryingToLogIn}
 		<span class="inProgress">Logging in...</span>
+	{:else if $loginStateStore === LoginState.TryingToCreateUser}
+		<span class="inProgress">Creating user...</span>
 	{:else if $loginStateStore === LoginState.LoggedIn}
 		<span class="dialog" on:click={() => openDialog?.(DialogType.Logout)} on:keydown={undefined}>
 			Logout

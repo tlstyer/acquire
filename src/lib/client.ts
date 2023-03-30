@@ -92,7 +92,7 @@ export class Client {
 			},
 		});
 
-		this.loginStateWritableStore.set(LoginState.TryingToLogIn);
+		this.loginStateWritableStore.set(LoginState.TryingToCreateUser);
 		this.loginLogoutResponseCodeWritableStore.set(undefined);
 
 		this.clientCommunication.sendMessage(this.loginMessage);
@@ -204,6 +204,7 @@ export class Client {
 export const enum LoginState {
 	LoggedOut,
 	TryingToLogIn,
+	TryingToCreateUser,
 	LoggedIn,
 	TryingToLogOut,
 }
