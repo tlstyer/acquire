@@ -30,6 +30,9 @@ export class Client {
 	>(undefined);
 	loginLogoutResponseCodeStore = { subscribe: this.loginLogoutResponseCodeWritableStore.subscribe };
 
+	private usernameAndTokenWritableStore = writable<UsernameAndToken | undefined>(undefined);
+	usernameAndTokenStore = { subscribe: this.usernameAndTokenWritableStore.subscribe };
+
 	constructor(private clientCommunication: ClientCommunication, private version: number) {
 		clientCommunication.setCallbacks(
 			this.onConnect.bind(this),
@@ -174,6 +177,8 @@ export class Client {
 
 			this.usernameWritableStore.set(message.username);
 			this.loginStateWritableStore.set(LoginState.LoggedIn);
+
+			this.usernameAndTokenWritableStore.set(new UsernameAndToken(message.username, message.token));
 		} else {
 			this.makeLoggedOutDataChanges();
 		}
@@ -198,6 +203,8 @@ export class Client {
 
 		this.usernameWritableStore.set('');
 		this.loginStateWritableStore.set(LoginState.LoggedOut);
+
+		this.usernameAndTokenWritableStore.set(undefined);
 	}
 }
 
@@ -207,4 +214,8 @@ export const enum LoginState {
 	TryingToCreateUser,
 	LoggedIn,
 	TryingToLogOut,
+}
+
+class UsernameAndToken {
+	constructor(public username: string, public token: string) {}
 }

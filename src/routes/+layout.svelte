@@ -55,6 +55,77 @@
 
 	const client = new Client(clientCommunication, parseInt(PUBLIC_VERSION, 10));
 	setContext('client', client);
+
+	if (browser) {
+		const localStorageKey = 'UsernameAndToken';
+
+		let usernameInLocalStorage: string | undefined;
+		let tokenInLocalStorage: string | undefined;
+
+		let ignoredFirstMessage = false;
+		client.usernameAndTokenStore.subscribe((usernameAndToken) => {
+			if (ignoredFirstMessage) {
+				if (usernameAndToken !== undefined) {
+					if (
+						usernameInLocalStorage !== usernameAndToken.username ||
+						tokenInLocalStorage !== usernameAndToken.token
+					) {
+						localStorage.setItem(
+							localStorageKey,
+							JSON.stringify({
+								username: usernameAndToken.username,
+								token: usernameAndToken.token,
+							}),
+						);
+
+						usernameInLocalStorage = usernameAndToken.username;
+						tokenInLocalStorage = usernameAndToken.token;
+					}
+				} else {
+					if (usernameInLocalStorage !== undefined || tokenInLocalStorage !== undefined) {
+						localStorage.removeItem(localStorageKey);
+
+						usernameInLocalStorage = undefined;
+						tokenInLocalStorage = undefined;
+					}
+				}
+			} else {
+				ignoredFirstMessage = true;
+			}
+		});
+
+		processValueFromLocalStorage(localStorage.getItem(localStorageKey));
+
+		addEventListener('storage', (event) => {
+			if (event.key === localStorageKey || event.key === null) {
+				processValueFromLocalStorage(event.newValue);
+			}
+		});
+
+		function processValueFromLocalStorage(value: string | null) {
+			usernameInLocalStorage = undefined;
+			tokenInLocalStorage = undefined;
+
+			if (value !== null) {
+				try {
+					const data = JSON.parse(value);
+					usernameInLocalStorage = data.username;
+					tokenInLocalStorage = data.token;
+				} catch (error) {
+					// ignore
+				}
+			}
+
+			if (typeof usernameInLocalStorage === 'string' && typeof tokenInLocalStorage === 'string') {
+				client.loginWithToken(usernameInLocalStorage, tokenInLocalStorage);
+			} else {
+				client.logout();
+
+				usernameInLocalStorage = undefined;
+				tokenInLocalStorage = undefined;
+			}
+		}
+	}
 </script>
 
 <Header />
