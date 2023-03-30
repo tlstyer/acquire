@@ -51,6 +51,8 @@ export class Server {
 	}
 
 	private onDisconnect(clientID: number) {
+		this.makeLogoutDataChanges(clientID);
+
 		this.clientIDs.delete(clientID);
 	}
 
@@ -224,9 +226,13 @@ export class Server {
 			return;
 		}
 
-		this.clientIDToUserID.delete(clientID);
+		this.makeLogoutDataChanges(clientID);
 
 		this.sendLoginLogoutMessage(clientID, PB_MessageToClient_LoginLogout_ResponseCode.SUCCESS);
+	}
+
+	private makeLogoutDataChanges(clientID: number) {
+		this.clientIDToUserID.delete(clientID);
 	}
 
 	private sendLoginLogoutMessage(

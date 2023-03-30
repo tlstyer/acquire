@@ -389,6 +389,26 @@ describe('Login / Create User / Logout', () => {
 			expect(server.clientIDToUserID.size).toBe(0);
 		});
 
+		test('logout data changes are made on the server when a client disconnects', async () => {
+			const { client, clientCommunication, server } = createOneClientConnectedToOneServer();
+
+			client.loginWithToken('user 4', userIDToCorrectToken[4]);
+			await waitForAsyncServerStuff();
+
+			clientCommunication.communicatedMessages.length = 0;
+
+			clientCommunication.disconnect();
+			await waitForAsyncServerStuff();
+
+			expect(clientCommunication.communicatedMessages.length).toBe(0);
+
+			expect(client.myUsername).toEqual('user 4');
+			expect(client.myUserID).toEqual(4);
+			expect(client.myToken).toEqual(userIDToCorrectToken[4]);
+
+			expect(server.clientIDToUserID.size).toBe(0);
+		});
+
 		test('no message sent when trying to log out while already logged out', async () => {
 			const { client, clientCommunication, server } = createOneClientConnectedToOneServer();
 
