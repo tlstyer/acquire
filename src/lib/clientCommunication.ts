@@ -47,7 +47,7 @@ export class WebSocketClientCommunication extends ClientCommunication {
 	}
 
 	sendMessage(message: Uint8Array) {
-		if (this.running) {
+		if (this.isConnected) {
 			this.socket?.send(message);
 		}
 	}
@@ -94,6 +94,7 @@ export class WebSocketClientCommunication extends ClientCommunication {
 }
 
 export class TestClientCommunication extends ClientCommunication {
+	private isConnected = false;
 	communicatedMessages: TestClientCommunicatedMessage[] = [];
 
 	constructor(private serverCommunication: TestServerCommunication) {
@@ -102,30 +103,34 @@ export class TestClientCommunication extends ClientCommunication {
 
 	connect() {
 		if (this.serverCommunication.connect(this)) {
+			this.isConnected = true;
 			this.onConnect();
 		}
 	}
 
 	disconnect() {
 		if (this.serverCommunication.disconnect(this)) {
+			this.isConnected = false;
 			this.onDisconnect();
 		}
 	}
 
 	sendMessage(message: Uint8Array) {
-		const clientID = this.serverCommunication.clientCommunicationToClientID.get(this);
+		if (this.isConnected) {
+			const clientID = this.serverCommunication.clientCommunicationToClientID.get(this);
 
-		if (clientID !== undefined) {
-			const messageToServer = PB_MessageToServer.fromBinary(message);
+			if (clientID !== undefined) {
+				const messageToServer = PB_MessageToServer.fromBinary(message);
 
-			this.communicatedMessages.push(
-				new TestClientCommunicatedMessage(true, message, messageToServer, undefined),
-			);
-			this.serverCommunication.communicatedMessages.push(
-				new TestServerCommunicatedMessage(false, clientID, message, undefined, messageToServer),
-			);
+				this.communicatedMessages.push(
+					new TestClientCommunicatedMessage(true, message, messageToServer, undefined),
+				);
+				this.serverCommunication.communicatedMessages.push(
+					new TestServerCommunicatedMessage(false, clientID, message, undefined, messageToServer),
+				);
 
-			this.serverCommunication.receiveMessage(clientID, message);
+				this.serverCommunication.receiveMessage(clientID, message);
+			}
 		}
 	}
 
