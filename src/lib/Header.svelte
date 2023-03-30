@@ -20,6 +20,10 @@
 
 	<span class="middle" />
 
+	{#if $usernameStore !== ''}
+		<span><Username username={$usernameStore} /></span>
+	{/if}
+
 	{#if $loginStateStore === LoginState.LoggedOut}
 		<span class="dialog" on:click={() => openDialog?.(DialogType.Login)} on:keydown={undefined}>
 			Login
@@ -27,12 +31,10 @@
 	{:else if $loginStateStore === LoginState.TryingToLogIn}
 		<span>Logging in...</span>
 	{:else if $loginStateStore === LoginState.LoggedIn}
-		<span><Username username={$usernameStore} /></span>
 		<span class="dialog" on:click={() => openDialog?.(DialogType.Logout)} on:keydown={undefined}>
 			Logout
 		</span>
 	{:else if $loginStateStore === LoginState.TryingToLogOut}
-		<span><Username username={$usernameStore} /></span>
 		<span>Logging out...</span>
 	{/if}
 
