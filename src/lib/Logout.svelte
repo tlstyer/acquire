@@ -28,7 +28,7 @@
 		<button type="submit" disabled={$loginStateStore !== LoginState.LoggedIn}>Logout</button>
 		{#if submitted}
 			{#if $loginLogoutResponseCodeStore === undefined}
-				Logging out...
+				<span class="inProgress">Logging out...</span>
 			{:else}
 				<span
 					class:success={$loginLogoutResponseCodeStore ===
@@ -46,6 +46,10 @@
 <style>
 	div {
 		margin-top: 8px;
+	}
+
+	.inProgress {
+		font-style: italic;
 	}
 
 	.success {

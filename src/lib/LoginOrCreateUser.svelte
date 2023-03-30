@@ -186,7 +186,7 @@
 		</button>
 		{#if stuff.submitted}
 			{#if $loginLogoutResponseCodeStore === undefined}
-				{stuff.submittedMessage}
+				<span class="inProgress">{stuff.submittedMessage}</span>
 			{:else}
 				<span
 					class:success={$loginLogoutResponseCodeStore ===
@@ -222,6 +222,10 @@
 	.inputError {
 		border-color: red;
 		border-style: solid;
+	}
+
+	.inProgress {
+		font-style: italic;
 	}
 
 	.success {

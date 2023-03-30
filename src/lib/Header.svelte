@@ -29,13 +29,13 @@
 			Login
 		</span>
 	{:else if $loginStateStore === LoginState.TryingToLogIn}
-		<span>Logging in...</span>
+		<span class="inProgress">Logging in...</span>
 	{:else if $loginStateStore === LoginState.LoggedIn}
 		<span class="dialog" on:click={() => openDialog?.(DialogType.Logout)} on:keydown={undefined}>
 			Logout
 		</span>
 	{:else if $loginStateStore === LoginState.TryingToLogOut}
-		<span>Logging out...</span>
+		<span class="inProgress">Logging out...</span>
 	{/if}
 
 	<span class="dialog" on:click={() => openDialog?.(DialogType.Settings)} on:keydown={undefined}>
@@ -82,6 +82,10 @@
 	.dialog:hover {
 		cursor: pointer;
 		text-shadow: 0px 0px 1px black;
+	}
+
+	.inProgress {
+		font-style: italic;
 	}
 
 	.connection {
