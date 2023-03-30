@@ -15,7 +15,7 @@ describe('Connect', () => {
 	test('client should reload window when version is different', () => {
 		const mock = vi.fn();
 		// @ts-expect-error
-		global.window = { location: { reload: mock } };
+		global.location = { reload: mock };
 
 		const serverCommunication = new TestServerCommunication();
 		const userDataProvider = new TestUserDataProvider();
@@ -34,7 +34,7 @@ describe('Connect', () => {
 	test('client should not reload window when version is the same', () => {
 		const mock = vi.fn();
 		// @ts-expect-error
-		global.window = { location: { reload: mock } };
+		global.location = { reload: mock };
 
 		const { clientCommunication, serverCommunication } = createOneClientConnectedToOneServer();
 

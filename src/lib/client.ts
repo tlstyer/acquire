@@ -151,7 +151,7 @@ export class Client {
 
 	private onMessage_Initial(message: PB_MessageToClient_Initial) {
 		if (message.version !== this.version) {
-			window.location.reload();
+			location.reload();
 		}
 
 		this.logTime = message.logTime;

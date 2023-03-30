@@ -42,8 +42,8 @@
 		}
 	}
 
-	let windowInnerWidth = window.innerWidth;
-	let windowInnerHeight = window.innerHeight;
+	let windowInnerWidth = innerWidth;
+	let windowInnerHeight = innerHeight;
 	let gameBoardCellSize = 0;
 	let scoreBoardCellWidth = 0;
 

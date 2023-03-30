@@ -14,7 +14,7 @@
 		);
 
 		if (browser) {
-			window.addEventListener('storage', (event) => {
+			addEventListener('storage', (event) => {
 				if (event.key === localStorageKey || event.key === null) {
 					store.set(localStorageValueToValidValue(event.newValue));
 				}
