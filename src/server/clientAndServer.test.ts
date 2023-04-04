@@ -531,11 +531,11 @@ describe('lobby', () => {
 		);
 		clientCommunication.communicatedMessages.length = 0;
 
-		expect([...server.lobbyManager.clients].map((c) => c.clientID)).toEqual([0]);
+		expect([...server.lobbyRoom.clients].map((c) => c.clientID)).toEqual([0]);
 
 		clientCommunication.disconnect();
 
-		expect(server.lobbyManager.clients.size).toBe(0);
+		expect(server.lobbyRoom.clients.size).toBe(0);
 
 		clientCommunication.connect();
 
@@ -557,7 +557,7 @@ describe('lobby', () => {
 		);
 		clientCommunication.communicatedMessages.length = 0;
 
-		expect([...server.lobbyManager.clients].map((c) => c.clientID)).toEqual([1]);
+		expect([...server.lobbyRoom.clients].map((c) => c.clientID)).toEqual([1]);
 	});
 });
 

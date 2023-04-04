@@ -14,7 +14,7 @@ import {
 	PB_MessageToServer_LoginLogout_LoginWithToken,
 } from '../common/pb';
 import { Client } from './client';
-import { LobbyManager } from './lobbyManager';
+import { LobbyRoom } from './lobbyRoom';
 import type { ServerCommunication } from './serverCommunication';
 import type { UserData, UserDataProvider } from './userDataProvider';
 
@@ -23,7 +23,7 @@ export class Server {
 
 	clientIDToClient = new Map<number, Client>();
 
-	lobbyManager = new LobbyManager(this);
+	lobbyRoom = new LobbyRoom(this);
 
 	constructor(
 		public serverCommunication: ServerCommunication,
@@ -68,7 +68,7 @@ export class Server {
 			await this.onMessage_LoginLogout(client, messageToServer.loginLogout);
 		}
 		if (messageToServer.lobby) {
-			this.lobbyManager.onMessage(client, messageToServer.lobby);
+			this.lobbyRoom.onMessage(client, messageToServer.lobby);
 		}
 	}
 

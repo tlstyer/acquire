@@ -7,7 +7,7 @@ import type { Client } from './client';
 import { Room } from './room';
 import type { Server } from './server';
 
-export class LobbyManager extends Room {
+export class LobbyRoom extends Room {
 	lastEventIndex = 2; // need a gap between first event index and what clients initially say they have
 
 	lastStateCheckpointMessage: Uint8Array;
