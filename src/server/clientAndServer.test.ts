@@ -102,7 +102,7 @@ describe('Login / Create User / Logout', () => {
 				PB_MessageToClient_LoginLogout_ResponseCode.SUCCESS,
 				'user 1',
 				1,
-				userIDToCorrectToken[1],
+				userIDToTestUserData[1].passwordHash,
 			),
 			1,
 		);
@@ -114,7 +114,7 @@ describe('Login / Create User / Logout', () => {
 				PB_MessageToClient_LoginLogout_ResponseCode.SUCCESS,
 				'user 1',
 				1,
-				userIDToCorrectToken[1],
+				userIDToTestUserData[1].passwordHash,
 			),
 			1,
 		);
@@ -185,24 +185,24 @@ describe('Login / Create User / Logout', () => {
 
 		testLogin(
 			'correct password and is logged in',
-			(client) => client.loginWithToken('user 1', userIDToCorrectToken[1]),
+			(client) => client.loginWithToken('user 1', userIDToTestUserData[1].passwordHash),
 			createLoginLogoutMessage(
 				PB_MessageToClient_LoginLogout_ResponseCode.SUCCESS,
 				'user 1',
 				1,
-				userIDToCorrectToken[1],
+				userIDToTestUserData[1].passwordHash,
 			),
 			1,
 		);
 
 		testLogin(
 			'correct password and is logged in after whitespace in username is cleaned up',
-			(client) => client.loginWithToken('\t user\n \t\v1\v ', userIDToCorrectToken[1]),
+			(client) => client.loginWithToken('\t user\n \t\v1\v ', userIDToTestUserData[1].passwordHash),
 			createLoginLogoutMessage(
 				PB_MessageToClient_LoginLogout_ResponseCode.SUCCESS,
 				'user 1',
 				1,
-				userIDToCorrectToken[1],
+				userIDToTestUserData[1].passwordHash,
 			),
 			1,
 		);
@@ -210,12 +210,12 @@ describe('Login / Create User / Logout', () => {
 		test('no message sent when trying to login with token while already logged in', async () => {
 			const { client, clientCommunication, server } = createOneClientConnectedToOneServer();
 
-			client.loginWithToken('user 1', userIDToCorrectToken[1]);
+			client.loginWithToken('user 1', userIDToTestUserData[1].passwordHash);
 			await waitForAsyncServerStuff();
 
 			clientCommunication.communicatedMessages.length = 0;
 
-			client.loginWithToken('user 1', userIDToCorrectToken[1]);
+			client.loginWithToken('user 1', userIDToTestUserData[1].passwordHash);
 			await waitForAsyncServerStuff();
 
 			expect(clientCommunication.communicatedMessages.length).toBe(0);
@@ -226,7 +226,7 @@ describe('Login / Create User / Logout', () => {
 		test('no reply when trying to login with token while already logged in when sending message client would not send', async () => {
 			const { client, clientCommunication, server } = createOneClientConnectedToOneServer();
 
-			client.loginWithToken('user 1', userIDToCorrectToken[1]);
+			client.loginWithToken('user 1', userIDToTestUserData[1].passwordHash);
 			await waitForAsyncServerStuff();
 
 			clientCommunication.communicatedMessages.length = 0;
@@ -236,7 +236,7 @@ describe('Login / Create User / Logout', () => {
 					loginLogout: {
 						loginWithToken: {
 							username: 'user 1',
-							token: userIDToCorrectToken[1],
+							token: userIDToTestUserData[1].passwordHash,
 						},
 					},
 				}),
@@ -392,7 +392,7 @@ describe('Login / Create User / Logout', () => {
 		test('logout data changes are made on the server when a client disconnects', async () => {
 			const { client, clientCommunication, server } = createOneClientConnectedToOneServer();
 
-			client.loginWithToken('user 4', userIDToCorrectToken[4]);
+			client.loginWithToken('user 4', userIDToTestUserData[4].passwordHash);
 			await waitForAsyncServerStuff();
 
 			clientCommunication.communicatedMessages.length = 0;
@@ -404,7 +404,7 @@ describe('Login / Create User / Logout', () => {
 
 			expect(client.myUsername).toEqual('user 4');
 			expect(client.myUserID).toEqual(4);
-			expect(client.myToken).toEqual(userIDToCorrectToken[4]);
+			expect(client.myToken).toEqual(userIDToTestUserData[4].passwordHash);
 
 			expect(server.clientIDToUserID.size).toBe(0);
 		});
@@ -477,22 +477,21 @@ describe('Login / Create User / Logout', () => {
 	}
 });
 
-const userIDToCorrectToken = [''];
-
 const numTestUsers = 7;
+const userIDToTestUserData = [new TestUserData('', 0, '')];
 for (let userID = 1; userID <= numTestUsers; userID++) {
-	userIDToCorrectToken.push(getPasswordHash(`user ${userID}`, 'password'));
+	const username = `user ${userID}`;
+	userIDToTestUserData.push(
+		new TestUserData(username, userID, getPasswordHash(username, 'password')),
+	);
 }
 
 function createOneClientConnectedToOneServer() {
 	const userDataProvider = new TestUserDataProvider();
 
 	for (let userID = 1; userID <= numTestUsers; userID++) {
-		const username = `user ${userID}`;
-		userDataProvider.usernameToUserData.set(
-			username,
-			new TestUserData(username, userID, userIDToCorrectToken[userID]),
-		);
+		const userData = userIDToTestUserData[userID];
+		userDataProvider.usernameToUserData.set(userData.username, userData);
 	}
 	userDataProvider.nextUserID = numTestUsers + 1;
 
