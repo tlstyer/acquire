@@ -132,7 +132,9 @@ describe('Login / Create User / Logout', () => {
 
 			expect(clientCommunication.communicatedMessages.length).toBe(0);
 
-			expect(server.clientIDToUserID.size).toBe(1);
+			expect(
+				[...server.clientIDToClient.values()].filter((c) => c.userID !== undefined).length,
+			).toBe(1);
 		});
 
 		test('no reply when trying to login with password while already logged in when sending message client would not send', async () => {
@@ -157,7 +159,9 @@ describe('Login / Create User / Logout', () => {
 
 			expect(clientCommunication.communicatedMessages.length).toBe(1);
 
-			expect(server.clientIDToUserID.size).toBe(1);
+			expect(
+				[...server.clientIDToClient.values()].filter((c) => c.userID !== undefined).length,
+			).toBe(1);
 		});
 	});
 
@@ -220,7 +224,9 @@ describe('Login / Create User / Logout', () => {
 
 			expect(clientCommunication.communicatedMessages.length).toBe(0);
 
-			expect(server.clientIDToUserID.size).toBe(1);
+			expect(
+				[...server.clientIDToClient.values()].filter((c) => c.userID !== undefined).length,
+			).toBe(1);
 		});
 
 		test('no reply when trying to login with token while already logged in when sending message client would not send', async () => {
@@ -245,7 +251,9 @@ describe('Login / Create User / Logout', () => {
 
 			expect(clientCommunication.communicatedMessages.length).toBe(1);
 
-			expect(server.clientIDToUserID.size).toBe(1);
+			expect(
+				[...server.clientIDToClient.values()].filter((c) => c.userID !== undefined).length,
+			).toBe(1);
 		});
 	});
 
@@ -336,7 +344,9 @@ describe('Login / Create User / Logout', () => {
 
 			expect(clientCommunication.communicatedMessages.length).toBe(0);
 
-			expect(server.clientIDToUserID.size).toBe(1);
+			expect(
+				[...server.clientIDToClient.values()].filter((c) => c.userID !== undefined).length,
+			).toBe(1);
 		});
 
 		test('no reply when trying to create user and login while already logged in when sending message client would not send', async () => {
@@ -361,7 +371,9 @@ describe('Login / Create User / Logout', () => {
 
 			expect(clientCommunication.communicatedMessages.length).toBe(1);
 
-			expect(server.clientIDToUserID.size).toBe(1);
+			expect(
+				[...server.clientIDToClient.values()].filter((c) => c.userID !== undefined).length,
+			).toBe(1);
 		});
 	});
 
@@ -386,7 +398,9 @@ describe('Login / Create User / Logout', () => {
 			expect(client.myUserID).toEqual(undefined);
 			expect(client.myToken).toEqual(undefined);
 
-			expect(server.clientIDToUserID.size).toBe(0);
+			expect(
+				[...server.clientIDToClient.values()].filter((c) => c.userID !== undefined).length,
+			).toBe(0);
 		});
 
 		test('logout data changes are made on the server when a client disconnects', async () => {
@@ -406,7 +420,9 @@ describe('Login / Create User / Logout', () => {
 			expect(client.myUserID).toEqual(4);
 			expect(client.myToken).toEqual(userIDToTestUserData[4].passwordHash);
 
-			expect(server.clientIDToUserID.size).toBe(0);
+			expect(
+				[...server.clientIDToClient.values()].filter((c) => c.userID !== undefined).length,
+			).toBe(0);
 		});
 
 		test('no message sent when trying to log out while already logged out', async () => {
@@ -419,7 +435,9 @@ describe('Login / Create User / Logout', () => {
 
 			expect(clientCommunication.communicatedMessages.length).toBe(0);
 
-			expect(server.clientIDToUserID.size).toBe(0);
+			expect(
+				[...server.clientIDToClient.values()].filter((c) => c.userID !== undefined).length,
+			).toBe(0);
 		});
 
 		test('no reply when trying to log out while already logged out when sending message client would not send', async () => {
@@ -438,7 +456,9 @@ describe('Login / Create User / Logout', () => {
 
 			expect(clientCommunication.communicatedMessages.length).toBe(1);
 
-			expect(server.clientIDToUserID.size).toBe(0);
+			expect(
+				[...server.clientIDToClient.values()].filter((c) => c.userID !== undefined).length,
+			).toBe(0);
 		});
 	});
 
@@ -472,7 +492,9 @@ describe('Login / Create User / Logout', () => {
 				loginLogoutMessage.token !== '' ? loginLogoutMessage.token : undefined,
 			);
 
-			expect(server.clientIDToUserID.size).toBe(clientIDToUserIDSize);
+			expect(
+				[...server.clientIDToClient.values()].filter((c) => c.userID !== undefined).length,
+			).toBe(clientIDToUserIDSize);
 		});
 	}
 });
@@ -509,11 +531,11 @@ describe('lobby', () => {
 		);
 		clientCommunication.communicatedMessages.length = 0;
 
-		expect(server.lobbyManager.clientIDs).toEqual(new Set([0]));
+		expect([...server.lobbyManager.clients].map((c) => c.clientID)).toEqual([0]);
 
 		clientCommunication.disconnect();
 
-		expect(server.lobbyManager.clientIDs).toEqual(new Set());
+		expect(server.lobbyManager.clients.size).toBe(0);
 
 		clientCommunication.connect();
 
@@ -535,7 +557,7 @@ describe('lobby', () => {
 		);
 		clientCommunication.communicatedMessages.length = 0;
 
-		expect(server.lobbyManager.clientIDs).toEqual(new Set([1]));
+		expect([...server.lobbyManager.clients].map((c) => c.clientID)).toEqual([1]);
 	});
 });
 

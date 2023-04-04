@@ -3,11 +3,11 @@ import {
 	PB_MessageToServer_Lobby,
 	PB_MessageToServer_Lobby_Connect,
 } from '../common/pb';
+import type { Client } from './client';
+import { Room } from './room';
 import type { Server } from './server';
 
-export class LobbyManager {
-	clientIDs = new Set<number>();
-
+export class LobbyManager extends Room {
 	lastEventIndex = 2; // need a gap between first event index and what clients initially say they have
 
 	lastStateCheckpointMessage: Uint8Array;
@@ -15,6 +15,8 @@ export class LobbyManager {
 	noUpdatesMessage: Uint8Array;
 
 	constructor(private server: Server) {
+		super();
+
 		this.lastStateCheckpointMessage = PB_MessageToClient.toBinary(
 			PB_MessageToClient.create({
 				lobby: {
@@ -32,23 +34,19 @@ export class LobbyManager {
 		);
 	}
 
-	onDisconnect(clientID: number) {
-		this.clientIDs.delete(clientID);
-	}
-
-	onMessage(clientID: number, message: PB_MessageToServer_Lobby) {
+	onMessage(client: Client, message: PB_MessageToServer_Lobby) {
 		if (message.connect) {
-			this.onMessage_Connect(clientID, message.connect);
+			this.onMessage_Connect(client, message.connect);
 		}
 	}
 
-	onMessage_Connect(clientID: number, message: PB_MessageToServer_Lobby_Connect) {
-		this.clientIDs.add(clientID);
+	onMessage_Connect(client: Client, message: PB_MessageToServer_Lobby_Connect) {
+		client.connectToRoom(this);
 
 		if (message.lastEventIndex + 1 < this.lastEventIndex) {
-			this.server.serverCommunication.sendMessage(clientID, this.lastStateCheckpointMessage);
+			this.server.serverCommunication.sendMessage(client.clientID, this.lastStateCheckpointMessage);
 		} else {
-			this.server.serverCommunication.sendMessage(clientID, this.noUpdatesMessage);
+			this.server.serverCommunication.sendMessage(client.clientID, this.noUpdatesMessage);
 		}
 	}
 }

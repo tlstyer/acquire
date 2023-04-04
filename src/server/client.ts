@@ -6,6 +6,8 @@ export class Client {
 	userID: number | undefined;
 	username: string | undefined;
 
+	isLoggingInOrOut = false;
+
 	constructor(public clientID: number) {}
 
 	connectToRoom(room: Room) {

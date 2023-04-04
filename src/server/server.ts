@@ -13,6 +13,7 @@ import {
 	PB_MessageToServer_LoginLogout_LoginWithPassword,
 	PB_MessageToServer_LoginLogout_LoginWithToken,
 } from '../common/pb';
+import { Client } from './client';
 import { LobbyManager } from './lobbyManager';
 import type { ServerCommunication } from './serverCommunication';
 import type { UserData, UserDataProvider } from './userDataProvider';
@@ -20,10 +21,7 @@ import type { UserData, UserDataProvider } from './userDataProvider';
 export class Server {
 	private initialMessage: Uint8Array;
 
-	clientIDs = new Set<number>();
-	clientIDsThatAreLoggingInOrOut = new Set<number>();
-	clientIDToUserID = new Map<number, number>();
-	userIDToUsername = new Map<number, string>();
+	clientIDToClient = new Map<number, Client>();
 
 	lobbyManager = new LobbyManager(this);
 
@@ -48,56 +46,58 @@ export class Server {
 	}
 
 	private onConnect(clientID: number) {
-		this.clientIDs.add(clientID);
+		const client = new Client(clientID);
+		this.clientIDToClient.set(clientID, client);
 
 		this.serverCommunication.sendMessage(clientID, this.initialMessage);
 	}
 
 	private onDisconnect(clientID: number) {
-		this.makeLogoutDataChanges(clientID);
+		const client = this.clientIDToClient.get(clientID)!;
 
-		this.lobbyManager.onDisconnect(clientID);
+		this.makeLogoutDataChanges(client);
 
-		this.clientIDs.delete(clientID);
+		this.clientIDToClient.delete(clientID);
 	}
 
 	private async onMessage(clientID: number, message: Uint8Array) {
+		const client = this.clientIDToClient.get(clientID)!;
 		const messageToServer = PB_MessageToServer.fromBinary(message);
 
 		if (messageToServer.loginLogout) {
-			await this.onMessage_LoginLogout(clientID, messageToServer.loginLogout);
+			await this.onMessage_LoginLogout(client, messageToServer.loginLogout);
 		}
 		if (messageToServer.lobby) {
-			this.lobbyManager.onMessage(clientID, messageToServer.lobby);
+			this.lobbyManager.onMessage(client, messageToServer.lobby);
 		}
 	}
 
-	private async onMessage_LoginLogout(clientID: number, message: PB_MessageToServer_LoginLogout) {
-		if (this.clientIDsThatAreLoggingInOrOut.has(clientID)) {
+	private async onMessage_LoginLogout(client: Client, message: PB_MessageToServer_LoginLogout) {
+		if (client.isLoggingInOrOut) {
 			// ignore attempt to login or logout while already attempting to do so
 			return;
 		}
 
-		this.clientIDsThatAreLoggingInOrOut.add(clientID);
+		client.isLoggingInOrOut = true;
 
 		if (message.loginWithPassword) {
-			await this.onMessage_LoginLogout_LoginWithPassword(clientID, message.loginWithPassword);
+			await this.onMessage_LoginLogout_LoginWithPassword(client, message.loginWithPassword);
 		} else if (message.loginWithToken) {
-			await this.onMessage_LoginLogout_LoginWithToken(clientID, message.loginWithToken);
+			await this.onMessage_LoginLogout_LoginWithToken(client, message.loginWithToken);
 		} else if (message.createUserAndLogin) {
-			await this.onMessage_LoginLogout_CreateUserAndLogin(clientID, message.createUserAndLogin);
+			await this.onMessage_LoginLogout_CreateUserAndLogin(client, message.createUserAndLogin);
 		} else if (message.logout) {
-			this.onMessage_LoginLogout_Logout(clientID);
+			this.onMessage_LoginLogout_Logout(client);
 		}
 
-		this.clientIDsThatAreLoggingInOrOut.delete(clientID);
+		client.isLoggingInOrOut = false;
 	}
 
 	private async onMessage_LoginLogout_LoginWithPassword(
-		clientID: number,
+		client: Client,
 		message: PB_MessageToServer_LoginLogout_LoginWithPassword,
 	) {
-		if (this.clientIDToUserID.has(clientID)) {
+		if (client.userID !== undefined) {
 			// ignore attempt to login while already logged in
 			return;
 		}
@@ -107,13 +107,13 @@ export class Server {
 		const userDataProviderResponse = await this.userDataProvider.lookupUser(username);
 
 		if (userDataProviderResponse.errorCode !== undefined) {
-			this.sendLoginLogoutMessage(clientID, userDataProviderResponse.errorCode);
+			this.sendLoginLogoutMessage(client, userDataProviderResponse.errorCode);
 			return;
 		}
 
 		if (!userDataProviderResponse.userData) {
 			this.sendLoginLogoutMessage(
-				clientID,
+				client,
 				PB_MessageToClient_LoginLogout_ResponseCode.USER_NOT_FOUND,
 			);
 			return;
@@ -121,20 +121,20 @@ export class Server {
 
 		if (!userDataProviderResponse.userData.verifyPassword(message.password)) {
 			this.sendLoginLogoutMessage(
-				clientID,
+				client,
 				PB_MessageToClient_LoginLogout_ResponseCode.INCORRECT_PASSWORD,
 			);
 			return;
 		}
 
-		this.loginUser(clientID, userDataProviderResponse.userData);
+		this.loginUser(client, userDataProviderResponse.userData);
 	}
 
 	private async onMessage_LoginLogout_LoginWithToken(
-		clientID: number,
+		client: Client,
 		message: PB_MessageToServer_LoginLogout_LoginWithToken,
 	) {
-		if (this.clientIDToUserID.has(clientID)) {
+		if (client.userID !== undefined) {
 			// ignore attempt to login while already logged in
 			return;
 		}
@@ -144,13 +144,13 @@ export class Server {
 		const userDataProviderResponse = await this.userDataProvider.lookupUser(username);
 
 		if (userDataProviderResponse.errorCode !== undefined) {
-			this.sendLoginLogoutMessage(clientID, userDataProviderResponse.errorCode);
+			this.sendLoginLogoutMessage(client, userDataProviderResponse.errorCode);
 			return;
 		}
 
 		if (!userDataProviderResponse.userData) {
 			this.sendLoginLogoutMessage(
-				clientID,
+				client,
 				PB_MessageToClient_LoginLogout_ResponseCode.USER_NOT_FOUND,
 			);
 			return;
@@ -158,20 +158,20 @@ export class Server {
 
 		if (!userDataProviderResponse.userData.verifyToken(message.token)) {
 			this.sendLoginLogoutMessage(
-				clientID,
+				client,
 				PB_MessageToClient_LoginLogout_ResponseCode.INVALID_TOKEN,
 			);
 			return;
 		}
 
-		this.loginUser(clientID, userDataProviderResponse.userData);
+		this.loginUser(client, userDataProviderResponse.userData);
 	}
 
 	private async onMessage_LoginLogout_CreateUserAndLogin(
-		clientID: number,
+		client: Client,
 		message: PB_MessageToServer_LoginLogout_CreateUserAndLogin,
 	) {
-		if (this.clientIDToUserID.has(clientID)) {
+		if (client.userID !== undefined) {
 			// ignore attempt to login while already logged in
 			return;
 		}
@@ -180,7 +180,7 @@ export class Server {
 
 		if (!isValidUsername(username)) {
 			this.sendLoginLogoutMessage(
-				clientID,
+				client,
 				PB_MessageToClient_LoginLogout_ResponseCode.INVALID_USERNAME,
 			);
 			return;
@@ -188,7 +188,7 @@ export class Server {
 
 		if (!isValidPassword(message.password)) {
 			this.sendLoginLogoutMessage(
-				clientID,
+				client,
 				PB_MessageToClient_LoginLogout_ResponseCode.INVALID_PASSWORD,
 			);
 			return;
@@ -200,27 +200,26 @@ export class Server {
 		);
 
 		if (userDataProviderResponse.errorCode !== undefined) {
-			this.sendLoginLogoutMessage(clientID, userDataProviderResponse.errorCode);
+			this.sendLoginLogoutMessage(client, userDataProviderResponse.errorCode);
 			return;
 		}
 
 		if (!userDataProviderResponse.userData) {
 			this.sendLoginLogoutMessage(
-				clientID,
+				client,
 				PB_MessageToClient_LoginLogout_ResponseCode.GENERIC_ERROR,
 			);
 			return;
 		}
 
-		this.loginUser(clientID, userDataProviderResponse.userData);
+		this.loginUser(client, userDataProviderResponse.userData);
 	}
 
-	private loginUser(clientID: number, userData: UserData) {
-		this.clientIDToUserID.set(clientID, userData.userID);
-		this.userIDToUsername.set(userData.userID, userData.username);
+	private loginUser(client: Client, userData: UserData) {
+		client.loggedIn(userData.userID, userData.username);
 
 		this.sendLoginLogoutMessage(
-			clientID,
+			client,
 			PB_MessageToClient_LoginLogout_ResponseCode.SUCCESS,
 			userData.username,
 			userData.userID,
@@ -228,30 +227,31 @@ export class Server {
 		);
 	}
 
-	private onMessage_LoginLogout_Logout(clientID: number) {
-		if (!this.clientIDToUserID.has(clientID)) {
+	private onMessage_LoginLogout_Logout(client: Client) {
+		if (client.userID === undefined) {
 			// ignore attempt to log out while already logged out
 			return;
 		}
 
-		this.makeLogoutDataChanges(clientID);
+		this.makeLogoutDataChanges(client);
 
-		this.sendLoginLogoutMessage(clientID, PB_MessageToClient_LoginLogout_ResponseCode.SUCCESS);
+		this.sendLoginLogoutMessage(client, PB_MessageToClient_LoginLogout_ResponseCode.SUCCESS);
 	}
 
-	private makeLogoutDataChanges(clientID: number) {
-		this.clientIDToUserID.delete(clientID);
+	private makeLogoutDataChanges(client: Client) {
+		client.disconnectFromRoom();
+		client.loggedOut();
 	}
 
 	private sendLoginLogoutMessage(
-		clientID: number,
+		client: Client,
 		responseCode: PB_MessageToClient_LoginLogout_ResponseCode,
 		username?: string,
 		userID?: number,
 		token?: string,
 	) {
 		this.serverCommunication.sendMessage(
-			clientID,
+			client.clientID,
 			PB_MessageToClient.toBinary(createLoginLogoutMessage(responseCode, username, userID, token)),
 		);
 	}
