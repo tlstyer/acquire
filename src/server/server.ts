@@ -13,6 +13,7 @@ import {
 	PB_MessageToServer_LoginLogout_LoginWithPassword,
 	PB_MessageToServer_LoginLogout_LoginWithToken,
 } from '../common/pb';
+import { LobbyManager } from './lobbyManager';
 import type { ServerCommunication } from './serverCommunication';
 import type { UserData, UserDataProvider } from './userDataProvider';
 
@@ -24,8 +25,10 @@ export class Server {
 	clientIDToUserID = new Map<number, number>();
 	userIDToUsername = new Map<number, string>();
 
+	lobbyManager = new LobbyManager(this);
+
 	constructor(
-		private serverCommunication: ServerCommunication,
+		public serverCommunication: ServerCommunication,
 		private userDataProvider: UserDataProvider,
 		version: number,
 		logTime: number,
@@ -53,14 +56,19 @@ export class Server {
 	private onDisconnect(clientID: number) {
 		this.makeLogoutDataChanges(clientID);
 
+		this.lobbyManager.onDisconnect(clientID);
+
 		this.clientIDs.delete(clientID);
 	}
 
-	private onMessage(clientID: number, message: Uint8Array) {
+	private async onMessage(clientID: number, message: Uint8Array) {
 		const messageToServer = PB_MessageToServer.fromBinary(message);
 
 		if (messageToServer.loginLogout) {
-			this.onMessage_LoginLogout(clientID, messageToServer.loginLogout);
+			await this.onMessage_LoginLogout(clientID, messageToServer.loginLogout);
+		}
+		if (messageToServer.lobby) {
+			this.lobbyManager.onMessage(clientID, messageToServer.lobby);
 		}
 	}
 

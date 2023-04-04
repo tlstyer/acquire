@@ -185,3 +185,20 @@ export function createLoginLogoutMessage(
 export function cleanUpWhitespaceInUsername(username: string) {
 	return username.replace(/\s+/g, ' ').trim();
 }
+
+export function concatenateUint8Arrays(arrays: Uint8Array[]) {
+	if (arrays.length === 1) {
+		return arrays[0];
+	}
+
+	const totalLength = arrays.reduce((soFar, array) => soFar + array.length, 0);
+	const result = new Uint8Array(totalLength);
+
+	let targetOffset = 0;
+	for (const array of arrays) {
+		result.set(array, targetOffset);
+		targetOffset += array.length;
+	}
+
+	return result;
+}

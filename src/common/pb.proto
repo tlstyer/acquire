@@ -215,7 +215,16 @@ message PB {
       Logout logout = 4;
     }
 
+    message Lobby {
+      message Connect {
+        int32 last_event_index = 1;
+      }
+
+      Connect connect = 1;
+    }
+
     LoginLogout login_logout = 1;
+    Lobby lobby = 2;
   }
 
   message MessageToClient {
@@ -242,8 +251,17 @@ message PB {
       string token = 4;
     }
 
+    message Lobby {
+      message LastStateCheckpoint {
+        int32 last_event_index = 1;
+      }
+
+      LastStateCheckpoint last_state_checkpoint = 1;
+    }
+
     Initial initial = 15;
     LoginLogout login_logout = 1;
+    Lobby lobby = 2;
   }
 
   message GameReview {

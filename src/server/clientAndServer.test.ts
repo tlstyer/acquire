@@ -477,6 +477,68 @@ describe('Login / Create User / Logout', () => {
 	}
 });
 
+describe('lobby', () => {
+	test('connect to lobby in its initial state', () => {
+		const { client, clientCommunication, server, serverCommunication, userDataProvider } =
+			createOneClientConnectedToOneServer();
+		clientCommunication.communicatedMessages.length = 0;
+
+		expect(client.lobbyManager.lastEventIndex).toBe(0);
+
+		client.connectToLobby();
+
+		expect(client.lobbyManager.lastEventIndex).toBe(2);
+		expect(clientCommunication.communicatedMessages.length).toBe(2);
+		expect(clientCommunication.communicatedMessages[0].sentMessage).toEqual(
+			PB_MessageToServer.create({
+				lobby: {
+					connect: {
+						lastEventIndex: 0,
+					},
+				},
+			}),
+		);
+		expect(clientCommunication.communicatedMessages[1].receivedMessage).toEqual(
+			PB_MessageToClient.create({
+				lobby: {
+					lastStateCheckpoint: {
+						lastEventIndex: 2,
+					},
+				},
+			}),
+		);
+		clientCommunication.communicatedMessages.length = 0;
+
+		expect(server.lobbyManager.clientIDs).toEqual(new Set([0]));
+
+		clientCommunication.disconnect();
+
+		expect(server.lobbyManager.clientIDs).toEqual(new Set());
+
+		clientCommunication.connect();
+
+		expect(client.lobbyManager.lastEventIndex).toBe(2);
+		expect(clientCommunication.communicatedMessages.length).toBe(3);
+		expect(clientCommunication.communicatedMessages[1].sentMessage).toEqual(
+			PB_MessageToServer.create({
+				lobby: {
+					connect: {
+						lastEventIndex: 2,
+					},
+				},
+			}),
+		);
+		expect(clientCommunication.communicatedMessages[2].receivedMessage).toEqual(
+			PB_MessageToClient.create({
+				lobby: {},
+			}),
+		);
+		clientCommunication.communicatedMessages.length = 0;
+
+		expect(server.lobbyManager.clientIDs).toEqual(new Set([1]));
+	});
+});
+
 const numTestUsers = 7;
 const userIDToTestUserData = [new TestUserData('', 0, '')];
 for (let userID = 1; userID <= numTestUsers; userID++) {

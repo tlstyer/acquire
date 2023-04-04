@@ -1,4 +1,5 @@
 import { writable } from 'svelte/store';
+import { concatenateUint8Arrays } from '../common/helpers';
 import {
 	PB_MessageToClient,
 	PB_MessageToClient_Initial,
@@ -7,6 +8,7 @@ import {
 	PB_MessageToServer,
 } from '../common/pb';
 import type { ClientCommunication } from './clientCommunication';
+import { LobbyManager } from './lobbyManager';
 
 export class Client {
 	logTime = 0;
@@ -32,6 +34,9 @@ export class Client {
 
 	private usernameAndTokenWritableStore = writable<UsernameAndToken | undefined>(undefined);
 	usernameAndTokenStore = { subscribe: this.usernameAndTokenWritableStore.subscribe };
+
+	currentPage = CurrentPage.None;
+	lobbyManager = new LobbyManager();
 
 	constructor(private clientCommunication: ClientCommunication, private version: number) {
 		clientCommunication.setCallbacks(
@@ -124,12 +129,30 @@ export class Client {
 		}
 	}
 
+	connectToLobby() {
+		this.currentPage = CurrentPage.Lobby;
+		this.clientCommunication.sendMessage(this.lobbyManager.getConnectMessage());
+	}
+
 	private onConnect() {
 		this.isConnected = true;
 		this.isConnectedWritableStore.set(true);
 
+		const dataToSend: Uint8Array[] = [];
+
 		if (this.loginMessage !== undefined) {
-			this.clientCommunication.sendMessage(this.loginMessage);
+			dataToSend.push(this.loginMessage);
+		}
+
+		switch (this.currentPage) {
+			case CurrentPage.Lobby: {
+				dataToSend.push(this.lobbyManager.getConnectMessage());
+				break;
+			}
+		}
+
+		if (dataToSend.length > 0) {
+			this.clientCommunication.sendMessage(concatenateUint8Arrays(dataToSend));
 		}
 	}
 
@@ -147,8 +170,12 @@ export class Client {
 
 		if (messageToClient.initial) {
 			this.onMessage_Initial(messageToClient.initial);
-		} else if (messageToClient.loginLogout) {
+		}
+		if (messageToClient.loginLogout) {
 			this.onMessage_LoginLogout(messageToClient.loginLogout);
+		}
+		if (messageToClient.lobby) {
+			this.lobbyManager.onMessage(messageToClient.lobby);
 		}
 	}
 
@@ -218,4 +245,9 @@ export const enum LoginState {
 
 class UsernameAndToken {
 	constructor(public username: string, public token: string) {}
+}
+
+const enum CurrentPage {
+	None,
+	Lobby,
 }
