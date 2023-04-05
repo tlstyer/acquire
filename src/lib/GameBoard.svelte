@@ -22,7 +22,7 @@
 
 				if (tile !== null) {
 					const y = tile % 9;
-					const x = tile / 9;
+					const x = (tile - y) / 9;
 					tileRackRowBitMasks[y] |= 1 << x;
 				}
 			}

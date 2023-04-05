@@ -72,7 +72,9 @@ export function getTileString(tile: number) {
 	if (tile === TileEnum.Unknown) {
 		return '?';
 	} else {
-		return `${Math.floor(tile / 9) + 1}${yTileNames[tile % 9]}`;
+		const y = tile % 9;
+		const x = (tile - y) / 9;
+		return `${x + 1}${yTileNames[y]}`;
 	}
 }
 

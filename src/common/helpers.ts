@@ -23,8 +23,8 @@ export const neighboringTilesLookup: number[][] = new Array(108);
 for (let tile = 0; tile < 108; tile++) {
 	const neighboringTiles: number[] = [];
 
-	const x = Math.floor(tile / 9);
 	const y = tile % 9;
+	const x = (tile - y) / 9;
 
 	if (x > 0) {
 		neighboringTiles.push(tile - 9);
