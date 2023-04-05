@@ -639,6 +639,7 @@ describe('changeGameMode', () => {
 		// @ts-expect-error
 		gameSetup.changeGameMode({});
 		gameSetup.changeGameMode(0);
+		// @ts-expect-error
 		gameSetup.changeGameMode(10);
 
 		expect(gameSetup.gameMode).toBe(PB_GameMode.TEAMS_2_VS_2);
@@ -883,8 +884,10 @@ describe('changePlayerArrangementMode', () => {
 		gameSetup.changePlayerArrangementMode(null);
 		// @ts-expect-error
 		gameSetup.changePlayerArrangementMode({});
+		// @ts-expect-error
 		gameSetup.changePlayerArrangementMode(-1);
 		gameSetup.changePlayerArrangementMode(PB_PlayerArrangementMode.VERSION_1);
+		// @ts-expect-error
 		gameSetup.changePlayerArrangementMode(4);
 
 		expect(gameSetup.playerArrangementMode).toBe(PB_PlayerArrangementMode.RANDOM_ORDER);
