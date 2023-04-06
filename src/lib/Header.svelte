@@ -16,7 +16,7 @@
 </script>
 
 <div>
-	<span class="name">Acquire</span>
+	<span class="name"><a href="/">Acquire</a></span>
 
 	<span class="middle" />
 
@@ -66,6 +66,20 @@
 
 		display: flex;
 		flex-direction: row;
+	}
+
+	a {
+		color: inherit;
+		text-decoration: none;
+	}
+
+	a:focus,
+	a:hover {
+		text-decoration: underline;
+	}
+
+	a:active {
+		color: red;
 	}
 
 	span:nth-last-child(n + 2) {
