@@ -8,7 +8,7 @@
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"test": "vitest",
 		"lint": "eslint .",
-		"format": "prettier --plugin-search-dir . --write .",
+		"format": "prettier --write .",
 		"protobuf": "protoc --ts_out src/common --proto_path src/common src/common/pb.proto",
 		"buildServer:watch": "mkdir -p build ; echo '{}' > build/package.json ; tsc --module commonjs --preserveValueImports false --watch",
 		"server": "nodemon -r dotenv/config --trace-warnings --enable-source-maps build/src/server/main.js"

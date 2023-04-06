@@ -9,7 +9,7 @@ import {
 } from '../common/pb';
 import { Server } from './server';
 import { TestServerCommunication } from './serverCommunication';
-import { getPasswordHash, TestUserData, TestUserDataProvider } from './userDataProvider';
+import { TestUserData, TestUserDataProvider, getPasswordHash } from './userDataProvider';
 
 describe('Connect', () => {
 	test('client should reload window when version is different', () => {

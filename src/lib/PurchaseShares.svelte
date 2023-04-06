@@ -11,12 +11,12 @@
 <script lang="ts">
 	import type { PB_GameBoardType } from '../common/pb';
 	import {
+		KEY_SHIFT,
 		allChains,
 		gameBoardTypeToCSSClassName,
 		gameBoardTypeToHotelInitial,
 		keyboardEventCodeToGameBoardType,
 		keyboardEventToKeysAlsoPressed,
-		KEY_SHIFT,
 	} from './helpers';
 
 	export let scoreBoardAvailable: number[];

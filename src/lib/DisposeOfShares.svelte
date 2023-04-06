@@ -54,9 +54,9 @@
 <script lang="ts">
 	import type { PB_GameBoardType } from '../common/pb';
 	import {
+		KEY_SHIFT,
 		gameBoardTypeToCSSClassName,
 		keyboardEventToKeysAlsoPressed,
-		KEY_SHIFT,
 	} from './helpers';
 
 	export let defunctChain: PB_GameBoardType;

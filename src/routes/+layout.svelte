@@ -11,14 +11,14 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
 	import { PUBLIC_VERSION } from '$env/static/public';
+	import Header from '$lib/Header.svelte';
+	import { colorSchemeStore } from '$lib/Settings.svelte';
 	import { Client } from '$lib/client';
 	import {
 		ClientCommunication,
 		TestClientCommunication,
 		WebSocketClientCommunication,
 	} from '$lib/clientCommunication';
-	import Header from '$lib/Header.svelte';
-	import { colorSchemeStore } from '$lib/Settings.svelte';
 	import 'normalize.css';
 	import { onDestroy, setContext } from 'svelte';
 	import { TestServerCommunication } from '../server/serverCommunication';

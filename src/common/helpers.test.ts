@@ -1,9 +1,9 @@
 import { describe, expect, test } from 'vitest';
 import {
+	PlayerIDAndAmount,
 	calculateBonuses,
 	getNewTileBag,
 	neighboringTilesLookup,
-	PlayerIDAndAmount,
 } from './helpers';
 
 describe('getNewTileBag', () => {

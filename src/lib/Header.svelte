@@ -2,9 +2,9 @@
 
 <script lang="ts">
 	import { getContext } from 'svelte';
-	import { LoginState, type Client } from './client';
 	import Dialog, { DialogType } from './Dialog.svelte';
 	import Username from './Username.svelte';
+	import { LoginState, type Client } from './client';
 
 	const client: Client = getContext('client');
 
