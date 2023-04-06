@@ -36,9 +36,9 @@ export class Client {
 	usernameAndTokenStore = { subscribe: this.usernameAndTokenWritableStore.subscribe };
 
 	currentPage = CurrentPage.None;
-	lobbyManager = new LobbyManager();
+	lobbyManager = new LobbyManager(this);
 
-	constructor(private clientCommunication: ClientCommunication, private version: number) {
+	constructor(public clientCommunication: ClientCommunication, private version: number) {
 		clientCommunication.setCallbacks(
 			this.onConnect.bind(this),
 			this.onDisconnect.bind(this),
@@ -131,7 +131,7 @@ export class Client {
 
 	connectToLobby() {
 		this.currentPage = CurrentPage.Lobby;
-		this.clientCommunication.sendMessage(this.lobbyManager.getConnectMessage());
+		this.lobbyManager.connect();
 	}
 
 	private onConnect() {

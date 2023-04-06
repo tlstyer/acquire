@@ -1,2 +1,22 @@
-<h1>Welcome to SvelteKit</h1>
-<p>Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation</p>
+<svelte:options immutable />
+
+<script lang="ts">
+	import type { Client } from '$lib/client';
+	import { getContext } from 'svelte';
+
+	const client: Client = getContext('client');
+
+	client.connectToLobby();
+
+	let connectedStore = client.lobbyManager.connectedStore;
+</script>
+
+{#if $connectedStore}
+	<div class="gameListings">Lobby</div>
+{/if}
+
+<style>
+	.gameListings {
+		padding: 4px 0 0 12px;
+	}
+</style>
