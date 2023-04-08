@@ -1,7 +1,6 @@
 <svelte:options immutable />
 
 <script lang="ts">
-	import { getTileString } from '$lib/helpers';
 	import HotelName from '$lib/HotelName.svelte';
 	import Username from '$lib/Username.svelte';
 	import {
@@ -26,6 +25,7 @@
 		GameHistoryMessageTurnBegan,
 		type GameHistoryMessage,
 	} from '../../common/gameHistoryMessage';
+	import { toTileString } from '../../common/helpers';
 
 	export let usernames: string[];
 	export let gameHistoryMessage: GameHistoryMessage;
@@ -37,19 +37,19 @@
 			<legend><Username username={usernames[gameHistoryMessage.playerID]} /></legend>
 		</fieldset>
 	{:else if gameHistoryMessage instanceof GameHistoryMessageDrewPositionTile}
-		<Username username={usernames[gameHistoryMessage.playerID]} /> drew position tile {getTileString(
+		<Username username={usernames[gameHistoryMessage.playerID]} /> drew position tile {toTileString(
 			gameHistoryMessage.tile,
 		)}.
 	{:else if gameHistoryMessage instanceof GameHistoryMessageStartedGame}
 		<Username username={usernames[gameHistoryMessage.playerID]} /> started the game.
 	{:else if gameHistoryMessage instanceof GameHistoryMessageDrewTile}
-		<Username username={usernames[gameHistoryMessage.playerID]} /> drew tile {getTileString(
+		<Username username={usernames[gameHistoryMessage.playerID]} /> drew tile {toTileString(
 			gameHistoryMessage.tile,
 		)}.
 	{:else if gameHistoryMessage instanceof GameHistoryMessageHasNoPlayableTile}
 		<Username username={usernames[gameHistoryMessage.playerID]} /> has no playable tile.
 	{:else if gameHistoryMessage instanceof GameHistoryMessagePlayedTile}
-		<Username username={usernames[gameHistoryMessage.playerID]} /> played tile {getTileString(
+		<Username username={usernames[gameHistoryMessage.playerID]} /> played tile {toTileString(
 			gameHistoryMessage.tile,
 		)}.
 	{:else if gameHistoryMessage instanceof GameHistoryMessageFormedChain}
@@ -112,7 +112,7 @@
 	{:else if gameHistoryMessage instanceof GameHistoryMessageDrewLastTile}
 		<Username username={usernames[gameHistoryMessage.playerID]} /> drew the last tile from the tile bag.
 	{:else if gameHistoryMessage instanceof GameHistoryMessageReplacedDeadTile}
-		<Username username={usernames[gameHistoryMessage.playerID]} /> replaced dead tile {getTileString(
+		<Username username={usernames[gameHistoryMessage.playerID]} /> replaced dead tile {toTileString(
 			gameHistoryMessage.tile,
 		)}.
 	{:else if gameHistoryMessage instanceof GameHistoryMessageEndedGame}

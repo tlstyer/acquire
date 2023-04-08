@@ -21,12 +21,9 @@
 </script>
 
 <script lang="ts">
+	import { toTileString } from '../common/helpers';
 	import { PB_GameBoardType } from '../common/pb';
-	import {
-		gameBoardTypeToCSSClassName,
-		getTileString,
-		keyboardEventToKeysAlsoPressed,
-	} from './helpers';
+	import { gameBoardTypeToCSSClassName, keyboardEventToKeysAlsoPressed } from './helpers';
 
 	export let tiles: (number | null)[];
 	export let types: (PB_GameBoardType | null)[];
@@ -86,7 +83,7 @@
 				type="button"
 				class="hotelButton {gameBoardTypeToCSSClassName.get(tileData.type)}"
 				style={buttonStyle}
-				value={getTileString(tileData.tile)}
+				value={toTileString(tileData.tile)}
 				disabled={tileData.type === PB_GameBoardType.CANT_PLAY_EVER ||
 					tileData.type === PB_GameBoardType.CANT_PLAY_NOW}
 				on:click={() => onClick(tileData)}

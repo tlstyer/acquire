@@ -1,3 +1,4 @@
+import { TileEnum } from './enums';
 import { PB_GameMode, PB_MessageToClient, PB_MessageToClient_LoginLogout_ResponseCode } from './pb';
 
 export function getNewTileBag() {
@@ -218,4 +219,16 @@ export function concatenateUint8Arrays(arrays: Uint8Array[]) {
 	}
 
 	return result;
+}
+
+export const yTileNames = 'ABCDEFGHI';
+
+export function toTileString(tile: number) {
+	if (tile === TileEnum.Unknown) {
+		return '?';
+	} else {
+		const y = tile % 9;
+		const x = (tile - y) / 9;
+		return `${x + 1}${yTileNames[y]}`;
+	}
 }

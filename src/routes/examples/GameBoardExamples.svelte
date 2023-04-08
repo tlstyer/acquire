@@ -1,6 +1,7 @@
 <script lang="ts">
 	import GameBoard from '$lib/GameBoard.svelte';
-	import { GameBoardLabelMode, getTileString } from '$lib/helpers';
+	import { GameBoardLabelMode } from '$lib/helpers';
+	import { toTileString } from '../../common/helpers';
 	import type { PB_GameBoardType } from '../../common/pb';
 
 	const baseGameBoardProps = {
@@ -43,7 +44,7 @@
 	];
 
 	function onTileClicked(tile: number) {
-		console.log('onTileClicked:', getTileString(tile));
+		console.log('onTileClicked:', toTileString(tile));
 	}
 </script>
 

@@ -1,4 +1,3 @@
-import { TileEnum } from '../common/enums';
 import {
 	PB_GameBoardType,
 	PB_GameMode,
@@ -64,18 +63,6 @@ export enum GameBoardLabelMode {
 	Nothing,
 	Coordinates,
 	HotelInitials,
-}
-
-const yTileNames = 'ABCDEFGHI';
-
-export function getTileString(tile: number) {
-	if (tile === TileEnum.Unknown) {
-		return '?';
-	} else {
-		const y = tile % 9;
-		const x = (tile - y) / 9;
-		return `${x + 1}${yTileNames[y]}`;
-	}
 }
 
 export const gameModeToString = new Map([

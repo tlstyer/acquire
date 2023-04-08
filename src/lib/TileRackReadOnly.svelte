@@ -1,6 +1,7 @@
 <script lang="ts">
+	import { toTileString } from '../common/helpers';
 	import type { PB_GameBoardType } from '../common/pb';
-	import { gameBoardTypeToCSSClassName, getTileString } from './helpers';
+	import { gameBoardTypeToCSSClassName } from './helpers';
 
 	export let tiles: (number | null)[];
 	export let types: (PB_GameBoardType | null)[];
@@ -32,7 +33,7 @@
 	{#each allTileData as tileData}
 		{#if tileData}
 			<div class="button {gameBoardTypeToCSSClassName.get(tileData.type)}" style={buttonStyle}>
-				<div>{getTileString(tileData.tile)}</div>
+				<div>{toTileString(tileData.tile)}</div>
 			</div>
 		{:else}
 			<div class="button invisible" style={buttonStyle}>?</div>

@@ -1,12 +1,12 @@
 <svelte:options immutable />
 
 <script lang="ts">
+	import { toTileString } from '../../common/helpers';
 	import { PB_GameBoardType } from '../../common/pb';
 	import {
 		GameBoardLabelMode,
 		gameBoardTypeToCSSClassName,
 		gameBoardTypeToHotelInitial,
-		getTileString,
 	} from '../helpers';
 
 	export let tile: number;
@@ -21,18 +21,18 @@
 				gameBoardType === PB_GameBoardType.NOTHING ||
 				gameBoardType === PB_GameBoardType.I_HAVE_THIS
 			) {
-				label = getTileString(tile);
+				label = toTileString(tile);
 			} else {
 				label = '\u00a0';
 			}
 		} else if (labelMode === GameBoardLabelMode.Coordinates) {
-			label = getTileString(tile);
+			label = toTileString(tile);
 		} else if (labelMode === GameBoardLabelMode.HotelInitials) {
 			if (
 				gameBoardType === PB_GameBoardType.NOTHING ||
 				gameBoardType === PB_GameBoardType.I_HAVE_THIS
 			) {
-				label = getTileString(tile);
+				label = toTileString(tile);
 			} else if (gameBoardType <= PB_GameBoardType.IMPERIAL) {
 				label = gameBoardTypeToHotelInitial.get(gameBoardType)!;
 			} else {

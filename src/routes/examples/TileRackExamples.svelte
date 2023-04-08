@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { getTileString } from '$lib/helpers';
 	import TileRack from '$lib/TileRack.svelte';
+	import { toTileString } from '../../common/helpers';
 	import { PB_GameBoardType } from '../../common/pb';
 	import EnableKeyboardShortcutsButton from './EnableKeyboardShortcutsButton.svelte';
 
@@ -50,7 +50,7 @@
 	];
 
 	function onTileClicked(tile: number) {
-		console.log('onTileClicked:', getTileString(tile));
+		console.log('onTileClicked:', toTileString(tile));
 	}
 </script>
 

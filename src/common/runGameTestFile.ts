@@ -31,7 +31,7 @@ import {
 } from './gameHistoryMessage';
 import { gameToJSON } from './gameSerialization';
 import type { GameState, GameStateTileBagTile } from './gameState';
-import { getValueOfKey, lowercaseFirstLetter } from './helpers';
+import { getValueOfKey, lowercaseFirstLetter, toTileString, yTileNames } from './helpers';
 import {
 	PB_GameAction,
 	PB_GameAction_DisposeOfShares,
@@ -635,18 +635,6 @@ function toTilesString(tiles: number[]) {
 
 function fromTilesString(str: string) {
 	return str.split(', ').map(fromTileString);
-}
-
-const yTileNames = 'ABCDEFGHI';
-
-function toTileString(tile: number) {
-	if (tile === TileEnum.Unknown) {
-		return '?';
-	} else {
-		const y = tile % 9;
-		const x = (tile - y) / 9;
-		return `${x + 1}${yTileNames[y]}`;
-	}
 }
 
 function fromTileString(str: string) {
