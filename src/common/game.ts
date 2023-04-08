@@ -292,11 +292,8 @@ export class Game {
 				const neighboringTiles = neighboringTilesLookup[tile];
 				for (let i = 0; i < neighboringTiles.length; i++) {
 					const neighboringTile = neighboringTiles[i];
-					borderTiles.push(neighboringTile);
-
-					const y = neighboringTile % 9;
-					const x = (neighboringTile - y) / 9;
-					borderTypes.push(this.gameBoard[y][x]);
+					borderTiles.push(neighboringTile.tile);
+					borderTypes.push(this.gameBoard[neighboringTile.y][neighboringTile.x]);
 				}
 
 				borderTypes = borderTypes.filter((type, index) => {
@@ -407,12 +404,12 @@ export class Game {
 			for (let i = 0; i < neighboringTiles.length; i++) {
 				const neighboringTile = neighboringTiles[i];
 
-				const y = neighboringTile % 9;
-				const x = (neighboringTile - y) / 9;
-
-				if (!found.has(neighboringTile) && !excludedTypes.has(this.gameBoard[y][x])) {
-					pending.push(neighboringTile);
-					found.add(neighboringTile);
+				if (
+					!found.has(neighboringTile.tile) &&
+					!excludedTypes.has(this.gameBoard[neighboringTile.y][neighboringTile.x])
+				) {
+					pending.push(neighboringTile.tile);
+					found.add(neighboringTile.tile);
 				}
 			}
 

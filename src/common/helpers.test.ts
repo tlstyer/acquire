@@ -1,5 +1,6 @@
 import { describe, expect, test } from 'vitest';
 import {
+	NeighboringTile,
 	PlayerIDAndAmount,
 	calculateBonuses,
 	getNewTileBag,
@@ -24,19 +25,52 @@ describe('getNewTileBag', () => {
 describe('neighboringTilesLookup', () => {
 	test('returns neighboring tiles', () => {
 		// corner tiles
-		expect(neighboringTilesLookup[0]).toEqual([1, 9]);
-		expect(neighboringTilesLookup[8]).toEqual([7, 17]);
-		expect(neighboringTilesLookup[99]).toEqual([90, 100]);
-		expect(neighboringTilesLookup[107]).toEqual([98, 106]);
+		expect(neighboringTilesLookup[0]).toEqual([
+			new NeighboringTile(1, 1, 0),
+			new NeighboringTile(9, 0, 1),
+		]);
+		expect(neighboringTilesLookup[8]).toEqual([
+			new NeighboringTile(7, 7, 0),
+			new NeighboringTile(17, 8, 1),
+		]);
+		expect(neighboringTilesLookup[99]).toEqual([
+			new NeighboringTile(90, 0, 10),
+			new NeighboringTile(100, 1, 11),
+		]);
+		expect(neighboringTilesLookup[107]).toEqual([
+			new NeighboringTile(98, 8, 10),
+			new NeighboringTile(106, 7, 11),
+		]);
 
 		// some side tiles
-		expect(neighboringTilesLookup[4]).toEqual([3, 5, 13]);
-		expect(neighboringTilesLookup[54]).toEqual([45, 55, 63]);
-		expect(neighboringTilesLookup[62]).toEqual([53, 61, 71]);
-		expect(neighboringTilesLookup[103]).toEqual([94, 102, 104]);
+		expect(neighboringTilesLookup[4]).toEqual([
+			new NeighboringTile(3, 3, 0),
+			new NeighboringTile(5, 5, 0),
+			new NeighboringTile(13, 4, 1),
+		]);
+		expect(neighboringTilesLookup[54]).toEqual([
+			new NeighboringTile(45, 0, 5),
+			new NeighboringTile(55, 1, 6),
+			new NeighboringTile(63, 0, 7),
+		]);
+		expect(neighboringTilesLookup[62]).toEqual([
+			new NeighboringTile(53, 8, 5),
+			new NeighboringTile(61, 7, 6),
+			new NeighboringTile(71, 8, 7),
+		]);
+		expect(neighboringTilesLookup[103]).toEqual([
+			new NeighboringTile(94, 4, 10),
+			new NeighboringTile(102, 3, 11),
+			new NeighboringTile(104, 5, 11),
+		]);
 
 		// a middle tile
-		expect(neighboringTilesLookup[58]).toEqual([49, 57, 59, 67]);
+		expect(neighboringTilesLookup[58]).toEqual([
+			new NeighboringTile(49, 4, 5),
+			new NeighboringTile(57, 3, 6),
+			new NeighboringTile(59, 5, 6),
+			new NeighboringTile(67, 4, 7),
+		]);
 	});
 });
 

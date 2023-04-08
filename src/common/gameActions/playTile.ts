@@ -109,9 +109,7 @@ export class ActionPlayTile extends ActionBase {
 		for (let i = 0; i < neighboringTiles.length; i++) {
 			const neighboringTile = neighboringTiles[i];
 
-			const y = neighboringTile % 9;
-			const x = (neighboringTile - y) / 9;
-			const type = this.game.gameBoard[y][x];
+			const type = this.game.gameBoard[neighboringTile.y][neighboringTile.x];
 
 			if (type <= PB_GameBoardType.IMPERIAL && chains.indexOf(type) === -1) {
 				chains.push(type);

@@ -19,28 +19,45 @@ export function shuffleArray(a: any[]) {
 	}
 }
 
-export const neighboringTilesLookup: number[][] = new Array(108);
-for (let tile = 0; tile < 108; tile++) {
-	const neighboringTiles: number[] = [];
-
-	const y = tile % 9;
-	const x = (tile - y) / 9;
-
-	if (x > 0) {
-		neighboringTiles.push(tile - 9);
-	}
-	if (y > 0) {
-		neighboringTiles.push(tile - 1);
-	}
-	if (y < 8) {
-		neighboringTiles.push(tile + 1);
-	}
-	if (x < 11) {
-		neighboringTiles.push(tile + 9);
-	}
-
-	neighboringTilesLookup[tile] = neighboringTiles;
+export class NeighboringTile {
+	constructor(public tile: number, public y: number, public x: number) {}
 }
+
+export const neighboringTilesLookup = (() => {
+	const allTiles: NeighboringTile[] = new Array(108);
+	let tile = 0;
+	for (let x = 0; x < 12; x++) {
+		for (let y = 0; y < 9; y++) {
+			allTiles[tile] = new NeighboringTile(tile, y, x);
+			tile++;
+		}
+	}
+
+	const result: NeighboringTile[][] = new Array(108);
+	tile = 0;
+	for (let x = 0; x < 12; x++) {
+		for (let y = 0; y < 9; y++) {
+			const neighboringTiles: NeighboringTile[] = [];
+
+			if (x > 0) {
+				neighboringTiles.push(allTiles[tile - 9]);
+			}
+			if (y > 0) {
+				neighboringTiles.push(allTiles[tile - 1]);
+			}
+			if (y < 8) {
+				neighboringTiles.push(allTiles[tile + 1]);
+			}
+			if (x < 11) {
+				neighboringTiles.push(allTiles[tile + 9]);
+			}
+
+			result[tile++] = neighboringTiles;
+		}
+	}
+
+	return result;
+})();
 
 export function calculateBonuses(sharesOwned: number[], sharePrice: number) {
 	const bonuses: PlayerIDAndAmount[] = [];
