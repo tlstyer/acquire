@@ -253,7 +253,7 @@ message PB {
 
     message Lobby {
       message LastStateCheckpoint {
-        int32 last_event_index = 1;
+        int32 last_event_index = 3;
       }
 
       LastStateCheckpoint last_state_checkpoint = 1;

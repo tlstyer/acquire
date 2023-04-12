@@ -603,7 +603,7 @@ export interface PB_MessageToClient_Lobby {
  */
 export interface PB_MessageToClient_Lobby_LastStateCheckpoint {
     /**
-     * @generated from protobuf field: int32 last_event_index = 1;
+     * @generated from protobuf field: int32 last_event_index = 3;
      */
     lastEventIndex: number;
 }
@@ -3006,7 +3006,7 @@ export const PB_MessageToClient_Lobby = new PB_MessageToClient_Lobby$Type();
 class PB_MessageToClient_Lobby_LastStateCheckpoint$Type extends MessageType<PB_MessageToClient_Lobby_LastStateCheckpoint> {
     constructor() {
         super("PB.MessageToClient.Lobby.LastStateCheckpoint", [
-            { no: 1, name: "last_event_index", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
+            { no: 3, name: "last_event_index", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
         ]);
     }
     create(value?: PartialMessage<PB_MessageToClient_Lobby_LastStateCheckpoint>): PB_MessageToClient_Lobby_LastStateCheckpoint {
@@ -3021,7 +3021,7 @@ class PB_MessageToClient_Lobby_LastStateCheckpoint$Type extends MessageType<PB_M
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* int32 last_event_index */ 1:
+                case /* int32 last_event_index */ 3:
                     message.lastEventIndex = reader.int32();
                     break;
                 default:
@@ -3036,9 +3036,9 @@ class PB_MessageToClient_Lobby_LastStateCheckpoint$Type extends MessageType<PB_M
         return message;
     }
     internalBinaryWrite(message: PB_MessageToClient_Lobby_LastStateCheckpoint, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* int32 last_event_index = 1; */
+        /* int32 last_event_index = 3; */
         if (message.lastEventIndex !== 0)
-            writer.tag(1, WireType.Varint).int32(message.lastEventIndex);
+            writer.tag(3, WireType.Varint).int32(message.lastEventIndex);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
