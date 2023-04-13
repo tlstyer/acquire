@@ -8,7 +8,7 @@ export class Client {
 
 	isLoggingInOrOut = false;
 
-	constructor(public clientID: number) {}
+	constructor(public clientID: number, public sendMessage: (message: Uint8Array) => void) {}
 
 	connectToRoom(room: Room) {
 		this.disconnectFromRoom();

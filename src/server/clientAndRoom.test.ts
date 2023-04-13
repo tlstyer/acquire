@@ -28,7 +28,7 @@ describe('no other clients in room', () => {
 
 	test('never logs in', () => {
 		const room = new TestRoom();
-		const client = new Client(clientID);
+		const client = new Client(clientID, () => {});
 
 		expectStuff(client, room, false, false);
 		expect(room.usersConnected.length).toBe(0);
@@ -49,7 +49,7 @@ describe('no other clients in room', () => {
 
 	test('logs in before connecting, does not log out', () => {
 		const room = new TestRoom();
-		const client = new Client(clientID);
+		const client = new Client(clientID, () => {});
 
 		expectStuff(client, room, false, false);
 		expect(room.usersConnected.length).toBe(0);
@@ -78,7 +78,7 @@ describe('no other clients in room', () => {
 
 	test('logs in after connecting, does not log out', () => {
 		const room = new TestRoom();
-		const client = new Client(clientID);
+		const client = new Client(clientID, () => {});
 
 		expectStuff(client, room, false, false);
 		expect(room.usersConnected.length).toBe(0);
@@ -107,7 +107,7 @@ describe('no other clients in room', () => {
 
 	test('logs in before connecting, logs out after connecting', () => {
 		const room = new TestRoom();
-		const client = new Client(clientID);
+		const client = new Client(clientID, () => {});
 
 		expectStuff(client, room, false, false);
 		expect(room.usersConnected.length).toBe(0);
@@ -142,7 +142,7 @@ describe('no other clients in room', () => {
 
 	test('logs in after connecting, logs out after connecting', () => {
 		const room = new TestRoom();
-		const client = new Client(clientID);
+		const client = new Client(clientID, () => {});
 
 		expectStuff(client, room, false, false);
 		expect(room.usersConnected.length).toBe(0);
@@ -216,8 +216,8 @@ describe('same user already in room', () => {
 
 	test('never logs in', () => {
 		const room = new TestRoom();
-		const client = new Client(clientID);
-		const otherClient = new Client(otherClientID);
+		const client = new Client(clientID, () => {});
+		const otherClient = new Client(otherClientID, () => {});
 		initialStuffForOtherClient(otherClient, room);
 
 		expectStuff(client, otherClient, room, false, false);
@@ -239,8 +239,8 @@ describe('same user already in room', () => {
 
 	test('logs in before connecting, does not log out', () => {
 		const room = new TestRoom();
-		const client = new Client(clientID);
-		const otherClient = new Client(otherClientID);
+		const client = new Client(clientID, () => {});
+		const otherClient = new Client(otherClientID, () => {});
 		initialStuffForOtherClient(otherClient, room);
 
 		expectStuff(client, otherClient, room, false, false);
@@ -268,8 +268,8 @@ describe('same user already in room', () => {
 
 	test('logs in after connecting, does not log out', () => {
 		const room = new TestRoom();
-		const client = new Client(clientID);
-		const otherClient = new Client(otherClientID);
+		const client = new Client(clientID, () => {});
+		const otherClient = new Client(otherClientID, () => {});
 		initialStuffForOtherClient(otherClient, room);
 
 		expectStuff(client, otherClient, room, false, false);
@@ -297,8 +297,8 @@ describe('same user already in room', () => {
 
 	test('logs in before connecting, logs out after connecting', () => {
 		const room = new TestRoom();
-		const client = new Client(clientID);
-		const otherClient = new Client(otherClientID);
+		const client = new Client(clientID, () => {});
+		const otherClient = new Client(otherClientID, () => {});
 		initialStuffForOtherClient(otherClient, room);
 
 		expectStuff(client, otherClient, room, false, false);
@@ -332,8 +332,8 @@ describe('same user already in room', () => {
 
 	test('logs in after connecting, logs out after connecting', () => {
 		const room = new TestRoom();
-		const client = new Client(clientID);
-		const otherClient = new Client(otherClientID);
+		const client = new Client(clientID, () => {});
+		const otherClient = new Client(otherClientID, () => {});
 		initialStuffForOtherClient(otherClient, room);
 
 		expectStuff(client, otherClient, room, false, false);
@@ -408,8 +408,8 @@ describe('different user already in room', () => {
 
 	test('never logs in', () => {
 		const room = new TestRoom();
-		const client = new Client(clientID);
-		const otherClient = new Client(otherClientID);
+		const client = new Client(clientID, () => {});
+		const otherClient = new Client(otherClientID, () => {});
 		initialStuffForOtherClient(otherClient, room);
 
 		expectStuff(client, otherClient, room, false, false);
@@ -431,8 +431,8 @@ describe('different user already in room', () => {
 
 	test('logs in before connecting, does not log out', () => {
 		const room = new TestRoom();
-		const client = new Client(clientID);
-		const otherClient = new Client(otherClientID);
+		const client = new Client(clientID, () => {});
+		const otherClient = new Client(otherClientID, () => {});
 		initialStuffForOtherClient(otherClient, room);
 
 		expectStuff(client, otherClient, room, false, false);
@@ -462,8 +462,8 @@ describe('different user already in room', () => {
 
 	test('logs in after connecting, does not log out', () => {
 		const room = new TestRoom();
-		const client = new Client(clientID);
-		const otherClient = new Client(otherClientID);
+		const client = new Client(clientID, () => {});
+		const otherClient = new Client(otherClientID, () => {});
 		initialStuffForOtherClient(otherClient, room);
 
 		expectStuff(client, otherClient, room, false, false);
@@ -493,8 +493,8 @@ describe('different user already in room', () => {
 
 	test('logs in before connecting, logs out after connecting', () => {
 		const room = new TestRoom();
-		const client = new Client(clientID);
-		const otherClient = new Client(otherClientID);
+		const client = new Client(clientID, () => {});
+		const otherClient = new Client(otherClientID, () => {});
 		initialStuffForOtherClient(otherClient, room);
 
 		expectStuff(client, otherClient, room, false, false);
@@ -530,8 +530,8 @@ describe('different user already in room', () => {
 
 	test('logs in after connecting, logs out after connecting', () => {
 		const room = new TestRoom();
-		const client = new Client(clientID);
-		const otherClient = new Client(otherClientID);
+		const client = new Client(clientID, () => {});
+		const otherClient = new Client(otherClientID, () => {});
 		initialStuffForOtherClient(otherClient, room);
 
 		expectStuff(client, otherClient, room, false, false);

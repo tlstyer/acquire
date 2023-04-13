@@ -23,7 +23,7 @@ export class Server {
 
 	clientIDToClient = new Map<number, Client>();
 
-	lobbyRoom = new LobbyRoom(this);
+	lobbyRoom = new LobbyRoom();
 
 	constructor(
 		public serverCommunication: ServerCommunication,
@@ -46,10 +46,12 @@ export class Server {
 	}
 
 	private onConnect(clientID: number) {
-		const client = new Client(clientID);
+		const client = new Client(clientID, (message) =>
+			this.serverCommunication.sendMessage(clientID, message),
+		);
 		this.clientIDToClient.set(clientID, client);
 
-		this.serverCommunication.sendMessage(clientID, this.initialMessage);
+		client.sendMessage(this.initialMessage);
 	}
 
 	private onDisconnect(clientID: number) {
@@ -250,8 +252,7 @@ export class Server {
 		userID?: number,
 		token?: string,
 	) {
-		this.serverCommunication.sendMessage(
-			client.clientID,
+		client.sendMessage(
 			PB_MessageToClient.toBinary(createLoginLogoutMessage(responseCode, username, userID, token)),
 		);
 	}

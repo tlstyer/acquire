@@ -5,7 +5,6 @@ import {
 } from '../common/pb';
 import type { Client } from './client';
 import { Room } from './room';
-import type { Server } from './server';
 
 export class LobbyRoom extends Room {
 	lastEventIndex = 2; // need a gap between first event index and what clients initially say they have
@@ -14,7 +13,7 @@ export class LobbyRoom extends Room {
 
 	noUpdatesMessage: Uint8Array;
 
-	constructor(private server: Server) {
+	constructor() {
 		super();
 
 		this.lastStateCheckpointMessage = PB_MessageToClient.toBinary(
@@ -44,9 +43,9 @@ export class LobbyRoom extends Room {
 		client.connectToRoom(this);
 
 		if (message.lastEventIndex + 1 < this.lastEventIndex) {
-			this.server.serverCommunication.sendMessage(client.clientID, this.lastStateCheckpointMessage);
+			client.sendMessage(this.lastStateCheckpointMessage);
 		} else {
-			this.server.serverCommunication.sendMessage(client.clientID, this.noUpdatesMessage);
+			client.sendMessage(this.noUpdatesMessage);
 		}
 	}
 }
