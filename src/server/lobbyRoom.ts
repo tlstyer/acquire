@@ -1,6 +1,7 @@
 import {
 	PB_MessageToClient,
 	PB_MessageToClient_Lobby_Event,
+	PB_MessageToClient_Lobby_LastStateCheckpoint_User,
 	PB_MessageToServer_Lobby,
 	PB_MessageToServer_Lobby_Connect,
 } from '../common/pb';
@@ -20,6 +21,32 @@ export class LobbyRoom extends Room {
 		client.sendMessage(this.getConnectionResponse(message));
 	}
 
+	userConnected(userID: number, username: string) {
+		const isKnownUser = this.lscKnownUserIDs.has(userID);
+
+		this.queueEvent(
+			PB_MessageToClient_Lobby_Event.create({
+				addUserToLobby: {
+					userId: userID,
+					username: isKnownUser ? undefined : username,
+				},
+			}),
+		);
+		if (!isKnownUser) {
+			this.lscKnownUserIDs.add(userID);
+		}
+	}
+
+	userDisconnected(userID: number, username: string) {
+		this.queueEvent(
+			PB_MessageToClient_Lobby_Event.create({
+				removeUserFromLobby: {
+					userId: userID,
+				},
+			}),
+		);
+	}
+
 	/**
 	 * event management stuff
 	 *
@@ -37,6 +64,7 @@ export class LobbyRoom extends Room {
 			},
 		}),
 	);
+	private lscKnownUserIDs = new Set<number>();
 
 	private noUpdatesMessage = PB_MessageToClient.toBinary(
 		PB_MessageToClient.create({
@@ -74,16 +102,32 @@ export class LobbyRoom extends Room {
 	createLastStateCheckpoint() {
 		this.sendQueuedEvents();
 
+		const userIDToUser = new Map<number, PB_MessageToClient_Lobby_LastStateCheckpoint_User>();
+		for (const client of this.clients) {
+			if (client.userID !== undefined && !userIDToUser.has(client.userID)) {
+				userIDToUser.set(
+					client.userID,
+					PB_MessageToClient_Lobby_LastStateCheckpoint_User.create({
+						userId: client.userID,
+						username: client.username,
+						isInLobby: true,
+					}),
+				);
+			}
+		}
+
 		this.lscLastEventIndex = this.batchesOfEvents[this.batchesOfEvents.length - 1].lastEventIndex;
 		this.lscMessage = PB_MessageToClient.toBinary(
 			PB_MessageToClient.create({
 				lobby: {
 					lastStateCheckpoint: {
+						users: [...userIDToUser.values()],
 						lastEventIndex: this.lscLastEventIndex,
 					},
 				},
 			}),
 		);
+		this.lscKnownUserIDs = new Set(userIDToUser.keys());
 	}
 
 	private getConnectionResponse(message: PB_MessageToServer_Lobby_Connect) {

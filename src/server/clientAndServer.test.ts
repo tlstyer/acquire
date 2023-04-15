@@ -559,6 +559,146 @@ describe('lobby', () => {
 
 		expect([...server.lobbyRoom.clients].map((c) => c.clientID)).toEqual([1]);
 	});
+
+	test('users are added and removed', async () => {
+		const { client, clientCommunication, server, serverCommunication, userDataProvider } =
+			createOneClientConnectedToOneServer();
+
+		// first client logs in and connects to lobby
+
+		client.loginWithToken('user 3', userIDToTestUserData[3].passwordHash);
+		await waitForAsyncServerStuff();
+		client.connectToLobby();
+		clientCommunication.communicatedMessages.length = 0;
+
+		expect(client.lobbyManager.userIDToUsername.size).toBe(0);
+		expect(client.lobbyManager.userIDs.size).toBe(0);
+
+		server.lobbyRoom.sendQueuedEvents();
+
+		expect(clientCommunication.communicatedMessages.length).toBe(1);
+		expect(clientCommunication.communicatedMessages[0].receivedMessage).toEqual({
+			lobby: { events: [{ addUserToLobby: { userId: 3, username: 'user 3' } }] },
+		});
+		const expectedUserIDToUsername = new Map([[3, 'user 3']]);
+		expect(client.lobbyManager.userIDToUsername).toEqual(expectedUserIDToUsername);
+		expect(client.lobbyManager.userIDs).toEqual(new Set([3]));
+
+		// another client connects to lobby and then logs in
+
+		const clientCommunication4 = new TestClientCommunication(serverCommunication);
+		const client4 = new Client(clientCommunication4, 2);
+		clientCommunication4.connect();
+		clientCommunication4.communicatedMessages.length = 0;
+
+		client4.connectToLobby();
+
+		expect(clientCommunication4.communicatedMessages.length).toBe(2);
+		expect(clientCommunication4.communicatedMessages[1].receivedMessage).toEqual({
+			lobby: {
+				lastStateCheckpoint: { users: [], lastEventIndex: 2 },
+				events: [{ addUserToLobby: { userId: 3, username: 'user 3' } }],
+			},
+		});
+
+		client4.loginWithToken('user 4', userIDToTestUserData[4].passwordHash);
+		await waitForAsyncServerStuff();
+		clientCommunication.communicatedMessages.length = 0;
+		clientCommunication4.communicatedMessages.length = 0;
+
+		server.lobbyRoom.sendQueuedEvents();
+
+		expect(clientCommunication.communicatedMessages.length).toBe(1);
+		expect(clientCommunication4.communicatedMessages.length).toBe(1);
+		const expectedAddUserToLobbyMessage = {
+			lobby: { events: [{ addUserToLobby: { userId: 4, username: 'user 4' } }] },
+		};
+		expect(clientCommunication.communicatedMessages[0].receivedMessage).toEqual(
+			expectedAddUserToLobbyMessage,
+		);
+		expect(clientCommunication4.communicatedMessages[0].receivedMessage).toEqual(
+			expectedAddUserToLobbyMessage,
+		);
+		expectedUserIDToUsername.set(4, 'user 4');
+		expect(client.lobbyManager.userIDToUsername).toEqual(expectedUserIDToUsername);
+		expect(client.lobbyManager.userIDs).toEqual(new Set([3, 4]));
+		expect(client4.lobbyManager.userIDToUsername).toEqual(expectedUserIDToUsername);
+		expect(client4.lobbyManager.userIDs).toEqual(new Set([3, 4]));
+
+		// client logs out
+
+		client.logout();
+		clientCommunication.communicatedMessages.length = 0;
+		clientCommunication4.communicatedMessages.length = 0;
+
+		server.lobbyRoom.sendQueuedEvents();
+
+		expect(clientCommunication.communicatedMessages.length).toBe(1);
+		expect(clientCommunication4.communicatedMessages.length).toBe(1);
+		const expectedRemoveUserFromLobbyMessage = {
+			lobby: { events: [{ removeUserFromLobby: { userId: 3 } }] },
+		};
+		expect(clientCommunication.communicatedMessages[0].receivedMessage).toEqual(
+			expectedRemoveUserFromLobbyMessage,
+		);
+		expect(clientCommunication4.communicatedMessages[0].receivedMessage).toEqual(
+			expectedRemoveUserFromLobbyMessage,
+		);
+		expect(client.lobbyManager.userIDToUsername).toEqual(expectedUserIDToUsername);
+		expect(client.lobbyManager.userIDs).toEqual(new Set([4]));
+		expect(client4.lobbyManager.userIDToUsername).toEqual(expectedUserIDToUsername);
+		expect(client4.lobbyManager.userIDs).toEqual(new Set([4]));
+
+		// anonymous client 1 connects to lobby
+
+		const clientCommunicationAnon1 = new TestClientCommunication(serverCommunication);
+		const clientAnon1 = new Client(clientCommunicationAnon1, 2);
+		clientCommunicationAnon1.connect();
+		clientCommunicationAnon1.communicatedMessages.length = 0;
+
+		clientAnon1.connectToLobby();
+
+		expect(clientCommunicationAnon1.communicatedMessages.length).toBe(2);
+		expect(clientCommunicationAnon1.communicatedMessages[1].receivedMessage).toEqual({
+			lobby: {
+				lastStateCheckpoint: { users: [], lastEventIndex: 2 },
+				events: [
+					{ addUserToLobby: { userId: 3, username: 'user 3' } },
+					{ addUserToLobby: { userId: 4, username: 'user 4' } },
+					{ removeUserFromLobby: { userId: 3 } },
+				],
+			},
+		});
+		expect(clientAnon1.lobbyManager.userIDToUsername).toEqual(expectedUserIDToUsername);
+		expect(clientAnon1.lobbyManager.userIDs).toEqual(new Set([4]));
+
+		// create last state checkpoint
+
+		server.lobbyRoom.createLastStateCheckpoint();
+
+		// anonymous client 2 connects to lobby
+
+		const clientCommunicationAnon2 = new TestClientCommunication(serverCommunication);
+		const clientAnon2 = new Client(clientCommunicationAnon2, 2);
+		clientCommunicationAnon2.connect();
+		clientCommunicationAnon2.communicatedMessages.length = 0;
+
+		clientAnon2.connectToLobby();
+
+		expect(clientCommunicationAnon2.communicatedMessages.length).toBe(2);
+		expect(clientCommunicationAnon2.communicatedMessages[1].receivedMessage).toEqual({
+			lobby: {
+				lastStateCheckpoint: {
+					users: [{ userId: 4, username: 'user 4', isInLobby: true }],
+					lastEventIndex: 5,
+				},
+				events: [],
+			},
+		});
+		expectedUserIDToUsername.delete(3);
+		expect(clientAnon2.lobbyManager.userIDToUsername).toEqual(expectedUserIDToUsername);
+		expect(clientAnon2.lobbyManager.userIDs).toEqual(new Set([4]));
+	});
 });
 
 const numTestUsers = 7;

@@ -57,7 +57,8 @@ export class Server {
 	private onDisconnect(clientID: number) {
 		const client = this.clientIDToClient.get(clientID)!;
 
-		this.makeLogoutDataChanges(client);
+		client.disconnectFromRoom();
+		client.loggedOut();
 
 		this.clientIDToClient.delete(clientID);
 	}
@@ -235,14 +236,9 @@ export class Server {
 			return;
 		}
 
-		this.makeLogoutDataChanges(client);
+		client.loggedOut();
 
 		this.sendLoginLogoutMessage(client, PB_MessageToClient_LoginLogout_ResponseCode.SUCCESS);
-	}
-
-	private makeLogoutDataChanges(client: Client) {
-		client.disconnectFromRoom();
-		client.loggedOut();
 	}
 
 	private sendLoginLogoutMessage(

@@ -607,14 +607,65 @@ export interface PB_MessageToClient_Lobby {
  */
 export interface PB_MessageToClient_Lobby_LastStateCheckpoint {
     /**
+     * @generated from protobuf field: repeated PB.MessageToClient.Lobby.LastStateCheckpoint.User users = 2;
+     */
+    users: PB_MessageToClient_Lobby_LastStateCheckpoint_User[];
+    /**
      * @generated from protobuf field: int32 last_event_index = 3;
      */
     lastEventIndex: number;
 }
 /**
+ * @generated from protobuf message PB.MessageToClient.Lobby.LastStateCheckpoint.User
+ */
+export interface PB_MessageToClient_Lobby_LastStateCheckpoint_User {
+    /**
+     * @generated from protobuf field: int32 user_id = 1;
+     */
+    userId: number;
+    /**
+     * @generated from protobuf field: string username = 2;
+     */
+    username: string;
+    /**
+     * @generated from protobuf field: bool is_in_lobby = 3;
+     */
+    isInLobby: boolean;
+}
+/**
  * @generated from protobuf message PB.MessageToClient.Lobby.Event
  */
 export interface PB_MessageToClient_Lobby_Event {
+    /**
+     * @generated from protobuf field: PB.MessageToClient.Lobby.Event.AddUserToLobby add_user_to_lobby = 6;
+     */
+    addUserToLobby?: PB_MessageToClient_Lobby_Event_AddUserToLobby;
+    /**
+     * @generated from protobuf field: PB.MessageToClient.Lobby.Event.RemoveUserFromLobby remove_user_from_lobby = 7;
+     */
+    removeUserFromLobby?: PB_MessageToClient_Lobby_Event_RemoveUserFromLobby;
+}
+/**
+ * @generated from protobuf message PB.MessageToClient.Lobby.Event.AddUserToLobby
+ */
+export interface PB_MessageToClient_Lobby_Event_AddUserToLobby {
+    /**
+     * @generated from protobuf field: int32 user_id = 1;
+     */
+    userId: number;
+    /**
+     * @generated from protobuf field: string username = 2;
+     */
+    username: string;
+}
+/**
+ * @generated from protobuf message PB.MessageToClient.Lobby.Event.RemoveUserFromLobby
+ */
+export interface PB_MessageToClient_Lobby_Event_RemoveUserFromLobby {
+    /**
+     * @generated from protobuf field: int32 user_id = 1;
+     */
+    userId: number;
 }
 /**
  * @generated from protobuf message PB.GameReview
@@ -3022,11 +3073,12 @@ export const PB_MessageToClient_Lobby = new PB_MessageToClient_Lobby$Type();
 class PB_MessageToClient_Lobby_LastStateCheckpoint$Type extends MessageType<PB_MessageToClient_Lobby_LastStateCheckpoint> {
     constructor() {
         super("PB.MessageToClient.Lobby.LastStateCheckpoint", [
+            { no: 2, name: "users", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => PB_MessageToClient_Lobby_LastStateCheckpoint_User },
             { no: 3, name: "last_event_index", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
         ]);
     }
     create(value?: PartialMessage<PB_MessageToClient_Lobby_LastStateCheckpoint>): PB_MessageToClient_Lobby_LastStateCheckpoint {
-        const message = { lastEventIndex: 0 };
+        const message = { users: [], lastEventIndex: 0 };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<PB_MessageToClient_Lobby_LastStateCheckpoint>(this, message, value);
@@ -3037,6 +3089,9 @@ class PB_MessageToClient_Lobby_LastStateCheckpoint$Type extends MessageType<PB_M
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
+                case /* repeated PB.MessageToClient.Lobby.LastStateCheckpoint.User users */ 2:
+                    message.users.push(PB_MessageToClient_Lobby_LastStateCheckpoint_User.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
                 case /* int32 last_event_index */ 3:
                     message.lastEventIndex = reader.int32();
                     break;
@@ -3052,6 +3107,9 @@ class PB_MessageToClient_Lobby_LastStateCheckpoint$Type extends MessageType<PB_M
         return message;
     }
     internalBinaryWrite(message: PB_MessageToClient_Lobby_LastStateCheckpoint, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated PB.MessageToClient.Lobby.LastStateCheckpoint.User users = 2; */
+        for (let i = 0; i < message.users.length; i++)
+            PB_MessageToClient_Lobby_LastStateCheckpoint_User.internalBinaryWrite(message.users[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         /* int32 last_event_index = 3; */
         if (message.lastEventIndex !== 0)
             writer.tag(3, WireType.Varint).int32(message.lastEventIndex);
@@ -3066,9 +3124,73 @@ class PB_MessageToClient_Lobby_LastStateCheckpoint$Type extends MessageType<PB_M
  */
 export const PB_MessageToClient_Lobby_LastStateCheckpoint = new PB_MessageToClient_Lobby_LastStateCheckpoint$Type();
 // @generated message type with reflection information, may provide speed optimized methods
+class PB_MessageToClient_Lobby_LastStateCheckpoint_User$Type extends MessageType<PB_MessageToClient_Lobby_LastStateCheckpoint_User> {
+    constructor() {
+        super("PB.MessageToClient.Lobby.LastStateCheckpoint.User", [
+            { no: 1, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 2, name: "username", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 3, name: "is_in_lobby", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+        ]);
+    }
+    create(value?: PartialMessage<PB_MessageToClient_Lobby_LastStateCheckpoint_User>): PB_MessageToClient_Lobby_LastStateCheckpoint_User {
+        const message = { userId: 0, username: "", isInLobby: false };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<PB_MessageToClient_Lobby_LastStateCheckpoint_User>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PB_MessageToClient_Lobby_LastStateCheckpoint_User): PB_MessageToClient_Lobby_LastStateCheckpoint_User {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* int32 user_id */ 1:
+                    message.userId = reader.int32();
+                    break;
+                case /* string username */ 2:
+                    message.username = reader.string();
+                    break;
+                case /* bool is_in_lobby */ 3:
+                    message.isInLobby = reader.bool();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: PB_MessageToClient_Lobby_LastStateCheckpoint_User, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int32 user_id = 1; */
+        if (message.userId !== 0)
+            writer.tag(1, WireType.Varint).int32(message.userId);
+        /* string username = 2; */
+        if (message.username !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.username);
+        /* bool is_in_lobby = 3; */
+        if (message.isInLobby !== false)
+            writer.tag(3, WireType.Varint).bool(message.isInLobby);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message PB.MessageToClient.Lobby.LastStateCheckpoint.User
+ */
+export const PB_MessageToClient_Lobby_LastStateCheckpoint_User = new PB_MessageToClient_Lobby_LastStateCheckpoint_User$Type();
+// @generated message type with reflection information, may provide speed optimized methods
 class PB_MessageToClient_Lobby_Event$Type extends MessageType<PB_MessageToClient_Lobby_Event> {
     constructor() {
-        super("PB.MessageToClient.Lobby.Event", []);
+        super("PB.MessageToClient.Lobby.Event", [
+            { no: 6, name: "add_user_to_lobby", kind: "message", T: () => PB_MessageToClient_Lobby_Event_AddUserToLobby },
+            { no: 7, name: "remove_user_from_lobby", kind: "message", T: () => PB_MessageToClient_Lobby_Event_RemoveUserFromLobby }
+        ]);
     }
     create(value?: PartialMessage<PB_MessageToClient_Lobby_Event>): PB_MessageToClient_Lobby_Event {
         const message = {};
@@ -3078,9 +3200,34 @@ class PB_MessageToClient_Lobby_Event$Type extends MessageType<PB_MessageToClient
         return message;
     }
     internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PB_MessageToClient_Lobby_Event): PB_MessageToClient_Lobby_Event {
-        return target ?? this.create();
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* PB.MessageToClient.Lobby.Event.AddUserToLobby add_user_to_lobby */ 6:
+                    message.addUserToLobby = PB_MessageToClient_Lobby_Event_AddUserToLobby.internalBinaryRead(reader, reader.uint32(), options, message.addUserToLobby);
+                    break;
+                case /* PB.MessageToClient.Lobby.Event.RemoveUserFromLobby remove_user_from_lobby */ 7:
+                    message.removeUserFromLobby = PB_MessageToClient_Lobby_Event_RemoveUserFromLobby.internalBinaryRead(reader, reader.uint32(), options, message.removeUserFromLobby);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
     }
     internalBinaryWrite(message: PB_MessageToClient_Lobby_Event, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* PB.MessageToClient.Lobby.Event.AddUserToLobby add_user_to_lobby = 6; */
+        if (message.addUserToLobby)
+            PB_MessageToClient_Lobby_Event_AddUserToLobby.internalBinaryWrite(message.addUserToLobby, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
+        /* PB.MessageToClient.Lobby.Event.RemoveUserFromLobby remove_user_from_lobby = 7; */
+        if (message.removeUserFromLobby)
+            PB_MessageToClient_Lobby_Event_RemoveUserFromLobby.internalBinaryWrite(message.removeUserFromLobby, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -3091,6 +3238,107 @@ class PB_MessageToClient_Lobby_Event$Type extends MessageType<PB_MessageToClient
  * @generated MessageType for protobuf message PB.MessageToClient.Lobby.Event
  */
 export const PB_MessageToClient_Lobby_Event = new PB_MessageToClient_Lobby_Event$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class PB_MessageToClient_Lobby_Event_AddUserToLobby$Type extends MessageType<PB_MessageToClient_Lobby_Event_AddUserToLobby> {
+    constructor() {
+        super("PB.MessageToClient.Lobby.Event.AddUserToLobby", [
+            { no: 1, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 2, name: "username", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+        ]);
+    }
+    create(value?: PartialMessage<PB_MessageToClient_Lobby_Event_AddUserToLobby>): PB_MessageToClient_Lobby_Event_AddUserToLobby {
+        const message = { userId: 0, username: "" };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<PB_MessageToClient_Lobby_Event_AddUserToLobby>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PB_MessageToClient_Lobby_Event_AddUserToLobby): PB_MessageToClient_Lobby_Event_AddUserToLobby {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* int32 user_id */ 1:
+                    message.userId = reader.int32();
+                    break;
+                case /* string username */ 2:
+                    message.username = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: PB_MessageToClient_Lobby_Event_AddUserToLobby, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int32 user_id = 1; */
+        if (message.userId !== 0)
+            writer.tag(1, WireType.Varint).int32(message.userId);
+        /* string username = 2; */
+        if (message.username !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.username);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message PB.MessageToClient.Lobby.Event.AddUserToLobby
+ */
+export const PB_MessageToClient_Lobby_Event_AddUserToLobby = new PB_MessageToClient_Lobby_Event_AddUserToLobby$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class PB_MessageToClient_Lobby_Event_RemoveUserFromLobby$Type extends MessageType<PB_MessageToClient_Lobby_Event_RemoveUserFromLobby> {
+    constructor() {
+        super("PB.MessageToClient.Lobby.Event.RemoveUserFromLobby", [
+            { no: 1, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
+        ]);
+    }
+    create(value?: PartialMessage<PB_MessageToClient_Lobby_Event_RemoveUserFromLobby>): PB_MessageToClient_Lobby_Event_RemoveUserFromLobby {
+        const message = { userId: 0 };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<PB_MessageToClient_Lobby_Event_RemoveUserFromLobby>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PB_MessageToClient_Lobby_Event_RemoveUserFromLobby): PB_MessageToClient_Lobby_Event_RemoveUserFromLobby {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* int32 user_id */ 1:
+                    message.userId = reader.int32();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: PB_MessageToClient_Lobby_Event_RemoveUserFromLobby, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int32 user_id = 1; */
+        if (message.userId !== 0)
+            writer.tag(1, WireType.Varint).int32(message.userId);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message PB.MessageToClient.Lobby.Event.RemoveUserFromLobby
+ */
+export const PB_MessageToClient_Lobby_Event_RemoveUserFromLobby = new PB_MessageToClient_Lobby_Event_RemoveUserFromLobby$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class PB_GameReview$Type extends MessageType<PB_GameReview> {
     constructor() {
