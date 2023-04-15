@@ -597,6 +597,10 @@ export interface PB_MessageToClient_Lobby {
      * @generated from protobuf field: PB.MessageToClient.Lobby.LastStateCheckpoint last_state_checkpoint = 1;
      */
     lastStateCheckpoint?: PB_MessageToClient_Lobby_LastStateCheckpoint;
+    /**
+     * @generated from protobuf field: repeated PB.MessageToClient.Lobby.Event events = 2;
+     */
+    events: PB_MessageToClient_Lobby_Event[];
 }
 /**
  * @generated from protobuf message PB.MessageToClient.Lobby.LastStateCheckpoint
@@ -606,6 +610,11 @@ export interface PB_MessageToClient_Lobby_LastStateCheckpoint {
      * @generated from protobuf field: int32 last_event_index = 3;
      */
     lastEventIndex: number;
+}
+/**
+ * @generated from protobuf message PB.MessageToClient.Lobby.Event
+ */
+export interface PB_MessageToClient_Lobby_Event {
 }
 /**
  * @generated from protobuf message PB.GameReview
@@ -2959,11 +2968,12 @@ export const PB_MessageToClient_LoginLogout = new PB_MessageToClient_LoginLogout
 class PB_MessageToClient_Lobby$Type extends MessageType<PB_MessageToClient_Lobby> {
     constructor() {
         super("PB.MessageToClient.Lobby", [
-            { no: 1, name: "last_state_checkpoint", kind: "message", T: () => PB_MessageToClient_Lobby_LastStateCheckpoint }
+            { no: 1, name: "last_state_checkpoint", kind: "message", T: () => PB_MessageToClient_Lobby_LastStateCheckpoint },
+            { no: 2, name: "events", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => PB_MessageToClient_Lobby_Event }
         ]);
     }
     create(value?: PartialMessage<PB_MessageToClient_Lobby>): PB_MessageToClient_Lobby {
-        const message = {};
+        const message = { events: [] };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<PB_MessageToClient_Lobby>(this, message, value);
@@ -2976,6 +2986,9 @@ class PB_MessageToClient_Lobby$Type extends MessageType<PB_MessageToClient_Lobby
             switch (fieldNo) {
                 case /* PB.MessageToClient.Lobby.LastStateCheckpoint last_state_checkpoint */ 1:
                     message.lastStateCheckpoint = PB_MessageToClient_Lobby_LastStateCheckpoint.internalBinaryRead(reader, reader.uint32(), options, message.lastStateCheckpoint);
+                    break;
+                case /* repeated PB.MessageToClient.Lobby.Event events */ 2:
+                    message.events.push(PB_MessageToClient_Lobby_Event.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -2992,6 +3005,9 @@ class PB_MessageToClient_Lobby$Type extends MessageType<PB_MessageToClient_Lobby
         /* PB.MessageToClient.Lobby.LastStateCheckpoint last_state_checkpoint = 1; */
         if (message.lastStateCheckpoint)
             PB_MessageToClient_Lobby_LastStateCheckpoint.internalBinaryWrite(message.lastStateCheckpoint, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* repeated PB.MessageToClient.Lobby.Event events = 2; */
+        for (let i = 0; i < message.events.length; i++)
+            PB_MessageToClient_Lobby_Event.internalBinaryWrite(message.events[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -3049,6 +3065,32 @@ class PB_MessageToClient_Lobby_LastStateCheckpoint$Type extends MessageType<PB_M
  * @generated MessageType for protobuf message PB.MessageToClient.Lobby.LastStateCheckpoint
  */
 export const PB_MessageToClient_Lobby_LastStateCheckpoint = new PB_MessageToClient_Lobby_LastStateCheckpoint$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class PB_MessageToClient_Lobby_Event$Type extends MessageType<PB_MessageToClient_Lobby_Event> {
+    constructor() {
+        super("PB.MessageToClient.Lobby.Event", []);
+    }
+    create(value?: PartialMessage<PB_MessageToClient_Lobby_Event>): PB_MessageToClient_Lobby_Event {
+        const message = {};
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<PB_MessageToClient_Lobby_Event>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PB_MessageToClient_Lobby_Event): PB_MessageToClient_Lobby_Event {
+        return target ?? this.create();
+    }
+    internalBinaryWrite(message: PB_MessageToClient_Lobby_Event, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message PB.MessageToClient.Lobby.Event
+ */
+export const PB_MessageToClient_Lobby_Event = new PB_MessageToClient_Lobby_Event$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class PB_GameReview$Type extends MessageType<PB_GameReview> {
     constructor() {

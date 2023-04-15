@@ -1,6 +1,7 @@
 import { writable } from 'svelte/store';
 import {
 	PB_MessageToClient_Lobby,
+	PB_MessageToClient_Lobby_Event,
 	PB_MessageToClient_Lobby_LastStateCheckpoint,
 	PB_MessageToServer,
 } from '../common/pb';
@@ -34,11 +35,22 @@ export class LobbyManager {
 		if (message.lastStateCheckpoint) {
 			this.onMessage_LastStateCheckpoint(message.lastStateCheckpoint);
 		}
+		if (message.events.length > 0) {
+			this.onMessage_Events(message.events);
+		}
 
 		this.connectedWritableStore.set(true);
 	}
 
 	onMessage_LastStateCheckpoint(message: PB_MessageToClient_Lobby_LastStateCheckpoint) {
 		this.lastEventIndex = message.lastEventIndex;
+	}
+
+	onMessage_Events(events: PB_MessageToClient_Lobby_Event[]) {
+		for (let i = 0; i < events.length; i++) {
+			const event = events[i];
+		}
+
+		this.lastEventIndex += events.length;
 	}
 }
