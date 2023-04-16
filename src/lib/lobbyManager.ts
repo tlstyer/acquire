@@ -18,6 +18,10 @@ export class LobbyManager {
 	private connectedWritableStore = writable(false);
 	connectedStore = { subscribe: this.connectedWritableStore.subscribe };
 
+	private shouldUpdateUsernamesStore = false;
+	private usernamesWritableStore = writable<string[]>([]);
+	usernamesStore = { subscribe: this.usernamesWritableStore.subscribe };
+
 	constructor(public client: Client) {}
 
 	connect() {
@@ -45,6 +49,13 @@ export class LobbyManager {
 		}
 
 		this.connectedWritableStore.set(true);
+
+		if (this.shouldUpdateUsernamesStore) {
+			this.usernamesWritableStore.set(
+				[...this.userIDs].map((userID) => this.userIDToUsername.get(userID) ?? '?'),
+			);
+			this.shouldUpdateUsernamesStore = false;
+		}
 	}
 
 	onMessage_LastStateCheckpoint(message: PB_MessageToClient_Lobby_LastStateCheckpoint) {
@@ -62,6 +73,8 @@ export class LobbyManager {
 		}
 
 		this.lastEventIndex = message.lastEventIndex;
+
+		this.shouldUpdateUsernamesStore = true;
 	}
 
 	onMessage_Events(events: PB_MessageToClient_Lobby_Event[]) {
@@ -84,9 +97,13 @@ export class LobbyManager {
 		}
 
 		this.userIDs.add(event.userId);
+
+		this.shouldUpdateUsernamesStore = true;
 	}
 
 	onMessage_Event_RemoveUserFromLobby(event: PB_MessageToClient_Lobby_Event_RemoveUserFromLobby) {
 		this.userIDs.delete(event.userId);
+
+		this.shouldUpdateUsernamesStore = true;
 	}
 }

@@ -12,6 +12,10 @@ function main() {
 		parseInt(process.env.LOG_TIME ?? '0', 10),
 	);
 	serverCommunication.begin();
+
+	setInterval(() => {
+		server.lobbyRoom.sendQueuedEvents();
+	}, 500);
 }
 
 main();
