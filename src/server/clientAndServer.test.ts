@@ -1,12 +1,15 @@
 import { Client } from '$lib/client';
 import { TestClientCommunication } from '$lib/clientCommunication';
 import { describe, expect, test, vi } from 'vitest';
+import { GameSetup } from '../common/gameSetup';
 import { createLoginLogoutMessage } from '../common/helpers';
 import {
+	PB_GameMode,
 	PB_MessageToClient,
 	PB_MessageToClient_LoginLogout_ResponseCode,
 	PB_MessageToServer,
 } from '../common/pb';
+import { GameRoom } from './gameRoom';
 import { Server } from './server';
 import { TestServerCommunication } from './serverCommunication';
 import { TestUserData, TestUserDataProvider, getPasswordHash } from './userDataProvider';
@@ -698,6 +701,93 @@ describe('lobby', () => {
 		expectedUserIDToUsername.delete(3);
 		expect(clientAnon2.lobbyManager.userIDToUsername).toEqual(expectedUserIDToUsername);
 		expect(clientAnon2.lobbyManager.userIDs).toEqual(new Set([4]));
+	});
+
+	describe('create game', () => {
+		test('cannot if not logged in', async () => {
+			const { client, clientCommunication } = createOneClientConnectedToOneServer();
+
+			client.connectToLobby();
+
+			clientCommunication.communicatedMessages.length = 0;
+
+			client.lobbyManager.createGame(PB_GameMode.TEAMS_3_VS_3);
+
+			expect(clientCommunication.communicatedMessages.length).toBe(1);
+		});
+
+		test('cannot if not in lobby', async () => {
+			const { client, clientCommunication } = createOneClientConnectedToOneServer();
+
+			client.loginWithToken('user 3', userIDToTestUserData[3].passwordHash);
+			await waitForAsyncServerStuff();
+
+			clientCommunication.communicatedMessages.length = 0;
+
+			client.lobbyManager.createGame(PB_GameMode.TEAMS_3_VS_3);
+
+			expect(clientCommunication.communicatedMessages.length).toBe(1);
+		});
+
+		describe('cannot if passing invalid game mode', () => {
+			runTest('that is too small', PB_GameMode.SINGLES_1 - 1);
+			runTest('that is too big', PB_GameMode.TEAMS_3_VS_3 + 1);
+
+			function runTest(description: string, gameMode: number) {
+				test(description, async () => {
+					const { client, clientCommunication } = createOneClientConnectedToOneServer();
+
+					client.loginWithToken('user 3', userIDToTestUserData[3].passwordHash);
+					await waitForAsyncServerStuff();
+					client.connectToLobby();
+
+					clientCommunication.communicatedMessages.length = 0;
+
+					client.lobbyManager.createGame(gameMode);
+
+					expect(clientCommunication.communicatedMessages.length).toBe(1);
+				});
+			}
+		});
+
+		test('can if passing valid game mode', async () => {
+			const { client, clientCommunication, server } = createOneClientConnectedToOneServer();
+
+			client.loginWithToken('user 3', userIDToTestUserData[3].passwordHash);
+			await waitForAsyncServerStuff();
+			client.connectToLobby();
+			server.lobbyRoom.sendQueuedEvents();
+
+			clientCommunication.communicatedMessages.length = 0;
+
+			client.lobbyManager.createGame(PB_GameMode.TEAMS_3_VS_3);
+
+			expect(clientCommunication.communicatedMessages.length).toBe(2);
+			expect(clientCommunication.communicatedMessages[1].receivedMessage).toEqual({
+				lobby: {
+					events: [],
+					createGameResponse: { gameNumber: 1 },
+				},
+			});
+
+			clientCommunication.communicatedMessages.length = 0;
+
+			server.lobbyRoom.sendQueuedEvents();
+
+			expect(clientCommunication.communicatedMessages.length).toBe(1);
+			expect(clientCommunication.communicatedMessages[0].receivedMessage).toEqual({
+				lobby: {
+					events: [
+						{ gameCreated: { gameNumber: 1, gameDisplayNumber: 1, gameMode: 9, hostUserId: 3 } },
+					],
+				},
+			});
+
+			const gameRoom = server.gameRoomsManager.gameNumberToGameRoom.get(1);
+			expect(gameRoom).toBeInstanceOf(GameRoom);
+			expect(gameRoom!.gameSetup).toBeInstanceOf(GameSetup);
+			expect(gameRoom!.game).toBe(undefined);
+		});
 	});
 });
 

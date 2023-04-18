@@ -491,6 +491,10 @@ export interface PB_MessageToServer_Lobby {
      * @generated from protobuf field: PB.MessageToServer.Lobby.Connect connect = 1;
      */
     connect?: PB_MessageToServer_Lobby_Connect;
+    /**
+     * @generated from protobuf field: PB.MessageToServer.Lobby.CreateGame create_game = 2;
+     */
+    createGame?: PB_MessageToServer_Lobby_CreateGame;
 }
 /**
  * @generated from protobuf message PB.MessageToServer.Lobby.Connect
@@ -500,6 +504,15 @@ export interface PB_MessageToServer_Lobby_Connect {
      * @generated from protobuf field: int32 last_event_index = 1;
      */
     lastEventIndex: number;
+}
+/**
+ * @generated from protobuf message PB.MessageToServer.Lobby.CreateGame
+ */
+export interface PB_MessageToServer_Lobby_CreateGame {
+    /**
+     * @generated from protobuf field: PB.GameMode game_mode = 1;
+     */
+    gameMode: PB_GameMode;
 }
 /**
  * @generated from protobuf message PB.MessageToClient
@@ -601,6 +614,10 @@ export interface PB_MessageToClient_Lobby {
      * @generated from protobuf field: repeated PB.MessageToClient.Lobby.Event events = 2;
      */
     events: PB_MessageToClient_Lobby_Event[];
+    /**
+     * @generated from protobuf field: PB.MessageToClient.Lobby.CreateGameResponse create_game_response = 3;
+     */
+    createGameResponse?: PB_MessageToClient_Lobby_CreateGameResponse;
 }
 /**
  * @generated from protobuf message PB.MessageToClient.Lobby.LastStateCheckpoint
@@ -637,6 +654,10 @@ export interface PB_MessageToClient_Lobby_LastStateCheckpoint_User {
  */
 export interface PB_MessageToClient_Lobby_Event {
     /**
+     * @generated from protobuf field: PB.MessageToClient.Lobby.Event.GameCreated game_created = 1;
+     */
+    gameCreated?: PB_MessageToClient_Lobby_Event_GameCreated;
+    /**
      * @generated from protobuf field: PB.MessageToClient.Lobby.Event.AddUserToLobby add_user_to_lobby = 6;
      */
     addUserToLobby?: PB_MessageToClient_Lobby_Event_AddUserToLobby;
@@ -644,6 +665,27 @@ export interface PB_MessageToClient_Lobby_Event {
      * @generated from protobuf field: PB.MessageToClient.Lobby.Event.RemoveUserFromLobby remove_user_from_lobby = 7;
      */
     removeUserFromLobby?: PB_MessageToClient_Lobby_Event_RemoveUserFromLobby;
+}
+/**
+ * @generated from protobuf message PB.MessageToClient.Lobby.Event.GameCreated
+ */
+export interface PB_MessageToClient_Lobby_Event_GameCreated {
+    /**
+     * @generated from protobuf field: int32 game_number = 1;
+     */
+    gameNumber: number;
+    /**
+     * @generated from protobuf field: int32 game_display_number = 2;
+     */
+    gameDisplayNumber: number;
+    /**
+     * @generated from protobuf field: PB.GameMode game_mode = 3;
+     */
+    gameMode: PB_GameMode;
+    /**
+     * @generated from protobuf field: int32 host_user_id = 4;
+     */
+    hostUserId: number;
 }
 /**
  * @generated from protobuf message PB.MessageToClient.Lobby.Event.AddUserToLobby
@@ -666,6 +708,15 @@ export interface PB_MessageToClient_Lobby_Event_RemoveUserFromLobby {
      * @generated from protobuf field: int32 user_id = 1;
      */
     userId: number;
+}
+/**
+ * @generated from protobuf message PB.MessageToClient.Lobby.CreateGameResponse
+ */
+export interface PB_MessageToClient_Lobby_CreateGameResponse {
+    /**
+     * @generated from protobuf field: int32 game_number = 1;
+     */
+    gameNumber: number;
 }
 /**
  * @generated from protobuf message PB.GameReview
@@ -2742,7 +2793,8 @@ export const PB_MessageToServer_LoginLogout_Logout = new PB_MessageToServer_Logi
 class PB_MessageToServer_Lobby$Type extends MessageType<PB_MessageToServer_Lobby> {
     constructor() {
         super("PB.MessageToServer.Lobby", [
-            { no: 1, name: "connect", kind: "message", T: () => PB_MessageToServer_Lobby_Connect }
+            { no: 1, name: "connect", kind: "message", T: () => PB_MessageToServer_Lobby_Connect },
+            { no: 2, name: "create_game", kind: "message", T: () => PB_MessageToServer_Lobby_CreateGame }
         ]);
     }
     create(value?: PartialMessage<PB_MessageToServer_Lobby>): PB_MessageToServer_Lobby {
@@ -2760,6 +2812,9 @@ class PB_MessageToServer_Lobby$Type extends MessageType<PB_MessageToServer_Lobby
                 case /* PB.MessageToServer.Lobby.Connect connect */ 1:
                     message.connect = PB_MessageToServer_Lobby_Connect.internalBinaryRead(reader, reader.uint32(), options, message.connect);
                     break;
+                case /* PB.MessageToServer.Lobby.CreateGame create_game */ 2:
+                    message.createGame = PB_MessageToServer_Lobby_CreateGame.internalBinaryRead(reader, reader.uint32(), options, message.createGame);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -2775,6 +2830,9 @@ class PB_MessageToServer_Lobby$Type extends MessageType<PB_MessageToServer_Lobby
         /* PB.MessageToServer.Lobby.Connect connect = 1; */
         if (message.connect)
             PB_MessageToServer_Lobby_Connect.internalBinaryWrite(message.connect, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* PB.MessageToServer.Lobby.CreateGame create_game = 2; */
+        if (message.createGame)
+            PB_MessageToServer_Lobby_CreateGame.internalBinaryWrite(message.createGame, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -2832,6 +2890,53 @@ class PB_MessageToServer_Lobby_Connect$Type extends MessageType<PB_MessageToServ
  * @generated MessageType for protobuf message PB.MessageToServer.Lobby.Connect
  */
 export const PB_MessageToServer_Lobby_Connect = new PB_MessageToServer_Lobby_Connect$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class PB_MessageToServer_Lobby_CreateGame$Type extends MessageType<PB_MessageToServer_Lobby_CreateGame> {
+    constructor() {
+        super("PB.MessageToServer.Lobby.CreateGame", [
+            { no: 1, name: "game_mode", kind: "enum", T: () => ["PB.GameMode", PB_GameMode] }
+        ]);
+    }
+    create(value?: PartialMessage<PB_MessageToServer_Lobby_CreateGame>): PB_MessageToServer_Lobby_CreateGame {
+        const message = { gameMode: 0 };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<PB_MessageToServer_Lobby_CreateGame>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PB_MessageToServer_Lobby_CreateGame): PB_MessageToServer_Lobby_CreateGame {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* PB.GameMode game_mode */ 1:
+                    message.gameMode = reader.int32();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: PB_MessageToServer_Lobby_CreateGame, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* PB.GameMode game_mode = 1; */
+        if (message.gameMode !== 0)
+            writer.tag(1, WireType.Varint).int32(message.gameMode);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message PB.MessageToServer.Lobby.CreateGame
+ */
+export const PB_MessageToServer_Lobby_CreateGame = new PB_MessageToServer_Lobby_CreateGame$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class PB_MessageToClient$Type extends MessageType<PB_MessageToClient> {
     constructor() {
@@ -3020,7 +3125,8 @@ class PB_MessageToClient_Lobby$Type extends MessageType<PB_MessageToClient_Lobby
     constructor() {
         super("PB.MessageToClient.Lobby", [
             { no: 1, name: "last_state_checkpoint", kind: "message", T: () => PB_MessageToClient_Lobby_LastStateCheckpoint },
-            { no: 2, name: "events", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => PB_MessageToClient_Lobby_Event }
+            { no: 2, name: "events", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => PB_MessageToClient_Lobby_Event },
+            { no: 3, name: "create_game_response", kind: "message", T: () => PB_MessageToClient_Lobby_CreateGameResponse }
         ]);
     }
     create(value?: PartialMessage<PB_MessageToClient_Lobby>): PB_MessageToClient_Lobby {
@@ -3041,6 +3147,9 @@ class PB_MessageToClient_Lobby$Type extends MessageType<PB_MessageToClient_Lobby
                 case /* repeated PB.MessageToClient.Lobby.Event events */ 2:
                     message.events.push(PB_MessageToClient_Lobby_Event.internalBinaryRead(reader, reader.uint32(), options));
                     break;
+                case /* PB.MessageToClient.Lobby.CreateGameResponse create_game_response */ 3:
+                    message.createGameResponse = PB_MessageToClient_Lobby_CreateGameResponse.internalBinaryRead(reader, reader.uint32(), options, message.createGameResponse);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -3059,6 +3168,9 @@ class PB_MessageToClient_Lobby$Type extends MessageType<PB_MessageToClient_Lobby
         /* repeated PB.MessageToClient.Lobby.Event events = 2; */
         for (let i = 0; i < message.events.length; i++)
             PB_MessageToClient_Lobby_Event.internalBinaryWrite(message.events[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* PB.MessageToClient.Lobby.CreateGameResponse create_game_response = 3; */
+        if (message.createGameResponse)
+            PB_MessageToClient_Lobby_CreateGameResponse.internalBinaryWrite(message.createGameResponse, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -3188,6 +3300,7 @@ export const PB_MessageToClient_Lobby_LastStateCheckpoint_User = new PB_MessageT
 class PB_MessageToClient_Lobby_Event$Type extends MessageType<PB_MessageToClient_Lobby_Event> {
     constructor() {
         super("PB.MessageToClient.Lobby.Event", [
+            { no: 1, name: "game_created", kind: "message", T: () => PB_MessageToClient_Lobby_Event_GameCreated },
             { no: 6, name: "add_user_to_lobby", kind: "message", T: () => PB_MessageToClient_Lobby_Event_AddUserToLobby },
             { no: 7, name: "remove_user_from_lobby", kind: "message", T: () => PB_MessageToClient_Lobby_Event_RemoveUserFromLobby }
         ]);
@@ -3204,6 +3317,9 @@ class PB_MessageToClient_Lobby_Event$Type extends MessageType<PB_MessageToClient
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
+                case /* PB.MessageToClient.Lobby.Event.GameCreated game_created */ 1:
+                    message.gameCreated = PB_MessageToClient_Lobby_Event_GameCreated.internalBinaryRead(reader, reader.uint32(), options, message.gameCreated);
+                    break;
                 case /* PB.MessageToClient.Lobby.Event.AddUserToLobby add_user_to_lobby */ 6:
                     message.addUserToLobby = PB_MessageToClient_Lobby_Event_AddUserToLobby.internalBinaryRead(reader, reader.uint32(), options, message.addUserToLobby);
                     break;
@@ -3222,6 +3338,9 @@ class PB_MessageToClient_Lobby_Event$Type extends MessageType<PB_MessageToClient
         return message;
     }
     internalBinaryWrite(message: PB_MessageToClient_Lobby_Event, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* PB.MessageToClient.Lobby.Event.GameCreated game_created = 1; */
+        if (message.gameCreated)
+            PB_MessageToClient_Lobby_Event_GameCreated.internalBinaryWrite(message.gameCreated, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         /* PB.MessageToClient.Lobby.Event.AddUserToLobby add_user_to_lobby = 6; */
         if (message.addUserToLobby)
             PB_MessageToClient_Lobby_Event_AddUserToLobby.internalBinaryWrite(message.addUserToLobby, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
@@ -3238,6 +3357,74 @@ class PB_MessageToClient_Lobby_Event$Type extends MessageType<PB_MessageToClient
  * @generated MessageType for protobuf message PB.MessageToClient.Lobby.Event
  */
 export const PB_MessageToClient_Lobby_Event = new PB_MessageToClient_Lobby_Event$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class PB_MessageToClient_Lobby_Event_GameCreated$Type extends MessageType<PB_MessageToClient_Lobby_Event_GameCreated> {
+    constructor() {
+        super("PB.MessageToClient.Lobby.Event.GameCreated", [
+            { no: 1, name: "game_number", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 2, name: "game_display_number", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 3, name: "game_mode", kind: "enum", T: () => ["PB.GameMode", PB_GameMode] },
+            { no: 4, name: "host_user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
+        ]);
+    }
+    create(value?: PartialMessage<PB_MessageToClient_Lobby_Event_GameCreated>): PB_MessageToClient_Lobby_Event_GameCreated {
+        const message = { gameNumber: 0, gameDisplayNumber: 0, gameMode: 0, hostUserId: 0 };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<PB_MessageToClient_Lobby_Event_GameCreated>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PB_MessageToClient_Lobby_Event_GameCreated): PB_MessageToClient_Lobby_Event_GameCreated {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* int32 game_number */ 1:
+                    message.gameNumber = reader.int32();
+                    break;
+                case /* int32 game_display_number */ 2:
+                    message.gameDisplayNumber = reader.int32();
+                    break;
+                case /* PB.GameMode game_mode */ 3:
+                    message.gameMode = reader.int32();
+                    break;
+                case /* int32 host_user_id */ 4:
+                    message.hostUserId = reader.int32();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: PB_MessageToClient_Lobby_Event_GameCreated, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int32 game_number = 1; */
+        if (message.gameNumber !== 0)
+            writer.tag(1, WireType.Varint).int32(message.gameNumber);
+        /* int32 game_display_number = 2; */
+        if (message.gameDisplayNumber !== 0)
+            writer.tag(2, WireType.Varint).int32(message.gameDisplayNumber);
+        /* PB.GameMode game_mode = 3; */
+        if (message.gameMode !== 0)
+            writer.tag(3, WireType.Varint).int32(message.gameMode);
+        /* int32 host_user_id = 4; */
+        if (message.hostUserId !== 0)
+            writer.tag(4, WireType.Varint).int32(message.hostUserId);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message PB.MessageToClient.Lobby.Event.GameCreated
+ */
+export const PB_MessageToClient_Lobby_Event_GameCreated = new PB_MessageToClient_Lobby_Event_GameCreated$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class PB_MessageToClient_Lobby_Event_AddUserToLobby$Type extends MessageType<PB_MessageToClient_Lobby_Event_AddUserToLobby> {
     constructor() {
@@ -3339,6 +3526,53 @@ class PB_MessageToClient_Lobby_Event_RemoveUserFromLobby$Type extends MessageTyp
  * @generated MessageType for protobuf message PB.MessageToClient.Lobby.Event.RemoveUserFromLobby
  */
 export const PB_MessageToClient_Lobby_Event_RemoveUserFromLobby = new PB_MessageToClient_Lobby_Event_RemoveUserFromLobby$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class PB_MessageToClient_Lobby_CreateGameResponse$Type extends MessageType<PB_MessageToClient_Lobby_CreateGameResponse> {
+    constructor() {
+        super("PB.MessageToClient.Lobby.CreateGameResponse", [
+            { no: 1, name: "game_number", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
+        ]);
+    }
+    create(value?: PartialMessage<PB_MessageToClient_Lobby_CreateGameResponse>): PB_MessageToClient_Lobby_CreateGameResponse {
+        const message = { gameNumber: 0 };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<PB_MessageToClient_Lobby_CreateGameResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PB_MessageToClient_Lobby_CreateGameResponse): PB_MessageToClient_Lobby_CreateGameResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* int32 game_number */ 1:
+                    message.gameNumber = reader.int32();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: PB_MessageToClient_Lobby_CreateGameResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int32 game_number = 1; */
+        if (message.gameNumber !== 0)
+            writer.tag(1, WireType.Varint).int32(message.gameNumber);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message PB.MessageToClient.Lobby.CreateGameResponse
+ */
+export const PB_MessageToClient_Lobby_CreateGameResponse = new PB_MessageToClient_Lobby_CreateGameResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class PB_GameReview$Type extends MessageType<PB_GameReview> {
     constructor() {

@@ -1,17 +1,28 @@
 import {
+	PB_GameMode,
 	PB_MessageToClient,
 	PB_MessageToClient_Lobby_Event,
 	PB_MessageToClient_Lobby_LastStateCheckpoint_User,
 	PB_MessageToServer_Lobby,
 	PB_MessageToServer_Lobby_Connect,
+	PB_MessageToServer_Lobby_CreateGame,
 } from '../common/pb';
 import type { Client } from './client';
+import type { GameRoomsManager } from './gameRoomsManager';
 import { Room } from './room';
 
 export class LobbyRoom extends Room {
+	private gameRoomsManager!: GameRoomsManager;
+	setGameRoomsManager(gameRoomsManager: GameRoomsManager) {
+		this.gameRoomsManager = gameRoomsManager;
+	}
+
 	onMessage(client: Client, message: PB_MessageToServer_Lobby) {
 		if (message.connect) {
 			this.onMessage_Connect(client, message.connect);
+		}
+		if (message.createGame) {
+			this.onMessage_CreateGame(client, message.createGame);
 		}
 	}
 
@@ -19,6 +30,32 @@ export class LobbyRoom extends Room {
 		client.connectToRoom(this);
 
 		client.sendMessage(this.getConnectionResponse(message));
+	}
+
+	onMessage_CreateGame(client: Client, message: PB_MessageToServer_Lobby_CreateGame) {
+		if (client.userID === undefined) {
+			return;
+		}
+		if (client.room !== this) {
+			return;
+		}
+		if (message.gameMode < PB_GameMode.SINGLES_1 || message.gameMode > PB_GameMode.TEAMS_3_VS_3) {
+			return;
+		}
+
+		const gameRoom = this.gameRoomsManager.createGameRoom(client, message.gameMode);
+
+		client.sendMessage(
+			PB_MessageToClient.toBinary(
+				PB_MessageToClient.create({
+					lobby: {
+						createGameResponse: {
+							gameNumber: gameRoom.gameNumber,
+						},
+					},
+				}),
+			),
+		);
 	}
 
 	userConnected(userID: number, username: string) {

@@ -14,6 +14,7 @@ import {
 	PB_MessageToServer_LoginLogout_LoginWithToken,
 } from '../common/pb';
 import { Client } from './client';
+import { GameRoomsManager } from './gameRoomsManager';
 import { LobbyRoom } from './lobbyRoom';
 import type { ServerCommunication } from './serverCommunication';
 import type { UserData, UserDataProvider } from './userDataProvider';
@@ -24,6 +25,7 @@ export class Server {
 	clientIDToClient = new Map<number, Client>();
 
 	lobbyRoom = new LobbyRoom();
+	gameRoomsManager = new GameRoomsManager();
 
 	constructor(
 		public serverCommunication: ServerCommunication,
@@ -43,6 +45,9 @@ export class Server {
 				logTime,
 			},
 		});
+
+		this.lobbyRoom.setGameRoomsManager(this.gameRoomsManager);
+		this.gameRoomsManager.setLobbyRoom(this.lobbyRoom);
 	}
 
 	private onConnect(clientID: number) {

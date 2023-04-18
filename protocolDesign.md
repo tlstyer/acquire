@@ -124,6 +124,18 @@ Send Chat Message:
     - user ID
     - game display number
 
+# Lobby page: create game
+
+## Protocol
+
+### Send
+
+- game mode
+
+### Receive
+
+- game number
+
 # Game page
 
 ## Data needed

@@ -220,7 +220,12 @@ message PB {
         int32 last_event_index = 1;
       }
 
+      message CreateGame {
+        GameMode game_mode = 1;
+      }
+
       Connect connect = 1;
+      CreateGame create_game = 2;
     }
 
     LoginLogout login_logout = 1;
@@ -264,6 +269,13 @@ message PB {
       }
 
       message Event {
+        message GameCreated {
+          int32 game_number = 1;
+          int32 game_display_number = 2;
+          GameMode game_mode = 3;
+          int32 host_user_id = 4;
+        }
+
         message AddUserToLobby {
           int32 user_id = 1;
           string username = 2;
@@ -273,12 +285,18 @@ message PB {
           int32 user_id = 1;
         }
 
+        GameCreated game_created = 1;
         AddUserToLobby add_user_to_lobby = 6;
         RemoveUserFromLobby remove_user_from_lobby = 7;
       }
 
+      message CreateGameResponse {
+        int32 game_number = 1;
+      }
+
       LastStateCheckpoint last_state_checkpoint = 1;
       repeated Event events = 2;
+      CreateGameResponse create_game_response = 3;
     }
 
     Initial initial = 15;

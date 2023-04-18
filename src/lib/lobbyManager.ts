@@ -1,5 +1,6 @@
 import { writable } from 'svelte/store';
 import {
+	PB_GameMode,
 	PB_MessageToClient_Lobby,
 	PB_MessageToClient_Lobby_Event,
 	PB_MessageToClient_Lobby_Event_AddUserToLobby,
@@ -38,6 +39,18 @@ export class LobbyManager {
 				},
 			},
 		});
+	}
+
+	createGame(gameMode: PB_GameMode) {
+		this.client.clientCommunication.sendMessage(
+			PB_MessageToServer.toBinary({
+				lobby: {
+					createGame: {
+						gameMode,
+					},
+				},
+			}),
+		);
 	}
 
 	onMessage(message: PB_MessageToClient_Lobby) {
