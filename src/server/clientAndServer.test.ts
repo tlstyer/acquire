@@ -1,5 +1,6 @@
 import { Client } from '$lib/client';
 import { TestClientCommunication } from '$lib/clientCommunication';
+import { GameStatus } from '$lib/helpers';
 import { describe, expect, test, vi } from 'vitest';
 import { GameSetup } from '../common/gameSetup';
 import { createLoginLogoutMessage } from '../common/helpers';
@@ -599,7 +600,7 @@ describe('lobby', () => {
 		expect(clientCommunication4.communicatedMessages.length).toBe(2);
 		expect(clientCommunication4.communicatedMessages[1].receivedMessage).toEqual({
 			lobby: {
-				lastStateCheckpoint: { users: [], lastEventIndex: 2 },
+				lastStateCheckpoint: { games: [], users: [], lastEventIndex: 2 },
 				events: [{ addUserToLobby: { userId: 3, username: 'user 3' } }],
 			},
 		});
@@ -664,7 +665,7 @@ describe('lobby', () => {
 		expect(clientCommunicationAnon1.communicatedMessages.length).toBe(2);
 		expect(clientCommunicationAnon1.communicatedMessages[1].receivedMessage).toEqual({
 			lobby: {
-				lastStateCheckpoint: { users: [], lastEventIndex: 2 },
+				lastStateCheckpoint: { games: [], users: [], lastEventIndex: 2 },
 				events: [
 					{ addUserToLobby: { userId: 3, username: 'user 3' } },
 					{ addUserToLobby: { userId: 4, username: 'user 4' } },
@@ -692,6 +693,7 @@ describe('lobby', () => {
 		expect(clientCommunicationAnon2.communicatedMessages[1].receivedMessage).toEqual({
 			lobby: {
 				lastStateCheckpoint: {
+					games: [],
 					users: [{ userId: 4, username: 'user 4', isInLobby: true }],
 					lastEventIndex: 5,
 				},
@@ -787,6 +789,59 @@ describe('lobby', () => {
 			expect(gameRoom).toBeInstanceOf(GameRoom);
 			expect(gameRoom!.gameSetup).toBeInstanceOf(GameSetup);
 			expect(gameRoom!.game).toBe(undefined);
+		});
+
+		test("client's lobby manager correctly processes event", async () => {
+			const { client, clientCommunication, server, serverCommunication, userDataProvider } =
+				createOneClientConnectedToOneServer();
+			client.loginWithToken('user 3', userIDToTestUserData[3].passwordHash);
+			await waitForAsyncServerStuff();
+			client.connectToLobby();
+			client.lobbyManager.createGame(PB_GameMode.TEAMS_3_VS_3);
+			server.lobbyRoom.sendQueuedEvents();
+
+			const lobbyGame = client.lobbyManager.gameDisplayNumberToLobbyGame.get(1)!;
+			expect(lobbyGame.gameNumber).toBe(1);
+			expect(lobbyGame.gameDisplayNumber).toBe(1);
+			expect(lobbyGame.gameMode).toBe(PB_GameMode.TEAMS_3_VS_3);
+			expect(lobbyGame.usernames).toEqual(['user 3', null, null, null, null, null]);
+			expect(lobbyGame.gameStatus).toBe(GameStatus.SETTING_UP);
+		});
+
+		describe("client's lobby manager correctly processes last state checkpoint", () => {
+			runTest(true);
+			runTest(false);
+
+			function runTest(hostUserStillConnected: boolean) {
+				test(
+					hostUserStillConnected ? 'when host still connected' : 'when host disconnected',
+					async () => {
+						const { client, clientCommunication, server, serverCommunication, userDataProvider } =
+							createOneClientConnectedToOneServer();
+						client.loginWithToken('user 3', userIDToTestUserData[3].passwordHash);
+						await waitForAsyncServerStuff();
+						client.connectToLobby();
+						client.lobbyManager.createGame(PB_GameMode.TEAMS_3_VS_3);
+						if (!hostUserStillConnected) {
+							clientCommunication.disconnect();
+						}
+						server.lobbyRoom.createLastStateCheckpoint();
+
+						const clientCommunicationAnon1 = new TestClientCommunication(serverCommunication);
+						const clientAnon1 = new Client(clientCommunicationAnon1, 2);
+						clientCommunicationAnon1.connect();
+						clientCommunicationAnon1.communicatedMessages.length = 0;
+						clientAnon1.connectToLobby();
+
+						const lobbyGame = clientAnon1.lobbyManager.gameDisplayNumberToLobbyGame.get(1)!;
+						expect(lobbyGame.gameNumber).toBe(1);
+						expect(lobbyGame.gameDisplayNumber).toBe(1);
+						expect(lobbyGame.gameMode).toBe(PB_GameMode.TEAMS_3_VS_3);
+						expect(lobbyGame.usernames).toEqual(['user 3', null, null, null, null, null]);
+						expect(lobbyGame.gameStatus).toBe(GameStatus.SETTING_UP);
+					},
+				);
+			}
 		});
 	});
 });

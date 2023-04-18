@@ -1,20 +1,27 @@
 import { writable } from 'svelte/store';
+import { GameSetup } from '../common/gameSetup';
+import { gameModeToNumPlayers } from '../common/helpers';
 import {
 	PB_GameMode,
 	PB_MessageToClient_Lobby,
 	PB_MessageToClient_Lobby_Event,
 	PB_MessageToClient_Lobby_Event_AddUserToLobby,
+	PB_MessageToClient_Lobby_Event_GameCreated,
 	PB_MessageToClient_Lobby_Event_RemoveUserFromLobby,
 	PB_MessageToClient_Lobby_LastStateCheckpoint,
 	PB_MessageToServer,
+	PB_PlayerArrangementMode,
 } from '../common/pb';
 import type { Client } from './client';
+import { GameStatus } from './helpers';
 
 export class LobbyManager {
 	lastEventIndex = 0;
 
 	userIDToUsername = new Map<number, string>();
+	getUsernameForUserID = (userID: number) => this.userIDToUsername.get(userID) ?? '?';
 	userIDs = new Set<number>();
+	gameDisplayNumberToLobbyGame = new Map<number, LobbyGame>();
 
 	private connectedWritableStore = writable(false);
 	connectedStore = { subscribe: this.connectedWritableStore.subscribe };
@@ -74,6 +81,7 @@ export class LobbyManager {
 	onMessage_LastStateCheckpoint(message: PB_MessageToClient_Lobby_LastStateCheckpoint) {
 		this.userIDToUsername.clear();
 		this.userIDs.clear();
+		this.gameDisplayNumberToLobbyGame.clear();
 
 		const users = message.users;
 		for (let i = 0; i < users.length; i++) {
@@ -85,6 +93,23 @@ export class LobbyManager {
 			}
 		}
 
+		const games = message.games;
+		for (let i = 0; i < games.length; i++) {
+			const game = games[i];
+
+			this.gameDisplayNumberToLobbyGame.set(
+				game.gameDisplayNumber,
+				new LobbyGame(
+					game.gameNumber,
+					game.gameDisplayNumber,
+					game.gameMode,
+					game.hostUserId,
+					game.userIds,
+					this.getUsernameForUserID,
+				),
+			);
+		}
+
 		this.lastEventIndex = message.lastEventIndex;
 
 		this.shouldUpdateUsernamesStore = true;
@@ -94,7 +119,9 @@ export class LobbyManager {
 		for (let i = 0; i < events.length; i++) {
 			const event = events[i];
 
-			if (event.addUserToLobby) {
+			if (event.gameCreated) {
+				this.onMessage_Event_GameCreated(event.gameCreated);
+			} else if (event.addUserToLobby) {
 				this.onMessage_Event_AddUserToLobby(event.addUserToLobby);
 			} else if (event.removeUserFromLobby) {
 				this.onMessage_Event_RemoveUserFromLobby(event.removeUserFromLobby);
@@ -102,6 +129,24 @@ export class LobbyManager {
 		}
 
 		this.lastEventIndex += events.length;
+	}
+
+	onMessage_Event_GameCreated(event: PB_MessageToClient_Lobby_Event_GameCreated) {
+		const userIDs: number[] = new Array(gameModeToNumPlayers.get(event.gameMode));
+		userIDs.fill(0);
+		userIDs[0] = event.hostUserId;
+
+		this.gameDisplayNumberToLobbyGame.set(
+			event.gameDisplayNumber,
+			new LobbyGame(
+				event.gameNumber,
+				event.gameDisplayNumber,
+				event.gameMode,
+				event.hostUserId,
+				userIDs,
+				this.getUsernameForUserID,
+			),
+		);
 	}
 
 	onMessage_Event_AddUserToLobby(event: PB_MessageToClient_Lobby_Event_AddUserToLobby) {
@@ -118,5 +163,32 @@ export class LobbyManager {
 		this.userIDs.delete(event.userId);
 
 		this.shouldUpdateUsernamesStore = true;
+	}
+}
+
+class LobbyGame {
+	usernames: (string | null)[];
+	gameStatus: GameStatus;
+
+	gameSetup: GameSetup | undefined;
+
+	constructor(
+		public gameNumber: number,
+		public gameDisplayNumber: number,
+		public gameMode: PB_GameMode,
+		hostUserID: number,
+		userIDs: number[],
+		getUsernameForUserID: (userID: number) => string,
+	) {
+		this.gameStatus = GameStatus.SETTING_UP;
+
+		this.gameSetup = new GameSetup(
+			gameMode,
+			PB_PlayerArrangementMode.EXACT_ORDER,
+			hostUserID,
+			getUsernameForUserID,
+			userIDs?.map((userID) => (userID !== 0 ? userID : null)),
+		);
+		this.usernames = this.gameSetup.usernames;
 	}
 }

@@ -624,6 +624,10 @@ export interface PB_MessageToClient_Lobby {
  */
 export interface PB_MessageToClient_Lobby_LastStateCheckpoint {
     /**
+     * @generated from protobuf field: repeated PB.MessageToClient.Lobby.LastStateCheckpoint.Game games = 1;
+     */
+    games: PB_MessageToClient_Lobby_LastStateCheckpoint_Game[];
+    /**
      * @generated from protobuf field: repeated PB.MessageToClient.Lobby.LastStateCheckpoint.User users = 2;
      */
     users: PB_MessageToClient_Lobby_LastStateCheckpoint_User[];
@@ -631,6 +635,31 @@ export interface PB_MessageToClient_Lobby_LastStateCheckpoint {
      * @generated from protobuf field: int32 last_event_index = 3;
      */
     lastEventIndex: number;
+}
+/**
+ * @generated from protobuf message PB.MessageToClient.Lobby.LastStateCheckpoint.Game
+ */
+export interface PB_MessageToClient_Lobby_LastStateCheckpoint_Game {
+    /**
+     * @generated from protobuf field: int32 game_number = 1;
+     */
+    gameNumber: number;
+    /**
+     * @generated from protobuf field: int32 game_display_number = 2;
+     */
+    gameDisplayNumber: number;
+    /**
+     * @generated from protobuf field: PB.GameMode game_mode = 3;
+     */
+    gameMode: PB_GameMode;
+    /**
+     * @generated from protobuf field: int32 host_user_id = 4;
+     */
+    hostUserId: number;
+    /**
+     * @generated from protobuf field: repeated int32 user_ids = 5;
+     */
+    userIds: number[];
 }
 /**
  * @generated from protobuf message PB.MessageToClient.Lobby.LastStateCheckpoint.User
@@ -3185,12 +3214,13 @@ export const PB_MessageToClient_Lobby = new PB_MessageToClient_Lobby$Type();
 class PB_MessageToClient_Lobby_LastStateCheckpoint$Type extends MessageType<PB_MessageToClient_Lobby_LastStateCheckpoint> {
     constructor() {
         super("PB.MessageToClient.Lobby.LastStateCheckpoint", [
+            { no: 1, name: "games", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => PB_MessageToClient_Lobby_LastStateCheckpoint_Game },
             { no: 2, name: "users", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => PB_MessageToClient_Lobby_LastStateCheckpoint_User },
             { no: 3, name: "last_event_index", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
         ]);
     }
     create(value?: PartialMessage<PB_MessageToClient_Lobby_LastStateCheckpoint>): PB_MessageToClient_Lobby_LastStateCheckpoint {
-        const message = { users: [], lastEventIndex: 0 };
+        const message = { games: [], users: [], lastEventIndex: 0 };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<PB_MessageToClient_Lobby_LastStateCheckpoint>(this, message, value);
@@ -3201,6 +3231,9 @@ class PB_MessageToClient_Lobby_LastStateCheckpoint$Type extends MessageType<PB_M
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
+                case /* repeated PB.MessageToClient.Lobby.LastStateCheckpoint.Game games */ 1:
+                    message.games.push(PB_MessageToClient_Lobby_LastStateCheckpoint_Game.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
                 case /* repeated PB.MessageToClient.Lobby.LastStateCheckpoint.User users */ 2:
                     message.users.push(PB_MessageToClient_Lobby_LastStateCheckpoint_User.internalBinaryRead(reader, reader.uint32(), options));
                     break;
@@ -3219,6 +3252,9 @@ class PB_MessageToClient_Lobby_LastStateCheckpoint$Type extends MessageType<PB_M
         return message;
     }
     internalBinaryWrite(message: PB_MessageToClient_Lobby_LastStateCheckpoint, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated PB.MessageToClient.Lobby.LastStateCheckpoint.Game games = 1; */
+        for (let i = 0; i < message.games.length; i++)
+            PB_MessageToClient_Lobby_LastStateCheckpoint_Game.internalBinaryWrite(message.games[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         /* repeated PB.MessageToClient.Lobby.LastStateCheckpoint.User users = 2; */
         for (let i = 0; i < message.users.length; i++)
             PB_MessageToClient_Lobby_LastStateCheckpoint_User.internalBinaryWrite(message.users[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
@@ -3235,6 +3271,89 @@ class PB_MessageToClient_Lobby_LastStateCheckpoint$Type extends MessageType<PB_M
  * @generated MessageType for protobuf message PB.MessageToClient.Lobby.LastStateCheckpoint
  */
 export const PB_MessageToClient_Lobby_LastStateCheckpoint = new PB_MessageToClient_Lobby_LastStateCheckpoint$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class PB_MessageToClient_Lobby_LastStateCheckpoint_Game$Type extends MessageType<PB_MessageToClient_Lobby_LastStateCheckpoint_Game> {
+    constructor() {
+        super("PB.MessageToClient.Lobby.LastStateCheckpoint.Game", [
+            { no: 1, name: "game_number", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 2, name: "game_display_number", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 3, name: "game_mode", kind: "enum", T: () => ["PB.GameMode", PB_GameMode] },
+            { no: 4, name: "host_user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 5, name: "user_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ }
+        ]);
+    }
+    create(value?: PartialMessage<PB_MessageToClient_Lobby_LastStateCheckpoint_Game>): PB_MessageToClient_Lobby_LastStateCheckpoint_Game {
+        const message = { gameNumber: 0, gameDisplayNumber: 0, gameMode: 0, hostUserId: 0, userIds: [] };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<PB_MessageToClient_Lobby_LastStateCheckpoint_Game>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PB_MessageToClient_Lobby_LastStateCheckpoint_Game): PB_MessageToClient_Lobby_LastStateCheckpoint_Game {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* int32 game_number */ 1:
+                    message.gameNumber = reader.int32();
+                    break;
+                case /* int32 game_display_number */ 2:
+                    message.gameDisplayNumber = reader.int32();
+                    break;
+                case /* PB.GameMode game_mode */ 3:
+                    message.gameMode = reader.int32();
+                    break;
+                case /* int32 host_user_id */ 4:
+                    message.hostUserId = reader.int32();
+                    break;
+                case /* repeated int32 user_ids */ 5:
+                    if (wireType === WireType.LengthDelimited)
+                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
+                            message.userIds.push(reader.int32());
+                    else
+                        message.userIds.push(reader.int32());
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: PB_MessageToClient_Lobby_LastStateCheckpoint_Game, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int32 game_number = 1; */
+        if (message.gameNumber !== 0)
+            writer.tag(1, WireType.Varint).int32(message.gameNumber);
+        /* int32 game_display_number = 2; */
+        if (message.gameDisplayNumber !== 0)
+            writer.tag(2, WireType.Varint).int32(message.gameDisplayNumber);
+        /* PB.GameMode game_mode = 3; */
+        if (message.gameMode !== 0)
+            writer.tag(3, WireType.Varint).int32(message.gameMode);
+        /* int32 host_user_id = 4; */
+        if (message.hostUserId !== 0)
+            writer.tag(4, WireType.Varint).int32(message.hostUserId);
+        /* repeated int32 user_ids = 5; */
+        if (message.userIds.length) {
+            writer.tag(5, WireType.LengthDelimited).fork();
+            for (let i = 0; i < message.userIds.length; i++)
+                writer.int32(message.userIds[i]);
+            writer.join();
+        }
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message PB.MessageToClient.Lobby.LastStateCheckpoint.Game
+ */
+export const PB_MessageToClient_Lobby_LastStateCheckpoint_Game = new PB_MessageToClient_Lobby_LastStateCheckpoint_Game$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class PB_MessageToClient_Lobby_LastStateCheckpoint_User$Type extends MessageType<PB_MessageToClient_Lobby_LastStateCheckpoint_User> {
     constructor() {

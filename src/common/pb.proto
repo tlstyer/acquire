@@ -258,12 +258,21 @@ message PB {
 
     message Lobby {
       message LastStateCheckpoint {
+        message Game {
+          int32 game_number = 1;
+          int32 game_display_number = 2;
+          GameMode game_mode = 3;
+          int32 host_user_id = 4;
+          repeated int32 user_ids = 5;
+        }
+
         message User {
           int32 user_id = 1;
           string username = 2;
           bool is_in_lobby = 3;
         }
 
+        repeated Game games = 1;
         repeated User users = 2;
         int32 last_event_index = 3;
       }

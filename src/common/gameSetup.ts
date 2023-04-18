@@ -26,21 +26,37 @@ export class GameSetup {
 		public playerArrangementMode: PB_PlayerArrangementMode,
 		public hostUserID: number,
 		public getUsernameForUserID: (userID: number) => string,
+		initialUserIDs?: (number | null)[],
 	) {
 		const numPlayers = gameModeToNumPlayers.get(gameMode)!;
 		this.hostUsername = getUsernameForUserID(hostUserID);
 
-		const usernames: (string | null)[] = new Array(numPlayers);
-		usernames.fill(null);
-		usernames[0] = this.hostUsername;
-		this.usernames = usernames;
+		if (initialUserIDs !== undefined) {
+			this.usernames = initialUserIDs.map((userID) =>
+				userID !== null ? this.getUsernameForUserID(userID) : null,
+			);
 
-		const userIDs: (number | null)[] = new Array(numPlayers);
-		userIDs.fill(null);
-		userIDs[0] = hostUserID;
-		this.userIDs = userIDs;
+			this.userIDs = initialUserIDs;
 
-		this.userIDsSet = new Set([hostUserID]);
+			this.userIDsSet = new Set();
+			for (const userID of initialUserIDs) {
+				if (userID !== null) {
+					this.userIDsSet.add(userID);
+				}
+			}
+		} else {
+			const usernames: (string | null)[] = new Array(numPlayers);
+			usernames.fill(null);
+			usernames[0] = this.hostUsername;
+			this.usernames = usernames;
+
+			const userIDs: (number | null)[] = new Array(numPlayers);
+			userIDs.fill(null);
+			userIDs[0] = hostUserID;
+			this.userIDs = userIDs;
+
+			this.userIDsSet = new Set([hostUserID]);
+		}
 
 		this.approvals = defaultApprovals[numPlayers];
 	}

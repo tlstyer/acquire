@@ -2,6 +2,7 @@ import {
 	PB_GameMode,
 	PB_MessageToClient,
 	PB_MessageToClient_Lobby_Event,
+	PB_MessageToClient_Lobby_LastStateCheckpoint_Game,
 	PB_MessageToClient_Lobby_LastStateCheckpoint_User,
 	PB_MessageToServer_Lobby,
 	PB_MessageToServer_Lobby_Connect,
@@ -153,11 +154,52 @@ export class LobbyRoom extends Room {
 			}
 		}
 
+		const gameCheckpoints: PB_MessageToClient_Lobby_LastStateCheckpoint_Game[] = [];
+		for (const gameRoom of this.gameRoomsManager.gameNumberToGameRoom.values()) {
+			const gameCheckpoint = PB_MessageToClient_Lobby_LastStateCheckpoint_Game.create();
+			gameCheckpoint.gameNumber = gameRoom.gameNumber;
+			gameCheckpoint.gameDisplayNumber = gameRoom.gameDisplayNumber;
+
+			if (gameRoom.gameSetup) {
+				const gameSetup = gameRoom.gameSetup;
+
+				gameCheckpoint.gameMode = gameSetup.gameMode;
+				gameCheckpoint.hostUserId = gameSetup.hostUserID;
+				gameCheckpoint.userIds = gameSetup.userIDs.map((userID) => (userID !== null ? userID : 0));
+
+				for (let playerID = 0; playerID < gameSetup.userIDs.length; playerID++) {
+					const userID = gameSetup.userIDs[playerID];
+					const username = gameSetup.usernames[playerID];
+
+					if (userID !== null && username !== null) {
+						if (!userIDToUser.has(userID)) {
+							userIDToUser.set(
+								userID,
+								PB_MessageToClient_Lobby_LastStateCheckpoint_User.create({
+									userId: userID,
+									username,
+								}),
+							);
+						}
+					}
+				}
+			} else if (gameRoom.game) {
+				console.log('TODO');
+				continue;
+			} else {
+				console.log('huh?');
+				continue;
+			}
+
+			gameCheckpoints.push(gameCheckpoint);
+		}
+
 		this.lscLastEventIndex = this.batchesOfEvents[this.batchesOfEvents.length - 1].lastEventIndex;
 		this.lscMessage = PB_MessageToClient.toBinary(
 			PB_MessageToClient.create({
 				lobby: {
 					lastStateCheckpoint: {
+						games: gameCheckpoints,
 						users: [...userIDToUser.values()],
 						lastEventIndex: this.lscLastEventIndex,
 					},
