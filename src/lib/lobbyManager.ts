@@ -4,6 +4,7 @@ import { gameModeToNumPlayers } from '../common/helpers';
 import {
 	PB_GameMode,
 	PB_MessageToClient_Lobby,
+	PB_MessageToClient_Lobby_CreateGameResponse,
 	PB_MessageToClient_Lobby_Event,
 	PB_MessageToClient_Lobby_Event_AddUserToLobby,
 	PB_MessageToClient_Lobby_Event_GameCreated,
@@ -30,10 +31,14 @@ export class LobbyManager {
 	private usernamesWritableStore = writable<string[]>([]);
 	usernamesStore = { subscribe: this.usernamesWritableStore.subscribe };
 
+	private createdGameNumberWritableStore = writable<number | undefined>(undefined);
+	createdGameNumberStore = { subscribe: this.createdGameNumberWritableStore.subscribe };
+
 	constructor(public client: Client) {}
 
 	connect() {
 		this.connectedWritableStore.set(false);
+		this.createdGameNumberWritableStore.set(undefined);
 
 		this.client.clientCommunication.sendMessage(this.getConnectMessage());
 	}
@@ -66,6 +71,9 @@ export class LobbyManager {
 		}
 		if (message.events.length > 0) {
 			this.onMessage_Events(message.events);
+		}
+		if (message.createGameResponse) {
+			this.onMessage_CreateGameResponse(message.createGameResponse);
 		}
 
 		this.connectedWritableStore.set(true);
@@ -163,6 +171,10 @@ export class LobbyManager {
 		this.userIDs.delete(event.userId);
 
 		this.shouldUpdateUsernamesStore = true;
+	}
+
+	onMessage_CreateGameResponse(message: PB_MessageToClient_Lobby_CreateGameResponse) {
+		this.createdGameNumberWritableStore.set(message.gameNumber);
 	}
 }
 
