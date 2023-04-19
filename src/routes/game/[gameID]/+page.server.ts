@@ -3,8 +3,6 @@ import fs from 'fs/promises';
 import path from 'path';
 import type { PageServerLoad } from './$types';
 
-export const ssr = false;
-
 export const load = (async ({ params }) => {
 	let gamePBBinary: number[] | undefined;
 
