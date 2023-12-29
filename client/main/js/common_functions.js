@@ -65,7 +65,15 @@ function getGameStateText(game_id) {
   var state_text,
     state_id = common_data.game_id_to_state_id[game_id];
 
-  state_text = enums.GameModes[common_data.game_id_to_mode_id[game_id]] + ', ';
+    var game_mode = enums.GameModes[common_data.game_id_to_mode_id[game_id]];
+    if (game_mode == "Singles") {
+        game_mode = "\u{1F464}" + game_mode;
+    }
+    else if (game_mode=="Teams") {
+        game_mode = "\u{1F465}" + game_mode;
+    }
+
+    state_text = game_mode + ', ';
   if (state_id === enums.GameStates.Starting) {
     state_text += 'Starting (Max of ' + common_data.game_id_to_max_players[game_id] + ' Players)';
   } else if (state_id === enums.GameStates.StartingFull) {
