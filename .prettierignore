@@ -3,3 +3,4 @@
 /node_modules
 /package
 /src/common/pb.ts
+/pnpm-lock.yaml
