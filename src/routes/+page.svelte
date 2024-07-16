@@ -48,7 +48,7 @@
     </div>
     <div class="rightSide">
       {#each $usernamesStore as username (username)}
-        <div transition:slide|local>{username}</div>
+        <div transition:slide>{username}</div>
       {/each}
     </div>
   </div>
