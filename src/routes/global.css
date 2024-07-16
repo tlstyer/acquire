@@ -1,109 +1,109 @@
 /* global */
 
 * {
-	box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 fieldset {
-	border: 1px solid #c0c0c0;
+  border: 1px solid #c0c0c0;
 }
 
 /* colors */
 
 .color-luxor {
-	background-color: #ff0000;
-	color: #ffffff;
+  background-color: #ff0000;
+  color: #ffffff;
 }
 
 .color-tower {
-	background-color: #ffff00;
+  background-color: #ffff00;
 }
 
 .color-american {
-	background-color: #0000ff;
-	color: #ffffff;
+  background-color: #0000ff;
+  color: #ffffff;
 }
 
 .color-festival {
-	background-color: #00ff00;
+  background-color: #00ff00;
 }
 
 .color-worldwide {
-	background-color: #804000;
-	color: #ffffff;
+  background-color: #804000;
+  color: #ffffff;
 }
 
 .color-continental {
-	background-color: #00ffff;
+  background-color: #00ffff;
 }
 
 .color-imperial {
-	background-color: #ff00ff;
-	color: #ffffff;
+  background-color: #ff00ff;
+  color: #ffffff;
 }
 
 .color-nothing {
-	background-color: #ffffc0;
+  background-color: #ffffc0;
 }
 
 .color-nothingYet {
-	background-color: #000000;
-	color: #ffffff;
+  background-color: #000000;
+  color: #ffffff;
 }
 
 .color-cantPlayEver {
-	background-color: #808080;
-	color: #ffffff;
+  background-color: #808080;
+  color: #ffffff;
 }
 
 .color-iHaveThis {
-	background-color: #ffe0a0;
+  background-color: #ffe0a0;
 }
 
 .color-willPutLonelyTileDown {
-	background-color: #c0c0c0;
+  background-color: #c0c0c0;
 }
 
 .color-haveNeighboringTileToo {
-	background-color: #c0ffc0;
+  background-color: #c0ffc0;
 }
 
 .color-willFormNewChain {
-	background-color: #ffffff;
+  background-color: #ffffff;
 }
 
 .color-willMergeChains {
-	background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAIAQMAAAD+wSzIAAAAA3NCSVQICAjb4U/gAAAABlBMVEXd3d3///+uIkqAAAAAD0lEQVQI12P4wACB/BAIAC4AA/2aaHtfAAAAAElFTkSuQmCC);
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAIAQMAAAD+wSzIAAAAA3NCSVQICAjb4U/gAAAABlBMVEXd3d3///+uIkqAAAAAD0lEQVQI12P4wACB/BAIAC4AA/2aaHtfAAAAAElFTkSuQmCC);
 }
 
 .color-cantPlayNow {
-	background-color: #606060;
-	color: #ffffff;
+  background-color: #606060;
+  color: #ffffff;
 }
 
 .color-team1 {
-	background-color: #fff7e7;
+  background-color: #fff7e7;
 }
 
 .color-team2 {
-	background-color: #eee7ff;
+  background-color: #eee7ff;
 }
 
 .color-team3 {
-	background-color: #ebffe7;
+  background-color: #ebffe7;
 }
 
 /* misc. */
 
 .hotelButton {
-	font-weight: bold;
-	padding: 1px;
+  font-weight: bold;
+  padding: 1px;
 }
 
 .hotelButton:focus {
-	box-shadow: 0px 0px 2px 0px #323232;
+  box-shadow: 0px 0px 2px 0px #323232;
 }
 
 .invisible {
-	visibility: hidden;
+  visibility: hidden;
 }

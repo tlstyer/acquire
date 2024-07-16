@@ -1,15 +1,14 @@
 {
-	"useTabs": true,
-	"singleQuote": true,
-	"trailingComma": "all",
-	"printWidth": 100,
-	"overrides": [
-		{
-			"files": "*.svelte",
-			"options": {
-				"parser": "svelte",
-				"organizeImportsSkipDestructiveCodeActions": true
-			}
-		}
-	]
+  "singleQuote": true,
+  "trailingComma": "all",
+  "printWidth": 100,
+  "overrides": [
+    {
+      "files": "*.svelte",
+      "options": {
+        "parser": "svelte",
+        "organizeImportsSkipDestructiveCodeActions": true
+      }
+    }
+  ]
 }
