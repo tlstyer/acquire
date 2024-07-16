@@ -26,7 +26,10 @@ export class GameHistoryMessageTurnBegan {
 }
 
 export class GameHistoryMessageDrewPositionTile {
-  constructor(public playerID: number, public tile: number) {}
+  constructor(
+    public playerID: number,
+    public tile: number,
+  ) {}
 }
 
 export class GameHistoryMessageStartedGame {
@@ -34,7 +37,10 @@ export class GameHistoryMessageStartedGame {
 }
 
 export class GameHistoryMessageDrewTile {
-  constructor(public playerID: number, public tile: number) {}
+  constructor(
+    public playerID: number,
+    public tile: number,
+  ) {}
 }
 
 export class GameHistoryMessageHasNoPlayableTile {
@@ -42,27 +48,46 @@ export class GameHistoryMessageHasNoPlayableTile {
 }
 
 export class GameHistoryMessagePlayedTile {
-  constructor(public playerID: number, public tile: number) {}
+  constructor(
+    public playerID: number,
+    public tile: number,
+  ) {}
 }
 
 export class GameHistoryMessageFormedChain {
-  constructor(public playerID: number, public chain: PB_GameBoardType) {}
+  constructor(
+    public playerID: number,
+    public chain: PB_GameBoardType,
+  ) {}
 }
 
 export class GameHistoryMessageMergedChains {
-  constructor(public playerID: number, public chains: PB_GameBoardType[]) {}
+  constructor(
+    public playerID: number,
+    public chains: PB_GameBoardType[],
+  ) {}
 }
 
 export class GameHistoryMessageSelectedMergerSurvivor {
-  constructor(public playerID: number, public chain: PB_GameBoardType) {}
+  constructor(
+    public playerID: number,
+    public chain: PB_GameBoardType,
+  ) {}
 }
 
 export class GameHistoryMessageSelectedChainToDisposeOfNext {
-  constructor(public playerID: number, public chain: PB_GameBoardType) {}
+  constructor(
+    public playerID: number,
+    public chain: PB_GameBoardType,
+  ) {}
 }
 
 export class GameHistoryMessageReceivedBonus {
-  constructor(public playerID: number, public chain: PB_GameBoardType, public amount: number) {}
+  constructor(
+    public playerID: number,
+    public chain: PB_GameBoardType,
+    public amount: number,
+  ) {}
 }
 
 export class GameHistoryMessageDisposedOfShares {
@@ -79,7 +104,10 @@ export class GameHistoryMessageCouldNotAffordAnyShares {
 }
 
 export class GameHistoryMessagePurchasedShares {
-  constructor(public playerID: number, public chainsAndCounts: ChainAndCount[]) {}
+  constructor(
+    public playerID: number,
+    public chainsAndCounts: ChainAndCount[],
+  ) {}
 }
 
 export class GameHistoryMessageDrewLastTile {
@@ -87,7 +115,10 @@ export class GameHistoryMessageDrewLastTile {
 }
 
 export class GameHistoryMessageReplacedDeadTile {
-  constructor(public playerID: number, public tile: number) {}
+  constructor(
+    public playerID: number,
+    public tile: number,
+  ) {}
 }
 
 export class GameHistoryMessageEndedGame {
@@ -99,5 +130,8 @@ export class GameHistoryMessageNoTilesPlayedForEntireRound {}
 export class GameHistoryMessageAllTilesPlayed {}
 
 export class ChainAndCount {
-  constructor(public chain: PB_GameBoardType, public count: number) {}
+  constructor(
+    public chain: PB_GameBoardType,
+    public count: number,
+  ) {}
 }

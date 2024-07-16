@@ -38,7 +38,10 @@ export class Client {
   currentPage = CurrentPage.None;
   lobbyManager = new LobbyManager(this);
 
-  constructor(public clientCommunication: ClientCommunication, private version: number) {
+  constructor(
+    public clientCommunication: ClientCommunication,
+    private version: number,
+  ) {
     clientCommunication.setCallbacks(
       this.onConnect.bind(this),
       this.onDisconnect.bind(this),
@@ -244,7 +247,10 @@ export const enum LoginState {
 }
 
 class UsernameAndToken {
-  constructor(public username: string, public token: string) {}
+  constructor(
+    public username: string,
+    public token: string,
+  ) {}
 }
 
 const enum CurrentPage {

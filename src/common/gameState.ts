@@ -53,7 +53,10 @@ export class GameState {
   gameBoardChangeTiles: number[] = [];
   gameBoardCantPlayEverTiles: number[] = [];
 
-  constructor(public game: Game, public previousGameState: GameState | null) {
+  constructor(
+    public game: Game,
+    public previousGameState: GameState | null,
+  ) {
     // assign something to this.nextGameAction so it gets set in the constructor
     this.nextGameAction = game.gameActionStack[game.gameActionStack.length - 1];
   }
@@ -194,5 +197,8 @@ export class GameState {
 }
 
 export class GameStateTileBagTile {
-  constructor(public tile: number, public playerIDWithPermission: number | null) {}
+  constructor(
+    public tile: number,
+    public playerIDWithPermission: number | null,
+  ) {}
 }

@@ -298,7 +298,10 @@ class BatchOfEvents {
   lastEventIndex: number;
   message: Uint8Array;
 
-  constructor(public firstEventIndex: number, events: PB_MessageToClient_Lobby_Event[]) {
+  constructor(
+    public firstEventIndex: number,
+    events: PB_MessageToClient_Lobby_Event[],
+  ) {
     this.lastEventIndex = firstEventIndex + events.length - 1;
     this.message = PB_MessageToClient.toBinary({
       lobby: {

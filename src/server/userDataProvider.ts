@@ -60,7 +60,11 @@ export class TestUserDataProvider implements UserDataProvider {
 }
 
 export class TestUserData implements UserData {
-  constructor(public username: string, public userID: number, public passwordHash: string) {}
+  constructor(
+    public username: string,
+    public userID: number,
+    public passwordHash: string,
+  ) {}
 
   verifyPassword(password: string) {
     return getPasswordHash(this.username, password) === this.passwordHash;

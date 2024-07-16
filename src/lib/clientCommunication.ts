@@ -85,10 +85,13 @@ export class WebSocketClientCommunication extends ClientCommunication {
     this.socket = undefined;
 
     if (this.running) {
-      this.reconnectTimeout = setTimeout(() => {
-        this.reconnectTimeout = undefined;
-        this.connect();
-      }, 1000 + 500 * Math.random());
+      this.reconnectTimeout = setTimeout(
+        () => {
+          this.reconnectTimeout = undefined;
+          this.connect();
+        },
+        1000 + 500 * Math.random(),
+      );
     }
   }
 }

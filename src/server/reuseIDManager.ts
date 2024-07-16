@@ -38,7 +38,10 @@ export class ReuseIDManager {
 }
 
 class IDAndTime {
-  constructor(public id: number, public time: number) {}
+  constructor(
+    public id: number,
+    public time: number,
+  ) {}
 }
 
 function compareIDAndTime(a: IDAndTime, b: IDAndTime) {

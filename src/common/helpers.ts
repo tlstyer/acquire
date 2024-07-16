@@ -21,7 +21,11 @@ export function shuffleArray(a: any[]) {
 }
 
 export class NeighboringTile {
-  constructor(public tile: number, public y: number, public x: number) {}
+  constructor(
+    public tile: number,
+    public y: number,
+    public x: number,
+  ) {}
 }
 
 export const neighboringTilesLookup = (() => {
@@ -127,7 +131,10 @@ export function calculateBonuses(sharesOwned: number[], sharePrice: number) {
 }
 
 export class PlayerIDAndAmount {
-  constructor(public playerID: number, public amount: number) {}
+  constructor(
+    public playerID: number,
+    public amount: number,
+  ) {}
 }
 
 export function isASCII(str: string) {
