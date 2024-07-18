@@ -1,4 +1,4 @@
-import { SHA256 } from 'crypto-js';
+import CryptoJS from 'crypto-js';
 import { PB_MessageToClient_LoginLogout_ResponseCode } from '../common/pb';
 
 export interface UserDataProvider {
@@ -76,5 +76,5 @@ export class TestUserData implements UserData {
 }
 
 export function getPasswordHash(username: string, password: string) {
-  return SHA256('acquire ' + username + ' ' + password).toString();
+  return CryptoJS.SHA256('acquire ' + username + ' ' + password).toString();
 }
