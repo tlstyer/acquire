@@ -2,7 +2,6 @@
 .env.*
 !.env.example
 *.ignore.*
-/.svelte-kit
 /.vscode
 /build
 /node_modules

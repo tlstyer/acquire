@@ -1,10 +1,10 @@
 import http from 'http';
 import { WebSocket, WebSocketServer } from 'ws';
-import { PB_MessageToClient, PB_MessageToServer } from '../common/pb';
 import {
   TestClientCommunicatedMessage,
   type TestClientCommunication,
-} from '../lib/clientCommunication';
+} from '../client/clientCommunication';
+import { PB_MessageToClient, PB_MessageToServer } from '../common/pb';
 import { ReuseIDManager } from './reuseIDManager';
 
 export abstract class ServerCommunication {
