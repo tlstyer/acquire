@@ -1,7 +1,11 @@
+import { CreateGameExamples } from './CreateGameExamples';
+import styles from './Examples.module.css';
+
 export function Examples() {
   return (
-    <>
-      <h1>Examples</h1>
-    </>
+    <div class={styles.root}>
+      <h1>CreateGame</h1>
+      <CreateGameExamples />
+    </div>
   );
 }

@@ -1,4 +1,6 @@
 import { Router } from '@solidjs/router';
+import 'normalize.css';
+import './App.module.css';
 import { Examples } from './pages/examples/Examples';
 
 const routes = [
