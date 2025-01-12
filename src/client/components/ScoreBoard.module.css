@@ -1,0 +1,68 @@
+.root {
+  background-color: #ffffff;
+  border-collapse: collapse;
+  font-weight: bold;
+  table-layout: fixed;
+}
+
+.root td {
+  border: 2px solid var(--border-color);
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.root td:nth-child(1) {
+  padding-left: 3px;
+  text-align: left;
+  width: calc(100% * 5 / 18);
+}
+
+.root td:nth-child(n + 2):nth-child(-n + 8) {
+  text-align: center;
+  width: calc(100% / 18);
+}
+
+.root td:nth-child(n + 9) {
+  padding-right: 3px;
+  text-align: right;
+  width: calc(100% * 3 / 18);
+}
+
+.playerHeader {
+  background-color: #c0c0ff;
+}
+
+.cashAndNetHeader {
+  background-color: #008000;
+  color: #ffffff;
+}
+
+.player {
+  background-color: #ffffff;
+}
+
+.availableChainSizeAndPrice {
+  background-color: #c0ffff;
+}
+
+.isPlayersTurn {
+  background-color: #ffc0c0;
+}
+
+.isPlayersMove {
+  background-color: #ffe0e0;
+}
+
+.safeChain {
+  background-color: #ffc080;
+}
+
+.notTeamScore {
+  background-color: var(--main-background-color);
+  border-color: var(--main-background-color);
+}
+
+.teamScore {
+  border-color: var(--border-color);
+  border-style: double;
+}

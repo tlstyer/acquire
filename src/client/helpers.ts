@@ -3,6 +3,7 @@ import {
   PB_GameMode,
   PB_MessageToClient_LoginLogout_ResponseCode,
 } from '../common/pb';
+import styles from './App.module.css';
 
 export const allChains = [
   PB_GameBoardType.LUXOR,
@@ -15,22 +16,22 @@ export const allChains = [
 ];
 
 export const gameBoardTypeToCSSClassName = new Map([
-  [PB_GameBoardType.LUXOR, 'color-luxor'],
-  [PB_GameBoardType.TOWER, 'color-tower'],
-  [PB_GameBoardType.AMERICAN, 'color-american'],
-  [PB_GameBoardType.FESTIVAL, 'color-festival'],
-  [PB_GameBoardType.WORLDWIDE, 'color-worldwide'],
-  [PB_GameBoardType.CONTINENTAL, 'color-continental'],
-  [PB_GameBoardType.IMPERIAL, 'color-imperial'],
-  [PB_GameBoardType.NOTHING, 'color-nothing'],
-  [PB_GameBoardType.NOTHING_YET, 'color-nothingYet'],
-  [PB_GameBoardType.CANT_PLAY_EVER, 'color-cantPlayEver'],
-  [PB_GameBoardType.I_HAVE_THIS, 'color-iHaveThis'],
-  [PB_GameBoardType.WILL_PUT_LONELY_TILE_DOWN, 'color-willPutLonelyTileDown'],
-  [PB_GameBoardType.HAVE_NEIGHBORING_TILE_TOO, 'color-haveNeighboringTileToo'],
-  [PB_GameBoardType.WILL_FORM_NEW_CHAIN, 'color-willFormNewChain'],
-  [PB_GameBoardType.WILL_MERGE_CHAINS, 'color-willMergeChains'],
-  [PB_GameBoardType.CANT_PLAY_NOW, 'color-cantPlayNow'],
+  [PB_GameBoardType.LUXOR, styles.colorLuxor],
+  [PB_GameBoardType.TOWER, styles.colorTower],
+  [PB_GameBoardType.AMERICAN, styles.colorAmerican],
+  [PB_GameBoardType.FESTIVAL, styles.colorFestival],
+  [PB_GameBoardType.WORLDWIDE, styles.colorWorldwide],
+  [PB_GameBoardType.CONTINENTAL, styles.colorContinental],
+  [PB_GameBoardType.IMPERIAL, styles.colorImperial],
+  [PB_GameBoardType.NOTHING, styles.colorNothing],
+  [PB_GameBoardType.NOTHING_YET, styles.colorNothingYet],
+  [PB_GameBoardType.CANT_PLAY_EVER, styles.colorCantPlayEver],
+  [PB_GameBoardType.I_HAVE_THIS, styles.colorIHaveThis],
+  [PB_GameBoardType.WILL_PUT_LONELY_TILE_DOWN, styles.colorWillPutLonelyTileDown],
+  [PB_GameBoardType.HAVE_NEIGHBORING_TILE_TOO, styles.colorHaveNeighboringTileToo],
+  [PB_GameBoardType.WILL_FORM_NEW_CHAIN, styles.colorWillFormNewChain],
+  [PB_GameBoardType.WILL_MERGE_CHAINS, styles.colorWillMergeChains],
+  [PB_GameBoardType.CANT_PLAY_NOW, styles.colorCantPlayNow],
 ]);
 
 export const gameBoardTypeToHotelInitial = new Map([
@@ -54,9 +55,9 @@ export const gameBoardTypeToHotelName = new Map([
 ]);
 
 export const teamNumberToCSSClassName = new Map([
-  [1, 'color-team1'],
-  [2, 'color-team2'],
-  [3, 'color-team3'],
+  [1, styles.colorTeam1],
+  [2, styles.colorTeam2],
+  [3, styles.colorTeam3],
 ]);
 
 export enum GameBoardLabelMode {
