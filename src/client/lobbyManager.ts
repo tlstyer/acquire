@@ -1,4 +1,4 @@
-import { writable } from 'svelte/store';
+import { Accessor, createSignal, Setter } from 'solid-js';
 import { GameSetup } from '../common/gameSetup';
 import { gameModeToNumPlayers } from '../common/helpers';
 import {
@@ -24,21 +24,35 @@ export class LobbyManager {
   userIDs = new Set<number>();
   gameDisplayNumberToLobbyGame = new Map<number, LobbyGame>();
 
-  private connectedWritableStore = writable(false);
-  connectedStore = { subscribe: this.connectedWritableStore.subscribe };
+  connectedSignal: Accessor<boolean>;
+  private setConnectedSignal: Setter<boolean>;
 
-  private shouldUpdateUsernamesStore = false;
-  private usernamesWritableStore = writable<string[]>([]);
-  usernamesStore = { subscribe: this.usernamesWritableStore.subscribe };
+  private shouldUpdateUsernamesSignal = false;
+  usernamesSignal: Accessor<string[]>;
+  private setUsernamesSignal: Setter<string[]>;
 
-  private createdGameNumberWritableStore = writable<number | undefined>(undefined);
-  createdGameNumberStore = { subscribe: this.createdGameNumberWritableStore.subscribe };
+  createdGameNumberSignal: Accessor<number | undefined>;
+  private setCreatedGameNumberSignal: Setter<number | undefined>;
 
-  constructor(public client: Client) {}
+  constructor(public client: Client) {
+    const [connectedSignal, setConnectedSignal] = createSignal(false);
+    this.connectedSignal = connectedSignal;
+    this.setConnectedSignal = setConnectedSignal;
+
+    const [usernamesSignal, setUsernamesSignal] = createSignal<string[]>([]);
+    this.usernamesSignal = usernamesSignal;
+    this.setUsernamesSignal = setUsernamesSignal;
+
+    const [createdGameNumberSignal, setCreatedGameNumberSignal] = createSignal<number | undefined>(
+      undefined,
+    );
+    this.createdGameNumberSignal = createdGameNumberSignal;
+    this.setCreatedGameNumberSignal = setCreatedGameNumberSignal;
+  }
 
   connect() {
-    this.connectedWritableStore.set(false);
-    this.createdGameNumberWritableStore.set(undefined);
+    this.setConnectedSignal(false);
+    this.setCreatedGameNumberSignal(undefined);
 
     this.client.clientCommunication.sendMessage(this.getConnectMessage());
   }
@@ -76,13 +90,13 @@ export class LobbyManager {
       this.onMessage_CreateGameResponse(message.createGameResponse);
     }
 
-    this.connectedWritableStore.set(true);
+    this.setConnectedSignal(true);
 
-    if (this.shouldUpdateUsernamesStore) {
-      this.usernamesWritableStore.set(
+    if (this.shouldUpdateUsernamesSignal) {
+      this.setUsernamesSignal(
         [...this.userIDs].map((userID) => this.userIDToUsername.get(userID) ?? '?'),
       );
-      this.shouldUpdateUsernamesStore = false;
+      this.shouldUpdateUsernamesSignal = false;
     }
   }
 
@@ -120,7 +134,7 @@ export class LobbyManager {
 
     this.lastEventIndex = message.lastEventIndex;
 
-    this.shouldUpdateUsernamesStore = true;
+    this.shouldUpdateUsernamesSignal = true;
   }
 
   onMessage_Events(events: PB_MessageToClient_Lobby_Event[]) {
@@ -164,17 +178,17 @@ export class LobbyManager {
 
     this.userIDs.add(event.userId);
 
-    this.shouldUpdateUsernamesStore = true;
+    this.shouldUpdateUsernamesSignal = true;
   }
 
   onMessage_Event_RemoveUserFromLobby(event: PB_MessageToClient_Lobby_Event_RemoveUserFromLobby) {
     this.userIDs.delete(event.userId);
 
-    this.shouldUpdateUsernamesStore = true;
+    this.shouldUpdateUsernamesSignal = true;
   }
 
   onMessage_CreateGameResponse(message: PB_MessageToClient_Lobby_CreateGameResponse) {
-    this.createdGameNumberWritableStore.set(message.gameNumber);
+    this.setCreatedGameNumberSignal(message.gameNumber);
   }
 }
 

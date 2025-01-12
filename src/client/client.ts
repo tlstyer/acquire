@@ -1,4 +1,4 @@
-import { writable } from 'svelte/store';
+import { Accessor, createSignal, Setter } from 'solid-js';
 import { concatenateUint8Arrays } from '../common/helpers';
 import {
   PB_MessageToClient,
@@ -18,22 +18,22 @@ export class Client {
   myToken: string | undefined;
 
   isConnected = false;
-  private isConnectedWritableStore = writable(false);
-  isConnectedStore = { subscribe: this.isConnectedWritableStore.subscribe };
+  isConnectedSignal: Accessor<boolean>;
+  private setIsConnectedSignal: Setter<boolean>;
 
   loginMessage: Uint8Array | undefined;
 
-  private usernameWritableStore = writable<string>('');
-  usernameStore = { subscribe: this.usernameWritableStore.subscribe };
-  private loginStateWritableStore = writable(LoginState.LoggedOut);
-  loginStateStore = { subscribe: this.loginStateWritableStore.subscribe };
-  private loginLogoutResponseCodeWritableStore = writable<
+  usernameSignal: Accessor<string>;
+  private setUsernameSignal: Setter<string>;
+  loginStateSignal: Accessor<LoginState>;
+  private setLoginStateSignal: Setter<LoginState>;
+  loginLogoutResponseCodeSignal: Accessor<PB_MessageToClient_LoginLogout_ResponseCode | undefined>;
+  private setLoginLogoutResponseCodeSignal: Setter<
     PB_MessageToClient_LoginLogout_ResponseCode | undefined
-  >(undefined);
-  loginLogoutResponseCodeStore = { subscribe: this.loginLogoutResponseCodeWritableStore.subscribe };
+  >;
 
-  private usernameAndTokenWritableStore = writable<UsernameAndToken | undefined>(undefined);
-  usernameAndTokenStore = { subscribe: this.usernameAndTokenWritableStore.subscribe };
+  usernameAndTokenSignal: Accessor<UsernameAndToken | undefined>;
+  private setUsernameAndTokenSignal: Setter<UsernameAndToken | undefined>;
 
   currentPage = CurrentPage.None;
   lobbyManager = new LobbyManager(this);
@@ -47,6 +47,30 @@ export class Client {
       this.onDisconnect.bind(this),
       this.onMessage.bind(this),
     );
+
+    const [isConnectedSignal, setIsConnectedSignal] = createSignal(false);
+    this.isConnectedSignal = isConnectedSignal;
+    this.setIsConnectedSignal = setIsConnectedSignal;
+
+    const [usernameSignal, setUsernameSignal] = createSignal('');
+    this.usernameSignal = usernameSignal;
+    this.setUsernameSignal = setUsernameSignal;
+
+    const [loginStateSignal, setLoginStateSignal] = createSignal(LoginState.LoggedOut);
+    this.loginStateSignal = loginStateSignal;
+    this.setLoginStateSignal = setLoginStateSignal;
+
+    const [loginLogoutResponseCodeSignal, setLoginLogoutResponseCodeSignal] = createSignal<
+      PB_MessageToClient_LoginLogout_ResponseCode | undefined
+    >(undefined);
+    this.loginLogoutResponseCodeSignal = loginLogoutResponseCodeSignal;
+    this.setLoginLogoutResponseCodeSignal = setLoginLogoutResponseCodeSignal;
+
+    const [usernameAndTokenSignal, setUsernameAndTokenSignal] = createSignal<
+      UsernameAndToken | undefined
+    >(undefined);
+    this.usernameAndTokenSignal = usernameAndTokenSignal;
+    this.setUsernameAndTokenSignal = setUsernameAndTokenSignal;
   }
 
   loginWithPassword(username: string, password: string) {
@@ -63,8 +87,8 @@ export class Client {
       },
     });
 
-    this.loginStateWritableStore.set(LoginState.TryingToLogIn);
-    this.loginLogoutResponseCodeWritableStore.set(undefined);
+    this.setLoginStateSignal(LoginState.TryingToLogIn);
+    this.setLoginLogoutResponseCodeSignal(undefined);
 
     this.clientCommunication.sendMessage(this.loginMessage);
   }
@@ -83,8 +107,8 @@ export class Client {
       },
     });
 
-    this.loginStateWritableStore.set(LoginState.TryingToLogIn);
-    this.loginLogoutResponseCodeWritableStore.set(undefined);
+    this.setLoginStateSignal(LoginState.TryingToLogIn);
+    this.setLoginLogoutResponseCodeSignal(undefined);
 
     this.clientCommunication.sendMessage(this.loginMessage);
   }
@@ -103,8 +127,8 @@ export class Client {
       },
     });
 
-    this.loginStateWritableStore.set(LoginState.TryingToCreateUser);
-    this.loginLogoutResponseCodeWritableStore.set(undefined);
+    this.setLoginStateSignal(LoginState.TryingToCreateUser);
+    this.setLoginLogoutResponseCodeSignal(undefined);
 
     this.clientCommunication.sendMessage(this.loginMessage);
   }
@@ -117,8 +141,8 @@ export class Client {
     if (this.isConnected) {
       this.loginMessage = undefined;
 
-      this.loginStateWritableStore.set(LoginState.TryingToLogOut);
-      this.loginLogoutResponseCodeWritableStore.set(undefined);
+      this.setLoginStateSignal(LoginState.TryingToLogOut);
+      this.setLoginLogoutResponseCodeSignal(undefined);
 
       this.clientCommunication.sendMessage(
         PB_MessageToServer.toBinary({
@@ -139,7 +163,7 @@ export class Client {
 
   private onConnect() {
     this.isConnected = true;
-    this.isConnectedWritableStore.set(true);
+    this.setIsConnectedSignal(true);
 
     const dataToSend: Uint8Array[] = [];
 
@@ -161,7 +185,7 @@ export class Client {
 
   private onDisconnect() {
     this.isConnected = false;
-    this.isConnectedWritableStore.set(false);
+    this.setIsConnectedSignal(false);
 
     if (this.loginMessage === undefined) {
       this.logoutWhenNotConnected();
@@ -205,23 +229,21 @@ export class Client {
         },
       });
 
-      this.usernameWritableStore.set(message.username);
-      this.loginStateWritableStore.set(LoginState.LoggedIn);
+      this.setUsernameSignal(message.username);
+      this.setLoginStateSignal(LoginState.LoggedIn);
 
-      this.usernameAndTokenWritableStore.set(new UsernameAndToken(message.username, message.token));
+      this.setUsernameAndTokenSignal(new UsernameAndToken(message.username, message.token));
     } else {
       this.makeLoggedOutDataChanges();
     }
 
-    this.loginLogoutResponseCodeWritableStore.set(message.responseCode);
+    this.setLoginLogoutResponseCodeSignal(message.responseCode);
   }
 
   private logoutWhenNotConnected() {
     this.makeLoggedOutDataChanges();
 
-    this.loginLogoutResponseCodeWritableStore.set(
-      PB_MessageToClient_LoginLogout_ResponseCode.SUCCESS,
-    );
+    this.setLoginLogoutResponseCodeSignal(PB_MessageToClient_LoginLogout_ResponseCode.SUCCESS);
   }
 
   private makeLoggedOutDataChanges() {
@@ -231,10 +253,10 @@ export class Client {
 
     this.loginMessage = undefined;
 
-    this.usernameWritableStore.set('');
-    this.loginStateWritableStore.set(LoginState.LoggedOut);
+    this.setUsernameSignal('');
+    this.setLoginStateSignal(LoginState.LoggedOut);
 
-    this.usernameAndTokenWritableStore.set(undefined);
+    this.setUsernameAndTokenSignal(undefined);
   }
 }
 
