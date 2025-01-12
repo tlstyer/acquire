@@ -1,6 +1,3 @@
-import { Client } from '$lib/client';
-import { TestClientCommunication } from '$lib/clientCommunication';
-import { GameStatus } from '$lib/helpers';
 import { describe, expect, test, vi } from 'vitest';
 import { Client } from '../client/client';
 import { TestClientCommunication } from '../client/clientCommunication';

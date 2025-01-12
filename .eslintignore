@@ -1,8 +1,0 @@
-.env
-.env.*
-!.env.example
-*.ignore.*
-/build
-/node_modules
-/package
-/src/common/pb.ts
