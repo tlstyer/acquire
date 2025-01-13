@@ -1,0 +1,58 @@
+.root {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: var(--header-height);
+  width: 100%;
+  padding: 2px 12px;
+  background-color: #e6e6e6;
+
+  display: flex;
+  flex-direction: row;
+}
+
+.root a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.root a:hover {
+  text-decoration: underline;
+}
+
+.root a:active {
+  color: red;
+}
+
+.name {
+  font-weight: bold;
+}
+
+.middle {
+  flex-grow: 1;
+  cursor: initial;
+}
+
+.connection {
+  width: calc(var(--header-height) - 4px);
+  height: calc(var(--header-height) - 4px);
+  border-radius: 50%;
+  border: 1px solid black;
+}
+
+.connecting {
+  animation-name: connecting;
+  animation-duration: 1.5s;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+  animation-timing-function: linear;
+}
+
+@keyframes connecting {
+  from {
+    background-color: #ff0;
+  }
+  to {
+    background-color: #aa0;
+  }
+}

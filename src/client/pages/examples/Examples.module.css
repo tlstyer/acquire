@@ -1,3 +1,4 @@
 .root {
+  padding-top: var(--header-height);
   margin-left: 25px;
 }
