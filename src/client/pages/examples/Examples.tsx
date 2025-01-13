@@ -2,6 +2,7 @@ import { CreateGameExamples } from './CreateGameExamples';
 import styles from './Examples.module.css';
 import { GameBoardExamples } from './GameBoardExamples';
 import { GameListingExamples } from './GameListingExamples';
+import { GameSetupUIExamples } from './GameSetupUIExamples';
 import { ScoreBoardExamples } from './ScoreBoardExamples';
 
 export function Examples() {
@@ -11,6 +12,8 @@ export function Examples() {
       <CreateGameExamples />
       <h1>GameListing</h1>
       <GameListingExamples />
+      <h1>GameSetupUI</h1>
+      <GameSetupUIExamples />
       <h1>GameBoard</h1>
       <GameBoardExamples />
       <h1>ScoreBoard</h1>
