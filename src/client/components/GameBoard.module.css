@@ -1,0 +1,15 @@
+.root {
+  border-collapse: collapse;
+  font-weight: bold;
+  table-layout: fixed;
+  text-align: center;
+}
+
+.root td {
+  border: 2px solid var(--border-color);
+  overflow: hidden;
+}
+
+.clickable {
+  cursor: pointer;
+}
