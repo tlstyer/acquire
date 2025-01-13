@@ -1,0 +1,31 @@
+.miniGameBoardWrapper {
+  display: inline-block;
+}
+
+.usernames {
+  border-collapse: collapse;
+  display: inline-block;
+  font-weight: bold;
+  vertical-align: top;
+}
+
+.usernames td {
+  border: 2px solid var(--border-color);
+  height: 22px;
+  max-width: 200px;
+  overflow: hidden;
+  padding-left: 3px;
+  text-align: left;
+  white-space: nowrap;
+  width: 200px;
+}
+
+.other {
+  display: inline-block;
+  font-weight: bold;
+  vertical-align: top;
+}
+
+.player {
+  background-color: #ffffff;
+}

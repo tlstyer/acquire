@@ -1,0 +1,8 @@
+.root {
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.root td {
+  border: 1px solid var(--border-color);
+}
