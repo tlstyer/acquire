@@ -4,6 +4,7 @@ import { GameBoardExamples } from './GameBoardExamples';
 import { GameListingExamples } from './GameListingExamples';
 import { GameSetupUIExamples } from './GameSetupUIExamples';
 import { ScoreBoardExamples } from './ScoreBoardExamples';
+import { TileRackExamples } from './TileRackExamples';
 
 export function Examples() {
   return (
@@ -18,6 +19,8 @@ export function Examples() {
       <GameBoardExamples />
       <h1>ScoreBoard</h1>
       <ScoreBoardExamples />
+      <h1>TileRack</h1>
+      <TileRackExamples />
     </div>
   );
 }

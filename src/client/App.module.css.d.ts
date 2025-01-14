@@ -18,6 +18,8 @@ declare const styles: {
   readonly "colorWillMergeChains": string;
   readonly "colorWillPutLonelyTileDown": string;
   readonly "colorWorldwide": string;
+  readonly "hotelButton": string;
+  readonly "invisible": string;
 };
 export = styles;
 

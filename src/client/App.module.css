@@ -99,3 +99,18 @@
 .colorTeam3 {
   background-color: #ebffe7;
 }
+
+/* misc. */
+
+.hotelButton {
+  font-weight: bold;
+  padding: 1px;
+}
+
+.hotelButton:focus {
+  box-shadow: 0px 0px 2px 0px #323232;
+}
+
+.invisible {
+  visibility: hidden;
+}
