@@ -1,0 +1,9 @@
+.root {
+  background-color: var(--scrolling-div-background-color);
+  height: 100%;
+  overflow-y: scroll;
+}
+
+.move {
+  padding: 0 2px;
+}

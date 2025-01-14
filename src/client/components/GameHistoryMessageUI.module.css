@@ -1,0 +1,13 @@
+.root fieldset {
+  border-bottom: none;
+  border-left: none;
+  border-right: none;
+  border-top: 1px solid #000000;
+  margin: 0;
+  padding: 0;
+  text-align: center;
+}
+
+.root legend {
+  padding: 0 5px;
+}

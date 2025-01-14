@@ -2,6 +2,7 @@ import { CreateGameExamples } from './CreateGameExamples';
 import { DisposeOfSharesExamples } from './DisposeOfSharesExamples';
 import styles from './Examples.module.css';
 import { GameBoardExamples } from './GameBoardExamples';
+import { GameHistoryExamples } from './GameHistoryExamples';
 import { GameListingExamples } from './GameListingExamples';
 import { GameSetupUIExamples } from './GameSetupUIExamples';
 import { NextGameActionExamples } from './NextGameActionExamples';
@@ -34,6 +35,8 @@ export function Examples() {
       <DisposeOfSharesExamples />
       <h1>PurchaseShares</h1>
       <PurchaseSharesExamples />
+      <h1>GameHistory</h1>
+      <GameHistoryExamples />
       <h1>NextGameAction</h1>
       <NextGameActionExamples />
     </div>

@@ -1,0 +1,7 @@
+.root {
+  width: 600px;
+}
+
+.root > div {
+  height: 300px;
+}
