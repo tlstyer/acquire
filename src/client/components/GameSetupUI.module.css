@@ -1,20 +1,20 @@
-.div {
+.root > div {
   margin-bottom: 0.5em;
 }
 
-.table {
+.root > table {
   border-collapse: collapse;
   font-weight: bold;
 }
 
-.table td {
+.root > table td {
   border: 2px solid transparent;
   height: 28px;
   overflow: hidden;
   white-space: nowrap;
 }
 
-.table td:nth-child(1) {
+.root > table td:nth-child(1) {
   border-color: var(--border-color);
   max-width: 300px;
   padding-left: 3px;

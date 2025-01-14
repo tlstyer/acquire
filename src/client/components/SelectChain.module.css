@@ -1,13 +1,13 @@
-.fieldset {
+.root fieldset {
   display: inline-block;
   margin: 0;
   padding: 0 3px 3px;
 }
 
-.legend {
+.root legend {
   padding: 0 5px;
 }
 
-.input:not(:last-child) {
+.root input:not(:last-child) {
   margin-right: 4px;
 }

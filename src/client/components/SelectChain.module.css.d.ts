@@ -1,7 +1,5 @@
 declare const styles: {
-  readonly "fieldset": string;
-  readonly "input": string;
-  readonly "legend": string;
+  readonly "root": string;
 };
 export = styles;
 

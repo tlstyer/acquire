@@ -33,8 +33,8 @@ export function GameSetupUI(props: {
   );
 
   return (
-    <>
-      <div class={styles.div}>
+    <div class={styles.root}>
+      <div>
         Game mode:{' '}
         <Show
           when={props.onChangeGameMode !== undefined}
@@ -58,7 +58,7 @@ export function GameSetupUI(props: {
         </Show>
       </div>
 
-      <div class={styles.div}>
+      <div>
         Player arrangement mode:{' '}
         <Show
           when={props.onChangePlayerArrangementMode !== undefined}
@@ -87,7 +87,7 @@ export function GameSetupUI(props: {
         </Show>
       </div>
 
-      <table class={styles.table}>
+      <table>
         <tbody>
           <Switch>
             <Match when={props.playerArrangementMode === PB_PlayerArrangementMode.RANDOM_ORDER}>
@@ -222,7 +222,7 @@ export function GameSetupUI(props: {
           </Switch>
         </tbody>
       </table>
-    </>
+    </div>
   );
 }
 

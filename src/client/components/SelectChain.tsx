@@ -16,16 +16,12 @@ export function SelectChain(props: {
   }));
 
   return (
-    <div>
-      <fieldset
-        class={styles.fieldset}
-        style={{ 'font-size': `${Math.floor(props.buttonSize * 0.4)}px` }}
-      >
-        <legend class={styles.legend}>{typeToInstructions.get(props.type)}</legend>
+    <div class={styles.root}>
+      <fieldset style={{ 'font-size': `${Math.floor(props.buttonSize * 0.4)}px` }}>
+        <legend>{typeToInstructions.get(props.type)}</legend>
         <For each={allChains}>
           {(chain) => (
             <input
-              class={styles.input}
               type="button"
               classList={{
                 [stylesApp.hotelButton]: true,
