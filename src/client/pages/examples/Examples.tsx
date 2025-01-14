@@ -4,6 +4,7 @@ import { GameBoardExamples } from './GameBoardExamples';
 import { GameListingExamples } from './GameListingExamples';
 import { GameSetupUIExamples } from './GameSetupUIExamples';
 import { ScoreBoardExamples } from './ScoreBoardExamples';
+import { SelectChainExamples } from './SelectChainExamples';
 import { TileRackExamples } from './TileRackExamples';
 import { TileRackReadOnlyExamples } from './TileRackReadOnlyExamples';
 
@@ -24,6 +25,8 @@ export function Examples() {
       <TileRackExamples />
       <h1>TileRackReadOnly</h1>
       <TileRackReadOnlyExamples />
+      <h1>SelectChain</h1>
+      <SelectChainExamples />
     </div>
   );
 }
