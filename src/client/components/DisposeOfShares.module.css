@@ -1,0 +1,23 @@
+.root fieldset {
+  display: inline-block;
+  margin: 0;
+  padding: 0 3px 3px;
+}
+
+.root legend {
+  padding: 0 5px;
+}
+
+.root span {
+  display: inline-block;
+  text-align: right;
+  width: 1.5em;
+}
+
+.root input {
+  color: #000000;
+}
+
+.root input:disabled {
+  color: #808080;
+}

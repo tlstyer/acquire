@@ -1,4 +1,5 @@
 import { CreateGameExamples } from './CreateGameExamples';
+import { DisposeOfSharesExamples } from './DisposeOfSharesExamples';
 import styles from './Examples.module.css';
 import { GameBoardExamples } from './GameBoardExamples';
 import { GameListingExamples } from './GameListingExamples';
@@ -27,6 +28,8 @@ export function Examples() {
       <TileRackReadOnlyExamples />
       <h1>SelectChain</h1>
       <SelectChainExamples />
+      <h1>DisposeOfShares</h1>
+      <DisposeOfSharesExamples />
     </div>
   );
 }
