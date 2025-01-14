@@ -4,6 +4,7 @@ import styles from './Examples.module.css';
 import { GameBoardExamples } from './GameBoardExamples';
 import { GameListingExamples } from './GameListingExamples';
 import { GameSetupUIExamples } from './GameSetupUIExamples';
+import { NextGameActionExamples } from './NextGameActionExamples';
 import { PurchaseSharesExamples } from './PurchaseSharesExamples';
 import { ScoreBoardExamples } from './ScoreBoardExamples';
 import { SelectChainExamples } from './SelectChainExamples';
@@ -33,6 +34,8 @@ export function Examples() {
       <DisposeOfSharesExamples />
       <h1>PurchaseShares</h1>
       <PurchaseSharesExamples />
+      <h1>NextGameAction</h1>
+      <NextGameActionExamples />
     </div>
   );
 }
