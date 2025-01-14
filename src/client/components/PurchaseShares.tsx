@@ -1,4 +1,4 @@
-import { batch, createEffect, createMemo, createSignal, Index, JSX } from 'solid-js';
+import { batch, createEffect, createMemo, createSignal, Index, JSX, on } from 'solid-js';
 import { PB_GameBoardType } from '../../common/pb';
 import stylesApp from '../App.module.css';
 import { allChains, gameBoardTypeToCSSClassName, gameBoardTypeToHotelInitial } from '../helpers';
@@ -18,6 +18,15 @@ export function PurchaseShares(props: {
   const [costLeft, setCostLeft] = createSignal(0);
   const [cart, setCart] = createSignal<(number | null)[]>([null, null, null]);
   const [endGame, setEndGame] = createSignal(false);
+
+  // reset upon props changing
+  createEffect(
+    on(
+      [() => props.scoreBoardAvailable, () => props.scoreBoardPrice, () => props.cash],
+      () => setCart([null, null, null]),
+      { defer: true },
+    ),
+  );
 
   createEffect(() => {
     const chainToNumSharesInCart = new Map<number, number>();
