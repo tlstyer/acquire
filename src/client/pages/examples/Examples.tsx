@@ -5,6 +5,7 @@ import { GameListingExamples } from './GameListingExamples';
 import { GameSetupUIExamples } from './GameSetupUIExamples';
 import { ScoreBoardExamples } from './ScoreBoardExamples';
 import { TileRackExamples } from './TileRackExamples';
+import { TileRackReadOnlyExamples } from './TileRackReadOnlyExamples';
 
 export function Examples() {
   return (
@@ -21,6 +22,8 @@ export function Examples() {
       <ScoreBoardExamples />
       <h1>TileRack</h1>
       <TileRackExamples />
+      <h1>TileRackReadOnly</h1>
+      <TileRackReadOnlyExamples />
     </div>
   );
 }

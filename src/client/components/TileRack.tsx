@@ -1,4 +1,4 @@
-import { createEffect, createMemo, For, JSX, Show } from 'solid-js';
+import { Accessor, createEffect, createMemo, For, JSX, Show } from 'solid-js';
 import { createStore } from 'solid-js/store';
 import { toTileString } from '../../common/helpers';
 import { PB_GameBoardType } from '../../common/pb';
@@ -12,30 +12,12 @@ export function TileRack(props: {
   buttonSize: number;
   onTileClicked: (tile: number) => void;
 }) {
-  const [allTileData, setAllTileData] = createStore<
-    { tile: number | null; type: PB_GameBoardType | null }[]
-  >([
-    { tile: null, type: null },
-    { tile: null, type: null },
-    { tile: null, type: null },
-    { tile: null, type: null },
-    { tile: null, type: null },
-    { tile: null, type: null },
-  ]);
-
-  createEffect(() => {
-    const tiles = props.tiles;
-    for (let i = 0; i < tiles.length; i++) {
-      setAllTileData(i, 'tile', tiles[i]);
-    }
-  });
-
-  createEffect(() => {
-    const types = props.types;
-    for (let i = 0; i < types.length; i++) {
-      setAllTileData(i, 'type', types[i]);
-    }
-  });
+  const allTileData = allTileDataFromTilesAndTypes(
+    // eslint-disable-next-line solid/reactivity
+    () => props.tiles,
+    // eslint-disable-next-line solid/reactivity
+    () => props.types,
+  );
 
   const buttonStyle = createMemo<JSX.CSSProperties>(() => ({
     width: `${props.buttonSize}px`,
@@ -71,4 +53,36 @@ export function TileRack(props: {
       </For>
     </div>
   );
+}
+
+export function allTileDataFromTilesAndTypes(
+  tiles: Accessor<(number | null)[]>,
+  types: Accessor<(PB_GameBoardType | null)[]>,
+) {
+  const [allTileData, setAllTileData] = createStore<
+    { tile: number | null; type: PB_GameBoardType | null }[]
+  >([
+    { tile: null, type: null },
+    { tile: null, type: null },
+    { tile: null, type: null },
+    { tile: null, type: null },
+    { tile: null, type: null },
+    { tile: null, type: null },
+  ]);
+
+  createEffect(() => {
+    const t = tiles();
+    for (let i = 0; i < t.length; i++) {
+      setAllTileData(i, 'tile', t[i]);
+    }
+  });
+
+  createEffect(() => {
+    const t = types();
+    for (let i = 0; i < t.length; i++) {
+      setAllTileData(i, 'type', t[i]);
+    }
+  });
+
+  return allTileData;
 }

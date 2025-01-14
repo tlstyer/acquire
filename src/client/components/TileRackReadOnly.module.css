@@ -1,0 +1,15 @@
+.root :not(:last-child) {
+  margin-right: 4px;
+}
+
+.button {
+  display: inline-block;
+  font-weight: bold;
+  text-align: center;
+}
+
+.button > div {
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
+}
