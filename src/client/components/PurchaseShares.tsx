@@ -19,22 +19,18 @@ export function PurchaseShares(props: {
   const [cart, setCart] = createSignal<(number | null)[]>([null, null, null]);
   const [endGame, setEndGame] = createSignal(false);
 
-  // reset upon props changing
   createEffect(
-    on(
-      [() => props.scoreBoardAvailable, () => props.scoreBoardPrice, () => props.cash],
-      () => setCart([null, null, null]),
-      { defer: true },
+    on([() => props.scoreBoardAvailable, () => props.scoreBoardPrice, () => props.cash], () =>
+      updateValues([null, null, null]),
     ),
   );
 
-  createEffect(() => {
+  function updateValues(newCart: (number | null)[]) {
     const chainToNumSharesInCart = new Map<number, number>();
     let newCostTotal = 0;
     let numItemsInCart = 0;
-    const c = cart();
-    for (let i = 0; i < c.length; i++) {
-      const chain = c[i];
+    for (let i = 0; i < newCart.length; i++) {
+      const chain = newCart[i];
       if (chain !== null) {
         chainToNumSharesInCart.set(chain, (chainToNumSharesInCart.get(chain) ?? 0) + 1);
         newCostTotal += props.scoreBoardPrice[chain];
@@ -61,8 +57,9 @@ export function PurchaseShares(props: {
       setAvailableButtonStatuses(newAvailableButtonStatuses);
       setCostTotal(newCostTotal);
       setCostLeft(newCostLeft);
+      setCart(newCart);
     });
-  });
+  }
 
   const buttonStyle = createMemo<JSX.CSSProperties>(() => ({
     width: `${props.buttonSize}px`,
@@ -112,7 +109,7 @@ export function PurchaseShares(props: {
                       if (c[i] === null) {
                         const newCart = [...c];
                         newCart[i] = chain;
-                        setCart(newCart);
+                        updateValues(newCart);
                         break;
                       }
                     }
@@ -154,11 +151,9 @@ export function PurchaseShares(props: {
                   style={cartButtonStyle()}
                   value={props.scoreBoardPrice[chain() ?? 0] * 100}
                   onClick={() => {
-                    setCart((c) => {
-                      const newCart = [...c];
-                      newCart[i] = null;
-                      return newCart;
-                    });
+                    const newCart = [...cart()];
+                    newCart[i] = null;
+                    updateValues(newCart);
                   }}
                 />{' '}
               </>
