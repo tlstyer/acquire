@@ -1,0 +1,36 @@
+.root fieldset {
+  display: inline-block;
+  margin: 0;
+  padding: 0 3px 3px;
+}
+
+.root legend {
+  padding: 0 5px;
+}
+
+.root input:disabled {
+  background-color: #d3d3d3;
+  color: #555555;
+}
+
+.root label {
+  margin-right: 4px;
+}
+
+.topRow fieldset {
+  vertical-align: top;
+}
+
+.root table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+.root td:nth-child(1) {
+  text-align: left;
+}
+
+.root td:nth-child(2) {
+  text-align: right;
+  width: 4em;
+}
