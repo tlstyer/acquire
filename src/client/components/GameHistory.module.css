@@ -1,9 +1,36 @@
 .root {
-  background-color: var(--scrolling-div-background-color);
+  display: flex;
+  flex-direction: column;
   height: 100%;
+}
+
+.root svg {
+  display: block;
+  height: 16px;
+}
+
+.root button:disabled svg {
+  fill: #808080;
+}
+
+.moves {
+  flex-grow: 1;
+  background-color: var(--scrolling-div-background-color);
   overflow-y: scroll;
 }
 
 .move {
   padding: 0 2px;
+}
+
+.move:hover {
+  cursor: pointer;
+}
+
+.move:not(.selected):hover {
+  background-color: #ffefc0;
+}
+
+.move.selected {
+  background-color: #ffd0c0;
 }
