@@ -1,6 +1,6 @@
 import { Router } from '@solidjs/router';
 import 'normalize.css';
-import './App.module.css';
+import styles from './App.module.css';
 import { Header } from './components/Header';
 import { ExamplesPage } from './pages/examples/ExamplesPage';
 
@@ -24,7 +24,9 @@ export function App() {
   return (
     <>
       <Header />
-      <Router>{routes}</Router>
+      <div class={styles.content}>
+        <Router>{routes}</Router>
+      </div>
     </>
   );
 }

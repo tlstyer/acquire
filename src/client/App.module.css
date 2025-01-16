@@ -21,6 +21,10 @@ fieldset {
   --header-height: 20px;
 }
 
+.content {
+  padding-top: var(--header-height);
+}
+
 /* colors */
 
 .colorLuxor {
