@@ -2,7 +2,7 @@ import { Router } from '@solidjs/router';
 import 'normalize.css';
 import './App.module.css';
 import { Header } from './components/Header';
-import { Examples } from './pages/examples/Examples';
+import { ExamplesPage } from './pages/examples/ExamplesPage';
 
 const routes = [
   {
@@ -16,7 +16,7 @@ const routes = [
   },
   {
     path: '/examples',
-    component: () => <Examples />,
+    component: () => <ExamplesPage />,
   },
 ];
 

@@ -1,6 +1,6 @@
 import { CreateGameExamples } from './CreateGameExamples';
 import { DisposeOfSharesExamples } from './DisposeOfSharesExamples';
-import styles from './Examples.module.css';
+import styles from './ExamplesPage.module.css';
 import { GameBoardExamples } from './GameBoardExamples';
 import { GameHistoryExamples } from './GameHistoryExamples';
 import { GameListingExamples } from './GameListingExamples';
@@ -12,7 +12,7 @@ import { SelectChainExamples } from './SelectChainExamples';
 import { TileRackExamples } from './TileRackExamples';
 import { TileRackReadOnlyExamples } from './TileRackReadOnlyExamples';
 
-export function Examples() {
+export function ExamplesPage() {
   return (
     <div class={styles.root}>
       <h1>CreateGame</h1>
