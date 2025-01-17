@@ -1,12 +1,14 @@
-import { Accessor, createEffect, createMemo, For, JSX, Show } from 'solid-js';
+import { Accessor, createEffect, createMemo, For, JSX, onMount, Show } from 'solid-js';
 import { createStore } from 'solid-js/store';
 import { toTileString } from '../../common/helpers';
 import { PB_GameBoardType } from '../../common/pb';
 import stylesApp from '../App.module.css';
 import { gameBoardTypeToCSSClassName } from '../helpers';
+import { ProcessMyKeyboardEventRef } from '../myKeyboardEvents';
 import styles from './TileRack.module.css';
 
 export function TileRack(props: {
+  ref: (ref: ProcessMyKeyboardEventRef) => void;
   tiles: (number | null)[];
   types: (PB_GameBoardType | null)[];
   buttonSize: number;
@@ -24,10 +26,23 @@ export function TileRack(props: {
     height: `${props.buttonSize}px`,
   }));
 
+  const inputs: HTMLInputElement[] = new Array(6);
+  onMount(() => {
+    props.ref({
+      processMyKeyboardEvent: (myKeyboardEvent) => {
+        const tileIndex = keyboardEventCodeToTileIndex.get(myKeyboardEvent.code);
+
+        if (tileIndex !== undefined && myKeyboardEvent.modifiers === 0) {
+          inputs[tileIndex].focus();
+        }
+      },
+    });
+  });
+
   return (
     <div class={styles.root} style={{ 'font-size': `${Math.floor(props.buttonSize * 0.4)}px` }}>
       <For each={allTileData}>
-        {(tileData) => (
+        {(tileData, index) => (
           <Show
             when={tileData.tile !== null && tileData.type !== null}
             fallback={
@@ -35,6 +50,7 @@ export function TileRack(props: {
             }
           >
             <input
+              ref={inputs[index()]}
               type="button"
               classList={{
                 [stylesApp.hotelButton]: true,
@@ -86,3 +102,18 @@ export function allTileDataFromTilesAndTypes(
 
   return allTileData;
 }
+
+export const keyboardEventCodeToTileIndex = new Map([
+  ['Digit1', 0],
+  ['Numpad1', 0],
+  ['Digit2', 1],
+  ['Numpad2', 1],
+  ['Digit3', 2],
+  ['Numpad3', 2],
+  ['Digit4', 3],
+  ['Numpad4', 3],
+  ['Digit5', 4],
+  ['Numpad5', 4],
+  ['Digit6', 5],
+  ['Numpad6', 5],
+]);

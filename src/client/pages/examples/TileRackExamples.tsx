@@ -1,7 +1,9 @@
-import { For } from 'solid-js';
+import { createSignal, For } from 'solid-js';
 import { toTileString } from '../../../common/helpers';
 import { PB_GameBoardType } from '../../../common/pb';
 import { TileRack } from '../../components/TileRack';
+import { processBrowserMyKeyboardEvents } from '../../myKeyboardEvents';
+import { EnableKeyboardShortcutsButton } from './EnableKeyboardShortcutsButton';
 
 export function TileRackExamples() {
   const allTileRackProps = [
@@ -52,16 +54,26 @@ export function TileRackExamples() {
 
   return (
     <For each={allTileRackProps}>
-      {(tileRackProps) => (
-        <p>
-          <TileRack
-            tiles={tileRackProps.tiles}
-            types={tileRackProps.types}
-            buttonSize={tileRackProps.buttonSize}
-            onTileClicked={tileRackProps.onTileClicked}
-          />
-        </p>
-      )}
+      {(tileRackProps) => {
+        const [keyboardShortcutsEnabled, setKeyboardShortcutsEnabled] = createSignal(false);
+
+        return (
+          <>
+            <p>
+              <EnableKeyboardShortcutsButton onChangeEnabled={setKeyboardShortcutsEnabled} />
+            </p>
+            <p>
+              <TileRack
+                ref={(ref) => processBrowserMyKeyboardEvents(keyboardShortcutsEnabled, ref)}
+                tiles={tileRackProps.tiles}
+                types={tileRackProps.types}
+                buttonSize={tileRackProps.buttonSize}
+                onTileClicked={tileRackProps.onTileClicked}
+              />
+            </p>
+          </>
+        );
+      }}
     </For>
   );
 }
