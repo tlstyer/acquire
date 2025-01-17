@@ -4,16 +4,12 @@ import styles from './App.module.css';
 import { Header } from './components/Header';
 import { ExamplesPage } from './pages/examples/ExamplesPage';
 import { GamePage } from './pages/game/GamePage';
+import { HomePage } from './pages/home/HomePage';
 
 const routes = [
   {
     path: '/',
-    component: () => (
-      <>
-        <h1>Acquire</h1>
-        <a href="/examples">Examples</a>
-      </>
-    ),
+    component: () => <HomePage />,
   },
   {
     path: '/game',
