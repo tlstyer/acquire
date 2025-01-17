@@ -9,7 +9,7 @@ export function GameHistory(props: {
   onMoveSelected: (index: number) => void;
 }) {
   const lastMoveIndex = () => props.gameStateHistory.length - 1;
-  const [selectedMoveIndex, setSelectedMoveIndex] = createSignal(lastMoveIndex());
+  const [selectedMoveIndex, setSelectedMoveIndex] = createSignal(-1);
   let lastSelectedMoveIndex = -1;
 
   const isMoveSelected = createSelector(selectedMoveIndex);
@@ -45,6 +45,9 @@ export function GameHistory(props: {
       lastSelectedMoveIndex = selectedMoveIndex();
     }
   });
+
+  // eslint-disable-next-line solid/reactivity
+  onMoveSelected(lastMoveIndex());
 
   function onMoveSelected(moveIndex: number) {
     setSelectedMoveIndex(moveIndex);

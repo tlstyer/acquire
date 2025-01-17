@@ -1,0 +1,47 @@
+.root {
+  display: flex;
+  flex-direction: row;
+  column-gap: 2px;
+  height: calc(100vh - var(--header-height));
+  width: 100vw;
+}
+
+.root > :nth-child(2) {
+  flex-grow: 1;
+}
+
+.rightSide {
+  display: flex;
+  flex-direction: column;
+}
+
+.rightSide > :nth-child(1) {
+  margin-bottom: 2px;
+  margin-left: -2px;
+}
+
+.rightSide > :nth-child(n + 2):nth-last-child(n + 3) {
+  margin-bottom: 4px;
+}
+
+.rightSide > :nth-last-child(2) {
+  height: 0;
+  flex-grow: 1;
+  margin-bottom: 2px;
+}
+
+.tileRackWrapper {
+  display: inline-block;
+  vertical-align: top;
+}
+
+.buttonWrapper {
+  display: inline-block;
+  margin-left: 4px;
+}
+
+.buttonWrapper > input {
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
+}

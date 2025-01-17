@@ -3,6 +3,7 @@ import 'normalize.css';
 import styles from './App.module.css';
 import { Header } from './components/Header';
 import { ExamplesPage } from './pages/examples/ExamplesPage';
+import { GamePage } from './pages/game/GamePage';
 
 const routes = [
   {
@@ -13,6 +14,10 @@ const routes = [
         <a href="/examples">Examples</a>
       </>
     ),
+  },
+  {
+    path: '/game',
+    component: () => <GamePage />,
   },
   {
     path: '/examples',
