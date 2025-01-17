@@ -102,20 +102,6 @@ export const allGameModes = [
   PB_GameMode.TEAMS_3_VS_3,
 ];
 
-export const KEY_ALT = 1;
-export const KEY_CTRL = 2;
-export const KEY_META = 4;
-export const KEY_SHIFT = 8;
-
-export function keyboardEventToKeysAlsoPressed(event: KeyboardEvent) {
-  return (
-    (event.altKey ? KEY_ALT : 0) +
-    (event.ctrlKey ? KEY_CTRL : 0) +
-    (event.metaKey ? KEY_META : 0) +
-    (event.shiftKey ? KEY_SHIFT : 0)
-  );
-}
-
 export const keyboardEventCodeToGameBoardType = new Map([
   // Luxor
   ['KeyL', PB_GameBoardType.LUXOR],
