@@ -9,15 +9,15 @@ import { HomePage } from './pages/home/HomePage';
 const routes = [
   {
     path: '/',
-    component: () => <HomePage />,
+    component: HomePage,
   },
   {
     path: '/game',
-    component: () => <GamePage />,
+    component: GamePage,
   },
   {
     path: '/examples',
-    component: () => <ExamplesPage />,
+    component: ExamplesPage,
   },
 ];
 
