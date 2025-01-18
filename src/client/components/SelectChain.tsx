@@ -1,10 +1,17 @@
-import { createMemo, For, JSX } from 'solid-js';
+import { createMemo, For, JSX, onMount } from 'solid-js';
 import { PB_GameBoardType } from '../../common/pb';
 import stylesApp from '../App.module.css';
-import { allChains, gameBoardTypeToCSSClassName, gameBoardTypeToHotelInitial } from '../helpers';
+import {
+  allChains,
+  gameBoardTypeToCSSClassName,
+  gameBoardTypeToHotelInitial,
+  keyboardEventCodeToGameBoardType,
+} from '../helpers';
+import { ProcessMyKeyboardEventRef } from '../myKeyboardEvents';
 import styles from './SelectChain.module.css';
 
 export function SelectChain(props: {
+  ref: (ref: ProcessMyKeyboardEventRef) => void;
   type: SelectChainTitle;
   availableChains: PB_GameBoardType[];
   buttonSize: number;
@@ -15,13 +22,27 @@ export function SelectChain(props: {
     height: `${props.buttonSize}px`,
   }));
 
+  const inputs: HTMLInputElement[] = new Array(allChains.length);
+  onMount(() => {
+    props.ref({
+      processMyKeyboardEvent: (myKeyboardEvent) => {
+        const gameBoardType = keyboardEventCodeToGameBoardType.get(myKeyboardEvent.code);
+
+        if (gameBoardType !== undefined && myKeyboardEvent.modifiers === 0) {
+          inputs[gameBoardType].focus();
+        }
+      },
+    });
+  });
+
   return (
     <div class={styles.root}>
       <fieldset style={{ 'font-size': `${Math.floor(props.buttonSize * 0.4)}px` }}>
         <legend>{typeToInstructions.get(props.type)}</legend>
         <For each={allChains}>
-          {(chain) => (
+          {(chain, index) => (
             <input
+              ref={inputs[index()]}
               type="button"
               classList={{
                 [stylesApp.hotelButton]: true,

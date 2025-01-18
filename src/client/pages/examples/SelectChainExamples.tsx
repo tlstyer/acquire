@@ -1,7 +1,9 @@
-import { For } from 'solid-js';
+import { createSignal, For } from 'solid-js';
 import { PB_GameBoardType } from '../../../common/pb';
 import { SelectChain, SelectChainTitle } from '../../components/SelectChain';
 import { gameBoardTypeToHotelInitial } from '../../helpers';
+import { processBrowserMyKeyboardEvents } from '../../myKeyboardEvents';
+import { EnableKeyboardShortcutsButton } from './EnableKeyboardShortcutsButton';
 
 export function SelectChainExamples() {
   const allSelectChainProps = [
@@ -31,16 +33,26 @@ export function SelectChainExamples() {
 
   return (
     <For each={allSelectChainProps}>
-      {(selectChainProps) => (
-        <p>
-          <SelectChain
-            type={selectChainProps.type}
-            availableChains={selectChainProps.availableChains}
-            buttonSize={selectChainProps.buttonSize}
-            onChainSelected={selectChainProps.onChainSelected}
-          />
-        </p>
-      )}
+      {(selectChainProps) => {
+        const [keyboardShortcutsEnabled, setKeyboardShortcutsEnabled] = createSignal(false);
+
+        return (
+          <>
+            <p>
+              <EnableKeyboardShortcutsButton onChangeEnabled={setKeyboardShortcutsEnabled} />
+            </p>
+            <p>
+              <SelectChain
+                ref={(ref) => processBrowserMyKeyboardEvents(keyboardShortcutsEnabled, ref)}
+                type={selectChainProps.type}
+                availableChains={selectChainProps.availableChains}
+                buttonSize={selectChainProps.buttonSize}
+                onChainSelected={selectChainProps.onChainSelected}
+              />
+            </p>
+          </>
+        );
+      }}
     </For>
   );
 }
