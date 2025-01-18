@@ -1,10 +1,17 @@
-import { batch, createEffect, createMemo, createSignal, Index, JSX, on } from 'solid-js';
+import { batch, createEffect, createMemo, createSignal, Index, JSX, on, onMount } from 'solid-js';
 import { PB_GameBoardType } from '../../common/pb';
 import stylesApp from '../App.module.css';
-import { allChains, gameBoardTypeToCSSClassName, gameBoardTypeToHotelInitial } from '../helpers';
+import {
+  allChains,
+  gameBoardTypeToCSSClassName,
+  gameBoardTypeToHotelInitial,
+  keyboardEventCodeToGameBoardType,
+} from '../helpers';
+import { KEY_SHIFT, ProcessMyKeyboardEventRef } from '../myKeyboardEvents';
 import styles from './PurchaseShares.module.css';
 
 export function PurchaseShares(props: {
+  ref: (ref: ProcessMyKeyboardEventRef) => void;
   scoreBoardAvailable: number[];
   scoreBoardPrice: number[];
   cash: number;
@@ -84,6 +91,63 @@ export function PurchaseShares(props: {
     props.onSharesPurchased(chains, endGame());
   }
 
+  const availableButtons: HTMLInputElement[] = new Array(allChains.length);
+  const cartButtons: HTMLInputElement[] = new Array(3);
+  let endGameCheckbox!: HTMLInputElement;
+  let okButton!: HTMLInputElement;
+  onMount(() => {
+    props.ref({
+      processMyKeyboardEvent: (myKeyboardEvent) => {
+        const gameBoardType = keyboardEventCodeToGameBoardType.get(myKeyboardEvent.code);
+
+        if (myKeyboardEvent.modifiers === 0) {
+          if (gameBoardType !== undefined) {
+            const button = availableButtons[gameBoardType];
+            button.focus();
+            button.click();
+          } else if (
+            myKeyboardEvent.code === 'Backspace' ||
+            myKeyboardEvent.code === 'Delete' ||
+            myKeyboardEvent.code === 'NumpadSubtract'
+          ) {
+            const c = cart();
+            for (let i = c.length - 1; i >= 0; i--) {
+              if (c[i] !== null) {
+                const button = cartButtons[i];
+                button.focus();
+                button.click();
+                break;
+              }
+            }
+          } else if (myKeyboardEvent.code === 'KeyE' || myKeyboardEvent.code === 'NumpadMultiply') {
+            endGameCheckbox.focus();
+            endGameCheckbox.click();
+          } else if (
+            myKeyboardEvent.code === 'KeyO' ||
+            myKeyboardEvent.code === 'Digit0' ||
+            myKeyboardEvent.code === 'Numpad0' ||
+            myKeyboardEvent.code === 'Digit8' ||
+            myKeyboardEvent.code === 'Numpad8'
+          ) {
+            okButton.focus();
+          }
+        } else if (myKeyboardEvent.modifiers === KEY_SHIFT) {
+          if (gameBoardType !== undefined) {
+            const c = cart();
+            for (let i = c.length - 1; i >= 0; i--) {
+              if (c[i] === gameBoardType) {
+                const button = cartButtons[i];
+                button.focus();
+                button.click();
+                break;
+              }
+            }
+          }
+        }
+      },
+    });
+  });
+
   return (
     <div class={styles.root} style={{ 'font-size': `${Math.floor(props.buttonSize * 0.4)}px` }}>
       <div class={styles.topRow}>
@@ -93,6 +157,7 @@ export function PurchaseShares(props: {
             {(availableButtonStatus, chain) => (
               <>
                 <input
+                  ref={availableButtons[chain]}
                   type="button"
                   classList={{
                     [stylesApp.hotelButton]: true,
@@ -142,6 +207,7 @@ export function PurchaseShares(props: {
             {(chain, i) => (
               <>
                 <input
+                  ref={cartButtons[i]}
                   type="button"
                   classList={{
                     [stylesApp.hotelButton]: true,
@@ -162,13 +228,14 @@ export function PurchaseShares(props: {
         </fieldset>{' '}
         <label>
           <input
+            ref={endGameCheckbox}
             type="checkbox"
             checked={endGame()}
             onInput={(e) => setEndGame(e.currentTarget.checked)}
           />{' '}
           End game
         </label>{' '}
-        <input type="button" value="OK" onClick={handleOK} />
+        <input ref={okButton} type="button" value="OK" onClick={handleOK} />
       </div>
     </div>
   );

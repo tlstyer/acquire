@@ -2,6 +2,8 @@ import { batch, createSignal, For, onCleanup } from 'solid-js';
 import { PB_GameBoardType } from '../../../common/pb';
 import { PurchaseShares } from '../../components/PurchaseShares';
 import { gameBoardTypeToHotelInitial } from '../../helpers';
+import { processBrowserMyKeyboardEvents } from '../../myKeyboardEvents';
+import { EnableKeyboardShortcutsButton } from './EnableKeyboardShortcutsButton';
 
 export function PurchaseSharesExamples() {
   const allPurchaseSharesProps = [
@@ -31,25 +33,33 @@ export function PurchaseSharesExamples() {
   return (
     <>
       <For each={allPurchaseSharesProps}>
-        {(purchaseSharesProps) => (
-          <>
-            <h2>
-              {getPurchaseSharesDescription(
-                purchaseSharesProps.scoreBoardAvailable,
-                purchaseSharesProps.scoreBoardPrice,
-              )}
-            </h2>
-            <p>
-              <PurchaseShares
-                scoreBoardAvailable={purchaseSharesProps.scoreBoardAvailable}
-                scoreBoardPrice={purchaseSharesProps.scoreBoardPrice}
-                cash={purchaseSharesProps.cash}
-                buttonSize={purchaseSharesProps.buttonSize}
-                onSharesPurchased={purchaseSharesProps.onSharesPurchased}
-              />
-            </p>
-          </>
-        )}
+        {(purchaseSharesProps) => {
+          const [keyboardShortcutsEnabled, setKeyboardShortcutsEnabled] = createSignal(false);
+
+          return (
+            <>
+              <h2>
+                {getPurchaseSharesDescription(
+                  purchaseSharesProps.scoreBoardAvailable,
+                  purchaseSharesProps.scoreBoardPrice,
+                )}
+              </h2>
+              <p>
+                <EnableKeyboardShortcutsButton onChangeEnabled={setKeyboardShortcutsEnabled} />
+              </p>
+              <p>
+                <PurchaseShares
+                  ref={(ref) => processBrowserMyKeyboardEvents(keyboardShortcutsEnabled, ref)}
+                  scoreBoardAvailable={purchaseSharesProps.scoreBoardAvailable}
+                  scoreBoardPrice={purchaseSharesProps.scoreBoardPrice}
+                  cash={purchaseSharesProps.cash}
+                  buttonSize={purchaseSharesProps.buttonSize}
+                  onSharesPurchased={purchaseSharesProps.onSharesPurchased}
+                />
+              </p>
+            </>
+          );
+        }}
       </For>
       <TestPurchaseSharesPropsChanging />
     </>
@@ -99,6 +109,8 @@ function TestPurchaseSharesPropsChanging() {
     });
   }
 
+  const [keyboardShortcutsEnabled, setKeyboardShortcutsEnabled] = createSignal(false);
+
   return (
     <>
       <h2>
@@ -106,7 +118,11 @@ function TestPurchaseSharesPropsChanging() {
         {countdown()}
       </h2>
       <p>
+        <EnableKeyboardShortcutsButton onChangeEnabled={setKeyboardShortcutsEnabled} />
+      </p>
+      <p>
         <PurchaseShares
+          ref={(ref) => processBrowserMyKeyboardEvents(keyboardShortcutsEnabled, ref)}
           scoreBoardAvailable={scoreBoardAvailable()}
           scoreBoardPrice={scoreBoardPrice()}
           cash={cash()}
