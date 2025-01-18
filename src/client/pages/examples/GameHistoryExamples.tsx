@@ -1,6 +1,8 @@
-import { For } from 'solid-js';
+import { createSignal, For } from 'solid-js';
 import { GameState } from '../../../common/gameState';
 import { GameHistory } from '../../components/GameHistory';
+import { processBrowserMyKeyboardEvents } from '../../myKeyboardEvents';
+import { EnableKeyboardShortcutsButton } from './EnableKeyboardShortcutsButton';
 import styles from './GameHistoryExamples.module.css';
 import { getExampleGame1, getExampleGame2, getExampleGameForGameHistory } from './games';
 
@@ -42,15 +44,25 @@ export function GameHistoryExamples() {
 
   return (
     <For each={allGameHistoryProps}>
-      {(gameHistoryProps) => (
-        <div class={styles.gameHistoryWrapper}>
-          <GameHistory
-            usernames={gameHistoryProps.usernames}
-            gameStateHistory={gameHistoryProps.gameStateHistory}
-            onMoveSelected={gameHistoryProps.onMoveSelected}
-          />
-        </div>
-      )}
+      {(gameHistoryProps) => {
+        const [keyboardShortcutsEnabled, setKeyboardShortcutsEnabled] = createSignal(false);
+
+        return (
+          <>
+            <p>
+              <EnableKeyboardShortcutsButton onChangeEnabled={setKeyboardShortcutsEnabled} />
+            </p>
+            <div class={styles.gameHistoryWrapper}>
+              <GameHistory
+                ref={(ref) => processBrowserMyKeyboardEvents(keyboardShortcutsEnabled, ref)}
+                usernames={gameHistoryProps.usernames}
+                gameStateHistory={gameHistoryProps.gameStateHistory}
+                onMoveSelected={gameHistoryProps.onMoveSelected}
+              />
+            </div>
+          </>
+        );
+      }}
     </For>
   );
 }

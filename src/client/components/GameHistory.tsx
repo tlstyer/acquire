@@ -1,9 +1,11 @@
-import { createEffect, createSelector, createSignal, For } from 'solid-js';
+import { createEffect, createSelector, createSignal, For, onMount } from 'solid-js';
 import { GameState } from '../../common/gameState';
+import { ProcessMyKeyboardEventRef } from '../myKeyboardEvents';
 import styles from './GameHistory.module.css';
 import { GameHistoryMessageUI } from './GameHistoryMessageUI';
 
 export function GameHistory(props: {
+  ref: (ref: ProcessMyKeyboardEventRef) => void;
   usernames: string[];
   gameStateHistory: GameState[];
   onMoveSelected: (index: number) => void;
@@ -54,16 +56,47 @@ export function GameHistory(props: {
     props.onMoveSelected(moveIndex);
   }
 
+  let fastBackwardButton!: HTMLButtonElement;
+  let stepBackwardButton!: HTMLButtonElement;
+  let stepForwardButton!: HTMLButtonElement;
+  let fastForwardButton!: HTMLButtonElement;
+  onMount(() => {
+    props.ref({
+      processMyKeyboardEvent: (myKeyboardEvent) => {
+        if (myKeyboardEvent.modifiers === 0) {
+          if (myKeyboardEvent.code === 'ArrowUp' || myKeyboardEvent.code === 'Home') {
+            fastBackwardButton.focus();
+            fastBackwardButton.click();
+          } else if (myKeyboardEvent.code === 'ArrowLeft') {
+            stepBackwardButton.focus();
+            stepBackwardButton.click();
+          } else if (myKeyboardEvent.code === 'ArrowRight') {
+            stepForwardButton.focus();
+            stepForwardButton.click();
+          } else if (myKeyboardEvent.code === 'ArrowDown' || myKeyboardEvent.code === 'End') {
+            fastForwardButton.focus();
+            fastForwardButton.click();
+          }
+        }
+      },
+    });
+  });
+
   return (
     <div class={styles.root}>
       <div>
-        <button onClick={() => onMoveSelected(0)} disabled={selectedMoveIndex() === 0}>
+        <button
+          ref={fastBackwardButton}
+          onClick={() => onMoveSelected(0)}
+          disabled={selectedMoveIndex() === 0}
+        >
           {/* adapted from https://www.svgrepo.com/svg/391832/fast-backward */}
           <svg viewBox="0 0 120 120">
             <path d="M0,120V0h20v55L70,5v50l50-50v110L70,65v50L20,65v55H0z" />
           </svg>
         </button>{' '}
         <button
+          ref={stepBackwardButton}
           onClick={() => onMoveSelected(Math.max(selectedMoveIndex() - 1, 0))}
           disabled={selectedMoveIndex() === 0}
         >
@@ -73,6 +106,7 @@ export function GameHistory(props: {
           </svg>
         </button>{' '}
         <button
+          ref={stepForwardButton}
           onClick={() => onMoveSelected(Math.min(selectedMoveIndex() + 1, lastMoveIndex()))}
           disabled={selectedMoveIndex() === lastMoveIndex()}
         >
@@ -82,6 +116,7 @@ export function GameHistory(props: {
           </svg>
         </button>{' '}
         <button
+          ref={fastForwardButton}
           onClick={() => onMoveSelected(lastMoveIndex())}
           disabled={selectedMoveIndex() === lastMoveIndex()}
         >
