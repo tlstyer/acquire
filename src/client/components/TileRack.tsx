@@ -1,4 +1,4 @@
-import { Accessor, createEffect, createMemo, Index, JSX, onMount, Show } from 'solid-js';
+import { Accessor, createEffect, createMemo, Index, JSX, onMount } from 'solid-js';
 import { createStore } from 'solid-js/store';
 import { toTileString } from '../../common/helpers';
 import { PB_GameBoardType } from '../../common/pb';
@@ -43,28 +43,23 @@ export function TileRack(props: {
     <div class={styles.root} style={{ 'font-size': `${Math.floor(props.buttonSize * 0.4)}px` }}>
       <Index each={allTileData}>
         {(tileData, index) => (
-          <Show
-            when={tileData().tile !== null && tileData().type !== null}
-            fallback={
-              <input type="button" class={stylesApp.invisible} style={buttonStyle()} value="?" />
+          <input
+            ref={inputs[index]}
+            type="button"
+            classList={{
+              [stylesApp.hotelButton]: true,
+              [tileData().type !== null ? gameBoardTypeToCSSClassName.get(tileData().type!)! : '']:
+                tileData().type !== null,
+              [stylesApp.invisible]: tileData().type === null,
+            }}
+            style={buttonStyle()}
+            value={tileData().tile !== null ? toTileString(tileData().tile!) : '?'}
+            disabled={
+              tileData().type === PB_GameBoardType.CANT_PLAY_EVER ||
+              tileData().type === PB_GameBoardType.CANT_PLAY_NOW
             }
-          >
-            <input
-              ref={inputs[index]}
-              type="button"
-              classList={{
-                [stylesApp.hotelButton]: true,
-                [gameBoardTypeToCSSClassName.get(tileData().type!)!]: true,
-              }}
-              style={buttonStyle()}
-              value={toTileString(tileData().tile!)}
-              disabled={
-                tileData().type === PB_GameBoardType.CANT_PLAY_EVER ||
-                tileData().type === PB_GameBoardType.CANT_PLAY_NOW
-              }
-              onClick={() => props.onTileClicked(tileData().tile!)}
-            />
-          </Show>
+            onClick={() => props.onTileClicked(tileData().tile!)}
+          />
         )}
       </Index>
     </div>
