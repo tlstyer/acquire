@@ -1,6 +1,8 @@
 import { batch, createSignal, For, onCleanup } from 'solid-js';
 import { PB_GameBoardType } from '../../../common/pb';
 import { DisposeOfShares } from '../../components/DisposeOfShares';
+import { processBrowserMyKeyboardEvents } from '../../myKeyboardEvents';
+import { EnableKeyboardShortcutsButton } from './EnableKeyboardShortcutsButton';
 
 export function DisposeOfSharesExamples() {
   const allDisposeOfSharesProps = [
@@ -45,26 +47,34 @@ export function DisposeOfSharesExamples() {
   return (
     <>
       <For each={allDisposeOfSharesProps}>
-        {(disposeOfSharesProps) => (
-          <>
-            <h2>
-              defunct owned: {disposeOfSharesProps.sharesOwnedInDefunctChain}, controlling
-              available: {disposeOfSharesProps.sharesAvailableInControllingChain}
-            </h2>
-            <p>
-              <DisposeOfShares
-                defunctChain={disposeOfSharesProps.defunctChain}
-                controllingChain={disposeOfSharesProps.controllingChain}
-                sharesOwnedInDefunctChain={disposeOfSharesProps.sharesOwnedInDefunctChain}
-                sharesAvailableInControllingChain={
-                  disposeOfSharesProps.sharesAvailableInControllingChain
-                }
-                buttonSize={disposeOfSharesProps.buttonSize}
-                onSharesDisposed={disposeOfSharesProps.onSharesDisposed}
-              />
-            </p>
-          </>
-        )}
+        {(disposeOfSharesProps) => {
+          const [keyboardShortcutsEnabled, setKeyboardShortcutsEnabled] = createSignal(false);
+
+          return (
+            <>
+              <h2>
+                defunct owned: {disposeOfSharesProps.sharesOwnedInDefunctChain}, controlling
+                available: {disposeOfSharesProps.sharesAvailableInControllingChain}
+              </h2>
+              <p>
+                <EnableKeyboardShortcutsButton onChangeEnabled={setKeyboardShortcutsEnabled} />
+              </p>
+              <p>
+                <DisposeOfShares
+                  ref={(ref) => processBrowserMyKeyboardEvents(keyboardShortcutsEnabled, ref)}
+                  defunctChain={disposeOfSharesProps.defunctChain}
+                  controllingChain={disposeOfSharesProps.controllingChain}
+                  sharesOwnedInDefunctChain={disposeOfSharesProps.sharesOwnedInDefunctChain}
+                  sharesAvailableInControllingChain={
+                    disposeOfSharesProps.sharesAvailableInControllingChain
+                  }
+                  buttonSize={disposeOfSharesProps.buttonSize}
+                  onSharesDisposed={disposeOfSharesProps.onSharesDisposed}
+                />
+              </p>
+            </>
+          );
+        }}
       </For>
       <TestDisposeOfSharesPropsChanging />
     </>
@@ -104,6 +114,8 @@ function TestDisposeOfSharesPropsChanging() {
     console.log('onSharesDisposed', traded, sold);
   }
 
+  const [keyboardShortcutsEnabled, setKeyboardShortcutsEnabled] = createSignal(false);
+
   return (
     <>
       <h2>
@@ -111,7 +123,11 @@ function TestDisposeOfSharesPropsChanging() {
         {sharesAvailableInControllingChain()}, countdown: {countdown()}
       </h2>
       <p>
+        <EnableKeyboardShortcutsButton onChangeEnabled={setKeyboardShortcutsEnabled} />
+      </p>
+      <p>
         <DisposeOfShares
+          ref={(ref) => processBrowserMyKeyboardEvents(keyboardShortcutsEnabled, ref)}
           defunctChain={defunctChain()}
           controllingChain={controllingChain()}
           sharesOwnedInDefunctChain={sharesOwnedInDefunctChain()}
