@@ -6,6 +6,7 @@ import { NextGameAction } from '../../components/NextGameAction';
 import { ScoreBoard } from '../../components/ScoreBoard';
 import { TileRackReadOnly } from '../../components/TileRackReadOnly';
 import { GameBoardLabelMode } from '../../helpers';
+import { processBrowserMyKeyboardEvents } from '../../myKeyboardEvents';
 import { getExampleGame1 } from '../examples/games';
 import styles from './GamePage.module.css';
 
@@ -64,6 +65,8 @@ export function GamePage() {
   window.addEventListener('resize', updateWindowSizes);
   onCleanup(() => window.removeEventListener('resize', updateWindowSizes));
 
+  const [keyboardShortcutsEnabled] = createSignal(true);
+
   return (
     <div class={styles.root}>
       <GameBoard
@@ -111,6 +114,7 @@ export function GamePage() {
           )}
         </Index>
         <GameHistory
+          ref={(ref) => processBrowserMyKeyboardEvents(keyboardShortcutsEnabled, ref)}
           usernames={game.usernames}
           gameStateHistory={game.gameStateHistory}
           onMoveSelected={setSelectedMoveIndex}
