@@ -1,4 +1,4 @@
-import { createMemo, For } from 'solid-js';
+import { createMemo, Index } from 'solid-js';
 import { PB_GameBoardType } from '../../common/pb';
 import { gameBoardTypeToCSSClassName, gameBoardTypeToHotelInitial } from '../helpers';
 
@@ -20,15 +20,15 @@ export function NextGameActionHotelInitialsList(props: { chains: PB_GameBoardTyp
   });
 
   return (
-    <For each={chainsData()}>
-      {({ chain, separator }) => (
+    <Index each={chainsData()}>
+      {(chainData) => (
         <>
-          <span class={gameBoardTypeToCSSClassName.get(chain)}>
-            {gameBoardTypeToHotelInitial.get(chain)}
+          <span class={gameBoardTypeToCSSClassName.get(chainData().chain)}>
+            {gameBoardTypeToHotelInitial.get(chainData().chain)}
           </span>
-          {separator}
+          {chainData().separator}
         </>
       )}
-    </For>
+    </Index>
   );
 }

@@ -1,4 +1,4 @@
-import { createMemo, For } from 'solid-js';
+import { createMemo, Index } from 'solid-js';
 import { gameModeToNumPlayers, gameModeToTeamSize } from '../../common/helpers';
 import { PB_GameBoardType, PB_GameMode } from '../../common/pb';
 import {
@@ -30,22 +30,22 @@ export function GameListing(props: {
       </div>{' '}
       <table class={styles.usernames}>
         <tbody>
-          <For each={props.usernames}>
+          <Index each={props.usernames}>
             {(username, playerID) => (
               <tr>
                 <td
                   class={
                     isTeamGame()
-                      ? teamNumberToCSSClassName.get((playerID() % numTeams()) + 1)
+                      ? teamNumberToCSSClassName.get((playerID % numTeams()) + 1)
                       : styles.player
                   }
-                  title={username ?? undefined}
+                  title={username() ?? undefined}
                 >
-                  {username ?? ''}
+                  {username() ?? ''}
                 </td>
               </tr>
             )}
-          </For>
+          </Index>
         </tbody>
       </table>{' '}
       <div class={styles.other}>

@@ -1,4 +1,4 @@
-import { For } from 'solid-js';
+import { Index } from 'solid-js';
 import { PB_GameBoardType } from '../../common/pb';
 import { gameBoardTypeToCSSClassName } from '../helpers';
 import styles from './MiniGameBoard.module.css';
@@ -10,15 +10,15 @@ export function MiniGameBoard(props: { gameBoard: PB_GameBoardType[][]; cellSize
       style={{ width: `${props.cellSize * 12 + 1}px`, height: `${props.cellSize * 9 + 1}px` }}
     >
       <tbody>
-        <For each={props.gameBoard}>
+        <Index each={props.gameBoard}>
           {(gameBoardRow) => (
             <tr>
-              <For each={gameBoardRow}>
-                {(gameBoardType) => <td class={gameBoardTypeToCSSClassName.get(gameBoardType)} />}
-              </For>
+              <Index each={gameBoardRow()}>
+                {(gameBoardType) => <td class={gameBoardTypeToCSSClassName.get(gameBoardType())} />}
+              </Index>
             </tr>
           )}
-        </For>
+        </Index>
       </tbody>
     </table>
   );

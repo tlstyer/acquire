@@ -1,4 +1,4 @@
-import { createMemo, For } from 'solid-js';
+import { createMemo, Index } from 'solid-js';
 import { toTileString } from '../../common/helpers';
 import { PB_GameBoardType } from '../../common/pb';
 import {
@@ -46,17 +46,17 @@ export function GameBoard(props: {
       }}
     >
       <tbody>
-        <For each={props.gameBoard}>
+        <Index each={props.gameBoard}>
           {(gameBoardRow, y) => (
             <GameBoardRow
-              y={y()}
-              gameBoardRow={gameBoardRow}
-              tileRackRowBitMask={tileRackRowBitMasks()[y()]}
+              y={y}
+              gameBoardRow={gameBoardRow()}
+              tileRackRowBitMask={tileRackRowBitMasks()[y]}
               labelMode={props.labelMode}
               onCellClicked={props.onCellClicked}
             />
           )}
-        </For>
+        </Index>
       </tbody>
     </table>
   );
@@ -71,20 +71,20 @@ function GameBoardRow(props: {
 }) {
   return (
     <tr>
-      <For each={props.gameBoardRow}>
+      <Index each={props.gameBoardRow}>
         {(gameBoardType, x) => (
           <GameBoardCell
-            tile={x() * 9 + props.y}
+            tile={x * 9 + props.y}
             gameBoardType={
-              ((props.tileRackRowBitMask >> x()) & 1) === 1
+              ((props.tileRackRowBitMask >> x) & 1) === 1
                 ? PB_GameBoardType.I_HAVE_THIS
-                : gameBoardType
+                : gameBoardType()
             }
             labelMode={props.labelMode}
             onCellClicked={props.onCellClicked}
           />
         )}
-      </For>
+      </Index>
     </tr>
   );
 }

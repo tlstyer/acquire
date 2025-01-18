@@ -1,4 +1,4 @@
-import { createMemo, For, JSX } from 'solid-js';
+import { createMemo, Index, JSX } from 'solid-js';
 import { toTileString } from '../../common/helpers';
 import { PB_GameBoardType } from '../../common/pb';
 import stylesApp from '../App.module.css';
@@ -25,21 +25,21 @@ export function TileRackReadOnly(props: {
 
   return (
     <div class={styles.root} style={{ 'font-size': `${Math.floor(props.buttonSize * 0.4)}px` }}>
-      <For each={allTileData}>
+      <Index each={allTileData}>
         {(tileData) => (
           <div
             classList={{
               [styles.button]: true,
-              [tileData.type !== null ? gameBoardTypeToCSSClassName.get(tileData.type)! : '']:
-                tileData.type !== null,
-              [stylesApp.invisible]: tileData.type === null,
+              [tileData().type !== null ? gameBoardTypeToCSSClassName.get(tileData().type!)! : '']:
+                tileData().type !== null,
+              [stylesApp.invisible]: tileData().type === null,
             }}
             style={buttonStyle()}
           >
-            <div>{tileData.tile !== null ? toTileString(tileData.tile) : '?'}</div>
+            <div>{tileData().tile !== null ? toTileString(tileData().tile!) : '?'}</div>
           </div>
         )}
-      </For>
+      </Index>
     </div>
   );
 }
