@@ -41,8 +41,8 @@ export function GamePage() {
     }
   });
 
-  const [windowInnerWidth, setWindowInnerWidth] = createSignal(window.innerWidth);
-  const [windowInnerHeight, setWindowInnerHeight] = createSignal(window.innerHeight);
+  const [windowInnerWidth, setWindowInnerWidth] = createSignal(innerWidth);
+  const [windowInnerHeight, setWindowInnerHeight] = createSignal(innerHeight);
   const gameBoardCellSize = createMemo(() => {
     const gameBoardCellSizeBasedOnWindowWidth = windowInnerWidth() / 2 / 12;
     const gameBoardCellSizeBasedOnWindowHeight = (windowInnerHeight() - 129) / 9;
@@ -58,12 +58,12 @@ export function GamePage() {
 
   function updateWindowSizes() {
     batch(() => {
-      setWindowInnerWidth(window.innerWidth);
-      setWindowInnerHeight(window.innerHeight);
+      setWindowInnerWidth(innerWidth);
+      setWindowInnerHeight(innerHeight);
     });
   }
-  window.addEventListener('resize', updateWindowSizes);
-  onCleanup(() => window.removeEventListener('resize', updateWindowSizes));
+  addEventListener('resize', updateWindowSizes);
+  onCleanup(() => removeEventListener('resize', updateWindowSizes));
 
   const [keyboardShortcutsEnabled] = createSignal(true);
 

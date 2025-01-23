@@ -20,7 +20,7 @@ const [browserMyKeyboardEvent, setBrowserMyKeyboardEvent] = createSignal(dummyMy
 });
 
 if (!isServer) {
-  window.addEventListener('keydown', (e) => {
+  addEventListener('keydown', (e) => {
     setBrowserMyKeyboardEvent(
       new MyKeyboardEvent(
         (e.altKey ? KEY_ALT : 0) +
