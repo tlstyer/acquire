@@ -173,7 +173,7 @@ export class GameSetup {
       return;
     }
 
-    const newNumPlayers = gameModeToNumPlayers.get(gameMode) || 0;
+    const newNumPlayers = gameModeToNumPlayers.get(gameMode) ?? 0;
     if (this.userIDsSet.size > newNumPlayers) {
       return;
     }

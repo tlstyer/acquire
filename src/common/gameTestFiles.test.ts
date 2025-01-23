@@ -43,7 +43,7 @@ function processDirectory(base: string, dir: string) {
         expect(outputLines).toEqual(inputLines);
 
         if (dir === "from a user's perspective") {
-          const playerID = game.userIDs.indexOf(game.myUserID || -1);
+          const playerID = game.userIDs.indexOf(game.myUserID ?? -1);
           const game2 = new Game(
             game.gameMode,
             game.playerArrangementMode,
