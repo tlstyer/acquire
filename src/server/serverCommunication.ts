@@ -8,8 +8,11 @@ import { PB_MessageToClient, PB_MessageToServer } from '../common/pb';
 import { ReuseIDManager } from './reuseIDManager';
 
 export abstract class ServerCommunication {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   protected onConnect = (clientID: number) => {};
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   protected onDisconnect = (clientID: number) => {};
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   protected onMessage = (clientID: number, message: Uint8Array) => {};
 
   setCallbacks(
@@ -39,6 +42,7 @@ export class WebSocketServerCommunication extends ServerCommunication {
       });
     });
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     webSocketServer.on('connection', (webSocket, connectionMessage) => {
       const clientID = this.nextClientID.getID();
       this.clientIDToWebSocket.set(clientID, webSocket);
@@ -52,11 +56,16 @@ export class WebSocketServerCommunication extends ServerCommunication {
 
       this.onConnect(clientID);
 
-      webSocket.on('message', (message) => {
-        // @ts-expect-error
-        const uint8Array = new Uint8Array(message);
+      webSocket.on('message', (message, isBinary) => {
+        if (isBinary) {
+          // @ts-expect-error message is binary
+          const uint8Array = new Uint8Array(message);
 
-        this.onMessage(clientID, uint8Array);
+          this.onMessage(clientID, uint8Array);
+        } else {
+          // messages that are not binary are not allowed
+          webSocket.close();
+        }
       });
 
       webSocket.on('close', () => {

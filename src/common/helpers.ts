@@ -11,7 +11,7 @@ export function getNewTileBag() {
 }
 
 // from https://stackoverflow.com/questions/6274339/how-can-i-shuffle-an-array
-export function shuffleArray(a: any[]) {
+export function shuffleArray<T>(a: T[]) {
   for (let i = a.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     const x = a[i];
@@ -183,6 +183,7 @@ export function lowercaseFirstLetter(str: string) {
   return str.charAt(0).toLowerCase() + str.slice(1);
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function getValueOfKey(obj: any) {
   for (const key in obj) {
     if (Object.prototype.hasOwnProperty.call(obj, key)) {

@@ -18,7 +18,7 @@ import { TestUserData, TestUserDataProvider, getPasswordHash } from './userDataP
 describe('Connect', () => {
   test('client should reload window when version is different', () => {
     const mock = vi.fn();
-    // @ts-expect-error
+    // @ts-expect-error the other required properties of global.location aren't used in this test
     global.location = { reload: mock };
 
     const serverCommunication = new TestServerCommunication();
@@ -37,7 +37,7 @@ describe('Connect', () => {
 
   test('client should not reload window when version is the same', () => {
     const mock = vi.fn();
-    // @ts-expect-error
+    // @ts-expect-error the other required properties of global.location aren't used in this test
     global.location = { reload: mock };
 
     const { clientCommunication, serverCommunication } = createOneClientConnectedToOneServer();
@@ -445,7 +445,7 @@ describe('Login / Create User / Logout', () => {
     });
 
     test('no reply when trying to log out while already logged out when sending message client would not send', async () => {
-      const { client, clientCommunication, server } = createOneClientConnectedToOneServer();
+      const { clientCommunication, server } = createOneClientConnectedToOneServer();
 
       clientCommunication.communicatedMessages.length = 0;
 
@@ -505,8 +505,7 @@ describe('Login / Create User / Logout', () => {
 
 describe('lobby', () => {
   test('connect to lobby in its initial state', () => {
-    const { client, clientCommunication, server, serverCommunication, userDataProvider } =
-      createOneClientConnectedToOneServer();
+    const { client, clientCommunication, server } = createOneClientConnectedToOneServer();
     clientCommunication.communicatedMessages.length = 0;
 
     expect(client.lobbyManager.lastEventIndex).toBe(0);
@@ -565,7 +564,7 @@ describe('lobby', () => {
   });
 
   test('users are added and removed', async () => {
-    const { client, clientCommunication, server, serverCommunication, userDataProvider } =
+    const { client, clientCommunication, server, serverCommunication } =
       createOneClientConnectedToOneServer();
 
     // first client logs in and connects to lobby
@@ -792,8 +791,7 @@ describe('lobby', () => {
     });
 
     test("client's lobby manager correctly processes event", async () => {
-      const { client, clientCommunication, server, serverCommunication, userDataProvider } =
-        createOneClientConnectedToOneServer();
+      const { client, server } = createOneClientConnectedToOneServer();
       client.loginWithToken('user 3', userIDToTestUserData[3].passwordHash);
       await waitForAsyncServerStuff();
       client.connectToLobby();
@@ -816,7 +814,7 @@ describe('lobby', () => {
         test(
           hostUserStillConnected ? 'when host still connected' : 'when host disconnected',
           async () => {
-            const { client, clientCommunication, server, serverCommunication, userDataProvider } =
+            const { client, clientCommunication, server, serverCommunication } =
               createOneClientConnectedToOneServer();
             client.loginWithToken('user 3', userIDToTestUserData[3].passwordHash);
             await waitForAsyncServerStuff();

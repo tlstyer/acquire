@@ -48,10 +48,12 @@ export class Room {
    * They can be overridden in order to listen to these events.
    */
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   userConnected(userID: number, username: string) {
     // nothing here
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   userDisconnected(userID: number, username: string) {
     // nothing here
   }

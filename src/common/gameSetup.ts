@@ -346,9 +346,9 @@ export class GameSetup {
             this.getUsernameForUserID(userID),
           );
         } else {
-          // @ts-expect-error
+          // @ts-expect-error this.userIDs has no nulls
           this.finalUserIDs = this.userIDs;
-          // @ts-expect-error
+          // @ts-expect-error this.usernames has no nulls
           this.finalUsernames = this.usernames;
         }
       }
@@ -373,7 +373,7 @@ export class GameSetup {
   }
 
   private getFinalUserIDsAndUsernames(): [number[], string[]] {
-    // @ts-expect-error
+    // @ts-expect-error this.userIDs has no nulls
     const userIDs: number[] = [...this.userIDs];
 
     if (this.playerArrangementMode === PB_PlayerArrangementMode.RANDOM_ORDER) {
@@ -423,7 +423,7 @@ export class GameSetup {
     }
 
     if (userIDsOrderIsTheSame) {
-      // @ts-expect-error
+      // @ts-expect-error this.userIDs and this.usernames have no nulls
       return [this.userIDs, this.usernames];
     } else {
       const usernames = userIDs.map((userID) => this.getUsernameForUserID(userID));

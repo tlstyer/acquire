@@ -72,11 +72,11 @@ export function runGameTestFile(inputLines: string[]) {
         const value = parts.slice(1).join(': ');
         switch (key) {
           case 'game mode':
-            // @ts-expect-error
+            // @ts-expect-error just go with what's in the test file
             gameMode = PB_GameMode[value];
             break;
           case 'player arrangement mode':
-            // @ts-expect-error
+            // @ts-expect-error just go with what's in the test file
             playerArrangementMode = PB_PlayerArrangementMode[value];
             break;
           case 'tile bag': {
@@ -166,15 +166,13 @@ export function runGameTestFile(inputLines: string[]) {
           if (actionParts[2] === '--') {
             usingJSONParameters = true;
             const json = actionParts.slice(3).join(' ');
-            let parsedJson;
             try {
-              parsedJson = JSON.parse(json);
-            } catch (error) {
+              gameAction = PB_GameAction.create({
+                [lowercaseFirstLetter(actualGameActionName)]: JSON.parse(json),
+              });
+            } catch {
               throw new Error('invalid action JSON');
             }
-            gameAction = PB_GameAction.create({
-              [lowercaseFirstLetter(actualGameActionName)]: parsedJson,
-            });
           } else {
             gameAction = fromParameterStrings(actualGameAction, actionParts.slice(2));
           }
@@ -215,7 +213,7 @@ export function runGameTestFile(inputLines: string[]) {
             outputLines.push(`  error: ${error.message}`);
           } else {
             outputLines.push(`line with unknown error: ${line}`);
-            // @ts-expect-error
+            // @ts-expect-error the test would fail regardless of whether error has a toString() method. this makes the test easier to fix.
             outputLines.push(`  unknown error: ${error.toString()}`);
             if (error instanceof Error) {
               outputLines.push(`  stack trace: ${error.stack}`);

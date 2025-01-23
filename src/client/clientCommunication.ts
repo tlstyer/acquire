@@ -7,6 +7,7 @@ import {
 export abstract class ClientCommunication {
   protected onConnect = () => {};
   protected onDisconnect = () => {};
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   protected onMessage = (message: Uint8Array) => {};
 
   setCallbacks(
@@ -65,6 +66,7 @@ export class WebSocketClientCommunication extends ClientCommunication {
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   private onSocketOpen(ev: Event) {
     this.isConnected = true;
     this.onConnect();
@@ -74,8 +76,10 @@ export class WebSocketClientCommunication extends ClientCommunication {
     this.onMessage(new Uint8Array(ev.data));
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   private onSocketError(ev: Event) {}
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   private onSocketClose(ev: CloseEvent) {
     if (this.isConnected) {
       this.isConnected = false;

@@ -2,10 +2,12 @@ import { Game } from './game';
 import { ActionGameOver } from './gameActions/gameOver';
 import { PB_GameAction, PB_GameReview } from './pb';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function gameToJSON(game: Game): any {
   return PB_GameReview.toJson(gameToProtocolBuffer(game));
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function gameFromJSON(json: any) {
   return gameFromProtocolBuffer(PB_GameReview.fromJson(json));
 }

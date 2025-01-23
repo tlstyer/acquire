@@ -632,14 +632,14 @@ describe('changeGameMode', () => {
 
     expect(gameSetup.gameMode).toBe(PB_GameMode.TEAMS_2_VS_2);
 
-    // @ts-expect-error
+    // @ts-expect-error intentionally invalid parameter for testing
     gameSetup.changeGameMode('invalid mode');
-    // @ts-expect-error
+    // @ts-expect-error intentionally invalid parameter for testing
     gameSetup.changeGameMode(null);
-    // @ts-expect-error
+    // @ts-expect-error intentionally invalid parameter for testing
     gameSetup.changeGameMode({});
     gameSetup.changeGameMode(0);
-    // @ts-expect-error
+    // @ts-expect-error intentionally invalid parameter for testing
     gameSetup.changeGameMode(10);
 
     expect(gameSetup.gameMode).toBe(PB_GameMode.TEAMS_2_VS_2);
@@ -878,16 +878,16 @@ describe('changePlayerArrangementMode', () => {
 
     expect(gameSetup.playerArrangementMode).toBe(PB_PlayerArrangementMode.RANDOM_ORDER);
 
-    // @ts-expect-error
+    // @ts-expect-error intentionally invalid parameter for testing
     gameSetup.changePlayerArrangementMode('invalid mode');
-    // @ts-expect-error
+    // @ts-expect-error intentionally invalid parameter for testing
     gameSetup.changePlayerArrangementMode(null);
-    // @ts-expect-error
+    // @ts-expect-error intentionally invalid parameter for testing
     gameSetup.changePlayerArrangementMode({});
-    // @ts-expect-error
+    // @ts-expect-error intentionally invalid parameter for testing
     gameSetup.changePlayerArrangementMode(-1);
     gameSetup.changePlayerArrangementMode(PB_PlayerArrangementMode.VERSION_1);
-    // @ts-expect-error
+    // @ts-expect-error intentionally invalid parameter for testing
     gameSetup.changePlayerArrangementMode(4);
 
     expect(gameSetup.playerArrangementMode).toBe(PB_PlayerArrangementMode.RANDOM_ORDER);
@@ -1148,11 +1148,11 @@ describe('kickUser', () => {
 
     expect(gameSetup.usernames).toEqual(['user 1', 'user 2', 'user 3', 'user 4']);
 
-    // @ts-expect-error
+    // @ts-expect-error intentionally invalid parameter for testing
     gameSetup.kickUser('invalid user');
-    // @ts-expect-error
+    // @ts-expect-error intentionally invalid parameter for testing
     gameSetup.kickUser(null);
-    // @ts-expect-error
+    // @ts-expect-error intentionally invalid parameter for testing
     gameSetup.kickUser({});
     gameSetup.kickUser(-1);
 

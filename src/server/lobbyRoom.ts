@@ -75,7 +75,7 @@ export class LobbyRoom extends Room {
     }
   }
 
-  userDisconnected(userID: number, username: string) {
+  userDisconnected(userID: number) {
     this.queueEvent(
       PB_MessageToClient_Lobby_Event.create({
         removeUserFromLobby: {
