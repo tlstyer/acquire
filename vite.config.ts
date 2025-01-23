@@ -6,7 +6,6 @@ export default defineConfig({
   server: {
     port: 3000,
   },
-  // @ts-expect-error this is from the ts-vitest template
   test: {
     environment: 'jsdom',
     globals: true,
