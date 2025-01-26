@@ -1,4 +1,4 @@
-import { Router } from '@solidjs/router';
+import { RouteDefinition, Router } from '@solidjs/router';
 import 'normalize.css';
 import { createEffect, onCleanup } from 'solid-js';
 import { isServer } from 'solid-js/web';
@@ -15,21 +15,6 @@ import { Header } from './components/Header';
 import { ExamplesPage } from './pages/examples/ExamplesPage';
 import { GamePage } from './pages/game/GamePage';
 import { HomePage } from './pages/home/HomePage';
-
-const routes = [
-  {
-    path: '/',
-    component: HomePage,
-  },
-  {
-    path: '/game',
-    component: GamePage,
-  },
-  {
-    path: '/examples',
-    component: ExamplesPage,
-  },
-];
 
 export function App() {
   let clientCommunication: ClientCommunication;
@@ -122,6 +107,21 @@ export function App() {
       }
     }
   }
+
+  const routes: RouteDefinition[] = [
+    {
+      path: '/',
+      component: HomePage,
+    },
+    {
+      path: '/game',
+      component: GamePage,
+    },
+    {
+      path: '/examples',
+      component: ExamplesPage,
+    },
+  ];
 
   return (
     <>
