@@ -1,12 +1,13 @@
-import { createMemo, Match, onCleanup, Show, Switch } from 'solid-js';
+import { createMemo, Match, onCleanup, onMount, Show, Switch } from 'solid-js';
 import { Client } from '../client';
+import { ProcessMyKeyboardEventRef } from '../myKeyboardEvents';
 import { CreateUser } from './CreateUser';
 import styles from './Dialog.module.css';
 import { Login } from './Login';
 import { Logout } from './Logout';
 import { Settings } from './Settings';
 
-export function Dialog(props: { client: Client }) {
+export function Dialog(props: { ref: (ref: ProcessMyKeyboardEventRef) => void; client: Client }) {
   let rootElement!: HTMLDivElement;
 
   const earliestTimeToCloseByClickingOutside = createMemo(() =>
@@ -26,6 +27,16 @@ export function Dialog(props: { client: Client }) {
   // eslint-disable-next-line solid/reactivity
   addEventListener('click', onClickSomewhere);
   onCleanup(() => removeEventListener('click', onClickSomewhere));
+
+  onMount(() => {
+    props.ref({
+      processMyKeyboardEvent: (myKeyboardEvent) => {
+        if (myKeyboardEvent.code === 'Escape' && myKeyboardEvent.modifiers === 0) {
+          close();
+        }
+      },
+    });
+  });
 
   function close() {
     props.client.setDialogType(undefined);

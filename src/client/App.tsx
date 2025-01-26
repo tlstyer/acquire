@@ -12,6 +12,7 @@ import {
 } from './clientCommunication';
 import { Dialog } from './components/Dialog';
 import { Header } from './components/Header';
+import { processBrowserMyKeyboardEvents } from './myKeyboardEvents';
 import { ExamplesPage } from './pages/examples/ExamplesPage';
 import { GamePage } from './pages/game/GamePage';
 import { HomePage } from './pages/home/HomePage';
@@ -139,7 +140,12 @@ export function App() {
   return (
     <>
       <Header client={client} />
-      <Dialog client={client} />
+      <Dialog
+        ref={(ref) =>
+          processBrowserMyKeyboardEvents(() => client.signals.dialogType() !== undefined, ref)
+        }
+        client={client}
+      />
       <div class={styles.content}>
         <Router>{routes}</Router>
       </div>
