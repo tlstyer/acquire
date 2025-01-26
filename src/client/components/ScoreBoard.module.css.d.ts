@@ -8,7 +8,7 @@ declare const styles: {
   readonly "playerHeader": string;
   readonly "root": string;
   readonly "safeChain": string;
-  readonly "teamScore": string;
+  readonly "teamScoreArea": string;
 };
 export = styles;
 

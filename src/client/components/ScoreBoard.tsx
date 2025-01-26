@@ -183,15 +183,20 @@ function ScoreBoardRow(props: {
           <td>{props.scoreBoardRow[ScoreBoardIndexEnum.Net] * 100}</td>
         </Match>
         <Match when={true}>
-          <td class={styles.notTeamScore}>
+          <td
+            classList={{
+              [styles.teamScoreArea]: !props.isPlayerRow,
+              [styles.notTeamScore]: true,
+            }}
+          >
             {props.teamNumber !== undefined ? `Team ${props.teamNumber}` : ''}
           </td>
           <td
             classList={{
+              [styles.teamScoreArea]: !props.isPlayerRow,
               [props.teamNumber !== undefined
                 ? teamNumberToCSSClassName.get(props.teamNumber)!
                 : '']: true,
-              [styles.teamScore]: props.teamNumber !== undefined,
               [styles.notTeamScore]: props.teamNumber === undefined,
             }}
           >

@@ -57,12 +57,10 @@
   background-color: #ffc080;
 }
 
-.notTeamScore {
-  background-color: var(--main-background-color);
+.root td.teamScoreArea {
   border-color: var(--main-background-color);
 }
 
-.teamScore {
-  border-color: var(--border-color);
-  border-style: double;
+.root td.notTeamScore {
+  background-color: var(--main-background-color);
 }
