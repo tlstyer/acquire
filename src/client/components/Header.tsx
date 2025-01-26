@@ -1,10 +1,22 @@
 import { Match, Show, Switch } from 'solid-js';
+import { DOMElement } from 'solid-js/jsx-runtime';
 import { Client, LoginState } from '../client';
 import { DialogType } from './Dialog';
 import styles from './Header.module.css';
 import { Username } from './Username';
 
 export function Header(props: { client: Client }) {
+  function dialogClickHandler(
+    dialogType: DialogType,
+    e: MouseEvent & {
+      currentTarget: HTMLAnchorElement;
+      target: DOMElement;
+    },
+  ) {
+    e.preventDefault();
+    props.client.setDialogType(dialogType);
+  }
+
   return (
     <div class={styles.root}>
       <span class={styles.name}>
@@ -19,8 +31,10 @@ export function Header(props: { client: Client }) {
 
       <Switch>
         <Match when={props.client.signals.loginState() === LoginState.LoggedOut}>
-          <span class={styles.dialog} onClick={() => props.client.setDialogType(DialogType.Login)}>
-            Login
+          <span>
+            <a href="/" onClick={[dialogClickHandler, DialogType.Login]}>
+              Login
+            </a>
           </span>
         </Match>
         <Match when={props.client.signals.loginState() === LoginState.TryingToLogIn}>
@@ -30,8 +44,10 @@ export function Header(props: { client: Client }) {
           <span class={styles.inProgress}>Creating user...</span>
         </Match>
         <Match when={props.client.signals.loginState() === LoginState.LoggedIn}>
-          <span class={styles.dialog} onClick={() => props.client.setDialogType(DialogType.Logout)}>
-            Logout
+          <span>
+            <a href="/" onClick={[dialogClickHandler, DialogType.Logout]}>
+              Logout
+            </a>
           </span>
         </Match>
         <Match when={props.client.signals.loginState() === LoginState.TryingToLogOut}>
@@ -39,8 +55,10 @@ export function Header(props: { client: Client }) {
         </Match>
       </Switch>
 
-      <span class={styles.dialog} onClick={() => props.client.setDialogType(DialogType.Settings)}>
-        ⚙
+      <span>
+        <a href="/" onClick={[dialogClickHandler, DialogType.Settings]}>
+          ⚙
+        </a>
       </span>
 
       <span
