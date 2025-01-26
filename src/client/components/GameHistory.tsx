@@ -16,36 +16,33 @@ export function GameHistory(props: {
 
   const isMoveSelected = createSelector(selectedMoveIndex);
 
-  let movesElement: HTMLDivElement | undefined;
-  const moveElements: (HTMLDivElement | undefined)[] = []; // TODO: maybe should reset this when props.gameStateHistory becomes shorter than before
+  let movesElement!: HTMLDivElement;
+  const moveElements: HTMLDivElement[] = []; // TODO: maybe should reset this when props.gameStateHistory becomes shorter than before
 
   createEffect(() => {
     if (selectedMoveIndex() !== lastSelectedMoveIndex) {
       const selectedMoveElement = moveElements[selectedMoveIndex()];
 
-      if (movesElement && selectedMoveElement) {
-        // scroll so that selected move element is in view
+      // scroll so that selected move element is in view
 
-        const parentScrollTop = movesElement.scrollTop;
-        const parentScrollBottom = parentScrollTop + movesElement.clientHeight;
+      const parentScrollTop = movesElement.scrollTop;
+      const parentScrollBottom = parentScrollTop + movesElement.clientHeight;
 
-        const selectedMoveRelativeOffsetTop =
-          selectedMoveElement.offsetTop - movesElement.offsetTop;
-        const selectedMoveRelativeOffsetBottom =
-          selectedMoveRelativeOffsetTop + selectedMoveElement.clientHeight;
+      const selectedMoveRelativeOffsetTop = selectedMoveElement.offsetTop - movesElement.offsetTop;
+      const selectedMoveRelativeOffsetBottom =
+        selectedMoveRelativeOffsetTop + selectedMoveElement.clientHeight;
 
-        if (
-          selectedMoveRelativeOffsetTop < parentScrollTop ||
-          selectedMoveElement.clientHeight > movesElement.clientHeight
-        ) {
-          movesElement.scrollTop = selectedMoveRelativeOffsetTop;
-        } else if (selectedMoveRelativeOffsetBottom > parentScrollBottom) {
-          movesElement.scrollTop = selectedMoveRelativeOffsetBottom - movesElement.clientHeight;
-        }
+      if (
+        selectedMoveRelativeOffsetTop < parentScrollTop ||
+        selectedMoveElement.clientHeight > movesElement.clientHeight
+      ) {
+        movesElement.scrollTop = selectedMoveRelativeOffsetTop;
+      } else if (selectedMoveRelativeOffsetBottom > parentScrollBottom) {
+        movesElement.scrollTop = selectedMoveRelativeOffsetBottom - movesElement.clientHeight;
       }
-
-      lastSelectedMoveIndex = selectedMoveIndex();
     }
+
+    lastSelectedMoveIndex = selectedMoveIndex();
   });
 
   // eslint-disable-next-line solid/reactivity
