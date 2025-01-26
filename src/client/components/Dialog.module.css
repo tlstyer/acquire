@@ -1,0 +1,27 @@
+.root {
+  position: fixed;
+  top: calc(var(--header-height) + 4px);
+  right: 8px;
+
+  background-color: white;
+  border: 1px solid black;
+  padding: 10px;
+  border-radius: 10px;
+  box-shadow: 4px 4px 4px black;
+}
+
+.header {
+  display: flex;
+  flex-direction: row;
+}
+
+.title {
+  flex-grow: 1;
+
+  font-weight: bold;
+}
+
+.close {
+  cursor: pointer;
+  color: gray;
+}

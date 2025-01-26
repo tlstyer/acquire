@@ -1,0 +1,24 @@
+.root div {
+  margin-top: 8px;
+}
+
+.root hr {
+  margin: 1em 0;
+}
+
+.inputError {
+  border-color: red;
+  border-style: solid;
+}
+
+.inProgress {
+  font-style: italic;
+}
+
+.success {
+  color: green;
+}
+
+.error {
+  color: red;
+}

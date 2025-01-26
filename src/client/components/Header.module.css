@@ -24,6 +24,10 @@
   color: red;
 }
 
+.root span:nth-last-child(n + 2) {
+  margin-right: 1em;
+}
+
 .name {
   font-weight: bold;
 }
@@ -31,6 +35,15 @@
 .middle {
   flex-grow: 1;
   cursor: initial;
+}
+
+.dialog:hover {
+  cursor: pointer;
+  text-shadow: 0px 0px 1px black;
+}
+
+.inProgress {
+  font-style: italic;
 }
 
 .connection {

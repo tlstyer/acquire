@@ -8,6 +8,7 @@ import {
   PB_MessageToServer,
 } from '../common/pb';
 import type { ClientCommunication } from './clientCommunication';
+import { DialogType } from './components/Dialog';
 import { LobbyManager } from './lobbyManager';
 
 export class Client {
@@ -34,6 +35,9 @@ export class Client {
 
   usernameAndTokenSignal: Accessor<UsernameAndToken | undefined>;
   private setUsernameAndTokenSignal: Setter<UsernameAndToken | undefined>;
+
+  dialogTypeSignal: Accessor<DialogType | undefined>;
+  private setDialogTypeSignal: Setter<DialogType | undefined>;
 
   currentPage = CurrentPage.None;
   lobbyManager = new LobbyManager(this);
@@ -62,15 +66,23 @@ export class Client {
 
     const [loginLogoutResponseCodeSignal, setLoginLogoutResponseCodeSignal] = createSignal<
       PB_MessageToClient_LoginLogout_ResponseCode | undefined
-    >(undefined);
+    >();
     this.loginLogoutResponseCodeSignal = loginLogoutResponseCodeSignal;
     this.setLoginLogoutResponseCodeSignal = setLoginLogoutResponseCodeSignal;
 
     const [usernameAndTokenSignal, setUsernameAndTokenSignal] = createSignal<
       UsernameAndToken | undefined
-    >(undefined);
+    >();
     this.usernameAndTokenSignal = usernameAndTokenSignal;
     this.setUsernameAndTokenSignal = setUsernameAndTokenSignal;
+
+    const [dialogTypeSignal, setDialogTypeSignal] = createSignal<DialogType | undefined>();
+    this.dialogTypeSignal = dialogTypeSignal;
+    this.setDialogTypeSignal = setDialogTypeSignal;
+  }
+
+  setDialogType(dialogType: DialogType | undefined) {
+    this.setDialogTypeSignal(dialogType);
   }
 
   loginWithPassword(username: string, password: string) {
