@@ -13,28 +13,28 @@ export function Header(props: { client: Client }) {
 
       <span class={styles.middle} />
 
-      <Show when={props.client.usernameSignal() !== ''}>
-        <Username username={props.client.usernameSignal()} />
+      <Show when={props.client.signals.username() !== ''}>
+        <Username username={props.client.signals.username()} />
       </Show>
 
       <Switch>
-        <Match when={props.client.loginStateSignal() === LoginState.LoggedOut}>
+        <Match when={props.client.signals.loginState() === LoginState.LoggedOut}>
           <span class={styles.dialog} onClick={() => props.client.setDialogType(DialogType.Login)}>
             Login
           </span>
         </Match>
-        <Match when={props.client.loginStateSignal() === LoginState.TryingToLogIn}>
+        <Match when={props.client.signals.loginState() === LoginState.TryingToLogIn}>
           <span class={styles.inProgress}>Logging in...</span>
         </Match>
-        <Match when={props.client.loginStateSignal() === LoginState.TryingToCreateUser}>
+        <Match when={props.client.signals.loginState() === LoginState.TryingToCreateUser}>
           <span class={styles.inProgress}>Creating user...</span>
         </Match>
-        <Match when={props.client.loginStateSignal() === LoginState.LoggedIn}>
+        <Match when={props.client.signals.loginState() === LoginState.LoggedIn}>
           <span class={styles.dialog} onClick={() => props.client.setDialogType(DialogType.Logout)}>
             Logout
           </span>
         </Match>
-        <Match when={props.client.loginStateSignal() === LoginState.TryingToLogOut}>
+        <Match when={props.client.signals.loginState() === LoginState.TryingToLogOut}>
           <span class={styles.inProgress}>Logging out...</span>
         </Match>
       </Switch>
@@ -46,10 +46,10 @@ export function Header(props: { client: Client }) {
       <span
         classList={{
           [styles.connection]: true,
-          [styles.connected]: props.client.isConnectedSignal(),
-          [styles.connecting]: !props.client.isConnectedSignal(),
+          [styles.connected]: props.client.signals.isConnected(),
+          [styles.connecting]: !props.client.signals.isConnected(),
         }}
-        title={props.client.isConnectedSignal() ? 'Connected' : 'Connecting...'}
+        title={props.client.signals.isConnected() ? 'Connected' : 'Connecting...'}
       />
     </div>
   );

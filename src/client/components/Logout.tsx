@@ -20,25 +20,30 @@ export function Logout(props: { client: Client }) {
       >
         <div>Are you sure you want to log out?</div>
         <div>
-          <button type="submit" disabled={props.client.loginStateSignal() !== LoginState.LoggedIn}>
+          <button
+            type="submit"
+            disabled={props.client.signals.loginState() !== LoginState.LoggedIn}
+          >
             Logout
           </button>{' '}
           <Show when={submitted()}>
             <Show
-              when={props.client.loginLogoutResponseCodeSignal() !== undefined}
+              when={props.client.signals.loginLogoutResponseCode() !== undefined}
               fallback={<span class={styles.inProgress}>Logging out...</span>}
             >
               <span
                 classList={{
                   [styles.success]:
-                    props.client.loginLogoutResponseCodeSignal() ===
+                    props.client.signals.loginLogoutResponseCode() ===
                     PB_MessageToClient_LoginLogout_ResponseCode.SUCCESS,
                   [styles.error]:
-                    props.client.loginLogoutResponseCodeSignal() !==
+                    props.client.signals.loginLogoutResponseCode() !==
                     PB_MessageToClient_LoginLogout_ResponseCode.SUCCESS,
                 }}
               >
-                {loginLogoutResponseCodeToString.get(props.client.loginLogoutResponseCodeSignal()!)}
+                {loginLogoutResponseCodeToString.get(
+                  props.client.signals.loginLogoutResponseCode()!,
+                )}
               </span>
             </Show>
           </Show>

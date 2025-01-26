@@ -1,4 +1,4 @@
-import { Accessor, createSignal, Setter } from 'solid-js';
+import { Accessor, createSignal } from 'solid-js';
 import { isServer } from 'solid-js/web';
 import { concatenateUint8Arrays } from '../common/helpers';
 import {
@@ -13,112 +13,89 @@ import { DialogType } from './components/Dialog';
 import { GameBoardLabelMode } from './helpers';
 import { LobbyManager } from './lobbyManager';
 
-export class Client {
-  logTime = 0;
+export type Client = ReturnType<typeof createClient>;
 
-  myUsername: string | undefined;
-  myUserID: number | undefined;
-  myToken: string | undefined;
+export function createClient(clientCommunication: ClientCommunication, version: number) {
+  clientCommunication.setCallbacks(onConnect, onDisconnect, onMessage);
 
-  isConnected = false;
-  isConnectedSignal: Accessor<boolean>;
-  private setIsConnectedSignal: Setter<boolean>;
+  let logTime = 0;
 
-  loginMessage: Uint8Array | undefined;
+  let myUsername: string | undefined;
+  let myUserID: number | undefined;
+  let myToken: string | undefined;
 
-  usernameSignal: Accessor<string>;
-  private setUsernameSignal: Setter<string>;
-  loginStateSignal: Accessor<LoginState>;
-  private setLoginStateSignal: Setter<LoginState>;
-  loginLogoutResponseCodeSignal: Accessor<PB_MessageToClient_LoginLogout_ResponseCode | undefined>;
-  private setLoginLogoutResponseCodeSignal: Setter<
+  const [isConnected, setIsConnected] = createSignal(false);
+
+  let loginMessage: Uint8Array | undefined;
+
+  const [username, setUsername] = createSignal('');
+  const [loginState, setLoginState] = createSignal(LoginState.LoggedOut);
+  const [loginLogoutResponseCode, setLoginLogoutResponseCode] = createSignal<
     PB_MessageToClient_LoginLogout_ResponseCode | undefined
-  >;
+  >();
 
-  usernameAndTokenSignal: Accessor<UsernameAndToken | undefined>;
-  private setUsernameAndTokenSignal: Setter<UsernameAndToken | undefined>;
+  const [usernameAndToken, setUsernameAndToken] = createSignal<UsernameAndToken | undefined>();
 
-  dialogTypeSignal: Accessor<DialogType | undefined>;
-  private setDialogTypeSignal: Setter<DialogType | undefined>;
+  const [dialogType, setDialogType] = createSignal<DialogType | undefined>();
 
-  colorSchemeSignal: Accessor<string>;
-  setColorScheme: (newValue: string) => void;
-  gameBoardLabelModeSignal: Accessor<GameBoardLabelMode>;
-  setGameBoardLabelMode: (newValue: GameBoardLabelMode) => void;
+  const [colorScheme, setColorScheme] = createSetting('ColorScheme', (localStorageValue): string =>
+    localStorageValue === 'white' ? localStorageValue : 'netacquire',
+  );
 
-  currentPage = CurrentPage.None;
-  lobbyManager = new LobbyManager(this);
+  const [gameBoardLabelMode, setGameBoardLabelMode] = createSetting(
+    'GameBoardLabelMode',
+    (localStorageValue) => {
+      const gblm: GameBoardLabelMode = localStorageValue
+        ? parseInt(localStorageValue, 10)
+        : GameBoardLabelMode.Nothing;
+      const gblmStr = GameBoardLabelMode[gblm];
+      return gblmStr && gblm.toString() === localStorageValue ? gblm : GameBoardLabelMode.Nothing;
+    },
+  );
 
-  constructor(
-    public clientCommunication: ClientCommunication,
-    private version: number,
-  ) {
-    clientCommunication.setCallbacks(
-      this.onConnect.bind(this),
-      this.onDisconnect.bind(this),
-      this.onMessage.bind(this),
-    );
+  let currentPage = CurrentPage.None;
+  const lobbyManager = new LobbyManager(clientCommunication);
 
-    const [isConnectedSignal, setIsConnectedSignal] = createSignal(false);
-    this.isConnectedSignal = isConnectedSignal;
-    this.setIsConnectedSignal = setIsConnectedSignal;
+  return {
+    loginWithPassword,
+    loginWithToken,
+    createUserAndLogin,
+    logout,
+    connectToLobby,
+    lobbyManager,
+    get logTime() {
+      return logTime;
+    },
+    get myUsername() {
+      return myUsername;
+    },
+    get myUserID() {
+      return myUserID;
+    },
+    get myToken() {
+      return myToken;
+    },
+    signals: {
+      isConnected,
+      username,
+      loginState,
+      loginLogoutResponseCode,
+      usernameAndToken,
+      dialogType,
+      colorScheme,
+      gameBoardLabelMode,
+    },
+    setDialogType,
+    setColorScheme,
+    setGameBoardLabelMode,
+  };
 
-    const [usernameSignal, setUsernameSignal] = createSignal('');
-    this.usernameSignal = usernameSignal;
-    this.setUsernameSignal = setUsernameSignal;
-
-    const [loginStateSignal, setLoginStateSignal] = createSignal(LoginState.LoggedOut);
-    this.loginStateSignal = loginStateSignal;
-    this.setLoginStateSignal = setLoginStateSignal;
-
-    const [loginLogoutResponseCodeSignal, setLoginLogoutResponseCodeSignal] = createSignal<
-      PB_MessageToClient_LoginLogout_ResponseCode | undefined
-    >();
-    this.loginLogoutResponseCodeSignal = loginLogoutResponseCodeSignal;
-    this.setLoginLogoutResponseCodeSignal = setLoginLogoutResponseCodeSignal;
-
-    const [usernameAndTokenSignal, setUsernameAndTokenSignal] = createSignal<
-      UsernameAndToken | undefined
-    >();
-    this.usernameAndTokenSignal = usernameAndTokenSignal;
-    this.setUsernameAndTokenSignal = setUsernameAndTokenSignal;
-
-    const [dialogTypeSignal, setDialogTypeSignal] = createSignal<DialogType | undefined>();
-    this.dialogTypeSignal = dialogTypeSignal;
-    this.setDialogTypeSignal = setDialogTypeSignal;
-
-    const [colorSchemeSignal, setColorScheme] = createSetting(
-      'ColorScheme',
-      (localStorageValue): string =>
-        localStorageValue === 'white' ? localStorageValue : 'netacquire',
-    );
-    this.colorSchemeSignal = colorSchemeSignal;
-    this.setColorScheme = setColorScheme;
-
-    const [gameBoardLabelModeSignal, setGameBoardLabelMode] = createSetting(
-      'GameBoardLabelMode',
-      (localStorageValue) => {
-        const gblm: GameBoardLabelMode = localStorageValue
-          ? parseInt(localStorageValue, 10)
-          : GameBoardLabelMode.Nothing;
-        const gblmStr = GameBoardLabelMode[gblm];
-        return gblmStr && gblm.toString() === localStorageValue ? gblm : GameBoardLabelMode.Nothing;
-      },
-    );
-    this.gameBoardLabelModeSignal = gameBoardLabelModeSignal;
-    this.setGameBoardLabelMode = setGameBoardLabelMode;
-  }
-
-  setDialogType(dialogType: DialogType | undefined) {
-    this.setDialogTypeSignal(dialogType);
-  }
-
-  loginWithPassword(username: string, password: string) {
-    if (this.loginMessage !== undefined) {
+  function loginWithPassword(username: string, password: string) {
+    if (loginMessage !== undefined) {
       return;
     }
 
-    this.loginMessage = PB_MessageToServer.toBinary({
+    loginMessage = PB_MessageToServer.toBinary({
       loginLogout: {
         loginWithPassword: {
           username,
@@ -127,18 +104,18 @@ export class Client {
       },
     });
 
-    this.setLoginStateSignal(LoginState.TryingToLogIn);
-    this.setLoginLogoutResponseCodeSignal(undefined);
+    setLoginState(LoginState.TryingToLogIn);
+    setLoginLogoutResponseCode(undefined);
 
-    this.clientCommunication.sendMessage(this.loginMessage);
+    clientCommunication.sendMessage(loginMessage);
   }
 
-  loginWithToken(username: string, token: string) {
-    if (this.loginMessage !== undefined) {
+  function loginWithToken(username: string, token: string) {
+    if (loginMessage !== undefined) {
       return;
     }
 
-    this.loginMessage = PB_MessageToServer.toBinary({
+    loginMessage = PB_MessageToServer.toBinary({
       loginLogout: {
         loginWithToken: {
           username,
@@ -147,18 +124,18 @@ export class Client {
       },
     });
 
-    this.setLoginStateSignal(LoginState.TryingToLogIn);
-    this.setLoginLogoutResponseCodeSignal(undefined);
+    setLoginState(LoginState.TryingToLogIn);
+    setLoginLogoutResponseCode(undefined);
 
-    this.clientCommunication.sendMessage(this.loginMessage);
+    clientCommunication.sendMessage(loginMessage);
   }
 
-  createUserAndLogin(username: string, password: string) {
-    if (this.loginMessage !== undefined) {
+  function createUserAndLogin(username: string, password: string) {
+    if (loginMessage !== undefined) {
       return;
     }
 
-    this.loginMessage = PB_MessageToServer.toBinary({
+    loginMessage = PB_MessageToServer.toBinary({
       loginLogout: {
         createUserAndLogin: {
           username,
@@ -167,24 +144,24 @@ export class Client {
       },
     });
 
-    this.setLoginStateSignal(LoginState.TryingToCreateUser);
-    this.setLoginLogoutResponseCodeSignal(undefined);
+    setLoginState(LoginState.TryingToCreateUser);
+    setLoginLogoutResponseCode(undefined);
 
-    this.clientCommunication.sendMessage(this.loginMessage);
+    clientCommunication.sendMessage(loginMessage);
   }
 
-  logout() {
-    if (this.loginMessage === undefined) {
+  function logout() {
+    if (loginMessage === undefined) {
       return;
     }
 
-    if (this.isConnected) {
-      this.loginMessage = undefined;
+    if (isConnected()) {
+      loginMessage = undefined;
 
-      this.setLoginStateSignal(LoginState.TryingToLogOut);
-      this.setLoginLogoutResponseCodeSignal(undefined);
+      setLoginState(LoginState.TryingToLogOut);
+      setLoginLogoutResponseCode(undefined);
 
-      this.clientCommunication.sendMessage(
+      clientCommunication.sendMessage(
         PB_MessageToServer.toBinary({
           loginLogout: {
             logout: {},
@@ -192,75 +169,73 @@ export class Client {
         }),
       );
     } else {
-      this.logoutWhenNotConnected();
+      logoutWhenNotConnected();
     }
   }
 
-  connectToLobby() {
-    this.currentPage = CurrentPage.Lobby;
-    this.lobbyManager.connect();
+  function connectToLobby() {
+    currentPage = CurrentPage.Lobby;
+    lobbyManager.connect();
   }
 
-  private onConnect() {
-    this.isConnected = true;
-    this.setIsConnectedSignal(true);
+  function onConnect() {
+    setIsConnected(true);
 
     const dataToSend: Uint8Array[] = [];
 
-    if (this.loginMessage !== undefined) {
-      dataToSend.push(this.loginMessage);
+    if (loginMessage !== undefined) {
+      dataToSend.push(loginMessage);
     }
 
-    switch (this.currentPage) {
+    switch (currentPage) {
       case CurrentPage.Lobby: {
-        dataToSend.push(this.lobbyManager.getConnectMessage());
+        dataToSend.push(lobbyManager.getConnectMessage());
         break;
       }
     }
 
     if (dataToSend.length > 0) {
-      this.clientCommunication.sendMessage(concatenateUint8Arrays(dataToSend));
+      clientCommunication.sendMessage(concatenateUint8Arrays(dataToSend));
     }
   }
 
-  private onDisconnect() {
-    this.isConnected = false;
-    this.setIsConnectedSignal(false);
+  function onDisconnect() {
+    setIsConnected(false);
 
-    if (this.loginMessage === undefined) {
-      this.logoutWhenNotConnected();
+    if (loginMessage === undefined) {
+      logoutWhenNotConnected();
     }
   }
 
-  private onMessage(message: Uint8Array) {
+  function onMessage(message: Uint8Array) {
     const messageToClient = PB_MessageToClient.fromBinary(message);
 
     if (messageToClient.initial) {
-      this.onMessage_Initial(messageToClient.initial);
+      onMessage_Initial(messageToClient.initial);
     }
     if (messageToClient.loginLogout) {
-      this.onMessage_LoginLogout(messageToClient.loginLogout);
+      onMessage_LoginLogout(messageToClient.loginLogout);
     }
     if (messageToClient.lobby) {
-      this.lobbyManager.onMessage(messageToClient.lobby);
+      lobbyManager.onMessage(messageToClient.lobby);
     }
   }
 
-  private onMessage_Initial(message: PB_MessageToClient_Initial) {
-    if (message.version !== this.version) {
+  function onMessage_Initial(message: PB_MessageToClient_Initial) {
+    if (message.version !== version) {
       location.reload();
     }
 
-    this.logTime = message.logTime;
+    logTime = message.logTime;
   }
 
-  private onMessage_LoginLogout(message: PB_MessageToClient_LoginLogout) {
+  function onMessage_LoginLogout(message: PB_MessageToClient_LoginLogout) {
     if (message.username && message.userId && message.token) {
-      this.myUsername = message.username;
-      this.myUserID = message.userId;
-      this.myToken = message.token;
+      myUsername = message.username;
+      myUserID = message.userId;
+      myToken = message.token;
 
-      this.loginMessage = PB_MessageToServer.toBinary({
+      loginMessage = PB_MessageToServer.toBinary({
         loginLogout: {
           loginWithToken: {
             username: message.username,
@@ -269,34 +244,34 @@ export class Client {
         },
       });
 
-      this.setUsernameSignal(message.username);
-      this.setLoginStateSignal(LoginState.LoggedIn);
+      setUsername(message.username);
+      setLoginState(LoginState.LoggedIn);
 
-      this.setUsernameAndTokenSignal(new UsernameAndToken(message.username, message.token));
+      setUsernameAndToken(new UsernameAndToken(message.username, message.token));
     } else {
-      this.makeLoggedOutDataChanges();
+      makeLoggedOutDataChanges();
     }
 
-    this.setLoginLogoutResponseCodeSignal(message.responseCode);
+    setLoginLogoutResponseCode(message.responseCode);
   }
 
-  private logoutWhenNotConnected() {
-    this.makeLoggedOutDataChanges();
+  function logoutWhenNotConnected() {
+    makeLoggedOutDataChanges();
 
-    this.setLoginLogoutResponseCodeSignal(PB_MessageToClient_LoginLogout_ResponseCode.SUCCESS);
+    setLoginLogoutResponseCode(PB_MessageToClient_LoginLogout_ResponseCode.SUCCESS);
   }
 
-  private makeLoggedOutDataChanges() {
-    this.myUsername = undefined;
-    this.myUserID = undefined;
-    this.myToken = undefined;
+  function makeLoggedOutDataChanges() {
+    myUsername = undefined;
+    myUserID = undefined;
+    myToken = undefined;
 
-    this.loginMessage = undefined;
+    loginMessage = undefined;
 
-    this.setUsernameSignal('');
-    this.setLoginStateSignal(LoginState.LoggedOut);
+    setUsername('');
+    setLoginState(LoginState.LoggedOut);
 
-    this.setUsernameAndTokenSignal(undefined);
+    setUsernameAndToken(undefined);
   }
 }
 

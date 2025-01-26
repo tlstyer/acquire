@@ -1,5 +1,5 @@
 import { describe, expect, test, vi } from 'vitest';
-import { Client } from '../client/client';
+import { Client, createClient } from '../client/client';
 import { TestClientCommunication } from '../client/clientCommunication';
 import { GameStatus } from '../client/helpers';
 import { GameSetup } from '../common/gameSetup';
@@ -26,7 +26,7 @@ describe('Connect', () => {
     new Server(serverCommunication, userDataProvider, 2, 123);
 
     const clientCommunication = new TestClientCommunication(serverCommunication);
-    new Client(clientCommunication, 1);
+    createClient(clientCommunication, 1);
 
     clientCommunication.connect();
 
@@ -590,7 +590,7 @@ describe('lobby', () => {
     // another client connects to lobby and then logs in
 
     const clientCommunication4 = new TestClientCommunication(serverCommunication);
-    const client4 = new Client(clientCommunication4, 2);
+    const client4 = createClient(clientCommunication4, 2);
     clientCommunication4.connect();
     clientCommunication4.communicatedMessages.length = 0;
 
@@ -655,7 +655,7 @@ describe('lobby', () => {
     // anonymous client 1 connects to lobby
 
     const clientCommunicationAnon1 = new TestClientCommunication(serverCommunication);
-    const clientAnon1 = new Client(clientCommunicationAnon1, 2);
+    const clientAnon1 = createClient(clientCommunicationAnon1, 2);
     clientCommunicationAnon1.connect();
     clientCommunicationAnon1.communicatedMessages.length = 0;
 
@@ -682,7 +682,7 @@ describe('lobby', () => {
     // anonymous client 2 connects to lobby
 
     const clientCommunicationAnon2 = new TestClientCommunication(serverCommunication);
-    const clientAnon2 = new Client(clientCommunicationAnon2, 2);
+    const clientAnon2 = createClient(clientCommunicationAnon2, 2);
     clientCommunicationAnon2.connect();
     clientCommunicationAnon2.communicatedMessages.length = 0;
 
@@ -826,7 +826,7 @@ describe('lobby', () => {
             server.lobbyRoom.createLastStateCheckpoint();
 
             const clientCommunicationAnon1 = new TestClientCommunication(serverCommunication);
-            const clientAnon1 = new Client(clientCommunicationAnon1, 2);
+            const clientAnon1 = createClient(clientCommunicationAnon1, 2);
             clientCommunicationAnon1.connect();
             clientCommunicationAnon1.communicatedMessages.length = 0;
             clientAnon1.connectToLobby();
@@ -866,7 +866,7 @@ function createOneClientConnectedToOneServer() {
   const server = new Server(serverCommunication, userDataProvider, 2, 123);
 
   const clientCommunication = new TestClientCommunication(serverCommunication);
-  const client = new Client(clientCommunication, 2);
+  const client = createClient(clientCommunication, 2);
 
   clientCommunication.connect();
 

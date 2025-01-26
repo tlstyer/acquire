@@ -13,7 +13,7 @@ import {
   PB_MessageToServer,
   PB_PlayerArrangementMode,
 } from '../common/pb';
-import type { Client } from './client';
+import { ClientCommunication } from './clientCommunication';
 import { GameStatus } from './helpers';
 
 export class LobbyManager {
@@ -34,7 +34,7 @@ export class LobbyManager {
   createdGameNumberSignal: Accessor<number | undefined>;
   private setCreatedGameNumberSignal: Setter<number | undefined>;
 
-  constructor(public client: Client) {
+  constructor(public clientCommunication: ClientCommunication) {
     const [connectedSignal, setConnectedSignal] = createSignal(false);
     this.connectedSignal = connectedSignal;
     this.setConnectedSignal = setConnectedSignal;
@@ -54,7 +54,7 @@ export class LobbyManager {
     this.setConnectedSignal(false);
     this.setCreatedGameNumberSignal(undefined);
 
-    this.client.clientCommunication.sendMessage(this.getConnectMessage());
+    this.clientCommunication.sendMessage(this.getConnectMessage());
   }
 
   getConnectMessage() {
@@ -68,7 +68,7 @@ export class LobbyManager {
   }
 
   createGame(gameMode: PB_GameMode) {
-    this.client.clientCommunication.sendMessage(
+    this.clientCommunication.sendMessage(
       PB_MessageToServer.toBinary({
         lobby: {
           createGame: {

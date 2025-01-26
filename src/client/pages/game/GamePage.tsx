@@ -65,14 +65,14 @@ export function GamePage(props: { client: Client }) {
   addEventListener('resize', updateWindowSizes);
   onCleanup(() => removeEventListener('resize', updateWindowSizes));
 
-  const keyboardShortcutsEnabled = () => props.client.dialogTypeSignal() === undefined;
+  const keyboardShortcutsEnabled = () => props.client.signals.dialogType() === undefined;
 
   return (
     <div class={styles.root}>
       <GameBoard
         gameBoard={gameState().gameBoard}
         tileRack={gameBoardTileRack()}
-        labelMode={props.client.gameBoardLabelModeSignal()}
+        labelMode={props.client.signals.gameBoardLabelMode()}
         cellSize={gameBoardCellSize()}
         onCellClicked={undefined}
       />

@@ -76,22 +76,29 @@ export function Login(props: { client: Client }) {
           <div class={styles.error}>{passwordError()}</div>
         </div>
         <div>
-          <button type="submit" disabled={props.client.loginStateSignal() !== LoginState.LoggedOut}>
+          <button
+            type="submit"
+            disabled={props.client.signals.loginState() !== LoginState.LoggedOut}
+          >
             Login
           </button>{' '}
           <Switch>
-            <Match when={submitted() && props.client.loginLogoutResponseCodeSignal() !== undefined}>
+            <Match
+              when={submitted() && props.client.signals.loginLogoutResponseCode() !== undefined}
+            >
               <span
                 classList={{
                   [styles.success]:
-                    props.client.loginLogoutResponseCodeSignal() ===
+                    props.client.signals.loginLogoutResponseCode() ===
                     PB_MessageToClient_LoginLogout_ResponseCode.SUCCESS,
                   [styles.error]:
-                    props.client.loginLogoutResponseCodeSignal() !==
+                    props.client.signals.loginLogoutResponseCode() !==
                     PB_MessageToClient_LoginLogout_ResponseCode.SUCCESS,
                 }}
               >
-                {loginLogoutResponseCodeToString.get(props.client.loginLogoutResponseCodeSignal()!)}
+                {loginLogoutResponseCodeToString.get(
+                  props.client.signals.loginLogoutResponseCode()!,
+                )}
               </span>
             </Match>
             <Match when={submitted()}>
@@ -106,7 +113,7 @@ export function Login(props: { client: Client }) {
       <div>
         If you have not created a user:{' '}
         <button
-          disabled={props.client.loginStateSignal() !== LoginState.LoggedOut}
+          disabled={props.client.signals.loginState() !== LoginState.LoggedOut}
           onClick={() => props.client.setDialogType(DialogType.CreateUser)}
         >
           Create User

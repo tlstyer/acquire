@@ -9,7 +9,7 @@ export function Settings(props: { client: Client }) {
         <label>
           Color Scheme:{' '}
           <select
-            value={props.client.colorSchemeSignal()}
+            value={props.client.signals.colorScheme()}
             onInput={(e) => props.client.setColorScheme(e.currentTarget.value)}
           >
             <option value="netacquire">NetAcquire</option>
@@ -21,7 +21,7 @@ export function Settings(props: { client: Client }) {
         <label>
           Game Board Label Mode:{' '}
           <select
-            value={props.client.gameBoardLabelModeSignal()}
+            value={props.client.signals.gameBoardLabelMode()}
             onInput={(e) => props.client.setGameBoardLabelMode(parseInt(e.currentTarget.value, 10))}
           >
             <option value={GameBoardLabelMode.Nothing}>Nothing</option>

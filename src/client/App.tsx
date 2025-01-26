@@ -4,7 +4,7 @@ import { createEffect, onCleanup } from 'solid-js';
 import { isServer } from 'solid-js/web';
 import { TestServerCommunication } from '../server/serverCommunication';
 import styles from './App.module.css';
-import { Client } from './client';
+import { createClient } from './client';
 import {
   ClientCommunication,
   TestClientCommunication,
@@ -33,7 +33,7 @@ export function App() {
     clientCommunication = webSocketClientCommunication;
   }
 
-  const client = new Client(clientCommunication, parseInt(import.meta.env.VITE_VERSION, 10));
+  const client = createClient(clientCommunication, parseInt(import.meta.env.VITE_VERSION, 10));
 
   if (!isServer) {
     const localStorageKey = 'UsernameAndToken';
@@ -43,7 +43,7 @@ export function App() {
 
     let ignoredFirstMessage = false;
     createEffect(() => {
-      const usernameAndToken = client.usernameAndTokenSignal();
+      const usernameAndToken = client.signals.usernameAndToken();
 
       if (ignoredFirstMessage) {
         if (usernameAndToken !== undefined) {
@@ -108,7 +108,7 @@ export function App() {
     }
 
     createEffect(() => {
-      const colorScheme = client.colorSchemeSignal();
+      const colorScheme = client.signals.colorScheme();
 
       document.documentElement.style.setProperty(
         '--main-background-color',
