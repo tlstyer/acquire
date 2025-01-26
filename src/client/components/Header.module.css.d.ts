@@ -1,4 +1,5 @@
 declare const styles: {
+  readonly "connected": string;
   readonly "connecting": string;
   readonly "connection": string;
   readonly "dialog": string;

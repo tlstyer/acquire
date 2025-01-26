@@ -53,6 +53,10 @@
   border: 1px solid black;
 }
 
+.connected {
+  background-color: #0c0;
+}
+
 .connecting {
   animation-name: connecting;
   animation-duration: 1.5s;

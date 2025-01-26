@@ -40,8 +40,12 @@ export function Header(props: { client: Client }) {
       </Switch>
 
       <span
-        classList={{ [styles.connection]: true, [styles.connecting]: true }}
-        title="Connecting..."
+        classList={{
+          [styles.connection]: true,
+          [styles.connected]: props.client.isConnectedSignal(),
+          [styles.connecting]: !props.client.isConnectedSignal(),
+        }}
+        title={props.client.isConnectedSignal() ? 'Connected' : 'Connecting...'}
       />
     </div>
   );
