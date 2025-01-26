@@ -11,7 +11,7 @@ import {
 import type { ClientCommunication } from './clientCommunication';
 import { DialogType } from './components/Dialog';
 import { GameBoardLabelMode } from './helpers';
-import { LobbyManager } from './lobbyManager';
+import { createLobbyManager } from './lobbyManager';
 
 export type Client = ReturnType<typeof createClient>;
 
@@ -54,7 +54,7 @@ export function createClient(clientCommunication: ClientCommunication, version: 
   );
 
   let currentPage = CurrentPage.None;
-  const lobbyManager = new LobbyManager(clientCommunication);
+  const lobbyManager = createLobbyManager(clientCommunication);
 
   return {
     loginWithPassword,

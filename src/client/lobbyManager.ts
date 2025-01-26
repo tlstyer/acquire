@@ -1,4 +1,4 @@
-import { Accessor, createSignal, Setter } from 'solid-js';
+import { createSignal } from 'solid-js';
 import { GameSetup } from '../common/gameSetup';
 import { gameModeToNumPlayers } from '../common/helpers';
 import {
@@ -16,59 +16,61 @@ import {
 import { ClientCommunication } from './clientCommunication';
 import { GameStatus } from './helpers';
 
-export class LobbyManager {
-  lastEventIndex = 0;
+export type LobbyManager = ReturnType<typeof createLobbyManager>;
 
-  userIDToUsername = new Map<number, string>();
-  getUsernameForUserID = (userID: number) => this.userIDToUsername.get(userID) ?? '?';
-  userIDs = new Set<number>();
-  gameDisplayNumberToLobbyGame = new Map<number, LobbyGame>();
+export function createLobbyManager(clientCommunication: ClientCommunication) {
+  let lastEventIndex = 0;
 
-  connectedSignal: Accessor<boolean>;
-  private setConnectedSignal: Setter<boolean>;
+  const userIDToUsername = new Map<number, string>();
+  const getUsernameForUserID = (userID: number) => userIDToUsername.get(userID) ?? '?';
+  const userIDs = new Set<number>();
+  const gameDisplayNumberToLobbyGame = new Map<number, LobbyGame>();
 
-  private shouldUpdateUsernamesSignal = false;
-  usernamesSignal: Accessor<string[]>;
-  private setUsernamesSignal: Setter<string[]>;
+  const [connectedSignal, setConnectedSignal] = createSignal(false);
 
-  createdGameNumberSignal: Accessor<number | undefined>;
-  private setCreatedGameNumberSignal: Setter<number | undefined>;
+  let shouldUpdateUsernamesSignal = false;
+  const [usernamesSignal, setUsernamesSignal] = createSignal<string[]>([]);
 
-  constructor(public clientCommunication: ClientCommunication) {
-    const [connectedSignal, setConnectedSignal] = createSignal(false);
-    this.connectedSignal = connectedSignal;
-    this.setConnectedSignal = setConnectedSignal;
+  const [createdGameNumberSignal, setCreatedGameNumberSignal] = createSignal<number | undefined>();
 
-    const [usernamesSignal, setUsernamesSignal] = createSignal<string[]>([]);
-    this.usernamesSignal = usernamesSignal;
-    this.setUsernamesSignal = setUsernamesSignal;
+  return {
+    connect,
+    getConnectMessage,
+    createGame,
+    onMessage,
+    get lastEventIndex() {
+      return lastEventIndex;
+    },
+    get userIDToUsername() {
+      return userIDToUsername;
+    },
+    get userIDs() {
+      return userIDs;
+    },
+    get gameDisplayNumberToLobbyGame() {
+      return gameDisplayNumberToLobbyGame;
+    },
+  };
 
-    const [createdGameNumberSignal, setCreatedGameNumberSignal] = createSignal<number | undefined>(
-      undefined,
-    );
-    this.createdGameNumberSignal = createdGameNumberSignal;
-    this.setCreatedGameNumberSignal = setCreatedGameNumberSignal;
+  function connect() {
+    setConnectedSignal(false);
+    setCreatedGameNumberSignal(undefined);
+
+    clientCommunication.sendMessage(getConnectMessage());
   }
 
-  connect() {
-    this.setConnectedSignal(false);
-    this.setCreatedGameNumberSignal(undefined);
-
-    this.clientCommunication.sendMessage(this.getConnectMessage());
-  }
-
-  getConnectMessage() {
+  function getConnectMessage() {
     return PB_MessageToServer.toBinary({
       lobby: {
         connect: {
-          lastEventIndex: this.lastEventIndex,
+          lastEventIndex: lastEventIndex,
         },
       },
     });
   }
 
-  createGame(gameMode: PB_GameMode) {
-    this.clientCommunication.sendMessage(
+  function createGame(gameMode: PB_GameMode) {
+    clientCommunication.sendMessage(
       PB_MessageToServer.toBinary({
         lobby: {
           createGame: {
@@ -79,39 +81,37 @@ export class LobbyManager {
     );
   }
 
-  onMessage(message: PB_MessageToClient_Lobby) {
+  function onMessage(message: PB_MessageToClient_Lobby) {
     if (message.lastStateCheckpoint) {
-      this.onMessage_LastStateCheckpoint(message.lastStateCheckpoint);
+      onMessage_LastStateCheckpoint(message.lastStateCheckpoint);
     }
     if (message.events.length > 0) {
-      this.onMessage_Events(message.events);
+      onMessage_Events(message.events);
     }
     if (message.createGameResponse) {
-      this.onMessage_CreateGameResponse(message.createGameResponse);
+      onMessage_CreateGameResponse(message.createGameResponse);
     }
 
-    this.setConnectedSignal(true);
+    setConnectedSignal(true);
 
-    if (this.shouldUpdateUsernamesSignal) {
-      this.setUsernamesSignal(
-        [...this.userIDs].map((userID) => this.userIDToUsername.get(userID) ?? '?'),
-      );
-      this.shouldUpdateUsernamesSignal = false;
+    if (shouldUpdateUsernamesSignal) {
+      setUsernamesSignal([...userIDs].map((userID) => userIDToUsername.get(userID) ?? '?'));
+      shouldUpdateUsernamesSignal = false;
     }
   }
 
-  onMessage_LastStateCheckpoint(message: PB_MessageToClient_Lobby_LastStateCheckpoint) {
-    this.userIDToUsername.clear();
-    this.userIDs.clear();
-    this.gameDisplayNumberToLobbyGame.clear();
+  function onMessage_LastStateCheckpoint(message: PB_MessageToClient_Lobby_LastStateCheckpoint) {
+    userIDToUsername.clear();
+    userIDs.clear();
+    gameDisplayNumberToLobbyGame.clear();
 
     const users = message.users;
     for (let i = 0; i < users.length; i++) {
       const user = users[i];
 
-      this.userIDToUsername.set(user.userId, user.username);
+      userIDToUsername.set(user.userId, user.username);
       if (user.isInLobby) {
-        this.userIDs.add(user.userId);
+        userIDs.add(user.userId);
       }
     }
 
@@ -119,7 +119,7 @@ export class LobbyManager {
     for (let i = 0; i < games.length; i++) {
       const game = games[i];
 
-      this.gameDisplayNumberToLobbyGame.set(
+      gameDisplayNumberToLobbyGame.set(
         game.gameDisplayNumber,
         new LobbyGame(
           game.gameNumber,
@@ -127,38 +127,38 @@ export class LobbyManager {
           game.gameMode,
           game.hostUserId,
           game.userIds,
-          this.getUsernameForUserID,
+          getUsernameForUserID,
         ),
       );
     }
 
-    this.lastEventIndex = message.lastEventIndex;
+    lastEventIndex = message.lastEventIndex;
 
-    this.shouldUpdateUsernamesSignal = true;
+    shouldUpdateUsernamesSignal = true;
   }
 
-  onMessage_Events(events: PB_MessageToClient_Lobby_Event[]) {
+  function onMessage_Events(events: PB_MessageToClient_Lobby_Event[]) {
     for (let i = 0; i < events.length; i++) {
       const event = events[i];
 
       if (event.gameCreated) {
-        this.onMessage_Event_GameCreated(event.gameCreated);
+        onMessage_Event_GameCreated(event.gameCreated);
       } else if (event.addUserToLobby) {
-        this.onMessage_Event_AddUserToLobby(event.addUserToLobby);
+        onMessage_Event_AddUserToLobby(event.addUserToLobby);
       } else if (event.removeUserFromLobby) {
-        this.onMessage_Event_RemoveUserFromLobby(event.removeUserFromLobby);
+        onMessage_Event_RemoveUserFromLobby(event.removeUserFromLobby);
       }
     }
 
-    this.lastEventIndex += events.length;
+    lastEventIndex += events.length;
   }
 
-  onMessage_Event_GameCreated(event: PB_MessageToClient_Lobby_Event_GameCreated) {
+  function onMessage_Event_GameCreated(event: PB_MessageToClient_Lobby_Event_GameCreated) {
     const userIDs: number[] = new Array(gameModeToNumPlayers.get(event.gameMode));
     userIDs.fill(0);
     userIDs[0] = event.hostUserId;
 
-    this.gameDisplayNumberToLobbyGame.set(
+    gameDisplayNumberToLobbyGame.set(
       event.gameDisplayNumber,
       new LobbyGame(
         event.gameNumber,
@@ -166,29 +166,31 @@ export class LobbyManager {
         event.gameMode,
         event.hostUserId,
         userIDs,
-        this.getUsernameForUserID,
+        getUsernameForUserID,
       ),
     );
   }
 
-  onMessage_Event_AddUserToLobby(event: PB_MessageToClient_Lobby_Event_AddUserToLobby) {
+  function onMessage_Event_AddUserToLobby(event: PB_MessageToClient_Lobby_Event_AddUserToLobby) {
     if (event.username) {
-      this.userIDToUsername.set(event.userId, event.username);
+      userIDToUsername.set(event.userId, event.username);
     }
 
-    this.userIDs.add(event.userId);
+    userIDs.add(event.userId);
 
-    this.shouldUpdateUsernamesSignal = true;
+    shouldUpdateUsernamesSignal = true;
   }
 
-  onMessage_Event_RemoveUserFromLobby(event: PB_MessageToClient_Lobby_Event_RemoveUserFromLobby) {
-    this.userIDs.delete(event.userId);
+  function onMessage_Event_RemoveUserFromLobby(
+    event: PB_MessageToClient_Lobby_Event_RemoveUserFromLobby,
+  ) {
+    userIDs.delete(event.userId);
 
-    this.shouldUpdateUsernamesSignal = true;
+    shouldUpdateUsernamesSignal = true;
   }
 
-  onMessage_CreateGameResponse(message: PB_MessageToClient_Lobby_CreateGameResponse) {
-    this.setCreatedGameNumberSignal(message.gameNumber);
+  function onMessage_CreateGameResponse(message: PB_MessageToClient_Lobby_CreateGameResponse) {
+    setCreatedGameNumberSignal(message.gameNumber);
   }
 }
 
