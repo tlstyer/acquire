@@ -1,4 +1,4 @@
-import { Match, Show, Switch } from 'solid-js';
+import { createMemo, Match, onCleanup, Show, Switch } from 'solid-js';
 import { Client } from '../client';
 import { CreateUser } from './CreateUser';
 import styles from './Dialog.module.css';
@@ -7,14 +7,38 @@ import { Logout } from './Logout';
 import { Settings } from './Settings';
 
 export function Dialog(props: { client: Client }) {
+  let rootElement!: HTMLDivElement;
+
+  const earliestTimeToCloseByClickingOutside = createMemo(() =>
+    props.client.signals.dialogType() !== undefined ? Date.now() + 100 : 0,
+  );
+
+  function onClickSomewhere(event: MouseEvent) {
+    if (
+      props.client.signals.dialogType() !== undefined &&
+      event.target instanceof Node &&
+      !rootElement.contains(event.target) &&
+      Date.now() >= earliestTimeToCloseByClickingOutside()
+    ) {
+      close();
+    }
+  }
+  // eslint-disable-next-line solid/reactivity
+  addEventListener('click', onClickSomewhere);
+  onCleanup(() => removeEventListener('click', onClickSomewhere));
+
+  function close() {
+    props.client.setDialogType(undefined);
+  }
+
   return (
     <Show when={props.client.signals.dialogType() !== undefined}>
-      <div class={styles.root}>
+      <div class={styles.root} ref={rootElement}>
         <div class={styles.header}>
           <span class={styles.title}>
             {dialogTypeToTitle.get(props.client.signals.dialogType()!)}
           </span>
-          <span class={styles.close} onClick={() => props.client.setDialogType(undefined)}>
+          <span class={styles.close} onClick={close}>
             &nbsp;x&nbsp;
           </span>
         </div>
