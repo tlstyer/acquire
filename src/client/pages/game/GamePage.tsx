@@ -1,16 +1,16 @@
 import { batch, createMemo, createSignal, Index, onCleanup, Show } from 'solid-js';
 import { ActionGameOver } from '../../../common/gameActions/gameOver';
+import { Client } from '../../client';
 import { GameBoard } from '../../components/GameBoard';
 import { GameHistory } from '../../components/GameHistory';
 import { NextGameAction } from '../../components/NextGameAction';
 import { ScoreBoard } from '../../components/ScoreBoard';
 import { TileRackReadOnly } from '../../components/TileRackReadOnly';
-import { GameBoardLabelMode } from '../../helpers';
 import { processBrowserMyKeyboardEvents } from '../../myKeyboardEvents';
 import { getExampleGame1 } from '../examples/games';
 import styles from './GamePage.module.css';
 
-export function GamePage() {
+export function GamePage(props: { client: Client }) {
   const game = getExampleGame1();
 
   const [selectedMoveIndex, setSelectedMoveIndex] = createSignal(game.gameStateHistory.length - 1);
@@ -65,14 +65,14 @@ export function GamePage() {
   addEventListener('resize', updateWindowSizes);
   onCleanup(() => removeEventListener('resize', updateWindowSizes));
 
-  const [keyboardShortcutsEnabled] = createSignal(true);
+  const keyboardShortcutsEnabled = () => props.client.dialogTypeSignal() === undefined;
 
   return (
     <div class={styles.root}>
       <GameBoard
         gameBoard={gameState().gameBoard}
         tileRack={gameBoardTileRack()}
-        labelMode={GameBoardLabelMode.Nothing}
+        labelMode={props.client.gameBoardLabelModeSignal()}
         cellSize={gameBoardCellSize()}
         onCellClicked={undefined}
       />

@@ -106,6 +106,19 @@ export function App() {
         tokenInLocalStorage = undefined;
       }
     }
+
+    createEffect(() => {
+      const colorScheme = client.colorSchemeSignal();
+
+      document.documentElement.style.setProperty(
+        '--main-background-color',
+        `var(--main-background-color-${colorScheme})`,
+      );
+      document.documentElement.style.setProperty(
+        '--scrolling-div-background-color',
+        `var(--scrolling-div-background-color-${colorScheme})`,
+      );
+    });
   }
 
   const routes: RouteDefinition[] = [
@@ -115,7 +128,7 @@ export function App() {
     },
     {
       path: '/game',
-      component: GamePage,
+      component: () => <GamePage client={client} />,
     },
     {
       path: '/examples',

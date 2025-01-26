@@ -4,6 +4,7 @@ import { CreateUser } from './CreateUser';
 import styles from './Dialog.module.css';
 import { Login } from './Login';
 import { Logout } from './Logout';
+import { Settings } from './Settings';
 
 export function Dialog(props: { client: Client }) {
   return (
@@ -27,6 +28,9 @@ export function Dialog(props: { client: Client }) {
           <Match when={props.client.dialogTypeSignal() === DialogType.Logout}>
             <Logout client={props.client} />
           </Match>
+          <Match when={props.client.dialogTypeSignal() === DialogType.Settings}>
+            <Settings client={props.client} />
+          </Match>
         </Switch>
       </div>
     </Show>
@@ -37,10 +41,12 @@ export enum DialogType {
   Login,
   CreateUser,
   Logout,
+  Settings,
 }
 
 const dialogTypeToTitle = new Map([
   [DialogType.Login, 'Login'],
   [DialogType.CreateUser, 'Create User'],
   [DialogType.Logout, 'Logout'],
+  [DialogType.Settings, 'Settings'],
 ]);

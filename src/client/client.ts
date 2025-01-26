@@ -1,4 +1,5 @@
 import { Accessor, createSignal, Setter } from 'solid-js';
+import { isServer } from 'solid-js/web';
 import { concatenateUint8Arrays } from '../common/helpers';
 import {
   PB_MessageToClient,
@@ -9,6 +10,7 @@ import {
 } from '../common/pb';
 import type { ClientCommunication } from './clientCommunication';
 import { DialogType } from './components/Dialog';
+import { GameBoardLabelMode } from './helpers';
 import { LobbyManager } from './lobbyManager';
 
 export class Client {
@@ -38,6 +40,11 @@ export class Client {
 
   dialogTypeSignal: Accessor<DialogType | undefined>;
   private setDialogTypeSignal: Setter<DialogType | undefined>;
+
+  colorSchemeSignal: Accessor<string>;
+  setColorScheme: (newValue: string) => void;
+  gameBoardLabelModeSignal: Accessor<GameBoardLabelMode>;
+  setGameBoardLabelMode: (newValue: GameBoardLabelMode) => void;
 
   currentPage = CurrentPage.None;
   lobbyManager = new LobbyManager(this);
@@ -79,6 +86,27 @@ export class Client {
     const [dialogTypeSignal, setDialogTypeSignal] = createSignal<DialogType | undefined>();
     this.dialogTypeSignal = dialogTypeSignal;
     this.setDialogTypeSignal = setDialogTypeSignal;
+
+    const [colorSchemeSignal, setColorScheme] = createSetting(
+      'ColorScheme',
+      (localStorageValue): string =>
+        localStorageValue === 'white' ? localStorageValue : 'netacquire',
+    );
+    this.colorSchemeSignal = colorSchemeSignal;
+    this.setColorScheme = setColorScheme;
+
+    const [gameBoardLabelModeSignal, setGameBoardLabelMode] = createSetting(
+      'GameBoardLabelMode',
+      (localStorageValue) => {
+        const gblm: GameBoardLabelMode = localStorageValue
+          ? parseInt(localStorageValue, 10)
+          : GameBoardLabelMode.Nothing;
+        const gblmStr = GameBoardLabelMode[gblm];
+        return gblmStr && gblm.toString() === localStorageValue ? gblm : GameBoardLabelMode.Nothing;
+      },
+    );
+    this.gameBoardLabelModeSignal = gameBoardLabelModeSignal;
+    this.setGameBoardLabelMode = setGameBoardLabelMode;
   }
 
   setDialogType(dialogType: DialogType | undefined) {
@@ -290,4 +318,33 @@ class UsernameAndToken {
 const enum CurrentPage {
   None,
   Lobby,
+}
+
+function createSetting<T extends { toString(): string }>(
+  localStorageKey: string,
+  localStorageValueToValidValue: (localStorageValue: string | null) => T,
+): [get: Accessor<T>, set: (newValue: T) => void] {
+  const [setting, setSetting] = createSignal(
+    localStorageValueToValidValue(isServer ? null : localStorage.getItem(localStorageKey)),
+  );
+
+  if (!isServer) {
+    addEventListener('storage', (event) => {
+      if (event.key === localStorageKey || event.key === null) {
+        // @ts-expect-error I have no idea why there's a TS error here
+        setSetting(localStorageValueToValidValue(event.newValue));
+      }
+    });
+  }
+
+  return [
+    setting,
+    function set(newValue: T) {
+      if (!isServer) {
+        localStorage.setItem(localStorageKey, newValue.toString());
+      }
+      // @ts-expect-error I have no idea why there's a TS error here
+      setSetting(newValue);
+    },
+  ];
 }

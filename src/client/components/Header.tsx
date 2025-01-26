@@ -39,6 +39,10 @@ export function Header(props: { client: Client }) {
         </Match>
       </Switch>
 
+      <span class={styles.dialog} onClick={() => props.client.setDialogType(DialogType.Settings)}>
+        ⚙
+      </span>
+
       <span
         classList={{
           [styles.connection]: true,

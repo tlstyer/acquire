@@ -14,9 +14,13 @@ fieldset {
 
   --border-color: #f6f4f2;
 
-  --main-background-color: #f6f4f2;
+  --main-background-color-netacquire: #f6f4f2;
+  --main-background-color-white: white;
+  --main-background-color: var(--main-background-color-netacquire);
 
-  --scrolling-div-background-color: #c0c0ff;
+  --scrolling-div-background-color-netacquire: #c0c0ff;
+  --scrolling-div-background-color-white: white;
+  --scrolling-div-background-color: var(--scrolling-div-background-color-netacquire);
 
   --header-height: 20px;
 }
