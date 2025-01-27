@@ -49,6 +49,13 @@ export class WebSocketClientCommunication extends ClientCommunication {
 
   sendMessage(message: Uint8Array) {
     if (this.isConnected) {
+      if (import.meta.env.VITE_LOG_MESSAGES_TO_BROWSER_CONSOLE === 'yes') {
+        console.log(
+          `%c${uint8ArrayToHexString(message)}\n${JSON.stringify(PB_MessageToServer.fromBinary(message), null, 2)}`,
+          'color: green',
+        );
+      }
+
       this.socket?.send(message);
     }
   }
@@ -73,7 +80,16 @@ export class WebSocketClientCommunication extends ClientCommunication {
   }
 
   private onSocketMessage(ev: MessageEvent) {
-    this.onMessage(new Uint8Array(ev.data));
+    const message = new Uint8Array(ev.data);
+
+    if (import.meta.env.VITE_LOG_MESSAGES_TO_BROWSER_CONSOLE === 'yes') {
+      console.log(
+        `%c${uint8ArrayToHexString(message)}\n${JSON.stringify(PB_MessageToClient.fromBinary(message), null, 2)}`,
+        'color: blue',
+      );
+    }
+
+    this.onMessage(message);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -180,4 +196,8 @@ export class TestClientCommunicatedMessage {
       console.log(JSON.stringify(this.receivedMessage, null, 2));
     }
   }
+}
+
+function uint8ArrayToHexString(uint8Array: Uint8Array) {
+  return Array.prototype.map.call(uint8Array, (x) => ('0' + x.toString(16)).slice(-2)).join('');
 }
