@@ -15,7 +15,7 @@ import { Header } from './components/Header';
 import { processBrowserMyKeyboardEvents } from './myKeyboardEvents';
 import { ExamplesPage } from './pages/examples/ExamplesPage';
 import { GamePage } from './pages/game/GamePage';
-import { HomePage } from './pages/home/HomePage';
+import { LobbyPage } from './pages/lobby/LobbyPage';
 
 export function App() {
   let clientCommunication: ClientCommunication;
@@ -125,7 +125,7 @@ export function App() {
   const routes: RouteDefinition[] = [
     {
       path: '/',
-      component: HomePage,
+      component: () => <LobbyPage client={client} />,
     },
     {
       path: '/game',

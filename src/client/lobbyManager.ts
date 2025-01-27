@@ -26,12 +26,12 @@ export function createLobbyManager(clientCommunication: ClientCommunication) {
   const userIDs = new Set<number>();
   const gameDisplayNumberToLobbyGame = new Map<number, LobbyGame>();
 
-  const [connectedSignal, setConnectedSignal] = createSignal(false);
+  const [connected, setConnected] = createSignal(false);
 
   let shouldUpdateUsernamesSignal = false;
-  const [usernamesSignal, setUsernamesSignal] = createSignal<string[]>([]);
+  const [usernames, setUsernames] = createSignal<string[]>([]);
 
-  const [createdGameNumberSignal, setCreatedGameNumberSignal] = createSignal<number | undefined>();
+  const [createdGameNumber, setCreatedGameNumber] = createSignal<number | undefined>();
 
   return {
     connect,
@@ -50,11 +50,16 @@ export function createLobbyManager(clientCommunication: ClientCommunication) {
     get gameDisplayNumberToLobbyGame() {
       return gameDisplayNumberToLobbyGame;
     },
+    signals: {
+      connected,
+      usernames,
+      createdGameNumber,
+    },
   };
 
   function connect() {
-    setConnectedSignal(false);
-    setCreatedGameNumberSignal(undefined);
+    setConnected(false);
+    setCreatedGameNumber(undefined);
 
     clientCommunication.sendMessage(getConnectMessage());
   }
@@ -92,10 +97,10 @@ export function createLobbyManager(clientCommunication: ClientCommunication) {
       onMessage_CreateGameResponse(message.createGameResponse);
     }
 
-    setConnectedSignal(true);
+    setConnected(true);
 
     if (shouldUpdateUsernamesSignal) {
-      setUsernamesSignal([...userIDs].map((userID) => userIDToUsername.get(userID) ?? '?'));
+      setUsernames([...userIDs].map((userID) => userIDToUsername.get(userID) ?? '?'));
       shouldUpdateUsernamesSignal = false;
     }
   }
@@ -190,7 +195,7 @@ export function createLobbyManager(clientCommunication: ClientCommunication) {
   }
 
   function onMessage_CreateGameResponse(message: PB_MessageToClient_Lobby_CreateGameResponse) {
-    setCreatedGameNumberSignal(message.gameNumber);
+    setCreatedGameNumber(message.gameNumber);
   }
 }
 
