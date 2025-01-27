@@ -2,5 +2,7 @@
 /node_modules
 /package
 /src/common/pb.ts
+/package-lock.json
 /pnpm-lock.yaml
+/yarn.lock
 *.module.css.d.ts
