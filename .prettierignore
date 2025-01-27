@@ -3,3 +3,4 @@
 /package
 /src/common/pb.ts
 /pnpm-lock.yaml
+*.module.css.d.ts
