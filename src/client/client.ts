@@ -56,40 +56,6 @@ export function createClient(clientCommunication: ClientCommunication, version: 
   let currentPage = CurrentPage.None;
   const lobbyManager = createLobbyManager(clientCommunication);
 
-  return {
-    loginWithPassword,
-    loginWithToken,
-    createUserAndLogin,
-    logout,
-    connectToLobby,
-    lobbyManager,
-    get logTime() {
-      return logTime;
-    },
-    get myUsername() {
-      return myUsername;
-    },
-    get myUserID() {
-      return myUserID;
-    },
-    get myToken() {
-      return myToken;
-    },
-    signals: {
-      isConnected,
-      username,
-      loginState,
-      loginLogoutResponseCode,
-      usernameAndToken,
-      dialogType,
-      colorScheme,
-      gameBoardLabelMode,
-    },
-    setDialogType,
-    setColorScheme,
-    setGameBoardLabelMode,
-  };
-
   function loginWithPassword(username: string, password: string) {
     if (loginMessage !== undefined) {
       return;
@@ -273,6 +239,40 @@ export function createClient(clientCommunication: ClientCommunication, version: 
 
     setUsernameAndToken(undefined);
   }
+
+  return {
+    loginWithPassword,
+    loginWithToken,
+    createUserAndLogin,
+    logout,
+    connectToLobby,
+    lobbyManager,
+    get logTime() {
+      return logTime;
+    },
+    get myUsername() {
+      return myUsername;
+    },
+    get myUserID() {
+      return myUserID;
+    },
+    get myToken() {
+      return myToken;
+    },
+    signals: {
+      isConnected,
+      username,
+      loginState,
+      loginLogoutResponseCode,
+      usernameAndToken,
+      dialogType,
+      colorScheme,
+      gameBoardLabelMode,
+    },
+    setDialogType,
+    setColorScheme,
+    setGameBoardLabelMode,
+  };
 }
 
 export const enum LoginState {

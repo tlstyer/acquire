@@ -33,30 +33,6 @@ export function createLobbyManager(clientCommunication: ClientCommunication) {
 
   const [createdGameNumber, setCreatedGameNumber] = createSignal<number | undefined>();
 
-  return {
-    connect,
-    getConnectMessage,
-    createGame,
-    onMessage,
-    get lastEventIndex() {
-      return lastEventIndex;
-    },
-    get userIDToUsername() {
-      return userIDToUsername;
-    },
-    get userIDs() {
-      return userIDs;
-    },
-    get gameDisplayNumberToLobbyGame() {
-      return gameDisplayNumberToLobbyGame;
-    },
-    signals: {
-      connected,
-      usernames,
-      createdGameNumber,
-    },
-  };
-
   function connect() {
     setConnected(false);
     setCreatedGameNumber(undefined);
@@ -197,6 +173,30 @@ export function createLobbyManager(clientCommunication: ClientCommunication) {
   function onMessage_CreateGameResponse(message: PB_MessageToClient_Lobby_CreateGameResponse) {
     setCreatedGameNumber(message.gameNumber);
   }
+
+  return {
+    connect,
+    getConnectMessage,
+    createGame,
+    onMessage,
+    get lastEventIndex() {
+      return lastEventIndex;
+    },
+    get userIDToUsername() {
+      return userIDToUsername;
+    },
+    get userIDs() {
+      return userIDs;
+    },
+    get gameDisplayNumberToLobbyGame() {
+      return gameDisplayNumberToLobbyGame;
+    },
+    signals: {
+      connected,
+      usernames,
+      createdGameNumber,
+    },
+  };
 }
 
 class LobbyGame {
