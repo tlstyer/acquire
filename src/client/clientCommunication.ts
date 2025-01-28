@@ -26,7 +26,7 @@ export abstract class ClientCommunication {
 export class WebSocketClientCommunication extends ClientCommunication {
   private running = false;
   private socket: WebSocket | undefined;
-  private isConnected = false;
+  private connected = false;
   private reconnectTimeout: ReturnType<typeof setTimeout> | undefined;
 
   begin() {
@@ -48,7 +48,7 @@ export class WebSocketClientCommunication extends ClientCommunication {
   }
 
   sendMessage(message: Uint8Array) {
-    if (this.isConnected) {
+    if (this.connected) {
       if (import.meta.env.VITE_LOG_MESSAGES_TO_BROWSER_CONSOLE === 'yes') {
         console.log(
           `%c${uint8ArrayToHexString(message)}\n${JSON.stringify(PB_MessageToServer.fromBinary(message), null, 2)}`,
@@ -75,7 +75,7 @@ export class WebSocketClientCommunication extends ClientCommunication {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   private onSocketOpen(ev: Event) {
-    this.isConnected = true;
+    this.connected = true;
     this.onConnect();
   }
 
@@ -97,8 +97,8 @@ export class WebSocketClientCommunication extends ClientCommunication {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   private onSocketClose(ev: CloseEvent) {
-    if (this.isConnected) {
-      this.isConnected = false;
+    if (this.connected) {
+      this.connected = false;
       this.onDisconnect();
     }
 
@@ -117,7 +117,7 @@ export class WebSocketClientCommunication extends ClientCommunication {
 }
 
 export class TestClientCommunication extends ClientCommunication {
-  private isConnected = false;
+  private connected = false;
   communicatedMessages: TestClientCommunicatedMessage[] = [];
 
   constructor(private serverCommunication: TestServerCommunication) {
@@ -126,20 +126,20 @@ export class TestClientCommunication extends ClientCommunication {
 
   connect() {
     if (this.serverCommunication.connect(this)) {
-      this.isConnected = true;
+      this.connected = true;
       this.onConnect();
     }
   }
 
   disconnect() {
     if (this.serverCommunication.disconnect(this)) {
-      this.isConnected = false;
+      this.connected = false;
       this.onDisconnect();
     }
   }
 
   sendMessage(message: Uint8Array) {
-    if (this.isConnected) {
+    if (this.connected) {
       const clientID = this.serverCommunication.clientCommunicationToClientID.get(this);
 
       if (clientID !== undefined) {

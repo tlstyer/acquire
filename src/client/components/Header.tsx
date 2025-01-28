@@ -64,10 +64,10 @@ export function Header(props: { client: Client }) {
       <span
         classList={{
           [styles.connection]: true,
-          [styles.connected]: props.client.signals.isConnected(),
-          [styles.connecting]: !props.client.signals.isConnected(),
+          [styles.connected]: props.client.signals.connected(),
+          [styles.connecting]: !props.client.signals.connected(),
         }}
-        title={props.client.signals.isConnected() ? 'Connected' : 'Connecting...'}
+        title={props.client.signals.connected() ? 'Connected' : 'Connecting...'}
       />
     </div>
   );

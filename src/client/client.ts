@@ -24,7 +24,7 @@ export function createClient(clientCommunication: ClientCommunication, version: 
   let myUserID: number | undefined;
   let myToken: string | undefined;
 
-  const [isConnected, setIsConnected] = createSignal(false);
+  const [connected, setConnected] = createSignal(false);
 
   let loginMessage: Uint8Array | undefined;
 
@@ -121,7 +121,7 @@ export function createClient(clientCommunication: ClientCommunication, version: 
       return;
     }
 
-    if (isConnected()) {
+    if (connected()) {
       loginMessage = undefined;
 
       setLoginState(LoginState.TryingToLogOut);
@@ -145,7 +145,7 @@ export function createClient(clientCommunication: ClientCommunication, version: 
   }
 
   function onConnect() {
-    setIsConnected(true);
+    setConnected(true);
 
     const dataToSend: Uint8Array[] = [];
 
@@ -166,7 +166,7 @@ export function createClient(clientCommunication: ClientCommunication, version: 
   }
 
   function onDisconnect() {
-    setIsConnected(false);
+    setConnected(false);
 
     if (loginMessage === undefined) {
       logoutWhenNotConnected();
@@ -260,7 +260,7 @@ export function createClient(clientCommunication: ClientCommunication, version: 
       return myToken;
     },
     signals: {
-      isConnected,
+      connected,
       username,
       loginState,
       loginLogoutResponseCode,
