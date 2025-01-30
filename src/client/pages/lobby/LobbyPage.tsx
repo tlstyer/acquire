@@ -1,4 +1,5 @@
-import { For, Show } from 'solid-js';
+import { useNavigate } from '@solidjs/router';
+import { createEffect, For, Show } from 'solid-js';
 import { TransitionGroup } from 'solid-transition-group';
 import { PB_GameBoardType, PB_GameMode } from '../../../common/pb';
 import { Client } from '../../client';
@@ -11,6 +12,14 @@ import styles from './LobbyPage.module.css';
 export function LobbyPage(props: { client: Client }) {
   // eslint-disable-next-line solid/reactivity
   props.client.connectToLobby();
+
+  const navigate = useNavigate();
+  createEffect(() => {
+    const createdGameNumber = props.client.lobbyManager.signals.createdGameNumber();
+    if (createdGameNumber !== undefined) {
+      navigate(`/game/${props.client.logTime}-${createdGameNumber}`);
+    }
+  });
 
   return (
     <Show when={props.client.lobbyManager.signals.connected()}>
@@ -61,8 +70,6 @@ export function LobbyPage(props: { client: Client }) {
               </div>
             )}
           </For>
-          <h2>Created Game Number</h2>
-          {props.client.lobbyManager.signals.createdGameNumber() ?? 'undefined'}
           <h2>Links</h2>
           <ul>
             <li>
