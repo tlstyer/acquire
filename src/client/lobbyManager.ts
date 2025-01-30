@@ -1,4 +1,5 @@
 import { createSignal } from 'solid-js';
+import { defaultGameBoard } from '../common/defaults';
 import { GameSetup } from '../common/gameSetup';
 import { gameModeToNumPlayers } from '../common/helpers';
 import {
@@ -30,6 +31,9 @@ export function createLobbyManager(clientCommunication: ClientCommunication) {
 
   let shouldUpdateUsernamesSignal = false;
   const [usernames, setUsernames] = createSignal<string[]>([]);
+
+  let shouldUpdateLobbyGamesSignal = false;
+  const [lobbyGames, setLobbyGames] = createSignal<LobbyGame[]>([]);
 
   const [createdGameNumber, setCreatedGameNumber] = createSignal<number | undefined>();
 
@@ -79,6 +83,12 @@ export function createLobbyManager(clientCommunication: ClientCommunication) {
       setUsernames([...userIDs].map((userID) => userIDToUsername.get(userID) ?? '?'));
       shouldUpdateUsernamesSignal = false;
     }
+    if (shouldUpdateLobbyGamesSignal) {
+      const newLobbyGames = [...gameDisplayNumberToLobbyGame.values()];
+      newLobbyGames.reverse();
+      setLobbyGames(newLobbyGames);
+      shouldUpdateLobbyGamesSignal = false;
+    }
   }
 
   function onMessage_LastStateCheckpoint(message: PB_MessageToClient_Lobby_LastStateCheckpoint) {
@@ -102,7 +112,7 @@ export function createLobbyManager(clientCommunication: ClientCommunication) {
 
       gameDisplayNumberToLobbyGame.set(
         game.gameDisplayNumber,
-        new LobbyGame(
+        createLobbyGame(
           game.gameNumber,
           game.gameDisplayNumber,
           game.gameMode,
@@ -116,6 +126,7 @@ export function createLobbyManager(clientCommunication: ClientCommunication) {
     lastEventIndex = message.lastEventIndex;
 
     shouldUpdateUsernamesSignal = true;
+    shouldUpdateLobbyGamesSignal = true;
   }
 
   function onMessage_Events(events: PB_MessageToClient_Lobby_Event[]) {
@@ -141,7 +152,7 @@ export function createLobbyManager(clientCommunication: ClientCommunication) {
 
     gameDisplayNumberToLobbyGame.set(
       event.gameDisplayNumber,
-      new LobbyGame(
+      createLobbyGame(
         event.gameNumber,
         event.gameDisplayNumber,
         event.gameMode,
@@ -150,6 +161,8 @@ export function createLobbyManager(clientCommunication: ClientCommunication) {
         getUsernameForUserID,
       ),
     );
+
+    shouldUpdateLobbyGamesSignal = true;
   }
 
   function onMessage_Event_AddUserToLobby(event: PB_MessageToClient_Lobby_Event_AddUserToLobby) {
@@ -194,34 +207,43 @@ export function createLobbyManager(clientCommunication: ClientCommunication) {
     signals: {
       connected,
       usernames,
+      lobbyGames,
       createdGameNumber,
     },
   };
 }
 
-class LobbyGame {
-  usernames: (string | null)[];
-  gameStatus: GameStatus;
+export type LobbyGame = ReturnType<typeof createLobbyGame>;
 
-  gameSetup: GameSetup | undefined;
+function createLobbyGame(
+  gameNumber: number,
+  gameDisplayNumber: number,
+  initialGameMode: PB_GameMode,
+  hostUserID: number,
+  initialUserIDs: number[],
+  getUsernameForUserID: (userID: number) => string,
+) {
+  const gameSetup = new GameSetup(
+    initialGameMode,
+    PB_PlayerArrangementMode.EXACT_ORDER,
+    hostUserID,
+    getUsernameForUserID,
+    initialUserIDs?.map((userID) => (userID !== 0 ? userID : null)),
+  );
 
-  constructor(
-    public gameNumber: number,
-    public gameDisplayNumber: number,
-    public gameMode: PB_GameMode,
-    hostUserID: number,
-    userIDs: number[],
-    getUsernameForUserID: (userID: number) => string,
-  ) {
-    this.gameStatus = GameStatus.SETTING_UP;
+  const [gameBoard, setGameBoard] = createSignal(defaultGameBoard);
+  const [usernames, setUsernames] = createSignal(gameSetup.usernames);
+  const [gameMode, setGameMode] = createSignal(gameSetup.gameMode);
+  const [gameStatus, setGameStatus] = createSignal(GameStatus.SETTING_UP);
 
-    this.gameSetup = new GameSetup(
+  return {
+    gameNumber,
+    gameDisplayNumber,
+    signals: {
+      gameBoard,
+      usernames,
       gameMode,
-      PB_PlayerArrangementMode.EXACT_ORDER,
-      hostUserID,
-      getUsernameForUserID,
-      userIDs?.map((userID) => (userID !== 0 ? userID : null)),
-    );
-    this.usernames = this.gameSetup.usernames;
-  }
+      gameStatus,
+    },
+  };
 }

@@ -801,9 +801,9 @@ describe('lobby', () => {
       const lobbyGame = client.lobbyManager.gameDisplayNumberToLobbyGame.get(1)!;
       expect(lobbyGame.gameNumber).toBe(1);
       expect(lobbyGame.gameDisplayNumber).toBe(1);
-      expect(lobbyGame.gameMode).toBe(PB_GameMode.TEAMS_3_VS_3);
-      expect(lobbyGame.usernames).toEqual(['user 3', null, null, null, null, null]);
-      expect(lobbyGame.gameStatus).toBe(GameStatus.SETTING_UP);
+      expect(lobbyGame.signals.gameMode()).toBe(PB_GameMode.TEAMS_3_VS_3);
+      expect(lobbyGame.signals.usernames()).toEqual(['user 3', null, null, null, null, null]);
+      expect(lobbyGame.signals.gameStatus()).toBe(GameStatus.SETTING_UP);
     });
 
     describe("client's lobby manager correctly processes last state checkpoint", () => {
@@ -834,9 +834,9 @@ describe('lobby', () => {
             const lobbyGame = clientAnon1.lobbyManager.gameDisplayNumberToLobbyGame.get(1)!;
             expect(lobbyGame.gameNumber).toBe(1);
             expect(lobbyGame.gameDisplayNumber).toBe(1);
-            expect(lobbyGame.gameMode).toBe(PB_GameMode.TEAMS_3_VS_3);
-            expect(lobbyGame.usernames).toEqual(['user 3', null, null, null, null, null]);
-            expect(lobbyGame.gameStatus).toBe(GameStatus.SETTING_UP);
+            expect(lobbyGame.signals.gameMode()).toBe(PB_GameMode.TEAMS_3_VS_3);
+            expect(lobbyGame.signals.usernames()).toEqual(['user 3', null, null, null, null, null]);
+            expect(lobbyGame.signals.gameStatus()).toBe(GameStatus.SETTING_UP);
           },
         );
       }

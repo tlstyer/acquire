@@ -10,7 +10,29 @@
   overflow-y: scroll;
 }
 
+.invisibleGameListing {
+  visibility: hidden;
+  height: 1em;
+  overflow: hidden;
+}
+
+.gameListings a {
+  color: inherit;
+  text-decoration: none;
+}
+
 .rightSide {
   flex-grow: 1;
   padding: 4px;
+}
+
+.gameListingEnterActive,
+.gameListingExitActive {
+  transition: height 1s;
+  height: 139px; /* TODO: don't hardcode this */
+  overflow: hidden;
+}
+.gameListingEnter,
+.gameListingExitTo {
+  height: 0;
 }
