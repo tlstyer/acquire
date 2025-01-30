@@ -10,7 +10,7 @@ export function CreateGame(props: {
 
   return (
     <div>
-      Mode:{' '}
+      Game mode:{' '}
       <select
         value={selectedGameMode()}
         onInput={(e) => setSelectedGameMode(parseInt(e.currentTarget.value, 10))}
