@@ -2,6 +2,7 @@ import { RouteDefinition, Router } from '@solidjs/router';
 import 'normalize.css';
 import { createEffect, onCleanup } from 'solid-js';
 import { isServer } from 'solid-js/web';
+import { parseDecimalInteger } from '../common/helpers';
 import { TestServerCommunication } from '../server/serverCommunication';
 import styles from './App.module.css';
 import { createClient } from './client';
@@ -34,7 +35,10 @@ export function App() {
     clientCommunication = webSocketClientCommunication;
   }
 
-  const client = createClient(clientCommunication, parseInt(import.meta.env.VITE_VERSION, 10));
+  const client = createClient(
+    clientCommunication,
+    parseDecimalInteger(import.meta.env.VITE_VERSION) ?? 0,
+  );
 
   if (!isServer) {
     const localStorageKey = 'UsernameAndToken';

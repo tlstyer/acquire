@@ -1,6 +1,6 @@
 import { Accessor, createSignal } from 'solid-js';
 import { isServer } from 'solid-js/web';
-import { concatenateUint8Arrays } from '../common/helpers';
+import { concatenateUint8Arrays, parseDecimalInteger } from '../common/helpers';
 import {
   PB_MessageToClient,
   PB_MessageToClient_Initial,
@@ -45,11 +45,8 @@ export function createClient(clientCommunication: ClientCommunication, version: 
   const [gameBoardLabelMode, setGameBoardLabelMode] = createSetting(
     'GameBoardLabelMode',
     (localStorageValue) => {
-      const gblm: GameBoardLabelMode = localStorageValue
-        ? parseInt(localStorageValue, 10)
-        : GameBoardLabelMode.Nothing;
-      const gblmStr = GameBoardLabelMode[gblm];
-      return gblmStr && gblm.toString() === localStorageValue ? gblm : GameBoardLabelMode.Nothing;
+      const gblm: GameBoardLabelMode = parseDecimalInteger(localStorageValue) ?? Number.NaN;
+      return GameBoardLabelMode[gblm] !== undefined ? gblm : GameBoardLabelMode.Nothing;
     },
   );
 

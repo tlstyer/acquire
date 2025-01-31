@@ -1,4 +1,5 @@
 import 'dotenv/config';
+import { parseDecimalInteger } from '../common/helpers';
 import { Server } from './server';
 import { WebSocketServerCommunication } from './serverCommunication';
 import { TestUserDataProvider } from './userDataProvider';
@@ -12,8 +13,8 @@ function main() {
   const server = new Server(
     serverCommunication,
     userDataProvider,
-    parseInt(process.env.VITE_VERSION ?? '0', 10),
-    parseInt(process.env.LOG_TIME ?? '0', 10),
+    parseDecimalInteger(process.env.VITE_VERSION) ?? 0,
+    parseDecimalInteger(process.env.LOG_TIME) ?? 0,
   );
   serverCommunication.begin();
 

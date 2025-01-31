@@ -1,9 +1,9 @@
+import { parseDecimalInteger } from '../common/helpers';
 import { iterateProcessedGameData, MovingAverage } from './misc';
 
 async function main(processedGameDataFilePath: string, movingAverageLengthStr: string | undefined) {
-  let movingAverageLength =
-    movingAverageLengthStr !== undefined ? parseInt(movingAverageLengthStr, 10) : 1;
-  if (!Number.isInteger(movingAverageLength) || movingAverageLength < 1) {
+  let movingAverageLength = parseDecimalInteger(movingAverageLengthStr);
+  if (movingAverageLength === undefined || movingAverageLength < 1) {
     movingAverageLength = 1;
   }
 

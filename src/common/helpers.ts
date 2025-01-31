@@ -240,3 +240,13 @@ export function toTileString(tile: number) {
     return `${x + 1}${yTileNames[y]}`;
   }
 }
+
+export function parseDecimalInteger(input: string | null | undefined) {
+  if (typeof input === 'string') {
+    const int = parseInt(input, 10);
+
+    if (int.toString() === input) {
+      return int;
+    }
+  }
+}
