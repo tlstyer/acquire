@@ -8,16 +8,16 @@ export function GameSetupUI(props: {
   gameMode: PB_GameMode;
   playerArrangementMode: PB_PlayerArrangementMode;
   usernames: (string | null)[];
-  userIDs: (number | null)[];
+  userIds: (number | null)[];
   approvals: boolean[];
-  hostUserID: number;
-  myUserID: number;
+  hostUserId: number;
+  myUserId: number;
   onChangeGameMode: ((gameMode: PB_GameMode) => void) | undefined;
   onChangePlayerArrangementMode:
     | ((playerArrangementMode: PB_PlayerArrangementMode) => void)
     | undefined;
   onSwapPositions: ((position1: number, position2: number) => void) | undefined;
-  onKickUser: ((userID: number) => void) | undefined;
+  onKickUser: ((userId: number) => void) | undefined;
   onApprove: (() => void) | undefined;
 }) {
   const numUsersInGame = createMemo(() =>
@@ -98,9 +98,9 @@ export function GameSetupUI(props: {
                       {username ?? ''}
                     </td>
                     <GameSetupUIKickUserAndApproveCells
-                      userID={props.userIDs[index()]}
-                      hostUserID={props.hostUserID}
-                      myUserID={props.myUserID}
+                      userId={props.userIds[index()]}
+                      hostUserId={props.hostUserId}
+                      myUserId={props.myUserId}
                       gameIsFull={gameIsFull()}
                       approved={props.approvals[index()]}
                       onKickUser={props.onKickUser}
@@ -129,7 +129,7 @@ export function GameSetupUI(props: {
                           <input
                             type="button"
                             value="▲"
-                            disabled={props.userIDs[index()] === props.userIDs[index() - 1]}
+                            disabled={props.userIds[index()] === props.userIds[index() - 1]}
                             onClick={() => props.onSwapPositions!(index(), index() - 1)}
                           />
                         </Show>
@@ -139,16 +139,16 @@ export function GameSetupUI(props: {
                           <input
                             type="button"
                             value="▼"
-                            disabled={props.userIDs[index()] === props.userIDs[index() + 1]}
+                            disabled={props.userIds[index()] === props.userIds[index() + 1]}
                             onClick={() => props.onSwapPositions!(index(), index() + 1)}
                           />
                         </Show>
                       </td>
                     </Show>
                     <GameSetupUIKickUserAndApproveCells
-                      userID={props.userIDs[index()]}
-                      hostUserID={props.hostUserID}
-                      myUserID={props.myUserID}
+                      userId={props.userIds[index()]}
+                      hostUserId={props.hostUserId}
+                      myUserId={props.myUserId}
                       gameIsFull={gameIsFull()}
                       approved={props.approvals[index()]}
                       onKickUser={props.onKickUser}
@@ -172,7 +172,7 @@ export function GameSetupUI(props: {
                                 type="button"
                                 value="▲"
                                 disabled={
-                                  props.userIDs[entry!.index] === props.userIDs[entry!.upIndex!]
+                                  props.userIds[entry!.index] === props.userIds[entry!.upIndex!]
                                 }
                                 onClick={() => {
                                   if (entry! && entry!.upIndex !== null) {
@@ -188,7 +188,7 @@ export function GameSetupUI(props: {
                                 type="button"
                                 value="▼"
                                 disabled={
-                                  props.userIDs[entry!.index] === props.userIDs[entry!.downIndex!]
+                                  props.userIds[entry!.index] === props.userIds[entry!.downIndex!]
                                 }
                                 onClick={() => {
                                   if (entry! && entry!.downIndex !== null) {
@@ -200,9 +200,9 @@ export function GameSetupUI(props: {
                           </td>
                         </Show>
                         <GameSetupUIKickUserAndApproveCells
-                          userID={props.userIDs[entry!.index]}
-                          hostUserID={props.hostUserID}
-                          myUserID={props.myUserID}
+                          userId={props.userIds[entry!.index]}
+                          hostUserId={props.hostUserId}
+                          myUserId={props.myUserId}
                           gameIsFull={gameIsFull()}
                           approved={props.approvals[entry!.index]}
                           onKickUser={props.onKickUser}
@@ -227,25 +227,25 @@ export function GameSetupUI(props: {
 }
 
 function GameSetupUIKickUserAndApproveCells(props: {
-  userID: number | null;
-  hostUserID: number;
-  myUserID: number;
+  userId: number | null;
+  hostUserId: number;
+  myUserId: number;
   gameIsFull: boolean;
   approved: boolean;
-  onKickUser: ((userID: number) => void) | undefined;
+  onKickUser: ((userId: number) => void) | undefined;
   onApprove: (() => void) | undefined;
 }) {
   return (
     <>
       <Show when={props.onKickUser}>
         <td>
-          <Show when={props.userID !== null && props.userID !== props.hostUserID}>
+          <Show when={props.userId !== null && props.userId !== props.hostUserId}>
             <input
               type="button"
               value="Kick"
               onClick={() => {
-                if (props.userID) {
-                  props.onKickUser!(props.userID);
+                if (props.userId) {
+                  props.onKickUser!(props.userId);
                 }
               }}
             />
@@ -257,7 +257,7 @@ function GameSetupUIKickUserAndApproveCells(props: {
           <Match when={props.approved}>
             <td class={styles.ready}>Ready</td>
           </Match>
-          <Match when={props.userID === props.myUserID}>
+          <Match when={props.userId === props.myUserId}>
             <td>
               <input type="button" value="Ready" onClick={() => props.onApprove?.()} />
             </td>

@@ -5,7 +5,7 @@ import type { PB_GameAction } from '../pb';
 export abstract class ActionBase {
   constructor(
     public game: Game,
-    public playerID: number,
+    public playerId: number,
     public gameAction: GameActionEnum,
   ) {}
 

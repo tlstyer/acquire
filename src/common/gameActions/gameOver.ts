@@ -4,8 +4,8 @@ import type { Game } from '../game';
 import { ActionBase } from './base';
 
 export class ActionGameOver extends ActionBase {
-  constructor(game: Game, playerID: number) {
-    super(game, playerID, GameActionEnum.GameOver);
+  constructor(game: Game, playerId: number) {
+    super(game, playerId, GameActionEnum.GameOver);
   }
 
   prepare() {

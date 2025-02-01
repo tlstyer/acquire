@@ -52,14 +52,14 @@ export function runGameTestFile(inputLines: string[]) {
   let gameMode = PB_GameMode.SINGLES_1;
   let playerArrangementMode = PB_PlayerArrangementMode.VERSION_1;
   let tileBag: number[] = [];
-  const userIDs: number[] = [];
+  const userIds: number[] = [];
   const usernames: string[] = [];
-  let hostUserID = 0;
-  let myUserID: number | null = null;
+  let hostUserId = 0;
+  let myUserId: number | null = null;
 
   const outputLines: string[] = [];
 
-  let myPlayerID: number | null = null;
+  let myPlayerId: number | null = null;
   let lastGameState: GameState | null = null;
   let timestamp: number | null = null;
 
@@ -90,15 +90,15 @@ export function runGameTestFile(inputLines: string[]) {
           }
           case 'user': {
             const userParts = value.split(' ');
-            userIDs.push(parseInt(userParts[0], 10));
+            userIds.push(parseInt(userParts[0], 10));
             usernames.push(userParts.slice(1).join(' '));
             break;
           }
           case 'host':
-            hostUserID = parseInt(value, 10);
+            hostUserId = parseInt(value, 10);
             break;
           case 'me':
-            myUserID = value === 'null' ? null : parseInt(value, 10);
+            myUserId = value === 'null' ? null : parseInt(value, 10);
             break;
           default:
             outputLines.push(`unrecognized line: ${line}`);
@@ -112,35 +112,35 @@ export function runGameTestFile(inputLines: string[]) {
         if (tileBag.length > 0) {
           outputLines.push(`tile bag: ${toTilesString(tileBag)}`);
         }
-        for (let i = 0; i < userIDs.length; i++) {
-          const userID = userIDs[i];
+        for (let i = 0; i < userIds.length; i++) {
+          const userId = userIds[i];
           const username = usernames[i];
-          outputLines.push(`user: ${userID} ${username}`);
+          outputLines.push(`user: ${userId} ${username}`);
         }
-        outputLines.push(`host: ${hostUserID}`);
-        if (myUserID !== null) {
-          outputLines.push(`me: ${myUserID}`);
+        outputLines.push(`host: ${hostUserId}`);
+        if (myUserId !== null) {
+          outputLines.push(`me: ${myUserId}`);
         }
 
         game = new Game(
           gameMode,
           playerArrangementMode,
           tileBag,
-          userIDs,
+          userIds,
           usernames,
-          hostUserID,
-          myUserID,
+          hostUserId,
+          myUserId,
         );
 
-        if (myUserID !== null) {
-          myPlayerID = userIDs.indexOf(myUserID);
+        if (myUserId !== null) {
+          myPlayerId = userIds.indexOf(myUserId);
         }
       }
     } else {
       const lineParts = line.split(': ');
 
       if (lastGameState !== null) {
-        outputLines.push(...getGameStateLines(lastGameState, myPlayerID, line !== ''));
+        outputLines.push(...getGameStateLines(lastGameState, myPlayerId, line !== ''));
         lastGameState = null;
       }
 
@@ -149,7 +149,7 @@ export function runGameTestFile(inputLines: string[]) {
       } else if (lineParts[0] === 'revealed tile bag tiles') {
         game.processRevealedTileBagTiles(fromTilesString(lineParts[1]));
       } else if (lineParts[0] === 'player ID with playable tile') {
-        game.processPlayerIDWithPlayableTile(parseInt(lineParts[1], 10));
+        game.processPlayerIdWithPlayableTile(parseInt(lineParts[1], 10));
       } else if (lineParts[0] === 'timestamp') {
         timestamp = parseInt(lineParts[1], 10);
       } else if (lineParts[0] === 'action') {
@@ -207,7 +207,7 @@ export function runGameTestFile(inputLines: string[]) {
             }
             outputLines.push(
               `action: ${
-                game.gameStateHistory[game.gameStateHistory.length - 1].nextGameAction.playerID
+                game.gameStateHistory[game.gameStateHistory.length - 1].nextGameAction.playerId
               } ${actualGameActionName}${stringParameters}`,
             );
             outputLines.push(`  error: ${error.message}`);
@@ -347,15 +347,15 @@ const gameBoardStringSpacer = '            ';
 
 function getGameStateLines(
   gameState: GameState,
-  revealedTilesPlayerID: number | null,
+  revealedTilesPlayerId: number | null,
   detailed: boolean,
 ) {
   const lines: string[] = [];
 
-  if (revealedTilesPlayerID !== null) {
+  if (revealedTilesPlayerId !== null) {
     const rtrtStr = getRevealedTileRackTilesStringForPlayer(
       gameState.revealedTileRackTiles,
-      revealedTilesPlayerID,
+      revealedTilesPlayerId,
     );
     if (rtrtStr.length > 0) {
       lines.push(`revealed tile rack tiles: ${rtrtStr}`);
@@ -363,14 +363,14 @@ function getGameStateLines(
 
     const rtbtStr = getRevealedTileBagTilesStringForPlayer(
       gameState.revealedTileBagTiles,
-      revealedTilesPlayerID,
+      revealedTilesPlayerId,
     );
     if (rtbtStr.length > 0) {
       lines.push(`revealed tile bag tiles: ${rtbtStr}`);
     }
 
-    if (gameState.playerIDWithPlayableTile !== null) {
-      lines.push(`player ID with playable tile: ${gameState.playerIDWithPlayableTile}`);
+    if (gameState.playerIdWithPlayableTile !== null) {
+      lines.push(`player ID with playable tile: ${gameState.playerIdWithPlayableTile}`);
     }
   }
 
@@ -384,7 +384,7 @@ function getGameStateLines(
     stringParameters = ` ${arr.join(' ')}`;
   }
   lines.push(
-    `action: ${gameState.playerID} ${GameActionEnum[gameState.gameActionEnum]}${stringParameters}`,
+    `action: ${gameState.playerId} ${GameActionEnum[gameState.gameActionEnum]}${stringParameters}`,
   );
 
   if (detailed) {
@@ -394,8 +394,8 @@ function getGameStateLines(
       gameState.scoreBoardAvailable,
       gameState.scoreBoardChainSize,
       gameState.scoreBoardPrice,
-      gameState.nextGameAction instanceof ActionGameOver ? -1 : gameState.turnPlayerID,
-      gameState.nextGameAction instanceof ActionGameOver ? -1 : gameState.nextGameAction.playerID,
+      gameState.nextGameAction instanceof ActionGameOver ? -1 : gameState.turnPlayerId,
+      gameState.nextGameAction instanceof ActionGameOver ? -1 : gameState.nextGameAction.playerId,
     );
     const numLines = Math.max(gameBoardLines.length, scoreBoardLines.length);
     for (let i = 0; i < numLines; i++) {
@@ -409,9 +409,9 @@ function getGameStateLines(
     }
 
     lines.push('  tile racks:');
-    gameState.tileRacks.forEach((tileRack, playerID) => {
-      const tileTypes = gameState.tileRackTypes[playerID];
-      lines.push(`    ${playerID}: ${getTileRackString(tileRack, tileTypes)}`);
+    gameState.tileRacks.forEach((tileRack, playerId) => {
+      const tileTypes = gameState.tileRackTypes[playerId];
+      lines.push(`    ${playerId}: ${getTileRackString(tileRack, tileTypes)}`);
     });
 
     if (gameState.revealedTileRackTiles.length > 0) {
@@ -426,22 +426,22 @@ function getGameStateLines(
         .map(
           (tbt) =>
             `${toTileString(tbt.tile)}:${
-              tbt.playerIDWithPermission === null ? 'all' : tbt.playerIDWithPermission.toString()
+              tbt.playerIdWithPermission === null ? 'all' : tbt.playerIdWithPermission.toString()
             }`,
         )
         .join(', ');
       lines.push(`  revealed tile bag tiles: ${str}`);
     }
 
-    if (gameState.playerIDWithPlayableTile !== null) {
-      lines.push(`  player ID with playable tile: ${gameState.playerIDWithPlayableTile}`);
+    if (gameState.playerIdWithPlayableTile !== null) {
+      lines.push(`  player ID with playable tile: ${gameState.playerIdWithPlayableTile}`);
     }
 
     lines.push('  messages:');
     gameState.createPlayerAndWatcherGameStates();
-    for (let playerID = 0; playerID < gameState.playerGameStates.length; playerID++) {
+    for (let playerId = 0; playerId < gameState.playerGameStates.length; playerId++) {
       lines.push(
-        `    ${playerID}: ${formatPlayerOrWatcherGameState(gameState.playerGameStates[playerID])}`,
+        `    ${playerId}: ${formatPlayerOrWatcherGameState(gameState.playerGameStates[playerId])}`,
       );
     }
     lines.push(`    w: ${formatPlayerOrWatcherGameState(gameState.watcherGameState)}`);
@@ -459,13 +459,13 @@ function getGameStateLines(
 
 function getRevealedTileRackTilesStringForPlayer(
   revealedTileRackTiles: PB_GameState_RevealedTileRackTile[],
-  playerID: number,
+  playerId: number,
 ) {
   const parts: string[] = [];
 
   for (let i = 0; i < revealedTileRackTiles.length; i++) {
     const rtrt = revealedTileRackTiles[i];
-    if (rtrt.playerIdBelongsTo !== playerID) {
+    if (rtrt.playerIdBelongsTo !== playerId) {
       parts.push(`${toTileString(rtrt.tile)}:${rtrt.playerIdBelongsTo}`);
     }
   }
@@ -493,11 +493,11 @@ function getArrayFromRevealedTileRackTilesString(revealedTileRackTilesString: st
   const revealedTileRackTiles: PB_GameState_RevealedTileRackTile[] = new Array(strParts.length);
 
   for (let i = 0; i < strParts.length; i++) {
-    const [tileStr, playerIDStr] = strParts[i].split(':');
+    const [tileStr, playerIdStr] = strParts[i].split(':');
 
     const revealedTileRackTile = PB_GameState_RevealedTileRackTile.create({
       tile: fromTileString(tileStr),
-      playerIdBelongsTo: parseInt(playerIDStr, 10),
+      playerIdBelongsTo: parseInt(playerIdStr, 10),
     });
 
     revealedTileRackTiles[i] = revealedTileRackTile;
@@ -508,14 +508,14 @@ function getArrayFromRevealedTileRackTilesString(revealedTileRackTilesString: st
 
 function getRevealedTileBagTilesStringForPlayer(
   revealedTileBagTiles: GameStateTileBagTile[],
-  playerID: number,
+  playerId: number,
 ) {
   const parts: string[] = [];
 
   for (let i = 0; i < revealedTileBagTiles.length; i++) {
     const rtbt = revealedTileBagTiles[i];
     const tile =
-      rtbt.playerIDWithPermission === null || rtbt.playerIDWithPermission === playerID
+      rtbt.playerIdWithPermission === null || rtbt.playerIdWithPermission === playerId
         ? rtbt.tile
         : TileEnum.Unknown;
     parts.push(toTileString(tile));
@@ -559,16 +559,16 @@ function getScoreBoardLines(
   scoreBoardAvailable: number[],
   scoreBoardChainSize: number[],
   scoreBoardPrice: number[],
-  turnPlayerID: number,
-  movePlayerID: number,
+  turnPlayerId: number,
+  movePlayerId: number,
 ) {
   const lines: string[] = [];
   lines.push(formatScoreBoardLine(['P', 'L', 'T', 'A', 'F', 'W', 'C', 'I', 'Cash', 'Net']));
-  scoreBoard.forEach((row, playerID) => {
+  scoreBoard.forEach((row, playerId) => {
     let name: string;
-    if (playerID === turnPlayerID) {
+    if (playerId === turnPlayerId) {
       name = 'T';
-    } else if (playerID === movePlayerID) {
+    } else if (playerId === movePlayerId) {
       name = 'M';
     } else {
       name = '';
@@ -649,65 +649,65 @@ export function getGameHistoryMessageString(gameHistoryMessage: GameHistoryMessa
   let parts: (number | string)[];
 
   if (gameHistoryMessage instanceof GameHistoryMessageTurnBegan) {
-    parts = [gameHistoryMessage.playerID, 'TurnBegan'];
+    parts = [gameHistoryMessage.playerId, 'TurnBegan'];
   } else if (gameHistoryMessage instanceof GameHistoryMessageDrewPositionTile) {
     parts = [
-      gameHistoryMessage.playerID,
+      gameHistoryMessage.playerId,
       'DrewPositionTile',
       toTileString(gameHistoryMessage.tile),
     ];
   } else if (gameHistoryMessage instanceof GameHistoryMessageStartedGame) {
-    parts = [gameHistoryMessage.playerID, 'StartedGame'];
+    parts = [gameHistoryMessage.playerId, 'StartedGame'];
   } else if (gameHistoryMessage instanceof GameHistoryMessageDrewTile) {
-    parts = [gameHistoryMessage.playerID, 'DrewTile', toTileString(gameHistoryMessage.tile)];
+    parts = [gameHistoryMessage.playerId, 'DrewTile', toTileString(gameHistoryMessage.tile)];
   } else if (gameHistoryMessage instanceof GameHistoryMessageHasNoPlayableTile) {
-    parts = [gameHistoryMessage.playerID, 'HasNoPlayableTile'];
+    parts = [gameHistoryMessage.playerId, 'HasNoPlayableTile'];
   } else if (gameHistoryMessage instanceof GameHistoryMessagePlayedTile) {
-    parts = [gameHistoryMessage.playerID, 'PlayedTile', toTileString(gameHistoryMessage.tile)];
+    parts = [gameHistoryMessage.playerId, 'PlayedTile', toTileString(gameHistoryMessage.tile)];
   } else if (gameHistoryMessage instanceof GameHistoryMessageFormedChain) {
     parts = [
-      gameHistoryMessage.playerID,
+      gameHistoryMessage.playerId,
       'FormedChain',
       PB_GameBoardType[gameHistoryMessage.chain][0],
     ];
   } else if (gameHistoryMessage instanceof GameHistoryMessageMergedChains) {
     parts = [
-      gameHistoryMessage.playerID,
+      gameHistoryMessage.playerId,
       'MergedChains',
       gameHistoryMessage.chains.map((chain) => PB_GameBoardType[chain][0]).join(','),
     ];
   } else if (gameHistoryMessage instanceof GameHistoryMessageSelectedMergerSurvivor) {
     parts = [
-      gameHistoryMessage.playerID,
+      gameHistoryMessage.playerId,
       'SelectedMergerSurvivor',
       PB_GameBoardType[gameHistoryMessage.chain][0],
     ];
   } else if (gameHistoryMessage instanceof GameHistoryMessageSelectedChainToDisposeOfNext) {
     parts = [
-      gameHistoryMessage.playerID,
+      gameHistoryMessage.playerId,
       'SelectedChainToDisposeOfNext',
       PB_GameBoardType[gameHistoryMessage.chain][0],
     ];
   } else if (gameHistoryMessage instanceof GameHistoryMessageReceivedBonus) {
     parts = [
-      gameHistoryMessage.playerID,
+      gameHistoryMessage.playerId,
       'ReceivedBonus',
       PB_GameBoardType[gameHistoryMessage.chain][0],
       gameHistoryMessage.amount,
     ];
   } else if (gameHistoryMessage instanceof GameHistoryMessageDisposedOfShares) {
     parts = [
-      gameHistoryMessage.playerID,
+      gameHistoryMessage.playerId,
       'DisposedOfShares',
       PB_GameBoardType[gameHistoryMessage.chain][0],
       gameHistoryMessage.tradeAmount,
       gameHistoryMessage.sellAmount,
     ];
   } else if (gameHistoryMessage instanceof GameHistoryMessageCouldNotAffordAnyShares) {
-    parts = [gameHistoryMessage.playerID, 'CouldNotAffordAnyShares'];
+    parts = [gameHistoryMessage.playerId, 'CouldNotAffordAnyShares'];
   } else if (gameHistoryMessage instanceof GameHistoryMessagePurchasedShares) {
     parts = [
-      gameHistoryMessage.playerID,
+      gameHistoryMessage.playerId,
       'PurchasedShares',
       gameHistoryMessage.chainsAndCounts.length > 0
         ? gameHistoryMessage.chainsAndCounts
@@ -719,15 +719,15 @@ export function getGameHistoryMessageString(gameHistoryMessage: GameHistoryMessa
         : 'x',
     ];
   } else if (gameHistoryMessage instanceof GameHistoryMessageDrewLastTile) {
-    parts = [gameHistoryMessage.playerID, 'DrewLastTile'];
+    parts = [gameHistoryMessage.playerId, 'DrewLastTile'];
   } else if (gameHistoryMessage instanceof GameHistoryMessageReplacedDeadTile) {
     parts = [
-      gameHistoryMessage.playerID,
+      gameHistoryMessage.playerId,
       'ReplacedDeadTile',
       toTileString(gameHistoryMessage.tile),
     ];
   } else if (gameHistoryMessage instanceof GameHistoryMessageEndedGame) {
-    parts = [gameHistoryMessage.playerID, 'EndedGame'];
+    parts = [gameHistoryMessage.playerId, 'EndedGame'];
   } else if (gameHistoryMessage instanceof GameHistoryMessageNoTilesPlayedForEntireRound) {
     parts = ['NoTilesPlayedForEntireRound'];
   } else if (gameHistoryMessage instanceof GameHistoryMessageAllTilesPlayed) {
@@ -740,10 +740,10 @@ export function getGameHistoryMessageString(gameHistoryMessage: GameHistoryMessa
 }
 
 function getNextActionString(action: ActionBase) {
-  const nextPlayerID = action.playerID;
+  const nextPlayerId = action.playerId;
   const nextActionName = action.constructor.name.slice(6);
 
-  const parts = [nextPlayerID.toString(), nextActionName];
+  const parts = [nextPlayerId.toString(), nextActionName];
 
   if (action instanceof ActionSelectNewChain) {
     parts.push(

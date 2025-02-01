@@ -24,17 +24,17 @@ const dummyPlayerGameStates: PB_GameState[] = [];
 const dummyWatcherGameState = PB_GameState.create();
 
 export class GameState {
-  playerID = -1;
+  playerId = -1;
   gameActionEnum = GameActionEnum.StartGame;
   gameAction = dummyGameAction;
   timestamp: number | null = null;
   revealedTileRackTiles: PB_GameState_RevealedTileRackTile[] = [];
   revealedTileBagTiles: GameStateTileBagTile[] = [];
-  playerIDWithPlayableTile: number | null = null;
+  playerIdWithPlayableTile: number | null = null;
   gameHistoryMessages: GameHistoryMessage[] = [];
   nextGameAction: ActionBase;
 
-  turnPlayerID = 0;
+  turnPlayerId = 0;
   tileRacks = defaultTileRacks;
   tileRackTypes = defaultTileRackTypesList;
   gameBoard = defaultGameBoard;
@@ -62,33 +62,33 @@ export class GameState {
   }
 
   setGameAction(
-    playerID: number,
+    playerId: number,
     gameActionEnum: GameActionEnum,
     gameAction: PB_GameAction,
     timestamp: number | null,
   ) {
-    this.playerID = playerID;
+    this.playerId = playerId;
     this.gameActionEnum = gameActionEnum;
     this.gameAction = gameAction;
     this.timestamp = timestamp;
   }
 
-  addTileBagTile(tile: number, playerID: number | null) {
-    const gameStateTileBagTile = new GameStateTileBagTile(tile, playerID);
+  addTileBagTile(tile: number, playerId: number | null) {
+    const gameStateTileBagTile = new GameStateTileBagTile(tile, playerId);
     this.revealedTileBagTiles.push(gameStateTileBagTile);
     this.revealedTileBagTilesLookup.set(tile, gameStateTileBagTile);
   }
 
-  addPlayedTile(tile: number, playerID: number) {
+  addPlayedTile(tile: number, playerId: number) {
     // if already in the tile bag additions
     if (this.revealedTileBagTilesLookup.has(tile)) {
       // change it to public
-      this.revealedTileBagTilesLookup.get(tile)!.playerIDWithPermission = null;
+      this.revealedTileBagTilesLookup.get(tile)!.playerIdWithPermission = null;
     } else {
       // add it to the tile rack additions
       const revealedTileRackTile = PB_GameState_RevealedTileRackTile.create({
         tile,
-        playerIdBelongsTo: playerID,
+        playerIdBelongsTo: playerId,
       });
       this.revealedTileRackTiles.push(revealedTileRackTile);
     }
@@ -117,7 +117,7 @@ export class GameState {
   }
 
   endMove() {
-    this.turnPlayerID = this.game.turnPlayerID;
+    this.turnPlayerId = this.game.turnPlayerId;
     this.tileRacks = this.game.tileRacks;
     this.tileRackTypes = this.game.tileRackTypes;
     this.gameBoard = this.game.gameBoard;
@@ -129,7 +129,7 @@ export class GameState {
     this.nextGameAction = this.game.gameActionStack[this.game.gameActionStack.length - 1];
 
     if (this.nextGameAction.gameAction === GameActionEnum.PlayTile) {
-      this.playerIDWithPlayableTile = this.nextGameAction.playerID;
+      this.playerIdWithPlayableTile = this.nextGameAction.playerId;
     }
 
     if (this.revealedTileBagTiles.length > 0) {
@@ -139,15 +139,15 @@ export class GameState {
   }
 
   createPlayerAndWatcherGameStates() {
-    this.playerGameStates = new Array(this.game.userIDs.length);
-    for (let playerID = 0; playerID < this.playerGameStates.length; playerID++) {
-      this.playerGameStates[playerID] = this.createGameState(playerID);
+    this.playerGameStates = new Array(this.game.userIds.length);
+    for (let playerId = 0; playerId < this.playerGameStates.length; playerId++) {
+      this.playerGameStates[playerId] = this.createGameState(playerId);
     }
 
     this.watcherGameState = this.createGameState(-1);
   }
 
-  createGameState(playerID: number) {
+  createGameState(playerId: number) {
     let timestamp = this.timestamp;
     if (
       timestamp !== null &&
@@ -160,7 +160,7 @@ export class GameState {
     const revealedTileRackTiles: PB_GameState_RevealedTileRackTile[] = [];
     for (let i = 0; i < this.revealedTileRackTiles.length; i++) {
       const gameStateTileRackTile = this.revealedTileRackTiles[i];
-      if (gameStateTileRackTile.playerIdBelongsTo !== playerID) {
+      if (gameStateTileRackTile.playerIdBelongsTo !== playerId) {
         revealedTileRackTiles.push(gameStateTileRackTile);
       }
     }
@@ -169,8 +169,8 @@ export class GameState {
     for (let i = 0; i < this.revealedTileBagTiles.length; i++) {
       const gameStateTileBagTile = this.revealedTileBagTiles[i];
       revealedTileBagTiles.push(
-        gameStateTileBagTile.playerIDWithPermission === null ||
-          gameStateTileBagTile.playerIDWithPermission === playerID
+        gameStateTileBagTile.playerIdWithPermission === null ||
+          gameStateTileBagTile.playerIdWithPermission === playerId
           ? gameStateTileBagTile.tile
           : TileEnum.Unknown,
       );
@@ -188,8 +188,8 @@ export class GameState {
     if (revealedTileBagTiles.length > 0) {
       gameState.revealedTileBagTiles = revealedTileBagTiles;
     }
-    if (this.playerIDWithPlayableTile !== null) {
-      gameState.playerIdWithPlayableTilePlusOne = this.playerIDWithPlayableTile + 1;
+    if (this.playerIdWithPlayableTile !== null) {
+      gameState.playerIdWithPlayableTilePlusOne = this.playerIdWithPlayableTile + 1;
     }
 
     return gameState;
@@ -199,6 +199,6 @@ export class GameState {
 export class GameStateTileBagTile {
   constructor(
     public tile: number,
-    public playerIDWithPermission: number | null,
+    public playerIdWithPermission: number | null,
   ) {}
 }

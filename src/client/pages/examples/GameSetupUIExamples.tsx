@@ -4,14 +4,14 @@ import { PB_GameMode, PB_PlayerArrangementMode } from '../../../common/pb';
 import { GameSetupUI } from '../../components/GameSetupUI';
 
 export function GameSetupUIExamples() {
-  const hostUserID = 1;
+  const hostUserId = 1;
 
   const [gameSetup, setGameSetup] = createSignal(
     new GameSetup(
       PB_GameMode.SINGLES_4,
       PB_PlayerArrangementMode.RANDOM_ORDER,
-      hostUserID,
-      getUsernameForUserID,
+      hostUserId,
+      getUsernameForUserId,
     ),
     {
       equals: false,
@@ -20,19 +20,19 @@ export function GameSetupUIExamples() {
 
   const [simulatedNetworkDelay, setSimulatedNetworkDelay] = createSignal(250);
 
-  const [nonHostUserIDs, setNonHostUserIDs] = createSignal<number[]>([]);
+  const [nonHostUserIds, setNonHostUserIds] = createSignal<number[]>([]);
 
   let nextUserId = 2;
 
-  const numUsersInGame = () => gameSetup().userIDsSet.size;
+  const numUsersInGame = () => gameSetup().userIdsSet.size;
 
-  const maxUsers = () => gameSetup().userIDs.length;
+  const maxUsers = () => gameSetup().userIds.length;
 
-  function getUsernameForUserID(userID: number) {
-    if (userID === hostUserID) {
+  function getUsernameForUserId(userId: number) {
+    if (userId === hostUserId) {
       return 'Host';
     } else {
-      return `User ${userID}`;
+      return `User ${userId}`;
     }
   }
 
@@ -47,17 +47,17 @@ export function GameSetupUIExamples() {
         />
       </p>
 
-      <h2>{getUsernameForUserID(hostUserID)}'s view</h2>
+      <h2>{getUsernameForUserId(hostUserId)}'s view</h2>
 
       <p>
         <GameSetupUI
           gameMode={gameSetup().gameMode}
           playerArrangementMode={gameSetup().playerArrangementMode}
           usernames={gameSetup().usernames}
-          userIDs={gameSetup().userIDs}
+          userIds={gameSetup().userIds}
           approvals={gameSetup().approvals}
-          hostUserID={gameSetup().hostUserID}
-          myUserID={gameSetup().hostUserID}
+          hostUserId={gameSetup().hostUserId}
+          myUserId={gameSetup().hostUserId}
           onChangeGameMode={(gameMode) => {
             setTimeout(() => {
               console.log('changeGameMode', gameMode);
@@ -85,20 +85,20 @@ export function GameSetupUIExamples() {
               });
             }, simulatedNetworkDelay());
           }}
-          onKickUser={(userID) => {
+          onKickUser={(userId) => {
             setTimeout(() => {
-              console.log('kickUser', userID);
+              console.log('kickUser', userId);
               setGameSetup((gs) => {
-                gs.kickUser(userID);
+                gs.kickUser(userId);
                 return gs;
               });
             }, simulatedNetworkDelay());
           }}
           onApprove={() => {
             setTimeout(() => {
-              console.log('approve', hostUserID);
+              console.log('approve', hostUserId);
               setGameSetup((gs) => {
-                gs.approve(hostUserID);
+                gs.approve(hostUserId);
                 return gs;
               });
             }, simulatedNetworkDelay());
@@ -106,29 +106,29 @@ export function GameSetupUIExamples() {
         />
       </p>
 
-      <For each={nonHostUserIDs()}>
-        {(userID) => (
+      <For each={nonHostUserIds()}>
+        {(userId) => (
           <>
-            <h2>{getUsernameForUserID(userID)}'s view</h2>
+            <h2>{getUsernameForUserId(userId)}'s view</h2>
 
             <p>
               <input
                 type="button"
-                value={gameSetup().userIDsSet.has(userID) ? 'Stand Up' : 'Sit Down'}
-                disabled={!gameSetup().userIDsSet.has(userID) && numUsersInGame === maxUsers}
+                value={gameSetup().userIdsSet.has(userId) ? 'Stand Up' : 'Sit Down'}
+                disabled={!gameSetup().userIdsSet.has(userId) && numUsersInGame === maxUsers}
                 onClick={() => {
-                  const inGameNow = gameSetup().userIDsSet.has(userID);
+                  const inGameNow = gameSetup().userIdsSet.has(userId);
                   setTimeout(() => {
                     if (inGameNow) {
-                      console.log('removeUser', userID);
+                      console.log('removeUser', userId);
                       setGameSetup((gs) => {
-                        gs.removeUser(userID);
+                        gs.removeUser(userId);
                         return gs;
                       });
                     } else {
-                      console.log('addUser', userID);
+                      console.log('addUser', userId);
                       setGameSetup((gs) => {
-                        gs.addUser(userID);
+                        gs.addUser(userId);
                         return gs;
                       });
                     }
@@ -142,19 +142,19 @@ export function GameSetupUIExamples() {
                 gameMode={gameSetup().gameMode}
                 playerArrangementMode={gameSetup().playerArrangementMode}
                 usernames={gameSetup().usernames}
-                userIDs={gameSetup().userIDs}
+                userIds={gameSetup().userIds}
                 approvals={gameSetup().approvals}
-                hostUserID={gameSetup().hostUserID}
-                myUserID={userID}
+                hostUserId={gameSetup().hostUserId}
+                myUserId={userId}
                 onChangeGameMode={undefined}
                 onChangePlayerArrangementMode={undefined}
                 onSwapPositions={undefined}
                 onKickUser={undefined}
                 onApprove={() => {
                   setTimeout(() => {
-                    console.log('approve', userID);
+                    console.log('approve', userId);
                     setGameSetup((gs) => {
-                      gs.approve(userID);
+                      gs.approve(userId);
                       return gs;
                     });
                   }, simulatedNetworkDelay());
@@ -170,19 +170,19 @@ export function GameSetupUIExamples() {
           type="button"
           value="Add A User"
           onClick={() => {
-            const userID = nextUserId++;
-            setNonHostUserIDs((ids) => [...ids, userID]);
+            const userId = nextUserId++;
+            setNonHostUserIds((ids) => [...ids, userId]);
           }}
         />{' '}
         <input
           type="button"
           value="Remove Users Who Are Not In The Game"
           onClick={() => {
-            const filteredUserIDs = nonHostUserIDs().filter((userID) =>
-              gameSetup().userIDsSet.has(userID),
+            const filteredUserIds = nonHostUserIds().filter((userId) =>
+              gameSetup().userIdsSet.has(userId),
             );
-            if (filteredUserIDs.length !== nonHostUserIDs().length) {
-              setNonHostUserIDs(filteredUserIDs);
+            if (filteredUserIds.length !== nonHostUserIds().length) {
+              setNonHostUserIds(filteredUserIds);
             }
           }}
         />

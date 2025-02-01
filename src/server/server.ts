@@ -22,7 +22,7 @@ import type { UserData, UserDataProvider } from './userDataProvider';
 export class Server {
   private initialMessage: Uint8Array;
 
-  clientIDToClient = new Map<number, Client>();
+  clientIdToClient = new Map<number, Client>();
 
   lobbyRoom = new LobbyRoom();
   gameRoomsManager = new GameRoomsManager();
@@ -52,26 +52,26 @@ export class Server {
     this.gameRoomsManager.setLogTime(logTime);
   }
 
-  private onConnect(clientID: number) {
-    const client = new Client(clientID, (message) =>
-      this.serverCommunication.sendMessage(clientID, message),
+  private onConnect(clientId: number) {
+    const client = new Client(clientId, (message) =>
+      this.serverCommunication.sendMessage(clientId, message),
     );
-    this.clientIDToClient.set(clientID, client);
+    this.clientIdToClient.set(clientId, client);
 
     client.sendMessage(this.initialMessage);
   }
 
-  private onDisconnect(clientID: number) {
-    const client = this.clientIDToClient.get(clientID)!;
+  private onDisconnect(clientId: number) {
+    const client = this.clientIdToClient.get(clientId)!;
 
     client.disconnectFromRoom();
     client.loggedOut();
 
-    this.clientIDToClient.delete(clientID);
+    this.clientIdToClient.delete(clientId);
   }
 
-  private async onMessage(clientID: number, message: Uint8Array) {
-    const client = this.clientIDToClient.get(clientID)!;
+  private async onMessage(clientId: number, message: Uint8Array) {
+    const client = this.clientIdToClient.get(clientId)!;
     const messageToServer = PB_MessageToServer.fromBinary(message);
 
     if (messageToServer.loginLogout) {
@@ -110,7 +110,7 @@ export class Server {
     client: Client,
     message: PB_MessageToServer_LoginLogout_LoginWithPassword,
   ) {
-    if (client.userID !== undefined) {
+    if (client.userId !== undefined) {
       // ignore attempt to login while already logged in
       return;
     }
@@ -147,7 +147,7 @@ export class Server {
     client: Client,
     message: PB_MessageToServer_LoginLogout_LoginWithToken,
   ) {
-    if (client.userID !== undefined) {
+    if (client.userId !== undefined) {
       // ignore attempt to login while already logged in
       return;
     }
@@ -184,7 +184,7 @@ export class Server {
     client: Client,
     message: PB_MessageToServer_LoginLogout_CreateUserAndLogin,
   ) {
-    if (client.userID !== undefined) {
+    if (client.userId !== undefined) {
       // ignore attempt to login while already logged in
       return;
     }
@@ -229,19 +229,19 @@ export class Server {
   }
 
   private loginUser(client: Client, userData: UserData) {
-    client.loggedIn(userData.userID, userData.username);
+    client.loggedIn(userData.userId, userData.username);
 
     this.sendLoginLogoutMessage(
       client,
       PB_MessageToClient_LoginLogout_ResponseCode.SUCCESS,
       userData.username,
-      userData.userID,
+      userData.userId,
       userData.passwordHash,
     );
   }
 
   private onMessage_LoginLogout_Logout(client: Client) {
-    if (client.userID === undefined) {
+    if (client.userId === undefined) {
       // ignore attempt to log out while already logged out
       return;
     }
@@ -255,11 +255,11 @@ export class Server {
     client: Client,
     responseCode: PB_MessageToClient_LoginLogout_ResponseCode,
     username?: string,
-    userID?: number,
+    userId?: number,
     token?: string,
   ) {
     client.sendMessage(
-      PB_MessageToClient.toBinary(createLoginLogoutMessage(responseCode, username, userID, token)),
+      PB_MessageToClient.toBinary(createLoginLogoutMessage(responseCode, username, userId, token)),
     );
   }
 }

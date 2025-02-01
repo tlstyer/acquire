@@ -15,14 +15,14 @@ export class UserDataProviderResponse {
 
 export interface UserData {
   username: string;
-  userID: number;
+  userId: number;
   passwordHash: string;
   verifyPassword(password: string): boolean;
   verifyToken(token: string): boolean;
 }
 
 export class TestUserDataProvider implements UserDataProvider {
-  nextUserID = 1;
+  nextUserId = 1;
   usernameToUserData = new Map<string, TestUserData>();
 
   async createUser(username: string, password: string) {
@@ -40,8 +40,8 @@ export class TestUserDataProvider implements UserDataProvider {
       );
     }
 
-    const userID = this.nextUserID++;
-    const userData = new TestUserData(username, userID, getPasswordHash(username, password));
+    const userId = this.nextUserId++;
+    const userData = new TestUserData(username, userId, getPasswordHash(username, password));
     this.usernameToUserData.set(username, userData);
 
     return new UserDataProviderResponse(userData, undefined);
@@ -62,7 +62,7 @@ export class TestUserDataProvider implements UserDataProvider {
 export class TestUserData implements UserData {
   constructor(
     public username: string,
-    public userID: number,
+    public userId: number,
     public passwordHash: string,
   ) {}
 

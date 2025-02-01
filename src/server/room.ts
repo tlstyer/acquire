@@ -2,7 +2,7 @@ import type { Client } from './client';
 
 export class Room {
   clients = new Set<Client>();
-  userIDToClients = new Map<number, Set<Client>>();
+  userIdToClients = new Map<number, Set<Client>>();
 
   /**
    * These methods are called by Client.
@@ -11,7 +11,7 @@ export class Room {
   clientConnected(client: Client) {
     this.clients.add(client);
 
-    if (client.userID !== undefined) {
+    if (client.userId !== undefined) {
       this.clientLoggedIn(client);
     }
   }
@@ -19,27 +19,27 @@ export class Room {
   clientDisconnected(client: Client) {
     this.clients.delete(client);
 
-    if (client.userID !== undefined) {
+    if (client.userId !== undefined) {
       this.clientLoggedOut(client);
     }
   }
 
   clientLoggedIn(client: Client) {
-    const clients = this.userIDToClients.get(client.userID!);
+    const clients = this.userIdToClients.get(client.userId!);
     if (clients !== undefined) {
       clients.add(client);
     } else {
-      this.userIDToClients.set(client.userID!, new Set([client]));
-      this.userConnected(client.userID!, client.username!);
+      this.userIdToClients.set(client.userId!, new Set([client]));
+      this.userConnected(client.userId!, client.username!);
     }
   }
 
   clientLoggedOut(client: Client) {
-    const clients = this.userIDToClients.get(client.userID!)!;
+    const clients = this.userIdToClients.get(client.userId!)!;
     clients.delete(client);
     if (clients.size === 0) {
-      this.userIDToClients.delete(client.userID!);
-      this.userDisconnected(client.userID!, client.username!);
+      this.userIdToClients.delete(client.userId!);
+      this.userDisconnected(client.userId!, client.username!);
     }
   }
 
@@ -49,12 +49,12 @@ export class Room {
    */
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  userConnected(userID: number, username: string) {
+  userConnected(userId: number, username: string) {
     // nothing here
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  userDisconnected(userID: number, username: string) {
+  userDisconnected(userId: number, username: string) {
     // nothing here
   }
 }

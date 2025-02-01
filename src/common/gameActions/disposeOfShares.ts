@@ -11,13 +11,13 @@ export class ActionDisposeOfShares extends ActionBase {
 
   constructor(
     game: Game,
-    playerID: number,
+    playerId: number,
     public defunctChain: PB_GameBoardType,
     public controllingChain: PB_GameBoardType,
   ) {
-    super(game, playerID, GameActionEnum.DisposeOfShares);
+    super(game, playerId, GameActionEnum.DisposeOfShares);
 
-    this.sharesOwnedInDefunctChain = this.game.scoreBoard[playerID][defunctChain];
+    this.sharesOwnedInDefunctChain = this.game.scoreBoard[playerId][defunctChain];
   }
 
   prepare() {
@@ -63,14 +63,14 @@ export class ActionDisposeOfShares extends ActionBase {
           ),
         );
       }
-      this.game.adjustPlayerScoreBoardRow(this.playerID, adjustments);
+      this.game.adjustPlayerScoreBoardRow(this.playerId, adjustments);
     }
 
     this.game
       .getCurrentGameState()
       .addGameHistoryMessage(
         new GameHistoryMessageDisposedOfShares(
-          this.playerID,
+          this.playerId,
           this.defunctChain,
           tradeAmount,
           sellAmount,

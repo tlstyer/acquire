@@ -3,7 +3,7 @@ import { createLoginLogoutMessage } from '../helpers';
 import { PB_MessageToClient_LoginLogout_ResponseCode, PB_MessageToServer } from '../pb';
 import {
   createOneClientConnectedToOneServer,
-  userIDToTestUserData,
+  userIdToTestUserData,
   waitForAsyncServerStuff,
 } from './common';
 
@@ -24,10 +24,10 @@ test('can log out while logged in', async () => {
   );
 
   expect(client.myUsername).toEqual(undefined);
-  expect(client.myUserID).toEqual(undefined);
+  expect(client.myUserId).toEqual(undefined);
   expect(client.myToken).toEqual(undefined);
 
-  expect([...server.clientIDToClient.values()].filter((c) => c.userID !== undefined).length).toBe(
+  expect([...server.clientIdToClient.values()].filter((c) => c.userId !== undefined).length).toBe(
     0,
   );
 });
@@ -35,7 +35,7 @@ test('can log out while logged in', async () => {
 test('logout data changes are made on the server when a client disconnects', async () => {
   const { client, clientCommunication, server } = createOneClientConnectedToOneServer();
 
-  client.loginWithToken('user 4', userIDToTestUserData[4].passwordHash);
+  client.loginWithToken('user 4', userIdToTestUserData[4].passwordHash);
   await waitForAsyncServerStuff();
 
   clientCommunication.communicatedMessages.length = 0;
@@ -46,10 +46,10 @@ test('logout data changes are made on the server when a client disconnects', asy
   expect(clientCommunication.communicatedMessages.length).toBe(0);
 
   expect(client.myUsername).toEqual('user 4');
-  expect(client.myUserID).toEqual(4);
-  expect(client.myToken).toEqual(userIDToTestUserData[4].passwordHash);
+  expect(client.myUserId).toEqual(4);
+  expect(client.myToken).toEqual(userIdToTestUserData[4].passwordHash);
 
-  expect([...server.clientIDToClient.values()].filter((c) => c.userID !== undefined).length).toBe(
+  expect([...server.clientIdToClient.values()].filter((c) => c.userId !== undefined).length).toBe(
     0,
   );
 });
@@ -64,7 +64,7 @@ test('no message sent when trying to log out while already logged out', async ()
 
   expect(clientCommunication.communicatedMessages.length).toBe(0);
 
-  expect([...server.clientIDToClient.values()].filter((c) => c.userID !== undefined).length).toBe(
+  expect([...server.clientIdToClient.values()].filter((c) => c.userId !== undefined).length).toBe(
     0,
   );
 });
@@ -85,7 +85,7 @@ test('no reply when trying to log out while already logged out when sending mess
 
   expect(clientCommunication.communicatedMessages.length).toBe(1);
 
-  expect([...server.clientIDToClient.values()].filter((c) => c.userID !== undefined).length).toBe(
+  expect([...server.clientIdToClient.values()].filter((c) => c.userId !== undefined).length).toBe(
     0,
   );
 });

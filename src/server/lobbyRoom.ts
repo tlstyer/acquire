@@ -34,7 +34,7 @@ export class LobbyRoom extends Room {
   }
 
   onMessage_CreateGame(client: Client, message: PB_MessageToServer_Lobby_CreateGame) {
-    if (client.userID === undefined) {
+    if (client.userId === undefined) {
       return;
     }
     if (client.room !== this) {
@@ -59,27 +59,27 @@ export class LobbyRoom extends Room {
     );
   }
 
-  userConnected(userID: number, username: string) {
-    const isKnownUser = this.lscKnownUserIDs.has(userID);
+  userConnected(userId: number, username: string) {
+    const isKnownUser = this.lscKnownUserIds.has(userId);
 
     this.queueEvent(
       PB_MessageToClient_Lobby_Event.create({
         addUserToLobby: {
-          userId: userID,
+          userId: userId,
           username: isKnownUser ? undefined : username,
         },
       }),
     );
     if (!isKnownUser) {
-      this.lscKnownUserIDs.add(userID);
+      this.lscKnownUserIds.add(userId);
     }
   }
 
-  userDisconnected(userID: number) {
+  userDisconnected(userId: number) {
     this.queueEvent(
       PB_MessageToClient_Lobby_Event.create({
         removeUserFromLobby: {
-          userId: userID,
+          userId: userId,
         },
       }),
     );
@@ -102,7 +102,7 @@ export class LobbyRoom extends Room {
       },
     }),
   );
-  private lscKnownUserIDs = new Set<number>();
+  private lscKnownUserIds = new Set<number>();
 
   private noUpdatesMessage = PB_MessageToClient.toBinary(
     PB_MessageToClient.create({
@@ -140,13 +140,13 @@ export class LobbyRoom extends Room {
   createLastStateCheckpoint() {
     this.sendQueuedEvents();
 
-    const userIDToUser = new Map<number, PB_MessageToClient_Lobby_LastStateCheckpoint_User>();
+    const userIdToUser = new Map<number, PB_MessageToClient_Lobby_LastStateCheckpoint_User>();
     for (const client of this.clients) {
-      if (client.userID !== undefined && !userIDToUser.has(client.userID)) {
-        userIDToUser.set(
-          client.userID,
+      if (client.userId !== undefined && !userIdToUser.has(client.userId)) {
+        userIdToUser.set(
+          client.userId,
           PB_MessageToClient_Lobby_LastStateCheckpoint_User.create({
-            userId: client.userID,
+            userId: client.userId,
             username: client.username,
             isInLobby: true,
           }),
@@ -164,19 +164,19 @@ export class LobbyRoom extends Room {
         const gameSetup = gameRoom.gameSetup;
 
         gameCheckpoint.gameMode = gameSetup.gameMode;
-        gameCheckpoint.hostUserId = gameSetup.hostUserID;
-        gameCheckpoint.userIds = gameSetup.userIDs.map((userID) => (userID !== null ? userID : 0));
+        gameCheckpoint.hostUserId = gameSetup.hostUserId;
+        gameCheckpoint.userIds = gameSetup.userIds.map((userId) => (userId !== null ? userId : 0));
 
-        for (let playerID = 0; playerID < gameSetup.userIDs.length; playerID++) {
-          const userID = gameSetup.userIDs[playerID];
-          const username = gameSetup.usernames[playerID];
+        for (let playerId = 0; playerId < gameSetup.userIds.length; playerId++) {
+          const userId = gameSetup.userIds[playerId];
+          const username = gameSetup.usernames[playerId];
 
-          if (userID !== null && username !== null) {
-            if (!userIDToUser.has(userID)) {
-              userIDToUser.set(
-                userID,
+          if (userId !== null && username !== null) {
+            if (!userIdToUser.has(userId)) {
+              userIdToUser.set(
+                userId,
                 PB_MessageToClient_Lobby_LastStateCheckpoint_User.create({
-                  userId: userID,
+                  userId: userId,
                   username,
                 }),
               );
@@ -200,13 +200,13 @@ export class LobbyRoom extends Room {
         lobby: {
           lastStateCheckpoint: {
             games: gameCheckpoints,
-            users: [...userIDToUser.values()],
+            users: [...userIdToUser.values()],
             lastEventIndex: this.lscLastEventIndex,
           },
         },
       }),
     );
-    this.lscKnownUserIDs = new Set(userIDToUser.keys());
+    this.lscKnownUserIds = new Set(userIdToUser.keys());
   }
 
   private getConnectionResponse(message: PB_MessageToServer_Lobby_Connect) {

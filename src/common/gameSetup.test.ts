@@ -6,7 +6,7 @@ import { PB_GameMode, PB_GameSetupChange, PB_PlayerArrangementMode } from './pb'
 
 const dummyApprovals = [true];
 
-const userIDToUsername = new Map([
+const userIdToUsername = new Map([
   [1, 'user 1'],
   [2, 'user 2'],
   [3, 'user 3'],
@@ -16,8 +16,8 @@ const userIDToUsername = new Map([
   [7, 'user 7'],
 ]);
 
-function getUsernameForUserID(userID: number) {
-  return userIDToUsername.get(userID)!;
+function getUsernameForUserId(userId: number) {
+  return userIdToUsername.get(userId)!;
 }
 
 function expectEqualGameSetups(gameSetup1: GameSetup, gameSetup2: GameSetup) {
@@ -30,20 +30,20 @@ test('can construct', () => {
     PB_GameMode.SINGLES_4,
     PB_PlayerArrangementMode.RANDOM_ORDER,
     1,
-    getUsernameForUserID,
+    getUsernameForUserId,
   );
   const gameSetupChangeVerifier = new GameSetupChangeVerifier(gameSetup);
 
   expect(gameSetup.gameMode).toBe(PB_GameMode.SINGLES_4);
   expect(gameSetup.playerArrangementMode).toBe(PB_PlayerArrangementMode.RANDOM_ORDER);
-  expect(gameSetup.hostUserID).toBe(1);
-  expect(gameSetup.getUsernameForUserID).toBe(getUsernameForUserID);
+  expect(gameSetup.hostUserId).toBe(1);
+  expect(gameSetup.getUsernameForUserId).toBe(getUsernameForUserId);
   expect(gameSetup.hostUsername).toBe('user 1');
   expect(gameSetup.usernames).toEqual(['user 1', null, null, null]);
-  expect(gameSetup.userIDs).toEqual([1, null, null, null]);
-  expect(gameSetup.userIDsSet).toEqual(new Set([1]));
+  expect(gameSetup.userIds).toEqual([1, null, null, null]);
+  expect(gameSetup.userIdsSet).toEqual(new Set([1]));
   expect(gameSetup.approvals).toEqual([false, false, false, false]);
-  expect(gameSetup.finalUserIDs).toBe(null);
+  expect(gameSetup.finalUserIds).toBe(null);
   expect(gameSetup.finalUsernames).toBe(null);
   expect(gameSetup.history).toEqual([]);
 
@@ -57,7 +57,7 @@ describe('addUser', () => {
       PB_GameMode.SINGLES_3,
       PB_PlayerArrangementMode.RANDOM_ORDER,
       1,
-      getUsernameForUserID,
+      getUsernameForUserId,
     );
     const gameSetupChangeVerifier = new GameSetupChangeVerifier(gameSetup);
 
@@ -66,8 +66,8 @@ describe('addUser', () => {
     gameSetup.addUser(5);
 
     expect(gameSetup.usernames).toEqual(['user 1', 'user 3', 'user 4']);
-    expect(gameSetup.userIDs).toEqual([1, 3, 4]);
-    expect(gameSetup.userIDsSet).toEqual(new Set([1, 3, 4]));
+    expect(gameSetup.userIds).toEqual([1, 3, 4]);
+    expect(gameSetup.userIdsSet).toEqual(new Set([1, 3, 4]));
     expect(gameSetup.history).toEqual([
       PB_GameSetupChange.create({ userAdded: { userId: 3 } }),
       PB_GameSetupChange.create({ userAdded: { userId: 4 } }),
@@ -82,7 +82,7 @@ describe('addUser', () => {
       PB_GameMode.SINGLES_3,
       PB_PlayerArrangementMode.RANDOM_ORDER,
       1,
-      getUsernameForUserID,
+      getUsernameForUserId,
     );
     const gameSetupChangeVerifier = new GameSetupChangeVerifier(gameSetup);
 
@@ -90,8 +90,8 @@ describe('addUser', () => {
     gameSetup.addUser(6);
 
     expect(gameSetup.usernames).toEqual(['user 1', 'user 6', null]);
-    expect(gameSetup.userIDs).toEqual([1, 6, null]);
-    expect(gameSetup.userIDsSet).toEqual(new Set([1, 6]));
+    expect(gameSetup.userIds).toEqual([1, 6, null]);
+    expect(gameSetup.userIdsSet).toEqual(new Set([1, 6]));
     expect(gameSetup.history).toEqual([PB_GameSetupChange.create({ userAdded: { userId: 6 } })]);
 
     gameSetupChangeVerifier.processChangesThenClearHistory();
@@ -103,18 +103,18 @@ describe('addUser', () => {
       PB_GameMode.SINGLES_3,
       PB_PlayerArrangementMode.RANDOM_ORDER,
       1,
-      getUsernameForUserID,
+      getUsernameForUserId,
     );
     const gameSetupChangeVerifier = new GameSetupChangeVerifier(gameSetup);
 
     gameSetup.approvals = dummyApprovals;
-    gameSetup.finalUserIDs = [];
+    gameSetup.finalUserIds = [];
     gameSetup.finalUsernames = [];
 
     gameSetup.addUser(3);
 
     expect(gameSetup.approvals).toEqual([false, false, false]);
-    expect(gameSetup.finalUserIDs).toBe(null);
+    expect(gameSetup.finalUserIds).toBe(null);
     expect(gameSetup.finalUsernames).toBe(null);
 
     gameSetupChangeVerifier.processChangesThenClearHistory();
@@ -128,7 +128,7 @@ describe('removeUser', () => {
       PB_GameMode.SINGLES_3,
       PB_PlayerArrangementMode.RANDOM_ORDER,
       1,
-      getUsernameForUserID,
+      getUsernameForUserId,
     );
     const gameSetupChangeVerifier = new GameSetupChangeVerifier(gameSetup);
 
@@ -139,15 +139,15 @@ describe('removeUser', () => {
     gameSetup.removeUser(7);
 
     expect(gameSetup.usernames).toEqual(['user 1', null, 'user 2']);
-    expect(gameSetup.userIDs).toEqual([1, null, 2]);
-    expect(gameSetup.userIDsSet).toEqual(new Set([1, 2]));
+    expect(gameSetup.userIds).toEqual([1, null, 2]);
+    expect(gameSetup.userIdsSet).toEqual(new Set([1, 2]));
     expect(gameSetup.history).toEqual([PB_GameSetupChange.create({ userRemoved: { userId: 7 } })]);
 
     gameSetup.removeUser(2);
 
     expect(gameSetup.usernames).toEqual(['user 1', null, null]);
-    expect(gameSetup.userIDs).toEqual([1, null, null]);
-    expect(gameSetup.userIDsSet).toEqual(new Set([1]));
+    expect(gameSetup.userIds).toEqual([1, null, null]);
+    expect(gameSetup.userIdsSet).toEqual(new Set([1]));
     expect(gameSetup.history).toEqual([
       PB_GameSetupChange.create({ userRemoved: { userId: 7 } }),
       PB_GameSetupChange.create({ userRemoved: { userId: 2 } }),
@@ -162,7 +162,7 @@ describe('removeUser', () => {
       PB_GameMode.SINGLES_3,
       PB_PlayerArrangementMode.RANDOM_ORDER,
       1,
-      getUsernameForUserID,
+      getUsernameForUserId,
     );
     const gameSetupChangeVerifier = new GameSetupChangeVerifier(gameSetup);
 
@@ -172,8 +172,8 @@ describe('removeUser', () => {
     gameSetup.removeUser(1);
 
     expect(gameSetup.usernames).toEqual(['user 1', 'user 2', null]);
-    expect(gameSetup.userIDs).toEqual([1, 2, null]);
-    expect(gameSetup.userIDsSet).toEqual(new Set([1, 2]));
+    expect(gameSetup.userIds).toEqual([1, 2, null]);
+    expect(gameSetup.userIdsSet).toEqual(new Set([1, 2]));
     expect(gameSetup.history).toEqual([]);
 
     gameSetupChangeVerifier.processChangesThenClearHistory();
@@ -185,19 +185,19 @@ describe('removeUser', () => {
       PB_GameMode.SINGLES_3,
       PB_PlayerArrangementMode.RANDOM_ORDER,
       1,
-      getUsernameForUserID,
+      getUsernameForUserId,
     );
     const gameSetupChangeVerifier = new GameSetupChangeVerifier(gameSetup);
 
     gameSetup.addUser(7);
     gameSetup.approvals = dummyApprovals;
-    gameSetup.finalUserIDs = [];
+    gameSetup.finalUserIds = [];
     gameSetup.finalUsernames = [];
 
     gameSetup.removeUser(7);
 
     expect(gameSetup.approvals).toEqual([false, false, false]);
-    expect(gameSetup.finalUserIDs).toBe(null);
+    expect(gameSetup.finalUserIds).toBe(null);
     expect(gameSetup.finalUsernames).toBe(null);
 
     gameSetupChangeVerifier.processChangesThenClearHistory();
@@ -211,7 +211,7 @@ describe('approve', () => {
       PB_GameMode.SINGLES_2,
       PB_PlayerArrangementMode.RANDOM_ORDER,
       1,
-      getUsernameForUserID,
+      getUsernameForUserId,
     );
     const gameSetupChangeVerifier = new GameSetupChangeVerifier(gameSetup);
 
@@ -219,13 +219,13 @@ describe('approve', () => {
     gameSetupChangeVerifier.processChangesThenClearHistory();
 
     expect(gameSetup.approvals).toEqual([false, false]);
-    expect(gameSetup.finalUserIDs).toBe(null);
+    expect(gameSetup.finalUserIds).toBe(null);
     expect(gameSetup.finalUsernames).toBe(null);
 
     gameSetup.approve(3);
 
     expect(gameSetup.approvals).toEqual([false, false]);
-    expect(gameSetup.finalUserIDs).toBe(null);
+    expect(gameSetup.finalUserIds).toBe(null);
     expect(gameSetup.finalUsernames).toBe(null);
     expect(gameSetup.history).toEqual([]);
 
@@ -238,7 +238,7 @@ describe('approve', () => {
       PB_GameMode.SINGLES_3,
       PB_PlayerArrangementMode.RANDOM_ORDER,
       1,
-      getUsernameForUserID,
+      getUsernameForUserId,
     );
     const gameSetupChangeVerifier = new GameSetupChangeVerifier(gameSetup);
 
@@ -246,13 +246,13 @@ describe('approve', () => {
     gameSetupChangeVerifier.processChangesThenClearHistory();
 
     expect(gameSetup.approvals).toEqual([false, false, false]);
-    expect(gameSetup.finalUserIDs).toBe(null);
+    expect(gameSetup.finalUserIds).toBe(null);
     expect(gameSetup.finalUsernames).toBe(null);
 
     gameSetup.approve(2);
 
     expect(gameSetup.approvals).toEqual([false, false, false]);
-    expect(gameSetup.finalUserIDs).toBe(null);
+    expect(gameSetup.finalUserIds).toBe(null);
     expect(gameSetup.finalUsernames).toBe(null);
     expect(gameSetup.history).toEqual([]);
 
@@ -265,7 +265,7 @@ describe('approve', () => {
       PB_GameMode.SINGLES_2,
       PB_PlayerArrangementMode.RANDOM_ORDER,
       1,
-      getUsernameForUserID,
+      getUsernameForUserId,
     );
     const gameSetupChangeVerifier = new GameSetupChangeVerifier(gameSetup);
 
@@ -274,13 +274,13 @@ describe('approve', () => {
     gameSetupChangeVerifier.processChangesThenClearHistory();
 
     expect(gameSetup.approvals).toEqual([false, true]);
-    expect(gameSetup.finalUserIDs).toBe(null);
+    expect(gameSetup.finalUserIds).toBe(null);
     expect(gameSetup.finalUsernames).toBe(null);
 
     gameSetup.approve(2);
 
     expect(gameSetup.approvals).toEqual([false, true]);
-    expect(gameSetup.finalUserIDs).toBe(null);
+    expect(gameSetup.finalUserIds).toBe(null);
     expect(gameSetup.finalUsernames).toBe(null);
     expect(gameSetup.history).toEqual([]);
 
@@ -293,7 +293,7 @@ describe('approve', () => {
       PB_GameMode.SINGLES_2,
       PB_PlayerArrangementMode.RANDOM_ORDER,
       1,
-      getUsernameForUserID,
+      getUsernameForUserId,
     );
     const gameSetupChangeVerifier = new GameSetupChangeVerifier(gameSetup);
 
@@ -301,13 +301,13 @@ describe('approve', () => {
     gameSetupChangeVerifier.processChangesThenClearHistory();
 
     expect(gameSetup.approvals).toEqual([false, false]);
-    expect(gameSetup.finalUserIDs).toBe(null);
+    expect(gameSetup.finalUserIds).toBe(null);
     expect(gameSetup.finalUsernames).toBe(null);
 
     gameSetup.approve(2);
 
     expect(gameSetup.approvals).toEqual([false, true]);
-    expect(gameSetup.finalUserIDs).toBe(null);
+    expect(gameSetup.finalUserIds).toBe(null);
     expect(gameSetup.finalUsernames).toBe(null);
     expect(gameSetup.history).toEqual([
       PB_GameSetupChange.create({ userApprovedOfGameSetup: { userId: 2 } }),
@@ -326,7 +326,7 @@ describe('approve', () => {
           PB_GameMode.SINGLES_4,
           PB_PlayerArrangementMode.RANDOM_ORDER,
           1,
-          getUsernameForUserID,
+          getUsernameForUserId,
         );
         const gameSetupChangeVerifier = new GameSetupChangeVerifier(gameSetup);
 
@@ -351,7 +351,7 @@ describe('approve', () => {
 
         expect(gameSetup.usernames).toEqual(['user 1', 'user 2', 'user 3', 'user 4']);
 
-        expect(gameSetup.finalUserIDs).toEqual([3, 1, 4, 2]);
+        expect(gameSetup.finalUserIds).toEqual([3, 1, 4, 2]);
         expect(gameSetup.finalUsernames).toEqual(['user 3', 'user 1', 'user 4', 'user 2']);
 
         gameSetupChangeVerifier.processChangesThenClearHistory();
@@ -365,7 +365,7 @@ describe('approve', () => {
           PB_GameMode.SINGLES_2,
           PB_PlayerArrangementMode.RANDOM_ORDER,
           1,
-          getUsernameForUserID,
+          getUsernameForUserId,
         );
         const gameSetupChangeVerifier = new GameSetupChangeVerifier(gameSetup);
 
@@ -384,7 +384,7 @@ describe('approve', () => {
 
         expect(gameSetup.usernames).toEqual(['user 1', 'user 2']);
 
-        expect(gameSetup.finalUserIDs).toBe(gameSetup.userIDs);
+        expect(gameSetup.finalUserIds).toBe(gameSetup.userIds);
         expect(gameSetup.finalUsernames).toBe(gameSetup.usernames);
 
         gameSetupChangeVerifier.processChangesThenClearHistory();
@@ -398,7 +398,7 @@ describe('approve', () => {
           PB_GameMode.TEAMS_2_VS_2,
           PB_PlayerArrangementMode.EXACT_ORDER,
           1,
-          getUsernameForUserID,
+          getUsernameForUserId,
         );
         const gameSetupChangeVerifier = new GameSetupChangeVerifier(gameSetup);
 
@@ -421,7 +421,7 @@ describe('approve', () => {
 
         expect(gameSetup.usernames).toEqual(['user 1', 'user 2', 'user 3', 'user 4']);
 
-        expect(gameSetup.finalUserIDs).toEqual([1, 2, 3, 4]);
+        expect(gameSetup.finalUserIds).toEqual([1, 2, 3, 4]);
         expect(gameSetup.finalUsernames).toEqual(['user 1', 'user 2', 'user 3', 'user 4']);
 
         gameSetupChangeVerifier.processChangesThenClearHistory();
@@ -437,7 +437,7 @@ describe('approve', () => {
           PB_GameMode.TEAMS_2_VS_2,
           PB_PlayerArrangementMode.SPECIFY_TEAMS,
           1,
-          getUsernameForUserID,
+          getUsernameForUserId,
         );
         const gameSetupChangeVerifier = new GameSetupChangeVerifier(gameSetup);
 
@@ -461,7 +461,7 @@ describe('approve', () => {
 
         expect(gameSetup.usernames).toEqual(['user 1', 'user 2', 'user 3', 'user 4']);
 
-        expect(gameSetup.finalUserIDs).toEqual([2, 3, 4, 1]);
+        expect(gameSetup.finalUserIds).toEqual([2, 3, 4, 1]);
         expect(gameSetup.finalUsernames).toEqual(['user 2', 'user 3', 'user 4', 'user 1']);
 
         gameSetupChangeVerifier.processChangesThenClearHistory();
@@ -475,7 +475,7 @@ describe('approve', () => {
           PB_GameMode.TEAMS_2_VS_2_VS_2,
           PB_PlayerArrangementMode.SPECIFY_TEAMS,
           1,
-          getUsernameForUserID,
+          getUsernameForUserId,
         );
         const gameSetupChangeVerifier = new GameSetupChangeVerifier(gameSetup);
 
@@ -510,7 +510,7 @@ describe('approve', () => {
           'user 6',
         ]);
 
-        expect(gameSetup.finalUserIDs).toEqual([4, 3, 2, 1, 6, 5]);
+        expect(gameSetup.finalUserIds).toEqual([4, 3, 2, 1, 6, 5]);
         expect(gameSetup.finalUsernames).toEqual([
           'user 4',
           'user 3',
@@ -531,7 +531,7 @@ describe('approve', () => {
           PB_GameMode.TEAMS_3_VS_3,
           PB_PlayerArrangementMode.SPECIFY_TEAMS,
           1,
-          getUsernameForUserID,
+          getUsernameForUserId,
         );
         const gameSetupChangeVerifier = new GameSetupChangeVerifier(gameSetup);
 
@@ -566,7 +566,7 @@ describe('approve', () => {
           'user 6',
         ]);
 
-        expect(gameSetup.finalUserIDs).toEqual([5, 4, 1, 6, 3, 2]);
+        expect(gameSetup.finalUserIds).toEqual([5, 4, 1, 6, 3, 2]);
         expect(gameSetup.finalUsernames).toEqual([
           'user 5',
           'user 4',
@@ -587,7 +587,7 @@ describe('approve', () => {
           PB_GameMode.TEAMS_2_VS_2,
           PB_PlayerArrangementMode.SPECIFY_TEAMS,
           1,
-          getUsernameForUserID,
+          getUsernameForUserId,
         );
         const gameSetupChangeVerifier = new GameSetupChangeVerifier(gameSetup);
 
@@ -610,7 +610,7 @@ describe('approve', () => {
 
         expect(gameSetup.usernames).toEqual(['user 1', 'user 2', 'user 3', 'user 4']);
 
-        expect(gameSetup.finalUserIDs).toBe(gameSetup.userIDs);
+        expect(gameSetup.finalUserIds).toBe(gameSetup.userIds);
         expect(gameSetup.finalUsernames).toBe(gameSetup.usernames);
 
         gameSetupChangeVerifier.processChangesThenClearHistory();
@@ -626,7 +626,7 @@ describe('changeGameMode', () => {
       PB_GameMode.TEAMS_2_VS_2,
       PB_PlayerArrangementMode.RANDOM_ORDER,
       1,
-      getUsernameForUserID,
+      getUsernameForUserId,
     );
     const gameSetupChangeVerifier = new GameSetupChangeVerifier(gameSetup);
 
@@ -654,7 +654,7 @@ describe('changeGameMode', () => {
       PB_GameMode.TEAMS_2_VS_2,
       PB_PlayerArrangementMode.RANDOM_ORDER,
       1,
-      getUsernameForUserID,
+      getUsernameForUserId,
     );
     const gameSetupChangeVerifier = new GameSetupChangeVerifier(gameSetup);
 
@@ -679,7 +679,7 @@ describe('changeGameMode', () => {
       PB_GameMode.SINGLES_4,
       PB_PlayerArrangementMode.RANDOM_ORDER,
       1,
-      getUsernameForUserID,
+      getUsernameForUserId,
     );
     const gameSetupChangeVerifier = new GameSetupChangeVerifier(gameSetup);
 
@@ -707,7 +707,7 @@ describe('changeGameMode', () => {
       PB_GameMode.TEAMS_2_VS_2,
       PB_PlayerArrangementMode.RANDOM_ORDER,
       1,
-      getUsernameForUserID,
+      getUsernameForUserId,
     );
     const gameSetupChangeVerifier = new GameSetupChangeVerifier(gameSetup);
 
@@ -734,7 +734,7 @@ describe('changeGameMode', () => {
       PB_GameMode.SINGLES_2,
       PB_PlayerArrangementMode.EXACT_ORDER,
       1,
-      getUsernameForUserID,
+      getUsernameForUserId,
     );
     const gameSetupChangeVerifier = new GameSetupChangeVerifier(gameSetup);
 
@@ -761,7 +761,7 @@ describe('changeGameMode', () => {
       PB_GameMode.SINGLES_4,
       PB_PlayerArrangementMode.EXACT_ORDER,
       1,
-      getUsernameForUserID,
+      getUsernameForUserId,
     );
     const gameSetupChangeVerifier = new GameSetupChangeVerifier(gameSetup);
 
@@ -788,7 +788,7 @@ describe('changeGameMode', () => {
       PB_GameMode.TEAMS_3_VS_3,
       PB_PlayerArrangementMode.RANDOM_ORDER,
       1,
-      getUsernameForUserID,
+      getUsernameForUserId,
     );
     const gameSetupChangeVerifier = new GameSetupChangeVerifier(gameSetup);
 
@@ -821,7 +821,7 @@ describe('changeGameMode', () => {
       PB_GameMode.TEAMS_2_VS_2,
       PB_PlayerArrangementMode.SPECIFY_TEAMS,
       1,
-      getUsernameForUserID,
+      getUsernameForUserId,
     );
     const gameSetupChangeVerifier = new GameSetupChangeVerifier(gameSetup);
 
@@ -847,18 +847,18 @@ describe('changeGameMode', () => {
       PB_GameMode.TEAMS_2_VS_2,
       PB_PlayerArrangementMode.SPECIFY_TEAMS,
       1,
-      getUsernameForUserID,
+      getUsernameForUserId,
     );
     const gameSetupChangeVerifier = new GameSetupChangeVerifier(gameSetup);
 
     gameSetup.approvals = dummyApprovals;
-    gameSetup.finalUserIDs = [];
+    gameSetup.finalUserIds = [];
     gameSetup.finalUsernames = [];
 
     gameSetup.changeGameMode(PB_GameMode.SINGLES_4);
 
     expect(gameSetup.approvals).toEqual([false, false, false, false]);
-    expect(gameSetup.finalUserIDs).toBe(null);
+    expect(gameSetup.finalUserIds).toBe(null);
     expect(gameSetup.finalUsernames).toBe(null);
 
     gameSetupChangeVerifier.processChangesThenClearHistory();
@@ -872,7 +872,7 @@ describe('changePlayerArrangementMode', () => {
       PB_GameMode.TEAMS_2_VS_2,
       PB_PlayerArrangementMode.RANDOM_ORDER,
       1,
-      getUsernameForUserID,
+      getUsernameForUserId,
     );
     const gameSetupChangeVerifier = new GameSetupChangeVerifier(gameSetup);
 
@@ -902,7 +902,7 @@ describe('changePlayerArrangementMode', () => {
       PB_GameMode.TEAMS_2_VS_2,
       PB_PlayerArrangementMode.SPECIFY_TEAMS,
       1,
-      getUsernameForUserID,
+      getUsernameForUserId,
     );
     const gameSetupChangeVerifier = new GameSetupChangeVerifier(gameSetup);
 
@@ -922,7 +922,7 @@ describe('changePlayerArrangementMode', () => {
       PB_GameMode.SINGLES_4,
       PB_PlayerArrangementMode.RANDOM_ORDER,
       1,
-      getUsernameForUserID,
+      getUsernameForUserId,
     );
     const gameSetupChangeVerifier = new GameSetupChangeVerifier(gameSetup);
 
@@ -942,7 +942,7 @@ describe('changePlayerArrangementMode', () => {
       PB_GameMode.TEAMS_2_VS_2,
       PB_PlayerArrangementMode.SPECIFY_TEAMS,
       1,
-      getUsernameForUserID,
+      getUsernameForUserId,
     );
     const gameSetupChangeVerifier = new GameSetupChangeVerifier(gameSetup);
 
@@ -968,18 +968,18 @@ describe('changePlayerArrangementMode', () => {
       PB_GameMode.TEAMS_2_VS_2,
       PB_PlayerArrangementMode.SPECIFY_TEAMS,
       1,
-      getUsernameForUserID,
+      getUsernameForUserId,
     );
     const gameSetupChangeVerifier = new GameSetupChangeVerifier(gameSetup);
 
     gameSetup.approvals = dummyApprovals;
-    gameSetup.finalUserIDs = [];
+    gameSetup.finalUserIds = [];
     gameSetup.finalUsernames = [];
 
     gameSetup.changePlayerArrangementMode(PB_PlayerArrangementMode.EXACT_ORDER);
 
     expect(gameSetup.approvals).toEqual([false, false, false, false]);
-    expect(gameSetup.finalUserIDs).toBe(null);
+    expect(gameSetup.finalUserIds).toBe(null);
     expect(gameSetup.finalUsernames).toBe(null);
 
     gameSetupChangeVerifier.processChangesThenClearHistory();
@@ -993,7 +993,7 @@ describe('swapPositions', () => {
       PB_GameMode.TEAMS_2_VS_2,
       PB_PlayerArrangementMode.SPECIFY_TEAMS,
       1,
-      getUsernameForUserID,
+      getUsernameForUserId,
     );
     const gameSetupChangeVerifier = new GameSetupChangeVerifier(gameSetup);
 
@@ -1022,7 +1022,7 @@ describe('swapPositions', () => {
       PB_GameMode.SINGLES_3,
       PB_PlayerArrangementMode.EXACT_ORDER,
       1,
-      getUsernameForUserID,
+      getUsernameForUserId,
     );
     const gameSetupChangeVerifier = new GameSetupChangeVerifier(gameSetup);
 
@@ -1050,7 +1050,7 @@ describe('swapPositions', () => {
       PB_GameMode.SINGLES_3,
       PB_PlayerArrangementMode.EXACT_ORDER,
       1,
-      getUsernameForUserID,
+      getUsernameForUserId,
     );
     const gameSetupChangeVerifier = new GameSetupChangeVerifier(gameSetup);
 
@@ -1070,7 +1070,7 @@ describe('swapPositions', () => {
       PB_GameMode.TEAMS_2_VS_2,
       PB_PlayerArrangementMode.SPECIFY_TEAMS,
       1,
-      getUsernameForUserID,
+      getUsernameForUserId,
     );
     const gameSetupChangeVerifier = new GameSetupChangeVerifier(gameSetup);
 
@@ -1109,7 +1109,7 @@ describe('swapPositions', () => {
       PB_GameMode.TEAMS_2_VS_2,
       PB_PlayerArrangementMode.SPECIFY_TEAMS,
       1,
-      getUsernameForUserID,
+      getUsernameForUserId,
     );
     const gameSetupChangeVerifier = new GameSetupChangeVerifier(gameSetup);
 
@@ -1117,13 +1117,13 @@ describe('swapPositions', () => {
     gameSetup.addUser(3);
     gameSetup.addUser(4);
     gameSetup.approvals = dummyApprovals;
-    gameSetup.finalUserIDs = [];
+    gameSetup.finalUserIds = [];
     gameSetup.finalUsernames = [];
 
     gameSetup.swapPositions(0, 1);
 
     expect(gameSetup.approvals).toEqual([false, false, false, false]);
-    expect(gameSetup.finalUserIDs).toBe(null);
+    expect(gameSetup.finalUserIds).toBe(null);
     expect(gameSetup.finalUsernames).toBe(null);
 
     gameSetupChangeVerifier.processChangesThenClearHistory();
@@ -1137,7 +1137,7 @@ describe('kickUser', () => {
       PB_GameMode.TEAMS_2_VS_2,
       PB_PlayerArrangementMode.SPECIFY_TEAMS,
       1,
-      getUsernameForUserID,
+      getUsernameForUserId,
     );
     const gameSetupChangeVerifier = new GameSetupChangeVerifier(gameSetup);
 
@@ -1168,7 +1168,7 @@ describe('kickUser', () => {
       PB_GameMode.TEAMS_2_VS_2,
       PB_PlayerArrangementMode.SPECIFY_TEAMS,
       1,
-      getUsernameForUserID,
+      getUsernameForUserId,
     );
     const gameSetupChangeVerifier = new GameSetupChangeVerifier(gameSetup);
 
@@ -1192,7 +1192,7 @@ describe('kickUser', () => {
       PB_GameMode.TEAMS_2_VS_2,
       PB_PlayerArrangementMode.SPECIFY_TEAMS,
       1,
-      getUsernameForUserID,
+      getUsernameForUserId,
     );
     const gameSetupChangeVerifier = new GameSetupChangeVerifier(gameSetup);
 
@@ -1216,7 +1216,7 @@ describe('kickUser', () => {
       PB_GameMode.TEAMS_2_VS_2,
       PB_PlayerArrangementMode.SPECIFY_TEAMS,
       1,
-      getUsernameForUserID,
+      getUsernameForUserId,
     );
     const gameSetupChangeVerifier = new GameSetupChangeVerifier(gameSetup);
 
@@ -1225,14 +1225,14 @@ describe('kickUser', () => {
     gameSetupChangeVerifier.processChangesThenClearHistory();
 
     expect(gameSetup.usernames).toEqual(['user 1', 'user 2', 'user 3', null]);
-    expect(gameSetup.userIDs).toEqual([1, 2, 3, null]);
-    expect(gameSetup.userIDsSet).toEqual(new Set([1, 2, 3]));
+    expect(gameSetup.userIds).toEqual([1, 2, 3, null]);
+    expect(gameSetup.userIdsSet).toEqual(new Set([1, 2, 3]));
 
     gameSetup.kickUser(2);
 
     expect(gameSetup.usernames).toEqual(['user 1', null, 'user 3', null]);
-    expect(gameSetup.userIDs).toEqual([1, null, 3, null]);
-    expect(gameSetup.userIDsSet).toEqual(new Set([1, 3]));
+    expect(gameSetup.userIds).toEqual([1, null, 3, null]);
+    expect(gameSetup.userIdsSet).toEqual(new Set([1, 3]));
     expect(gameSetup.history).toEqual([PB_GameSetupChange.create({ userKicked: { userId: 2 } })]);
 
     gameSetupChangeVerifier.processChangesThenClearHistory();
@@ -1244,20 +1244,20 @@ describe('kickUser', () => {
       PB_GameMode.TEAMS_2_VS_2,
       PB_PlayerArrangementMode.SPECIFY_TEAMS,
       1,
-      getUsernameForUserID,
+      getUsernameForUserId,
     );
     const gameSetupChangeVerifier = new GameSetupChangeVerifier(gameSetup);
 
     gameSetup.addUser(2);
     gameSetup.addUser(3);
     gameSetup.approvals = dummyApprovals;
-    gameSetup.finalUserIDs = [];
+    gameSetup.finalUserIds = [];
     gameSetup.finalUsernames = [];
 
     gameSetup.kickUser(2);
 
     expect(gameSetup.approvals).toEqual([false, false, false, false]);
-    expect(gameSetup.finalUserIDs).toBe(null);
+    expect(gameSetup.finalUserIds).toBe(null);
     expect(gameSetup.finalUsernames).toBe(null);
 
     gameSetupChangeVerifier.processChangesThenClearHistory();
@@ -1271,7 +1271,7 @@ describe('processChange', () => {
       PB_GameMode.SINGLES_4,
       PB_PlayerArrangementMode.RANDOM_ORDER,
       1,
-      getUsernameForUserID,
+      getUsernameForUserId,
     );
     const gameSetupChangeVerifier = new GameSetupChangeVerifier(gameSetup);
 
@@ -1287,7 +1287,7 @@ describe('processChange', () => {
       PB_GameMode.SINGLES_4,
       PB_PlayerArrangementMode.RANDOM_ORDER,
       1,
-      getUsernameForUserID,
+      getUsernameForUserId,
     );
     const gameSetupChangeVerifier = new GameSetupChangeVerifier(gameSetup);
 
@@ -1322,14 +1322,14 @@ describe('processChange', () => {
 
     expect(gameSetup.gameMode).toBe(PB_GameMode.TEAMS_2_VS_2);
     expect(gameSetup.playerArrangementMode).toBe(PB_PlayerArrangementMode.EXACT_ORDER);
-    expect(gameSetup.hostUserID).toBe(1);
-    expect(gameSetup.getUsernameForUserID).toBe(getUsernameForUserID);
+    expect(gameSetup.hostUserId).toBe(1);
+    expect(gameSetup.getUsernameForUserId).toBe(getUsernameForUserId);
     expect(gameSetup.hostUsername).toBe('user 1');
     expect(gameSetup.usernames).toEqual(['user 4', 'user 5', 'user 6', 'user 1']);
-    expect(gameSetup.userIDs).toEqual([4, 5, 6, 1]);
-    expect(gameSetup.userIDsSet).toEqual(new Set([4, 5, 6, 1]));
+    expect(gameSetup.userIds).toEqual([4, 5, 6, 1]);
+    expect(gameSetup.userIdsSet).toEqual(new Set([4, 5, 6, 1]));
     expect(gameSetup.approvals).toEqual([true, true, true, true]);
-    expect(gameSetup.finalUserIDs).toBe(gameSetup.userIDs);
+    expect(gameSetup.finalUserIds).toBe(gameSetup.userIds);
     expect(gameSetup.finalUsernames).toBe(gameSetup.usernames);
 
     gameSetupChangeVerifier.processChangesThenClearHistory();
@@ -1343,7 +1343,7 @@ describe('gameSetupToProtocolBuffer and gameSetupFromProtocolBuffer', () => {
       PB_GameMode.TEAMS_2_VS_2,
       PB_PlayerArrangementMode.SPECIFY_TEAMS,
       1,
-      getUsernameForUserID,
+      getUsernameForUserId,
     );
     const gameSetupChangeVerifier = new GameSetupChangeVerifier(gameSetup);
 
@@ -1352,7 +1352,7 @@ describe('gameSetupToProtocolBuffer and gameSetupFromProtocolBuffer', () => {
 
     const gameSetup2 = gameSetupFromProtocolBuffer(
       gameSetupToProtocolBuffer(gameSetup),
-      getUsernameForUserID,
+      getUsernameForUserId,
     );
     gameSetup2.clearHistory();
 
@@ -1367,7 +1367,7 @@ describe('gameSetupToProtocolBuffer and gameSetupFromProtocolBuffer', () => {
       PB_GameMode.TEAMS_3_VS_3,
       PB_PlayerArrangementMode.EXACT_ORDER,
       3,
-      getUsernameForUserID,
+      getUsernameForUserId,
     );
     const gameSetupChangeVerifier = new GameSetupChangeVerifier(gameSetup);
 
@@ -1381,12 +1381,12 @@ describe('gameSetupToProtocolBuffer and gameSetupFromProtocolBuffer', () => {
     gameSetup.approve(5);
     gameSetup.approve(6);
     gameSetupChangeVerifier.processChangesThenClearHistory();
-    expect(gameSetup.finalUserIDs).toBe(null);
+    expect(gameSetup.finalUserIds).toBe(null);
     expect(gameSetup.finalUsernames).toBe(null);
 
     const gameSetup2 = gameSetupFromProtocolBuffer(
       gameSetupToProtocolBuffer(gameSetup),
-      getUsernameForUserID,
+      getUsernameForUserId,
     );
 
     expectEqualGameSetups(gameSetup, gameSetup2);
@@ -1403,8 +1403,8 @@ class GameSetupChangeVerifier {
     this.gameSetup = new GameSetup(
       initialGameSetup.gameMode,
       initialGameSetup.playerArrangementMode,
-      initialGameSetup.hostUserID,
-      initialGameSetup.getUsernameForUserID,
+      initialGameSetup.hostUserId,
+      initialGameSetup.getUsernameForUserId,
     );
   }
 

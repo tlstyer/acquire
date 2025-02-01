@@ -11,18 +11,18 @@ import { ClientCommunication } from './clientCommunication';
 export type GamesManager = ReturnType<typeof createGamesManager>;
 
 export function createGamesManager(clientCommunication: ClientCommunication) {
-  const gameIDToGameManager = new Map<string, GameManager>();
+  const gameIdToGameManager = new Map<string, GameManager>();
 
-  let lastRequestedGameID = '';
-  let lastReceivedGameID = '';
+  let lastRequestedGameId = '';
+  let lastReceivedGameId = '';
 
   function connect(logTime: number, gameNumber: number) {
-    lastRequestedGameID = `${logTime}-${gameNumber}`;
+    lastRequestedGameId = `${logTime}-${gameNumber}`;
 
-    let gameManager = gameIDToGameManager.get(lastRequestedGameID);
+    let gameManager = gameIdToGameManager.get(lastRequestedGameId);
     if (gameManager === undefined) {
       gameManager = createGameManager(clientCommunication, logTime, gameNumber);
-      gameIDToGameManager.set(lastRequestedGameID, gameManager);
+      gameIdToGameManager.set(lastRequestedGameId, gameManager);
     }
 
     gameManager.connect();
@@ -31,7 +31,7 @@ export function createGamesManager(clientCommunication: ClientCommunication) {
   }
 
   function getConnectMessage() {
-    const gameManager = gameIDToGameManager.get(lastRequestedGameID);
+    const gameManager = gameIdToGameManager.get(lastRequestedGameId);
     if (gameManager === undefined) {
       throw new Error('last requested game manager does not exist');
     }
@@ -41,10 +41,10 @@ export function createGamesManager(clientCommunication: ClientCommunication) {
 
   function onMessage(message: PB_MessageToClient_Game) {
     if (message.gameNumber) {
-      lastReceivedGameID = `${message.logTime}-${message.gameNumber}`;
+      lastReceivedGameId = `${message.logTime}-${message.gameNumber}`;
     }
 
-    const gameManager = gameIDToGameManager.get(lastReceivedGameID);
+    const gameManager = gameIdToGameManager.get(lastReceivedGameId);
     if (gameManager === undefined) {
       throw new Error('last received game manager does not exist');
     }
@@ -77,9 +77,9 @@ export function createGameManager(
     PB_PlayerArrangementMode.VERSION_1,
   );
   const [usernames, setUsernames] = createSignal<(string | null)[]>([]);
-  const [userIDs, setUserIDs] = createSignal<(number | null)[]>([]);
+  const [userIds, setUserIds] = createSignal<(number | null)[]>([]);
   const [approvals, setApprovals] = createSignal<boolean[]>([]);
-  const [hostUserID, setHostUserID] = createSignal(0);
+  const [hostUserId, setHostUserId] = createSignal(0);
 
   function connect() {
     setConnected(false);
@@ -98,15 +98,15 @@ export function createGameManager(
     });
   }
 
-  const userIDToUsername = new Map<number, string>();
-  function getUsernameForUserID(userID: number) {
-    return userIDToUsername.get(userID) ?? '?';
+  const userIdToUsername = new Map<number, string>();
+  function getUsernameForUserId(userId: number) {
+    return userIdToUsername.get(userId) ?? '?';
   }
 
   function onMessage(message: PB_MessageToClient_Game) {
     for (let i = 0; i < message.userIdsAndUsernames.length; i++) {
-      const userIDAndUsername = message.userIdsAndUsernames[i];
-      userIDToUsername.set(userIDAndUsername.userId, userIDAndUsername.username);
+      const userIdAndUsername = message.userIdsAndUsernames[i];
+      userIdToUsername.set(userIdAndUsername.userId, userIdAndUsername.username);
     }
 
     if (message.gameNumber !== 0) {
@@ -117,8 +117,8 @@ export function createGameManager(
           metadata.gameMode,
           metadata.playerArrangementMode,
           metadata.hostUserId,
-          getUsernameForUserID,
-          metadata.userIds.map((userID) => (userID === 0 ? null : userID)),
+          getUsernameForUserId,
+          metadata.userIds.map((userId) => (userId === 0 ? null : userId)),
         );
         gameSetup.approvals = metadata.approvals;
       }
@@ -130,9 +130,9 @@ export function createGameManager(
       setGameMode(gameSetup.gameMode);
       setPlayerArrangementMode(gameSetup.playerArrangementMode);
       setUsernames(gameSetup.usernames);
-      setUserIDs(gameSetup.userIDs);
+      setUserIds(gameSetup.userIds);
       setApprovals(gameSetup.approvals);
-      setHostUserID(gameSetup.hostUserID);
+      setHostUserId(gameSetup.hostUserId);
     }
   }
 
@@ -145,9 +145,9 @@ export function createGameManager(
       gameMode,
       playerArrangementMode,
       usernames,
-      userIDs,
+      userIds,
       approvals,
-      hostUserID,
+      hostUserId,
     },
   };
 }

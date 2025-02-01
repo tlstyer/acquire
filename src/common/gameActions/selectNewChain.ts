@@ -8,11 +8,11 @@ import { ActionBase } from './base';
 export class ActionSelectNewChain extends ActionBase {
   constructor(
     game: Game,
-    playerID: number,
+    playerId: number,
     public availableChains: PB_GameBoardType[],
     public tile: number,
   ) {
-    super(game, playerID, GameActionEnum.SelectNewChain);
+    super(game, playerId, GameActionEnum.SelectNewChain);
   }
 
   prepare() {
@@ -46,11 +46,11 @@ export class ActionSelectNewChain extends ActionBase {
     this.game.fillCells(this.tile, chain);
     this.game.setChainSize(chain, this.game.gameBoardTypeCounts[chain]);
     if (this.game.scoreBoardAvailable[chain] > 0) {
-      this.game.adjustPlayerScoreBoardRow(this.playerID, [new ScoreBoardAdjustment(chain, 1)]);
+      this.game.adjustPlayerScoreBoardRow(this.playerId, [new ScoreBoardAdjustment(chain, 1)]);
     }
 
     this.game
       .getCurrentGameState()
-      .addGameHistoryMessage(new GameHistoryMessageFormedChain(this.playerID, chain));
+      .addGameHistoryMessage(new GameHistoryMessageFormedChain(this.playerId, chain));
   }
 }

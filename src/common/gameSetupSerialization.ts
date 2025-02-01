@@ -2,11 +2,11 @@ import { GameSetup } from './gameSetup';
 import { PB_GameSetup, PB_GameSetup_Position } from './pb';
 
 export function gameSetupToProtocolBuffer(gameSetup: GameSetup): PB_GameSetup {
-  const positions: PB_GameSetup_Position[] = new Array(gameSetup.userIDs.length);
-  gameSetup.userIDs.forEach((userID, i) => {
+  const positions: PB_GameSetup_Position[] = new Array(gameSetup.userIds.length);
+  gameSetup.userIds.forEach((userId, i) => {
     positions[i] = PB_GameSetup_Position.create({
-      userId: userID !== null ? userID : undefined,
-      isHost: userID === gameSetup.hostUserID,
+      userId: userId !== null ? userId : undefined,
+      isHost: userId === gameSetup.hostUserId,
       approvesOfGameSetup: gameSetup.approvals[i],
     });
   });
@@ -20,31 +20,31 @@ export function gameSetupToProtocolBuffer(gameSetup: GameSetup): PB_GameSetup {
 
 export function gameSetupFromProtocolBuffer(
   gameSetupData: PB_GameSetup,
-  getUsernameForUserID: (userID: number) => string,
+  getUsernameForUserId: (userId: number) => string,
 ) {
   const positions = gameSetupData.positions;
 
   const usernames: (string | null)[] = new Array(positions.length);
-  const userIDsArray: (number | null)[] = new Array(positions.length);
-  const userIDsSet = new Set<number>();
-  let hostUserID = 0;
+  const userIdsArray: (number | null)[] = new Array(positions.length);
+  const userIdsSet = new Set<number>();
+  let hostUserId = 0;
   const approvals: boolean[] = new Array(positions.length);
 
   for (let index = 0; index < positions.length; index++) {
     const position = positions[index];
-    const userID = position.userId;
+    const userId = position.userId;
 
-    if (userID !== 0) {
-      usernames[index] = getUsernameForUserID(userID);
-      userIDsArray[index] = userID;
-      userIDsSet.add(userID);
+    if (userId !== 0) {
+      usernames[index] = getUsernameForUserId(userId);
+      userIdsArray[index] = userId;
+      userIdsSet.add(userId);
       if (position.isHost) {
-        hostUserID = userID;
+        hostUserId = userId;
       }
       approvals[index] = position.approvesOfGameSetup;
     } else {
       usernames[index] = null;
-      userIDsArray[index] = null;
+      userIdsArray[index] = null;
       approvals[index] = false;
     }
   }
@@ -52,12 +52,12 @@ export function gameSetupFromProtocolBuffer(
   const gameSetup = new GameSetup(
     gameSetupData.gameMode,
     gameSetupData.playerArrangementMode,
-    hostUserID,
-    getUsernameForUserID,
+    hostUserId,
+    getUsernameForUserId,
   );
   gameSetup.usernames = usernames;
-  gameSetup.userIDs = userIDsArray;
-  gameSetup.userIDsSet = userIDsSet;
+  gameSetup.userIds = userIdsArray;
+  gameSetup.userIdsSet = userIdsSet;
   gameSetup.approvals = approvals;
 
   return gameSetup;

@@ -22,7 +22,7 @@ export function createClient(clientCommunication: ClientCommunication, version: 
   let logTime = 0;
 
   let myUsername: string | undefined;
-  let myUserID: number | undefined;
+  let myUserId: number | undefined;
   let myToken: string | undefined;
 
   const [connected, setConnected] = createSignal(false);
@@ -209,7 +209,7 @@ export function createClient(clientCommunication: ClientCommunication, version: 
   function onMessage_LoginLogout(message: PB_MessageToClient_LoginLogout) {
     if (message.username && message.userId && message.token) {
       myUsername = message.username;
-      myUserID = message.userId;
+      myUserId = message.userId;
       myToken = message.token;
 
       loginMessage = PB_MessageToServer.toBinary({
@@ -240,7 +240,7 @@ export function createClient(clientCommunication: ClientCommunication, version: 
 
   function makeLoggedOutDataChanges() {
     myUsername = undefined;
-    myUserID = undefined;
+    myUserId = undefined;
     myToken = undefined;
 
     loginMessage = undefined;
@@ -265,8 +265,8 @@ export function createClient(clientCommunication: ClientCommunication, version: 
     get myUsername() {
       return myUsername;
     },
-    get myUserID() {
-      return myUserID;
+    get myUserId() {
+      return myUserId;
     },
     get myToken() {
       return myToken;

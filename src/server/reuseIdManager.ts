@@ -1,13 +1,13 @@
 import { PriorityQueue } from 'typescript-collections';
 
-export class ReuseIDManager {
+export class ReuseIdManager {
   used = new Set<number>();
-  unusedWait = new PriorityQueue<IDAndTime>(compareIDAndTime);
-  unused = new PriorityQueue<number>(compareID);
+  unusedWait = new PriorityQueue<IdAndTime>(compareIdAndTime);
+  unused = new PriorityQueue<number>(compareId);
 
   constructor(public waitTime: number) {}
 
-  getID() {
+  getId() {
     const now = Date.now();
     for (;;) {
       const nextUnusedWait = this.unusedWait.peek();
@@ -19,35 +19,35 @@ export class ReuseIDManager {
       }
     }
 
-    let nextID = this.unused.dequeue();
-    if (nextID === undefined) {
-      nextID = this.used.size + this.unusedWait.size() + 1;
+    let nextId = this.unused.dequeue();
+    if (nextId === undefined) {
+      nextId = this.used.size + this.unusedWait.size() + 1;
     }
 
-    this.used.add(nextID);
+    this.used.add(nextId);
 
-    return nextID;
+    return nextId;
   }
 
-  returnID(id: number) {
+  returnId(id: number) {
     const deleted = this.used.delete(id);
     if (deleted) {
-      this.unusedWait.enqueue(new IDAndTime(id, Date.now() + this.waitTime));
+      this.unusedWait.enqueue(new IdAndTime(id, Date.now() + this.waitTime));
     }
   }
 }
 
-class IDAndTime {
+class IdAndTime {
   constructor(
     public id: number,
     public time: number,
   ) {}
 }
 
-function compareIDAndTime(a: IDAndTime, b: IDAndTime) {
+function compareIdAndTime(a: IdAndTime, b: IdAndTime) {
   return b.time - a.time;
 }
 
-function compareID(a: number, b: number) {
+function compareId(a: number, b: number) {
   return b - a;
 }

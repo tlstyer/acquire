@@ -9,11 +9,11 @@ import { ActionDisposeOfShares } from './disposeOfShares';
 export class ActionSelectChainToDisposeOfNext extends ActionBase {
   constructor(
     game: Game,
-    playerID: number,
+    playerId: number,
     public defunctChains: PB_GameBoardType[],
     public controllingChain: PB_GameBoardType,
   ) {
-    super(game, playerID, GameActionEnum.SelectChainToDisposeOfNext);
+    super(game, playerId, GameActionEnum.SelectChainToDisposeOfNext);
   }
 
   prepare() {
@@ -39,7 +39,7 @@ export class ActionSelectChainToDisposeOfNext extends ActionBase {
     this.game
       .getCurrentGameState()
       .addGameHistoryMessage(
-        new GameHistoryMessageSelectedChainToDisposeOfNext(this.playerID, chain),
+        new GameHistoryMessageSelectedChainToDisposeOfNext(this.playerId, chain),
       );
 
     return this.completeAction(chain);
@@ -49,22 +49,22 @@ export class ActionSelectChainToDisposeOfNext extends ActionBase {
     const actions: ActionBase[] = [];
 
     const sharesOwned = this.game.getScoreBoardColumnArray(nextChain);
-    let playerID = this.playerID;
+    let playerId = this.playerId;
     do {
-      if (sharesOwned[playerID] > 0) {
+      if (sharesOwned[playerId] > 0) {
         actions.push(
-          new ActionDisposeOfShares(this.game, playerID, nextChain, this.controllingChain),
+          new ActionDisposeOfShares(this.game, playerId, nextChain, this.controllingChain),
         );
       }
-      playerID = (playerID + 1) % this.game.userIDs.length;
-    } while (playerID !== this.playerID);
+      playerId = (playerId + 1) % this.game.userIds.length;
+    } while (playerId !== this.playerId);
 
     const remainingDefunctChains = this.defunctChains.filter((c) => c !== nextChain);
     if (remainingDefunctChains.length > 0) {
       actions.push(
         new ActionSelectChainToDisposeOfNext(
           this.game,
-          this.playerID,
+          this.playerId,
           remainingDefunctChains,
           this.controllingChain,
         ),

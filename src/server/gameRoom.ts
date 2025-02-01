@@ -2,7 +2,7 @@ import type { Game } from '../common/game';
 import { GameSetup } from '../common/gameSetup';
 import {
   PB_MessageToClient,
-  PB_MessageToClient_Game_UserIDAndUsername,
+  PB_MessageToClient_Game_UserIdAndUsername,
   PB_MessageToClient_Lobby_Event,
   PB_MessageToServer_Game_Connect,
   PB_PlayerArrangementMode,
@@ -16,8 +16,8 @@ export class GameRoom extends Room {
   gameSetup: GameSetup | undefined;
   game: Game | undefined;
 
-  private userIDToUsername = new Map<number, string>();
-  private userIDsAndUsernames: PB_MessageToClient_Game_UserIDAndUsername[] = [];
+  private userIdToUsername = new Map<number, string>();
+  private userIdsAndUsernames: PB_MessageToClient_Game_UserIdAndUsername[] = [];
 
   constructor(
     public lobbyRoom: LobbyRoom,
@@ -28,13 +28,13 @@ export class GameRoom extends Room {
   ) {
     super();
 
-    this.addUserIDAndUsername(host.userID!, host.username!);
+    this.addUserIdAndUsername(host.userId!, host.username!);
 
     this.gameSetup = new GameSetup(
       gameMode,
       PB_PlayerArrangementMode.RANDOM_ORDER,
-      host.userID!,
-      this.getUsernameForUserID.bind(this),
+      host.userId!,
+      this.getUsernameForUserId.bind(this),
     );
 
     lobbyRoom.queueEvent(
@@ -43,24 +43,24 @@ export class GameRoom extends Room {
           gameNumber,
           gameDisplayNumber,
           gameMode,
-          hostUserId: host.userID,
+          hostUserId: host.userId,
         },
       }),
     );
   }
 
-  addUserIDAndUsername(userID: number, username: string) {
-    this.userIDToUsername.set(userID, username);
-    this.userIDsAndUsernames.push(
-      PB_MessageToClient_Game_UserIDAndUsername.create({
-        userId: userID,
+  addUserIdAndUsername(userId: number, username: string) {
+    this.userIdToUsername.set(userId, username);
+    this.userIdsAndUsernames.push(
+      PB_MessageToClient_Game_UserIdAndUsername.create({
+        userId: userId,
         username,
       }),
     );
   }
 
-  getUsernameForUserID(userID: number) {
-    return this.userIDToUsername.get(userID) ?? '?';
+  getUsernameForUserId(userId: number) {
+    return this.userIdToUsername.get(userId) ?? '?';
   }
 
   onMessage_Connect(client: Client, message: PB_MessageToServer_Game_Connect) {
@@ -77,13 +77,13 @@ export class GameRoom extends Room {
               playerArrangementMode: this.gameSetup
                 ? this.gameSetup.playerArrangementMode
                 : this.game!.playerArrangementMode,
-              hostUserId: this.gameSetup ? this.gameSetup.hostUserID : this.game!.hostUserID,
+              hostUserId: this.gameSetup ? this.gameSetup.hostUserId : this.game!.hostUserId,
               userIds: this.gameSetup
-                ? this.gameSetup.userIDs.map((userID) => userID ?? 0)
-                : this.game!.userIDs,
+                ? this.gameSetup.userIds.map((userId) => userId ?? 0)
+                : this.game!.userIds,
               approvals: this.gameSetup ? this.gameSetup.approvals : dummyApprovals,
             },
-            userIdsAndUsernames: this.userIDsAndUsernames,
+            userIdsAndUsernames: this.userIdsAndUsernames,
           },
         }),
       ),

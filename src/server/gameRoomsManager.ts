@@ -6,11 +6,11 @@ import type {
 import type { Client } from './client';
 import { GameRoom } from './gameRoom';
 import type { LobbyRoom } from './lobbyRoom';
-import { ReuseIDManager } from './reuseIDManager';
+import { ReuseIdManager } from './reuseIdManager';
 
 export class GameRoomsManager {
   nextGameNumber = 1;
-  nextGameDisplayNumber = new ReuseIDManager(60000);
+  nextGameDisplayNumber = new ReuseIdManager(60000);
   gameNumberToGameRoom = new Map<number, GameRoom>();
 
   private lobbyRoom!: LobbyRoom;
@@ -25,7 +25,7 @@ export class GameRoomsManager {
 
   createGameRoom(host: Client, gameMode: PB_GameMode) {
     const gameNumber = this.nextGameNumber++;
-    const gameDisplayNumber = this.nextGameDisplayNumber.getID();
+    const gameDisplayNumber = this.nextGameDisplayNumber.getId();
     const gameRoom = new GameRoom(this.lobbyRoom, gameNumber, gameDisplayNumber, host, gameMode);
 
     this.gameNumberToGameRoom.set(gameNumber, gameRoom);

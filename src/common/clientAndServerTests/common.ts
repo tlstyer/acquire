@@ -7,22 +7,22 @@ import { TestUserData, TestUserDataProvider, getPasswordHash } from '../../serve
 import { PB_MessageToClient } from '../pb';
 
 export const numTestUsers = 7;
-export const userIDToTestUserData = [new TestUserData('', 0, '')];
-for (let userID = 1; userID <= numTestUsers; userID++) {
-  const username = `user ${userID}`;
-  userIDToTestUserData.push(
-    new TestUserData(username, userID, getPasswordHash(username, 'password')),
+export const userIdToTestUserData = [new TestUserData('', 0, '')];
+for (let userId = 1; userId <= numTestUsers; userId++) {
+  const username = `user ${userId}`;
+  userIdToTestUserData.push(
+    new TestUserData(username, userId, getPasswordHash(username, 'password')),
   );
 }
 
 export function createOneClientConnectedToOneServer() {
   const userDataProvider = new TestUserDataProvider();
 
-  for (let userID = 1; userID <= numTestUsers; userID++) {
-    const userData = userIDToTestUserData[userID];
+  for (let userId = 1; userId <= numTestUsers; userId++) {
+    const userData = userIdToTestUserData[userId];
     userDataProvider.usernameToUserData.set(userData.username, userData);
   }
-  userDataProvider.nextUserID = numTestUsers + 1;
+  userDataProvider.nextUserId = numTestUsers + 1;
 
   const serverCommunication = new TestServerCommunication();
   const server = new Server(serverCommunication, userDataProvider, 2, 123);
@@ -43,7 +43,7 @@ export function testLogin(
   name: string,
   login: (client: Client) => void,
   expectedMessageToClient: PB_MessageToClient,
-  clientIDToUserIDSize: number,
+  clientIdToUserIdSize: number,
 ) {
   test(name, async () => {
     const { client, clientCommunication, server } = createOneClientConnectedToOneServer();
@@ -62,15 +62,15 @@ export function testLogin(
     expect(client.myUsername).toEqual(
       loginLogoutMessage.username !== '' ? loginLogoutMessage.username : undefined,
     );
-    expect(client.myUserID).toEqual(
+    expect(client.myUserId).toEqual(
       loginLogoutMessage.userId !== 0 ? loginLogoutMessage.userId : undefined,
     );
     expect(client.myToken).toEqual(
       loginLogoutMessage.token !== '' ? loginLogoutMessage.token : undefined,
     );
 
-    expect([...server.clientIDToClient.values()].filter((c) => c.userID !== undefined).length).toBe(
-      clientIDToUserIDSize,
+    expect([...server.clientIdToClient.values()].filter((c) => c.userId !== undefined).length).toBe(
+      clientIdToUserIdSize,
     );
   });
 }

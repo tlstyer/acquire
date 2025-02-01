@@ -20,7 +20,7 @@ test('newly created game has correct signals', async () => {
   expect(gameManager.signals.gameMode()).toBe(PB_GameMode.SINGLES_2);
   expect(gameManager.signals.playerArrangementMode()).toBe(PB_PlayerArrangementMode.RANDOM_ORDER);
   expect(gameManager.signals.usernames()).toEqual(['user 1', null]);
-  expect(gameManager.signals.userIDs()).toEqual([1, null]);
+  expect(gameManager.signals.userIds()).toEqual([1, null]);
   expect(gameManager.signals.approvals()).toEqual([false, false]);
-  expect(gameManager.signals.hostUserID()).toBe(1);
+  expect(gameManager.signals.hostUserId()).toBe(1);
 });

@@ -82,16 +82,16 @@ export async function* iterateProcessedGameData(processedGameDataFilePath: strin
   }
 }
 
-export function determineTeamUserIDs(gameMode: PB_GameMode, userIDs: number[]) {
+export function determineTeamUserIds(gameMode: PB_GameMode, userIds: number[]) {
   const numTeams = gameModeToNumPlayers.get(gameMode)! / gameModeToTeamSize.get(gameMode)!;
   const grouped: number[][] = new Array(numTeams);
-  for (let teamID = 0; teamID < grouped.length; teamID++) {
-    grouped[teamID] = [];
+  for (let teamId = 0; teamId < grouped.length; teamId++) {
+    grouped[teamId] = [];
   }
 
-  for (let playerID = 0; playerID < userIDs.length; playerID++) {
-    const teamID = playerID % numTeams;
-    grouped[teamID].push(userIDs[playerID]);
+  for (let playerId = 0; playerId < userIds.length; playerId++) {
+    const teamId = playerId % numTeams;
+    grouped[teamId].push(userIds[playerId]);
   }
 
   return grouped;
@@ -106,31 +106,31 @@ export function calculateFinalTeamScores(gameMode: PB_GameMode, finalPlayerScore
   const scores: number[] = new Array(numTeams);
   scores.fill(0);
 
-  for (let playerID = 0; playerID < finalPlayerScores.length; playerID++) {
-    const teamID = playerID % numTeams;
-    scores[teamID] += finalPlayerScores[playerID];
+  for (let playerId = 0; playerId < finalPlayerScores.length; playerId++) {
+    const teamId = playerId % numTeams;
+    scores[teamId] += finalPlayerScores[playerId];
   }
 
   return scores;
 }
 
 export function calculatePlacings(scores: number[]) {
-  const scoreAndTeamIDArray = scores.map((score, teamID) => [score, teamID]);
-  scoreAndTeamIDArray.sort((a, b) => b[0] - a[0]);
+  const scoreAndTeamIdArray = scores.map((score, teamId) => [score, teamId]);
+  scoreAndTeamIdArray.sort((a, b) => b[0] - a[0]);
 
   let lastScore = 0;
   let lastPlacing = 0;
-  const placingAndTeamIDArray = scoreAndTeamIDArray.map((scoreAndTeamID, index) => {
-    const [score, teamID] = scoreAndTeamID;
+  const placingAndTeamIdArray = scoreAndTeamIdArray.map((scoreAndTeamId, index) => {
+    const [score, teamId] = scoreAndTeamId;
     const placing = score === lastScore ? lastPlacing : index + 1;
     lastScore = score;
     lastPlacing = placing;
-    return [placing, teamID];
+    return [placing, teamId];
   });
 
-  placingAndTeamIDArray.sort((a, b) => a[1] - b[1]);
+  placingAndTeamIdArray.sort((a, b) => a[1] - b[1]);
 
-  const placings = placingAndTeamIDArray.map((placingAndTeamID) => placingAndTeamID[0]);
+  const placings = placingAndTeamIdArray.map((placingAndTeamId) => placingAndTeamId[0]);
 
   return placings;
 }

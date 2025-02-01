@@ -377,7 +377,7 @@ message PB {
         repeated bool approvals = 5;
       }
 
-      message UserIDAndUsername {
+      message UserIdAndUsername {
         int32 user_id = 1;
         string username = 2;
       }
@@ -388,7 +388,7 @@ message PB {
       GameReview game_review = 4;
       GameSetupChange game_setup_change = 5;
       repeated GameState game_states = 6;
-      repeated UserIDAndUsername user_ids_and_usernames = 7;
+      repeated UserIdAndUsername user_ids_and_usernames = 7;
       int32 user_id_who_entered_game_room = 8;
       int32 user_id_who_exited_game_room = 9;
       repeated int32 tile_bag = 10;

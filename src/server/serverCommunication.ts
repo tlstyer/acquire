@@ -5,32 +5,32 @@ import {
   type TestClientCommunication,
 } from '../client/clientCommunication';
 import { PB_MessageToClient, PB_MessageToServer } from '../common/pb';
-import { ReuseIDManager } from './reuseIDManager';
+import { ReuseIdManager } from './reuseIdManager';
 
 export abstract class ServerCommunication {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  protected onConnect = (clientID: number) => {};
+  protected onConnect = (clientId: number) => {};
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  protected onDisconnect = (clientID: number) => {};
+  protected onDisconnect = (clientId: number) => {};
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  protected onMessage = (clientID: number, message: Uint8Array) => {};
+  protected onMessage = (clientId: number, message: Uint8Array) => {};
 
   setCallbacks(
-    onConnect: (clientID: number) => void,
-    onDisconnect: (clientID: number) => void,
-    onMessage: (clientID: number, message: Uint8Array) => void,
+    onConnect: (clientId: number) => void,
+    onDisconnect: (clientId: number) => void,
+    onMessage: (clientId: number, message: Uint8Array) => void,
   ) {
     this.onConnect = onConnect;
     this.onDisconnect = onDisconnect;
     this.onMessage = onMessage;
   }
 
-  abstract sendMessage(clientID: number, message: Uint8Array): void;
+  abstract sendMessage(clientId: number, message: Uint8Array): void;
 }
 
 export class WebSocketServerCommunication extends ServerCommunication {
-  nextClientID = new ReuseIDManager(60000);
-  clientIDToWebSocket = new Map<number, WebSocket>();
+  nextClientId = new ReuseIdManager(60000);
+  clientIdToWebSocket = new Map<number, WebSocket>();
 
   begin() {
     const server = http.createServer();
@@ -44,24 +44,24 @@ export class WebSocketServerCommunication extends ServerCommunication {
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     webSocketServer.on('connection', (webSocket, connectionMessage) => {
-      const clientID = this.nextClientID.getID();
-      this.clientIDToWebSocket.set(clientID, webSocket);
+      const clientId = this.nextClientId.getId();
+      this.clientIdToWebSocket.set(clientId, webSocket);
 
       // console.log(
-      //   clientID,
+      //   clientId,
       //   connectionMessage?.headers,
       //   connectionMessage?.socket?.remoteAddress,
       //   connectionMessage?.socket?.remotePort,
       // );
 
-      this.onConnect(clientID);
+      this.onConnect(clientId);
 
       webSocket.on('message', (message, isBinary) => {
         if (isBinary) {
           // @ts-expect-error message is binary
           const uint8Array = new Uint8Array(message);
 
-          this.onMessage(clientID, uint8Array);
+          this.onMessage(clientId, uint8Array);
         } else {
           // messages that are not binary are not allowed
           webSocket.close();
@@ -69,35 +69,35 @@ export class WebSocketServerCommunication extends ServerCommunication {
       });
 
       webSocket.on('close', () => {
-        this.nextClientID.returnID(clientID);
-        this.clientIDToWebSocket.delete(clientID);
+        this.nextClientId.returnId(clientId);
+        this.clientIdToWebSocket.delete(clientId);
 
-        this.onDisconnect(clientID);
+        this.onDisconnect(clientId);
       });
     });
 
     server.listen(9999, '0.0.0.0');
   }
 
-  sendMessage(clientID: number, message: Uint8Array) {
-    this.clientIDToWebSocket.get(clientID)?.send(message);
+  sendMessage(clientId: number, message: Uint8Array) {
+    this.clientIdToWebSocket.get(clientId)?.send(message);
   }
 }
 
 export class TestServerCommunication extends ServerCommunication {
-  nextClientID = 0;
-  clientIDToClientCommunication = new Map<number, TestClientCommunication>();
-  clientCommunicationToClientID = new Map<TestClientCommunication, number>();
+  nextClientId = 0;
+  clientIdToClientCommunication = new Map<number, TestClientCommunication>();
+  clientCommunicationToClientId = new Map<TestClientCommunication, number>();
 
   communicatedMessages: TestServerCommunicatedMessage[] = [];
 
   connect(clientCommunication: TestClientCommunication) {
-    if (!this.clientCommunicationToClientID.has(clientCommunication)) {
-      const clientID = this.nextClientID++;
-      this.clientIDToClientCommunication.set(clientID, clientCommunication);
-      this.clientCommunicationToClientID.set(clientCommunication, clientID);
+    if (!this.clientCommunicationToClientId.has(clientCommunication)) {
+      const clientId = this.nextClientId++;
+      this.clientIdToClientCommunication.set(clientId, clientCommunication);
+      this.clientCommunicationToClientId.set(clientCommunication, clientId);
 
-      this.onConnect(clientID);
+      this.onConnect(clientId);
 
       return true;
     } else {
@@ -106,12 +106,12 @@ export class TestServerCommunication extends ServerCommunication {
   }
 
   disconnect(clientCommunication: TestClientCommunication) {
-    const clientID = this.clientCommunicationToClientID.get(clientCommunication);
-    if (clientID !== undefined) {
-      this.clientIDToClientCommunication.delete(clientID);
-      this.clientCommunicationToClientID.delete(clientCommunication);
+    const clientId = this.clientCommunicationToClientId.get(clientCommunication);
+    if (clientId !== undefined) {
+      this.clientIdToClientCommunication.delete(clientId);
+      this.clientCommunicationToClientId.delete(clientCommunication);
 
-      this.onDisconnect(clientID);
+      this.onDisconnect(clientId);
 
       return true;
     } else {
@@ -119,14 +119,14 @@ export class TestServerCommunication extends ServerCommunication {
     }
   }
 
-  sendMessage(clientID: number, message: Uint8Array) {
-    const clientCommunication = this.clientIDToClientCommunication.get(clientID);
+  sendMessage(clientId: number, message: Uint8Array) {
+    const clientCommunication = this.clientIdToClientCommunication.get(clientId);
 
     if (clientCommunication) {
       const messageToClient = PB_MessageToClient.fromBinary(message);
 
       this.communicatedMessages.push(
-        new TestServerCommunicatedMessage(true, clientID, message, messageToClient, undefined),
+        new TestServerCommunicatedMessage(true, clientId, message, messageToClient, undefined),
       );
       clientCommunication.communicatedMessages.push(
         new TestClientCommunicatedMessage(false, message, undefined, messageToClient),
@@ -136,8 +136,8 @@ export class TestServerCommunication extends ServerCommunication {
     }
   }
 
-  receiveMessage(clientID: number, message: Uint8Array) {
-    this.onMessage(clientID, message);
+  receiveMessage(clientId: number, message: Uint8Array) {
+    this.onMessage(clientId, message);
   }
 
   logAndEmptyCommunicatedMessages() {
@@ -153,7 +153,7 @@ export class TestServerCommunication extends ServerCommunication {
 export class TestServerCommunicatedMessage {
   constructor(
     public sent: boolean,
-    public clientID: number,
+    public clientId: number,
     public message: Uint8Array,
     public sentMessage: PB_MessageToClient | undefined,
     public receivedMessage: PB_MessageToServer | undefined,
@@ -163,7 +163,7 @@ export class TestServerCommunicatedMessage {
     if (this.sent) {
       console.log(
         'Sent:',
-        this.clientID,
+        this.clientId,
         Buffer.from(this.message).toString('hex'),
         `(${this.message.length} bytes)`,
       );
@@ -171,7 +171,7 @@ export class TestServerCommunicatedMessage {
     } else {
       console.log(
         'Received:',
-        this.clientID,
+        this.clientId,
         Buffer.from(this.message).toString('hex'),
         `(${this.message.length} bytes)`,
       );

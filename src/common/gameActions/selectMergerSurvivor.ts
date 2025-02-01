@@ -16,11 +16,11 @@ export class ActionSelectMergerSurvivor extends ActionBase {
 
   constructor(
     game: Game,
-    playerID: number,
+    playerId: number,
     public chains: PB_GameBoardType[],
     public tile: number,
   ) {
-    super(game, playerID, GameActionEnum.SelectMergerSurvivor);
+    super(game, playerId, GameActionEnum.SelectMergerSurvivor);
 
     const sizeToChains = new Map<number, PB_GameBoardType[]>();
     const sizes: number[] = [];
@@ -52,7 +52,7 @@ export class ActionSelectMergerSurvivor extends ActionBase {
   prepare() {
     this.game
       .getCurrentGameState()
-      .addGameHistoryMessage(new GameHistoryMessageMergedChains(this.playerID, this.chains));
+      .addGameHistoryMessage(new GameHistoryMessageMergedChains(this.playerId, this.chains));
 
     if (this.chainsBySize[0].length === 1) {
       return this.completeAction(this.chainsBySize[0][0]);
@@ -77,7 +77,7 @@ export class ActionSelectMergerSurvivor extends ActionBase {
 
     this.game
       .getCurrentGameState()
-      .addGameHistoryMessage(new GameHistoryMessageSelectedMergerSurvivor(this.playerID, chain));
+      .addGameHistoryMessage(new GameHistoryMessageSelectedMergerSurvivor(this.playerId, chain));
 
     return this.completeAction(chain);
   }
@@ -90,7 +90,7 @@ export class ActionSelectMergerSurvivor extends ActionBase {
     this.game.determineTileRackTypesForEverybody();
 
     // pay bonuses
-    const bonuses: number[] = new Array(this.game.userIDs.length);
+    const bonuses: number[] = new Array(this.game.userIds.length);
     bonuses.fill(0);
 
     for (let i = 0; i < this.chains.length; i++) {
@@ -102,9 +102,9 @@ export class ActionSelectMergerSurvivor extends ActionBase {
         );
         for (let j = 0; j < chainBonuses.length; j++) {
           const chainBonus = chainBonuses[j];
-          bonuses[chainBonus.playerID] += chainBonus.amount;
+          bonuses[chainBonus.playerId] += chainBonus.amount;
           gameState.addGameHistoryMessage(
-            new GameHistoryMessageReceivedBonus(chainBonus.playerID, chain, chainBonus.amount),
+            new GameHistoryMessageReceivedBonus(chainBonus.playerId, chain, chainBonus.amount),
           );
         }
       }
@@ -120,7 +120,7 @@ export class ActionSelectMergerSurvivor extends ActionBase {
 
       if (chains.length > 0) {
         actions.push(
-          new ActionSelectChainToDisposeOfNext(this.game, this.playerID, chains, controllingChain),
+          new ActionSelectChainToDisposeOfNext(this.game, this.playerId, chains, controllingChain),
         );
       }
     }

@@ -4,7 +4,7 @@ import { PB_MessageToClient_LoginLogout_ResponseCode, PB_MessageToServer } from 
 import {
   createOneClientConnectedToOneServer,
   testLogin,
-  userIDToTestUserData,
+  userIdToTestUserData,
   waitForAsyncServerStuff,
 } from './common';
 
@@ -31,24 +31,24 @@ testLogin(
 
 testLogin(
   'correct password and is logged in',
-  (client) => client.loginWithToken('user 1', userIDToTestUserData[1].passwordHash),
+  (client) => client.loginWithToken('user 1', userIdToTestUserData[1].passwordHash),
   createLoginLogoutMessage(
     PB_MessageToClient_LoginLogout_ResponseCode.SUCCESS,
     'user 1',
     1,
-    userIDToTestUserData[1].passwordHash,
+    userIdToTestUserData[1].passwordHash,
   ),
   1,
 );
 
 testLogin(
   'correct password and is logged in after whitespace in username is cleaned up',
-  (client) => client.loginWithToken('\t user\n \t\v1\v ', userIDToTestUserData[1].passwordHash),
+  (client) => client.loginWithToken('\t user\n \t\v1\v ', userIdToTestUserData[1].passwordHash),
   createLoginLogoutMessage(
     PB_MessageToClient_LoginLogout_ResponseCode.SUCCESS,
     'user 1',
     1,
-    userIDToTestUserData[1].passwordHash,
+    userIdToTestUserData[1].passwordHash,
   ),
   1,
 );
@@ -56,17 +56,17 @@ testLogin(
 test('no message sent when trying to login with token while already logged in', async () => {
   const { client, clientCommunication, server } = createOneClientConnectedToOneServer();
 
-  client.loginWithToken('user 1', userIDToTestUserData[1].passwordHash);
+  client.loginWithToken('user 1', userIdToTestUserData[1].passwordHash);
   await waitForAsyncServerStuff();
 
   clientCommunication.communicatedMessages.length = 0;
 
-  client.loginWithToken('user 1', userIDToTestUserData[1].passwordHash);
+  client.loginWithToken('user 1', userIdToTestUserData[1].passwordHash);
   await waitForAsyncServerStuff();
 
   expect(clientCommunication.communicatedMessages.length).toBe(0);
 
-  expect([...server.clientIDToClient.values()].filter((c) => c.userID !== undefined).length).toBe(
+  expect([...server.clientIdToClient.values()].filter((c) => c.userId !== undefined).length).toBe(
     1,
   );
 });
@@ -74,7 +74,7 @@ test('no message sent when trying to login with token while already logged in', 
 test('no reply when trying to login with token while already logged in when sending message client would not send', async () => {
   const { client, clientCommunication, server } = createOneClientConnectedToOneServer();
 
-  client.loginWithToken('user 1', userIDToTestUserData[1].passwordHash);
+  client.loginWithToken('user 1', userIdToTestUserData[1].passwordHash);
   await waitForAsyncServerStuff();
 
   clientCommunication.communicatedMessages.length = 0;
@@ -84,7 +84,7 @@ test('no reply when trying to login with token while already logged in when send
       loginLogout: {
         loginWithToken: {
           username: 'user 1',
-          token: userIDToTestUserData[1].passwordHash,
+          token: userIdToTestUserData[1].passwordHash,
         },
       },
     }),
@@ -93,7 +93,7 @@ test('no reply when trying to login with token while already logged in when send
 
   expect(clientCommunication.communicatedMessages.length).toBe(1);
 
-  expect([...server.clientIDToClient.values()].filter((c) => c.userID !== undefined).length).toBe(
+  expect([...server.clientIdToClient.values()].filter((c) => c.userId !== undefined).length).toBe(
     1,
   );
 });

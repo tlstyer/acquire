@@ -43,29 +43,29 @@ function processDirectory(base: string, dir: string) {
         expect(outputLines).toEqual(inputLines);
 
         if (dir === "from a user's perspective") {
-          const playerID = game.userIDs.indexOf(game.myUserID ?? -1);
+          const playerId = game.userIds.indexOf(game.myUserId ?? -1);
           const game2 = new Game(
             game.gameMode,
             game.playerArrangementMode,
             [],
-            game.userIDs,
+            game.userIds,
             game.usernames,
-            game.hostUserID,
-            game.myUserID,
+            game.hostUserId,
+            game.myUserId,
           );
 
           game.gameStateHistory.forEach((gameState) => {
             gameState.createPlayerAndWatcherGameStates();
             const gameMessage =
-              playerID !== -1 ? gameState.playerGameStates[playerID] : gameState.watcherGameState;
+              playerId !== -1 ? gameState.playerGameStates[playerId] : gameState.watcherGameState;
             game2.processGameState(gameMessage);
 
             const gameState2 = game2.gameStateHistory[game2.gameStateHistory.length - 1];
             if (gameState2 !== null) {
               gameState2.createPlayerAndWatcherGameStates();
               const gameMessage2 =
-                playerID !== -1
-                  ? gameState2.playerGameStates[playerID]
+                playerId !== -1
+                  ? gameState2.playerGameStates[playerId]
                   : gameState2.watcherGameState;
               expect(gameMessage2).toEqual(gameMessage);
             } else {

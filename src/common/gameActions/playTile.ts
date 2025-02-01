@@ -13,22 +13,22 @@ import { ActionSelectMergerSurvivor } from './selectMergerSurvivor';
 import { ActionSelectNewChain } from './selectNewChain';
 
 export class ActionPlayTile extends ActionBase {
-  constructor(game: Game, playerID: number) {
-    super(game, playerID, GameActionEnum.PlayTile);
+  constructor(game: Game, playerId: number) {
+    super(game, playerId, GameActionEnum.PlayTile);
   }
 
   prepare() {
     const gameState = this.game.getCurrentGameState();
 
-    this.game.turnPlayerID = this.playerID;
+    this.game.turnPlayerId = this.playerId;
 
-    gameState.addGameHistoryMessage(new GameHistoryMessageTurnBegan(this.playerID));
+    gameState.addGameHistoryMessage(new GameHistoryMessageTurnBegan(this.playerId));
 
     let hasAPlayableTile = false;
-    if (this.playerID === this.game.playerIDWithPlayableTile) {
+    if (this.playerId === this.game.playerIdWithPlayableTile) {
       hasAPlayableTile = true;
     } else {
-      const tileRackTypes = this.game.tileRackTypes[this.playerID];
+      const tileRackTypes = this.game.tileRackTypes[this.playerId];
       for (let i = 0; i < 6; i++) {
         const tileType = tileRackTypes[i];
         if (
@@ -47,7 +47,7 @@ export class ActionPlayTile extends ActionBase {
       return null;
     } else {
       this.game.numTurnsWithoutPlayedTiles++;
-      gameState.addGameHistoryMessage(new GameHistoryMessageHasNoPlayableTile(this.playerID));
+      gameState.addGameHistoryMessage(new GameHistoryMessageHasNoPlayableTile(this.playerId));
       return [];
     }
   }
@@ -60,11 +60,11 @@ export class ActionPlayTile extends ActionBase {
     if (tile < 0 || tile >= 108) {
       throw new UserInputError('tile is not a valid tile');
     }
-    const tileRackIndex = this.game.tileRacks[this.playerID].indexOf(tile);
+    const tileRackIndex = this.game.tileRacks[this.playerId].indexOf(tile);
     if (tileRackIndex === -1) {
       throw new UserInputError('player does not have given tile');
     }
-    const tileType = this.game.tileRackTypes[this.playerID][tileRackIndex];
+    const tileType = this.game.tileRackTypes[this.playerId][tileRackIndex];
 
     let response: ActionBase[];
     if (tileType !== null && tileType <= PB_GameBoardType.IMPERIAL) {
@@ -85,20 +85,20 @@ export class ActionPlayTile extends ActionBase {
           availableChains.push(type);
         }
       }
-      response = [new ActionSelectNewChain(this.game, this.playerID, availableChains, tile)];
+      response = [new ActionSelectNewChain(this.game, this.playerId, availableChains, tile)];
     } else if (tileType === PB_GameBoardType.WILL_MERGE_CHAINS) {
       response = [
-        new ActionSelectMergerSurvivor(this.game, this.playerID, this.getMergedChains(tile), tile),
+        new ActionSelectMergerSurvivor(this.game, this.playerId, this.getMergedChains(tile), tile),
       ];
     } else {
       throw new UserInputError('cannot play given tile');
     }
 
-    this.game.removeTile(this.playerID, tileRackIndex);
+    this.game.removeTile(this.playerId, tileRackIndex);
 
     this.game
       .getCurrentGameState()
-      .addGameHistoryMessage(new GameHistoryMessagePlayedTile(this.playerID, tile));
+      .addGameHistoryMessage(new GameHistoryMessagePlayedTile(this.playerId, tile));
 
     return response;
   }

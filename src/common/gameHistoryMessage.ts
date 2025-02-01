@@ -22,69 +22,69 @@ export type GameHistoryMessage =
   | GameHistoryMessageAllTilesPlayed;
 
 export class GameHistoryMessageTurnBegan {
-  constructor(public playerID: number) {}
+  constructor(public playerId: number) {}
 }
 
 export class GameHistoryMessageDrewPositionTile {
   constructor(
-    public playerID: number,
+    public playerId: number,
     public tile: number,
   ) {}
 }
 
 export class GameHistoryMessageStartedGame {
-  constructor(public playerID: number) {}
+  constructor(public playerId: number) {}
 }
 
 export class GameHistoryMessageDrewTile {
   constructor(
-    public playerID: number,
+    public playerId: number,
     public tile: number,
   ) {}
 }
 
 export class GameHistoryMessageHasNoPlayableTile {
-  constructor(public playerID: number) {}
+  constructor(public playerId: number) {}
 }
 
 export class GameHistoryMessagePlayedTile {
   constructor(
-    public playerID: number,
+    public playerId: number,
     public tile: number,
   ) {}
 }
 
 export class GameHistoryMessageFormedChain {
   constructor(
-    public playerID: number,
+    public playerId: number,
     public chain: PB_GameBoardType,
   ) {}
 }
 
 export class GameHistoryMessageMergedChains {
   constructor(
-    public playerID: number,
+    public playerId: number,
     public chains: PB_GameBoardType[],
   ) {}
 }
 
 export class GameHistoryMessageSelectedMergerSurvivor {
   constructor(
-    public playerID: number,
+    public playerId: number,
     public chain: PB_GameBoardType,
   ) {}
 }
 
 export class GameHistoryMessageSelectedChainToDisposeOfNext {
   constructor(
-    public playerID: number,
+    public playerId: number,
     public chain: PB_GameBoardType,
   ) {}
 }
 
 export class GameHistoryMessageReceivedBonus {
   constructor(
-    public playerID: number,
+    public playerId: number,
     public chain: PB_GameBoardType,
     public amount: number,
   ) {}
@@ -92,7 +92,7 @@ export class GameHistoryMessageReceivedBonus {
 
 export class GameHistoryMessageDisposedOfShares {
   constructor(
-    public playerID: number,
+    public playerId: number,
     public chain: PB_GameBoardType,
     public tradeAmount: number,
     public sellAmount: number,
@@ -100,29 +100,29 @@ export class GameHistoryMessageDisposedOfShares {
 }
 
 export class GameHistoryMessageCouldNotAffordAnyShares {
-  constructor(public playerID: number) {}
+  constructor(public playerId: number) {}
 }
 
 export class GameHistoryMessagePurchasedShares {
   constructor(
-    public playerID: number,
+    public playerId: number,
     public chainsAndCounts: ChainAndCount[],
   ) {}
 }
 
 export class GameHistoryMessageDrewLastTile {
-  constructor(public playerID: number) {}
+  constructor(public playerId: number) {}
 }
 
 export class GameHistoryMessageReplacedDeadTile {
   constructor(
-    public playerID: number,
+    public playerId: number,
     public tile: number,
   ) {}
 }
 
 export class GameHistoryMessageEndedGame {
-  constructor(public playerID: number) {}
+  constructor(public playerId: number) {}
 }
 
 export class GameHistoryMessageNoTilesPlayedForEntireRound {}

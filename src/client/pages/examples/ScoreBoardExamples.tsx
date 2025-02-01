@@ -14,8 +14,8 @@ export function ScoreBoardExamples() {
       scoreBoardChainSize: [3, 0, 39, 5, 2, 4, 13],
       scoreBoardPrice: [3, 0, 10, 6, 3, 6, 9],
       safeChains: [false, false, true, false, false, false, true],
-      turnPlayerID: 1,
-      movePlayerID: 0,
+      turnPlayerId: 1,
+      movePlayerId: 0,
       gameMode: PB_GameMode.SINGLES_2,
       cellWidth: 30,
     },
@@ -36,8 +36,8 @@ export function ScoreBoardExamples() {
       scoreBoardChainSize: [2, 2, 0, 0, 0, 2, 9],
       scoreBoardPrice: [2, 2, 0, 0, 0, 4, 8],
       safeChains: [false, false, false, false, false, false, false],
-      turnPlayerID: 0,
-      movePlayerID: 0,
+      turnPlayerId: 0,
+      movePlayerId: 0,
       gameMode: PB_GameMode.SINGLES_4,
       cellWidth: 30,
     },
@@ -53,8 +53,8 @@ export function ScoreBoardExamples() {
       scoreBoardChainSize: [0, 0, 4, 27, 0, 42, 0],
       scoreBoardPrice: [0, 0, 5, 9, 0, 12, 0],
       safeChains: [false, false, false, true, false, true, false],
-      turnPlayerID: 3,
-      movePlayerID: 2,
+      turnPlayerId: 3,
+      movePlayerId: 2,
       gameMode: PB_GameMode.TEAMS_2_VS_2,
       cellWidth: 30,
     },
@@ -72,8 +72,8 @@ export function ScoreBoardExamples() {
       scoreBoardChainSize: [0, 0, 22, 30, 0, 15, 0],
       scoreBoardPrice: [0, 0, 9, 9, 0, 9, 0],
       safeChains: [false, false, true, true, false, true, false],
-      turnPlayerID: 3,
-      movePlayerID: 2,
+      turnPlayerId: 3,
+      movePlayerId: 2,
       gameMode: PB_GameMode.TEAMS_2_VS_2_VS_2,
       cellWidth: 30,
     },
@@ -94,8 +94,8 @@ export function ScoreBoardExamples() {
             scoreBoardChainSize={props.scoreBoardChainSize}
             scoreBoardPrice={props.scoreBoardPrice}
             safeChains={props.safeChains}
-            turnPlayerID={props.turnPlayerID}
-            movePlayerID={props.movePlayerID}
+            turnPlayerId={props.turnPlayerId}
+            movePlayerId={props.movePlayerId}
             gameMode={props.gameMode}
             cellWidth={props.cellWidth}
           />

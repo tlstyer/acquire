@@ -28,22 +28,22 @@ export function GamePage(props: { client: Client }) {
 
   const gameState = createMemo(() => game.gameStateHistory[selectedMoveIndex()]);
 
-  const turnPlayerID = createMemo(() =>
-    gameState().nextGameAction instanceof ActionGameOver ? -1 : gameState().turnPlayerID,
+  const turnPlayerId = createMemo(() =>
+    gameState().nextGameAction instanceof ActionGameOver ? -1 : gameState().turnPlayerId,
   );
-  const movePlayerID = createMemo(() =>
-    gameState().nextGameAction instanceof ActionGameOver ? -1 : gameState().nextGameAction.playerID,
+  const movePlayerId = createMemo(() =>
+    gameState().nextGameAction instanceof ActionGameOver ? -1 : gameState().nextGameAction.playerId,
   );
 
-  const [followedPlayerID, setFollowedPlayerID] = createSignal<number | null>(null);
+  const [followedPlayerId, setFollowedPlayerId] = createSignal<number | null>(null);
   const gameBoardTileRack = createMemo(() => {
-    if (game.userIDs.length > 1) {
-      const fpid = followedPlayerID();
+    if (game.userIds.length > 1) {
+      const fpid = followedPlayerId();
       if (fpid !== null) {
         return gameState().tileRacks[fpid];
       }
 
-      const mpid = movePlayerID();
+      const mpid = movePlayerId();
       if (mpid !== -1) {
         return gameState().tileRacks[mpid];
       }
@@ -95,28 +95,28 @@ export function GamePage(props: { client: Client }) {
           scoreBoardChainSize={gameState().scoreBoardChainSize}
           scoreBoardPrice={gameState().scoreBoardPrice}
           safeChains={gameState().safeChains}
-          turnPlayerID={turnPlayerID()}
-          movePlayerID={movePlayerID()}
+          turnPlayerId={turnPlayerId()}
+          movePlayerId={movePlayerId()}
           gameMode={game.gameMode}
           cellWidth={scoreBoardCellWidth()}
         />
         <Index each={gameState().tileRacks}>
-          {(tileRack, playerID) => (
+          {(tileRack, playerId) => (
             <div>
               <div class={styles.tileRackWrapper}>
                 <TileRackReadOnly
                   tiles={tileRack()}
-                  types={gameState().tileRackTypes[playerID]}
+                  types={gameState().tileRackTypes[playerId]}
                   buttonSize={gameBoardCellSize()}
                 />
               </div>
-              <Show when={game.userIDs.length > 1}>
+              <Show when={game.userIds.length > 1}>
                 <div class={styles.buttonWrapper} style={{ height: `${gameBoardCellSize()}px` }}>
                   <input
                     type="button"
-                    value={playerID === followedPlayerID() ? 'Unlock' : 'Lock'}
+                    value={playerId === followedPlayerId() ? 'Unlock' : 'Lock'}
                     onClick={() =>
-                      setFollowedPlayerID((fpid) => (playerID === fpid ? null : playerID))
+                      setFollowedPlayerId((fpid) => (playerId === fpid ? null : playerId))
                     }
                   />
                 </div>

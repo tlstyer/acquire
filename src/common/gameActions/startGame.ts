@@ -10,8 +10,8 @@ import { ActionPlayTile } from './playTile';
 import { ActionPurchaseShares } from './purchaseShares';
 
 export class ActionStartGame extends ActionBase {
-  constructor(game: Game, playerID: number) {
-    super(game, playerID, GameActionEnum.StartGame);
+  constructor(game: Game, playerId: number) {
+    super(game, playerId, GameActionEnum.StartGame);
   }
 
   prepare() {
@@ -22,7 +22,7 @@ export class ActionStartGame extends ActionBase {
     const gameState = this.game.getCurrentGameState();
 
     // draw position tiles
-    const positionTiles: PositionTileData[] = new Array(this.game.userIDs.length);
+    const positionTiles: PositionTileData[] = new Array(this.game.userIds.length);
     for (let tileBagIndex = 0; tileBagIndex < positionTiles.length; tileBagIndex++) {
       positionTiles[tileBagIndex] = new PositionTileData(
         this.game.tileBag[tileBagIndex],
@@ -30,8 +30,8 @@ export class ActionStartGame extends ActionBase {
       );
     }
     positionTiles.sort((a, b) => a.tile - b.tile);
-    for (let playerID = 0; playerID < positionTiles.length; playerID++) {
-      positionTiles[playerID].playerID = playerID;
+    for (let playerId = 0; playerId < positionTiles.length; playerId++) {
+      positionTiles[playerId].playerId = playerId;
     }
     positionTiles.sort((a, b) => a.tileBagIndex - b.tileBagIndex);
     for (let i = 0; i < positionTiles.length; i++) {
@@ -39,16 +39,16 @@ export class ActionStartGame extends ActionBase {
       gameState.addTileBagTile(positionTile.tile, null);
       this.game.setGameBoardPosition(positionTile.tile, PB_GameBoardType.NOTHING_YET);
       gameState.addGameHistoryMessage(
-        new GameHistoryMessageDrewPositionTile(positionTile.playerID, positionTile.tile),
+        new GameHistoryMessageDrewPositionTile(positionTile.playerId, positionTile.tile),
       );
     }
 
-    this.game.nextTileBagIndex = this.game.userIDs.length;
+    this.game.nextTileBagIndex = this.game.userIds.length;
 
     // start game
-    gameState.addGameHistoryMessage(new GameHistoryMessageStartedGame(this.playerID));
-    for (let playerID = 0; playerID < this.game.userIDs.length; playerID++) {
-      this.game.drawTiles(playerID);
+    gameState.addGameHistoryMessage(new GameHistoryMessageStartedGame(this.playerId));
+    for (let playerId = 0; playerId < this.game.userIds.length; playerId++) {
+      this.game.drawTiles(playerId);
     }
 
     this.game.determineTileRackTypesForEverybody();
@@ -58,7 +58,7 @@ export class ActionStartGame extends ActionBase {
 }
 
 class PositionTileData {
-  playerID = 0;
+  playerId = 0;
 
   constructor(
     public tile: number,

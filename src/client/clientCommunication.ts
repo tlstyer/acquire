@@ -140,19 +140,19 @@ export class TestClientCommunication extends ClientCommunication {
 
   sendMessage(message: Uint8Array) {
     if (this.connected) {
-      const clientID = this.serverCommunication.clientCommunicationToClientID.get(this);
+      const clientId = this.serverCommunication.clientCommunicationToClientId.get(this);
 
-      if (clientID !== undefined) {
+      if (clientId !== undefined) {
         const messageToServer = PB_MessageToServer.fromBinary(message);
 
         this.communicatedMessages.push(
           new TestClientCommunicatedMessage(true, message, messageToServer, undefined),
         );
         this.serverCommunication.communicatedMessages.push(
-          new TestServerCommunicatedMessage(false, clientID, message, undefined, messageToServer),
+          new TestServerCommunicatedMessage(false, clientId, message, undefined, messageToServer),
         );
 
-        this.serverCommunication.receiveMessage(clientID, message);
+        this.serverCommunication.receiveMessage(clientId, message);
       }
     }
   }

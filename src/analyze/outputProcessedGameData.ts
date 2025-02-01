@@ -3,7 +3,7 @@ import type { Game } from '../common/game';
 import {
   calculateFinalTeamScores,
   calculatePlacings,
-  determineTeamUserIDs,
+  determineTeamUserIds,
   getFinalPlayerScores,
   getGameHistoryMessageCounts,
   getMaxGameHistoryMessageCountsPerMove,
@@ -25,10 +25,10 @@ function processGame(game: Game, filePath: string) {
   return {
     endTimestamp: game.gameStateHistory[game.gameStateHistory.length - 1].timestamp!,
     gameMode: game.gameMode,
-    gameID: filePath.split(path.sep).slice(-2).join('-'),
-    playerUserIDs: game.userIDs,
+    gameId: filePath.split(path.sep).slice(-2).join('-'),
+    playerUserIds: game.userIds,
     playerScores,
-    teamUserIDs: determineTeamUserIDs(game.gameMode, game.userIDs),
+    teamUserIds: determineTeamUserIds(game.gameMode, game.userIds),
     teamScores,
     placings,
     gameHistoryMessageCounts: getGameHistoryMessageCounts(game),

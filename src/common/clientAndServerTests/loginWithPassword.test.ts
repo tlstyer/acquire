@@ -4,7 +4,7 @@ import { PB_MessageToClient_LoginLogout_ResponseCode, PB_MessageToServer } from 
 import {
   createOneClientConnectedToOneServer,
   testLogin,
-  userIDToTestUserData,
+  userIdToTestUserData,
   waitForAsyncServerStuff,
 } from './common';
 
@@ -36,7 +36,7 @@ testLogin(
     PB_MessageToClient_LoginLogout_ResponseCode.SUCCESS,
     'user 1',
     1,
-    userIDToTestUserData[1].passwordHash,
+    userIdToTestUserData[1].passwordHash,
   ),
   1,
 );
@@ -48,7 +48,7 @@ testLogin(
     PB_MessageToClient_LoginLogout_ResponseCode.SUCCESS,
     'user 1',
     1,
-    userIDToTestUserData[1].passwordHash,
+    userIdToTestUserData[1].passwordHash,
   ),
   1,
 );
@@ -66,7 +66,7 @@ test('no message sent when trying to login with password while already logged in
 
   expect(clientCommunication.communicatedMessages.length).toBe(0);
 
-  expect([...server.clientIDToClient.values()].filter((c) => c.userID !== undefined).length).toBe(
+  expect([...server.clientIdToClient.values()].filter((c) => c.userId !== undefined).length).toBe(
     1,
   );
 });
@@ -93,7 +93,7 @@ test('no reply when trying to login with password while already logged in when s
 
   expect(clientCommunication.communicatedMessages.length).toBe(1);
 
-  expect([...server.clientIDToClient.values()].filter((c) => c.userID !== undefined).length).toBe(
+  expect([...server.clientIdToClient.values()].filter((c) => c.userId !== undefined).length).toBe(
     1,
   );
 });

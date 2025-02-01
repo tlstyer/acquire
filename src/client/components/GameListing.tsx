@@ -31,12 +31,12 @@ export function GameListing(props: {
       <table class={styles.usernames}>
         <tbody>
           <Index each={props.usernames}>
-            {(username, playerID) => (
+            {(username, playerId) => (
               <tr>
                 <td
                   class={
                     isTeamGame()
-                      ? teamNumberToCSSClassName.get((playerID % numTeams()) + 1)
+                      ? teamNumberToCSSClassName.get((playerId % numTeams()) + 1)
                       : styles.player
                   }
                   title={username() ?? undefined}

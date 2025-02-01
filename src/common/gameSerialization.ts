@@ -16,9 +16,9 @@ export function gameToProtocolBuffer(game: Game) {
   const gameReview = PB_GameReview.create({
     gameMode: game.gameMode,
     playerArrangementMode: game.playerArrangementMode,
-    userIds: game.userIDs,
+    userIds: game.userIds,
     usernames: game.usernames,
-    hostUserId: game.hostUserID,
+    hostUserId: game.hostUserId,
     tileBag: game.tileBag,
   });
 

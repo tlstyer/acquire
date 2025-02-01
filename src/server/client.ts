@@ -3,13 +3,13 @@ import type { Room } from './room';
 export class Client {
   room: Room | undefined;
 
-  userID: number | undefined;
+  userId: number | undefined;
   username: string | undefined;
 
   isLoggingInOrOut = false;
 
   constructor(
-    public clientID: number,
+    public clientId: number,
     public sendMessage: (message: Uint8Array) => void,
   ) {}
 
@@ -27,8 +27,8 @@ export class Client {
     }
   }
 
-  loggedIn(userID: number, username: string) {
-    this.userID = userID;
+  loggedIn(userId: number, username: string) {
+    this.userId = userId;
     this.username = username;
 
     this.room?.clientLoggedIn(this);
@@ -37,7 +37,7 @@ export class Client {
   loggedOut() {
     this.room?.clientLoggedOut(this);
 
-    this.userID = undefined;
+    this.userId = undefined;
     this.username = undefined;
   }
 }

@@ -17,8 +17,8 @@ export function ScoreBoard(props: {
   scoreBoardChainSize: number[];
   scoreBoardPrice: number[];
   safeChains: boolean[];
-  turnPlayerID: number;
-  movePlayerID: number;
+  turnPlayerId: number;
+  movePlayerId: number;
   gameMode: PB_GameMode;
   cellWidth: number;
 }) {
@@ -38,8 +38,8 @@ export function ScoreBoard(props: {
       const sb = props.scoreBoard;
       const nt = numTeams();
 
-      for (let playerID = 0; playerID < sb.length; playerID++) {
-        totals[playerID % nt]! += sb[playerID][ScoreBoardIndexEnum.Net];
+      for (let playerId = 0; playerId < sb.length; playerId++) {
+        totals[playerId % nt]! += sb[playerId][ScoreBoardIndexEnum.Net];
       }
 
       if (nt === 2) {
@@ -77,17 +77,17 @@ export function ScoreBoard(props: {
         </tr>
 
         <Index each={props.usernames}>
-          {(username, playerID) => (
+          {(username, playerId) => (
             <ScoreBoardRow
               isPlayerRow={true}
               title={username()}
-              isPlayersTurn={playerID === props.turnPlayerID}
-              isPlayersMove={playerID === props.movePlayerID}
-              scoreBoardRow={props.scoreBoard[playerID]}
+              isPlayersTurn={playerId === props.turnPlayerId}
+              isPlayersMove={playerId === props.movePlayerId}
+              scoreBoardRow={props.scoreBoard[playerId]}
               safeChains={props.safeChains}
               defaultClassName={
                 isTeamGame()
-                  ? teamNumberToCSSClassName.get((playerID % numTeams()) + 1)!
+                  ? teamNumberToCSSClassName.get((playerId % numTeams()) + 1)!
                   : styles.player
               }
               zeroValueReplacement=""

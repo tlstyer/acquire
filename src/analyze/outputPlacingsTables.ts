@@ -23,9 +23,9 @@ async function main(processedGameDataFilePath: string) {
 
     console.log(PB_GameMode[gameMode], placingsForGameMode.numGames);
 
-    for (let teamID = 0; teamID < placingsForGameMode.teamIDToNumPlacings.length; teamID++) {
+    for (let teamId = 0; teamId < placingsForGameMode.teamIdToNumPlacings.length; teamId++) {
       console.log(
-        placingsForGameMode.teamIDToNumPlacings[teamID]
+        placingsForGameMode.teamIdToNumPlacings[teamId]
           .map((numTimes) => ((numTimes / placingsForGameMode.numGames) * 100).toFixed(2))
           .join(' '),
       );
@@ -35,22 +35,22 @@ async function main(processedGameDataFilePath: string) {
 
 class PlacingsForGameMode {
   numGames = 0;
-  teamIDToNumPlacings: number[][] = [];
+  teamIdToNumPlacings: number[][] = [];
 
   ingest(placings: number[]) {
-    if (this.teamIDToNumPlacings.length === 0) {
-      for (let teamID = 0; teamID < placings.length; teamID++) {
+    if (this.teamIdToNumPlacings.length === 0) {
+      for (let teamId = 0; teamId < placings.length; teamId++) {
         const row = new Array(placings.length);
         row.fill(0);
-        this.teamIDToNumPlacings.push(row);
+        this.teamIdToNumPlacings.push(row);
       }
     }
 
     this.numGames++;
 
-    for (let teamID = 0; teamID < placings.length; teamID++) {
-      const placing = placings[teamID];
-      this.teamIDToNumPlacings[teamID][placing - 1]++;
+    for (let teamId = 0; teamId < placings.length; teamId++) {
+      const placing = placings[teamId];
+      this.teamIdToNumPlacings[teamId][placing - 1]++;
     }
   }
 }

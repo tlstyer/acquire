@@ -22,9 +22,9 @@ export type LobbyManager = ReturnType<typeof createLobbyManager>;
 export function createLobbyManager(clientCommunication: ClientCommunication) {
   let lastEventIndex = 0;
 
-  const userIDToUsername = new Map<number, string>();
-  const getUsernameForUserID = (userID: number) => userIDToUsername.get(userID) ?? '?';
-  const userIDs = new Set<number>();
+  const userIdToUsername = new Map<number, string>();
+  const getUsernameForUserId = (userId: number) => userIdToUsername.get(userId) ?? '?';
+  const userIds = new Set<number>();
   const gameDisplayNumberToLobbyGame = new Map<number, LobbyGame>();
 
   const [connected, setConnected] = createSignal(false);
@@ -80,7 +80,7 @@ export function createLobbyManager(clientCommunication: ClientCommunication) {
     setConnected(true);
 
     if (shouldUpdateUsernamesSignal) {
-      setUsernames([...userIDs].map((userID) => userIDToUsername.get(userID) ?? '?'));
+      setUsernames([...userIds].map((userId) => userIdToUsername.get(userId) ?? '?'));
       shouldUpdateUsernamesSignal = false;
     }
     if (shouldUpdateLobbyGamesSignal) {
@@ -92,17 +92,17 @@ export function createLobbyManager(clientCommunication: ClientCommunication) {
   }
 
   function onMessage_LastStateCheckpoint(message: PB_MessageToClient_Lobby_LastStateCheckpoint) {
-    userIDToUsername.clear();
-    userIDs.clear();
+    userIdToUsername.clear();
+    userIds.clear();
     gameDisplayNumberToLobbyGame.clear();
 
     const users = message.users;
     for (let i = 0; i < users.length; i++) {
       const user = users[i];
 
-      userIDToUsername.set(user.userId, user.username);
+      userIdToUsername.set(user.userId, user.username);
       if (user.isInLobby) {
-        userIDs.add(user.userId);
+        userIds.add(user.userId);
       }
     }
 
@@ -118,7 +118,7 @@ export function createLobbyManager(clientCommunication: ClientCommunication) {
           game.gameMode,
           game.hostUserId,
           game.userIds,
-          getUsernameForUserID,
+          getUsernameForUserId,
         ),
       );
     }
@@ -146,9 +146,9 @@ export function createLobbyManager(clientCommunication: ClientCommunication) {
   }
 
   function onMessage_Event_GameCreated(event: PB_MessageToClient_Lobby_Event_GameCreated) {
-    const userIDs: number[] = new Array(gameModeToNumPlayers.get(event.gameMode));
-    userIDs.fill(0);
-    userIDs[0] = event.hostUserId;
+    const userIds: number[] = new Array(gameModeToNumPlayers.get(event.gameMode));
+    userIds.fill(0);
+    userIds[0] = event.hostUserId;
 
     gameDisplayNumberToLobbyGame.set(
       event.gameDisplayNumber,
@@ -157,8 +157,8 @@ export function createLobbyManager(clientCommunication: ClientCommunication) {
         event.gameDisplayNumber,
         event.gameMode,
         event.hostUserId,
-        userIDs,
-        getUsernameForUserID,
+        userIds,
+        getUsernameForUserId,
       ),
     );
 
@@ -167,10 +167,10 @@ export function createLobbyManager(clientCommunication: ClientCommunication) {
 
   function onMessage_Event_AddUserToLobby(event: PB_MessageToClient_Lobby_Event_AddUserToLobby) {
     if (event.username) {
-      userIDToUsername.set(event.userId, event.username);
+      userIdToUsername.set(event.userId, event.username);
     }
 
-    userIDs.add(event.userId);
+    userIds.add(event.userId);
 
     shouldUpdateUsernamesSignal = true;
   }
@@ -178,7 +178,7 @@ export function createLobbyManager(clientCommunication: ClientCommunication) {
   function onMessage_Event_RemoveUserFromLobby(
     event: PB_MessageToClient_Lobby_Event_RemoveUserFromLobby,
   ) {
-    userIDs.delete(event.userId);
+    userIds.delete(event.userId);
 
     shouldUpdateUsernamesSignal = true;
   }
@@ -195,11 +195,11 @@ export function createLobbyManager(clientCommunication: ClientCommunication) {
     get lastEventIndex() {
       return lastEventIndex;
     },
-    get userIDToUsername() {
-      return userIDToUsername;
+    get userIdToUsername() {
+      return userIdToUsername;
     },
-    get userIDs() {
-      return userIDs;
+    get userIds() {
+      return userIds;
     },
     get gameDisplayNumberToLobbyGame() {
       return gameDisplayNumberToLobbyGame;
@@ -219,16 +219,16 @@ function createLobbyGame(
   gameNumber: number,
   gameDisplayNumber: number,
   initialGameMode: PB_GameMode,
-  hostUserID: number,
-  initialUserIDs: number[],
-  getUsernameForUserID: (userID: number) => string,
+  hostUserId: number,
+  initialUserIds: number[],
+  getUsernameForUserId: (userId: number) => string,
 ) {
   const gameSetup = new GameSetup(
     initialGameMode,
     PB_PlayerArrangementMode.EXACT_ORDER,
-    hostUserID,
-    getUsernameForUserID,
-    initialUserIDs?.map((userID) => (userID !== 0 ? userID : null)),
+    hostUserId,
+    getUsernameForUserId,
+    initialUserIds?.map((userId) => (userId !== 0 ? userId : null)),
   );
 
   const [gameBoard, setGameBoard] = createSignal(defaultGameBoard);
