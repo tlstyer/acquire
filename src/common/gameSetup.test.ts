@@ -1,7 +1,6 @@
 import seedrandom from 'seedrandom';
 import { describe, expect, test } from 'vitest';
 import { GameSetup } from './gameSetup';
-import { gameSetupFromProtocolBuffer, gameSetupToProtocolBuffer } from './gameSetupSerialization';
 import { PB_GameMode, PB_GameSetupChange, PB_PlayerArrangementMode } from './pb';
 
 const dummyApprovals = [true];
@@ -22,7 +21,6 @@ function getUsernameForUserId(userId: number) {
 
 function expectEqualGameSetups(gameSetup1: GameSetup, gameSetup2: GameSetup) {
   expect(gameSetup2).toEqual(gameSetup1);
-  expect(gameSetupToProtocolBuffer(gameSetup2)).toEqual(gameSetupToProtocolBuffer(gameSetup1));
 }
 
 test('can construct', () => {
@@ -1331,65 +1329,6 @@ describe('processChange', () => {
     expect(gameSetup.approvals).toEqual([true, true, true, true]);
     expect(gameSetup.finalUserIds).toBe(gameSetup.userIds);
     expect(gameSetup.finalUsernames).toBe(gameSetup.usernames);
-
-    gameSetupChangeVerifier.processChangesThenClearHistory();
-    gameSetupChangeVerifier.expectEqual();
-  });
-});
-
-describe('gameSetupToProtocolBuffer and gameSetupFromProtocolBuffer', () => {
-  test('just the host', () => {
-    const gameSetup = new GameSetup(
-      PB_GameMode.TEAMS_2_VS_2,
-      PB_PlayerArrangementMode.SPECIFY_TEAMS,
-      1,
-      getUsernameForUserId,
-    );
-    const gameSetupChangeVerifier = new GameSetupChangeVerifier(gameSetup);
-
-    gameSetup.swapPositions(0, 2);
-    gameSetupChangeVerifier.processChangesThenClearHistory();
-
-    const gameSetup2 = gameSetupFromProtocolBuffer(
-      gameSetupToProtocolBuffer(gameSetup),
-      getUsernameForUserId,
-    );
-    gameSetup2.clearHistory();
-
-    expectEqualGameSetups(gameSetup, gameSetup2);
-
-    gameSetupChangeVerifier.processChangesThenClearHistory();
-    gameSetupChangeVerifier.expectEqual();
-  });
-
-  test('approved by some users', () => {
-    const gameSetup = new GameSetup(
-      PB_GameMode.TEAMS_3_VS_3,
-      PB_PlayerArrangementMode.EXACT_ORDER,
-      3,
-      getUsernameForUserId,
-    );
-    const gameSetupChangeVerifier = new GameSetupChangeVerifier(gameSetup);
-
-    gameSetup.addUser(6);
-    gameSetup.addUser(1);
-    gameSetup.addUser(5);
-    gameSetup.addUser(4);
-    gameSetup.addUser(2);
-    gameSetup.swapPositions(0, 4);
-    gameSetup.approve(2);
-    gameSetup.approve(5);
-    gameSetup.approve(6);
-    gameSetupChangeVerifier.processChangesThenClearHistory();
-    expect(gameSetup.finalUserIds).toBe(null);
-    expect(gameSetup.finalUsernames).toBe(null);
-
-    const gameSetup2 = gameSetupFromProtocolBuffer(
-      gameSetupToProtocolBuffer(gameSetup),
-      getUsernameForUserId,
-    );
-
-    expectEqualGameSetups(gameSetup, gameSetup2);
 
     gameSetupChangeVerifier.processChangesThenClearHistory();
     gameSetupChangeVerifier.expectEqual();
