@@ -6,7 +6,7 @@ import { processBrowserMyKeyboardEvents } from '../../myKeyboardEvents';
 import { EnableKeyboardShortcutsButton } from './EnableKeyboardShortcutsButton';
 
 export function SelectChainExamples() {
-  const allSelectChainProps = [
+  const allProps = [
     {
       type: SelectChainTitle.SelectNewChain,
       availableChains: [0, 1, 2, 3, 4, 5, 6],
@@ -32,8 +32,8 @@ export function SelectChainExamples() {
   }
 
   return (
-    <For each={allSelectChainProps}>
-      {(selectChainProps) => {
+    <For each={allProps}>
+      {(props) => {
         const [keyboardShortcutsEnabled, setKeyboardShortcutsEnabled] = createSignal(false);
 
         return (
@@ -44,10 +44,10 @@ export function SelectChainExamples() {
             <p>
               <SelectChain
                 ref={(ref) => processBrowserMyKeyboardEvents(keyboardShortcutsEnabled, ref)}
-                type={selectChainProps.type}
-                availableChains={selectChainProps.availableChains}
-                buttonSize={selectChainProps.buttonSize}
-                onChainSelected={selectChainProps.onChainSelected}
+                type={props.type}
+                availableChains={props.availableChains}
+                buttonSize={props.buttonSize}
+                onChainSelected={props.onChainSelected}
               />
             </p>
           </>

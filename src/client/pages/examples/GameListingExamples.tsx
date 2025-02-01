@@ -6,7 +6,7 @@ import { GameStatus } from '../../helpers';
 import { getExampleGame1, getExampleGame2 } from './games';
 
 export function GameListingExamples() {
-  const allGameListingProps = [
+  const allProps = [
     {
       gameBoard: defaultGameBoard,
       usernames: ['Host', null, 'User 2', null],
@@ -38,15 +38,15 @@ export function GameListingExamples() {
   ];
 
   return (
-    <For each={allGameListingProps}>
-      {(gameListingProps) => (
+    <For each={allProps}>
+      {(props) => (
         <p>
           <GameListing
-            gameBoard={gameListingProps.gameBoard}
-            usernames={gameListingProps.usernames}
-            gameDisplayNumber={gameListingProps.gameDisplayNumber}
-            gameMode={gameListingProps.gameMode}
-            gameStatus={gameListingProps.gameStatus}
+            gameBoard={props.gameBoard}
+            usernames={props.usernames}
+            gameDisplayNumber={props.gameDisplayNumber}
+            gameMode={props.gameMode}
+            gameStatus={props.gameStatus}
           />
         </p>
       )}

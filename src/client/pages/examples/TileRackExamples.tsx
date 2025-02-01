@@ -6,7 +6,7 @@ import { processBrowserMyKeyboardEvents } from '../../myKeyboardEvents';
 import { EnableKeyboardShortcutsButton } from './EnableKeyboardShortcutsButton';
 
 export function TileRackExamples() {
-  const allTileRackProps = [
+  const allProps = [
     {
       tiles: [1, 28, 55, 82, 92, 40],
       types: [
@@ -53,8 +53,8 @@ export function TileRackExamples() {
   }
 
   return (
-    <For each={allTileRackProps}>
-      {(tileRackProps) => {
+    <For each={allProps}>
+      {(props) => {
         const [keyboardShortcutsEnabled, setKeyboardShortcutsEnabled] = createSignal(false);
 
         return (
@@ -65,10 +65,10 @@ export function TileRackExamples() {
             <p>
               <TileRack
                 ref={(ref) => processBrowserMyKeyboardEvents(keyboardShortcutsEnabled, ref)}
-                tiles={tileRackProps.tiles}
-                types={tileRackProps.types}
-                buttonSize={tileRackProps.buttonSize}
-                onTileClicked={tileRackProps.onTileClicked}
+                tiles={props.tiles}
+                types={props.types}
+                buttonSize={props.buttonSize}
+                onTileClicked={props.onTileClicked}
               />
             </p>
           </>

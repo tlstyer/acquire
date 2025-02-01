@@ -5,7 +5,7 @@ import { GameBoard } from '../../components/GameBoard';
 import { GameBoardLabelMode } from '../../helpers';
 
 export function GameBoardExamples() {
-  const baseGameBoardProps = {
+  const baseProps = {
     gameBoard: [
       [0, 0, 7, 1, 1, 7, 2, 2, 7, 3, 3, 7],
       [7, 7, 8, 7, 7, 7, 7, 7, 7, 7, 7, 4],
@@ -23,24 +23,24 @@ export function GameBoardExamples() {
     onCellClicked,
   };
 
-  const allGameBoardProps: {
+  const allProps: {
     gameBoard: PB_GameBoardType[][];
     tileRack?: (number | null)[];
     labelMode: GameBoardLabelMode;
     cellSize: number;
     onCellClicked?: (tile: number) => void;
   }[] = [
-    baseGameBoardProps,
+    baseProps,
     {
-      gameBoard: baseGameBoardProps.gameBoard,
+      gameBoard: baseProps.gameBoard,
       labelMode: GameBoardLabelMode.Coordinates,
-      cellSize: baseGameBoardProps.cellSize,
+      cellSize: baseProps.cellSize,
     },
     {
-      gameBoard: baseGameBoardProps.gameBoard,
-      tileRack: baseGameBoardProps.tileRack,
+      gameBoard: baseProps.gameBoard,
+      tileRack: baseProps.tileRack,
       labelMode: GameBoardLabelMode.HotelInitials,
-      cellSize: baseGameBoardProps.cellSize,
+      cellSize: baseProps.cellSize,
     },
   ];
 
@@ -49,15 +49,15 @@ export function GameBoardExamples() {
   }
 
   return (
-    <For each={allGameBoardProps}>
-      {(gameBoardProps) => (
+    <For each={allProps}>
+      {(props) => (
         <p>
           <GameBoard
-            gameBoard={gameBoardProps.gameBoard}
-            tileRack={gameBoardProps.tileRack}
-            labelMode={gameBoardProps.labelMode}
-            cellSize={gameBoardProps.cellSize}
-            onCellClicked={gameBoardProps.onCellClicked}
+            gameBoard={props.gameBoard}
+            tileRack={props.tileRack}
+            labelMode={props.labelMode}
+            cellSize={props.cellSize}
+            onCellClicked={props.onCellClicked}
           />
         </p>
       )}

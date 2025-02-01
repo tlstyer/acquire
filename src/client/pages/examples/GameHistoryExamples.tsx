@@ -11,7 +11,7 @@ export function GameHistoryExamples() {
   const game1 = getExampleGame1();
   const game2 = getExampleGame2();
 
-  const allGameHistoryProps: {
+  const allProps: {
     usernames: string[];
     gameStateHistory: GameState[];
     onMoveSelected: (index: number) => void;
@@ -43,8 +43,8 @@ export function GameHistoryExamples() {
   }
 
   return (
-    <For each={allGameHistoryProps}>
-      {(gameHistoryProps) => {
+    <For each={allProps}>
+      {(props) => {
         const [keyboardShortcutsEnabled, setKeyboardShortcutsEnabled] = createSignal(false);
 
         return (
@@ -55,9 +55,9 @@ export function GameHistoryExamples() {
             <div class={styles.gameHistoryWrapper}>
               <GameHistory
                 ref={(ref) => processBrowserMyKeyboardEvents(keyboardShortcutsEnabled, ref)}
-                usernames={gameHistoryProps.usernames}
-                gameStateHistory={gameHistoryProps.gameStateHistory}
-                onMoveSelected={gameHistoryProps.onMoveSelected}
+                usernames={props.usernames}
+                gameStateHistory={props.gameStateHistory}
+                onMoveSelected={props.onMoveSelected}
               />
             </div>
           </>

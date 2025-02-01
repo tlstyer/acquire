@@ -6,7 +6,7 @@ import { processBrowserMyKeyboardEvents } from '../../myKeyboardEvents';
 import { EnableKeyboardShortcutsButton } from './EnableKeyboardShortcutsButton';
 
 export function PurchaseSharesExamples() {
-  const allPurchaseSharesProps = [
+  const allProps = [
     {
       scoreBoardAvailable: [3, 3, 3, 3, 3, 3, 3],
       scoreBoardPrice: [2, 3, 4, 5, 6, 7, 8],
@@ -32,17 +32,14 @@ export function PurchaseSharesExamples() {
 
   return (
     <>
-      <For each={allPurchaseSharesProps}>
-        {(purchaseSharesProps) => {
+      <For each={allProps}>
+        {(props) => {
           const [keyboardShortcutsEnabled, setKeyboardShortcutsEnabled] = createSignal(false);
 
           return (
             <>
               <h2>
-                {getPurchaseSharesDescription(
-                  purchaseSharesProps.scoreBoardAvailable,
-                  purchaseSharesProps.scoreBoardPrice,
-                )}
+                {getPurchaseSharesDescription(props.scoreBoardAvailable, props.scoreBoardPrice)}
               </h2>
               <p>
                 <EnableKeyboardShortcutsButton onChangeEnabled={setKeyboardShortcutsEnabled} />
@@ -50,11 +47,11 @@ export function PurchaseSharesExamples() {
               <p>
                 <PurchaseShares
                   ref={(ref) => processBrowserMyKeyboardEvents(keyboardShortcutsEnabled, ref)}
-                  scoreBoardAvailable={purchaseSharesProps.scoreBoardAvailable}
-                  scoreBoardPrice={purchaseSharesProps.scoreBoardPrice}
-                  cash={purchaseSharesProps.cash}
-                  buttonSize={purchaseSharesProps.buttonSize}
-                  onSharesPurchased={purchaseSharesProps.onSharesPurchased}
+                  scoreBoardAvailable={props.scoreBoardAvailable}
+                  scoreBoardPrice={props.scoreBoardPrice}
+                  cash={props.cash}
+                  buttonSize={props.buttonSize}
+                  onSharesPurchased={props.onSharesPurchased}
                 />
               </p>
             </>

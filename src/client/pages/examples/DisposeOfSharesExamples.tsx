@@ -5,7 +5,7 @@ import { processBrowserMyKeyboardEvents } from '../../myKeyboardEvents';
 import { EnableKeyboardShortcutsButton } from './EnableKeyboardShortcutsButton';
 
 export function DisposeOfSharesExamples() {
-  const allDisposeOfSharesProps = [
+  const allProps = [
     {
       defunctChain: PB_GameBoardType.AMERICAN,
       controllingChain: PB_GameBoardType.FESTIVAL,
@@ -46,15 +46,15 @@ export function DisposeOfSharesExamples() {
 
   return (
     <>
-      <For each={allDisposeOfSharesProps}>
-        {(disposeOfSharesProps) => {
+      <For each={allProps}>
+        {(props) => {
           const [keyboardShortcutsEnabled, setKeyboardShortcutsEnabled] = createSignal(false);
 
           return (
             <>
               <h2>
-                defunct owned: {disposeOfSharesProps.sharesOwnedInDefunctChain}, controlling
-                available: {disposeOfSharesProps.sharesAvailableInControllingChain}
+                defunct owned: {props.sharesOwnedInDefunctChain}, controlling available:{' '}
+                {props.sharesAvailableInControllingChain}
               </h2>
               <p>
                 <EnableKeyboardShortcutsButton onChangeEnabled={setKeyboardShortcutsEnabled} />
@@ -62,14 +62,12 @@ export function DisposeOfSharesExamples() {
               <p>
                 <DisposeOfShares
                   ref={(ref) => processBrowserMyKeyboardEvents(keyboardShortcutsEnabled, ref)}
-                  defunctChain={disposeOfSharesProps.defunctChain}
-                  controllingChain={disposeOfSharesProps.controllingChain}
-                  sharesOwnedInDefunctChain={disposeOfSharesProps.sharesOwnedInDefunctChain}
-                  sharesAvailableInControllingChain={
-                    disposeOfSharesProps.sharesAvailableInControllingChain
-                  }
-                  buttonSize={disposeOfSharesProps.buttonSize}
-                  onSharesDisposed={disposeOfSharesProps.onSharesDisposed}
+                  defunctChain={props.defunctChain}
+                  controllingChain={props.controllingChain}
+                  sharesOwnedInDefunctChain={props.sharesOwnedInDefunctChain}
+                  sharesAvailableInControllingChain={props.sharesAvailableInControllingChain}
+                  buttonSize={props.buttonSize}
+                  onSharesDisposed={props.onSharesDisposed}
                 />
               </p>
             </>

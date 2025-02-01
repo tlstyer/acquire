@@ -3,7 +3,7 @@ import { PB_GameBoardType } from '../../../common/pb';
 import { TileRackReadOnly } from '../../components/TileRackReadOnly';
 
 export function TileRackReadOnlyExamples() {
-  const allTileRackReadOnlyProps = [
+  const allProps = [
     {
       tiles: [1, 28, 55, 82, 92, 40],
       types: [
@@ -43,14 +43,10 @@ export function TileRackReadOnlyExamples() {
   ];
 
   return (
-    <For each={allTileRackReadOnlyProps}>
-      {(tileRackReadOnlyProps) => (
+    <For each={allProps}>
+      {(props) => (
         <p>
-          <TileRackReadOnly
-            tiles={tileRackReadOnlyProps.tiles}
-            types={tileRackReadOnlyProps.types}
-            buttonSize={tileRackReadOnlyProps.buttonSize}
-          />
+          <TileRackReadOnly tiles={props.tiles} types={props.types} buttonSize={props.buttonSize} />
         </p>
       )}
     </For>

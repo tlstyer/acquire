@@ -3,7 +3,7 @@ import { PB_GameMode } from '../../../common/pb';
 import { ScoreBoard } from '../../components/ScoreBoard';
 
 export function ScoreBoardExamples() {
-  const scoreBoardProps = [
+  const allProps = [
     {
       usernames: ['winning player', 'losing player'],
       scoreBoard: [
@@ -78,13 +78,13 @@ export function ScoreBoardExamples() {
       cellWidth: 30,
     },
   ];
-  scoreBoardProps.push({
-    ...scoreBoardProps[3],
+  allProps.push({
+    ...allProps[3],
     gameMode: PB_GameMode.TEAMS_3_VS_3,
   });
 
   return (
-    <For each={scoreBoardProps}>
+    <For each={allProps}>
       {(props) => (
         <p>
           <ScoreBoard
