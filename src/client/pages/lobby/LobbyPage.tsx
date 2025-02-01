@@ -75,9 +75,6 @@ export function LobbyPage(props: { client: Client }) {
             <li>
               <a href="/examples">Examples</a>
             </li>
-            <li>
-              <a href="/game">Game</a>
-            </li>
           </ul>
         </div>
       </div>

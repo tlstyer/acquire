@@ -1,5 +1,7 @@
+import { useParams } from '@solidjs/router';
 import { batch, createMemo, createSignal, Index, onCleanup, Show } from 'solid-js';
 import { ActionGameOver } from '../../../common/gameActions/gameOver';
+import { parseDecimalInteger } from '../../../common/helpers';
 import { Client } from '../../client';
 import { GameBoard } from '../../components/GameBoard';
 import { GameHistory } from '../../components/GameHistory';
@@ -11,6 +13,15 @@ import { getExampleGame1 } from '../examples/games';
 import styles from './GamePage.module.css';
 
 export function GamePage(props: { client: Client }) {
+  const params = useParams();
+  const idParts = params.id.split('-');
+  const idHasCorrectNumberOfParts = idParts.length === 2;
+  const logTime = idHasCorrectNumberOfParts ? (parseDecimalInteger(idParts[0]) ?? 0) : 0; // TODO: the default of 0 might be the same as the server's current log time
+  const gameNumber = idHasCorrectNumberOfParts ? (parseDecimalInteger(idParts[1]) ?? 0) : 0;
+
+  // eslint-disable-next-line solid/reactivity
+  const gameManager = props.client.connectToGame(logTime, gameNumber);
+
   const game = getExampleGame1();
 
   const [selectedMoveIndex, setSelectedMoveIndex] = createSignal(game.gameStateHistory.length - 1);

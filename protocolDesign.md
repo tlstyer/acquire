@@ -199,7 +199,6 @@ One or more of:
   - host user ID
   - user IDs
   - approvals (if Setting Up)
-  - number of game setup changes (if Setting Up)
 - game review data (only in initial response to a Connect message AND when game not shown in lobby)
 - game setup change (only in subsequent messages)
 - array of game state objects

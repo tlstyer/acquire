@@ -132,7 +132,7 @@ export function App() {
       component: () => <LobbyPage client={client} />,
     },
     {
-      path: '/game',
+      path: '/game/:id',
       component: () => <GamePage client={client} />,
     },
     {

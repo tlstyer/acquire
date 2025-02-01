@@ -47,7 +47,9 @@ export class Server {
     });
 
     this.lobbyRoom.setGameRoomsManager(this.gameRoomsManager);
+
     this.gameRoomsManager.setLobbyRoom(this.lobbyRoom);
+    this.gameRoomsManager.setLogTime(logTime);
   }
 
   private onConnect(clientID: number) {
@@ -77,6 +79,9 @@ export class Server {
     }
     if (messageToServer.lobby) {
       this.lobbyRoom.onMessage(client, messageToServer.lobby);
+    }
+    if (messageToServer.game) {
+      this.gameRoomsManager.onMessage(client, messageToServer.game);
     }
   }
 

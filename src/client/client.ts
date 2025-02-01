@@ -10,6 +10,7 @@ import {
 } from '../common/pb';
 import type { ClientCommunication } from './clientCommunication';
 import { DialogType } from './components/Dialog';
+import { createGamesManager } from './gamesManager';
 import { GameBoardLabelMode } from './helpers';
 import { createLobbyManager } from './lobbyManager';
 
@@ -52,6 +53,7 @@ export function createClient(clientCommunication: ClientCommunication, version: 
 
   let currentPage = CurrentPage.None;
   const lobbyManager = createLobbyManager(clientCommunication);
+  const gamesManager = createGamesManager(clientCommunication);
 
   function loginWithPassword(username: string, password: string) {
     if (loginMessage !== undefined) {
@@ -141,6 +143,11 @@ export function createClient(clientCommunication: ClientCommunication, version: 
     lobbyManager.connect();
   }
 
+  function connectToGame(logTime: number, gameNumber: number) {
+    currentPage = CurrentPage.Game;
+    return gamesManager.connect(logTime, gameNumber);
+  }
+
   function onConnect() {
     setConnected(true);
 
@@ -153,6 +160,10 @@ export function createClient(clientCommunication: ClientCommunication, version: 
     switch (currentPage) {
       case CurrentPage.Lobby: {
         dataToSend.push(lobbyManager.getConnectMessage());
+        break;
+      }
+      case CurrentPage.Game: {
+        dataToSend.push(gamesManager.getConnectMessage());
         break;
       }
     }
@@ -181,6 +192,9 @@ export function createClient(clientCommunication: ClientCommunication, version: 
     }
     if (messageToClient.lobby) {
       lobbyManager.onMessage(messageToClient.lobby);
+    }
+    if (messageToClient.game) {
+      gamesManager.onMessage(messageToClient.game);
     }
   }
 
@@ -243,6 +257,7 @@ export function createClient(clientCommunication: ClientCommunication, version: 
     createUserAndLogin,
     logout,
     connectToLobby,
+    connectToGame,
     lobbyManager,
     get logTime() {
       return logTime;
@@ -290,6 +305,7 @@ class UsernameAndToken {
 const enum CurrentPage {
   None,
   Lobby,
+  Game,
 }
 
 function createSetting<T extends { toString(): string }>(

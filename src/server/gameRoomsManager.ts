@@ -1,4 +1,8 @@
-import type { PB_GameMode } from '../common/pb';
+import type {
+  PB_GameMode,
+  PB_MessageToServer_Game,
+  PB_MessageToServer_Game_Connect,
+} from '../common/pb';
 import type { Client } from './client';
 import { GameRoom } from './gameRoom';
 import type { LobbyRoom } from './lobbyRoom';
@@ -14,6 +18,11 @@ export class GameRoomsManager {
     this.lobbyRoom = lobbyRoom;
   }
 
+  private logTime = 0;
+  setLogTime(logTime: number) {
+    this.logTime = logTime;
+  }
+
   createGameRoom(host: Client, gameMode: PB_GameMode) {
     const gameNumber = this.nextGameNumber++;
     const gameDisplayNumber = this.nextGameDisplayNumber.getID();
@@ -22,5 +31,18 @@ export class GameRoomsManager {
     this.gameNumberToGameRoom.set(gameNumber, gameRoom);
 
     return gameRoom;
+  }
+
+  onMessage(client: Client, message: PB_MessageToServer_Game) {
+    if (message.connect) {
+      this.onMessage_Connect(client, message.connect);
+    }
+  }
+
+  onMessage_Connect(client: Client, message: PB_MessageToServer_Game_Connect) {
+    if (message.logTime === this.logTime && this.gameNumberToGameRoom.has(message.gameNumber)) {
+      const gameRoom = this.gameNumberToGameRoom.get(message.gameNumber)!;
+      gameRoom.onMessage_Connect(client, message);
+    }
   }
 }
