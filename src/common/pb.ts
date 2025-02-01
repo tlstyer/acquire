@@ -405,6 +405,47 @@ export interface PB_GameAction_PurchaseShares {
 export interface PB_GameAction_GameOver {
 }
 /**
+ * @generated from protobuf message PB.GameBoardChanges
+ */
+export interface PB_GameBoardChanges {
+    /**
+     * @generated from protobuf field: repeated int32 luxor_tiles = 1;
+     */
+    luxorTiles: number[];
+    /**
+     * @generated from protobuf field: repeated int32 tower_tiles = 2;
+     */
+    towerTiles: number[];
+    /**
+     * @generated from protobuf field: repeated int32 american_tiles = 3;
+     */
+    americanTiles: number[];
+    /**
+     * @generated from protobuf field: repeated int32 festival_tiles = 4;
+     */
+    festivalTiles: number[];
+    /**
+     * @generated from protobuf field: repeated int32 worldwide_tiles = 5;
+     */
+    worldwideTiles: number[];
+    /**
+     * @generated from protobuf field: repeated int32 continental_tiles = 6;
+     */
+    continentalTiles: number[];
+    /**
+     * @generated from protobuf field: repeated int32 imperial_tiles = 7;
+     */
+    imperialTiles: number[];
+    /**
+     * @generated from protobuf field: repeated int32 nothing_yet_tiles = 8;
+     */
+    nothingYetTiles: number[];
+    /**
+     * @generated from protobuf field: repeated int32 cant_play_ever_tiles = 9;
+     */
+    cantPlayEverTiles: number[];
+}
+/**
  * @generated from protobuf message PB.MessageToServer
  */
 export interface PB_MessageToServer {
@@ -416,6 +457,10 @@ export interface PB_MessageToServer {
      * @generated from protobuf field: PB.MessageToServer.Lobby lobby = 2;
      */
     lobby?: PB_MessageToServer_Lobby;
+    /**
+     * @generated from protobuf field: PB.MessageToServer.Game game = 3;
+     */
+    game?: PB_MessageToServer_Game;
 }
 /**
  * @generated from protobuf message PB.MessageToServer.LoginLogout
@@ -514,6 +559,28 @@ export interface PB_MessageToServer_Lobby_CreateGame {
     gameMode: PB_GameMode;
 }
 /**
+ * @generated from protobuf message PB.MessageToServer.Game
+ */
+export interface PB_MessageToServer_Game {
+    /**
+     * @generated from protobuf field: PB.MessageToServer.Game.Connect connect = 1;
+     */
+    connect?: PB_MessageToServer_Game_Connect;
+}
+/**
+ * @generated from protobuf message PB.MessageToServer.Game.Connect
+ */
+export interface PB_MessageToServer_Game_Connect {
+    /**
+     * @generated from protobuf field: int32 log_time = 1;
+     */
+    logTime: number;
+    /**
+     * @generated from protobuf field: int32 game_number = 2;
+     */
+    gameNumber: number;
+}
+/**
  * @generated from protobuf message PB.MessageToClient
  */
 export interface PB_MessageToClient {
@@ -529,6 +596,10 @@ export interface PB_MessageToClient {
      * @generated from protobuf field: PB.MessageToClient.Lobby lobby = 2;
      */
     lobby?: PB_MessageToClient_Lobby;
+    /**
+     * @generated from protobuf field: PB.MessageToClient.Game game = 3;
+     */
+    game?: PB_MessageToClient_Game;
 }
 /**
  * @generated from protobuf message PB.MessageToClient.Initial
@@ -659,6 +730,14 @@ export interface PB_MessageToClient_Lobby_LastStateCheckpoint_Game {
      * @generated from protobuf field: repeated int32 user_ids = 5;
      */
     userIds: number[];
+    /**
+     * @generated from protobuf field: PB.GameBoardChanges game_board_changes = 6;
+     */
+    gameBoardChanges?: PB_GameBoardChanges;
+    /**
+     * @generated from protobuf field: bool is_completed = 7;
+     */
+    isCompleted: boolean;
 }
 /**
  * @generated from protobuf message PB.MessageToClient.Lobby.LastStateCheckpoint.User
@@ -676,6 +755,10 @@ export interface PB_MessageToClient_Lobby_LastStateCheckpoint_User {
      * @generated from protobuf field: bool is_in_lobby = 3;
      */
     isInLobby: boolean;
+    /**
+     * @generated from protobuf field: repeated int32 game_display_numbers_where_present = 4;
+     */
+    gameDisplayNumbersWherePresent: number[];
 }
 /**
  * @generated from protobuf message PB.MessageToClient.Lobby.Event
@@ -686,6 +769,22 @@ export interface PB_MessageToClient_Lobby_Event {
      */
     gameCreated?: PB_MessageToClient_Lobby_Event_GameCreated;
     /**
+     * @generated from protobuf field: PB.MessageToClient.Lobby.Event.GameSetupChange game_setup_change = 2;
+     */
+    gameSetupChange?: PB_MessageToClient_Lobby_Event_GameSetupChange;
+    /**
+     * @generated from protobuf field: PB.MessageToClient.Lobby.Event.GameBoardChanges game_board_changes = 3;
+     */
+    gameBoardChanges?: PB_MessageToClient_Lobby_Event_GameBoardChanges;
+    /**
+     * @generated from protobuf field: PB.MessageToClient.Lobby.Event.GameCompleted game_completed = 4;
+     */
+    gameCompleted?: PB_MessageToClient_Lobby_Event_GameCompleted;
+    /**
+     * @generated from protobuf field: PB.MessageToClient.Lobby.Event.GameRemovedFromLobby game_removed_from_lobby = 5;
+     */
+    gameRemovedFromLobby?: PB_MessageToClient_Lobby_Event_GameRemovedFromLobby;
+    /**
      * @generated from protobuf field: PB.MessageToClient.Lobby.Event.AddUserToLobby add_user_to_lobby = 6;
      */
     addUserToLobby?: PB_MessageToClient_Lobby_Event_AddUserToLobby;
@@ -693,6 +792,14 @@ export interface PB_MessageToClient_Lobby_Event {
      * @generated from protobuf field: PB.MessageToClient.Lobby.Event.RemoveUserFromLobby remove_user_from_lobby = 7;
      */
     removeUserFromLobby?: PB_MessageToClient_Lobby_Event_RemoveUserFromLobby;
+    /**
+     * @generated from protobuf field: PB.MessageToClient.Lobby.Event.AddUserToGameRoom add_user_to_game_room = 8;
+     */
+    addUserToGameRoom?: PB_MessageToClient_Lobby_Event_AddUserToGameRoom;
+    /**
+     * @generated from protobuf field: PB.MessageToClient.Lobby.Event.RemoveUserFromGameRoom remove_user_from_game_room = 9;
+     */
+    removeUserFromGameRoom?: PB_MessageToClient_Lobby_Event_RemoveUserFromGameRoom;
 }
 /**
  * @generated from protobuf message PB.MessageToClient.Lobby.Event.GameCreated
@@ -714,6 +821,50 @@ export interface PB_MessageToClient_Lobby_Event_GameCreated {
      * @generated from protobuf field: int32 host_user_id = 4;
      */
     hostUserId: number;
+}
+/**
+ * @generated from protobuf message PB.MessageToClient.Lobby.Event.GameSetupChange
+ */
+export interface PB_MessageToClient_Lobby_Event_GameSetupChange {
+    /**
+     * @generated from protobuf field: int32 game_display_number = 1;
+     */
+    gameDisplayNumber: number;
+    /**
+     * @generated from protobuf field: PB.GameSetupChange game_setup_change = 2;
+     */
+    gameSetupChange?: PB_GameSetupChange;
+}
+/**
+ * @generated from protobuf message PB.MessageToClient.Lobby.Event.GameBoardChanges
+ */
+export interface PB_MessageToClient_Lobby_Event_GameBoardChanges {
+    /**
+     * @generated from protobuf field: int32 game_display_number = 1;
+     */
+    gameDisplayNumber: number;
+    /**
+     * @generated from protobuf field: PB.MessageToClient.Lobby.Event.GameBoardChanges game_board_changes = 2;
+     */
+    gameBoardChanges?: PB_MessageToClient_Lobby_Event_GameBoardChanges;
+}
+/**
+ * @generated from protobuf message PB.MessageToClient.Lobby.Event.GameCompleted
+ */
+export interface PB_MessageToClient_Lobby_Event_GameCompleted {
+    /**
+     * @generated from protobuf field: int32 game_display_number = 1;
+     */
+    gameDisplayNumber: number;
+}
+/**
+ * @generated from protobuf message PB.MessageToClient.Lobby.Event.GameRemovedFromLobby
+ */
+export interface PB_MessageToClient_Lobby_Event_GameRemovedFromLobby {
+    /**
+     * @generated from protobuf field: int32 game_display_number = 1;
+     */
+    gameDisplayNumber: number;
 }
 /**
  * @generated from protobuf message PB.MessageToClient.Lobby.Event.AddUserToLobby
@@ -738,6 +889,36 @@ export interface PB_MessageToClient_Lobby_Event_RemoveUserFromLobby {
     userId: number;
 }
 /**
+ * @generated from protobuf message PB.MessageToClient.Lobby.Event.AddUserToGameRoom
+ */
+export interface PB_MessageToClient_Lobby_Event_AddUserToGameRoom {
+    /**
+     * @generated from protobuf field: int32 user_id = 1;
+     */
+    userId: number;
+    /**
+     * @generated from protobuf field: int32 game_display_number = 2;
+     */
+    gameDisplayNumber: number;
+    /**
+     * @generated from protobuf field: string username = 3;
+     */
+    username: string;
+}
+/**
+ * @generated from protobuf message PB.MessageToClient.Lobby.Event.RemoveUserFromGameRoom
+ */
+export interface PB_MessageToClient_Lobby_Event_RemoveUserFromGameRoom {
+    /**
+     * @generated from protobuf field: int32 user_id = 1;
+     */
+    userId: number;
+    /**
+     * @generated from protobuf field: int32 game_display_number = 2;
+     */
+    gameDisplayNumber: number;
+}
+/**
  * @generated from protobuf message PB.MessageToClient.Lobby.CreateGameResponse
  */
 export interface PB_MessageToClient_Lobby_CreateGameResponse {
@@ -745,6 +926,85 @@ export interface PB_MessageToClient_Lobby_CreateGameResponse {
      * @generated from protobuf field: int32 game_number = 1;
      */
     gameNumber: number;
+}
+/**
+ * @generated from protobuf message PB.MessageToClient.Game
+ */
+export interface PB_MessageToClient_Game {
+    /**
+     * @generated from protobuf field: PB.MessageToClient.Game.GameSetup game_setup = 1;
+     */
+    gameSetup?: PB_MessageToClient_Game_GameSetup;
+    /**
+     * @generated from protobuf field: PB.GameReview game_review = 2;
+     */
+    gameReview?: PB_GameReview;
+    /**
+     * @generated from protobuf field: PB.GameSetupChange game_setup_change = 3;
+     */
+    gameSetupChange?: PB_GameSetupChange;
+    /**
+     * @generated from protobuf field: repeated PB.GameState game_states = 4;
+     */
+    gameStates: PB_GameState[];
+    /**
+     * @generated from protobuf field: repeated PB.MessageToClient.Game.UserIDAndUsername user_ids_and_usernames = 5;
+     */
+    userIdsAndUsernames: PB_MessageToClient_Game_UserIDAndUsername[];
+    /**
+     * @generated from protobuf field: int32 user_id_who_entered_game_room = 6;
+     */
+    userIdWhoEnteredGameRoom: number;
+    /**
+     * @generated from protobuf field: int32 user_id_who_exited_game_room = 7;
+     */
+    userIdWhoExitedGameRoom: number;
+    /**
+     * @generated from protobuf field: repeated int32 tile_bag = 8;
+     */
+    tileBag: number[];
+}
+/**
+ * @generated from protobuf message PB.MessageToClient.Game.GameSetup
+ */
+export interface PB_MessageToClient_Game_GameSetup {
+    /**
+     * @generated from protobuf field: PB.GameMode game_mode = 1;
+     */
+    gameMode: PB_GameMode;
+    /**
+     * @generated from protobuf field: PB.PlayerArrangementMode player_arrangement_mode = 2;
+     */
+    playerArrangementMode: PB_PlayerArrangementMode;
+    /**
+     * @generated from protobuf field: int32 host_user_id = 3;
+     */
+    hostUserId: number;
+    /**
+     * @generated from protobuf field: repeated int32 user_ids = 4;
+     */
+    userIds: number[];
+    /**
+     * @generated from protobuf field: repeated bool approvals = 5;
+     */
+    approvals: boolean[];
+    /**
+     * @generated from protobuf field: int32 number_of_game_setup_changes = 6;
+     */
+    numberOfGameSetupChanges: number;
+}
+/**
+ * @generated from protobuf message PB.MessageToClient.Game.UserIDAndUsername
+ */
+export interface PB_MessageToClient_Game_UserIDAndUsername {
+    /**
+     * @generated from protobuf field: int32 user_id = 1;
+     */
+    userId: number;
+    /**
+     * @generated from protobuf field: string username = 2;
+     */
+    username: string;
 }
 /**
  * @generated from protobuf message PB.GameReview
@@ -2516,11 +2776,195 @@ class PB_GameAction_GameOver$Type extends MessageType<PB_GameAction_GameOver> {
  */
 export const PB_GameAction_GameOver = new PB_GameAction_GameOver$Type();
 // @generated message type with reflection information, may provide speed optimized methods
+class PB_GameBoardChanges$Type extends MessageType<PB_GameBoardChanges> {
+    constructor() {
+        super("PB.GameBoardChanges", [
+            { no: 1, name: "luxor_tiles", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ },
+            { no: 2, name: "tower_tiles", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ },
+            { no: 3, name: "american_tiles", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ },
+            { no: 4, name: "festival_tiles", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ },
+            { no: 5, name: "worldwide_tiles", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ },
+            { no: 6, name: "continental_tiles", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ },
+            { no: 7, name: "imperial_tiles", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ },
+            { no: 8, name: "nothing_yet_tiles", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ },
+            { no: 9, name: "cant_play_ever_tiles", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ }
+        ]);
+    }
+    create(value?: PartialMessage<PB_GameBoardChanges>): PB_GameBoardChanges {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.luxorTiles = [];
+        message.towerTiles = [];
+        message.americanTiles = [];
+        message.festivalTiles = [];
+        message.worldwideTiles = [];
+        message.continentalTiles = [];
+        message.imperialTiles = [];
+        message.nothingYetTiles = [];
+        message.cantPlayEverTiles = [];
+        if (value !== undefined)
+            reflectionMergePartial<PB_GameBoardChanges>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PB_GameBoardChanges): PB_GameBoardChanges {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated int32 luxor_tiles */ 1:
+                    if (wireType === WireType.LengthDelimited)
+                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
+                            message.luxorTiles.push(reader.int32());
+                    else
+                        message.luxorTiles.push(reader.int32());
+                    break;
+                case /* repeated int32 tower_tiles */ 2:
+                    if (wireType === WireType.LengthDelimited)
+                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
+                            message.towerTiles.push(reader.int32());
+                    else
+                        message.towerTiles.push(reader.int32());
+                    break;
+                case /* repeated int32 american_tiles */ 3:
+                    if (wireType === WireType.LengthDelimited)
+                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
+                            message.americanTiles.push(reader.int32());
+                    else
+                        message.americanTiles.push(reader.int32());
+                    break;
+                case /* repeated int32 festival_tiles */ 4:
+                    if (wireType === WireType.LengthDelimited)
+                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
+                            message.festivalTiles.push(reader.int32());
+                    else
+                        message.festivalTiles.push(reader.int32());
+                    break;
+                case /* repeated int32 worldwide_tiles */ 5:
+                    if (wireType === WireType.LengthDelimited)
+                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
+                            message.worldwideTiles.push(reader.int32());
+                    else
+                        message.worldwideTiles.push(reader.int32());
+                    break;
+                case /* repeated int32 continental_tiles */ 6:
+                    if (wireType === WireType.LengthDelimited)
+                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
+                            message.continentalTiles.push(reader.int32());
+                    else
+                        message.continentalTiles.push(reader.int32());
+                    break;
+                case /* repeated int32 imperial_tiles */ 7:
+                    if (wireType === WireType.LengthDelimited)
+                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
+                            message.imperialTiles.push(reader.int32());
+                    else
+                        message.imperialTiles.push(reader.int32());
+                    break;
+                case /* repeated int32 nothing_yet_tiles */ 8:
+                    if (wireType === WireType.LengthDelimited)
+                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
+                            message.nothingYetTiles.push(reader.int32());
+                    else
+                        message.nothingYetTiles.push(reader.int32());
+                    break;
+                case /* repeated int32 cant_play_ever_tiles */ 9:
+                    if (wireType === WireType.LengthDelimited)
+                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
+                            message.cantPlayEverTiles.push(reader.int32());
+                    else
+                        message.cantPlayEverTiles.push(reader.int32());
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: PB_GameBoardChanges, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated int32 luxor_tiles = 1; */
+        if (message.luxorTiles.length) {
+            writer.tag(1, WireType.LengthDelimited).fork();
+            for (let i = 0; i < message.luxorTiles.length; i++)
+                writer.int32(message.luxorTiles[i]);
+            writer.join();
+        }
+        /* repeated int32 tower_tiles = 2; */
+        if (message.towerTiles.length) {
+            writer.tag(2, WireType.LengthDelimited).fork();
+            for (let i = 0; i < message.towerTiles.length; i++)
+                writer.int32(message.towerTiles[i]);
+            writer.join();
+        }
+        /* repeated int32 american_tiles = 3; */
+        if (message.americanTiles.length) {
+            writer.tag(3, WireType.LengthDelimited).fork();
+            for (let i = 0; i < message.americanTiles.length; i++)
+                writer.int32(message.americanTiles[i]);
+            writer.join();
+        }
+        /* repeated int32 festival_tiles = 4; */
+        if (message.festivalTiles.length) {
+            writer.tag(4, WireType.LengthDelimited).fork();
+            for (let i = 0; i < message.festivalTiles.length; i++)
+                writer.int32(message.festivalTiles[i]);
+            writer.join();
+        }
+        /* repeated int32 worldwide_tiles = 5; */
+        if (message.worldwideTiles.length) {
+            writer.tag(5, WireType.LengthDelimited).fork();
+            for (let i = 0; i < message.worldwideTiles.length; i++)
+                writer.int32(message.worldwideTiles[i]);
+            writer.join();
+        }
+        /* repeated int32 continental_tiles = 6; */
+        if (message.continentalTiles.length) {
+            writer.tag(6, WireType.LengthDelimited).fork();
+            for (let i = 0; i < message.continentalTiles.length; i++)
+                writer.int32(message.continentalTiles[i]);
+            writer.join();
+        }
+        /* repeated int32 imperial_tiles = 7; */
+        if (message.imperialTiles.length) {
+            writer.tag(7, WireType.LengthDelimited).fork();
+            for (let i = 0; i < message.imperialTiles.length; i++)
+                writer.int32(message.imperialTiles[i]);
+            writer.join();
+        }
+        /* repeated int32 nothing_yet_tiles = 8; */
+        if (message.nothingYetTiles.length) {
+            writer.tag(8, WireType.LengthDelimited).fork();
+            for (let i = 0; i < message.nothingYetTiles.length; i++)
+                writer.int32(message.nothingYetTiles[i]);
+            writer.join();
+        }
+        /* repeated int32 cant_play_ever_tiles = 9; */
+        if (message.cantPlayEverTiles.length) {
+            writer.tag(9, WireType.LengthDelimited).fork();
+            for (let i = 0; i < message.cantPlayEverTiles.length; i++)
+                writer.int32(message.cantPlayEverTiles[i]);
+            writer.join();
+        }
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message PB.GameBoardChanges
+ */
+export const PB_GameBoardChanges = new PB_GameBoardChanges$Type();
+// @generated message type with reflection information, may provide speed optimized methods
 class PB_MessageToServer$Type extends MessageType<PB_MessageToServer> {
     constructor() {
         super("PB.MessageToServer", [
             { no: 1, name: "login_logout", kind: "message", T: () => PB_MessageToServer_LoginLogout },
-            { no: 2, name: "lobby", kind: "message", T: () => PB_MessageToServer_Lobby }
+            { no: 2, name: "lobby", kind: "message", T: () => PB_MessageToServer_Lobby },
+            { no: 3, name: "game", kind: "message", T: () => PB_MessageToServer_Game }
         ]);
     }
     create(value?: PartialMessage<PB_MessageToServer>): PB_MessageToServer {
@@ -2540,6 +2984,9 @@ class PB_MessageToServer$Type extends MessageType<PB_MessageToServer> {
                 case /* PB.MessageToServer.Lobby lobby */ 2:
                     message.lobby = PB_MessageToServer_Lobby.internalBinaryRead(reader, reader.uint32(), options, message.lobby);
                     break;
+                case /* PB.MessageToServer.Game game */ 3:
+                    message.game = PB_MessageToServer_Game.internalBinaryRead(reader, reader.uint32(), options, message.game);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -2558,6 +3005,9 @@ class PB_MessageToServer$Type extends MessageType<PB_MessageToServer> {
         /* PB.MessageToServer.Lobby lobby = 2; */
         if (message.lobby)
             PB_MessageToServer_Lobby.internalBinaryWrite(message.lobby, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* PB.MessageToServer.Game game = 3; */
+        if (message.game)
+            PB_MessageToServer_Game.internalBinaryWrite(message.game, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -2973,12 +3423,114 @@ class PB_MessageToServer_Lobby_CreateGame$Type extends MessageType<PB_MessageToS
  */
 export const PB_MessageToServer_Lobby_CreateGame = new PB_MessageToServer_Lobby_CreateGame$Type();
 // @generated message type with reflection information, may provide speed optimized methods
+class PB_MessageToServer_Game$Type extends MessageType<PB_MessageToServer_Game> {
+    constructor() {
+        super("PB.MessageToServer.Game", [
+            { no: 1, name: "connect", kind: "message", T: () => PB_MessageToServer_Game_Connect }
+        ]);
+    }
+    create(value?: PartialMessage<PB_MessageToServer_Game>): PB_MessageToServer_Game {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<PB_MessageToServer_Game>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PB_MessageToServer_Game): PB_MessageToServer_Game {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* PB.MessageToServer.Game.Connect connect */ 1:
+                    message.connect = PB_MessageToServer_Game_Connect.internalBinaryRead(reader, reader.uint32(), options, message.connect);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: PB_MessageToServer_Game, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* PB.MessageToServer.Game.Connect connect = 1; */
+        if (message.connect)
+            PB_MessageToServer_Game_Connect.internalBinaryWrite(message.connect, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message PB.MessageToServer.Game
+ */
+export const PB_MessageToServer_Game = new PB_MessageToServer_Game$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class PB_MessageToServer_Game_Connect$Type extends MessageType<PB_MessageToServer_Game_Connect> {
+    constructor() {
+        super("PB.MessageToServer.Game.Connect", [
+            { no: 1, name: "log_time", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 2, name: "game_number", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
+        ]);
+    }
+    create(value?: PartialMessage<PB_MessageToServer_Game_Connect>): PB_MessageToServer_Game_Connect {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.logTime = 0;
+        message.gameNumber = 0;
+        if (value !== undefined)
+            reflectionMergePartial<PB_MessageToServer_Game_Connect>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PB_MessageToServer_Game_Connect): PB_MessageToServer_Game_Connect {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* int32 log_time */ 1:
+                    message.logTime = reader.int32();
+                    break;
+                case /* int32 game_number */ 2:
+                    message.gameNumber = reader.int32();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: PB_MessageToServer_Game_Connect, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int32 log_time = 1; */
+        if (message.logTime !== 0)
+            writer.tag(1, WireType.Varint).int32(message.logTime);
+        /* int32 game_number = 2; */
+        if (message.gameNumber !== 0)
+            writer.tag(2, WireType.Varint).int32(message.gameNumber);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message PB.MessageToServer.Game.Connect
+ */
+export const PB_MessageToServer_Game_Connect = new PB_MessageToServer_Game_Connect$Type();
+// @generated message type with reflection information, may provide speed optimized methods
 class PB_MessageToClient$Type extends MessageType<PB_MessageToClient> {
     constructor() {
         super("PB.MessageToClient", [
             { no: 15, name: "initial", kind: "message", T: () => PB_MessageToClient_Initial },
             { no: 1, name: "login_logout", kind: "message", T: () => PB_MessageToClient_LoginLogout },
-            { no: 2, name: "lobby", kind: "message", T: () => PB_MessageToClient_Lobby }
+            { no: 2, name: "lobby", kind: "message", T: () => PB_MessageToClient_Lobby },
+            { no: 3, name: "game", kind: "message", T: () => PB_MessageToClient_Game }
         ]);
     }
     create(value?: PartialMessage<PB_MessageToClient>): PB_MessageToClient {
@@ -3001,6 +3553,9 @@ class PB_MessageToClient$Type extends MessageType<PB_MessageToClient> {
                 case /* PB.MessageToClient.Lobby lobby */ 2:
                     message.lobby = PB_MessageToClient_Lobby.internalBinaryRead(reader, reader.uint32(), options, message.lobby);
                     break;
+                case /* PB.MessageToClient.Game game */ 3:
+                    message.game = PB_MessageToClient_Game.internalBinaryRead(reader, reader.uint32(), options, message.game);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -3022,6 +3577,9 @@ class PB_MessageToClient$Type extends MessageType<PB_MessageToClient> {
         /* PB.MessageToClient.Lobby lobby = 2; */
         if (message.lobby)
             PB_MessageToClient_Lobby.internalBinaryWrite(message.lobby, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* PB.MessageToClient.Game game = 3; */
+        if (message.game)
+            PB_MessageToClient_Game.internalBinaryWrite(message.game, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -3290,7 +3848,9 @@ class PB_MessageToClient_Lobby_LastStateCheckpoint_Game$Type extends MessageType
             { no: 2, name: "game_display_number", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
             { no: 3, name: "game_mode", kind: "enum", T: () => ["PB.GameMode", PB_GameMode] },
             { no: 4, name: "host_user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 5, name: "user_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ }
+            { no: 5, name: "user_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ },
+            { no: 6, name: "game_board_changes", kind: "message", T: () => PB_GameBoardChanges },
+            { no: 7, name: "is_completed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<PB_MessageToClient_Lobby_LastStateCheckpoint_Game>): PB_MessageToClient_Lobby_LastStateCheckpoint_Game {
@@ -3300,6 +3860,7 @@ class PB_MessageToClient_Lobby_LastStateCheckpoint_Game$Type extends MessageType
         message.gameMode = 0;
         message.hostUserId = 0;
         message.userIds = [];
+        message.isCompleted = false;
         if (value !== undefined)
             reflectionMergePartial<PB_MessageToClient_Lobby_LastStateCheckpoint_Game>(this, message, value);
         return message;
@@ -3327,6 +3888,12 @@ class PB_MessageToClient_Lobby_LastStateCheckpoint_Game$Type extends MessageType
                             message.userIds.push(reader.int32());
                     else
                         message.userIds.push(reader.int32());
+                    break;
+                case /* PB.GameBoardChanges game_board_changes */ 6:
+                    message.gameBoardChanges = PB_GameBoardChanges.internalBinaryRead(reader, reader.uint32(), options, message.gameBoardChanges);
+                    break;
+                case /* bool is_completed */ 7:
+                    message.isCompleted = reader.bool();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -3359,6 +3926,12 @@ class PB_MessageToClient_Lobby_LastStateCheckpoint_Game$Type extends MessageType
                 writer.int32(message.userIds[i]);
             writer.join();
         }
+        /* PB.GameBoardChanges game_board_changes = 6; */
+        if (message.gameBoardChanges)
+            PB_GameBoardChanges.internalBinaryWrite(message.gameBoardChanges, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
+        /* bool is_completed = 7; */
+        if (message.isCompleted !== false)
+            writer.tag(7, WireType.Varint).bool(message.isCompleted);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -3375,7 +3948,8 @@ class PB_MessageToClient_Lobby_LastStateCheckpoint_User$Type extends MessageType
         super("PB.MessageToClient.Lobby.LastStateCheckpoint.User", [
             { no: 1, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
             { no: 2, name: "username", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 3, name: "is_in_lobby", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+            { no: 3, name: "is_in_lobby", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 4, name: "game_display_numbers_where_present", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ }
         ]);
     }
     create(value?: PartialMessage<PB_MessageToClient_Lobby_LastStateCheckpoint_User>): PB_MessageToClient_Lobby_LastStateCheckpoint_User {
@@ -3383,6 +3957,7 @@ class PB_MessageToClient_Lobby_LastStateCheckpoint_User$Type extends MessageType
         message.userId = 0;
         message.username = "";
         message.isInLobby = false;
+        message.gameDisplayNumbersWherePresent = [];
         if (value !== undefined)
             reflectionMergePartial<PB_MessageToClient_Lobby_LastStateCheckpoint_User>(this, message, value);
         return message;
@@ -3400,6 +3975,13 @@ class PB_MessageToClient_Lobby_LastStateCheckpoint_User$Type extends MessageType
                     break;
                 case /* bool is_in_lobby */ 3:
                     message.isInLobby = reader.bool();
+                    break;
+                case /* repeated int32 game_display_numbers_where_present */ 4:
+                    if (wireType === WireType.LengthDelimited)
+                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
+                            message.gameDisplayNumbersWherePresent.push(reader.int32());
+                    else
+                        message.gameDisplayNumbersWherePresent.push(reader.int32());
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -3422,6 +4004,13 @@ class PB_MessageToClient_Lobby_LastStateCheckpoint_User$Type extends MessageType
         /* bool is_in_lobby = 3; */
         if (message.isInLobby !== false)
             writer.tag(3, WireType.Varint).bool(message.isInLobby);
+        /* repeated int32 game_display_numbers_where_present = 4; */
+        if (message.gameDisplayNumbersWherePresent.length) {
+            writer.tag(4, WireType.LengthDelimited).fork();
+            for (let i = 0; i < message.gameDisplayNumbersWherePresent.length; i++)
+                writer.int32(message.gameDisplayNumbersWherePresent[i]);
+            writer.join();
+        }
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -3437,8 +4026,14 @@ class PB_MessageToClient_Lobby_Event$Type extends MessageType<PB_MessageToClient
     constructor() {
         super("PB.MessageToClient.Lobby.Event", [
             { no: 1, name: "game_created", kind: "message", T: () => PB_MessageToClient_Lobby_Event_GameCreated },
+            { no: 2, name: "game_setup_change", kind: "message", T: () => PB_MessageToClient_Lobby_Event_GameSetupChange },
+            { no: 3, name: "game_board_changes", kind: "message", T: () => PB_MessageToClient_Lobby_Event_GameBoardChanges },
+            { no: 4, name: "game_completed", kind: "message", T: () => PB_MessageToClient_Lobby_Event_GameCompleted },
+            { no: 5, name: "game_removed_from_lobby", kind: "message", T: () => PB_MessageToClient_Lobby_Event_GameRemovedFromLobby },
             { no: 6, name: "add_user_to_lobby", kind: "message", T: () => PB_MessageToClient_Lobby_Event_AddUserToLobby },
-            { no: 7, name: "remove_user_from_lobby", kind: "message", T: () => PB_MessageToClient_Lobby_Event_RemoveUserFromLobby }
+            { no: 7, name: "remove_user_from_lobby", kind: "message", T: () => PB_MessageToClient_Lobby_Event_RemoveUserFromLobby },
+            { no: 8, name: "add_user_to_game_room", kind: "message", T: () => PB_MessageToClient_Lobby_Event_AddUserToGameRoom },
+            { no: 9, name: "remove_user_from_game_room", kind: "message", T: () => PB_MessageToClient_Lobby_Event_RemoveUserFromGameRoom }
         ]);
     }
     create(value?: PartialMessage<PB_MessageToClient_Lobby_Event>): PB_MessageToClient_Lobby_Event {
@@ -3455,11 +4050,29 @@ class PB_MessageToClient_Lobby_Event$Type extends MessageType<PB_MessageToClient
                 case /* PB.MessageToClient.Lobby.Event.GameCreated game_created */ 1:
                     message.gameCreated = PB_MessageToClient_Lobby_Event_GameCreated.internalBinaryRead(reader, reader.uint32(), options, message.gameCreated);
                     break;
+                case /* PB.MessageToClient.Lobby.Event.GameSetupChange game_setup_change */ 2:
+                    message.gameSetupChange = PB_MessageToClient_Lobby_Event_GameSetupChange.internalBinaryRead(reader, reader.uint32(), options, message.gameSetupChange);
+                    break;
+                case /* PB.MessageToClient.Lobby.Event.GameBoardChanges game_board_changes */ 3:
+                    message.gameBoardChanges = PB_MessageToClient_Lobby_Event_GameBoardChanges.internalBinaryRead(reader, reader.uint32(), options, message.gameBoardChanges);
+                    break;
+                case /* PB.MessageToClient.Lobby.Event.GameCompleted game_completed */ 4:
+                    message.gameCompleted = PB_MessageToClient_Lobby_Event_GameCompleted.internalBinaryRead(reader, reader.uint32(), options, message.gameCompleted);
+                    break;
+                case /* PB.MessageToClient.Lobby.Event.GameRemovedFromLobby game_removed_from_lobby */ 5:
+                    message.gameRemovedFromLobby = PB_MessageToClient_Lobby_Event_GameRemovedFromLobby.internalBinaryRead(reader, reader.uint32(), options, message.gameRemovedFromLobby);
+                    break;
                 case /* PB.MessageToClient.Lobby.Event.AddUserToLobby add_user_to_lobby */ 6:
                     message.addUserToLobby = PB_MessageToClient_Lobby_Event_AddUserToLobby.internalBinaryRead(reader, reader.uint32(), options, message.addUserToLobby);
                     break;
                 case /* PB.MessageToClient.Lobby.Event.RemoveUserFromLobby remove_user_from_lobby */ 7:
                     message.removeUserFromLobby = PB_MessageToClient_Lobby_Event_RemoveUserFromLobby.internalBinaryRead(reader, reader.uint32(), options, message.removeUserFromLobby);
+                    break;
+                case /* PB.MessageToClient.Lobby.Event.AddUserToGameRoom add_user_to_game_room */ 8:
+                    message.addUserToGameRoom = PB_MessageToClient_Lobby_Event_AddUserToGameRoom.internalBinaryRead(reader, reader.uint32(), options, message.addUserToGameRoom);
+                    break;
+                case /* PB.MessageToClient.Lobby.Event.RemoveUserFromGameRoom remove_user_from_game_room */ 9:
+                    message.removeUserFromGameRoom = PB_MessageToClient_Lobby_Event_RemoveUserFromGameRoom.internalBinaryRead(reader, reader.uint32(), options, message.removeUserFromGameRoom);
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -3476,12 +4089,30 @@ class PB_MessageToClient_Lobby_Event$Type extends MessageType<PB_MessageToClient
         /* PB.MessageToClient.Lobby.Event.GameCreated game_created = 1; */
         if (message.gameCreated)
             PB_MessageToClient_Lobby_Event_GameCreated.internalBinaryWrite(message.gameCreated, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* PB.MessageToClient.Lobby.Event.GameSetupChange game_setup_change = 2; */
+        if (message.gameSetupChange)
+            PB_MessageToClient_Lobby_Event_GameSetupChange.internalBinaryWrite(message.gameSetupChange, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* PB.MessageToClient.Lobby.Event.GameBoardChanges game_board_changes = 3; */
+        if (message.gameBoardChanges)
+            PB_MessageToClient_Lobby_Event_GameBoardChanges.internalBinaryWrite(message.gameBoardChanges, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* PB.MessageToClient.Lobby.Event.GameCompleted game_completed = 4; */
+        if (message.gameCompleted)
+            PB_MessageToClient_Lobby_Event_GameCompleted.internalBinaryWrite(message.gameCompleted, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* PB.MessageToClient.Lobby.Event.GameRemovedFromLobby game_removed_from_lobby = 5; */
+        if (message.gameRemovedFromLobby)
+            PB_MessageToClient_Lobby_Event_GameRemovedFromLobby.internalBinaryWrite(message.gameRemovedFromLobby, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
         /* PB.MessageToClient.Lobby.Event.AddUserToLobby add_user_to_lobby = 6; */
         if (message.addUserToLobby)
             PB_MessageToClient_Lobby_Event_AddUserToLobby.internalBinaryWrite(message.addUserToLobby, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
         /* PB.MessageToClient.Lobby.Event.RemoveUserFromLobby remove_user_from_lobby = 7; */
         if (message.removeUserFromLobby)
             PB_MessageToClient_Lobby_Event_RemoveUserFromLobby.internalBinaryWrite(message.removeUserFromLobby, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
+        /* PB.MessageToClient.Lobby.Event.AddUserToGameRoom add_user_to_game_room = 8; */
+        if (message.addUserToGameRoom)
+            PB_MessageToClient_Lobby_Event_AddUserToGameRoom.internalBinaryWrite(message.addUserToGameRoom, writer.tag(8, WireType.LengthDelimited).fork(), options).join();
+        /* PB.MessageToClient.Lobby.Event.RemoveUserFromGameRoom remove_user_from_game_room = 9; */
+        if (message.removeUserFromGameRoom)
+            PB_MessageToClient_Lobby_Event_RemoveUserFromGameRoom.internalBinaryWrite(message.removeUserFromGameRoom, writer.tag(9, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -3563,6 +4194,208 @@ class PB_MessageToClient_Lobby_Event_GameCreated$Type extends MessageType<PB_Mes
  * @generated MessageType for protobuf message PB.MessageToClient.Lobby.Event.GameCreated
  */
 export const PB_MessageToClient_Lobby_Event_GameCreated = new PB_MessageToClient_Lobby_Event_GameCreated$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class PB_MessageToClient_Lobby_Event_GameSetupChange$Type extends MessageType<PB_MessageToClient_Lobby_Event_GameSetupChange> {
+    constructor() {
+        super("PB.MessageToClient.Lobby.Event.GameSetupChange", [
+            { no: 1, name: "game_display_number", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 2, name: "game_setup_change", kind: "message", T: () => PB_GameSetupChange }
+        ]);
+    }
+    create(value?: PartialMessage<PB_MessageToClient_Lobby_Event_GameSetupChange>): PB_MessageToClient_Lobby_Event_GameSetupChange {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.gameDisplayNumber = 0;
+        if (value !== undefined)
+            reflectionMergePartial<PB_MessageToClient_Lobby_Event_GameSetupChange>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PB_MessageToClient_Lobby_Event_GameSetupChange): PB_MessageToClient_Lobby_Event_GameSetupChange {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* int32 game_display_number */ 1:
+                    message.gameDisplayNumber = reader.int32();
+                    break;
+                case /* PB.GameSetupChange game_setup_change */ 2:
+                    message.gameSetupChange = PB_GameSetupChange.internalBinaryRead(reader, reader.uint32(), options, message.gameSetupChange);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: PB_MessageToClient_Lobby_Event_GameSetupChange, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int32 game_display_number = 1; */
+        if (message.gameDisplayNumber !== 0)
+            writer.tag(1, WireType.Varint).int32(message.gameDisplayNumber);
+        /* PB.GameSetupChange game_setup_change = 2; */
+        if (message.gameSetupChange)
+            PB_GameSetupChange.internalBinaryWrite(message.gameSetupChange, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message PB.MessageToClient.Lobby.Event.GameSetupChange
+ */
+export const PB_MessageToClient_Lobby_Event_GameSetupChange = new PB_MessageToClient_Lobby_Event_GameSetupChange$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class PB_MessageToClient_Lobby_Event_GameBoardChanges$Type extends MessageType<PB_MessageToClient_Lobby_Event_GameBoardChanges> {
+    constructor() {
+        super("PB.MessageToClient.Lobby.Event.GameBoardChanges", [
+            { no: 1, name: "game_display_number", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 2, name: "game_board_changes", kind: "message", T: () => PB_MessageToClient_Lobby_Event_GameBoardChanges }
+        ]);
+    }
+    create(value?: PartialMessage<PB_MessageToClient_Lobby_Event_GameBoardChanges>): PB_MessageToClient_Lobby_Event_GameBoardChanges {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.gameDisplayNumber = 0;
+        if (value !== undefined)
+            reflectionMergePartial<PB_MessageToClient_Lobby_Event_GameBoardChanges>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PB_MessageToClient_Lobby_Event_GameBoardChanges): PB_MessageToClient_Lobby_Event_GameBoardChanges {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* int32 game_display_number */ 1:
+                    message.gameDisplayNumber = reader.int32();
+                    break;
+                case /* PB.MessageToClient.Lobby.Event.GameBoardChanges game_board_changes */ 2:
+                    message.gameBoardChanges = PB_MessageToClient_Lobby_Event_GameBoardChanges.internalBinaryRead(reader, reader.uint32(), options, message.gameBoardChanges);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: PB_MessageToClient_Lobby_Event_GameBoardChanges, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int32 game_display_number = 1; */
+        if (message.gameDisplayNumber !== 0)
+            writer.tag(1, WireType.Varint).int32(message.gameDisplayNumber);
+        /* PB.MessageToClient.Lobby.Event.GameBoardChanges game_board_changes = 2; */
+        if (message.gameBoardChanges)
+            PB_MessageToClient_Lobby_Event_GameBoardChanges.internalBinaryWrite(message.gameBoardChanges, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message PB.MessageToClient.Lobby.Event.GameBoardChanges
+ */
+export const PB_MessageToClient_Lobby_Event_GameBoardChanges = new PB_MessageToClient_Lobby_Event_GameBoardChanges$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class PB_MessageToClient_Lobby_Event_GameCompleted$Type extends MessageType<PB_MessageToClient_Lobby_Event_GameCompleted> {
+    constructor() {
+        super("PB.MessageToClient.Lobby.Event.GameCompleted", [
+            { no: 1, name: "game_display_number", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
+        ]);
+    }
+    create(value?: PartialMessage<PB_MessageToClient_Lobby_Event_GameCompleted>): PB_MessageToClient_Lobby_Event_GameCompleted {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.gameDisplayNumber = 0;
+        if (value !== undefined)
+            reflectionMergePartial<PB_MessageToClient_Lobby_Event_GameCompleted>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PB_MessageToClient_Lobby_Event_GameCompleted): PB_MessageToClient_Lobby_Event_GameCompleted {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* int32 game_display_number */ 1:
+                    message.gameDisplayNumber = reader.int32();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: PB_MessageToClient_Lobby_Event_GameCompleted, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int32 game_display_number = 1; */
+        if (message.gameDisplayNumber !== 0)
+            writer.tag(1, WireType.Varint).int32(message.gameDisplayNumber);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message PB.MessageToClient.Lobby.Event.GameCompleted
+ */
+export const PB_MessageToClient_Lobby_Event_GameCompleted = new PB_MessageToClient_Lobby_Event_GameCompleted$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class PB_MessageToClient_Lobby_Event_GameRemovedFromLobby$Type extends MessageType<PB_MessageToClient_Lobby_Event_GameRemovedFromLobby> {
+    constructor() {
+        super("PB.MessageToClient.Lobby.Event.GameRemovedFromLobby", [
+            { no: 1, name: "game_display_number", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
+        ]);
+    }
+    create(value?: PartialMessage<PB_MessageToClient_Lobby_Event_GameRemovedFromLobby>): PB_MessageToClient_Lobby_Event_GameRemovedFromLobby {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.gameDisplayNumber = 0;
+        if (value !== undefined)
+            reflectionMergePartial<PB_MessageToClient_Lobby_Event_GameRemovedFromLobby>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PB_MessageToClient_Lobby_Event_GameRemovedFromLobby): PB_MessageToClient_Lobby_Event_GameRemovedFromLobby {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* int32 game_display_number */ 1:
+                    message.gameDisplayNumber = reader.int32();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: PB_MessageToClient_Lobby_Event_GameRemovedFromLobby, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int32 game_display_number = 1; */
+        if (message.gameDisplayNumber !== 0)
+            writer.tag(1, WireType.Varint).int32(message.gameDisplayNumber);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message PB.MessageToClient.Lobby.Event.GameRemovedFromLobby
+ */
+export const PB_MessageToClient_Lobby_Event_GameRemovedFromLobby = new PB_MessageToClient_Lobby_Event_GameRemovedFromLobby$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class PB_MessageToClient_Lobby_Event_AddUserToLobby$Type extends MessageType<PB_MessageToClient_Lobby_Event_AddUserToLobby> {
     constructor() {
@@ -3666,6 +4499,124 @@ class PB_MessageToClient_Lobby_Event_RemoveUserFromLobby$Type extends MessageTyp
  */
 export const PB_MessageToClient_Lobby_Event_RemoveUserFromLobby = new PB_MessageToClient_Lobby_Event_RemoveUserFromLobby$Type();
 // @generated message type with reflection information, may provide speed optimized methods
+class PB_MessageToClient_Lobby_Event_AddUserToGameRoom$Type extends MessageType<PB_MessageToClient_Lobby_Event_AddUserToGameRoom> {
+    constructor() {
+        super("PB.MessageToClient.Lobby.Event.AddUserToGameRoom", [
+            { no: 1, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 2, name: "game_display_number", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 3, name: "username", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+        ]);
+    }
+    create(value?: PartialMessage<PB_MessageToClient_Lobby_Event_AddUserToGameRoom>): PB_MessageToClient_Lobby_Event_AddUserToGameRoom {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.userId = 0;
+        message.gameDisplayNumber = 0;
+        message.username = "";
+        if (value !== undefined)
+            reflectionMergePartial<PB_MessageToClient_Lobby_Event_AddUserToGameRoom>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PB_MessageToClient_Lobby_Event_AddUserToGameRoom): PB_MessageToClient_Lobby_Event_AddUserToGameRoom {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* int32 user_id */ 1:
+                    message.userId = reader.int32();
+                    break;
+                case /* int32 game_display_number */ 2:
+                    message.gameDisplayNumber = reader.int32();
+                    break;
+                case /* string username */ 3:
+                    message.username = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: PB_MessageToClient_Lobby_Event_AddUserToGameRoom, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int32 user_id = 1; */
+        if (message.userId !== 0)
+            writer.tag(1, WireType.Varint).int32(message.userId);
+        /* int32 game_display_number = 2; */
+        if (message.gameDisplayNumber !== 0)
+            writer.tag(2, WireType.Varint).int32(message.gameDisplayNumber);
+        /* string username = 3; */
+        if (message.username !== "")
+            writer.tag(3, WireType.LengthDelimited).string(message.username);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message PB.MessageToClient.Lobby.Event.AddUserToGameRoom
+ */
+export const PB_MessageToClient_Lobby_Event_AddUserToGameRoom = new PB_MessageToClient_Lobby_Event_AddUserToGameRoom$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class PB_MessageToClient_Lobby_Event_RemoveUserFromGameRoom$Type extends MessageType<PB_MessageToClient_Lobby_Event_RemoveUserFromGameRoom> {
+    constructor() {
+        super("PB.MessageToClient.Lobby.Event.RemoveUserFromGameRoom", [
+            { no: 1, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 2, name: "game_display_number", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
+        ]);
+    }
+    create(value?: PartialMessage<PB_MessageToClient_Lobby_Event_RemoveUserFromGameRoom>): PB_MessageToClient_Lobby_Event_RemoveUserFromGameRoom {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.userId = 0;
+        message.gameDisplayNumber = 0;
+        if (value !== undefined)
+            reflectionMergePartial<PB_MessageToClient_Lobby_Event_RemoveUserFromGameRoom>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PB_MessageToClient_Lobby_Event_RemoveUserFromGameRoom): PB_MessageToClient_Lobby_Event_RemoveUserFromGameRoom {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* int32 user_id */ 1:
+                    message.userId = reader.int32();
+                    break;
+                case /* int32 game_display_number */ 2:
+                    message.gameDisplayNumber = reader.int32();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: PB_MessageToClient_Lobby_Event_RemoveUserFromGameRoom, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int32 user_id = 1; */
+        if (message.userId !== 0)
+            writer.tag(1, WireType.Varint).int32(message.userId);
+        /* int32 game_display_number = 2; */
+        if (message.gameDisplayNumber !== 0)
+            writer.tag(2, WireType.Varint).int32(message.gameDisplayNumber);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message PB.MessageToClient.Lobby.Event.RemoveUserFromGameRoom
+ */
+export const PB_MessageToClient_Lobby_Event_RemoveUserFromGameRoom = new PB_MessageToClient_Lobby_Event_RemoveUserFromGameRoom$Type();
+// @generated message type with reflection information, may provide speed optimized methods
 class PB_MessageToClient_Lobby_CreateGameResponse$Type extends MessageType<PB_MessageToClient_Lobby_CreateGameResponse> {
     constructor() {
         super("PB.MessageToClient.Lobby.CreateGameResponse", [
@@ -3712,6 +4663,272 @@ class PB_MessageToClient_Lobby_CreateGameResponse$Type extends MessageType<PB_Me
  * @generated MessageType for protobuf message PB.MessageToClient.Lobby.CreateGameResponse
  */
 export const PB_MessageToClient_Lobby_CreateGameResponse = new PB_MessageToClient_Lobby_CreateGameResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class PB_MessageToClient_Game$Type extends MessageType<PB_MessageToClient_Game> {
+    constructor() {
+        super("PB.MessageToClient.Game", [
+            { no: 1, name: "game_setup", kind: "message", T: () => PB_MessageToClient_Game_GameSetup },
+            { no: 2, name: "game_review", kind: "message", T: () => PB_GameReview },
+            { no: 3, name: "game_setup_change", kind: "message", T: () => PB_GameSetupChange },
+            { no: 4, name: "game_states", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => PB_GameState },
+            { no: 5, name: "user_ids_and_usernames", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => PB_MessageToClient_Game_UserIDAndUsername },
+            { no: 6, name: "user_id_who_entered_game_room", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 7, name: "user_id_who_exited_game_room", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 8, name: "tile_bag", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ }
+        ]);
+    }
+    create(value?: PartialMessage<PB_MessageToClient_Game>): PB_MessageToClient_Game {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.gameStates = [];
+        message.userIdsAndUsernames = [];
+        message.userIdWhoEnteredGameRoom = 0;
+        message.userIdWhoExitedGameRoom = 0;
+        message.tileBag = [];
+        if (value !== undefined)
+            reflectionMergePartial<PB_MessageToClient_Game>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PB_MessageToClient_Game): PB_MessageToClient_Game {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* PB.MessageToClient.Game.GameSetup game_setup */ 1:
+                    message.gameSetup = PB_MessageToClient_Game_GameSetup.internalBinaryRead(reader, reader.uint32(), options, message.gameSetup);
+                    break;
+                case /* PB.GameReview game_review */ 2:
+                    message.gameReview = PB_GameReview.internalBinaryRead(reader, reader.uint32(), options, message.gameReview);
+                    break;
+                case /* PB.GameSetupChange game_setup_change */ 3:
+                    message.gameSetupChange = PB_GameSetupChange.internalBinaryRead(reader, reader.uint32(), options, message.gameSetupChange);
+                    break;
+                case /* repeated PB.GameState game_states */ 4:
+                    message.gameStates.push(PB_GameState.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                case /* repeated PB.MessageToClient.Game.UserIDAndUsername user_ids_and_usernames */ 5:
+                    message.userIdsAndUsernames.push(PB_MessageToClient_Game_UserIDAndUsername.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                case /* int32 user_id_who_entered_game_room */ 6:
+                    message.userIdWhoEnteredGameRoom = reader.int32();
+                    break;
+                case /* int32 user_id_who_exited_game_room */ 7:
+                    message.userIdWhoExitedGameRoom = reader.int32();
+                    break;
+                case /* repeated int32 tile_bag */ 8:
+                    if (wireType === WireType.LengthDelimited)
+                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
+                            message.tileBag.push(reader.int32());
+                    else
+                        message.tileBag.push(reader.int32());
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: PB_MessageToClient_Game, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* PB.MessageToClient.Game.GameSetup game_setup = 1; */
+        if (message.gameSetup)
+            PB_MessageToClient_Game_GameSetup.internalBinaryWrite(message.gameSetup, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* PB.GameReview game_review = 2; */
+        if (message.gameReview)
+            PB_GameReview.internalBinaryWrite(message.gameReview, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* PB.GameSetupChange game_setup_change = 3; */
+        if (message.gameSetupChange)
+            PB_GameSetupChange.internalBinaryWrite(message.gameSetupChange, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* repeated PB.GameState game_states = 4; */
+        for (let i = 0; i < message.gameStates.length; i++)
+            PB_GameState.internalBinaryWrite(message.gameStates[i], writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* repeated PB.MessageToClient.Game.UserIDAndUsername user_ids_and_usernames = 5; */
+        for (let i = 0; i < message.userIdsAndUsernames.length; i++)
+            PB_MessageToClient_Game_UserIDAndUsername.internalBinaryWrite(message.userIdsAndUsernames[i], writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        /* int32 user_id_who_entered_game_room = 6; */
+        if (message.userIdWhoEnteredGameRoom !== 0)
+            writer.tag(6, WireType.Varint).int32(message.userIdWhoEnteredGameRoom);
+        /* int32 user_id_who_exited_game_room = 7; */
+        if (message.userIdWhoExitedGameRoom !== 0)
+            writer.tag(7, WireType.Varint).int32(message.userIdWhoExitedGameRoom);
+        /* repeated int32 tile_bag = 8; */
+        if (message.tileBag.length) {
+            writer.tag(8, WireType.LengthDelimited).fork();
+            for (let i = 0; i < message.tileBag.length; i++)
+                writer.int32(message.tileBag[i]);
+            writer.join();
+        }
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message PB.MessageToClient.Game
+ */
+export const PB_MessageToClient_Game = new PB_MessageToClient_Game$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class PB_MessageToClient_Game_GameSetup$Type extends MessageType<PB_MessageToClient_Game_GameSetup> {
+    constructor() {
+        super("PB.MessageToClient.Game.GameSetup", [
+            { no: 1, name: "game_mode", kind: "enum", T: () => ["PB.GameMode", PB_GameMode] },
+            { no: 2, name: "player_arrangement_mode", kind: "enum", T: () => ["PB.PlayerArrangementMode", PB_PlayerArrangementMode] },
+            { no: 3, name: "host_user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 4, name: "user_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ },
+            { no: 5, name: "approvals", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 8 /*ScalarType.BOOL*/ },
+            { no: 6, name: "number_of_game_setup_changes", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
+        ]);
+    }
+    create(value?: PartialMessage<PB_MessageToClient_Game_GameSetup>): PB_MessageToClient_Game_GameSetup {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.gameMode = 0;
+        message.playerArrangementMode = 0;
+        message.hostUserId = 0;
+        message.userIds = [];
+        message.approvals = [];
+        message.numberOfGameSetupChanges = 0;
+        if (value !== undefined)
+            reflectionMergePartial<PB_MessageToClient_Game_GameSetup>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PB_MessageToClient_Game_GameSetup): PB_MessageToClient_Game_GameSetup {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* PB.GameMode game_mode */ 1:
+                    message.gameMode = reader.int32();
+                    break;
+                case /* PB.PlayerArrangementMode player_arrangement_mode */ 2:
+                    message.playerArrangementMode = reader.int32();
+                    break;
+                case /* int32 host_user_id */ 3:
+                    message.hostUserId = reader.int32();
+                    break;
+                case /* repeated int32 user_ids */ 4:
+                    if (wireType === WireType.LengthDelimited)
+                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
+                            message.userIds.push(reader.int32());
+                    else
+                        message.userIds.push(reader.int32());
+                    break;
+                case /* repeated bool approvals */ 5:
+                    if (wireType === WireType.LengthDelimited)
+                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
+                            message.approvals.push(reader.bool());
+                    else
+                        message.approvals.push(reader.bool());
+                    break;
+                case /* int32 number_of_game_setup_changes */ 6:
+                    message.numberOfGameSetupChanges = reader.int32();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: PB_MessageToClient_Game_GameSetup, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* PB.GameMode game_mode = 1; */
+        if (message.gameMode !== 0)
+            writer.tag(1, WireType.Varint).int32(message.gameMode);
+        /* PB.PlayerArrangementMode player_arrangement_mode = 2; */
+        if (message.playerArrangementMode !== 0)
+            writer.tag(2, WireType.Varint).int32(message.playerArrangementMode);
+        /* int32 host_user_id = 3; */
+        if (message.hostUserId !== 0)
+            writer.tag(3, WireType.Varint).int32(message.hostUserId);
+        /* repeated int32 user_ids = 4; */
+        if (message.userIds.length) {
+            writer.tag(4, WireType.LengthDelimited).fork();
+            for (let i = 0; i < message.userIds.length; i++)
+                writer.int32(message.userIds[i]);
+            writer.join();
+        }
+        /* repeated bool approvals = 5; */
+        if (message.approvals.length) {
+            writer.tag(5, WireType.LengthDelimited).fork();
+            for (let i = 0; i < message.approvals.length; i++)
+                writer.bool(message.approvals[i]);
+            writer.join();
+        }
+        /* int32 number_of_game_setup_changes = 6; */
+        if (message.numberOfGameSetupChanges !== 0)
+            writer.tag(6, WireType.Varint).int32(message.numberOfGameSetupChanges);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message PB.MessageToClient.Game.GameSetup
+ */
+export const PB_MessageToClient_Game_GameSetup = new PB_MessageToClient_Game_GameSetup$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class PB_MessageToClient_Game_UserIDAndUsername$Type extends MessageType<PB_MessageToClient_Game_UserIDAndUsername> {
+    constructor() {
+        super("PB.MessageToClient.Game.UserIDAndUsername", [
+            { no: 1, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 2, name: "username", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+        ]);
+    }
+    create(value?: PartialMessage<PB_MessageToClient_Game_UserIDAndUsername>): PB_MessageToClient_Game_UserIDAndUsername {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.userId = 0;
+        message.username = "";
+        if (value !== undefined)
+            reflectionMergePartial<PB_MessageToClient_Game_UserIDAndUsername>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PB_MessageToClient_Game_UserIDAndUsername): PB_MessageToClient_Game_UserIDAndUsername {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* int32 user_id */ 1:
+                    message.userId = reader.int32();
+                    break;
+                case /* string username */ 2:
+                    message.username = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: PB_MessageToClient_Game_UserIDAndUsername, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int32 user_id = 1; */
+        if (message.userId !== 0)
+            writer.tag(1, WireType.Varint).int32(message.userId);
+        /* string username = 2; */
+        if (message.username !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.username);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message PB.MessageToClient.Game.UserIDAndUsername
+ */
+export const PB_MessageToClient_Game_UserIDAndUsername = new PB_MessageToClient_Game_UserIDAndUsername$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class PB_GameReview$Type extends MessageType<PB_GameReview> {
     constructor() {

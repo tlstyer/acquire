@@ -189,6 +189,18 @@ message PB {
     GameOver game_over = 8;
   }
 
+  message GameBoardChanges {
+    repeated int32 luxor_tiles = 1;
+    repeated int32 tower_tiles = 2;
+    repeated int32 american_tiles = 3;
+    repeated int32 festival_tiles = 4;
+    repeated int32 worldwide_tiles = 5;
+    repeated int32 continental_tiles = 6;
+    repeated int32 imperial_tiles = 7;
+    repeated int32 nothing_yet_tiles = 8;
+    repeated int32 cant_play_ever_tiles = 9;
+  }
+
   message MessageToServer {
     message LoginLogout {
       message LoginWithPassword {
@@ -228,8 +240,18 @@ message PB {
       CreateGame create_game = 2;
     }
 
+    message Game {
+      message Connect {
+        int32 log_time = 1;
+        int32 game_number = 2;
+      }
+
+      Connect connect = 1;
+    }
+
     LoginLogout login_logout = 1;
     Lobby lobby = 2;
+    Game game = 3;
   }
 
   message MessageToClient {
@@ -264,12 +286,15 @@ message PB {
           GameMode game_mode = 3;
           int32 host_user_id = 4;
           repeated int32 user_ids = 5;
+          GameBoardChanges game_board_changes = 6;
+          bool is_completed = 7;
         }
 
         message User {
           int32 user_id = 1;
           string username = 2;
           bool is_in_lobby = 3;
+          repeated int32 game_display_numbers_where_present = 4;
         }
 
         repeated Game games = 1;
@@ -285,6 +310,24 @@ message PB {
           int32 host_user_id = 4;
         }
 
+        message GameSetupChange {
+          int32 game_display_number = 1;
+          PB.GameSetupChange game_setup_change = 2;
+        }
+
+        message GameBoardChanges {
+          int32 game_display_number = 1;
+          GameBoardChanges game_board_changes = 2;
+        }
+
+        message GameCompleted {
+          int32 game_display_number = 1;
+        }
+
+        message GameRemovedFromLobby {
+          int32 game_display_number = 1;
+        }
+
         message AddUserToLobby {
           int32 user_id = 1;
           string username = 2;
@@ -294,9 +337,26 @@ message PB {
           int32 user_id = 1;
         }
 
+        message AddUserToGameRoom {
+          int32 user_id = 1;
+          int32 game_display_number = 2;
+          string username = 3;
+        }
+
+        message RemoveUserFromGameRoom {
+          int32 user_id = 1;
+          int32 game_display_number = 2;
+        }
+
         GameCreated game_created = 1;
+        GameSetupChange game_setup_change = 2;
+        GameBoardChanges game_board_changes = 3;
+        GameCompleted game_completed = 4;
+        GameRemovedFromLobby game_removed_from_lobby = 5;
         AddUserToLobby add_user_to_lobby = 6;
         RemoveUserFromLobby remove_user_from_lobby = 7;
+        AddUserToGameRoom add_user_to_game_room = 8;
+        RemoveUserFromGameRoom remove_user_from_game_room = 9;
       }
 
       message CreateGameResponse {
@@ -308,9 +368,35 @@ message PB {
       CreateGameResponse create_game_response = 3;
     }
 
+    message Game {
+      message GameSetup {
+        GameMode game_mode = 1;
+        PlayerArrangementMode player_arrangement_mode = 2;
+        int32 host_user_id = 3;
+        repeated int32 user_ids = 4;
+        repeated bool approvals = 5;
+        int32 number_of_game_setup_changes = 6;
+      }
+
+      message UserIDAndUsername {
+        int32 user_id = 1;
+        string username = 2;
+      }
+
+      GameSetup game_setup = 1;
+      GameReview game_review = 2;
+      GameSetupChange game_setup_change = 3;
+      repeated GameState game_states = 4;
+      repeated UserIDAndUsername user_ids_and_usernames = 5;
+      int32 user_id_who_entered_game_room = 6;
+      int32 user_id_who_exited_game_room = 7;
+      repeated int32 tile_bag = 8;
+    }
+
     Initial initial = 15;
     LoginLogout login_logout = 1;
     Lobby lobby = 2;
+    Game game = 3;
   }
 
   message GameReview {

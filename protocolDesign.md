@@ -83,6 +83,7 @@ Send Chat Message:
     - host user ID
     - user IDs
     - game board changes (if In Progress or Completed)
+    - completed
   - chat messages
     - user ID
     - message
@@ -190,18 +191,20 @@ Send chat message:
 
 One or more of:
 
-- metadata
+- log time (only in initial response to a Connect message)
+- game number (only in initial response to a Connect message)
+- metadata (only in initial response to a Connect message AND when game shown in lobby)
   - game mode
   - player arrangement mode
   - host user ID
   - user IDs
   - approvals (if Setting Up)
   - number of game setup changes (if Setting Up)
-- game setup change
-- array of game state history objects
+- game review data (only in initial response to a Connect message AND when game not shown in lobby)
+- game setup change (only in subsequent messages)
+- array of game state objects
 - array of chat messages and user IDs of senders
 - array of user IDs and usernames
-- user ID who entered game room
-- user ID who exited game room
+- user ID who entered game room (only in subsequent messages)
+- user ID who exited game room (only in subsequent messages)
 - tile bag (after game completed)
-- game review data (no other fields are sent if this is sent)

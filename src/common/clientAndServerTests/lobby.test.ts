@@ -200,7 +200,9 @@ test('users are added and removed', async () => {
     lobby: {
       lastStateCheckpoint: {
         games: [],
-        users: [{ userId: 4, username: 'user 4', isInLobby: true }],
+        users: [
+          { userId: 4, username: 'user 4', isInLobby: true, gameDisplayNumbersWherePresent: [] },
+        ],
         lastEventIndex: 5,
       },
       events: [],
