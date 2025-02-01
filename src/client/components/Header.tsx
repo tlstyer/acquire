@@ -23,6 +23,12 @@ export function Header(props: { client: Client }) {
         <a href="/">Acquire</a>
       </span>
 
+      <Show when={import.meta.env.VITE_INCLUDE_EXAMPLES_PAGE === 'yes'}>
+        <span>
+          <a href="/examples">Examples</a>
+        </span>
+      </Show>
+
       <span class={styles.middle} />
 
       <Show when={props.client.signals.username() !== ''}>

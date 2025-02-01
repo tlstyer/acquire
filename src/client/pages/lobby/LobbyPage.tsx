@@ -70,12 +70,6 @@ export function LobbyPage(props: { client: Client }) {
               </div>
             )}
           </For>
-          <h2>Links</h2>
-          <ul>
-            <li>
-              <a href="/examples">Examples</a>
-            </li>
-          </ul>
         </div>
       </div>
     </Show>

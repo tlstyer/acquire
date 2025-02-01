@@ -135,11 +135,14 @@ export function App() {
       path: '/game/:id',
       component: () => <GamePage client={client} />,
     },
-    {
+  ];
+
+  if (import.meta.env.VITE_INCLUDE_EXAMPLES_PAGE === 'yes') {
+    routes.push({
       path: '/examples',
       component: ExamplesPage,
-    },
-  ];
+    });
+  }
 
   return (
     <>
