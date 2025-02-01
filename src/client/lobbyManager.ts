@@ -48,7 +48,7 @@ export function createLobbyManager(clientCommunication: ClientCommunication) {
     return PB_MessageToServer.toBinary({
       lobby: {
         connect: {
-          lastEventIndex: lastEventIndex,
+          lastEventIndex,
         },
       },
     });

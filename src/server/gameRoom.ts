@@ -53,7 +53,7 @@ export class GameRoom extends Room {
     this.userIdToUsername.set(userId, username);
     this.userIdsAndUsernames.push(
       PB_MessageToClient_Game_UserIdAndUsername.create({
-        userId: userId,
+        userId,
         username,
       }),
     );

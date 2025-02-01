@@ -85,7 +85,7 @@ export class GameSetup {
         this.history.push(
           PB_GameSetupChange.create({
             userAdded: {
-              userId: userId,
+              userId,
             },
           }),
         );
@@ -118,7 +118,7 @@ export class GameSetup {
         this.history.push(
           PB_GameSetupChange.create({
             userRemoved: {
-              userId: userId,
+              userId,
             },
           }),
         );
@@ -144,7 +144,7 @@ export class GameSetup {
 
           const gameSetupChange = PB_GameSetupChange.create({
             userApprovedOfGameSetup: {
-              userId: userId,
+              userId,
             },
           });
 
@@ -322,7 +322,7 @@ export class GameSetup {
         this.history.push(
           PB_GameSetupChange.create({
             userKicked: {
-              userId: userId,
+              userId,
             },
           }),
         );

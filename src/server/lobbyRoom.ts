@@ -65,7 +65,7 @@ export class LobbyRoom extends Room {
     this.queueEvent(
       PB_MessageToClient_Lobby_Event.create({
         addUserToLobby: {
-          userId: userId,
+          userId,
           username: isKnownUser ? undefined : username,
         },
       }),
@@ -79,7 +79,7 @@ export class LobbyRoom extends Room {
     this.queueEvent(
       PB_MessageToClient_Lobby_Event.create({
         removeUserFromLobby: {
-          userId: userId,
+          userId,
         },
       }),
     );
@@ -176,7 +176,7 @@ export class LobbyRoom extends Room {
               userIdToUser.set(
                 userId,
                 PB_MessageToClient_Lobby_LastStateCheckpoint_User.create({
-                  userId: userId,
+                  userId,
                   username,
                 }),
               );
