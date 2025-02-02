@@ -39,3 +39,13 @@ test('game number of 0 is not found', async () => {
   expect(gameManager.signals.approvals()).toEqual([]);
   expect(gameManager.signals.hostUserId()).toBe(0);
 });
+
+test('client is disconnected from room upon trying to enter a game that is not found', async () => {
+  const { client, server } = createOneClientConnectedToOneServer();
+
+  client.connectToLobby();
+  expect(server.clientIdToClient.get(0)!.room !== undefined);
+
+  client.connectToGame(client.logTime, 0);
+  expect(server.clientIdToClient.get(0)!.room === undefined);
+});

@@ -45,6 +45,8 @@ export class GameRoomsManager {
       const gameRoom = this.gameNumberToGameRoom.get(message.gameNumber)!;
       gameRoom.onMessage_Connect(client, message);
     } else {
+      client.disconnectFromRoom();
+
       client.sendMessage(
         PB_MessageToClient.toBinary(
           PB_MessageToClient.create({
