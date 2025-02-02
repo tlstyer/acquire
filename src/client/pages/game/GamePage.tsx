@@ -1,10 +1,7 @@
 import { useParams } from '@solidjs/router';
 import { batch, createMemo, createSignal, Index, Match, onCleanup, Show, Switch } from 'solid-js';
-import { Game } from '../../../common/game';
 import { ActionGameOver } from '../../../common/gameActions/gameOver';
-import { GameState } from '../../../common/gameState';
 import { parseDecimalInteger } from '../../../common/helpers';
-import { PB_GameMode, PB_PlayerArrangementMode } from '../../../common/pb';
 import { type Client } from '../../client';
 import { GameBoard } from '../../components/GameBoard';
 import { GameHistory } from '../../components/GameHistory';
@@ -25,11 +22,9 @@ export function GamePage(props: { client: Client }) {
   // eslint-disable-next-line solid/reactivity
   const gameManager = props.client.connectToGame(logTime, gameNumber);
 
-  const [gameStateHistory, setGameStateHistory] = createSignal([dummyGameState]);
-
   const [selectedMoveIndex, setSelectedMoveIndex] = createSignal(0);
 
-  const gameState = createMemo(() => gameStateHistory()[selectedMoveIndex()]);
+  const gameState = createMemo(() => gameManager.signals.gameStateHistory()[selectedMoveIndex()]);
 
   const turnPlayerId = createMemo(() =>
     gameState().nextGameAction instanceof ActionGameOver ? -1 : gameState().turnPlayerId,
@@ -145,7 +140,7 @@ export function GamePage(props: { client: Client }) {
             <GameHistory
               ref={(ref) => processBrowserMyKeyboardEvents(keyboardShortcutsEnabled, ref)}
               usernames={gameManager.signals.usernamesWithoutNulls()}
-              gameStateHistory={gameStateHistory()}
+              gameStateHistory={gameManager.signals.gameStateHistory()}
               onMoveSelected={setSelectedMoveIndex}
             />
             <NextGameAction action={gameState().nextGameAction} />
@@ -155,15 +150,3 @@ export function GamePage(props: { client: Client }) {
     </div>
   );
 }
-
-const dummyGame = new Game(
-  PB_GameMode.SINGLES_1,
-  PB_PlayerArrangementMode.VERSION_1,
-  [],
-  [],
-  [],
-  0,
-  0,
-);
-
-const dummyGameState = new GameState(dummyGame, null);

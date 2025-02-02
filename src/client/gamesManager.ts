@@ -1,5 +1,7 @@
 import { batch, createSignal } from 'solid-js';
+import { Game } from '../common/game';
 import { GameSetup } from '../common/gameSetup';
+import { GameState } from '../common/gameState';
 import {
   PB_GameMode,
   type PB_MessageToClient_Game,
@@ -81,6 +83,8 @@ export function createGameManager(
   const [userIds, setUserIds] = createSignal<(number | null)[]>([]);
   const [approvals, setApprovals] = createSignal<boolean[]>([]);
   const [hostUserId, setHostUserId] = createSignal(0);
+
+  const [gameStateHistory, setGameStateHistory] = createSignal([dummyGameState]);
 
   function connect() {
     setStatus(GameManagerStatus.Connecting);
@@ -164,6 +168,7 @@ export function createGameManager(
       userIds,
       approvals,
       hostUserId,
+      gameStateHistory,
     },
   };
 }
@@ -175,3 +180,15 @@ export const enum GameManagerStatus {
   // Game,
   Review,
 }
+
+const dummyGame = new Game(
+  PB_GameMode.SINGLES_1,
+  PB_PlayerArrangementMode.VERSION_1,
+  [],
+  [],
+  [],
+  0,
+  0,
+);
+
+const dummyGameState = new GameState(dummyGame, null);
