@@ -5,7 +5,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "test": "vitest",
-    "lint": "eslint",
+    "lint": "eslint --fix",
     "format": "prettier --write .",
     "css": "tcm src/client/",
     "protobuf": "protoc --ts_out src/common --proto_path src/common src/common/pb.proto",
