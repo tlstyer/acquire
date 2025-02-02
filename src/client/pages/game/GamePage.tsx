@@ -1,15 +1,18 @@
 import { useParams } from '@solidjs/router';
-import { batch, createMemo, createSignal, Index, onCleanup, Show } from 'solid-js';
+import { batch, createMemo, createSignal, Index, Match, onCleanup, Show, Switch } from 'solid-js';
+import { Game } from '../../../common/game';
 import { ActionGameOver } from '../../../common/gameActions/gameOver';
+import { GameState } from '../../../common/gameState';
 import { parseDecimalInteger } from '../../../common/helpers';
+import { PB_GameMode, PB_PlayerArrangementMode } from '../../../common/pb';
 import { Client } from '../../client';
 import { GameBoard } from '../../components/GameBoard';
 import { GameHistory } from '../../components/GameHistory';
 import { NextGameAction } from '../../components/NextGameAction';
 import { ScoreBoard } from '../../components/ScoreBoard';
 import { TileRackReadOnly } from '../../components/TileRackReadOnly';
+import { GameManagerStatus } from '../../gamesManager';
 import { processBrowserMyKeyboardEvents } from '../../myKeyboardEvents';
-import { getExampleGame1 } from '../examples/games';
 import styles from './GamePage.module.css';
 
 export function GamePage(props: { client: Client }) {
@@ -22,11 +25,11 @@ export function GamePage(props: { client: Client }) {
   // eslint-disable-next-line solid/reactivity
   const gameManager = props.client.connectToGame(logTime, gameNumber);
 
-  const game = getExampleGame1();
+  const [gameStateHistory, setGameStateHistory] = createSignal([dummyGameState]);
 
-  const [selectedMoveIndex, setSelectedMoveIndex] = createSignal(game.gameStateHistory.length - 1);
+  const [selectedMoveIndex, setSelectedMoveIndex] = createSignal(0);
 
-  const gameState = createMemo(() => game.gameStateHistory[selectedMoveIndex()]);
+  const gameState = createMemo(() => gameStateHistory()[selectedMoveIndex()]);
 
   const turnPlayerId = createMemo(() =>
     gameState().nextGameAction instanceof ActionGameOver ? -1 : gameState().turnPlayerId,
@@ -37,7 +40,7 @@ export function GamePage(props: { client: Client }) {
 
   const [followedPlayerId, setFollowedPlayerId] = createSignal<number | null>(null);
   const gameBoardTileRack = createMemo(() => {
-    if (game.userIds.length > 1) {
+    if (gameManager.signals.userIds().length > 1) {
       const fpid = followedPlayerId();
       if (fpid !== null) {
         return gameState().tileRacks[fpid];
@@ -87,51 +90,80 @@ export function GamePage(props: { client: Client }) {
         cellSize={gameBoardCellSize()}
         onCellClicked={undefined}
       />
-      <div class={styles.rightSide}>
-        <ScoreBoard
-          usernames={game.usernames}
-          scoreBoard={gameState().scoreBoard}
-          scoreBoardAvailable={gameState().scoreBoardAvailable}
-          scoreBoardChainSize={gameState().scoreBoardChainSize}
-          scoreBoardPrice={gameState().scoreBoardPrice}
-          safeChains={gameState().safeChains}
-          turnPlayerId={turnPlayerId()}
-          movePlayerId={movePlayerId()}
-          gameMode={game.gameMode}
-          cellWidth={scoreBoardCellWidth()}
-        />
-        <Index each={gameState().tileRacks}>
-          {(tileRack, playerId) => (
-            <div>
-              <div class={styles.tileRackWrapper}>
-                <TileRackReadOnly
-                  tiles={tileRack()}
-                  types={gameState().tileRackTypes[playerId]}
-                  buttonSize={gameBoardCellSize()}
-                />
-              </div>
-              <Show when={game.userIds.length > 1}>
-                <div class={styles.buttonWrapper} style={{ height: `${gameBoardCellSize()}px` }}>
-                  <input
-                    type="button"
-                    value={playerId === followedPlayerId() ? 'Unlock' : 'Lock'}
-                    onClick={() =>
-                      setFollowedPlayerId((fpid) => (playerId === fpid ? null : playerId))
-                    }
-                  />
+
+      <Switch>
+        <Match when={gameManager.signals.status() === GameManagerStatus.Connecting}>
+          Connecting...
+        </Match>
+        <Match when={gameManager.signals.status() === GameManagerStatus.NotFound}>
+          Game not found.
+        </Match>
+        <Match when={gameManager.signals.status() === GameManagerStatus.SettingUp}>
+          Setting up.
+        </Match>
+        <Match when={true}>
+          <div class={styles.rightSide}>
+            <ScoreBoard
+              usernames={gameManager.signals.usernamesWithoutNulls()}
+              scoreBoard={gameState().scoreBoard}
+              scoreBoardAvailable={gameState().scoreBoardAvailable}
+              scoreBoardChainSize={gameState().scoreBoardChainSize}
+              scoreBoardPrice={gameState().scoreBoardPrice}
+              safeChains={gameState().safeChains}
+              turnPlayerId={turnPlayerId()}
+              movePlayerId={movePlayerId()}
+              gameMode={gameManager.signals.gameMode()}
+              cellWidth={scoreBoardCellWidth()}
+            />
+            <Index each={gameState().tileRacks}>
+              {(tileRack, playerId) => (
+                <div>
+                  <div class={styles.tileRackWrapper}>
+                    <TileRackReadOnly
+                      tiles={tileRack()}
+                      types={gameState().tileRackTypes[playerId]}
+                      buttonSize={gameBoardCellSize()}
+                    />
+                  </div>
+                  <Show when={gameManager.signals.userIds().length > 1}>
+                    <div
+                      class={styles.buttonWrapper}
+                      style={{ height: `${gameBoardCellSize()}px` }}
+                    >
+                      <input
+                        type="button"
+                        value={playerId === followedPlayerId() ? 'Unlock' : 'Lock'}
+                        onClick={() =>
+                          setFollowedPlayerId((fpid) => (playerId === fpid ? null : playerId))
+                        }
+                      />
+                    </div>
+                  </Show>
                 </div>
-              </Show>
-            </div>
-          )}
-        </Index>
-        <GameHistory
-          ref={(ref) => processBrowserMyKeyboardEvents(keyboardShortcutsEnabled, ref)}
-          usernames={game.usernames}
-          gameStateHistory={game.gameStateHistory}
-          onMoveSelected={setSelectedMoveIndex}
-        />
-        <NextGameAction action={gameState().nextGameAction} />
-      </div>
+              )}
+            </Index>
+            <GameHistory
+              ref={(ref) => processBrowserMyKeyboardEvents(keyboardShortcutsEnabled, ref)}
+              usernames={gameManager.signals.usernamesWithoutNulls()}
+              gameStateHistory={gameStateHistory()}
+              onMoveSelected={setSelectedMoveIndex}
+            />
+            <NextGameAction action={gameState().nextGameAction} />
+          </div>
+        </Match>
+      </Switch>
     </div>
   );
 }
+
+const dummyGame = new Game(
+  PB_GameMode.SINGLES_1,
+  PB_PlayerArrangementMode.VERSION_1,
+  [],
+  [],
+  [],
+  0,
+  0,
+);
+
+const dummyGameState = new GameState(dummyGame, null);

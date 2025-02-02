@@ -1,7 +1,8 @@
-import type {
-  PB_GameMode,
-  PB_MessageToServer_Game,
-  PB_MessageToServer_Game_Connect,
+import {
+  PB_MessageToClient,
+  type PB_GameMode,
+  type PB_MessageToServer_Game,
+  type PB_MessageToServer_Game_Connect,
 } from '../common/pb';
 import type { Client } from './client';
 import { GameRoom } from './gameRoom';
@@ -43,6 +44,18 @@ export class GameRoomsManager {
     if (message.logTime === this.logTime && this.gameNumberToGameRoom.has(message.gameNumber)) {
       const gameRoom = this.gameNumberToGameRoom.get(message.gameNumber)!;
       gameRoom.onMessage_Connect(client, message);
+    } else {
+      client.sendMessage(
+        PB_MessageToClient.toBinary(
+          PB_MessageToClient.create({
+            game: {
+              logTime: message.logTime,
+              gameNumber: message.gameNumber,
+              gameNotFound: true,
+            },
+          }),
+        ),
+      );
     }
   }
 }

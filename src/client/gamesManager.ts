@@ -1,4 +1,4 @@
-import { createSignal } from 'solid-js';
+import { batch, createSignal } from 'solid-js';
 import { GameSetup } from '../common/gameSetup';
 import {
   PB_GameMode,
@@ -40,7 +40,7 @@ export function createGamesManager(clientCommunication: ClientCommunication) {
   }
 
   function onMessage(message: PB_MessageToClient_Game) {
-    if (message.gameNumber) {
+    if (message.metadata || message.gameReview || message.gameNotFound) {
       lastReceivedGameId = `${message.logTime}-${message.gameNumber}`;
     }
 
@@ -66,23 +66,24 @@ export function createGameManager(
   logTime: number,
   gameNumber: number,
 ) {
-  let gameSetup: GameSetup | undefined;
+  let gameSetup: GameSetup | null;
 
-  // let game: Game | undefined;
+  // let game: Game | null;
 
-  const [connected, setConnected] = createSignal(false);
+  const [status, setStatus] = createSignal(GameManagerStatus.Connecting);
 
   const [gameMode, setGameMode] = createSignal(PB_GameMode.SINGLES_1);
   const [playerArrangementMode, setPlayerArrangementMode] = createSignal(
     PB_PlayerArrangementMode.VERSION_1,
   );
   const [usernames, setUsernames] = createSignal<(string | null)[]>([]);
+  const [usernamesWithoutNulls, setUsernamesWithoutNulls] = createSignal<string[]>([]); // TODO: come up with a better way
   const [userIds, setUserIds] = createSignal<(number | null)[]>([]);
   const [approvals, setApprovals] = createSignal<boolean[]>([]);
   const [hostUserId, setHostUserId] = createSignal(0);
 
   function connect() {
-    setConnected(false);
+    setStatus(GameManagerStatus.Connecting);
 
     clientCommunication.sendMessage(getConnectMessage());
   }
@@ -109,10 +110,9 @@ export function createGameManager(
       userIdToUsername.set(userIdAndUsername.userId, userIdAndUsername.username);
     }
 
-    if (message.gameNumber !== 0) {
-      const metadata = message.metadata;
-
-      if (metadata) {
+    if (message.metadata || message.gameReview || message.gameNotFound) {
+      if (message.metadata) {
+        const metadata = message.metadata;
         gameSetup = new GameSetup(
           metadata.gameMode,
           metadata.playerArrangementMode,
@@ -121,19 +121,34 @@ export function createGameManager(
           metadata.userIds.map((userId) => (userId === 0 ? null : userId)),
         );
         gameSetup.approvals = metadata.approvals;
+      } else if (message.gameNotFound) {
+        gameSetup = null;
       }
     }
 
-    setConnected(true);
-
-    if (gameSetup) {
-      setGameMode(gameSetup.gameMode);
-      setPlayerArrangementMode(gameSetup.playerArrangementMode);
-      setUsernames(gameSetup.usernames);
-      setUserIds(gameSetup.userIds);
-      setApprovals(gameSetup.approvals);
-      setHostUserId(gameSetup.hostUserId);
-    }
+    batch(() => {
+      if (gameSetup) {
+        setStatus(GameManagerStatus.SettingUp);
+        setGameMode(gameSetup.gameMode);
+        setPlayerArrangementMode(gameSetup.playerArrangementMode);
+        if (gameSetup.usernames !== usernames()) {
+          if (gameSetup.usernames.includes(null)) {
+            setUsernamesWithoutNulls(
+              gameSetup.usernames.map((username) => (username !== null ? username : '')),
+            );
+          } else {
+            // @ts-expect-error just asserted that gameSetup.usernames does not include null
+            setUsernamesWithoutNulls(gameSetup.usernames);
+          }
+        }
+        setUsernames(gameSetup.usernames);
+        setUserIds(gameSetup.userIds);
+        setApprovals(gameSetup.approvals);
+        setHostUserId(gameSetup.hostUserId);
+      } else {
+        setStatus(GameManagerStatus.NotFound);
+      }
+    });
   }
 
   return {
@@ -141,13 +156,22 @@ export function createGameManager(
     getConnectMessage,
     onMessage,
     signals: {
-      connected,
+      status,
       gameMode,
       playerArrangementMode,
       usernames,
+      usernamesWithoutNulls,
       userIds,
       approvals,
       hostUserId,
     },
   };
+}
+
+export const enum GameManagerStatus {
+  Connecting,
+  NotFound,
+  SettingUp,
+  // Game,
+  Review,
 }

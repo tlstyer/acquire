@@ -371,12 +371,13 @@ message PB {
       int32 game_number = 2;
       Metadata metadata = 3;
       GameReview game_review = 4;
-      GameSetupChange game_setup_change = 5;
-      repeated GameState game_states = 6;
-      repeated UserIdAndUsername user_ids_and_usernames = 7;
-      int32 user_id_who_entered_game_room = 8;
-      int32 user_id_who_exited_game_room = 9;
-      repeated int32 tile_bag = 10;
+      bool game_not_found = 5;
+      GameSetupChange game_setup_change = 6;
+      repeated GameState game_states = 7;
+      repeated UserIdAndUsername user_ids_and_usernames = 8;
+      int32 user_id_who_entered_game_room = 9;
+      int32 user_id_who_exited_game_room = 10;
+      repeated int32 tile_bag = 11;
     }
 
     Initial initial = 15;

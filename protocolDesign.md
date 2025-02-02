@@ -200,6 +200,7 @@ One or more of:
   - user IDs
   - approvals (if Setting Up)
 - game review data (only in initial response to a Connect message AND when game not shown in lobby)
+- not found (only in initial response to a Connect message AND when game not found)
 - game setup change (only in subsequent messages)
 - array of game state objects
 - array of chat messages and user IDs of senders
