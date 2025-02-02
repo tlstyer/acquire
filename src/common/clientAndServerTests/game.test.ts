@@ -44,8 +44,8 @@ test('client is disconnected from room upon trying to enter a game that is not f
   const { client, server } = createOneClientConnectedToOneServer();
 
   client.connectToLobby();
-  expect(server.clientIdToClient.get(0)!.room !== undefined);
+  expect(server.clientIdToClient.get(1)!.room !== undefined);
 
   client.connectToGame(client.logTime, 0);
-  expect(server.clientIdToClient.get(0)!.room === undefined);
+  expect(server.clientIdToClient.get(1)!.room === undefined);
 });

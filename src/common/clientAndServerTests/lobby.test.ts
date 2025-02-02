@@ -39,7 +39,7 @@ test('connect to lobby in its initial state', () => {
   );
   clientCommunication.communicatedMessages.length = 0;
 
-  expect([...server.lobbyRoom.clients].map((c) => c.clientId)).toEqual([0]);
+  expect([...server.lobbyRoom.clients].map((c) => c.clientId)).toEqual([1]);
 
   clientCommunication.disconnect();
 
@@ -65,7 +65,7 @@ test('connect to lobby in its initial state', () => {
   );
   clientCommunication.communicatedMessages.length = 0;
 
-  expect([...server.lobbyRoom.clients].map((c) => c.clientId)).toEqual([1]);
+  expect([...server.lobbyRoom.clients].map((c) => c.clientId)).toEqual([2]);
 });
 
 test('users are added and removed', async () => {

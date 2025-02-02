@@ -85,7 +85,7 @@ export class WebSocketServerCommunication extends ServerCommunication {
 }
 
 export class TestServerCommunication extends ServerCommunication {
-  nextClientId = 0;
+  nextClientId = 1;
   clientIdToClientCommunication = new Map<number, TestClientCommunication>();
   clientCommunicationToClientId = new Map<TestClientCommunication, number>();
 

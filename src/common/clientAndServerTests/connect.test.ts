@@ -62,6 +62,6 @@ function expectInitialMessageToBeCorrect(
   expect(clientCommunication.communicatedMessages[0].receivedMessage).toEqual(message);
 
   expect(serverCommunication.communicatedMessages.length).toBe(1);
-  expect(serverCommunication.communicatedMessages[0].clientId).toBe(0);
+  expect(serverCommunication.communicatedMessages[0].clientId).toBe(1);
   expect(serverCommunication.communicatedMessages[0].sentMessage).toEqual(message);
 }
