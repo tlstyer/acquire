@@ -141,6 +141,7 @@ export function createClient(clientCommunication: ClientCommunication, version: 
   function connectToLobby() {
     currentPage = CurrentPage.Lobby;
     lobbyManager.connect();
+    return lobbyManager;
   }
 
   function connectToGame(logTime: number, gameNumber: number) {
@@ -258,7 +259,6 @@ export function createClient(clientCommunication: ClientCommunication, version: 
     logout,
     connectToLobby,
     connectToGame,
-    lobbyManager,
     get logTime() {
       return logTime;
     },

@@ -11,24 +11,21 @@ import styles from './LobbyPage.module.css';
 
 export function LobbyPage(props: { client: Client }) {
   // eslint-disable-next-line solid/reactivity
-  props.client.connectToLobby();
+  const lobbyManager = props.client.connectToLobby();
 
   const navigate = useNavigate();
   createEffect(() => {
-    const createdGameNumber = props.client.lobbyManager.signals.createdGameNumber();
+    const createdGameNumber = lobbyManager.signals.createdGameNumber();
     if (createdGameNumber !== undefined) {
       navigate(`/game/${props.client.logTime}-${createdGameNumber}`);
     }
   });
 
   return (
-    <Show when={props.client.lobbyManager.signals.connected()}>
+    <Show when={lobbyManager.signals.connected()}>
       <div class={styles.root}>
         <div class={styles.gameListings}>
-          <CreateGame
-            initialGameMode={PB_GameMode.SINGLES_4}
-            onSubmit={props.client.lobbyManager.createGame}
-          />
+          <CreateGame initialGameMode={PB_GameMode.SINGLES_4} onSubmit={lobbyManager.createGame} />
           {/* This makes the game listings div always have the maximum width of an individual GameListing component */}
           <div class={styles.invisibleGameListing}>
             <GameListing
@@ -45,7 +42,7 @@ export function LobbyPage(props: { client: Client }) {
             exitToClass={styles.gameListingExitTo}
             exitActiveClass={styles.gameListingExitActive}
           >
-            <For each={props.client.lobbyManager.signals.lobbyGames()}>
+            <For each={lobbyManager.signals.lobbyGames()}>
               {(lobbyGame) => (
                 <div>
                   <a href={`/game/${props.client.logTime}-${lobbyGame.gameNumber}`}>
@@ -63,7 +60,7 @@ export function LobbyPage(props: { client: Client }) {
           </TransitionGroup>
         </div>
         <div class={styles.rightSide}>
-          <For each={props.client.lobbyManager.signals.usernames()}>
+          <For each={lobbyManager.signals.usernames()}>
             {(username) => (
               <div>
                 <Username username={username} />

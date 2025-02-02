@@ -9,12 +9,12 @@ test('newly created game has correct signals', async () => {
   client.loginWithPassword('user 1', 'password');
   await waitForAsyncServerStuff();
 
-  client.connectToLobby();
-  client.lobbyManager.createGame(PB_GameMode.SINGLES_2);
+  const lobbyManager = client.connectToLobby();
+  lobbyManager.createGame(PB_GameMode.SINGLES_2);
 
   const gameManager = client.connectToGame(
     client.logTime,
-    client.lobbyManager.signals.createdGameNumber() ?? -1,
+    lobbyManager.signals.createdGameNumber() ?? -1,
   );
 
   expect(gameManager.signals.status()).toBe(GameManagerStatus.SettingUp);

@@ -15,11 +15,9 @@ test('connect to lobby in its initial state', () => {
   const { client, clientCommunication, server } = createOneClientConnectedToOneServer();
   clientCommunication.communicatedMessages.length = 0;
 
-  expect(client.lobbyManager.lastEventIndex).toBe(0);
+  const lobbyManager = client.connectToLobby();
 
-  client.connectToLobby();
-
-  expect(client.lobbyManager.lastEventIndex).toBe(2);
+  expect(lobbyManager.lastEventIndex).toBe(2);
   expect(clientCommunication.communicatedMessages.length).toBe(2);
   expect(clientCommunication.communicatedMessages[0].sentMessage).toEqual(
     PB_MessageToServer.create({
@@ -49,7 +47,7 @@ test('connect to lobby in its initial state', () => {
 
   clientCommunication.connect();
 
-  expect(client.lobbyManager.lastEventIndex).toBe(2);
+  expect(lobbyManager.lastEventIndex).toBe(2);
   expect(clientCommunication.communicatedMessages.length).toBe(3);
   expect(clientCommunication.communicatedMessages[1].sentMessage).toEqual(
     PB_MessageToServer.create({
@@ -78,11 +76,11 @@ test('users are added and removed', async () => {
 
   client.loginWithToken('user 3', userIdToTestUserData[3].passwordHash);
   await waitForAsyncServerStuff();
-  client.connectToLobby();
+  const lobbyManager = client.connectToLobby();
   clientCommunication.communicatedMessages.length = 0;
 
-  expect(client.lobbyManager.userIdToUsername.size).toBe(0);
-  expect(client.lobbyManager.userIds.size).toBe(0);
+  expect(lobbyManager.userIdToUsername.size).toBe(0);
+  expect(lobbyManager.userIds.size).toBe(0);
 
   server.lobbyRoom.sendQueuedEvents();
 
@@ -91,8 +89,8 @@ test('users are added and removed', async () => {
     lobby: { events: [{ addUserToLobby: { userId: 3, username: 'user 3' } }] },
   });
   const expectedUserIdToUsername = new Map([[3, 'user 3']]);
-  expect(client.lobbyManager.userIdToUsername).toEqual(expectedUserIdToUsername);
-  expect(client.lobbyManager.userIds).toEqual(new Set([3]));
+  expect(lobbyManager.userIdToUsername).toEqual(expectedUserIdToUsername);
+  expect(lobbyManager.userIds).toEqual(new Set([3]));
 
   // another client connects to lobby and then logs in
 
@@ -101,7 +99,7 @@ test('users are added and removed', async () => {
   clientCommunication4.connect();
   clientCommunication4.communicatedMessages.length = 0;
 
-  client4.connectToLobby();
+  const lobbyManager4 = client4.connectToLobby();
 
   expect(clientCommunication4.communicatedMessages.length).toBe(2);
   expect(clientCommunication4.communicatedMessages[1].receivedMessage).toEqual({
@@ -130,10 +128,10 @@ test('users are added and removed', async () => {
     expectedAddUserToLobbyMessage,
   );
   expectedUserIdToUsername.set(4, 'user 4');
-  expect(client.lobbyManager.userIdToUsername).toEqual(expectedUserIdToUsername);
-  expect(client.lobbyManager.userIds).toEqual(new Set([3, 4]));
-  expect(client4.lobbyManager.userIdToUsername).toEqual(expectedUserIdToUsername);
-  expect(client4.lobbyManager.userIds).toEqual(new Set([3, 4]));
+  expect(lobbyManager.userIdToUsername).toEqual(expectedUserIdToUsername);
+  expect(lobbyManager.userIds).toEqual(new Set([3, 4]));
+  expect(lobbyManager4.userIdToUsername).toEqual(expectedUserIdToUsername);
+  expect(lobbyManager4.userIds).toEqual(new Set([3, 4]));
 
   // client logs out
 
@@ -154,10 +152,10 @@ test('users are added and removed', async () => {
   expect(clientCommunication4.communicatedMessages[0].receivedMessage).toEqual(
     expectedRemoveUserFromLobbyMessage,
   );
-  expect(client.lobbyManager.userIdToUsername).toEqual(expectedUserIdToUsername);
-  expect(client.lobbyManager.userIds).toEqual(new Set([4]));
-  expect(client4.lobbyManager.userIdToUsername).toEqual(expectedUserIdToUsername);
-  expect(client4.lobbyManager.userIds).toEqual(new Set([4]));
+  expect(lobbyManager.userIdToUsername).toEqual(expectedUserIdToUsername);
+  expect(lobbyManager.userIds).toEqual(new Set([4]));
+  expect(lobbyManager4.userIdToUsername).toEqual(expectedUserIdToUsername);
+  expect(lobbyManager4.userIds).toEqual(new Set([4]));
 
   // anonymous client 1 connects to lobby
 
@@ -166,7 +164,7 @@ test('users are added and removed', async () => {
   clientCommunicationAnon1.connect();
   clientCommunicationAnon1.communicatedMessages.length = 0;
 
-  clientAnon1.connectToLobby();
+  const lobbyManagerAnon1 = clientAnon1.connectToLobby();
 
   expect(clientCommunicationAnon1.communicatedMessages.length).toBe(2);
   expect(clientCommunicationAnon1.communicatedMessages[1].receivedMessage).toEqual({
@@ -179,8 +177,8 @@ test('users are added and removed', async () => {
       ],
     },
   });
-  expect(clientAnon1.lobbyManager.userIdToUsername).toEqual(expectedUserIdToUsername);
-  expect(clientAnon1.lobbyManager.userIds).toEqual(new Set([4]));
+  expect(lobbyManagerAnon1.userIdToUsername).toEqual(expectedUserIdToUsername);
+  expect(lobbyManagerAnon1.userIds).toEqual(new Set([4]));
 
   // create last state checkpoint
 
@@ -193,7 +191,7 @@ test('users are added and removed', async () => {
   clientCommunicationAnon2.connect();
   clientCommunicationAnon2.communicatedMessages.length = 0;
 
-  clientAnon2.connectToLobby();
+  const lobbyManagerAnon2 = clientAnon2.connectToLobby();
 
   expect(clientCommunicationAnon2.communicatedMessages.length).toBe(2);
   expect(clientCommunicationAnon2.communicatedMessages[1].receivedMessage).toEqual({
@@ -209,19 +207,19 @@ test('users are added and removed', async () => {
     },
   });
   expectedUserIdToUsername.delete(3);
-  expect(clientAnon2.lobbyManager.userIdToUsername).toEqual(expectedUserIdToUsername);
-  expect(clientAnon2.lobbyManager.userIds).toEqual(new Set([4]));
+  expect(lobbyManagerAnon2.userIdToUsername).toEqual(expectedUserIdToUsername);
+  expect(lobbyManagerAnon2.userIds).toEqual(new Set([4]));
 });
 
 describe('create game', () => {
   test('cannot if not logged in', async () => {
     const { client, clientCommunication } = createOneClientConnectedToOneServer();
 
-    client.connectToLobby();
+    const lobbyManager = client.connectToLobby();
 
     clientCommunication.communicatedMessages.length = 0;
 
-    client.lobbyManager.createGame(PB_GameMode.TEAMS_3_VS_3);
+    lobbyManager.createGame(PB_GameMode.TEAMS_3_VS_3);
 
     expect(clientCommunication.communicatedMessages.length).toBe(1);
   });
@@ -229,12 +227,15 @@ describe('create game', () => {
   test('cannot if not in lobby', async () => {
     const { client, clientCommunication } = createOneClientConnectedToOneServer();
 
+    const lobbyManager = client.connectToLobby();
+    client.connectToGame(0, 0);
+
     client.loginWithToken('user 3', userIdToTestUserData[3].passwordHash);
     await waitForAsyncServerStuff();
 
     clientCommunication.communicatedMessages.length = 0;
 
-    client.lobbyManager.createGame(PB_GameMode.TEAMS_3_VS_3);
+    lobbyManager.createGame(PB_GameMode.TEAMS_3_VS_3);
 
     expect(clientCommunication.communicatedMessages.length).toBe(1);
   });
@@ -249,11 +250,11 @@ describe('create game', () => {
 
         client.loginWithToken('user 3', userIdToTestUserData[3].passwordHash);
         await waitForAsyncServerStuff();
-        client.connectToLobby();
+        const lobbyManager = client.connectToLobby();
 
         clientCommunication.communicatedMessages.length = 0;
 
-        client.lobbyManager.createGame(gameMode);
+        lobbyManager.createGame(gameMode);
 
         expect(clientCommunication.communicatedMessages.length).toBe(1);
       });
@@ -265,12 +266,12 @@ describe('create game', () => {
 
     client.loginWithToken('user 3', userIdToTestUserData[3].passwordHash);
     await waitForAsyncServerStuff();
-    client.connectToLobby();
+    const lobbyManager = client.connectToLobby();
     server.lobbyRoom.sendQueuedEvents();
 
     clientCommunication.communicatedMessages.length = 0;
 
-    client.lobbyManager.createGame(PB_GameMode.TEAMS_3_VS_3);
+    lobbyManager.createGame(PB_GameMode.TEAMS_3_VS_3);
 
     expect(clientCommunication.communicatedMessages.length).toBe(2);
     expect(clientCommunication.communicatedMessages[1].receivedMessage).toEqual({
@@ -303,11 +304,11 @@ describe('create game', () => {
     const { client, server } = createOneClientConnectedToOneServer();
     client.loginWithToken('user 3', userIdToTestUserData[3].passwordHash);
     await waitForAsyncServerStuff();
-    client.connectToLobby();
-    client.lobbyManager.createGame(PB_GameMode.TEAMS_3_VS_3);
+    const lobbyManager = client.connectToLobby();
+    lobbyManager.createGame(PB_GameMode.TEAMS_3_VS_3);
     server.lobbyRoom.sendQueuedEvents();
 
-    const lobbyGame = client.lobbyManager.gameDisplayNumberToLobbyGame.get(1)!;
+    const lobbyGame = lobbyManager.gameDisplayNumberToLobbyGame.get(1)!;
     expect(lobbyGame.gameNumber).toBe(1);
     expect(lobbyGame.gameDisplayNumber).toBe(1);
     expect(lobbyGame.signals.gameMode()).toBe(PB_GameMode.TEAMS_3_VS_3);
@@ -327,8 +328,8 @@ describe('create game', () => {
             createOneClientConnectedToOneServer();
           client.loginWithToken('user 3', userIdToTestUserData[3].passwordHash);
           await waitForAsyncServerStuff();
-          client.connectToLobby();
-          client.lobbyManager.createGame(PB_GameMode.TEAMS_3_VS_3);
+          const lobbyManager = client.connectToLobby();
+          lobbyManager.createGame(PB_GameMode.TEAMS_3_VS_3);
           if (!hostUserStillConnected) {
             clientCommunication.disconnect();
           }
@@ -338,9 +339,9 @@ describe('create game', () => {
           const clientAnon1 = createClient(clientCommunicationAnon1, 2);
           clientCommunicationAnon1.connect();
           clientCommunicationAnon1.communicatedMessages.length = 0;
-          clientAnon1.connectToLobby();
+          const lobbyManagerAnon1 = clientAnon1.connectToLobby();
 
-          const lobbyGame = clientAnon1.lobbyManager.gameDisplayNumberToLobbyGame.get(1)!;
+          const lobbyGame = lobbyManagerAnon1.gameDisplayNumberToLobbyGame.get(1)!;
           expect(lobbyGame.gameNumber).toBe(1);
           expect(lobbyGame.gameDisplayNumber).toBe(1);
           expect(lobbyGame.signals.gameMode()).toBe(PB_GameMode.TEAMS_3_VS_3);
