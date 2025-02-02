@@ -8,8 +8,8 @@
     "lint": "eslint --fix",
     "format": "prettier --write .",
     "css": "tcm src/client/",
-    "protobuf": "protoc --ts_out src/common --proto_path src/common src/common/pb.proto",
-    "protobuf:format": "clang-format -i src/common/pb.proto",
+    "protobuf": "protoc --ts_out src/common --proto_path src/common src/common/*.proto",
+    "protobuf:format": "clang-format -i src/common/*.proto",
     "buildServer:watch": "mkdir -p build ; echo '{}' > build/package.json ; tsc --module commonjs --preserveValueImports false --watch",
     "server": "nodemon -r dotenv/config --trace-warnings --enable-source-maps build/src/server/main.js"
   },

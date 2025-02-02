@@ -35,7 +35,7 @@ export default [
       'build',
       'node_modules',
       'package',
-      'src/common/pb.ts',
+      'src/common/pb*.ts',
     ],
   },
   prettier,

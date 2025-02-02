@@ -1,5 +1,6 @@
 import { batch, createSignal } from 'solid-js';
 import { Game } from '../common/game';
+import { gameFromProtocolBuffer } from '../common/gameSerialization';
 import { GameSetup } from '../common/gameSetup';
 import { GameState } from '../common/gameState';
 import {
@@ -69,8 +70,7 @@ export function createGameManager(
   gameNumber: number,
 ) {
   let gameSetup: GameSetup | null;
-
-  // let game: Game | null;
+  let game: Game | null;
 
   const [status, setStatus] = createSignal(GameManagerStatus.Connecting);
 
@@ -125,8 +125,14 @@ export function createGameManager(
           metadata.userIds.map((userId) => (userId === 0 ? null : userId)),
         );
         gameSetup.approvals = metadata.approvals;
+
+        game = null;
+      } else if (message.gameReview) {
+        gameSetup = null;
+        game = gameFromProtocolBuffer(message.gameReview);
       } else if (message.gameNotFound) {
         gameSetup = null;
+        game = null;
       }
     }
 
@@ -149,6 +155,16 @@ export function createGameManager(
         setUserIds(gameSetup.userIds);
         setApprovals(gameSetup.approvals);
         setHostUserId(gameSetup.hostUserId);
+      } else if (game) {
+        setStatus(GameManagerStatus.Review);
+        setGameMode(game.gameMode);
+        setPlayerArrangementMode(game.playerArrangementMode);
+        setUsernames(game.usernames);
+        setUsernamesWithoutNulls(game.usernames);
+        setUserIds(game.userIds);
+        setHostUserId(game.hostUserId);
+
+        setGameStateHistory(game.gameStateHistory);
       } else {
         setStatus(GameManagerStatus.NotFound);
       }

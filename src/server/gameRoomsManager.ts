@@ -1,9 +1,12 @@
+import fsPromises from 'fs/promises';
+import path from 'path';
 import {
   PB_MessageToClient,
   type PB_GameMode,
   type PB_MessageToServer_Game,
   type PB_MessageToServer_Game_Connect,
 } from '../common/pb';
+import { PBWithBinaryAlready_MessageToClient } from '../common/pbWithBinaryAlready';
 import type { Client } from './client';
 import { GameRoom } from './gameRoom';
 import type { LobbyRoom } from './lobbyRoom';
@@ -40,24 +43,53 @@ export class GameRoomsManager {
     }
   }
 
-  onMessage_Connect(client: Client, message: PB_MessageToServer_Game_Connect) {
+  async onMessage_Connect(client: Client, message: PB_MessageToServer_Game_Connect) {
     if (message.logTime === this.logTime && this.gameNumberToGameRoom.has(message.gameNumber)) {
       const gameRoom = this.gameNumberToGameRoom.get(message.gameNumber)!;
       gameRoom.onMessage_Connect(client, message);
-    } else {
-      client.disconnectFromRoom();
-
-      client.sendMessage(
-        PB_MessageToClient.toBinary(
-          PB_MessageToClient.create({
-            game: {
-              logTime: message.logTime,
-              gameNumber: message.gameNumber,
-              gameNotFound: true,
-            },
-          }),
-        ),
-      );
+      return;
     }
+
+    client.disconnectFromRoom();
+
+    if (process.env.GAME_PROTOCOL_BUFFER_BINARIES_DIR) {
+      try {
+        const fileContents = await fsPromises.readFile(
+          path.join(
+            process.env.GAME_PROTOCOL_BUFFER_BINARIES_DIR,
+            message.logTime.toString(),
+            message.gameNumber.toString(),
+          ),
+        );
+
+        client.sendMessage(
+          PBWithBinaryAlready_MessageToClient.toBinary(
+            PBWithBinaryAlready_MessageToClient.create({
+              game: {
+                logTime: message.logTime,
+                gameNumber: message.gameNumber,
+                gameReview: fileContents,
+              },
+            }),
+          ),
+        );
+
+        return;
+      } catch {
+        // ignore file not found
+      }
+    }
+
+    client.sendMessage(
+      PB_MessageToClient.toBinary(
+        PB_MessageToClient.create({
+          game: {
+            logTime: message.logTime,
+            gameNumber: message.gameNumber,
+            gameNotFound: true,
+          },
+        }),
+      ),
+    );
   }
 }
