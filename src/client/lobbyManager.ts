@@ -1,4 +1,4 @@
-import { createSignal } from 'solid-js';
+import { batch, createSignal } from 'solid-js';
 import { defaultGameBoard } from '../common/defaults';
 import { GameSetup } from '../common/gameSetup';
 import { gameModeToNumPlayers } from '../common/helpers';
@@ -67,28 +67,30 @@ export function createLobbyManager(clientCommunication: ClientCommunication) {
   }
 
   function onMessage(message: PB_MessageToClient_Lobby) {
-    if (message.lastStateCheckpoint) {
-      onMessage_LastStateCheckpoint(message.lastStateCheckpoint);
-    }
-    if (message.events.length > 0) {
-      onMessage_Events(message.events);
-    }
-    if (message.createGameResponse) {
-      onMessage_CreateGameResponse(message.createGameResponse);
-    }
+    batch(() => {
+      if (message.lastStateCheckpoint) {
+        onMessage_LastStateCheckpoint(message.lastStateCheckpoint);
+      }
+      if (message.events.length > 0) {
+        onMessage_Events(message.events);
+      }
+      if (message.createGameResponse) {
+        onMessage_CreateGameResponse(message.createGameResponse);
+      }
 
-    setConnected(true);
+      setConnected(true);
 
-    if (shouldUpdateUsernamesSignal) {
-      setUsernames([...userIds].map((userId) => userIdToUsername.get(userId) ?? '?'));
-      shouldUpdateUsernamesSignal = false;
-    }
-    if (shouldUpdateLobbyGamesSignal) {
-      const newLobbyGames = [...gameDisplayNumberToLobbyGame.values()];
-      newLobbyGames.reverse();
-      setLobbyGames(newLobbyGames);
-      shouldUpdateLobbyGamesSignal = false;
-    }
+      if (shouldUpdateUsernamesSignal) {
+        setUsernames([...userIds].map((userId) => userIdToUsername.get(userId) ?? '?'));
+        shouldUpdateUsernamesSignal = false;
+      }
+      if (shouldUpdateLobbyGamesSignal) {
+        const newLobbyGames = [...gameDisplayNumberToLobbyGame.values()];
+        newLobbyGames.reverse();
+        setLobbyGames(newLobbyGames);
+        shouldUpdateLobbyGamesSignal = false;
+      }
+    });
   }
 
   function onMessage_LastStateCheckpoint(message: PB_MessageToClient_Lobby_LastStateCheckpoint) {
