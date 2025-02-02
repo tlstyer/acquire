@@ -5,7 +5,7 @@ import { ActionGameOver } from '../../../common/gameActions/gameOver';
 import { GameState } from '../../../common/gameState';
 import { parseDecimalInteger } from '../../../common/helpers';
 import { PB_GameMode, PB_PlayerArrangementMode } from '../../../common/pb';
-import { Client } from '../../client';
+import { type Client } from '../../client';
 import { GameBoard } from '../../components/GameBoard';
 import { GameHistory } from '../../components/GameHistory';
 import { NextGameAction } from '../../components/NextGameAction';

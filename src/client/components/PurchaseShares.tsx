@@ -1,5 +1,14 @@
-import { batch, createEffect, createMemo, createSignal, Index, JSX, on, onMount } from 'solid-js';
-import { PB_GameBoardType } from '../../common/pb';
+import {
+  batch,
+  createEffect,
+  createMemo,
+  createSignal,
+  Index,
+  type JSX,
+  on,
+  onMount,
+} from 'solid-js';
+import { type PB_GameBoardType } from '../../common/pb';
 import stylesApp from '../App.module.css';
 import {
   allChains,
@@ -7,7 +16,7 @@ import {
   gameBoardTypeToHotelInitial,
   keyboardEventCodeToGameBoardType,
 } from '../helpers';
-import { KEY_SHIFT, ProcessMyKeyboardEventRef } from '../myKeyboardEvents';
+import { KEY_SHIFT, type ProcessMyKeyboardEventRef } from '../myKeyboardEvents';
 import styles from './PurchaseShares.module.css';
 
 export function PurchaseShares(props: {

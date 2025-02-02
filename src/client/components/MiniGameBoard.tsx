@@ -1,5 +1,5 @@
 import { Index } from 'solid-js';
-import { PB_GameBoardType } from '../../common/pb';
+import { type PB_GameBoardType } from '../../common/pb';
 import { gameBoardTypeToCSSClassName } from '../helpers';
 import styles from './MiniGameBoard.module.css';
 

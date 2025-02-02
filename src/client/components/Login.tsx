@@ -1,7 +1,7 @@
 import { createSignal, Match, Switch } from 'solid-js';
 import { cleanUpWhitespaceInUsername } from '../../common/helpers';
 import { PB_MessageToClient_LoginLogout_ResponseCode } from '../../common/pb';
-import { Client, LoginState } from '../client';
+import { type Client, LoginState } from '../client';
 import { loginLogoutResponseCodeToString } from '../helpers';
 import { DialogType } from './Dialog';
 import styles from './Login.module.css';

@@ -1,6 +1,6 @@
-import { createMemo, Index, JSX } from 'solid-js';
+import { createMemo, Index, type JSX } from 'solid-js';
 import { toTileString } from '../../common/helpers';
-import { PB_GameBoardType } from '../../common/pb';
+import { type PB_GameBoardType } from '../../common/pb';
 import stylesApp from '../App.module.css';
 import { gameBoardTypeToCSSClassName } from '../helpers';
 import { allTileDataFromTilesAndTypes } from './TileRack';

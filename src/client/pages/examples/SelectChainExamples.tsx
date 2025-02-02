@@ -1,5 +1,5 @@
 import { createSignal, For } from 'solid-js';
-import { PB_GameBoardType } from '../../../common/pb';
+import { type PB_GameBoardType } from '../../../common/pb';
 import { SelectChain, SelectChainTitle } from '../../components/SelectChain';
 import { gameBoardTypeToHotelInitial } from '../../helpers';
 import { processBrowserMyKeyboardEvents } from '../../myKeyboardEvents';

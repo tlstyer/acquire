@@ -8,10 +8,10 @@ import {
   PB_MessageToClient,
   PB_MessageToClient_LoginLogout_ResponseCode,
   PB_MessageToServer,
-  PB_MessageToServer_LoginLogout,
-  PB_MessageToServer_LoginLogout_CreateUserAndLogin,
-  PB_MessageToServer_LoginLogout_LoginWithPassword,
-  PB_MessageToServer_LoginLogout_LoginWithToken,
+  type PB_MessageToServer_LoginLogout,
+  type PB_MessageToServer_LoginLogout_CreateUserAndLogin,
+  type PB_MessageToServer_LoginLogout_LoginWithPassword,
+  type PB_MessageToServer_LoginLogout_LoginWithToken,
 } from '../common/pb';
 import { Client } from './client';
 import { GameRoomsManager } from './gameRoomsManager';

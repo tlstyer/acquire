@@ -7,7 +7,7 @@ import {
   GameHistoryMessageSelectedMergerSurvivor,
 } from '../gameHistoryMessage';
 import { calculateBonuses } from '../helpers';
-import { PB_GameAction, PB_GameBoardType } from '../pb';
+import { type PB_GameAction, PB_GameBoardType } from '../pb';
 import { ActionBase } from './base';
 import { ActionSelectChainToDisposeOfNext } from './selectChainToDisposeOfNext';
 

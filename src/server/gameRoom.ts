@@ -4,9 +4,9 @@ import {
   PB_MessageToClient,
   PB_MessageToClient_Game_UserIdAndUsername,
   PB_MessageToClient_Lobby_Event,
-  PB_MessageToServer_Game_Connect,
   PB_PlayerArrangementMode,
   type PB_GameMode,
+  type PB_MessageToServer_Game_Connect,
 } from '../common/pb';
 import type { Client } from './client';
 import type { LobbyRoom } from './lobbyRoom';

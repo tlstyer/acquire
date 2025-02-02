@@ -1,5 +1,5 @@
 import { createSignal, For } from 'solid-js';
-import { PB_GameMode } from '../../common/pb';
+import { type PB_GameMode } from '../../common/pb';
 import { allGameModes, gameModeToString } from '../helpers';
 
 export function CreateGame(props: {

@@ -3,18 +3,18 @@ import { defaultGameBoard } from '../common/defaults';
 import { GameSetup } from '../common/gameSetup';
 import { gameModeToNumPlayers } from '../common/helpers';
 import {
-  PB_GameMode,
-  PB_MessageToClient_Lobby,
-  PB_MessageToClient_Lobby_CreateGameResponse,
-  PB_MessageToClient_Lobby_Event,
-  PB_MessageToClient_Lobby_Event_AddUserToLobby,
-  PB_MessageToClient_Lobby_Event_GameCreated,
-  PB_MessageToClient_Lobby_Event_RemoveUserFromLobby,
-  PB_MessageToClient_Lobby_LastStateCheckpoint,
+  type PB_GameMode,
+  type PB_MessageToClient_Lobby,
+  type PB_MessageToClient_Lobby_CreateGameResponse,
+  type PB_MessageToClient_Lobby_Event,
+  type PB_MessageToClient_Lobby_Event_AddUserToLobby,
+  type PB_MessageToClient_Lobby_Event_GameCreated,
+  type PB_MessageToClient_Lobby_Event_RemoveUserFromLobby,
+  type PB_MessageToClient_Lobby_LastStateCheckpoint,
   PB_MessageToServer,
   PB_PlayerArrangementMode,
 } from '../common/pb';
-import { ClientCommunication } from './clientCommunication';
+import { type ClientCommunication } from './clientCommunication';
 import { GameStatus } from './helpers';
 
 export type LobbyManager = ReturnType<typeof createLobbyManager>;

@@ -9,7 +9,7 @@ import {
   GameHistoryMessageNoTilesPlayedForEntireRound,
   GameHistoryMessagePurchasedShares,
 } from '../gameHistoryMessage';
-import { PB_GameAction, PB_GameBoardType } from '../pb';
+import { PB_GameBoardType, type PB_GameAction } from '../pb';
 import { ActionBase } from './base';
 import { ActionGameOver } from './gameOver';
 import { ActionPlayTile } from './playTile';

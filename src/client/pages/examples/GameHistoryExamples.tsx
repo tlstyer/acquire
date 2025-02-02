@@ -1,5 +1,5 @@
 import { createSignal, For } from 'solid-js';
-import { GameState } from '../../../common/gameState';
+import { type GameState } from '../../../common/gameState';
 import { GameHistory } from '../../components/GameHistory';
 import { processBrowserMyKeyboardEvents } from '../../myKeyboardEvents';
 import { EnableKeyboardShortcutsButton } from './EnableKeyboardShortcutsButton';

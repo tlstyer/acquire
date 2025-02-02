@@ -2,7 +2,7 @@ import { useNavigate } from '@solidjs/router';
 import { createEffect, For, Show } from 'solid-js';
 import { TransitionGroup } from 'solid-transition-group';
 import { PB_GameBoardType, PB_GameMode } from '../../../common/pb';
-import { Client } from '../../client';
+import { type Client } from '../../client';
 import { CreateGame } from '../../components/CreateGame';
 import { GameListing } from '../../components/GameListing';
 import { Username } from '../../components/Username';

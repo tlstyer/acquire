@@ -1,4 +1,4 @@
-import { RouteDefinition, Router } from '@solidjs/router';
+import { type RouteDefinition, Router } from '@solidjs/router';
 import 'normalize.css';
 import { createEffect, onCleanup } from 'solid-js';
 import { isServer } from 'solid-js/web';
@@ -7,7 +7,7 @@ import { TestServerCommunication } from '../server/serverCommunication';
 import styles from './App.module.css';
 import { createClient } from './client';
 import {
-  ClientCommunication,
+  type ClientCommunication,
   TestClientCommunication,
   WebSocketClientCommunication,
 } from './clientCommunication';

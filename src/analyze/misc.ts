@@ -28,7 +28,7 @@ import {
 } from '../common/gameHistoryMessage';
 import { gameFromProtocolBuffer } from '../common/gameSerialization';
 import { gameModeToNumPlayers, gameModeToTeamSize } from '../common/helpers';
-import { PB_GameMode, PB_GameReview } from '../common/pb';
+import { PB_GameReview, type PB_GameMode } from '../common/pb';
 import type { ProcessedGameDataType } from './outputProcessedGameData';
 
 export function* iterateGamesInDirectory(dirPath: string, completedGamesOnly = false) {

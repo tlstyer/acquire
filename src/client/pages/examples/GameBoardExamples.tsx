@@ -1,6 +1,6 @@
 import { For } from 'solid-js';
 import { toTileString } from '../../../common/helpers';
-import { PB_GameBoardType } from '../../../common/pb';
+import { type PB_GameBoardType } from '../../../common/pb';
 import { GameBoard } from '../../components/GameBoard';
 import { GameBoardLabelMode } from '../../helpers';
 

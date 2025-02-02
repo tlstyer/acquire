@@ -1,5 +1,5 @@
 import { Match, Switch } from 'solid-js';
-import { ActionBase } from '../../common/gameActions/base';
+import { type ActionBase } from '../../common/gameActions/base';
 import { ActionDisposeOfShares } from '../../common/gameActions/disposeOfShares';
 import { ActionGameOver } from '../../common/gameActions/gameOver';
 import { ActionPlayTile } from '../../common/gameActions/playTile';

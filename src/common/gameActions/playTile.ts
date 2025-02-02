@@ -7,7 +7,7 @@ import {
   GameHistoryMessageTurnBegan,
 } from '../gameHistoryMessage';
 import { neighboringTilesLookup } from '../helpers';
-import { PB_GameAction, PB_GameBoardType } from '../pb';
+import { type PB_GameAction, PB_GameBoardType } from '../pb';
 import { ActionBase } from './base';
 import { ActionSelectMergerSurvivor } from './selectMergerSurvivor';
 import { ActionSelectNewChain } from './selectNewChain';

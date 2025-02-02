@@ -1,10 +1,10 @@
 import { expect, test } from 'vitest';
-import { Client, createClient } from '../../client/client';
+import { type Client, createClient } from '../../client/client';
 import { TestClientCommunication } from '../../client/clientCommunication';
 import { Server } from '../../server/server';
 import { TestServerCommunication } from '../../server/serverCommunication';
 import { TestUserData, TestUserDataProvider, getPasswordHash } from '../../server/userDataProvider';
-import { PB_MessageToClient } from '../pb';
+import { type PB_MessageToClient } from '../pb';
 
 export const numTestUsers = 7;
 export const userIdToTestUserData = [new TestUserData('', 0, '')];

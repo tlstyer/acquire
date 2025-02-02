@@ -23,12 +23,12 @@ import {
 import { GameState } from './gameState';
 import { calculateBonuses, neighboringTilesLookup } from './helpers';
 import {
-  PB_GameAction,
+  type PB_GameAction,
   PB_GameBoardType,
-  PB_GameMode,
-  PB_GameState,
-  PB_GameState_RevealedTileRackTile,
-  PB_PlayerArrangementMode,
+  type PB_GameMode,
+  type PB_GameState,
+  type PB_GameState_RevealedTileRackTile,
+  type PB_PlayerArrangementMode,
 } from './pb';
 
 export class Game {

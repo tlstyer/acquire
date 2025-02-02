@@ -1,15 +1,15 @@
-import { Accessor, createSignal } from 'solid-js';
+import { type Accessor, createSignal } from 'solid-js';
 import { isServer } from 'solid-js/web';
 import { concatenateUint8Arrays, parseDecimalInteger } from '../common/helpers';
 import {
   PB_MessageToClient,
-  PB_MessageToClient_Initial,
-  PB_MessageToClient_LoginLogout,
+  type PB_MessageToClient_Initial,
+  type PB_MessageToClient_LoginLogout,
   PB_MessageToClient_LoginLogout_ResponseCode,
   PB_MessageToServer,
 } from '../common/pb';
 import type { ClientCommunication } from './clientCommunication';
-import { DialogType } from './components/Dialog';
+import { type DialogType } from './components/Dialog';
 import { createGamesManager } from './gamesManager';
 import { GameBoardLabelMode } from './helpers';
 import { createLobbyManager } from './lobbyManager';

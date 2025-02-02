@@ -2,11 +2,11 @@ import { batch, createSignal } from 'solid-js';
 import { GameSetup } from '../common/gameSetup';
 import {
   PB_GameMode,
-  PB_MessageToClient_Game,
+  type PB_MessageToClient_Game,
   PB_MessageToServer,
   PB_PlayerArrangementMode,
 } from '../common/pb';
-import { ClientCommunication } from './clientCommunication';
+import { type ClientCommunication } from './clientCommunication';
 
 export type GamesManager = ReturnType<typeof createGamesManager>;
 

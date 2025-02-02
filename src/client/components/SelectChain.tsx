@@ -1,5 +1,5 @@
-import { createMemo, For, JSX, onMount } from 'solid-js';
-import { PB_GameBoardType } from '../../common/pb';
+import { createMemo, For, type JSX, onMount } from 'solid-js';
+import { type PB_GameBoardType } from '../../common/pb';
 import stylesApp from '../App.module.css';
 import {
   allChains,
@@ -7,7 +7,7 @@ import {
   gameBoardTypeToHotelInitial,
   keyboardEventCodeToGameBoardType,
 } from '../helpers';
-import { ProcessMyKeyboardEventRef } from '../myKeyboardEvents';
+import { type ProcessMyKeyboardEventRef } from '../myKeyboardEvents';
 import styles from './SelectChain.module.css';
 
 export function SelectChain(props: {

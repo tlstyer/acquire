@@ -1,6 +1,6 @@
 import { Match, Switch } from 'solid-js';
 import {
-  GameHistoryMessage,
+  type GameHistoryMessage,
   GameHistoryMessageAllTilesPlayed,
   GameHistoryMessageCouldNotAffordAnyShares,
   GameHistoryMessageDisposedOfShares,

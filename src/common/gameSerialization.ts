@@ -1,6 +1,6 @@
 import { Game } from './game';
 import { ActionGameOver } from './gameActions/gameOver';
-import { PB_GameAction, PB_GameReview } from './pb';
+import { type PB_GameAction, PB_GameReview } from './pb';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function gameToJSON(game: Game): any {

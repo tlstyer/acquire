@@ -1,4 +1,4 @@
-import { Accessor, createEffect, createSignal, on } from 'solid-js';
+import { type Accessor, createEffect, createSignal, on } from 'solid-js';
 import { isServer } from 'solid-js/web';
 
 export const KEY_ALT = 1;

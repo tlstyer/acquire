@@ -1,4 +1,4 @@
-import { Client } from '../client';
+import { type Client } from '../client';
 import { GameBoardLabelMode } from '../helpers';
 import styles from './Login.module.css';
 

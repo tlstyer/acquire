@@ -2,7 +2,7 @@ import { GameActionEnum } from '../enums';
 import { UserInputError } from '../error';
 import { ScoreBoardAdjustment, type Game } from '../game';
 import { GameHistoryMessageFormedChain } from '../gameHistoryMessage';
-import { PB_GameAction, PB_GameBoardType } from '../pb';
+import { PB_GameBoardType, type PB_GameAction } from '../pb';
 import { ActionBase } from './base';
 
 export class ActionSelectNewChain extends ActionBase {

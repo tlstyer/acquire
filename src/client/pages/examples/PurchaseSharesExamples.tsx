@@ -1,5 +1,5 @@
 import { batch, createSignal, For, onCleanup } from 'solid-js';
-import { PB_GameBoardType } from '../../../common/pb';
+import { type PB_GameBoardType } from '../../../common/pb';
 import { PurchaseShares } from '../../components/PurchaseShares';
 import { gameBoardTypeToHotelInitial } from '../../helpers';
 import { processBrowserMyKeyboardEvents } from '../../myKeyboardEvents';

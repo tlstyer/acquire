@@ -42,9 +42,9 @@ import {
   PB_GameAction_SelectNewChain,
   PB_GameBoardType,
   PB_GameMode,
-  PB_GameState,
   PB_GameState_RevealedTileRackTile,
   PB_PlayerArrangementMode,
+  type PB_GameState,
 } from './pb';
 
 export function runGameTestFile(inputLines: string[]) {

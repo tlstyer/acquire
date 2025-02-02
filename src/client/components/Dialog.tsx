@@ -1,6 +1,6 @@
 import { createMemo, Match, onCleanup, onMount, Show, Switch } from 'solid-js';
-import { Client } from '../client';
-import { ProcessMyKeyboardEventRef } from '../myKeyboardEvents';
+import { type Client } from '../client';
+import { type ProcessMyKeyboardEventRef } from '../myKeyboardEvents';
 import { CreateUser } from './CreateUser';
 import styles from './Dialog.module.css';
 import { Login } from './Login';

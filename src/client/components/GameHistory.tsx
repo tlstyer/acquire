@@ -1,6 +1,6 @@
 import { createEffect, createSelector, createSignal, For, onMount } from 'solid-js';
-import { GameState } from '../../common/gameState';
-import { ProcessMyKeyboardEventRef } from '../myKeyboardEvents';
+import { type GameState } from '../../common/gameState';
+import { type ProcessMyKeyboardEventRef } from '../myKeyboardEvents';
 import styles from './GameHistory.module.css';
 import { GameHistoryMessageUI } from './GameHistoryMessageUI';
 

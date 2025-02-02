@@ -4,9 +4,9 @@ import {
   PB_MessageToClient_Lobby_Event,
   PB_MessageToClient_Lobby_LastStateCheckpoint_Game,
   PB_MessageToClient_Lobby_LastStateCheckpoint_User,
-  PB_MessageToServer_Lobby,
-  PB_MessageToServer_Lobby_Connect,
-  PB_MessageToServer_Lobby_CreateGame,
+  type PB_MessageToServer_Lobby,
+  type PB_MessageToServer_Lobby_Connect,
+  type PB_MessageToServer_Lobby_CreateGame,
 } from '../common/pb';
 import type { Client } from './client';
 import type { GameRoomsManager } from './gameRoomsManager';

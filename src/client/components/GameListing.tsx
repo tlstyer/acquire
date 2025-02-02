@@ -1,9 +1,9 @@
 import { createMemo, Index } from 'solid-js';
 import { gameModeToNumPlayers, gameModeToTeamSize } from '../../common/helpers';
-import { PB_GameBoardType, PB_GameMode } from '../../common/pb';
+import { type PB_GameBoardType, type PB_GameMode } from '../../common/pb';
 import {
   gameModeToString,
-  GameStatus,
+  type GameStatus,
   gameStatusToString,
   teamNumberToCSSClassName,
 } from '../helpers';

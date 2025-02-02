@@ -2,7 +2,7 @@ import { GameActionEnum } from '../enums';
 import { UserInputError } from '../error';
 import type { Game } from '../game';
 import { GameHistoryMessageSelectedChainToDisposeOfNext } from '../gameHistoryMessage';
-import { PB_GameAction, PB_GameBoardType } from '../pb';
+import { type PB_GameAction, PB_GameBoardType } from '../pb';
 import { ActionBase } from './base';
 import { ActionDisposeOfShares } from './disposeOfShares';
 

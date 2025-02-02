@@ -1,7 +1,7 @@
 import { createMemo, For, Index, Match, Switch } from 'solid-js';
 import { ScoreBoardIndexEnum } from '../../common/enums';
 import { gameModeToNumPlayers, gameModeToTeamSize } from '../../common/helpers';
-import { PB_GameMode } from '../../common/pb';
+import { type PB_GameMode } from '../../common/pb';
 import {
   allChains,
   gameBoardTypeToCSSClassName,
