@@ -1,5 +1,6 @@
 declare const styles: {
   readonly "buttonWrapper": string;
+  readonly "padded": string;
   readonly "rightSide": string;
   readonly "root": string;
   readonly "tileRackWrapper": string;

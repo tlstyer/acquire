@@ -78,73 +78,78 @@ export function GamePage(props: { client: Client }) {
 
   return (
     <div class={styles.root}>
-      <GameBoard
-        gameBoard={gameState().gameBoard}
-        tileRack={gameBoardTileRack()}
-        labelMode={props.client.signals.gameBoardLabelMode()}
-        cellSize={gameBoardCellSize()}
-        onCellClicked={undefined}
-      />
-
       <Switch>
         <Match when={gameManager.signals.status() === GameManagerStatus.Connecting}>
-          Connecting...
+          <div class={styles.padded}>Connecting...</div>
         </Match>
         <Match when={gameManager.signals.status() === GameManagerStatus.NotFound}>
-          Game not found.
-        </Match>
-        <Match when={gameManager.signals.status() === GameManagerStatus.SettingUp}>
-          Setting up.
+          <div class={styles.padded}>Game not found.</div>
         </Match>
         <Match when={true}>
-          <div class={styles.rightSide}>
-            <ScoreBoard
-              usernames={gameManager.signals.usernamesWithoutNulls()}
-              scoreBoard={gameState().scoreBoard}
-              scoreBoardAvailable={gameState().scoreBoardAvailable}
-              scoreBoardChainSize={gameState().scoreBoardChainSize}
-              scoreBoardPrice={gameState().scoreBoardPrice}
-              safeChains={gameState().safeChains}
-              turnPlayerId={turnPlayerId()}
-              movePlayerId={movePlayerId()}
-              gameMode={gameManager.signals.gameMode()}
-              cellWidth={scoreBoardCellWidth()}
+          <div>
+            <GameBoard
+              gameBoard={gameState().gameBoard}
+              tileRack={gameBoardTileRack()}
+              labelMode={props.client.signals.gameBoardLabelMode()}
+              cellSize={gameBoardCellSize()}
+              onCellClicked={undefined}
             />
-            <Index each={gameState().tileRacks}>
-              {(tileRack, playerId) => (
-                <div>
-                  <div class={styles.tileRackWrapper}>
-                    <TileRackReadOnly
-                      tiles={tileRack()}
-                      types={gameState().tileRackTypes[playerId]}
-                      buttonSize={gameBoardCellSize()}
-                    />
-                  </div>
-                  <Show when={gameManager.signals.userIds().length > 1}>
-                    <div
-                      class={styles.buttonWrapper}
-                      style={{ height: `${gameBoardCellSize()}px` }}
-                    >
-                      <input
-                        type="button"
-                        value={playerId === followedPlayerId() ? 'Unlock' : 'Lock'}
-                        onClick={() =>
-                          setFollowedPlayerId((fpid) => (playerId === fpid ? null : playerId))
-                        }
-                      />
-                    </div>
-                  </Show>
-                </div>
-              )}
-            </Index>
-            <GameHistory
-              ref={(ref) => processBrowserMyKeyboardEvents(keyboardShortcutsEnabled, ref)}
-              usernames={gameManager.signals.usernamesWithoutNulls()}
-              gameStateHistory={gameManager.signals.gameStateHistory()}
-              onMoveSelected={setSelectedMoveIndex}
-            />
-            <NextGameAction action={gameState().nextGameAction} />
           </div>
+          <Switch>
+            <Match when={gameManager.signals.status() === GameManagerStatus.SettingUp}>
+              <div class={styles.padded}>Setting up.</div>
+            </Match>
+            <Match when={true}>
+              <div class={styles.rightSide}>
+                <ScoreBoard
+                  usernames={gameManager.signals.usernamesWithoutNulls()}
+                  scoreBoard={gameState().scoreBoard}
+                  scoreBoardAvailable={gameState().scoreBoardAvailable}
+                  scoreBoardChainSize={gameState().scoreBoardChainSize}
+                  scoreBoardPrice={gameState().scoreBoardPrice}
+                  safeChains={gameState().safeChains}
+                  turnPlayerId={turnPlayerId()}
+                  movePlayerId={movePlayerId()}
+                  gameMode={gameManager.signals.gameMode()}
+                  cellWidth={scoreBoardCellWidth()}
+                />
+                <Index each={gameState().tileRacks}>
+                  {(tileRack, playerId) => (
+                    <div>
+                      <div class={styles.tileRackWrapper}>
+                        <TileRackReadOnly
+                          tiles={tileRack()}
+                          types={gameState().tileRackTypes[playerId]}
+                          buttonSize={gameBoardCellSize()}
+                        />
+                      </div>
+                      <Show when={gameManager.signals.userIds().length > 1}>
+                        <div
+                          class={styles.buttonWrapper}
+                          style={{ height: `${gameBoardCellSize()}px` }}
+                        >
+                          <input
+                            type="button"
+                            value={playerId === followedPlayerId() ? 'Unlock' : 'Lock'}
+                            onClick={() =>
+                              setFollowedPlayerId((fpid) => (playerId === fpid ? null : playerId))
+                            }
+                          />
+                        </div>
+                      </Show>
+                    </div>
+                  )}
+                </Index>
+                <GameHistory
+                  ref={(ref) => processBrowserMyKeyboardEvents(keyboardShortcutsEnabled, ref)}
+                  usernames={gameManager.signals.usernamesWithoutNulls()}
+                  gameStateHistory={gameManager.signals.gameStateHistory()}
+                  onMoveSelected={setSelectedMoveIndex}
+                />
+                <NextGameAction action={gameState().nextGameAction} />
+              </div>
+            </Match>
+          </Switch>
         </Match>
       </Switch>
     </div>
