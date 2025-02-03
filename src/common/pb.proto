@@ -54,42 +54,6 @@ message PB {
     int32 player_id_with_playable_tile_plus_one = 5; // 1 more than actual player_id
   }
 
-  message GameSetupAction {
-    message JoinGame {
-    }
-
-    message UnjoinGame {
-    }
-
-    message ApproveOfGameSetup {
-    }
-
-    message ChangeGameMode {
-      GameMode game_mode = 1;
-    }
-
-    message ChangePlayerArrangementMode {
-      PlayerArrangementMode player_arrangement_mode = 1;
-    }
-
-    message SwapPositions {
-      int32 position1 = 1;
-      int32 position2 = 2;
-    }
-
-    message KickUser {
-      int32 user_id = 1;
-    }
-
-    JoinGame join_game = 1;
-    UnjoinGame unjoin_game = 2;
-    ApproveOfGameSetup approve_of_game_setup = 3;
-    ChangeGameMode change_game_mode = 4;
-    ChangePlayerArrangementMode change_player_arrangement_mode = 5;
-    SwapPositions swap_positions = 6;
-    KickUser kick_user = 7;
-  }
-
   message GameSetupChange {
     message UserAdded {
       int32 user_id = 1;
@@ -231,7 +195,45 @@ message PB {
         int32 game_number = 2;
       }
 
+      message GameSetupAction {
+        message SitDown {
+        }
+
+        message StandUp {
+        }
+
+        message Approve {
+        }
+
+        message ChangeGameMode {
+          GameMode game_mode = 1;
+        }
+
+        message ChangePlayerArrangementMode {
+          PlayerArrangementMode player_arrangement_mode = 1;
+        }
+
+        message SwapPositions {
+          int32 position1 = 1;
+          int32 position2 = 2;
+        }
+
+        message KickUser {
+          int32 user_id = 1;
+        }
+
+        int32 number_of_game_setup_changes = 1;
+        SitDown sit_down = 2;
+        StandUp stand_up = 3;
+        Approve approve = 4;
+        ChangeGameMode change_game_mode = 5;
+        ChangePlayerArrangementMode change_player_arrangement_mode = 6;
+        SwapPositions swap_positions = 7;
+        KickUser kick_user = 8;
+      }
+
       Connect connect = 1;
+      GameSetupAction game_setup_action = 2;
     }
 
     LoginLogout login_logout = 1;
@@ -360,7 +362,8 @@ message PB {
         int32 host_user_id = 3;
         repeated int32 user_ids = 4;
         repeated bool approvals = 5;
-        repeated int32 user_ids_in_room = 6;
+        int32 number_of_game_setup_changes = 6;
+        repeated int32 user_ids_in_room = 7;
       }
 
       message UserIdAndUsername {

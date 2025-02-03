@@ -2,6 +2,7 @@ import { expect, test } from 'vitest';
 import { createClient } from '../../client/client';
 import { TestClientCommunication } from '../../client/clientCommunication';
 import { type GameManager, GameManagerStatus } from '../../client/gamesManager';
+import { type TestServerCommunication } from '../../server/serverCommunication';
 import { PB_GameMode, PB_PlayerArrangementMode } from '../pb';
 import { createOneClientConnectedToOneServer, waitForAsyncServerStuff } from './common';
 
@@ -172,3 +173,85 @@ test('client knows what user IDs and usernames are and were in the game room', a
     }
   }
 });
+
+test('game setup example', async () => {
+  const { client, serverCommunication } = createOneClientConnectedToOneServer();
+
+  // users 1 through 6 connect to game
+  client.loginWithPassword('user 1', 'password');
+  await waitForAsyncServerStuff();
+  const lobbyManager = client.connectToLobby();
+  lobbyManager.createGame(PB_GameMode.SINGLES_4);
+  const gameNumber = lobbyManager.signals.createdGameNumber() ?? -1;
+  const gameManager1 = client.connectToGame(client.logTime, gameNumber);
+
+  const gameManager2 = await connectToServerAndLoginAndConnectToGame(
+    serverCommunication,
+    gameNumber,
+    'user 2',
+  );
+  const gameManager3 = await connectToServerAndLoginAndConnectToGame(
+    serverCommunication,
+    gameNumber,
+    'user 3',
+  );
+  const gameManager4 = await connectToServerAndLoginAndConnectToGame(
+    serverCommunication,
+    gameNumber,
+    'user 4',
+  );
+  const gameManager5 = await connectToServerAndLoginAndConnectToGame(
+    serverCommunication,
+    gameNumber,
+    'user 5',
+  );
+  const gameManager6 = await connectToServerAndLoginAndConnectToGame(
+    serverCommunication,
+    gameNumber,
+    'user 6',
+  );
+
+  // game setup actions
+  gameManager2.gameSetupActions.sitDown();
+  gameManager3.gameSetupActions.sitDown();
+  gameManager4.gameSetupActions.sitDown();
+  gameManager3.gameSetupActions.standUp();
+  gameManager1.gameSetupActions.changeGameMode(PB_GameMode.TEAMS_2_VS_2);
+  gameManager1.gameSetupActions.changePlayerArrangementMode(PB_PlayerArrangementMode.EXACT_ORDER);
+  gameManager1.gameSetupActions.swapPositions(0, 3);
+  gameManager1.gameSetupActions.kickUser(2);
+  gameManager5.gameSetupActions.sitDown();
+  gameManager6.gameSetupActions.sitDown();
+  gameManager1.gameSetupActions.approve();
+  gameManager4.gameSetupActions.approve();
+  gameManager5.gameSetupActions.approve();
+  gameManager6.gameSetupActions.approve();
+
+  expect(gameManager1.signals.gameMode()).toBe(PB_GameMode.TEAMS_2_VS_2);
+  expect(gameManager1.signals.playerArrangementMode()).toBe(PB_PlayerArrangementMode.EXACT_ORDER);
+  expect(gameManager1.signals.hostUserId()).toBe(1);
+  expect(gameManager1.signals.usernames()).toEqual(['user 4', 'user 5', 'user 6', 'user 1']);
+  expect(gameManager1.signals.usernamesWithoutNulls()).toEqual([
+    'user 4',
+    'user 5',
+    'user 6',
+    'user 1',
+  ]);
+  expect(gameManager1.signals.userIds()).toEqual([4, 5, 6, 1]);
+  expect(gameManager1.signals.approvals()).toEqual([true, true, true, true]);
+  expect(gameManager1.signals.hostUserId()).toEqual(1);
+});
+
+async function connectToServerAndLoginAndConnectToGame(
+  serverCommunication: TestServerCommunication,
+  gameNumber: number,
+  username: string,
+) {
+  const clientCommunicationNew = new TestClientCommunication(serverCommunication);
+  const clientNew = createClient(clientCommunicationNew, 2);
+  clientCommunicationNew.connect();
+  clientNew.loginWithPassword(username, 'password');
+  await waitForAsyncServerStuff();
+  const gameManagerNew = clientNew.connectToGame(clientNew.logTime, gameNumber);
+  return gameManagerNew;
+}

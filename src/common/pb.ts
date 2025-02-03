@@ -54,94 +54,6 @@ export interface PB_GameState_RevealedTileRackTile {
     playerIdBelongsTo: number;
 }
 /**
- * @generated from protobuf message PB.GameSetupAction
- */
-export interface PB_GameSetupAction {
-    /**
-     * @generated from protobuf field: PB.GameSetupAction.JoinGame join_game = 1;
-     */
-    joinGame?: PB_GameSetupAction_JoinGame;
-    /**
-     * @generated from protobuf field: PB.GameSetupAction.UnjoinGame unjoin_game = 2;
-     */
-    unjoinGame?: PB_GameSetupAction_UnjoinGame;
-    /**
-     * @generated from protobuf field: PB.GameSetupAction.ApproveOfGameSetup approve_of_game_setup = 3;
-     */
-    approveOfGameSetup?: PB_GameSetupAction_ApproveOfGameSetup;
-    /**
-     * @generated from protobuf field: PB.GameSetupAction.ChangeGameMode change_game_mode = 4;
-     */
-    changeGameMode?: PB_GameSetupAction_ChangeGameMode;
-    /**
-     * @generated from protobuf field: PB.GameSetupAction.ChangePlayerArrangementMode change_player_arrangement_mode = 5;
-     */
-    changePlayerArrangementMode?: PB_GameSetupAction_ChangePlayerArrangementMode;
-    /**
-     * @generated from protobuf field: PB.GameSetupAction.SwapPositions swap_positions = 6;
-     */
-    swapPositions?: PB_GameSetupAction_SwapPositions;
-    /**
-     * @generated from protobuf field: PB.GameSetupAction.KickUser kick_user = 7;
-     */
-    kickUser?: PB_GameSetupAction_KickUser;
-}
-/**
- * @generated from protobuf message PB.GameSetupAction.JoinGame
- */
-export interface PB_GameSetupAction_JoinGame {
-}
-/**
- * @generated from protobuf message PB.GameSetupAction.UnjoinGame
- */
-export interface PB_GameSetupAction_UnjoinGame {
-}
-/**
- * @generated from protobuf message PB.GameSetupAction.ApproveOfGameSetup
- */
-export interface PB_GameSetupAction_ApproveOfGameSetup {
-}
-/**
- * @generated from protobuf message PB.GameSetupAction.ChangeGameMode
- */
-export interface PB_GameSetupAction_ChangeGameMode {
-    /**
-     * @generated from protobuf field: PB.GameMode game_mode = 1;
-     */
-    gameMode: PB_GameMode;
-}
-/**
- * @generated from protobuf message PB.GameSetupAction.ChangePlayerArrangementMode
- */
-export interface PB_GameSetupAction_ChangePlayerArrangementMode {
-    /**
-     * @generated from protobuf field: PB.PlayerArrangementMode player_arrangement_mode = 1;
-     */
-    playerArrangementMode: PB_PlayerArrangementMode;
-}
-/**
- * @generated from protobuf message PB.GameSetupAction.SwapPositions
- */
-export interface PB_GameSetupAction_SwapPositions {
-    /**
-     * @generated from protobuf field: int32 position1 = 1;
-     */
-    position1: number;
-    /**
-     * @generated from protobuf field: int32 position2 = 2;
-     */
-    position2: number;
-}
-/**
- * @generated from protobuf message PB.GameSetupAction.KickUser
- */
-export interface PB_GameSetupAction_KickUser {
-    /**
-     * @generated from protobuf field: int32 user_id = 1;
-     */
-    userId: number;
-}
-/**
  * @generated from protobuf message PB.GameSetupChange
  */
 export interface PB_GameSetupChange {
@@ -520,6 +432,10 @@ export interface PB_MessageToServer_Game {
      * @generated from protobuf field: PB.MessageToServer.Game.Connect connect = 1;
      */
     connect?: PB_MessageToServer_Game_Connect;
+    /**
+     * @generated from protobuf field: PB.MessageToServer.Game.GameSetupAction game_setup_action = 2;
+     */
+    gameSetupAction?: PB_MessageToServer_Game_GameSetupAction;
 }
 /**
  * @generated from protobuf message PB.MessageToServer.Game.Connect
@@ -533,6 +449,98 @@ export interface PB_MessageToServer_Game_Connect {
      * @generated from protobuf field: int32 game_number = 2;
      */
     gameNumber: number;
+}
+/**
+ * @generated from protobuf message PB.MessageToServer.Game.GameSetupAction
+ */
+export interface PB_MessageToServer_Game_GameSetupAction {
+    /**
+     * @generated from protobuf field: int32 number_of_game_setup_changes = 1;
+     */
+    numberOfGameSetupChanges: number;
+    /**
+     * @generated from protobuf field: PB.MessageToServer.Game.GameSetupAction.SitDown sit_down = 2;
+     */
+    sitDown?: PB_MessageToServer_Game_GameSetupAction_SitDown;
+    /**
+     * @generated from protobuf field: PB.MessageToServer.Game.GameSetupAction.StandUp stand_up = 3;
+     */
+    standUp?: PB_MessageToServer_Game_GameSetupAction_StandUp;
+    /**
+     * @generated from protobuf field: PB.MessageToServer.Game.GameSetupAction.Approve approve = 4;
+     */
+    approve?: PB_MessageToServer_Game_GameSetupAction_Approve;
+    /**
+     * @generated from protobuf field: PB.MessageToServer.Game.GameSetupAction.ChangeGameMode change_game_mode = 5;
+     */
+    changeGameMode?: PB_MessageToServer_Game_GameSetupAction_ChangeGameMode;
+    /**
+     * @generated from protobuf field: PB.MessageToServer.Game.GameSetupAction.ChangePlayerArrangementMode change_player_arrangement_mode = 6;
+     */
+    changePlayerArrangementMode?: PB_MessageToServer_Game_GameSetupAction_ChangePlayerArrangementMode;
+    /**
+     * @generated from protobuf field: PB.MessageToServer.Game.GameSetupAction.SwapPositions swap_positions = 7;
+     */
+    swapPositions?: PB_MessageToServer_Game_GameSetupAction_SwapPositions;
+    /**
+     * @generated from protobuf field: PB.MessageToServer.Game.GameSetupAction.KickUser kick_user = 8;
+     */
+    kickUser?: PB_MessageToServer_Game_GameSetupAction_KickUser;
+}
+/**
+ * @generated from protobuf message PB.MessageToServer.Game.GameSetupAction.SitDown
+ */
+export interface PB_MessageToServer_Game_GameSetupAction_SitDown {
+}
+/**
+ * @generated from protobuf message PB.MessageToServer.Game.GameSetupAction.StandUp
+ */
+export interface PB_MessageToServer_Game_GameSetupAction_StandUp {
+}
+/**
+ * @generated from protobuf message PB.MessageToServer.Game.GameSetupAction.Approve
+ */
+export interface PB_MessageToServer_Game_GameSetupAction_Approve {
+}
+/**
+ * @generated from protobuf message PB.MessageToServer.Game.GameSetupAction.ChangeGameMode
+ */
+export interface PB_MessageToServer_Game_GameSetupAction_ChangeGameMode {
+    /**
+     * @generated from protobuf field: PB.GameMode game_mode = 1;
+     */
+    gameMode: PB_GameMode;
+}
+/**
+ * @generated from protobuf message PB.MessageToServer.Game.GameSetupAction.ChangePlayerArrangementMode
+ */
+export interface PB_MessageToServer_Game_GameSetupAction_ChangePlayerArrangementMode {
+    /**
+     * @generated from protobuf field: PB.PlayerArrangementMode player_arrangement_mode = 1;
+     */
+    playerArrangementMode: PB_PlayerArrangementMode;
+}
+/**
+ * @generated from protobuf message PB.MessageToServer.Game.GameSetupAction.SwapPositions
+ */
+export interface PB_MessageToServer_Game_GameSetupAction_SwapPositions {
+    /**
+     * @generated from protobuf field: int32 position1 = 1;
+     */
+    position1: number;
+    /**
+     * @generated from protobuf field: int32 position2 = 2;
+     */
+    position2: number;
+}
+/**
+ * @generated from protobuf message PB.MessageToServer.Game.GameSetupAction.KickUser
+ */
+export interface PB_MessageToServer_Game_GameSetupAction_KickUser {
+    /**
+     * @generated from protobuf field: int32 user_id = 1;
+     */
+    userId: number;
 }
 /**
  * @generated from protobuf message PB.MessageToClient
@@ -955,7 +963,11 @@ export interface PB_MessageToClient_Game_Metadata {
      */
     approvals: boolean[];
     /**
-     * @generated from protobuf field: repeated int32 user_ids_in_room = 6;
+     * @generated from protobuf field: int32 number_of_game_setup_changes = 6;
+     */
+    numberOfGameSetupChanges: number;
+    /**
+     * @generated from protobuf field: repeated int32 user_ids_in_room = 7;
      */
     userIdsInRoom: number[];
 }
@@ -1324,365 +1336,6 @@ class PB_GameState_RevealedTileRackTile$Type extends MessageType<PB_GameState_Re
  * @generated MessageType for protobuf message PB.GameState.RevealedTileRackTile
  */
 export const PB_GameState_RevealedTileRackTile = new PB_GameState_RevealedTileRackTile$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class PB_GameSetupAction$Type extends MessageType<PB_GameSetupAction> {
-    constructor() {
-        super("PB.GameSetupAction", [
-            { no: 1, name: "join_game", kind: "message", T: () => PB_GameSetupAction_JoinGame },
-            { no: 2, name: "unjoin_game", kind: "message", T: () => PB_GameSetupAction_UnjoinGame },
-            { no: 3, name: "approve_of_game_setup", kind: "message", T: () => PB_GameSetupAction_ApproveOfGameSetup },
-            { no: 4, name: "change_game_mode", kind: "message", T: () => PB_GameSetupAction_ChangeGameMode },
-            { no: 5, name: "change_player_arrangement_mode", kind: "message", T: () => PB_GameSetupAction_ChangePlayerArrangementMode },
-            { no: 6, name: "swap_positions", kind: "message", T: () => PB_GameSetupAction_SwapPositions },
-            { no: 7, name: "kick_user", kind: "message", T: () => PB_GameSetupAction_KickUser }
-        ]);
-    }
-    create(value?: PartialMessage<PB_GameSetupAction>): PB_GameSetupAction {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        if (value !== undefined)
-            reflectionMergePartial<PB_GameSetupAction>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PB_GameSetupAction): PB_GameSetupAction {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* PB.GameSetupAction.JoinGame join_game */ 1:
-                    message.joinGame = PB_GameSetupAction_JoinGame.internalBinaryRead(reader, reader.uint32(), options, message.joinGame);
-                    break;
-                case /* PB.GameSetupAction.UnjoinGame unjoin_game */ 2:
-                    message.unjoinGame = PB_GameSetupAction_UnjoinGame.internalBinaryRead(reader, reader.uint32(), options, message.unjoinGame);
-                    break;
-                case /* PB.GameSetupAction.ApproveOfGameSetup approve_of_game_setup */ 3:
-                    message.approveOfGameSetup = PB_GameSetupAction_ApproveOfGameSetup.internalBinaryRead(reader, reader.uint32(), options, message.approveOfGameSetup);
-                    break;
-                case /* PB.GameSetupAction.ChangeGameMode change_game_mode */ 4:
-                    message.changeGameMode = PB_GameSetupAction_ChangeGameMode.internalBinaryRead(reader, reader.uint32(), options, message.changeGameMode);
-                    break;
-                case /* PB.GameSetupAction.ChangePlayerArrangementMode change_player_arrangement_mode */ 5:
-                    message.changePlayerArrangementMode = PB_GameSetupAction_ChangePlayerArrangementMode.internalBinaryRead(reader, reader.uint32(), options, message.changePlayerArrangementMode);
-                    break;
-                case /* PB.GameSetupAction.SwapPositions swap_positions */ 6:
-                    message.swapPositions = PB_GameSetupAction_SwapPositions.internalBinaryRead(reader, reader.uint32(), options, message.swapPositions);
-                    break;
-                case /* PB.GameSetupAction.KickUser kick_user */ 7:
-                    message.kickUser = PB_GameSetupAction_KickUser.internalBinaryRead(reader, reader.uint32(), options, message.kickUser);
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: PB_GameSetupAction, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* PB.GameSetupAction.JoinGame join_game = 1; */
-        if (message.joinGame)
-            PB_GameSetupAction_JoinGame.internalBinaryWrite(message.joinGame, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* PB.GameSetupAction.UnjoinGame unjoin_game = 2; */
-        if (message.unjoinGame)
-            PB_GameSetupAction_UnjoinGame.internalBinaryWrite(message.unjoinGame, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* PB.GameSetupAction.ApproveOfGameSetup approve_of_game_setup = 3; */
-        if (message.approveOfGameSetup)
-            PB_GameSetupAction_ApproveOfGameSetup.internalBinaryWrite(message.approveOfGameSetup, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        /* PB.GameSetupAction.ChangeGameMode change_game_mode = 4; */
-        if (message.changeGameMode)
-            PB_GameSetupAction_ChangeGameMode.internalBinaryWrite(message.changeGameMode, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
-        /* PB.GameSetupAction.ChangePlayerArrangementMode change_player_arrangement_mode = 5; */
-        if (message.changePlayerArrangementMode)
-            PB_GameSetupAction_ChangePlayerArrangementMode.internalBinaryWrite(message.changePlayerArrangementMode, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
-        /* PB.GameSetupAction.SwapPositions swap_positions = 6; */
-        if (message.swapPositions)
-            PB_GameSetupAction_SwapPositions.internalBinaryWrite(message.swapPositions, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
-        /* PB.GameSetupAction.KickUser kick_user = 7; */
-        if (message.kickUser)
-            PB_GameSetupAction_KickUser.internalBinaryWrite(message.kickUser, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message PB.GameSetupAction
- */
-export const PB_GameSetupAction = new PB_GameSetupAction$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class PB_GameSetupAction_JoinGame$Type extends MessageType<PB_GameSetupAction_JoinGame> {
-    constructor() {
-        super("PB.GameSetupAction.JoinGame", []);
-    }
-    create(value?: PartialMessage<PB_GameSetupAction_JoinGame>): PB_GameSetupAction_JoinGame {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        if (value !== undefined)
-            reflectionMergePartial<PB_GameSetupAction_JoinGame>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PB_GameSetupAction_JoinGame): PB_GameSetupAction_JoinGame {
-        return target ?? this.create();
-    }
-    internalBinaryWrite(message: PB_GameSetupAction_JoinGame, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message PB.GameSetupAction.JoinGame
- */
-export const PB_GameSetupAction_JoinGame = new PB_GameSetupAction_JoinGame$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class PB_GameSetupAction_UnjoinGame$Type extends MessageType<PB_GameSetupAction_UnjoinGame> {
-    constructor() {
-        super("PB.GameSetupAction.UnjoinGame", []);
-    }
-    create(value?: PartialMessage<PB_GameSetupAction_UnjoinGame>): PB_GameSetupAction_UnjoinGame {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        if (value !== undefined)
-            reflectionMergePartial<PB_GameSetupAction_UnjoinGame>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PB_GameSetupAction_UnjoinGame): PB_GameSetupAction_UnjoinGame {
-        return target ?? this.create();
-    }
-    internalBinaryWrite(message: PB_GameSetupAction_UnjoinGame, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message PB.GameSetupAction.UnjoinGame
- */
-export const PB_GameSetupAction_UnjoinGame = new PB_GameSetupAction_UnjoinGame$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class PB_GameSetupAction_ApproveOfGameSetup$Type extends MessageType<PB_GameSetupAction_ApproveOfGameSetup> {
-    constructor() {
-        super("PB.GameSetupAction.ApproveOfGameSetup", []);
-    }
-    create(value?: PartialMessage<PB_GameSetupAction_ApproveOfGameSetup>): PB_GameSetupAction_ApproveOfGameSetup {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        if (value !== undefined)
-            reflectionMergePartial<PB_GameSetupAction_ApproveOfGameSetup>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PB_GameSetupAction_ApproveOfGameSetup): PB_GameSetupAction_ApproveOfGameSetup {
-        return target ?? this.create();
-    }
-    internalBinaryWrite(message: PB_GameSetupAction_ApproveOfGameSetup, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message PB.GameSetupAction.ApproveOfGameSetup
- */
-export const PB_GameSetupAction_ApproveOfGameSetup = new PB_GameSetupAction_ApproveOfGameSetup$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class PB_GameSetupAction_ChangeGameMode$Type extends MessageType<PB_GameSetupAction_ChangeGameMode> {
-    constructor() {
-        super("PB.GameSetupAction.ChangeGameMode", [
-            { no: 1, name: "game_mode", kind: "enum", T: () => ["PB.GameMode", PB_GameMode] }
-        ]);
-    }
-    create(value?: PartialMessage<PB_GameSetupAction_ChangeGameMode>): PB_GameSetupAction_ChangeGameMode {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.gameMode = 0;
-        if (value !== undefined)
-            reflectionMergePartial<PB_GameSetupAction_ChangeGameMode>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PB_GameSetupAction_ChangeGameMode): PB_GameSetupAction_ChangeGameMode {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* PB.GameMode game_mode */ 1:
-                    message.gameMode = reader.int32();
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: PB_GameSetupAction_ChangeGameMode, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* PB.GameMode game_mode = 1; */
-        if (message.gameMode !== 0)
-            writer.tag(1, WireType.Varint).int32(message.gameMode);
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message PB.GameSetupAction.ChangeGameMode
- */
-export const PB_GameSetupAction_ChangeGameMode = new PB_GameSetupAction_ChangeGameMode$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class PB_GameSetupAction_ChangePlayerArrangementMode$Type extends MessageType<PB_GameSetupAction_ChangePlayerArrangementMode> {
-    constructor() {
-        super("PB.GameSetupAction.ChangePlayerArrangementMode", [
-            { no: 1, name: "player_arrangement_mode", kind: "enum", T: () => ["PB.PlayerArrangementMode", PB_PlayerArrangementMode] }
-        ]);
-    }
-    create(value?: PartialMessage<PB_GameSetupAction_ChangePlayerArrangementMode>): PB_GameSetupAction_ChangePlayerArrangementMode {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.playerArrangementMode = 0;
-        if (value !== undefined)
-            reflectionMergePartial<PB_GameSetupAction_ChangePlayerArrangementMode>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PB_GameSetupAction_ChangePlayerArrangementMode): PB_GameSetupAction_ChangePlayerArrangementMode {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* PB.PlayerArrangementMode player_arrangement_mode */ 1:
-                    message.playerArrangementMode = reader.int32();
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: PB_GameSetupAction_ChangePlayerArrangementMode, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* PB.PlayerArrangementMode player_arrangement_mode = 1; */
-        if (message.playerArrangementMode !== 0)
-            writer.tag(1, WireType.Varint).int32(message.playerArrangementMode);
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message PB.GameSetupAction.ChangePlayerArrangementMode
- */
-export const PB_GameSetupAction_ChangePlayerArrangementMode = new PB_GameSetupAction_ChangePlayerArrangementMode$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class PB_GameSetupAction_SwapPositions$Type extends MessageType<PB_GameSetupAction_SwapPositions> {
-    constructor() {
-        super("PB.GameSetupAction.SwapPositions", [
-            { no: 1, name: "position1", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 2, name: "position2", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
-        ]);
-    }
-    create(value?: PartialMessage<PB_GameSetupAction_SwapPositions>): PB_GameSetupAction_SwapPositions {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.position1 = 0;
-        message.position2 = 0;
-        if (value !== undefined)
-            reflectionMergePartial<PB_GameSetupAction_SwapPositions>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PB_GameSetupAction_SwapPositions): PB_GameSetupAction_SwapPositions {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* int32 position1 */ 1:
-                    message.position1 = reader.int32();
-                    break;
-                case /* int32 position2 */ 2:
-                    message.position2 = reader.int32();
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: PB_GameSetupAction_SwapPositions, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* int32 position1 = 1; */
-        if (message.position1 !== 0)
-            writer.tag(1, WireType.Varint).int32(message.position1);
-        /* int32 position2 = 2; */
-        if (message.position2 !== 0)
-            writer.tag(2, WireType.Varint).int32(message.position2);
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message PB.GameSetupAction.SwapPositions
- */
-export const PB_GameSetupAction_SwapPositions = new PB_GameSetupAction_SwapPositions$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class PB_GameSetupAction_KickUser$Type extends MessageType<PB_GameSetupAction_KickUser> {
-    constructor() {
-        super("PB.GameSetupAction.KickUser", [
-            { no: 1, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
-        ]);
-    }
-    create(value?: PartialMessage<PB_GameSetupAction_KickUser>): PB_GameSetupAction_KickUser {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.userId = 0;
-        if (value !== undefined)
-            reflectionMergePartial<PB_GameSetupAction_KickUser>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PB_GameSetupAction_KickUser): PB_GameSetupAction_KickUser {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* int32 user_id */ 1:
-                    message.userId = reader.int32();
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: PB_GameSetupAction_KickUser, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* int32 user_id = 1; */
-        if (message.userId !== 0)
-            writer.tag(1, WireType.Varint).int32(message.userId);
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message PB.GameSetupAction.KickUser
- */
-export const PB_GameSetupAction_KickUser = new PB_GameSetupAction_KickUser$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class PB_GameSetupChange$Type extends MessageType<PB_GameSetupChange> {
     constructor() {
@@ -3234,7 +2887,8 @@ export const PB_MessageToServer_Lobby_CreateGame = new PB_MessageToServer_Lobby_
 class PB_MessageToServer_Game$Type extends MessageType<PB_MessageToServer_Game> {
     constructor() {
         super("PB.MessageToServer.Game", [
-            { no: 1, name: "connect", kind: "message", T: () => PB_MessageToServer_Game_Connect }
+            { no: 1, name: "connect", kind: "message", T: () => PB_MessageToServer_Game_Connect },
+            { no: 2, name: "game_setup_action", kind: "message", T: () => PB_MessageToServer_Game_GameSetupAction }
         ]);
     }
     create(value?: PartialMessage<PB_MessageToServer_Game>): PB_MessageToServer_Game {
@@ -3251,6 +2905,9 @@ class PB_MessageToServer_Game$Type extends MessageType<PB_MessageToServer_Game> 
                 case /* PB.MessageToServer.Game.Connect connect */ 1:
                     message.connect = PB_MessageToServer_Game_Connect.internalBinaryRead(reader, reader.uint32(), options, message.connect);
                     break;
+                case /* PB.MessageToServer.Game.GameSetupAction game_setup_action */ 2:
+                    message.gameSetupAction = PB_MessageToServer_Game_GameSetupAction.internalBinaryRead(reader, reader.uint32(), options, message.gameSetupAction);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -3266,6 +2923,9 @@ class PB_MessageToServer_Game$Type extends MessageType<PB_MessageToServer_Game> 
         /* PB.MessageToServer.Game.Connect connect = 1; */
         if (message.connect)
             PB_MessageToServer_Game_Connect.internalBinaryWrite(message.connect, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* PB.MessageToServer.Game.GameSetupAction game_setup_action = 2; */
+        if (message.gameSetupAction)
+            PB_MessageToServer_Game_GameSetupAction.internalBinaryWrite(message.gameSetupAction, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -3331,6 +2991,373 @@ class PB_MessageToServer_Game_Connect$Type extends MessageType<PB_MessageToServe
  * @generated MessageType for protobuf message PB.MessageToServer.Game.Connect
  */
 export const PB_MessageToServer_Game_Connect = new PB_MessageToServer_Game_Connect$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class PB_MessageToServer_Game_GameSetupAction$Type extends MessageType<PB_MessageToServer_Game_GameSetupAction> {
+    constructor() {
+        super("PB.MessageToServer.Game.GameSetupAction", [
+            { no: 1, name: "number_of_game_setup_changes", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 2, name: "sit_down", kind: "message", T: () => PB_MessageToServer_Game_GameSetupAction_SitDown },
+            { no: 3, name: "stand_up", kind: "message", T: () => PB_MessageToServer_Game_GameSetupAction_StandUp },
+            { no: 4, name: "approve", kind: "message", T: () => PB_MessageToServer_Game_GameSetupAction_Approve },
+            { no: 5, name: "change_game_mode", kind: "message", T: () => PB_MessageToServer_Game_GameSetupAction_ChangeGameMode },
+            { no: 6, name: "change_player_arrangement_mode", kind: "message", T: () => PB_MessageToServer_Game_GameSetupAction_ChangePlayerArrangementMode },
+            { no: 7, name: "swap_positions", kind: "message", T: () => PB_MessageToServer_Game_GameSetupAction_SwapPositions },
+            { no: 8, name: "kick_user", kind: "message", T: () => PB_MessageToServer_Game_GameSetupAction_KickUser }
+        ]);
+    }
+    create(value?: PartialMessage<PB_MessageToServer_Game_GameSetupAction>): PB_MessageToServer_Game_GameSetupAction {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.numberOfGameSetupChanges = 0;
+        if (value !== undefined)
+            reflectionMergePartial<PB_MessageToServer_Game_GameSetupAction>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PB_MessageToServer_Game_GameSetupAction): PB_MessageToServer_Game_GameSetupAction {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* int32 number_of_game_setup_changes */ 1:
+                    message.numberOfGameSetupChanges = reader.int32();
+                    break;
+                case /* PB.MessageToServer.Game.GameSetupAction.SitDown sit_down */ 2:
+                    message.sitDown = PB_MessageToServer_Game_GameSetupAction_SitDown.internalBinaryRead(reader, reader.uint32(), options, message.sitDown);
+                    break;
+                case /* PB.MessageToServer.Game.GameSetupAction.StandUp stand_up */ 3:
+                    message.standUp = PB_MessageToServer_Game_GameSetupAction_StandUp.internalBinaryRead(reader, reader.uint32(), options, message.standUp);
+                    break;
+                case /* PB.MessageToServer.Game.GameSetupAction.Approve approve */ 4:
+                    message.approve = PB_MessageToServer_Game_GameSetupAction_Approve.internalBinaryRead(reader, reader.uint32(), options, message.approve);
+                    break;
+                case /* PB.MessageToServer.Game.GameSetupAction.ChangeGameMode change_game_mode */ 5:
+                    message.changeGameMode = PB_MessageToServer_Game_GameSetupAction_ChangeGameMode.internalBinaryRead(reader, reader.uint32(), options, message.changeGameMode);
+                    break;
+                case /* PB.MessageToServer.Game.GameSetupAction.ChangePlayerArrangementMode change_player_arrangement_mode */ 6:
+                    message.changePlayerArrangementMode = PB_MessageToServer_Game_GameSetupAction_ChangePlayerArrangementMode.internalBinaryRead(reader, reader.uint32(), options, message.changePlayerArrangementMode);
+                    break;
+                case /* PB.MessageToServer.Game.GameSetupAction.SwapPositions swap_positions */ 7:
+                    message.swapPositions = PB_MessageToServer_Game_GameSetupAction_SwapPositions.internalBinaryRead(reader, reader.uint32(), options, message.swapPositions);
+                    break;
+                case /* PB.MessageToServer.Game.GameSetupAction.KickUser kick_user */ 8:
+                    message.kickUser = PB_MessageToServer_Game_GameSetupAction_KickUser.internalBinaryRead(reader, reader.uint32(), options, message.kickUser);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: PB_MessageToServer_Game_GameSetupAction, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int32 number_of_game_setup_changes = 1; */
+        if (message.numberOfGameSetupChanges !== 0)
+            writer.tag(1, WireType.Varint).int32(message.numberOfGameSetupChanges);
+        /* PB.MessageToServer.Game.GameSetupAction.SitDown sit_down = 2; */
+        if (message.sitDown)
+            PB_MessageToServer_Game_GameSetupAction_SitDown.internalBinaryWrite(message.sitDown, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* PB.MessageToServer.Game.GameSetupAction.StandUp stand_up = 3; */
+        if (message.standUp)
+            PB_MessageToServer_Game_GameSetupAction_StandUp.internalBinaryWrite(message.standUp, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* PB.MessageToServer.Game.GameSetupAction.Approve approve = 4; */
+        if (message.approve)
+            PB_MessageToServer_Game_GameSetupAction_Approve.internalBinaryWrite(message.approve, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* PB.MessageToServer.Game.GameSetupAction.ChangeGameMode change_game_mode = 5; */
+        if (message.changeGameMode)
+            PB_MessageToServer_Game_GameSetupAction_ChangeGameMode.internalBinaryWrite(message.changeGameMode, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        /* PB.MessageToServer.Game.GameSetupAction.ChangePlayerArrangementMode change_player_arrangement_mode = 6; */
+        if (message.changePlayerArrangementMode)
+            PB_MessageToServer_Game_GameSetupAction_ChangePlayerArrangementMode.internalBinaryWrite(message.changePlayerArrangementMode, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
+        /* PB.MessageToServer.Game.GameSetupAction.SwapPositions swap_positions = 7; */
+        if (message.swapPositions)
+            PB_MessageToServer_Game_GameSetupAction_SwapPositions.internalBinaryWrite(message.swapPositions, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
+        /* PB.MessageToServer.Game.GameSetupAction.KickUser kick_user = 8; */
+        if (message.kickUser)
+            PB_MessageToServer_Game_GameSetupAction_KickUser.internalBinaryWrite(message.kickUser, writer.tag(8, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message PB.MessageToServer.Game.GameSetupAction
+ */
+export const PB_MessageToServer_Game_GameSetupAction = new PB_MessageToServer_Game_GameSetupAction$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class PB_MessageToServer_Game_GameSetupAction_SitDown$Type extends MessageType<PB_MessageToServer_Game_GameSetupAction_SitDown> {
+    constructor() {
+        super("PB.MessageToServer.Game.GameSetupAction.SitDown", []);
+    }
+    create(value?: PartialMessage<PB_MessageToServer_Game_GameSetupAction_SitDown>): PB_MessageToServer_Game_GameSetupAction_SitDown {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<PB_MessageToServer_Game_GameSetupAction_SitDown>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PB_MessageToServer_Game_GameSetupAction_SitDown): PB_MessageToServer_Game_GameSetupAction_SitDown {
+        return target ?? this.create();
+    }
+    internalBinaryWrite(message: PB_MessageToServer_Game_GameSetupAction_SitDown, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message PB.MessageToServer.Game.GameSetupAction.SitDown
+ */
+export const PB_MessageToServer_Game_GameSetupAction_SitDown = new PB_MessageToServer_Game_GameSetupAction_SitDown$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class PB_MessageToServer_Game_GameSetupAction_StandUp$Type extends MessageType<PB_MessageToServer_Game_GameSetupAction_StandUp> {
+    constructor() {
+        super("PB.MessageToServer.Game.GameSetupAction.StandUp", []);
+    }
+    create(value?: PartialMessage<PB_MessageToServer_Game_GameSetupAction_StandUp>): PB_MessageToServer_Game_GameSetupAction_StandUp {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<PB_MessageToServer_Game_GameSetupAction_StandUp>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PB_MessageToServer_Game_GameSetupAction_StandUp): PB_MessageToServer_Game_GameSetupAction_StandUp {
+        return target ?? this.create();
+    }
+    internalBinaryWrite(message: PB_MessageToServer_Game_GameSetupAction_StandUp, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message PB.MessageToServer.Game.GameSetupAction.StandUp
+ */
+export const PB_MessageToServer_Game_GameSetupAction_StandUp = new PB_MessageToServer_Game_GameSetupAction_StandUp$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class PB_MessageToServer_Game_GameSetupAction_Approve$Type extends MessageType<PB_MessageToServer_Game_GameSetupAction_Approve> {
+    constructor() {
+        super("PB.MessageToServer.Game.GameSetupAction.Approve", []);
+    }
+    create(value?: PartialMessage<PB_MessageToServer_Game_GameSetupAction_Approve>): PB_MessageToServer_Game_GameSetupAction_Approve {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<PB_MessageToServer_Game_GameSetupAction_Approve>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PB_MessageToServer_Game_GameSetupAction_Approve): PB_MessageToServer_Game_GameSetupAction_Approve {
+        return target ?? this.create();
+    }
+    internalBinaryWrite(message: PB_MessageToServer_Game_GameSetupAction_Approve, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message PB.MessageToServer.Game.GameSetupAction.Approve
+ */
+export const PB_MessageToServer_Game_GameSetupAction_Approve = new PB_MessageToServer_Game_GameSetupAction_Approve$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class PB_MessageToServer_Game_GameSetupAction_ChangeGameMode$Type extends MessageType<PB_MessageToServer_Game_GameSetupAction_ChangeGameMode> {
+    constructor() {
+        super("PB.MessageToServer.Game.GameSetupAction.ChangeGameMode", [
+            { no: 1, name: "game_mode", kind: "enum", T: () => ["PB.GameMode", PB_GameMode] }
+        ]);
+    }
+    create(value?: PartialMessage<PB_MessageToServer_Game_GameSetupAction_ChangeGameMode>): PB_MessageToServer_Game_GameSetupAction_ChangeGameMode {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.gameMode = 0;
+        if (value !== undefined)
+            reflectionMergePartial<PB_MessageToServer_Game_GameSetupAction_ChangeGameMode>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PB_MessageToServer_Game_GameSetupAction_ChangeGameMode): PB_MessageToServer_Game_GameSetupAction_ChangeGameMode {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* PB.GameMode game_mode */ 1:
+                    message.gameMode = reader.int32();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: PB_MessageToServer_Game_GameSetupAction_ChangeGameMode, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* PB.GameMode game_mode = 1; */
+        if (message.gameMode !== 0)
+            writer.tag(1, WireType.Varint).int32(message.gameMode);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message PB.MessageToServer.Game.GameSetupAction.ChangeGameMode
+ */
+export const PB_MessageToServer_Game_GameSetupAction_ChangeGameMode = new PB_MessageToServer_Game_GameSetupAction_ChangeGameMode$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class PB_MessageToServer_Game_GameSetupAction_ChangePlayerArrangementMode$Type extends MessageType<PB_MessageToServer_Game_GameSetupAction_ChangePlayerArrangementMode> {
+    constructor() {
+        super("PB.MessageToServer.Game.GameSetupAction.ChangePlayerArrangementMode", [
+            { no: 1, name: "player_arrangement_mode", kind: "enum", T: () => ["PB.PlayerArrangementMode", PB_PlayerArrangementMode] }
+        ]);
+    }
+    create(value?: PartialMessage<PB_MessageToServer_Game_GameSetupAction_ChangePlayerArrangementMode>): PB_MessageToServer_Game_GameSetupAction_ChangePlayerArrangementMode {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.playerArrangementMode = 0;
+        if (value !== undefined)
+            reflectionMergePartial<PB_MessageToServer_Game_GameSetupAction_ChangePlayerArrangementMode>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PB_MessageToServer_Game_GameSetupAction_ChangePlayerArrangementMode): PB_MessageToServer_Game_GameSetupAction_ChangePlayerArrangementMode {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* PB.PlayerArrangementMode player_arrangement_mode */ 1:
+                    message.playerArrangementMode = reader.int32();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: PB_MessageToServer_Game_GameSetupAction_ChangePlayerArrangementMode, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* PB.PlayerArrangementMode player_arrangement_mode = 1; */
+        if (message.playerArrangementMode !== 0)
+            writer.tag(1, WireType.Varint).int32(message.playerArrangementMode);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message PB.MessageToServer.Game.GameSetupAction.ChangePlayerArrangementMode
+ */
+export const PB_MessageToServer_Game_GameSetupAction_ChangePlayerArrangementMode = new PB_MessageToServer_Game_GameSetupAction_ChangePlayerArrangementMode$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class PB_MessageToServer_Game_GameSetupAction_SwapPositions$Type extends MessageType<PB_MessageToServer_Game_GameSetupAction_SwapPositions> {
+    constructor() {
+        super("PB.MessageToServer.Game.GameSetupAction.SwapPositions", [
+            { no: 1, name: "position1", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 2, name: "position2", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
+        ]);
+    }
+    create(value?: PartialMessage<PB_MessageToServer_Game_GameSetupAction_SwapPositions>): PB_MessageToServer_Game_GameSetupAction_SwapPositions {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.position1 = 0;
+        message.position2 = 0;
+        if (value !== undefined)
+            reflectionMergePartial<PB_MessageToServer_Game_GameSetupAction_SwapPositions>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PB_MessageToServer_Game_GameSetupAction_SwapPositions): PB_MessageToServer_Game_GameSetupAction_SwapPositions {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* int32 position1 */ 1:
+                    message.position1 = reader.int32();
+                    break;
+                case /* int32 position2 */ 2:
+                    message.position2 = reader.int32();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: PB_MessageToServer_Game_GameSetupAction_SwapPositions, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int32 position1 = 1; */
+        if (message.position1 !== 0)
+            writer.tag(1, WireType.Varint).int32(message.position1);
+        /* int32 position2 = 2; */
+        if (message.position2 !== 0)
+            writer.tag(2, WireType.Varint).int32(message.position2);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message PB.MessageToServer.Game.GameSetupAction.SwapPositions
+ */
+export const PB_MessageToServer_Game_GameSetupAction_SwapPositions = new PB_MessageToServer_Game_GameSetupAction_SwapPositions$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class PB_MessageToServer_Game_GameSetupAction_KickUser$Type extends MessageType<PB_MessageToServer_Game_GameSetupAction_KickUser> {
+    constructor() {
+        super("PB.MessageToServer.Game.GameSetupAction.KickUser", [
+            { no: 1, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
+        ]);
+    }
+    create(value?: PartialMessage<PB_MessageToServer_Game_GameSetupAction_KickUser>): PB_MessageToServer_Game_GameSetupAction_KickUser {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.userId = 0;
+        if (value !== undefined)
+            reflectionMergePartial<PB_MessageToServer_Game_GameSetupAction_KickUser>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PB_MessageToServer_Game_GameSetupAction_KickUser): PB_MessageToServer_Game_GameSetupAction_KickUser {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* int32 user_id */ 1:
+                    message.userId = reader.int32();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: PB_MessageToServer_Game_GameSetupAction_KickUser, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int32 user_id = 1; */
+        if (message.userId !== 0)
+            writer.tag(1, WireType.Varint).int32(message.userId);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message PB.MessageToServer.Game.GameSetupAction.KickUser
+ */
+export const PB_MessageToServer_Game_GameSetupAction_KickUser = new PB_MessageToServer_Game_GameSetupAction_KickUser$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class PB_MessageToClient$Type extends MessageType<PB_MessageToClient> {
     constructor() {
@@ -4612,7 +4639,8 @@ class PB_MessageToClient_Game_Metadata$Type extends MessageType<PB_MessageToClie
             { no: 3, name: "host_user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
             { no: 4, name: "user_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ },
             { no: 5, name: "approvals", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 8 /*ScalarType.BOOL*/ },
-            { no: 6, name: "user_ids_in_room", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ }
+            { no: 6, name: "number_of_game_setup_changes", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 7, name: "user_ids_in_room", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ }
         ]);
     }
     create(value?: PartialMessage<PB_MessageToClient_Game_Metadata>): PB_MessageToClient_Game_Metadata {
@@ -4622,6 +4650,7 @@ class PB_MessageToClient_Game_Metadata$Type extends MessageType<PB_MessageToClie
         message.hostUserId = 0;
         message.userIds = [];
         message.approvals = [];
+        message.numberOfGameSetupChanges = 0;
         message.userIdsInRoom = [];
         if (value !== undefined)
             reflectionMergePartial<PB_MessageToClient_Game_Metadata>(this, message, value);
@@ -4655,7 +4684,10 @@ class PB_MessageToClient_Game_Metadata$Type extends MessageType<PB_MessageToClie
                     else
                         message.approvals.push(reader.bool());
                     break;
-                case /* repeated int32 user_ids_in_room */ 6:
+                case /* int32 number_of_game_setup_changes */ 6:
+                    message.numberOfGameSetupChanges = reader.int32();
+                    break;
+                case /* repeated int32 user_ids_in_room */ 7:
                     if (wireType === WireType.LengthDelimited)
                         for (let e = reader.int32() + reader.pos; reader.pos < e;)
                             message.userIdsInRoom.push(reader.int32());
@@ -4697,9 +4729,12 @@ class PB_MessageToClient_Game_Metadata$Type extends MessageType<PB_MessageToClie
                 writer.bool(message.approvals[i]);
             writer.join();
         }
-        /* repeated int32 user_ids_in_room = 6; */
+        /* int32 number_of_game_setup_changes = 6; */
+        if (message.numberOfGameSetupChanges !== 0)
+            writer.tag(6, WireType.Varint).int32(message.numberOfGameSetupChanges);
+        /* repeated int32 user_ids_in_room = 7; */
         if (message.userIdsInRoom.length) {
-            writer.tag(6, WireType.LengthDelimited).fork();
+            writer.tag(7, WireType.LengthDelimited).fork();
             for (let i = 0; i < message.userIdsInRoom.length; i++)
                 writer.int32(message.userIdsInRoom[i]);
             writer.join();

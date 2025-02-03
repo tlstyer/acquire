@@ -85,6 +85,7 @@ export function createGameManager(
   const [userIds, setUserIds] = createSignal(dummyUserIds);
   const [approvals, setApprovals] = createSignal(dummyApprovals);
   const [hostUserId, setHostUserId] = createSignal(0);
+  let numberOfGameSetupChanges = 0;
   const internalUserIdToUsername = new Map<number, string>();
   const [userIdToUsername, setUserIdToUsername] = createSignal(internalUserIdToUsername, {
     equals: false,
@@ -128,6 +129,7 @@ export function createGameManager(
     if (message.metadata || message.gameReview || message.gameNotFound) {
       if (message.metadata) {
         const metadata = message.metadata;
+
         gameSetup = new GameSetup(
           metadata.gameMode,
           metadata.playerArrangementMode,
@@ -136,6 +138,8 @@ export function createGameManager(
           metadata.userIds.map((userId) => (userId === 0 ? null : userId)),
         );
         gameSetup.approvals = metadata.approvals;
+
+        numberOfGameSetupChanges = metadata.numberOfGameSetupChanges;
 
         for (let i = 0; i < metadata.userIdsInRoom.length; i++) {
           internalUserIdsInRoom.add(metadata.userIdsInRoom[i]);
@@ -159,6 +163,11 @@ export function createGameManager(
     if (message.userIdWhoExitedRoom) {
       internalUserIdsInRoom.delete(message.userIdWhoExitedRoom);
       updatedUserIdsInRoom = true;
+    }
+
+    if (message.gameSetupChange) {
+      gameSetup!.processChange(message.gameSetupChange);
+      numberOfGameSetupChanges++;
     }
 
     batch(() => {
@@ -203,10 +212,119 @@ export function createGameManager(
     });
   }
 
+  function sitDown() {
+    clientCommunication.sendMessage(
+      PB_MessageToServer.toBinary({
+        game: {
+          gameSetupAction: {
+            numberOfGameSetupChanges,
+            sitDown: {},
+          },
+        },
+      }),
+    );
+  }
+
+  function standUp() {
+    clientCommunication.sendMessage(
+      PB_MessageToServer.toBinary({
+        game: {
+          gameSetupAction: {
+            numberOfGameSetupChanges,
+            standUp: {},
+          },
+        },
+      }),
+    );
+  }
+
+  function approve() {
+    clientCommunication.sendMessage(
+      PB_MessageToServer.toBinary({
+        game: {
+          gameSetupAction: {
+            numberOfGameSetupChanges,
+            approve: {},
+          },
+        },
+      }),
+    );
+  }
+
+  function changeGameMode(gameMode: PB_GameMode) {
+    clientCommunication.sendMessage(
+      PB_MessageToServer.toBinary({
+        game: {
+          gameSetupAction: {
+            numberOfGameSetupChanges,
+            changeGameMode: {
+              gameMode,
+            },
+          },
+        },
+      }),
+    );
+  }
+
+  function changePlayerArrangementMode(playerArrangementMode: PB_PlayerArrangementMode) {
+    clientCommunication.sendMessage(
+      PB_MessageToServer.toBinary({
+        game: {
+          gameSetupAction: {
+            numberOfGameSetupChanges,
+            changePlayerArrangementMode: {
+              playerArrangementMode,
+            },
+          },
+        },
+      }),
+    );
+  }
+
+  function swapPositions(position1: number, position2: number) {
+    clientCommunication.sendMessage(
+      PB_MessageToServer.toBinary({
+        game: {
+          gameSetupAction: {
+            numberOfGameSetupChanges,
+            swapPositions: {
+              position1,
+              position2,
+            },
+          },
+        },
+      }),
+    );
+  }
+
+  function kickUser(userId: number) {
+    clientCommunication.sendMessage(
+      PB_MessageToServer.toBinary({
+        game: {
+          gameSetupAction: {
+            numberOfGameSetupChanges,
+            kickUser: {
+              userId,
+            },
+          },
+        },
+      }),
+    );
+  }
+
   return {
     connect,
     getConnectMessage,
     onMessage,
+    gameSetupActions: {
+      sitDown,
+      standUp,
+      approve,
+      changeGameMode,
+      changePlayerArrangementMode,
+      swapPositions,
+      kickUser,
+    },
     signals: {
       status,
       gameMode,

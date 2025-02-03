@@ -7,6 +7,7 @@ import {
   PB_PlayerArrangementMode,
   type PB_GameMode,
   type PB_MessageToServer_Game_Connect,
+  type PB_MessageToServer_Game_GameSetupAction,
 } from '../common/pb';
 import type { Client } from './client';
 import type { LobbyRoom } from './lobbyRoom';
@@ -81,6 +82,7 @@ export class GameRoom extends Room {
                 ? this.gameSetup.userIds.map((userId) => userId ?? 0)
                 : this.game!.userIds,
               approvals: this.gameSetup ? this.gameSetup.approvals : dummyApprovals,
+              numberOfGameSetupChanges: this.gameSetup ? this.gameSetup.history.length : 0,
               userIdsInRoom: [...this.userIdToClients.keys()],
             },
             userIdsAndUsernames: this.userIdsAndUsernames,
@@ -88,6 +90,55 @@ export class GameRoom extends Room {
         }),
       ),
     );
+  }
+
+  onMessage_GameSetupAction(client: Client, message: PB_MessageToServer_Game_GameSetupAction) {
+    if (this.gameSetup && client.userId !== undefined) {
+      const historyLengthBefore = this.gameSetup.history.length;
+
+      if (message.sitDown) {
+        this.gameSetup.addUser(client.userId);
+      } else if (message.standUp) {
+        this.gameSetup.removeUser(client.userId);
+      } else if (message.approve) {
+        this.gameSetup.approve(client.userId);
+      } else if (message.changeGameMode) {
+        if (client.userId === this.gameSetup.hostUserId) {
+          this.gameSetup.changeGameMode(message.changeGameMode.gameMode);
+        }
+      } else if (message.changePlayerArrangementMode) {
+        if (client.userId === this.gameSetup.hostUserId) {
+          this.gameSetup.changePlayerArrangementMode(
+            message.changePlayerArrangementMode.playerArrangementMode,
+          );
+        }
+      } else if (message.swapPositions) {
+        if (client.userId === this.gameSetup.hostUserId) {
+          this.gameSetup.swapPositions(
+            message.swapPositions.position1,
+            message.swapPositions.position2,
+          );
+        }
+      } else if (message.kickUser) {
+        if (client.userId === this.gameSetup.hostUserId) {
+          this.gameSetup.kickUser(message.kickUser.userId);
+        }
+      }
+
+      if (this.gameSetup.history.length !== historyLengthBefore) {
+        const messageToGameClients = PB_MessageToClient.toBinary(
+          PB_MessageToClient.create({
+            game: {
+              gameSetupChange: this.gameSetup.history[this.gameSetup.history.length - 1],
+            },
+          }),
+        );
+
+        for (const client of this.clients) {
+          client.sendMessage(messageToGameClients);
+        }
+      }
+    }
   }
 
   userConnected(userId: number, username: string) {

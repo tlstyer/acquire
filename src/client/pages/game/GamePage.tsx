@@ -5,6 +5,7 @@ import { parseDecimalInteger } from '../../../common/helpers';
 import { type Client } from '../../client';
 import { GameBoard } from '../../components/GameBoard';
 import { GameHistory } from '../../components/GameHistory';
+import { GameSetupUI } from '../../components/GameSetupUI';
 import { NextGameAction } from '../../components/NextGameAction';
 import { ScoreBoard } from '../../components/ScoreBoard';
 import { TileRackReadOnly } from '../../components/TileRackReadOnly';
@@ -21,6 +22,15 @@ export function GamePage(props: { client: Client }) {
 
   // eslint-disable-next-line solid/reactivity
   const gameManager = props.client.connectToGame(logTime, gameNumber);
+
+  const iAmHost = createMemo(
+    () => gameManager.signals.hostUserId() === props.client.signals.userId(),
+  );
+  const iAmInGame = createMemo(
+    () =>
+      props.client.signals.userId() !== null &&
+      gameManager.signals.userIds().includes(props.client.signals.userId()),
+  );
 
   const [selectedMoveIndex, setSelectedMoveIndex] = createSignal(0);
 
@@ -97,7 +107,43 @@ export function GamePage(props: { client: Client }) {
           </div>
           <Switch>
             <Match when={gameManager.signals.status() === GameManagerStatus.SettingUp}>
-              <div class={styles.padded}>Setting up.</div>
+              <div class={styles.padded}>
+                <Show when={props.client.signals.userId() !== null && !iAmHost()}>
+                  <input
+                    class={styles.sitDownInput}
+                    type="button"
+                    value={iAmInGame() ? 'Stand Up' : 'Sit Down'}
+                    disabled={!iAmInGame() && !gameManager.signals.usernames().includes(null)}
+                    onClick={() => {
+                      if (iAmInGame()) {
+                        gameManager.gameSetupActions.standUp();
+                      } else {
+                        gameManager.gameSetupActions.sitDown();
+                      }
+                    }}
+                  />
+                </Show>
+                <GameSetupUI
+                  gameMode={gameManager.signals.gameMode()}
+                  playerArrangementMode={gameManager.signals.playerArrangementMode()}
+                  usernames={gameManager.signals.usernames()}
+                  userIds={gameManager.signals.userIds()}
+                  approvals={gameManager.signals.approvals()}
+                  hostUserId={gameManager.signals.hostUserId()}
+                  myUserId={props.client.signals.userId() ?? 0}
+                  onChangeGameMode={
+                    iAmHost() ? gameManager.gameSetupActions.changeGameMode : undefined
+                  }
+                  onChangePlayerArrangementMode={
+                    iAmHost() ? gameManager.gameSetupActions.changePlayerArrangementMode : undefined
+                  }
+                  onSwapPositions={
+                    iAmHost() ? gameManager.gameSetupActions.swapPositions : undefined
+                  }
+                  onKickUser={iAmHost() ? gameManager.gameSetupActions.kickUser : undefined}
+                  onApprove={gameManager.gameSetupActions.approve}
+                />
+              </div>
             </Match>
             <Match when={true}>
               <div class={styles.rightSide}>
