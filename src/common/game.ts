@@ -102,11 +102,11 @@ export class Game {
       }
     }
 
-    if (gameState.revealedTileRackTiles && gameState.revealedTileRackTiles.length > 0) {
+    if (gameState.revealedTileRackTiles.length > 0) {
       this.processRevealedTileRackTiles(gameState.revealedTileRackTiles);
     }
 
-    if (gameState.revealedTileBagTiles && gameState.revealedTileBagTiles.length > 0) {
+    if (gameState.revealedTileBagTiles.length > 0) {
       this.processRevealedTileBagTiles(gameState.revealedTileBagTiles);
     }
 

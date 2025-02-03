@@ -70,6 +70,7 @@ export class LobbyRoom extends Room {
         },
       }),
     );
+
     if (!isKnownUser) {
       this.lscKnownUserIds.add(userId);
     }
