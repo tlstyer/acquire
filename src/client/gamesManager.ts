@@ -85,6 +85,12 @@ export function createGameManager(
   const [userIds, setUserIds] = createSignal(dummyUserIds);
   const [approvals, setApprovals] = createSignal(dummyApprovals);
   const [hostUserId, setHostUserId] = createSignal(0);
+  const internalUserIdToUsername = new Map<number, string>();
+  const [userIdToUsername, setUserIdToUsername] = createSignal(internalUserIdToUsername, {
+    equals: false,
+  });
+  const internalUserIdsInRoom = new Set<number>();
+  const [userIdsInRoom, setUserIdsInRoom] = createSignal(internalUserIdsInRoom, { equals: false });
 
   const [gameStateHistory, setGameStateHistory] = createSignal(dummyGameStateHistory);
 
@@ -105,15 +111,18 @@ export function createGameManager(
     });
   }
 
-  const userIdToUsername = new Map<number, string>();
   function getUsernameForUserId(userId: number) {
-    return userIdToUsername.get(userId) ?? '?';
+    return internalUserIdToUsername.get(userId) ?? '?';
   }
 
   function onMessage(message: PB_MessageToClient_Game) {
+    let updatedUserIdToUsername = false;
+    let updatedUserIdsInRoom = false;
+
     for (let i = 0; i < message.userIdsAndUsernames.length; i++) {
       const userIdAndUsername = message.userIdsAndUsernames[i];
-      userIdToUsername.set(userIdAndUsername.userId, userIdAndUsername.username);
+      internalUserIdToUsername.set(userIdAndUsername.userId, userIdAndUsername.username);
+      updatedUserIdToUsername = true;
     }
 
     if (message.metadata || message.gameReview || message.gameNotFound) {
@@ -128,6 +137,11 @@ export function createGameManager(
         );
         gameSetup.approvals = metadata.approvals;
 
+        for (let i = 0; i < metadata.userIdsInRoom.length; i++) {
+          internalUserIdsInRoom.add(metadata.userIdsInRoom[i]);
+          updatedUserIdsInRoom = true;
+        }
+
         game = null;
       } else if (message.gameReview) {
         gameSetup = null;
@@ -136,6 +150,15 @@ export function createGameManager(
         gameSetup = null;
         game = null;
       }
+    }
+
+    if (message.userIdWhoEnteredRoom) {
+      internalUserIdsInRoom.add(message.userIdWhoEnteredRoom);
+      updatedUserIdsInRoom = true;
+    }
+    if (message.userIdWhoExitedRoom) {
+      internalUserIdsInRoom.delete(message.userIdWhoExitedRoom);
+      updatedUserIdsInRoom = true;
     }
 
     batch(() => {
@@ -170,6 +193,13 @@ export function createGameManager(
       } else {
         setStatus(GameManagerStatus.NotFound);
       }
+
+      if (updatedUserIdToUsername) {
+        setUserIdToUsername(internalUserIdToUsername);
+      }
+      if (updatedUserIdsInRoom) {
+        setUserIdsInRoom(internalUserIdsInRoom);
+      }
     });
   }
 
@@ -186,6 +216,8 @@ export function createGameManager(
       userIds,
       approvals,
       hostUserId,
+      userIdToUsername,
+      userIdsInRoom,
       gameStateHistory,
     },
   };

@@ -16,6 +16,7 @@ export class GameRoom extends Room {
   gameSetup: GameSetup | undefined;
   game: Game | undefined;
 
+  private clientFromConnectMessage: Client | null = null;
   private userIdToUsername = new Map<number, string>();
   private userIdsAndUsernames: PB_MessageToClient_Game_UserIdAndUsername[] = [];
 
@@ -28,7 +29,13 @@ export class GameRoom extends Room {
   ) {
     super();
 
-    this.addUserIdAndUsername(host.userId!, host.username!);
+    this.userIdToUsername.set(host.userId!, host.username!);
+    this.userIdsAndUsernames.push(
+      PB_MessageToClient_Game_UserIdAndUsername.create({
+        userId: host.userId!,
+        username: host.username!,
+      }),
+    );
 
     this.gameSetup = new GameSetup(
       gameMode,
@@ -49,22 +56,14 @@ export class GameRoom extends Room {
     );
   }
 
-  addUserIdAndUsername(userId: number, username: string) {
-    this.userIdToUsername.set(userId, username);
-    this.userIdsAndUsernames.push(
-      PB_MessageToClient_Game_UserIdAndUsername.create({
-        userId,
-        username,
-      }),
-    );
-  }
-
   getUsernameForUserId(userId: number) {
     return this.userIdToUsername.get(userId) ?? '?';
   }
 
   onMessage_Connect(client: Client, message: PB_MessageToServer_Game_Connect) {
+    this.clientFromConnectMessage = client;
     client.connectToRoom(this);
+    this.clientFromConnectMessage = null;
 
     client.sendMessage(
       PB_MessageToClient.toBinary(
@@ -82,12 +81,54 @@ export class GameRoom extends Room {
                 ? this.gameSetup.userIds.map((userId) => userId ?? 0)
                 : this.game!.userIds,
               approvals: this.gameSetup ? this.gameSetup.approvals : dummyApprovals,
+              userIdsInRoom: [...this.userIdToClients.keys()],
             },
             userIdsAndUsernames: this.userIdsAndUsernames,
           },
         }),
       ),
     );
+  }
+
+  userConnected(userId: number, username: string) {
+    const messageToClient = PB_MessageToClient.create({
+      game: {
+        userIdWhoEnteredRoom: userId,
+      },
+    });
+
+    if (!this.userIdToUsername.has(userId)) {
+      this.userIdToUsername.set(userId, username);
+
+      const userIdAndUsername = PB_MessageToClient_Game_UserIdAndUsername.create({
+        userId,
+        username,
+      });
+      this.userIdsAndUsernames.push(userIdAndUsername);
+      messageToClient.game!.userIdsAndUsernames.push(userIdAndUsername);
+    }
+
+    const messageToClientBinary = PB_MessageToClient.toBinary(messageToClient);
+
+    for (const client of this.clients) {
+      if (client !== this.clientFromConnectMessage) {
+        client.sendMessage(messageToClientBinary);
+      }
+    }
+  }
+
+  userDisconnected(userId: number) {
+    const messageToClientBinary = PB_MessageToClient.toBinary(
+      PB_MessageToClient.create({
+        game: {
+          userIdWhoExitedRoom: userId,
+        },
+      }),
+    );
+
+    for (const client of this.clients) {
+      client.sendMessage(messageToClientBinary);
+    }
   }
 }
 
