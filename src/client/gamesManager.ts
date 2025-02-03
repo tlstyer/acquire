@@ -78,13 +78,15 @@ export function createGameManager(
   const [playerArrangementMode, setPlayerArrangementMode] = createSignal(
     PB_PlayerArrangementMode.VERSION_1,
   );
-  const [usernames, setUsernames] = createSignal<(string | null)[]>([]);
-  const [usernamesWithoutNulls, setUsernamesWithoutNulls] = createSignal<string[]>([]); // TODO: come up with a better way
-  const [userIds, setUserIds] = createSignal<(number | null)[]>([]);
-  const [approvals, setApprovals] = createSignal<boolean[]>([]);
+  const [usernames, setUsernames] = createSignal(dummyUsernames);
+  const [usernamesWithoutNulls, setUsernamesWithoutNulls] = createSignal(
+    dummyUsernamesWithoutNulls,
+  ); // TODO: come up with a better way
+  const [userIds, setUserIds] = createSignal(dummyUserIds);
+  const [approvals, setApprovals] = createSignal(dummyApprovals);
   const [hostUserId, setHostUserId] = createSignal(0);
 
-  const [gameStateHistory, setGameStateHistory] = createSignal([dummyGameState]);
+  const [gameStateHistory, setGameStateHistory] = createSignal(dummyGameStateHistory);
 
   function connect() {
     setStatus(GameManagerStatus.Connecting);
@@ -208,3 +210,9 @@ const dummyGame = new Game(
 );
 
 const dummyGameState = new GameState(dummyGame, null);
+
+const dummyUsernames: (string | null)[] = [];
+const dummyUsernamesWithoutNulls: string[] = [];
+const dummyUserIds: (number | null)[] = [];
+const dummyApprovals: boolean[] = [];
+const dummyGameStateHistory = [dummyGameState];
