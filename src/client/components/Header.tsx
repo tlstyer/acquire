@@ -31,8 +31,8 @@ export function Header(props: { client: Client }) {
 
       <span class={styles.middle} />
 
-      <Show when={props.client.signals.username() !== ''}>
-        <Username username={props.client.signals.username()} />
+      <Show when={props.client.signals.username() !== null}>
+        <Username username={props.client.signals.username()!} />
       </Show>
 
       <Switch>

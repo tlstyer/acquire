@@ -21,14 +21,13 @@ export function createClient(clientCommunication: ClientCommunication, version: 
 
   let logTime = 0;
 
-  let myUsername: string | undefined;
   let myToken: string | undefined;
 
   const [connected, setConnected] = createSignal(false);
 
   let loginMessage: Uint8Array | undefined;
 
-  const [username, setUsername] = createSignal('');
+  const [username, setUsername] = createSignal<string | null>(null);
   const [userId, setUserId] = createSignal<number | null>(null);
   const [loginState, setLoginState] = createSignal(LoginState.LoggedOut);
   const [loginLogoutResponseCode, setLoginLogoutResponseCode] = createSignal<
@@ -209,7 +208,6 @@ export function createClient(clientCommunication: ClientCommunication, version: 
 
   function onMessage_LoginLogout(message: PB_MessageToClient_LoginLogout) {
     if (message.username && message.userId && message.token) {
-      myUsername = message.username;
       myToken = message.token;
 
       loginMessage = PB_MessageToServer.toBinary({
@@ -240,12 +238,11 @@ export function createClient(clientCommunication: ClientCommunication, version: 
   }
 
   function makeLoggedOutDataChanges() {
-    myUsername = undefined;
     myToken = undefined;
 
     loginMessage = undefined;
 
-    setUsername('');
+    setUsername(null);
     setUserId(null);
     setLoginState(LoginState.LoggedOut);
 
@@ -261,9 +258,6 @@ export function createClient(clientCommunication: ClientCommunication, version: 
     connectToGame,
     get logTime() {
       return logTime;
-    },
-    get myUsername() {
-      return myUsername;
     },
     get myToken() {
       return myToken;

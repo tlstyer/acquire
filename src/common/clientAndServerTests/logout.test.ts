@@ -23,7 +23,7 @@ test('can log out while logged in', async () => {
     createLoginLogoutMessage(PB_MessageToClient_LoginLogout_ResponseCode.SUCCESS),
   );
 
-  expect(client.myUsername).toEqual(undefined);
+  expect(client.signals.username()).toEqual(null);
   expect(client.signals.userId()).toEqual(null);
   expect(client.myToken).toEqual(undefined);
 
@@ -45,7 +45,7 @@ test('logout data changes are made on the server when a client disconnects', asy
 
   expect(clientCommunication.communicatedMessages.length).toBe(0);
 
-  expect(client.myUsername).toEqual('user 4');
+  expect(client.signals.username()).toEqual('user 4');
   expect(client.signals.userId()).toEqual(4);
   expect(client.myToken).toEqual(userIdToTestUserData[4].passwordHash);
 
