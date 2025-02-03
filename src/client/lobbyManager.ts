@@ -1,7 +1,7 @@
 import { batch, createSignal } from 'solid-js';
 import { defaultGameBoard } from '../common/defaults';
-import { GameSetup } from '../common/gameSetup';
-import { gameModeToNumPlayers } from '../common/helpers';
+import { createGameSetupLite } from '../common/gameSetupLite';
+import { defaultApprovals, gameModeToNumPlayers } from '../common/helpers';
 import {
   type PB_GameMode,
   type PB_MessageToClient_Lobby,
@@ -225,16 +225,20 @@ function createLobbyGame(
   initialUserIds: number[],
   getUsernameForUserId: (userId: number) => string,
 ) {
-  const gameSetup = new GameSetup(
+  const gameSetup = createGameSetupLite(
     initialGameMode,
     PB_PlayerArrangementMode.EXACT_ORDER,
     hostUserId,
-    getUsernameForUserId,
     initialUserIds?.map((userId) => (userId !== 0 ? userId : null)),
+    defaultApprovals[gameModeToNumPlayers.get(initialGameMode)!],
   );
 
   const [gameBoard, setGameBoard] = createSignal(defaultGameBoard);
-  const [usernames, setUsernames] = createSignal(gameSetup.usernames);
+  const [usernames, setUsernames] = createSignal(
+    gameSetup.userIds.map((userId) =>
+      userId !== null ? (getUsernameForUserId(userId) ?? '?') : null,
+    ),
+  );
   const [gameMode, setGameMode] = createSignal(gameSetup.gameMode);
   const [gameStatus, setGameStatus] = createSignal(GameStatus.SETTING_UP);
 

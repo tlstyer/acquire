@@ -1,7 +1,7 @@
 import { batch, createSignal } from 'solid-js';
 import { Game } from '../common/game';
 import { gameFromProtocolBuffer } from '../common/gameSerialization';
-import { GameSetup } from '../common/gameSetup';
+import { createGameSetupLite, type GameSetupLite } from '../common/gameSetupLite';
 import { GameState } from '../common/gameState';
 import {
   PB_GameMode,
@@ -69,7 +69,7 @@ export function createGameManager(
   logTime: number,
   gameNumber: number,
 ) {
-  let gameSetup: GameSetup | null;
+  let gameSetup: GameSetupLite | null;
   let game: Game | null;
 
   const [status, setStatus] = createSignal(GameManagerStatus.Connecting);
@@ -112,10 +112,6 @@ export function createGameManager(
     });
   }
 
-  function getUsernameForUserId(userId: number) {
-    return internalUserIdToUsername.get(userId) ?? '?';
-  }
-
   function onMessage(message: PB_MessageToClient_Game) {
     let updatedUserIdToUsername = false;
     let updatedUserIdsInRoom = false;
@@ -130,14 +126,13 @@ export function createGameManager(
       if (message.metadata) {
         const metadata = message.metadata;
 
-        gameSetup = new GameSetup(
+        gameSetup = createGameSetupLite(
           metadata.gameMode,
           metadata.playerArrangementMode,
           metadata.hostUserId,
-          getUsernameForUserId,
           metadata.userIds.map((userId) => (userId === 0 ? null : userId)),
+          metadata.approvals,
         );
-        gameSetup.approvals = metadata.approvals;
 
         numberOfGameSetupChanges = metadata.numberOfGameSetupChanges;
 
@@ -175,18 +170,14 @@ export function createGameManager(
         setStatus(GameManagerStatus.SettingUp);
         setGameMode(gameSetup.gameMode);
         setPlayerArrangementMode(gameSetup.playerArrangementMode);
-        if (gameSetup.usernames !== usernames()) {
-          if (gameSetup.usernames.includes(null)) {
-            setUsernamesWithoutNulls(
-              gameSetup.usernames.map((username) => (username !== null ? username : '')),
-            );
-          } else {
-            // @ts-expect-error just asserted that gameSetup.usernames does not include null
-            setUsernamesWithoutNulls(gameSetup.usernames);
-          }
+        if (gameSetup.userIds !== userIds()) {
+          const usernames = gameSetup.userIds.map((userId) =>
+            userId !== null ? (internalUserIdToUsername.get(userId) ?? '?') : null,
+          );
+          setUsernames(usernames);
+          setUsernamesWithoutNulls(usernames.map((username) => username ?? ''));
+          setUserIds(gameSetup.userIds);
         }
-        setUsernames(gameSetup.usernames);
-        setUserIds(gameSetup.userIds);
         setApprovals(gameSetup.approvals);
         setHostUserId(gameSetup.hostUserId);
       } else if (game) {

@@ -254,3 +254,13 @@ export function parseDecimalInteger(input: string | null | undefined) {
     }
   }
 }
+
+export const defaultApprovals = [
+  [],
+  [false],
+  [false, false],
+  [false, false, false],
+  [false, false, false, false],
+  [false, false, false, false, false],
+  [false, false, false, false, false, false],
+];

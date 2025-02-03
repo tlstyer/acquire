@@ -1,15 +1,10 @@
-import { gameModeToNumPlayers, gameModeToTeamSize, shuffleArray } from './helpers';
+import {
+  defaultApprovals,
+  gameModeToNumPlayers,
+  gameModeToTeamSize,
+  shuffleArray,
+} from './helpers';
 import { PB_GameMode, PB_GameSetupChange, PB_PlayerArrangementMode } from './pb';
-
-const defaultApprovals = [
-  [],
-  [false],
-  [false, false],
-  [false, false, false],
-  [false, false, false, false],
-  [false, false, false, false, false],
-  [false, false, false, false, false, false],
-];
 
 export class GameSetup {
   hostUsername: string;
