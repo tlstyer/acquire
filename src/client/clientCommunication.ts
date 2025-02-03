@@ -85,7 +85,7 @@ export class WebSocketClientCommunication extends ClientCommunication {
     if (import.meta.env.VITE_LOG_MESSAGES_TO_BROWSER_CONSOLE === 'yes') {
       console.log(
         `%c${uint8ArrayToHexString(message)}\n${JSON.stringify(PB_MessageToClient.fromBinary(message), null, 2)}`,
-        'color: blue',
+        'color: red',
       );
     }
 
