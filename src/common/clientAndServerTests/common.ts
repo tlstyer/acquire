@@ -62,8 +62,8 @@ export function testLogin(
     expect(client.myUsername).toEqual(
       loginLogoutMessage.username !== '' ? loginLogoutMessage.username : undefined,
     );
-    expect(client.myUserId).toEqual(
-      loginLogoutMessage.userId !== 0 ? loginLogoutMessage.userId : undefined,
+    expect(client.signals.userId()).toEqual(
+      loginLogoutMessage.userId !== 0 ? loginLogoutMessage.userId : null,
     );
     expect(client.myToken).toEqual(
       loginLogoutMessage.token !== '' ? loginLogoutMessage.token : undefined,

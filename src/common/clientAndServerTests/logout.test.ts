@@ -24,7 +24,7 @@ test('can log out while logged in', async () => {
   );
 
   expect(client.myUsername).toEqual(undefined);
-  expect(client.myUserId).toEqual(undefined);
+  expect(client.signals.userId()).toEqual(null);
   expect(client.myToken).toEqual(undefined);
 
   expect([...server.clientIdToClient.values()].filter((c) => c.userId !== undefined).length).toBe(
@@ -46,7 +46,7 @@ test('logout data changes are made on the server when a client disconnects', asy
   expect(clientCommunication.communicatedMessages.length).toBe(0);
 
   expect(client.myUsername).toEqual('user 4');
-  expect(client.myUserId).toEqual(4);
+  expect(client.signals.userId()).toEqual(4);
   expect(client.myToken).toEqual(userIdToTestUserData[4].passwordHash);
 
   expect([...server.clientIdToClient.values()].filter((c) => c.userId !== undefined).length).toBe(

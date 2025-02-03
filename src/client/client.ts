@@ -22,7 +22,6 @@ export function createClient(clientCommunication: ClientCommunication, version: 
   let logTime = 0;
 
   let myUsername: string | undefined;
-  let myUserId: number | undefined;
   let myToken: string | undefined;
 
   const [connected, setConnected] = createSignal(false);
@@ -30,6 +29,7 @@ export function createClient(clientCommunication: ClientCommunication, version: 
   let loginMessage: Uint8Array | undefined;
 
   const [username, setUsername] = createSignal('');
+  const [userId, setUserId] = createSignal<number | null>(null);
   const [loginState, setLoginState] = createSignal(LoginState.LoggedOut);
   const [loginLogoutResponseCode, setLoginLogoutResponseCode] = createSignal<
     PB_MessageToClient_LoginLogout_ResponseCode | undefined
@@ -210,7 +210,6 @@ export function createClient(clientCommunication: ClientCommunication, version: 
   function onMessage_LoginLogout(message: PB_MessageToClient_LoginLogout) {
     if (message.username && message.userId && message.token) {
       myUsername = message.username;
-      myUserId = message.userId;
       myToken = message.token;
 
       loginMessage = PB_MessageToServer.toBinary({
@@ -223,6 +222,7 @@ export function createClient(clientCommunication: ClientCommunication, version: 
       });
 
       setUsername(message.username);
+      setUserId(message.userId);
       setLoginState(LoginState.LoggedIn);
 
       setUsernameAndToken(new UsernameAndToken(message.username, message.token));
@@ -241,12 +241,12 @@ export function createClient(clientCommunication: ClientCommunication, version: 
 
   function makeLoggedOutDataChanges() {
     myUsername = undefined;
-    myUserId = undefined;
     myToken = undefined;
 
     loginMessage = undefined;
 
     setUsername('');
+    setUserId(null);
     setLoginState(LoginState.LoggedOut);
 
     setUsernameAndToken(undefined);
@@ -265,15 +265,13 @@ export function createClient(clientCommunication: ClientCommunication, version: 
     get myUsername() {
       return myUsername;
     },
-    get myUserId() {
-      return myUserId;
-    },
     get myToken() {
       return myToken;
     },
     signals: {
       connected,
       username,
+      userId,
       loginState,
       loginLogoutResponseCode,
       usernameAndToken,
