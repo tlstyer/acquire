@@ -1,6 +1,7 @@
 import { createMemo, For, Match, Show, Switch } from 'solid-js';
 import { gameModeToNumPlayers, gameModeToTeamSize } from '../../common/helpers';
 import { PB_GameMode, PB_PlayerArrangementMode } from '../../common/pb';
+import stylesApp from '../App.module.css';
 import { allGameModes, gameModeToString, teamNumberToCSSClassName } from '../helpers';
 import styles from './GameSetupUI.module.css';
 
@@ -12,6 +13,7 @@ export function GameSetupUI(props: {
   approvals: boolean[];
   hostUserId: number;
   myUserId: number;
+  userIdsInRoom: Set<number>;
   onChangeGameMode: ((gameMode: PB_GameMode) => void) | undefined;
   onChangePlayerArrangementMode:
     | ((playerArrangementMode: PB_PlayerArrangementMode) => void)
@@ -94,7 +96,15 @@ export function GameSetupUI(props: {
               <For each={props.usernames}>
                 {(username, index) => (
                   <tr>
-                    <td class={styles.user} title={username ?? undefined}>
+                    <td
+                      classList={{
+                        [styles.user]: true,
+                        [stylesApp.playerMissing]:
+                          username !== null &&
+                          !props.userIdsInRoom.has(props.userIds[index()] ?? -1),
+                      }}
+                      title={username ?? undefined}
+                    >
                       {username ?? ''}
                     </td>
                     <GameSetupUIKickUserAndApproveCells
@@ -115,11 +125,14 @@ export function GameSetupUI(props: {
                 {(username, index) => (
                   <tr>
                     <td
-                      class={
-                        isTeamGame()
-                          ? teamNumberToCSSClassName.get((index() % numTeams()) + 1)
-                          : styles.user
-                      }
+                      classList={{
+                        [teamNumberToCSSClassName.get((index() % numTeams()) + 1) ?? '']:
+                          isTeamGame(),
+                        [styles.user]: !isTeamGame(),
+                        [stylesApp.playerMissing]:
+                          username !== null &&
+                          !props.userIdsInRoom.has(props.userIds[index()] ?? -1),
+                      }}
                     >
                       {username ?? ''}
                     </td>
@@ -164,7 +177,16 @@ export function GameSetupUI(props: {
                   <Switch>
                     <Match when={entry !== null}>
                       <tr>
-                        <td class={styles.user}>{props.usernames[entry!.index] ?? ''}</td>
+                        <td
+                          classList={{
+                            [styles.user]: true,
+                            [stylesApp.playerMissing]:
+                              props.usernames[entry!.index] !== null &&
+                              !props.userIdsInRoom.has(props.userIds[entry!.index] ?? -1),
+                          }}
+                        >
+                          {props.usernames[entry!.index] ?? ''}
+                        </td>
                         <Show when={props.onSwapPositions !== undefined}>
                           <td>
                             <Show when={entry!.upIndex !== null}>

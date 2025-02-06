@@ -131,6 +131,7 @@ export function GamePage(props: { client: Client }) {
                   approvals={gameManager.signals.approvals()}
                   hostUserId={gameManager.signals.hostUserId()}
                   myUserId={props.client.signals.userId() ?? 0}
+                  userIdsInRoom={gameManager.signals.userIdsInRoom()}
                   onChangeGameMode={
                     iAmHost() ? gameManager.gameSetupActions.changeGameMode : undefined
                   }

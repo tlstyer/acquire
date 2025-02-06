@@ -21,6 +21,7 @@ declare const styles: {
   readonly "content": string;
   readonly "hotelButton": string;
   readonly "invisible": string;
+  readonly "playerMissing": string;
 };
 export = styles;
 

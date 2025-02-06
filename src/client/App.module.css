@@ -128,3 +128,8 @@ fieldset {
 .invisible {
   visibility: hidden;
 }
+
+.playerMissing {
+  color: grey;
+  font-style: italic;
+}

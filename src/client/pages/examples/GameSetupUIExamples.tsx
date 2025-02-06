@@ -1,4 +1,4 @@
-import { createSignal, For } from 'solid-js';
+import { createMemo, createSignal, For } from 'solid-js';
 import { GameSetup } from '../../../common/gameSetup';
 import { PB_GameMode, PB_PlayerArrangementMode } from '../../../common/pb';
 import { GameSetupUI } from '../../components/GameSetupUI';
@@ -21,6 +21,10 @@ export function GameSetupUIExamples() {
   const [simulatedNetworkDelay, setSimulatedNetworkDelay] = createSignal(250);
 
   const [nonHostUserIds, setNonHostUserIds] = createSignal<number[]>([]);
+
+  const userIdsInRoom = createMemo(
+    () => new Set([hostUserId, ...nonHostUserIds().filter((userId) => userId % 2 === 1)]),
+  );
 
   let nextUserId = 2;
 
@@ -58,6 +62,7 @@ export function GameSetupUIExamples() {
           approvals={gameSetup().approvals}
           hostUserId={gameSetup().hostUserId}
           myUserId={gameSetup().hostUserId}
+          userIdsInRoom={userIdsInRoom()}
           onChangeGameMode={(gameMode) => {
             setTimeout(() => {
               console.log('changeGameMode', gameMode);
@@ -145,6 +150,7 @@ export function GameSetupUIExamples() {
                 userIds={gameSetup().userIds}
                 approvals={gameSetup().approvals}
                 hostUserId={gameSetup().hostUserId}
+                userIdsInRoom={userIdsInRoom()}
                 myUserId={userId}
                 onChangeGameMode={undefined}
                 onChangePlayerArrangementMode={undefined}
