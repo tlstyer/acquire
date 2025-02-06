@@ -77,6 +77,8 @@ export function createGameManager(
   let gameSetup: GameSetupLite | null;
   let game: Game | null;
 
+  let numberOfUserIdAndUsernameMessages = 0;
+
   const [status, setStatus] = createSignal(GameManagerStatus.Connecting);
 
   const [gameMode, setGameMode] = createSignal(PB_GameMode.SINGLES_1);
@@ -105,6 +107,7 @@ export function createGameManager(
         connect: {
           logTime,
           gameNumber,
+          numberOfUserIdAndUsernameMessages,
         },
       },
     });
@@ -123,6 +126,8 @@ export function createGameManager(
         );
       }
     }
+
+    numberOfUserIdAndUsernameMessages += message.userIdsAndUsernames.length;
 
     if (message.metadata || message.gameReview || message.gameNotFound) {
       if (message.metadata) {

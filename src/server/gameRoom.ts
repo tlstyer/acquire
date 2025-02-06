@@ -86,7 +86,10 @@ export class GameRoom extends Room {
               numberOfGameSetupChanges: this.gameSetup ? this.gameSetup.history.length : 0,
               userIdsInRoom: [...this.userToClients.keys()].map((user) => user.id),
             },
-            userIdsAndUsernames: this.userIdsAndUsernames,
+            userIdsAndUsernames:
+              message.numberOfUserIdAndUsernameMessages === 0
+                ? this.userIdsAndUsernames
+                : this.userIdsAndUsernames.slice(message.numberOfUserIdAndUsernameMessages),
           },
         }),
       ),

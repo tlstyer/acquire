@@ -193,6 +193,7 @@ message PB {
       message Connect {
         int32 log_time = 1;
         int32 game_number = 2;
+        int32 number_of_user_id_and_username_messages = 3;
       }
 
       message GameSetupAction {
