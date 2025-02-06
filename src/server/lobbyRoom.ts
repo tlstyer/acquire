@@ -142,16 +142,24 @@ export class LobbyRoom extends Room {
     this.sendQueuedEvents();
 
     const userIdToUser = new Map<number, PB_MessageToClient_Lobby_LastStateCheckpoint_User>();
+
+    function addUserToUserIdToUserIfNotThere(userId: number, username: string) {
+      let user = userIdToUser.get(userId);
+      if (user === undefined) {
+        user = PB_MessageToClient_Lobby_LastStateCheckpoint_User.create({
+          userId,
+          username,
+        });
+        userIdToUser.set(userId, user);
+      }
+
+      return user;
+    }
+
     for (const client of this.clients) {
-      if (client.userId !== undefined && !userIdToUser.has(client.userId)) {
-        userIdToUser.set(
-          client.userId,
-          PB_MessageToClient_Lobby_LastStateCheckpoint_User.create({
-            userId: client.userId,
-            username: client.username,
-            isInLobby: true,
-          }),
-        );
+      if (client.userId !== undefined && client.username !== undefined) {
+        const user = addUserToUserIdToUserIfNotThere(client.userId, client.username);
+        user.isInLobby = true;
       }
     }
 
@@ -173,15 +181,7 @@ export class LobbyRoom extends Room {
           const username = gameSetup.usernames[playerId];
 
           if (userId !== null && username !== null) {
-            if (!userIdToUser.has(userId)) {
-              userIdToUser.set(
-                userId,
-                PB_MessageToClient_Lobby_LastStateCheckpoint_User.create({
-                  userId,
-                  username,
-                }),
-              );
-            }
+            addUserToUserIdToUserIfNotThere(userId, username);
           }
         }
       } else if (gameRoom.game) {
