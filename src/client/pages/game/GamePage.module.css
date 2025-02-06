@@ -21,6 +21,7 @@
 .rightSide {
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .rightSide > :nth-child(1) {
