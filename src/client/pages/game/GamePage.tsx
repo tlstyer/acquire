@@ -23,13 +23,11 @@ export function GamePage(props: { client: Client }) {
   // eslint-disable-next-line solid/reactivity
   const gameManager = props.client.connectToGame(logTime, gameNumber);
 
-  const iAmHost = createMemo(
-    () => gameManager.signals.hostUserId() === props.client.signals.userId(),
-  );
+  const iAmHost = createMemo(() => gameManager.signals.hostUser() === props.client.signals.user());
   const iAmInGame = createMemo(
     () =>
-      props.client.signals.userId() !== null &&
-      gameManager.signals.userIds().includes(props.client.signals.userId()),
+      props.client.signals.user() !== null &&
+      gameManager.signals.users().includes(props.client.signals.user()),
   );
 
   const [selectedMoveIndex, setSelectedMoveIndex] = createSignal(0);
@@ -45,7 +43,7 @@ export function GamePage(props: { client: Client }) {
 
   const [followedPlayerId, setFollowedPlayerId] = createSignal<number | null>(null);
   const gameBoardTileRack = createMemo(() => {
-    if (gameManager.signals.userIds().length > 1) {
+    if (gameManager.signals.usersWithoutNulls().length > 1) {
       const fpid = followedPlayerId();
       if (fpid !== null) {
         return gameState().tileRacks[fpid];
@@ -108,12 +106,12 @@ export function GamePage(props: { client: Client }) {
           <Switch>
             <Match when={gameManager.signals.status() === GameManagerStatus.SettingUp}>
               <div class={styles.padded}>
-                <Show when={props.client.signals.userId() !== null && !iAmHost()}>
+                <Show when={props.client.signals.user() !== null && !iAmHost()}>
                   <input
                     class={styles.sitDownInput}
                     type="button"
                     value={iAmInGame() ? 'Stand Up' : 'Sit Down'}
-                    disabled={!iAmInGame() && !gameManager.signals.usernames().includes(null)}
+                    disabled={!iAmInGame() && !gameManager.signals.users().includes(null)}
                     onClick={() => {
                       if (iAmInGame()) {
                         gameManager.gameSetupActions.standUp();
@@ -126,12 +124,11 @@ export function GamePage(props: { client: Client }) {
                 <GameSetupUI
                   gameMode={gameManager.signals.gameMode()}
                   playerArrangementMode={gameManager.signals.playerArrangementMode()}
-                  usernames={gameManager.signals.usernames()}
-                  userIds={gameManager.signals.userIds()}
+                  users={gameManager.signals.users()}
                   approvals={gameManager.signals.approvals()}
-                  hostUserId={gameManager.signals.hostUserId()}
-                  myUserId={props.client.signals.userId() ?? 0}
-                  userIdsInRoom={gameManager.signals.userIdsInRoom()}
+                  hostUser={gameManager.signals.hostUser()}
+                  myUser={props.client.signals.user()}
+                  usersInRoom={gameManager.signals.usersInRoom()}
                   onChangeGameMode={
                     iAmHost() ? gameManager.gameSetupActions.changeGameMode : undefined
                   }
@@ -149,7 +146,7 @@ export function GamePage(props: { client: Client }) {
             <Match when={true}>
               <div class={styles.rightSide}>
                 <ScoreBoard
-                  usernames={gameManager.signals.usernamesWithoutNulls()}
+                  users={gameManager.signals.usersWithoutNulls()}
                   scoreBoard={gameState().scoreBoard}
                   scoreBoardAvailable={gameState().scoreBoardAvailable}
                   scoreBoardChainSize={gameState().scoreBoardChainSize}
@@ -170,7 +167,7 @@ export function GamePage(props: { client: Client }) {
                           buttonSize={gameBoardCellSize()}
                         />
                       </div>
-                      <Show when={gameManager.signals.userIds().length > 1}>
+                      <Show when={gameManager.signals.usersWithoutNulls().length > 1}>
                         <div
                           class={styles.buttonWrapper}
                           style={{ height: `${gameBoardCellSize()}px` }}
@@ -189,7 +186,7 @@ export function GamePage(props: { client: Client }) {
                 </Index>
                 <GameHistory
                   ref={(ref) => processBrowserMyKeyboardEvents(keyboardShortcutsEnabled, ref)}
-                  usernames={gameManager.signals.usernamesWithoutNulls()}
+                  users={gameManager.signals.usersWithoutNulls()}
                   gameStateHistory={gameManager.signals.gameStateHistory()}
                   onMoveSelected={setSelectedMoveIndex}
                 />

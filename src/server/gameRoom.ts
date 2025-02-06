@@ -9,6 +9,7 @@ import {
   type PB_MessageToServer_Game_Connect,
   type PB_MessageToServer_Game_GameSetupAction,
 } from '../common/pb';
+import { type User } from '../common/user';
 import type { Client } from './client';
 import type { LobbyRoom } from './lobbyRoom';
 import { Room } from './room';
@@ -18,7 +19,7 @@ export class GameRoom extends Room {
   game: Game | undefined;
 
   private clientFromConnectMessage: Client | null = null;
-  private userIdToUsername = new Map<number, string>();
+  private userIdToUser = new Map<number, User>();
   private userIdsAndUsernames: PB_MessageToClient_Game_UserIdAndUsername[] = [];
 
   constructor(
@@ -30,19 +31,19 @@ export class GameRoom extends Room {
   ) {
     super();
 
-    this.userIdToUsername.set(host.userId!, host.username!);
+    this.userIdToUser.set(host.user!.id, host.user!);
     this.userIdsAndUsernames.push(
       PB_MessageToClient_Game_UserIdAndUsername.create({
-        userId: host.userId!,
-        username: host.username!,
+        userId: host.user!.id,
+        username: host.user!.name,
       }),
     );
 
     this.gameSetup = new GameSetup(
       gameMode,
       PB_PlayerArrangementMode.RANDOM_ORDER,
-      host.userId!,
-      this.getUsernameForUserId.bind(this),
+      host.user!,
+      this.userIdToUser,
     );
 
     lobbyRoom.queueEvent(
@@ -51,14 +52,14 @@ export class GameRoom extends Room {
           gameNumber,
           gameDisplayNumber,
           gameMode,
-          hostUserId: host.userId,
+          hostUserId: host.user!.id,
         },
       }),
     );
   }
 
   getUsernameForUserId(userId: number) {
-    return this.userIdToUsername.get(userId) ?? '?';
+    return this.userIdToUser.get(userId) ?? '?';
   }
 
   onMessage_Connect(client: Client, message: PB_MessageToServer_Game_Connect) {
@@ -77,13 +78,13 @@ export class GameRoom extends Room {
               playerArrangementMode: this.gameSetup
                 ? this.gameSetup.playerArrangementMode
                 : this.game!.playerArrangementMode,
-              hostUserId: this.gameSetup ? this.gameSetup.hostUserId : this.game!.hostUserId,
-              userIds: this.gameSetup
-                ? this.gameSetup.userIds.map((userId) => userId ?? 0)
-                : this.game!.userIds,
+              hostUserId: this.gameSetup ? this.gameSetup.hostUser.id : this.game!.hostUser.id,
+              userIds: (this.gameSetup ? this.gameSetup : this.game!).users.map(
+                (user) => user?.id ?? 0,
+              ),
               approvals: this.gameSetup ? this.gameSetup.approvals : dummyApprovals,
               numberOfGameSetupChanges: this.gameSetup ? this.gameSetup.history.length : 0,
-              userIdsInRoom: [...this.userIdToClients.keys()],
+              userIdsInRoom: [...this.userToClients.keys()].map((user) => user.id),
             },
             userIdsAndUsernames: this.userIdsAndUsernames,
           },
@@ -93,35 +94,38 @@ export class GameRoom extends Room {
   }
 
   onMessage_GameSetupAction(client: Client, message: PB_MessageToServer_Game_GameSetupAction) {
-    if (this.gameSetup && client.userId !== undefined) {
+    if (this.gameSetup && client.user !== null) {
       const historyLengthBefore = this.gameSetup.history.length;
 
       if (message.sitDown) {
-        this.gameSetup.addUser(client.userId);
+        this.gameSetup.addUser(client.user);
       } else if (message.standUp) {
-        this.gameSetup.removeUser(client.userId);
+        this.gameSetup.removeUser(client.user);
       } else if (message.approve) {
-        this.gameSetup.approve(client.userId);
+        this.gameSetup.approve(client.user);
       } else if (message.changeGameMode) {
-        if (client.userId === this.gameSetup.hostUserId) {
+        if (client.user === this.gameSetup.hostUser) {
           this.gameSetup.changeGameMode(message.changeGameMode.gameMode);
         }
       } else if (message.changePlayerArrangementMode) {
-        if (client.userId === this.gameSetup.hostUserId) {
+        if (client.user === this.gameSetup.hostUser) {
           this.gameSetup.changePlayerArrangementMode(
             message.changePlayerArrangementMode.playerArrangementMode,
           );
         }
       } else if (message.swapPositions) {
-        if (client.userId === this.gameSetup.hostUserId) {
+        if (client.user === this.gameSetup.hostUser) {
           this.gameSetup.swapPositions(
             message.swapPositions.position1,
             message.swapPositions.position2,
           );
         }
       } else if (message.kickUser) {
-        if (client.userId === this.gameSetup.hostUserId) {
-          this.gameSetup.kickUser(message.kickUser.userId);
+        if (client.user === this.gameSetup.hostUser) {
+          const user = this.userIdToUser.get(message.kickUser.userId);
+          if (user) {
+            this.gameSetup.kickUser(user);
+          }
         }
       }
 
@@ -141,19 +145,19 @@ export class GameRoom extends Room {
     }
   }
 
-  userConnected(userId: number, username: string) {
+  userConnected(user: User) {
     const messageToClient = PB_MessageToClient.create({
       game: {
-        userIdWhoEnteredRoom: userId,
+        userIdWhoEnteredRoom: user.id,
       },
     });
 
-    if (!this.userIdToUsername.has(userId)) {
-      this.userIdToUsername.set(userId, username);
+    if (!this.userIdToUser.has(user.id)) {
+      this.userIdToUser.set(user.id, user);
 
       const userIdAndUsername = PB_MessageToClient_Game_UserIdAndUsername.create({
-        userId,
-        username,
+        userId: user.id,
+        username: user.name,
       });
       this.userIdsAndUsernames.push(userIdAndUsername);
       messageToClient.game!.userIdsAndUsernames.push(userIdAndUsername);
@@ -168,11 +172,11 @@ export class GameRoom extends Room {
     }
   }
 
-  userDisconnected(userId: number) {
+  userDisconnected(user: User) {
     const messageToClientBinary = PB_MessageToClient.toBinary(
       PB_MessageToClient.create({
         game: {
-          userIdWhoExitedRoom: userId,
+          userIdWhoExitedRoom: user.id,
         },
       }),
     );

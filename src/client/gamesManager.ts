@@ -9,11 +9,15 @@ import {
   PB_MessageToServer,
   PB_PlayerArrangementMode,
 } from '../common/pb';
+import { User } from '../common/user';
 import { type ClientCommunication } from './clientCommunication';
 
 export type GamesManager = ReturnType<typeof createGamesManager>;
 
-export function createGamesManager(clientCommunication: ClientCommunication) {
+export function createGamesManager(
+  clientCommunication: ClientCommunication,
+  userIdToUser: Map<number, User>,
+) {
   const gameIdToGameManager = new Map<string, GameManager>();
 
   let lastRequestedGameId = '';
@@ -24,7 +28,7 @@ export function createGamesManager(clientCommunication: ClientCommunication) {
 
     let gameManager = gameIdToGameManager.get(lastRequestedGameId);
     if (gameManager === undefined) {
-      gameManager = createGameManager(clientCommunication, logTime, gameNumber);
+      gameManager = createGameManager(clientCommunication, userIdToUser, logTime, gameNumber);
       gameIdToGameManager.set(lastRequestedGameId, gameManager);
     }
 
@@ -66,6 +70,7 @@ export type GameManager = ReturnType<typeof createGameManager>;
 
 export function createGameManager(
   clientCommunication: ClientCommunication,
+  userIdToUser: Map<number, User>,
   logTime: number,
   gameNumber: number,
 ) {
@@ -78,20 +83,13 @@ export function createGameManager(
   const [playerArrangementMode, setPlayerArrangementMode] = createSignal(
     PB_PlayerArrangementMode.VERSION_1,
   );
-  const [usernames, setUsernames] = createSignal(dummyUsernames);
-  const [usernamesWithoutNulls, setUsernamesWithoutNulls] = createSignal(
-    dummyUsernamesWithoutNulls,
-  ); // TODO: come up with a better way
-  const [userIds, setUserIds] = createSignal(dummyUserIds);
+  const [users, setUsers] = createSignal(dummyUsers);
+  const [usersWithoutNulls, setUsersWithoutNulls] = createSignal(dummyUsersWithoutNulls);
   const [approvals, setApprovals] = createSignal(dummyApprovals);
-  const [hostUserId, setHostUserId] = createSignal(0);
+  const [hostUser, setHostUser] = createSignal(dummyUser);
   let numberOfGameSetupChanges = 0;
-  const internalUserIdToUsername = new Map<number, string>();
-  const [userIdToUsername, setUserIdToUsername] = createSignal(internalUserIdToUsername, {
-    equals: false,
-  });
-  const internalUserIdsInRoom = new Set<number>();
-  const [userIdsInRoom, setUserIdsInRoom] = createSignal(internalUserIdsInRoom, { equals: false });
+  const internalUsersInRoom = new Set<User>();
+  const [usersInRoom, setUsersInRoom] = createSignal(internalUsersInRoom, { equals: false });
 
   const [gameStateHistory, setGameStateHistory] = createSignal(dummyGameStateHistory);
 
@@ -113,13 +111,17 @@ export function createGameManager(
   }
 
   function onMessage(message: PB_MessageToClient_Game) {
-    let updatedUserIdToUsername = false;
-    let updatedUserIdsInRoom = false;
+    let updatedUsersInRoom = false;
 
     for (let i = 0; i < message.userIdsAndUsernames.length; i++) {
       const userIdAndUsername = message.userIdsAndUsernames[i];
-      internalUserIdToUsername.set(userIdAndUsername.userId, userIdAndUsername.username);
-      updatedUserIdToUsername = true;
+
+      if (!userIdToUser.has(userIdAndUsername.userId)) {
+        userIdToUser.set(
+          userIdAndUsername.userId,
+          new User(userIdAndUsername.userId, userIdAndUsername.username),
+        );
+      }
     }
 
     if (message.metadata || message.gameReview || message.gameNotFound) {
@@ -129,16 +131,17 @@ export function createGameManager(
         gameSetup = createGameSetupLite(
           metadata.gameMode,
           metadata.playerArrangementMode,
-          metadata.hostUserId,
-          metadata.userIds.map((userId) => (userId === 0 ? null : userId)),
+          userIdToUser.get(metadata.hostUserId)!,
+          metadata.userIds.map((userId) => (userId === 0 ? null : userIdToUser.get(userId)!)),
           metadata.approvals,
+          userIdToUser,
         );
 
         numberOfGameSetupChanges = metadata.numberOfGameSetupChanges;
 
         for (let i = 0; i < metadata.userIdsInRoom.length; i++) {
-          internalUserIdsInRoom.add(metadata.userIdsInRoom[i]);
-          updatedUserIdsInRoom = true;
+          internalUsersInRoom.add(userIdToUser.get(metadata.userIdsInRoom[i])!);
+          updatedUsersInRoom = true;
         }
 
         game = null;
@@ -152,12 +155,12 @@ export function createGameManager(
     }
 
     if (message.userIdWhoEnteredRoom) {
-      internalUserIdsInRoom.add(message.userIdWhoEnteredRoom);
-      updatedUserIdsInRoom = true;
+      internalUsersInRoom.add(userIdToUser.get(message.userIdWhoEnteredRoom)!);
+      updatedUsersInRoom = true;
     }
     if (message.userIdWhoExitedRoom) {
-      internalUserIdsInRoom.delete(message.userIdWhoExitedRoom);
-      updatedUserIdsInRoom = true;
+      internalUsersInRoom.delete(userIdToUser.get(message.userIdWhoExitedRoom)!);
+      updatedUsersInRoom = true;
     }
 
     if (message.gameSetupChange) {
@@ -170,35 +173,24 @@ export function createGameManager(
         setStatus(GameManagerStatus.SettingUp);
         setGameMode(gameSetup.gameMode);
         setPlayerArrangementMode(gameSetup.playerArrangementMode);
-        if (gameSetup.userIds !== userIds()) {
-          const usernames = gameSetup.userIds.map((userId) =>
-            userId !== null ? (internalUserIdToUsername.get(userId) ?? '?') : null,
-          );
-          setUsernames(usernames);
-          setUsernamesWithoutNulls(usernames.map((username) => username ?? ''));
-          setUserIds(gameSetup.userIds);
-        }
+        setUsers(gameSetup.users);
         setApprovals(gameSetup.approvals);
-        setHostUserId(gameSetup.hostUserId);
+        setHostUser(gameSetup.hostUser);
       } else if (game) {
         setStatus(GameManagerStatus.Review);
         setGameMode(game.gameMode);
         setPlayerArrangementMode(game.playerArrangementMode);
-        setUsernames(game.usernames);
-        setUsernamesWithoutNulls(game.usernames);
-        setUserIds(game.userIds);
-        setHostUserId(game.hostUserId);
+        setUsers(game.users);
+        setUsersWithoutNulls(game.users);
+        setHostUser(game.hostUser);
 
         setGameStateHistory(game.gameStateHistory);
       } else {
         setStatus(GameManagerStatus.NotFound);
       }
 
-      if (updatedUserIdToUsername) {
-        setUserIdToUsername(internalUserIdToUsername);
-      }
-      if (updatedUserIdsInRoom) {
-        setUserIdsInRoom(internalUserIdsInRoom);
+      if (updatedUsersInRoom) {
+        setUsersInRoom(internalUsersInRoom);
       }
     });
   }
@@ -320,13 +312,11 @@ export function createGameManager(
       status,
       gameMode,
       playerArrangementMode,
-      usernames,
-      usernamesWithoutNulls,
-      userIds,
+      users,
+      usersWithoutNulls,
       approvals,
-      hostUserId,
-      userIdToUsername,
-      userIdsInRoom,
+      hostUser,
+      usersInRoom,
       gameStateHistory,
     },
   };
@@ -340,20 +330,20 @@ export const enum GameManagerStatus {
   Review,
 }
 
+const dummyUser = new User(-1, '?');
+
 const dummyGame = new Game(
   PB_GameMode.SINGLES_1,
   PB_PlayerArrangementMode.VERSION_1,
   [],
   [],
-  [],
-  0,
-  0,
+  dummyUser,
+  null,
 );
 
 const dummyGameState = new GameState(dummyGame, null);
 
-const dummyUsernames: (string | null)[] = [];
-const dummyUsernamesWithoutNulls: string[] = [];
-const dummyUserIds: (number | null)[] = [];
+const dummyUsers: (User | null)[] = [];
+const dummyUsersWithoutNulls: User[] = [];
 const dummyApprovals: boolean[] = [];
 const dummyGameStateHistory = [dummyGameState];

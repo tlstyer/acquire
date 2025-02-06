@@ -1,12 +1,13 @@
 import { createEffect, createSelector, createSignal, For, onMount } from 'solid-js';
 import { type GameState } from '../../common/gameState';
+import { type User } from '../../common/user';
 import { type ProcessMyKeyboardEventRef } from '../myKeyboardEvents';
 import styles from './GameHistory.module.css';
 import { GameHistoryMessageUI } from './GameHistoryMessageUI';
 
 export function GameHistory(props: {
   ref: (ref: ProcessMyKeyboardEventRef) => void;
-  usernames: string[];
+  users: User[];
   gameStateHistory: GameState[];
   onMoveSelected: (index: number) => void;
 }) {
@@ -142,7 +143,7 @@ export function GameHistory(props: {
               <For each={gameState.gameHistoryMessages}>
                 {(gameHistoryMessage) => (
                   <GameHistoryMessageUI
-                    usernames={props.usernames}
+                    users={props.users}
                     gameHistoryMessage={gameHistoryMessage}
                   />
                 )}

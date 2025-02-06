@@ -8,6 +8,7 @@ import {
   type PB_MessageToServer_Lobby_Connect,
   type PB_MessageToServer_Lobby_CreateGame,
 } from '../common/pb';
+import { type User } from '../common/user';
 import type { Client } from './client';
 import type { GameRoomsManager } from './gameRoomsManager';
 import { Room } from './room';
@@ -34,7 +35,7 @@ export class LobbyRoom extends Room {
   }
 
   onMessage_CreateGame(client: Client, message: PB_MessageToServer_Lobby_CreateGame) {
-    if (client.userId === undefined) {
+    if (client.user === null) {
       return;
     }
     if (client.room !== this) {
@@ -59,28 +60,28 @@ export class LobbyRoom extends Room {
     );
   }
 
-  userConnected(userId: number, username: string) {
-    const isKnownUser = this.lscKnownUserIds.has(userId);
+  userConnected(user: User) {
+    const isKnownUser = this.lscKnownUsers.has(user);
 
     this.queueEvent(
       PB_MessageToClient_Lobby_Event.create({
         addUserToLobby: {
-          userId,
-          username: isKnownUser ? undefined : username,
+          userId: user.id,
+          username: isKnownUser ? undefined : user.name,
         },
       }),
     );
 
     if (!isKnownUser) {
-      this.lscKnownUserIds.add(userId);
+      this.lscKnownUsers.add(user);
     }
   }
 
-  userDisconnected(userId: number) {
+  userDisconnected(user: User) {
     this.queueEvent(
       PB_MessageToClient_Lobby_Event.create({
         removeUserFromLobby: {
-          userId,
+          userId: user.id,
         },
       }),
     );
@@ -103,7 +104,7 @@ export class LobbyRoom extends Room {
       },
     }),
   );
-  private lscKnownUserIds = new Set<number>();
+  private lscKnownUsers = new Set<User>();
 
   private noUpdatesMessage = PB_MessageToClient.toBinary(
     PB_MessageToClient.create({
@@ -141,25 +142,25 @@ export class LobbyRoom extends Room {
   createLastStateCheckpoint() {
     this.sendQueuedEvents();
 
-    const userIdToUser = new Map<number, PB_MessageToClient_Lobby_LastStateCheckpoint_User>();
+    const userToUserMessage = new Map<User, PB_MessageToClient_Lobby_LastStateCheckpoint_User>();
 
-    function addUserToUserIdToUserIfNotThere(userId: number, username: string) {
-      let user = userIdToUser.get(userId);
-      if (user === undefined) {
-        user = PB_MessageToClient_Lobby_LastStateCheckpoint_User.create({
-          userId,
-          username,
+    function addUserToUserToUserMessageIfNotThere(user: User) {
+      let userMessage = userToUserMessage.get(user);
+      if (userMessage === undefined) {
+        userMessage = PB_MessageToClient_Lobby_LastStateCheckpoint_User.create({
+          userId: user.id,
+          username: user.name,
         });
-        userIdToUser.set(userId, user);
+        userToUserMessage.set(user, userMessage);
       }
 
-      return user;
+      return userMessage;
     }
 
     for (const client of this.clients) {
-      if (client.userId !== undefined && client.username !== undefined) {
-        const user = addUserToUserIdToUserIfNotThere(client.userId, client.username);
-        user.isInLobby = true;
+      if (client.user !== null) {
+        const userMessage = addUserToUserToUserMessageIfNotThere(client.user);
+        userMessage.isInLobby = true;
       }
     }
 
@@ -173,15 +174,14 @@ export class LobbyRoom extends Room {
         const gameSetup = gameRoom.gameSetup;
 
         gameCheckpoint.gameMode = gameSetup.gameMode;
-        gameCheckpoint.hostUserId = gameSetup.hostUserId;
-        gameCheckpoint.userIds = gameSetup.userIds.map((userId) => (userId !== null ? userId : 0));
+        gameCheckpoint.hostUserId = gameSetup.hostUser.id;
+        gameCheckpoint.userIds = gameSetup.users.map((user) => (user !== null ? user.id : 0));
 
-        for (let playerId = 0; playerId < gameSetup.userIds.length; playerId++) {
-          const userId = gameSetup.userIds[playerId];
-          const username = gameSetup.usernames[playerId];
+        for (let playerId = 0; playerId < gameSetup.users.length; playerId++) {
+          const user = gameSetup.users[playerId];
 
-          if (userId !== null && username !== null) {
-            addUserToUserIdToUserIfNotThere(userId, username);
+          if (user !== null) {
+            addUserToUserToUserMessageIfNotThere(user);
           }
         }
       } else if (gameRoom.game) {
@@ -201,13 +201,13 @@ export class LobbyRoom extends Room {
         lobby: {
           lastStateCheckpoint: {
             games: gameCheckpoints,
-            users: [...userIdToUser.values()],
+            users: [...userToUserMessage.values()],
             lastEventIndex: this.lscLastEventIndex,
           },
         },
       }),
     );
-    this.lscKnownUserIds = new Set(userIdToUser.keys());
+    this.lscKnownUsers = new Set(userToUserMessage.keys());
   }
 
   private getConnectionResponse(message: PB_MessageToServer_Lobby_Connect) {

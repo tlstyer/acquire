@@ -1,10 +1,10 @@
+import { type User } from '../common/user';
 import type { Room } from './room';
 
 export class Client {
   room: Room | undefined;
 
-  userId: number | undefined;
-  username: string | undefined;
+  user: User | null = null;
 
   isLoggingInOrOut = false;
 
@@ -27,9 +27,8 @@ export class Client {
     }
   }
 
-  loggedIn(userId: number, username: string) {
-    this.userId = userId;
-    this.username = username;
+  loggedIn(user: User) {
+    this.user = user;
 
     this.room?.clientLoggedIn(this);
   }
@@ -37,7 +36,6 @@ export class Client {
   loggedOut() {
     this.room?.clientLoggedOut(this);
 
-    this.userId = undefined;
-    this.username = undefined;
+    this.user = null;
   }
 }

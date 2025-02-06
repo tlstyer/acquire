@@ -1,6 +1,7 @@
 import { createMemo, Index } from 'solid-js';
 import { gameModeToNumPlayers, gameModeToTeamSize } from '../../common/helpers';
 import { type PB_GameBoardType, type PB_GameMode } from '../../common/pb';
+import { type User } from '../../common/user';
 import {
   gameModeToString,
   type GameStatus,
@@ -12,7 +13,7 @@ import { MiniGameBoard } from './MiniGameBoard';
 
 export function GameListing(props: {
   gameBoard: PB_GameBoardType[][];
-  usernames: (string | null)[];
+  users: (User | null)[];
   gameDisplayNumber: number;
   gameMode: PB_GameMode;
   gameStatus: GameStatus;
@@ -30,8 +31,8 @@ export function GameListing(props: {
       </div>{' '}
       <table class={styles.usernames}>
         <tbody>
-          <Index each={props.usernames}>
-            {(username, playerId) => (
+          <Index each={props.users}>
+            {(user, playerId) => (
               <tr>
                 <td
                   class={
@@ -39,9 +40,9 @@ export function GameListing(props: {
                       ? teamNumberToCSSClassName.get((playerId % numTeams()) + 1)
                       : styles.player
                   }
-                  title={username() ?? undefined}
+                  title={user()?.name}
                 >
-                  {username() ?? ''}
+                  {user()?.name ?? ''}
                 </td>
               </tr>
             )}

@@ -2,6 +2,7 @@ import { useNavigate } from '@solidjs/router';
 import { createEffect, For, Show } from 'solid-js';
 import { TransitionGroup } from 'solid-transition-group';
 import { PB_GameBoardType, PB_GameMode } from '../../../common/pb';
+import { User } from '../../../common/user';
 import { type Client } from '../../client';
 import { CreateGame } from '../../components/CreateGame';
 import { GameListing } from '../../components/GameListing';
@@ -30,7 +31,7 @@ export function LobbyPage(props: { client: Client }) {
           <div class={styles.invisibleGameListing}>
             <GameListing
               gameBoard={[[PB_GameBoardType.NOTHING]]}
-              usernames={['']}
+              users={dummyUsers}
               gameDisplayNumber={0}
               gameMode={PB_GameMode.TEAMS_2_VS_2_VS_2}
               gameStatus={GameStatus.SETTING_UP}
@@ -48,7 +49,7 @@ export function LobbyPage(props: { client: Client }) {
                   <a href={`/game/${props.client.logTime}-${lobbyGame.gameNumber}`}>
                     <GameListing
                       gameBoard={lobbyGame.signals.gameBoard()}
-                      usernames={lobbyGame.signals.usernames()}
+                      users={lobbyGame.signals.users()}
                       gameDisplayNumber={lobbyGame.gameDisplayNumber}
                       gameMode={lobbyGame.signals.gameMode()}
                       gameStatus={lobbyGame.signals.gameStatus()}
@@ -60,10 +61,10 @@ export function LobbyPage(props: { client: Client }) {
           </TransitionGroup>
         </div>
         <div class={styles.rightSide}>
-          <For each={lobbyManager.signals.usernames()}>
-            {(username) => (
+          <For each={lobbyManager.signals.users()}>
+            {(user) => (
               <div>
-                <Username username={username} />
+                <Username username={user.name} />
               </div>
             )}
           </For>
@@ -72,3 +73,5 @@ export function LobbyPage(props: { client: Client }) {
     </Show>
   );
 }
+
+const dummyUsers = [new User(-1, '')];

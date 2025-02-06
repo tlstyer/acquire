@@ -22,12 +22,13 @@ import {
   GameHistoryMessageTurnBegan,
 } from '../../common/gameHistoryMessage';
 import { toTileString } from '../../common/helpers';
+import { type User } from '../../common/user';
 import styles from './GameHistoryMessageUI.module.css';
 import { HotelName } from './HotelName';
 import { Username } from './Username';
 
 export function GameHistoryMessageUI(props: {
-  usernames: string[];
+  users: User[];
   gameHistoryMessage: GameHistoryMessage;
 }) {
   return (
@@ -35,55 +36,55 @@ export function GameHistoryMessageUI(props: {
       <Switch fallback={<>Mystery message!</>}>
         <Match when={props.gameHistoryMessage instanceof GameHistoryMessageTurnBegan}>
           <GameHistoryMessageUITurnBegan
-            usernames={props.usernames}
+            users={props.users}
             gameHistoryMessage={props.gameHistoryMessage as GameHistoryMessageTurnBegan}
           />
         </Match>
         <Match when={props.gameHistoryMessage instanceof GameHistoryMessageDrewPositionTile}>
           <GameHistoryMessageUIDrewPositionTile
-            usernames={props.usernames}
+            users={props.users}
             gameHistoryMessage={props.gameHistoryMessage as GameHistoryMessageDrewPositionTile}
           />
         </Match>
         <Match when={props.gameHistoryMessage instanceof GameHistoryMessageStartedGame}>
           <GameHistoryMessageUIStartedGame
-            usernames={props.usernames}
+            users={props.users}
             gameHistoryMessage={props.gameHistoryMessage as GameHistoryMessageStartedGame}
           />
         </Match>
         <Match when={props.gameHistoryMessage instanceof GameHistoryMessageDrewTile}>
           <GameHistoryMessageUIDrewTile
-            usernames={props.usernames}
+            users={props.users}
             gameHistoryMessage={props.gameHistoryMessage as GameHistoryMessageDrewTile}
           />
         </Match>
         <Match when={props.gameHistoryMessage instanceof GameHistoryMessageHasNoPlayableTile}>
           <GameHistoryMessageUIHasNoPlayableTile
-            usernames={props.usernames}
+            users={props.users}
             gameHistoryMessage={props.gameHistoryMessage as GameHistoryMessageHasNoPlayableTile}
           />
         </Match>
         <Match when={props.gameHistoryMessage instanceof GameHistoryMessagePlayedTile}>
           <GameHistoryMessageUIPlayedTile
-            usernames={props.usernames}
+            users={props.users}
             gameHistoryMessage={props.gameHistoryMessage as GameHistoryMessagePlayedTile}
           />
         </Match>
         <Match when={props.gameHistoryMessage instanceof GameHistoryMessageFormedChain}>
           <GameHistoryMessageUIFormedChain
-            usernames={props.usernames}
+            users={props.users}
             gameHistoryMessage={props.gameHistoryMessage as GameHistoryMessageFormedChain}
           />
         </Match>
         <Match when={props.gameHistoryMessage instanceof GameHistoryMessageMergedChains}>
           <GameHistoryMessageUIMergedChains
-            usernames={props.usernames}
+            users={props.users}
             gameHistoryMessage={props.gameHistoryMessage as GameHistoryMessageMergedChains}
           />
         </Match>
         <Match when={props.gameHistoryMessage instanceof GameHistoryMessageSelectedMergerSurvivor}>
           <GameHistoryMessageUISelectedMergerSurvivor
-            usernames={props.usernames}
+            users={props.users}
             gameHistoryMessage={
               props.gameHistoryMessage as GameHistoryMessageSelectedMergerSurvivor
             }
@@ -93,7 +94,7 @@ export function GameHistoryMessageUI(props: {
           when={props.gameHistoryMessage instanceof GameHistoryMessageSelectedChainToDisposeOfNext}
         >
           <GameHistoryMessageUISelectedChainToDisposeOfNext
-            usernames={props.usernames}
+            users={props.users}
             gameHistoryMessage={
               props.gameHistoryMessage as GameHistoryMessageSelectedChainToDisposeOfNext
             }
@@ -101,19 +102,19 @@ export function GameHistoryMessageUI(props: {
         </Match>
         <Match when={props.gameHistoryMessage instanceof GameHistoryMessageReceivedBonus}>
           <GameHistoryMessageUIReceivedBonus
-            usernames={props.usernames}
+            users={props.users}
             gameHistoryMessage={props.gameHistoryMessage as GameHistoryMessageReceivedBonus}
           />
         </Match>
         <Match when={props.gameHistoryMessage instanceof GameHistoryMessageDisposedOfShares}>
           <GameHistoryMessageUIDisposedOfShares
-            usernames={props.usernames}
+            users={props.users}
             gameHistoryMessage={props.gameHistoryMessage as GameHistoryMessageDisposedOfShares}
           />
         </Match>
         <Match when={props.gameHistoryMessage instanceof GameHistoryMessageCouldNotAffordAnyShares}>
           <GameHistoryMessageUICouldNotAffordAnyShares
-            usernames={props.usernames}
+            users={props.users}
             gameHistoryMessage={
               props.gameHistoryMessage as GameHistoryMessageCouldNotAffordAnyShares
             }
@@ -121,25 +122,25 @@ export function GameHistoryMessageUI(props: {
         </Match>
         <Match when={props.gameHistoryMessage instanceof GameHistoryMessagePurchasedShares}>
           <GameHistoryMessageUIPurchasedShares
-            usernames={props.usernames}
+            users={props.users}
             gameHistoryMessage={props.gameHistoryMessage as GameHistoryMessagePurchasedShares}
           />
         </Match>
         <Match when={props.gameHistoryMessage instanceof GameHistoryMessageDrewLastTile}>
           <GameHistoryMessageUIDrewLastTile
-            usernames={props.usernames}
+            users={props.users}
             gameHistoryMessage={props.gameHistoryMessage as GameHistoryMessageDrewLastTile}
           />
         </Match>
         <Match when={props.gameHistoryMessage instanceof GameHistoryMessageReplacedDeadTile}>
           <GameHistoryMessageUIReplacedDeadTile
-            usernames={props.usernames}
+            users={props.users}
             gameHistoryMessage={props.gameHistoryMessage as GameHistoryMessageReplacedDeadTile}
           />
         </Match>
         <Match when={props.gameHistoryMessage instanceof GameHistoryMessageEndedGame}>
           <GameHistoryMessageUIEndedGame
-            usernames={props.usernames}
+            users={props.users}
             gameHistoryMessage={props.gameHistoryMessage as GameHistoryMessageEndedGame}
           />
         </Match>
@@ -157,14 +158,14 @@ export function GameHistoryMessageUI(props: {
 }
 
 function GameHistoryMessageUITurnBegan(props: {
-  usernames: string[];
+  users: User[];
   gameHistoryMessage: GameHistoryMessageTurnBegan;
 }) {
   return (
     <>
       <fieldset>
         <legend>
-          <Username username={props.usernames[props.gameHistoryMessage.playerId]} />
+          <Username username={props.users[props.gameHistoryMessage.playerId].name} />
         </legend>
       </fieldset>
     </>
@@ -172,83 +173,83 @@ function GameHistoryMessageUITurnBegan(props: {
 }
 
 function GameHistoryMessageUIDrewPositionTile(props: {
-  usernames: string[];
+  users: User[];
   gameHistoryMessage: GameHistoryMessageDrewPositionTile;
 }) {
   return (
     <>
-      <Username username={props.usernames[props.gameHistoryMessage.playerId]} /> drew position tile{' '}
+      <Username username={props.users[props.gameHistoryMessage.playerId].name} /> drew position tile{' '}
       {toTileString(props.gameHistoryMessage.tile)}.
     </>
   );
 }
 
 function GameHistoryMessageUIStartedGame(props: {
-  usernames: string[];
+  users: User[];
   gameHistoryMessage: GameHistoryMessageStartedGame;
 }) {
   return (
     <>
-      <Username username={props.usernames[props.gameHistoryMessage.playerId]} /> started the game.
+      <Username username={props.users[props.gameHistoryMessage.playerId].name} /> started the game.
     </>
   );
 }
 
 function GameHistoryMessageUIDrewTile(props: {
-  usernames: string[];
+  users: User[];
   gameHistoryMessage: GameHistoryMessageDrewTile;
 }) {
   return (
     <>
-      <Username username={props.usernames[props.gameHistoryMessage.playerId]} /> drew tile{' '}
+      <Username username={props.users[props.gameHistoryMessage.playerId].name} /> drew tile{' '}
       {toTileString(props.gameHistoryMessage.tile)}.
     </>
   );
 }
 
 function GameHistoryMessageUIHasNoPlayableTile(props: {
-  usernames: string[];
+  users: User[];
   gameHistoryMessage: GameHistoryMessageHasNoPlayableTile;
 }) {
   return (
     <>
-      <Username username={props.usernames[props.gameHistoryMessage.playerId]} /> has no playable
+      <Username username={props.users[props.gameHistoryMessage.playerId].name} /> has no playable
       tile.
     </>
   );
 }
 
 function GameHistoryMessageUIPlayedTile(props: {
-  usernames: string[];
+  users: User[];
   gameHistoryMessage: GameHistoryMessagePlayedTile;
 }) {
   return (
     <>
-      <Username username={props.usernames[props.gameHistoryMessage.playerId]} /> played tile{' '}
+      <Username username={props.users[props.gameHistoryMessage.playerId].name} /> played tile{' '}
       {toTileString(props.gameHistoryMessage.tile)}.
     </>
   );
 }
 
 function GameHistoryMessageUIFormedChain(props: {
-  usernames: string[];
+  users: User[];
   gameHistoryMessage: GameHistoryMessageFormedChain;
 }) {
   return (
     <>
-      <Username username={props.usernames[props.gameHistoryMessage.playerId]} /> formed{' '}
+      <Username username={props.users[props.gameHistoryMessage.playerId].name} /> formed{' '}
       <HotelName chain={props.gameHistoryMessage.chain} />.
     </>
   );
 }
 
 function GameHistoryMessageUIMergedChains(props: {
-  usernames: string[];
+  users: User[];
   gameHistoryMessage: GameHistoryMessageMergedChains;
 }) {
   return (
     <>
-      <Username username={props.usernames[props.gameHistoryMessage.playerId]} /> merged{' '}
+      <Username username={props.users[props.gameHistoryMessage.playerId].name} /> merged{' '}
       <Switch>
         <Match when={props.gameHistoryMessage.chains.length === 2}>
           <HotelName chain={props.gameHistoryMessage.chains[0]} /> and{' '}
@@ -271,36 +272,36 @@ function GameHistoryMessageUIMergedChains(props: {
 }
 
 function GameHistoryMessageUISelectedMergerSurvivor(props: {
-  usernames: string[];
+  users: User[];
   gameHistoryMessage: GameHistoryMessageSelectedMergerSurvivor;
 }) {
   return (
     <>
-      <Username username={props.usernames[props.gameHistoryMessage.playerId]} /> selected{' '}
+      <Username username={props.users[props.gameHistoryMessage.playerId].name} /> selected{' '}
       <HotelName chain={props.gameHistoryMessage.chain} /> as merger survivor.
     </>
   );
 }
 
 function GameHistoryMessageUISelectedChainToDisposeOfNext(props: {
-  usernames: string[];
+  users: User[];
   gameHistoryMessage: GameHistoryMessageSelectedChainToDisposeOfNext;
 }) {
   return (
     <>
-      <Username username={props.usernames[props.gameHistoryMessage.playerId]} /> selected{' '}
+      <Username username={props.users[props.gameHistoryMessage.playerId].name} /> selected{' '}
       <HotelName chain={props.gameHistoryMessage.chain} /> as chain to dispose of next.
     </>
   );
 }
 
 function GameHistoryMessageUIReceivedBonus(props: {
-  usernames: string[];
+  users: User[];
   gameHistoryMessage: GameHistoryMessageReceivedBonus;
 }) {
   return (
     <>
-      <Username username={props.usernames[props.gameHistoryMessage.playerId]} /> received a $
+      <Username username={props.users[props.gameHistoryMessage.playerId].name} /> received a $
       {props.gameHistoryMessage.amount * 100} <HotelName chain={props.gameHistoryMessage.chain} />{' '}
       bonus.
     </>
@@ -308,12 +309,12 @@ function GameHistoryMessageUIReceivedBonus(props: {
 }
 
 function GameHistoryMessageUIDisposedOfShares(props: {
-  usernames: string[];
+  users: User[];
   gameHistoryMessage: GameHistoryMessageDisposedOfShares;
 }) {
   return (
     <>
-      <Username username={props.usernames[props.gameHistoryMessage.playerId]} /> traded{' '}
+      <Username username={props.users[props.gameHistoryMessage.playerId].name} /> traded{' '}
       {props.gameHistoryMessage.tradeAmount} and sold {props.gameHistoryMessage.sellAmount}{' '}
       <HotelName chain={props.gameHistoryMessage.chain} /> shares.
     </>
@@ -321,24 +322,24 @@ function GameHistoryMessageUIDisposedOfShares(props: {
 }
 
 function GameHistoryMessageUICouldNotAffordAnyShares(props: {
-  usernames: string[];
+  users: User[];
   gameHistoryMessage: GameHistoryMessageCouldNotAffordAnyShares;
 }) {
   return (
     <>
-      <Username username={props.usernames[props.gameHistoryMessage.playerId]} /> could not afford
+      <Username username={props.users[props.gameHistoryMessage.playerId].name} /> could not afford
       any shares.
     </>
   );
 }
 
 function GameHistoryMessageUIPurchasedShares(props: {
-  usernames: string[];
+  users: User[];
   gameHistoryMessage: GameHistoryMessagePurchasedShares;
 }) {
   return (
     <>
-      <Username username={props.usernames[props.gameHistoryMessage.playerId]} /> purchased{' '}
+      <Username username={props.users[props.gameHistoryMessage.playerId].name} /> purchased{' '}
       <Switch>
         <Match when={props.gameHistoryMessage.chainsAndCounts.length === 0}>nothing.</Match>
         <Match when={props.gameHistoryMessage.chainsAndCounts.length === 1}>
@@ -365,36 +366,36 @@ function GameHistoryMessageUIPurchasedShares(props: {
 }
 
 function GameHistoryMessageUIDrewLastTile(props: {
-  usernames: string[];
+  users: User[];
   gameHistoryMessage: GameHistoryMessageDrewLastTile;
 }) {
   return (
     <>
-      <Username username={props.usernames[props.gameHistoryMessage.playerId]} /> drew the last tile
+      <Username username={props.users[props.gameHistoryMessage.playerId].name} /> drew the last tile
       from the tile bag.
     </>
   );
 }
 
 function GameHistoryMessageUIReplacedDeadTile(props: {
-  usernames: string[];
+  users: User[];
   gameHistoryMessage: GameHistoryMessageReplacedDeadTile;
 }) {
   return (
     <>
-      <Username username={props.usernames[props.gameHistoryMessage.playerId]} /> replaced dead tile{' '}
+      <Username username={props.users[props.gameHistoryMessage.playerId].name} /> replaced dead tile{' '}
       {toTileString(props.gameHistoryMessage.tile)}.
     </>
   );
 }
 
 function GameHistoryMessageUIEndedGame(props: {
-  usernames: string[];
+  users: User[];
   gameHistoryMessage: GameHistoryMessageEndedGame;
 }) {
   return (
     <>
-      <Username username={props.usernames[props.gameHistoryMessage.playerId]} /> ended the game.
+      <Username username={props.users[props.gameHistoryMessage.playerId].name} /> ended the game.
     </>
   );
 }

@@ -22,13 +22,15 @@ function processGame(game: Game, filePath: string) {
   const teamScores = calculateFinalTeamScores(game.gameMode, playerScores);
   const placings = calculatePlacings(teamScores);
 
+  const userIds = game.users.map((user) => user.id);
+
   return {
     endTimestamp: game.gameStateHistory[game.gameStateHistory.length - 1].timestamp!,
     gameMode: game.gameMode,
     gameId: filePath.split(path.sep).slice(-2).join('-'),
-    playerUserIds: game.userIds,
+    playerUserIds: userIds,
     playerScores,
-    teamUserIds: determineTeamUserIds(game.gameMode, game.userIds),
+    teamUserIds: determineTeamUserIds(game.gameMode, userIds),
     teamScores,
     placings,
     gameHistoryMessageCounts: getGameHistoryMessageCounts(game),

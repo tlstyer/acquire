@@ -5,82 +5,60 @@ import {
   shuffleArray,
 } from './helpers';
 import { PB_GameMode, PB_GameSetupChange, PB_PlayerArrangementMode } from './pb';
+import { type User } from './user';
 
 export class GameSetup {
-  hostUsername: string;
-  usernames: (string | null)[];
-  userIds: (number | null)[];
-  userIdsSet: Set<number>;
+  users: (User | null)[];
+  usersSet: Set<User>;
   approvals: boolean[];
-  finalUserIds: number[] | null = null;
-  finalUsernames: string[] | null = null;
+  finalUsers: User[] | null = null;
   history: PB_GameSetupChange[] = [];
 
   constructor(
     public gameMode: PB_GameMode,
     public playerArrangementMode: PB_PlayerArrangementMode,
-    public hostUserId: number,
-    public getUsernameForUserId: (userId: number) => string,
-    initialUserIds?: (number | null)[],
+    public hostUser: User,
+    public userIdToUser: Map<number, User>,
+    initialUsers?: (User | null)[],
   ) {
     const numPlayers = gameModeToNumPlayers.get(gameMode)!;
-    this.hostUsername = getUsernameForUserId(hostUserId);
 
-    if (initialUserIds !== undefined) {
-      this.usernames = initialUserIds.map((userId) =>
-        userId !== null ? this.getUsernameForUserId(userId) : null,
-      );
+    if (initialUsers !== undefined) {
+      this.users = initialUsers;
 
-      this.userIds = initialUserIds;
-
-      this.userIdsSet = new Set();
-      for (const userId of initialUserIds) {
-        if (userId !== null) {
-          this.userIdsSet.add(userId);
-        }
-      }
+      this.usersSet = new Set(initialUsers.filter((user) => user !== null));
     } else {
-      const usernames: (string | null)[] = new Array(numPlayers);
-      usernames.fill(null);
-      usernames[0] = this.hostUsername;
-      this.usernames = usernames;
+      this.users = new Array(numPlayers);
+      this.users.fill(null);
+      this.users[0] = hostUser;
 
-      const userIds: (number | null)[] = new Array(numPlayers);
-      userIds.fill(null);
-      userIds[0] = hostUserId;
-      this.userIds = userIds;
-
-      this.userIdsSet = new Set([hostUserId]);
+      this.usersSet = new Set([hostUser]);
     }
 
     this.approvals = defaultApprovals[numPlayers];
   }
 
-  addUser(userId: number) {
-    if (this.userIdsSet.size === this.userIds.length) {
+  addUser(user: User) {
+    if (this.usersSet.size === this.users.length) {
       return;
     }
 
-    if (this.userIdsSet.has(userId)) {
+    if (this.usersSet.has(user)) {
       return;
     }
 
-    for (let position = 0; position < this.userIds.length; position++) {
-      if (this.userIds[position] === null) {
-        this.usernames = [...this.usernames];
-        this.usernames[position] = this.getUsernameForUserId(userId);
+    for (let position = 0; position < this.users.length; position++) {
+      if (this.users[position] === null) {
+        this.users = [...this.users];
+        this.users[position] = user;
 
-        this.userIds = [...this.userIds];
-        this.userIds[position] = userId;
-
-        this.userIdsSet.add(userId);
+        this.usersSet.add(user);
         this.approvals = defaultApprovals[gameModeToNumPlayers.get(this.gameMode)!];
-        this.finalUserIds = null;
-        this.finalUsernames = null;
+        this.finalUsers = null;
         this.history.push(
           PB_GameSetupChange.create({
             userAdded: {
-              userId,
+              userId: user.id,
             },
           }),
         );
@@ -89,31 +67,27 @@ export class GameSetup {
     }
   }
 
-  removeUser(userId: number) {
-    if (!this.userIdsSet.has(userId)) {
+  removeUser(user: User) {
+    if (!this.usersSet.has(user)) {
       return;
     }
 
-    if (userId === this.hostUserId) {
+    if (user === this.hostUser) {
       return;
     }
 
-    for (let position = 0; position < this.userIds.length; position++) {
-      if (this.userIds[position] === userId) {
-        this.usernames = [...this.usernames];
-        this.usernames[position] = null;
+    for (let position = 0; position < this.users.length; position++) {
+      if (this.users[position] === user) {
+        this.users = [...this.users];
+        this.users[position] = null;
 
-        this.userIds = [...this.userIds];
-        this.userIds[position] = null;
-
-        this.userIdsSet.delete(userId);
+        this.usersSet.delete(user);
         this.approvals = defaultApprovals[gameModeToNumPlayers.get(this.gameMode)!];
-        this.finalUserIds = null;
-        this.finalUsernames = null;
+        this.finalUsers = null;
         this.history.push(
           PB_GameSetupChange.create({
             userRemoved: {
-              userId,
+              userId: user.id,
             },
           }),
         );
@@ -122,37 +96,37 @@ export class GameSetup {
     }
   }
 
-  approve(userId: number) {
-    if (!this.userIdsSet.has(userId)) {
+  approve(user: User) {
+    if (!this.usersSet.has(user)) {
       return;
     }
 
-    if (this.userIdsSet.size !== this.userIds.length) {
+    if (this.usersSet.size !== this.users.length) {
       return;
     }
 
-    for (let position = 0; position < this.userIds.length; position++) {
-      if (this.userIds[position] === userId) {
+    for (let position = 0; position < this.users.length; position++) {
+      if (this.users[position] === user) {
         if (this.approvals[position] === false) {
           this.approvals = [...this.approvals];
           this.approvals[position] = true;
 
           const gameSetupChange = PB_GameSetupChange.create({
             userApprovedOfGameSetup: {
-              userId,
+              userId: user.id,
             },
           });
 
           const approvedByEverybody = this.approvals.indexOf(false) === -1;
           if (approvedByEverybody) {
-            const [userIds, usernames] = this.getFinalUserIdsAndUsernames();
-            this.finalUserIds = userIds;
-            this.finalUsernames = usernames;
+            this.finalUsers = this.getFinalUsers();
 
             gameSetupChange.userApprovedOfGameSetup!.approvedByEverybody = true;
 
-            if (userIds !== this.userIds) {
-              gameSetupChange.userApprovedOfGameSetup!.finalUserIds = userIds;
+            if (this.finalUsers !== this.users) {
+              gameSetupChange.userApprovedOfGameSetup!.finalUserIds = this.finalUsers.map(
+                (user) => user.id,
+              );
             }
           }
 
@@ -169,46 +143,40 @@ export class GameSetup {
     }
 
     const newNumPlayers = gameModeToNumPlayers.get(gameMode) ?? 0;
-    if (this.userIdsSet.size > newNumPlayers) {
+    if (this.usersSet.size > newNumPlayers) {
       return;
     }
 
     const oldNumPlayers = gameModeToNumPlayers.get(this.gameMode)!;
 
     if (newNumPlayers !== oldNumPlayers) {
-      const usernames = [...this.usernames];
-      const userIds = [...this.userIds];
+      const users = [...this.users];
 
       if (newNumPlayers > oldNumPlayers) {
         const numSpotsToAdd = newNumPlayers - oldNumPlayers;
         for (let i = 0; i < numSpotsToAdd; i++) {
-          usernames.push(null);
-          userIds.push(null);
+          users.push(null);
         }
       } else {
         for (let oldPosition = oldNumPlayers - 1; oldPosition >= newNumPlayers; oldPosition--) {
-          if (usernames[oldPosition] !== null) {
+          if (users[oldPosition] !== null) {
             for (let newPosition = newNumPlayers - 1; newPosition >= 0; newPosition--) {
-              if (usernames[newPosition] === null) {
-                usernames[newPosition] = usernames[oldPosition];
-                userIds[newPosition] = userIds[oldPosition];
+              if (users[newPosition] === null) {
+                users[newPosition] = users[oldPosition];
                 break;
               }
             }
           }
 
-          usernames.pop();
-          userIds.pop();
+          users.pop();
         }
       }
 
-      this.usernames = usernames;
-      this.userIds = userIds;
+      this.users = users;
     }
 
     this.approvals = defaultApprovals[newNumPlayers];
-    this.finalUserIds = null;
-    this.finalUsernames = null;
+    this.finalUsers = null;
 
     const isTeamGame = gameModeToTeamSize.get(gameMode)! > 1;
     if (!isTeamGame && this.playerArrangementMode === PB_PlayerArrangementMode.SPECIFY_TEAMS) {
@@ -245,8 +213,7 @@ export class GameSetup {
 
     this.playerArrangementMode = playerArrangementMode;
     this.approvals = defaultApprovals[gameModeToNumPlayers.get(this.gameMode)!];
-    this.finalUserIds = null;
-    this.finalUsernames = null;
+    this.finalUsers = null;
     this.history.push(
       PB_GameSetupChange.create({
         playerArrangementModeChanged: {
@@ -257,31 +224,25 @@ export class GameSetup {
   }
 
   swapPositions(position1: number, position2: number) {
-    if (position1 < 0 || position1 >= this.userIds.length) {
+    if (position1 < 0 || position1 >= this.users.length) {
       return;
     }
 
-    if (position2 < 0 || position2 >= this.userIds.length) {
+    if (position2 < 0 || position2 >= this.users.length) {
       return;
     }
 
-    if (this.userIds[position1] === this.userIds[position2]) {
+    if (this.users[position1] === this.users[position2]) {
       return;
     }
 
-    const usernames = [...this.usernames];
-    usernames[position1] = this.usernames[position2];
-    usernames[position2] = this.usernames[position1];
-    this.usernames = usernames;
-
-    const userIds = [...this.userIds];
-    userIds[position1] = this.userIds[position2];
-    userIds[position2] = this.userIds[position1];
-    this.userIds = userIds;
+    const users = [...this.users];
+    users[position1] = this.users[position2];
+    users[position2] = this.users[position1];
+    this.users = users;
 
     this.approvals = defaultApprovals[gameModeToNumPlayers.get(this.gameMode)!];
-    this.finalUserIds = null;
-    this.finalUsernames = null;
+    this.finalUsers = null;
 
     this.history.push(
       PB_GameSetupChange.create({
@@ -293,31 +254,27 @@ export class GameSetup {
     );
   }
 
-  kickUser(userId: number) {
-    if (!this.userIdsSet.has(userId)) {
+  kickUser(user: User) {
+    if (!this.usersSet.has(user)) {
       return;
     }
 
-    if (userId === this.hostUserId) {
+    if (user === this.hostUser) {
       return;
     }
 
-    for (let position = 0; position < this.userIds.length; position++) {
-      if (this.userIds[position] === userId) {
-        this.usernames = [...this.usernames];
-        this.usernames[position] = null;
+    for (let position = 0; position < this.users.length; position++) {
+      if (this.users[position] === user) {
+        this.users = [...this.users];
+        this.users[position] = null;
 
-        this.userIds = [...this.userIds];
-        this.userIds[position] = null;
-
-        this.userIdsSet.delete(userId);
+        this.usersSet.delete(user);
         this.approvals = defaultApprovals[gameModeToNumPlayers.get(this.gameMode)!];
-        this.finalUserIds = null;
-        this.finalUsernames = null;
+        this.finalUsers = null;
         this.history.push(
           PB_GameSetupChange.create({
             userKicked: {
-              userId,
+              userId: user.id,
             },
           }),
         );
@@ -328,23 +285,20 @@ export class GameSetup {
 
   processChange(gameSetupChange: PB_GameSetupChange) {
     if (gameSetupChange.userAdded) {
-      this.addUser(gameSetupChange.userAdded.userId);
+      this.addUser(this.userIdToUser.get(gameSetupChange.userAdded.userId)!);
     } else if (gameSetupChange.userRemoved) {
-      this.removeUser(gameSetupChange.userRemoved.userId);
+      this.removeUser(this.userIdToUser.get(gameSetupChange.userRemoved.userId)!);
     } else if (gameSetupChange.userApprovedOfGameSetup) {
-      this.approve(gameSetupChange.userApprovedOfGameSetup.userId);
+      this.approve(this.userIdToUser.get(gameSetupChange.userApprovedOfGameSetup.userId)!);
 
       if (gameSetupChange.userApprovedOfGameSetup.approvedByEverybody) {
         if (gameSetupChange.userApprovedOfGameSetup.finalUserIds.length > 0) {
-          this.finalUserIds = gameSetupChange.userApprovedOfGameSetup.finalUserIds;
-          this.finalUsernames = gameSetupChange.userApprovedOfGameSetup.finalUserIds.map((userId) =>
-            this.getUsernameForUserId(userId),
+          this.finalUsers = gameSetupChange.userApprovedOfGameSetup.finalUserIds.map(
+            (userId) => this.userIdToUser.get(userId)!,
           );
         } else {
-          // @ts-expect-error this.userIds has no nulls
-          this.finalUserIds = this.userIds;
-          // @ts-expect-error this.usernames has no nulls
-          this.finalUsernames = this.usernames;
+          // @ts-expect-error this.users has no nulls
+          this.finalUsers = this.users;
         }
       }
     } else if (gameSetupChange.gameModeChanged) {
@@ -359,7 +313,7 @@ export class GameSetup {
         gameSetupChange.positionsSwapped.position2,
       );
     } else if (gameSetupChange.userKicked) {
-      this.kickUser(gameSetupChange.userKicked.userId);
+      this.kickUser(this.userIdToUser.get(gameSetupChange.userKicked.userId)!);
     }
   }
 
@@ -367,29 +321,29 @@ export class GameSetup {
     this.history = [];
   }
 
-  private getFinalUserIdsAndUsernames(): [number[], string[]] {
-    // @ts-expect-error this.userIds has no nulls
-    const userIds: number[] = [...this.userIds];
+  private getFinalUsers(): User[] {
+    // @ts-expect-error this.users has no nulls
+    const users: User[] = [...this.users];
 
     if (this.playerArrangementMode === PB_PlayerArrangementMode.RANDOM_ORDER) {
-      shuffleArray(userIds);
+      shuffleArray(users);
     } else if (this.playerArrangementMode === PB_PlayerArrangementMode.SPECIFY_TEAMS) {
-      let teams: number[][];
+      let teams: User[][];
       if (this.gameMode === PB_GameMode.TEAMS_2_VS_2) {
         teams = [
-          [userIds[0], userIds[2]],
-          [userIds[1], userIds[3]],
+          [users[0], users[2]],
+          [users[1], users[3]],
         ];
       } else if (this.gameMode === PB_GameMode.TEAMS_2_VS_2_VS_2) {
         teams = [
-          [userIds[0], userIds[3]],
-          [userIds[1], userIds[4]],
-          [userIds[2], userIds[5]],
+          [users[0], users[3]],
+          [users[1], users[4]],
+          [users[2], users[5]],
         ];
       } else {
         teams = [
-          [userIds[0], userIds[2], userIds[4]],
-          [userIds[1], userIds[3], userIds[5]],
+          [users[0], users[2], users[4]],
+          [users[1], users[3], users[5]],
         ];
       }
 
@@ -404,26 +358,24 @@ export class GameSetup {
 
       for (let playerIndexInTeam = 0; playerIndexInTeam < numPlayersPerTeam; playerIndexInTeam++) {
         for (let teamIndex = 0; teamIndex < numTeams; teamIndex++) {
-          userIds[nextPlayerId++] = teams[teamIndex][playerIndexInTeam];
+          users[nextPlayerId++] = teams[teamIndex][playerIndexInTeam];
         }
       }
     }
 
     let userIdsOrderIsTheSame = true;
-    for (let playerId = 0; playerId < userIds.length; playerId++) {
-      if (userIds[playerId] !== this.userIds[playerId]) {
+    for (let playerId = 0; playerId < users.length; playerId++) {
+      if (users[playerId] !== this.users[playerId]) {
         userIdsOrderIsTheSame = false;
         break;
       }
     }
 
     if (userIdsOrderIsTheSame) {
-      // @ts-expect-error this.userIds and this.usernames have no nulls
-      return [this.userIds, this.usernames];
+      // @ts-expect-error this.users has no nulls
+      return this.users;
     } else {
-      const usernames = userIds.map((userId) => this.getUsernameForUserId(userId));
-
-      return [userIds, usernames];
+      return users;
     }
   }
 }

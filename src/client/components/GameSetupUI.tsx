@@ -1,6 +1,7 @@
 import { createMemo, For, Match, Show, Switch } from 'solid-js';
 import { gameModeToNumPlayers, gameModeToTeamSize } from '../../common/helpers';
 import { PB_GameMode, PB_PlayerArrangementMode } from '../../common/pb';
+import { type User } from '../../common/user';
 import stylesApp from '../App.module.css';
 import { allGameModes, gameModeToString, teamNumberToCSSClassName } from '../helpers';
 import styles from './GameSetupUI.module.css';
@@ -8,12 +9,11 @@ import styles from './GameSetupUI.module.css';
 export function GameSetupUI(props: {
   gameMode: PB_GameMode;
   playerArrangementMode: PB_PlayerArrangementMode;
-  usernames: (string | null)[];
-  userIds: (number | null)[];
+  users: (User | null)[];
   approvals: boolean[];
-  hostUserId: number;
-  myUserId: number;
-  userIdsInRoom: Set<number>;
+  hostUser: User;
+  myUser: User | null;
+  usersInRoom: Set<User>;
   onChangeGameMode: ((gameMode: PB_GameMode) => void) | undefined;
   onChangePlayerArrangementMode:
     | ((playerArrangementMode: PB_PlayerArrangementMode) => void)
@@ -23,10 +23,10 @@ export function GameSetupUI(props: {
   onApprove: (() => void) | undefined;
 }) {
   const numUsersInGame = createMemo(() =>
-    props.usernames.reduce((count, username) => count + (username !== null ? 1 : 0), 0),
+    props.users.reduce((count, user) => count + (user !== null ? 1 : 0), 0),
   );
 
-  const gameIsFull = createMemo(() => numUsersInGame() === props.usernames.length);
+  const gameIsFull = createMemo(() => numUsersInGame() === props.users.length);
 
   const isTeamGame = createMemo(() => gameModeToTeamSize.get(props.gameMode)! > 1);
 
@@ -93,24 +93,22 @@ export function GameSetupUI(props: {
         <tbody>
           <Switch>
             <Match when={props.playerArrangementMode === PB_PlayerArrangementMode.RANDOM_ORDER}>
-              <For each={props.usernames}>
-                {(username, index) => (
+              <For each={props.users}>
+                {(user, index) => (
                   <tr>
                     <td
                       classList={{
                         [styles.user]: true,
-                        [stylesApp.playerMissing]:
-                          username !== null &&
-                          !props.userIdsInRoom.has(props.userIds[index()] ?? -1),
+                        [stylesApp.playerMissing]: user !== null && !props.usersInRoom.has(user),
                       }}
-                      title={username ?? undefined}
+                      title={user?.name}
                     >
-                      {username ?? ''}
+                      {user?.name ?? ''}
                     </td>
                     <GameSetupUIKickUserAndApproveCells
-                      userId={props.userIds[index()]}
-                      hostUserId={props.hostUserId}
-                      myUserId={props.myUserId}
+                      userId={user?.id ?? null}
+                      hostUserId={props.hostUser.id}
+                      myUserId={props.myUser?.id ?? null}
                       gameIsFull={gameIsFull()}
                       approved={props.approvals[index()]}
                       onKickUser={props.onKickUser}
@@ -121,20 +119,18 @@ export function GameSetupUI(props: {
               </For>
             </Match>
             <Match when={props.playerArrangementMode === PB_PlayerArrangementMode.EXACT_ORDER}>
-              <For each={props.usernames}>
-                {(username, index) => (
+              <For each={props.users}>
+                {(user, index) => (
                   <tr>
                     <td
                       classList={{
                         [teamNumberToCSSClassName.get((index() % numTeams()) + 1) ?? '']:
                           isTeamGame(),
                         [styles.user]: !isTeamGame(),
-                        [stylesApp.playerMissing]:
-                          username !== null &&
-                          !props.userIdsInRoom.has(props.userIds[index()] ?? -1),
+                        [stylesApp.playerMissing]: user !== null && !props.usersInRoom.has(user),
                       }}
                     >
-                      {username ?? ''}
+                      {user?.name ?? ''}
                     </td>
                     <Show when={props.onSwapPositions !== undefined}>
                       <td>
@@ -142,26 +138,26 @@ export function GameSetupUI(props: {
                           <input
                             type="button"
                             value="▲"
-                            disabled={props.userIds[index()] === props.userIds[index() - 1]}
+                            disabled={props.users[index()] === props.users[index() - 1]}
                             onClick={() => props.onSwapPositions!(index(), index() - 1)}
                           />
                         </Show>
                       </td>
                       <td>
-                        <Show when={index() < props.usernames.length - 1}>
+                        <Show when={index() < props.users.length - 1}>
                           <input
                             type="button"
                             value="▼"
-                            disabled={props.userIds[index()] === props.userIds[index() + 1]}
+                            disabled={props.users[index()] === props.users[index() + 1]}
                             onClick={() => props.onSwapPositions!(index(), index() + 1)}
                           />
                         </Show>
                       </td>
                     </Show>
                     <GameSetupUIKickUserAndApproveCells
-                      userId={props.userIds[index()]}
-                      hostUserId={props.hostUserId}
-                      myUserId={props.myUserId}
+                      userId={user?.id ?? null}
+                      hostUserId={props.hostUser.id}
+                      myUserId={props.myUser?.id ?? null}
                       gameIsFull={gameIsFull()}
                       approved={props.approvals[index()]}
                       onKickUser={props.onKickUser}
@@ -181,11 +177,11 @@ export function GameSetupUI(props: {
                           classList={{
                             [styles.user]: true,
                             [stylesApp.playerMissing]:
-                              props.usernames[entry!.index] !== null &&
-                              !props.userIdsInRoom.has(props.userIds[entry!.index] ?? -1),
+                              props.users[entry!.index] !== null &&
+                              !props.usersInRoom.has(props.users[entry!.index]!),
                           }}
                         >
-                          {props.usernames[entry!.index] ?? ''}
+                          {props.users[entry!.index]?.name ?? ''}
                         </td>
                         <Show when={props.onSwapPositions !== undefined}>
                           <td>
@@ -194,7 +190,7 @@ export function GameSetupUI(props: {
                                 type="button"
                                 value="▲"
                                 disabled={
-                                  props.userIds[entry!.index] === props.userIds[entry!.upIndex!]
+                                  props.users[entry!.index] === props.users[entry!.upIndex!]
                                 }
                                 onClick={() => {
                                   if (entry! && entry!.upIndex !== null) {
@@ -210,7 +206,7 @@ export function GameSetupUI(props: {
                                 type="button"
                                 value="▼"
                                 disabled={
-                                  props.userIds[entry!.index] === props.userIds[entry!.downIndex!]
+                                  props.users[entry!.index] === props.users[entry!.downIndex!]
                                 }
                                 onClick={() => {
                                   if (entry! && entry!.downIndex !== null) {
@@ -222,9 +218,9 @@ export function GameSetupUI(props: {
                           </td>
                         </Show>
                         <GameSetupUIKickUserAndApproveCells
-                          userId={props.userIds[entry!.index]}
-                          hostUserId={props.hostUserId}
-                          myUserId={props.myUserId}
+                          userId={props.users[entry!.index]?.id ?? null}
+                          hostUserId={props.hostUser.id}
+                          myUserId={props.myUser?.id ?? null}
                           gameIsFull={gameIsFull()}
                           approved={props.approvals[entry!.index]}
                           onKickUser={props.onKickUser}
@@ -251,7 +247,7 @@ export function GameSetupUI(props: {
 function GameSetupUIKickUserAndApproveCells(props: {
   userId: number | null;
   hostUserId: number;
-  myUserId: number;
+  myUserId: number | null;
   gameIsFull: boolean;
   approved: boolean;
   onKickUser: ((userId: number) => void) | undefined;

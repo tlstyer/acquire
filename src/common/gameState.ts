@@ -139,7 +139,7 @@ export class GameState {
   }
 
   createPlayerAndWatcherGameStates() {
-    this.playerGameStates = new Array(this.game.userIds.length);
+    this.playerGameStates = new Array(this.game.users.length);
     for (let playerId = 0; playerId < this.playerGameStates.length; playerId++) {
       this.playerGameStates[playerId] = this.createGameState(playerId);
     }

@@ -66,7 +66,7 @@ test('no message sent when trying to login with token while already logged in', 
 
   expect(clientCommunication.communicatedMessages.length).toBe(0);
 
-  expect([...server.clientIdToClient.values()].filter((c) => c.userId !== undefined).length).toBe(
+  expect([...server.clientIdToClient.values()].filter((c) => c.user?.id !== undefined).length).toBe(
     1,
   );
 });
@@ -93,7 +93,7 @@ test('no reply when trying to login with token while already logged in when send
 
   expect(clientCommunication.communicatedMessages.length).toBe(1);
 
-  expect([...server.clientIdToClient.values()].filter((c) => c.userId !== undefined).length).toBe(
+  expect([...server.clientIdToClient.values()].filter((c) => c.user?.id !== undefined).length).toBe(
     1,
   );
 });

@@ -22,7 +22,7 @@ export class ActionStartGame extends ActionBase {
     const gameState = this.game.getCurrentGameState();
 
     // draw position tiles
-    const positionTiles: PositionTileData[] = new Array(this.game.userIds.length);
+    const positionTiles: PositionTileData[] = new Array(this.game.users.length);
     for (let tileBagIndex = 0; tileBagIndex < positionTiles.length; tileBagIndex++) {
       positionTiles[tileBagIndex] = new PositionTileData(
         this.game.tileBag[tileBagIndex],
@@ -43,11 +43,11 @@ export class ActionStartGame extends ActionBase {
       );
     }
 
-    this.game.nextTileBagIndex = this.game.userIds.length;
+    this.game.nextTileBagIndex = this.game.users.length;
 
     // start game
     gameState.addGameHistoryMessage(new GameHistoryMessageStartedGame(this.playerId));
-    for (let playerId = 0; playerId < this.game.userIds.length; playerId++) {
+    for (let playerId = 0; playerId < this.game.users.length; playerId++) {
       this.game.drawTiles(playerId);
     }
 

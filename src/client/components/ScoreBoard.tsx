@@ -2,6 +2,7 @@ import { createMemo, For, Index, Match, Switch } from 'solid-js';
 import { ScoreBoardIndexEnum } from '../../common/enums';
 import { gameModeToNumPlayers, gameModeToTeamSize } from '../../common/helpers';
 import { type PB_GameMode } from '../../common/pb';
+import { type User } from '../../common/user';
 import {
   allChains,
   gameBoardTypeToCSSClassName,
@@ -11,7 +12,7 @@ import {
 import styles from './ScoreBoard.module.css';
 
 export function ScoreBoard(props: {
-  usernames: string[];
+  users: User[];
   scoreBoard: number[][];
   scoreBoardAvailable: number[];
   scoreBoardChainSize: number[];
@@ -76,11 +77,11 @@ export function ScoreBoard(props: {
           <td class={styles.cashAndNetHeader}>Net</td>
         </tr>
 
-        <Index each={props.usernames}>
-          {(username, playerId) => (
+        <Index each={props.users}>
+          {(user, playerId) => (
             <ScoreBoardRow
               isPlayerRow={true}
-              title={username()}
+              title={user().name}
               isPlayersTurn={playerId === props.turnPlayerId}
               isPlayersMove={playerId === props.movePlayerId}
               scoreBoardRow={props.scoreBoard[playerId]}

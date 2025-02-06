@@ -1,10 +1,11 @@
 import { expect, test } from 'vitest';
-import { createClient } from '../../client/client';
+import { type Client, createClient } from '../../client/client';
 import { TestClientCommunication } from '../../client/clientCommunication';
 import { type GameManager, GameManagerStatus } from '../../client/gamesManager';
 import { type Server } from '../../server/server';
 import { type TestServerCommunication } from '../../server/serverCommunication';
 import { PB_GameMode, PB_PlayerArrangementMode } from '../pb';
+import { User } from '../user';
 import { createOneClientConnectedToOneServer, waitForAsyncServerStuff } from './common';
 
 test('newly created game has correct signals', async () => {
@@ -24,10 +25,9 @@ test('newly created game has correct signals', async () => {
   expect(gameManager.signals.status()).toBe(GameManagerStatus.SettingUp);
   expect(gameManager.signals.gameMode()).toBe(PB_GameMode.SINGLES_2);
   expect(gameManager.signals.playerArrangementMode()).toBe(PB_PlayerArrangementMode.RANDOM_ORDER);
-  expect(gameManager.signals.usernames()).toEqual(['user 1', null]);
-  expect(gameManager.signals.userIds()).toEqual([1, null]);
+  expect(gameManager.signals.users()).toEqual([user1, null]);
   expect(gameManager.signals.approvals()).toEqual([false, false]);
-  expect(gameManager.signals.hostUserId()).toBe(1);
+  expect(gameManager.signals.hostUser()).toEqual(user1);
 });
 
 test('game number of 0 is not found', async () => {
@@ -38,10 +38,9 @@ test('game number of 0 is not found', async () => {
   expect(gameManager.signals.status()).toBe(GameManagerStatus.NotFound);
   expect(gameManager.signals.gameMode()).toBe(PB_GameMode.SINGLES_1);
   expect(gameManager.signals.playerArrangementMode()).toBe(PB_PlayerArrangementMode.VERSION_1);
-  expect(gameManager.signals.usernames()).toEqual([]);
-  expect(gameManager.signals.userIds()).toEqual([]);
+  expect(gameManager.signals.users()).toEqual([]);
   expect(gameManager.signals.approvals()).toEqual([]);
-  expect(gameManager.signals.hostUserId()).toBe(0);
+  expect(gameManager.signals.hostUser()).toEqual(dummyUser);
 });
 
 test('client is disconnected from room upon trying to enter a game that is not found', async () => {
@@ -58,6 +57,7 @@ test('client knows what user IDs and usernames are and were in the game room', a
   const { client, clientCommunication, serverCommunication } =
     createOneClientConnectedToOneServer();
 
+  const clientsInGame = new Set<Client>();
   const gameManagersInGame = new Set<GameManager>();
 
   // client logs in as "user 1", creates game, connects to game
@@ -67,16 +67,18 @@ test('client knows what user IDs and usernames are and were in the game room', a
   lobbyManager.createGame(PB_GameMode.SINGLES_2);
   const gameNumber = lobbyManager.signals.createdGameNumber() ?? -1;
   const gameManager = client.connectToGame(client.logTime, gameNumber);
+  clientsInGame.add(client);
   gameManagersInGame.add(gameManager);
-  expectUserIdsAndUsernames(new Map([[1, 'user 1']]), new Set([1]));
+  expectUsers(new Map([[1, user1]]), new Set([user1]));
 
   // client2 connects to game
   const clientCommunication2 = new TestClientCommunication(serverCommunication);
   const client2 = createClient(clientCommunication2, 2);
   clientCommunication2.connect();
   const gameManager2 = client2.connectToGame(client2.logTime, gameNumber);
+  clientsInGame.add(client2);
   gameManagersInGame.add(gameManager2);
-  expectUserIdsAndUsernames(new Map([[1, 'user 1']]), new Set([1]));
+  expectUsers(new Map([[1, user1]]), new Set([user1]));
 
   // client3 logs in as "user 3", connects to game
   const clientCommunication3 = new TestClientCommunication(serverCommunication);
@@ -85,92 +87,95 @@ test('client knows what user IDs and usernames are and were in the game room', a
   client3.loginWithPassword('user 3', 'password');
   await waitForAsyncServerStuff();
   const gameManager3 = client3.connectToGame(client3.logTime, gameNumber);
+  clientsInGame.add(client3);
   gameManagersInGame.add(gameManager3);
-  expectUserIdsAndUsernames(
+  expectUsers(
     new Map([
-      [1, 'user 1'],
-      [3, 'user 3'],
+      [1, user1],
+      [3, user3],
     ]),
-    new Set([1, 3]),
+    new Set([user1, user3]),
   );
 
   // client2 logs in as "user 2"
   client2.loginWithPassword('user 2', 'password');
   await waitForAsyncServerStuff();
-  expectUserIdsAndUsernames(
+  expectUsers(
     new Map([
-      [1, 'user 1'],
-      [3, 'user 3'],
-      [2, 'user 2'],
+      [1, user1],
+      [3, user3],
+      [2, user2],
     ]),
-    new Set([1, 3, 2]),
+    new Set([user1, user3, user2]),
   );
 
   // client3 logs out
   client3.logout();
-  expectUserIdsAndUsernames(
+  expectUsers(
     new Map([
-      [1, 'user 1'],
-      [3, 'user 3'],
-      [2, 'user 2'],
+      [1, user1],
+      [3, user3],
+      [2, user2],
     ]),
-    new Set([1, 2]),
+    new Set([user1, user2]),
   );
 
   // client3 logs in as "user 2"
   client3.loginWithPassword('user 2', 'password');
   await waitForAsyncServerStuff();
-  expectUserIdsAndUsernames(
+  expectUsers(
     new Map([
-      [1, 'user 1'],
-      [3, 'user 3'],
-      [2, 'user 2'],
+      [1, user1],
+      [3, user3],
+      [2, user2],
     ]),
-    new Set([1, 2]),
+    new Set([user1, user2]),
   );
 
   // client2 logs out
   client2.logout();
-  expectUserIdsAndUsernames(
+  expectUsers(
     new Map([
-      [1, 'user 1'],
-      [3, 'user 3'],
-      [2, 'user 2'],
+      [1, user1],
+      [3, user3],
+      [2, user2],
     ]),
-    new Set([1, 2]),
+    new Set([user1, user2]),
   );
 
   // client3 disconnects
   clientCommunication3.disconnect();
+  clientsInGame.delete(client3);
   gameManagersInGame.delete(gameManager3);
-  expectUserIdsAndUsernames(
+  expectUsers(
     new Map([
-      [1, 'user 1'],
-      [3, 'user 3'],
-      [2, 'user 2'],
+      [1, user1],
+      [3, user3],
+      [2, user2],
     ]),
-    new Set([1]),
+    new Set([user1]),
   );
 
   // client disconnects
   clientCommunication.disconnect();
+  clientsInGame.delete(client);
   gameManagersInGame.delete(gameManager);
-  expectUserIdsAndUsernames(
+  expectUsers(
     new Map([
-      [1, 'user 1'],
-      [3, 'user 3'],
-      [2, 'user 2'],
+      [1, user1],
+      [3, user3],
+      [2, user2],
     ]),
     new Set(),
   );
 
-  function expectUserIdsAndUsernames(
-    expectedUserIdToUsername: Map<number, string>,
-    expectedUserIdsInRoom: Set<number>,
-  ) {
+  function expectUsers(expectedUserIdToUser: Map<number, User>, expectedUsersInRoom: Set<User>) {
+    for (const client of clientsInGame) {
+      expect(client.userIdToUser).toEqual(expectedUserIdToUser);
+    }
+
     for (const gameManager of gameManagersInGame) {
-      expect(gameManager.signals.userIdToUsername()).toEqual(expectedUserIdToUsername);
-      expect(gameManager.signals.userIdsInRoom()).toEqual(expectedUserIdsInRoom);
+      expect(gameManager.signals.usersInRoom()).toEqual(expectedUsersInRoom);
     }
   }
 });
@@ -230,17 +235,11 @@ test('game setup example 1', async () => {
 
   expect(gameManager1.signals.gameMode()).toBe(PB_GameMode.TEAMS_2_VS_2);
   expect(gameManager1.signals.playerArrangementMode()).toBe(PB_PlayerArrangementMode.EXACT_ORDER);
-  expect(gameManager1.signals.hostUserId()).toBe(1);
-  expect(gameManager1.signals.usernames()).toEqual(['user 4', 'user 5', 'user 6', 'user 1']);
-  expect(gameManager1.signals.usernamesWithoutNulls()).toEqual([
-    'user 4',
-    'user 5',
-    'user 6',
-    'user 1',
-  ]);
-  expect(gameManager1.signals.userIds()).toEqual([4, 5, 6, 1]);
+  expect(gameManager1.signals.hostUser()).toEqual(user1);
+  expect(gameManager1.signals.users()).toEqual([user4, user5, user6, user1]);
+  expect(gameManager1.signals.usersWithoutNulls()).toEqual([]); // not set during game setup
   expect(gameManager1.signals.approvals()).toEqual([true, true, true, true]);
-  expect(gameManager1.signals.hostUserId()).toEqual(1);
+  expect(gameManager1.signals.hostUser()).toEqual(user1);
 });
 
 test('game setup example 2', async () => {
@@ -255,12 +254,12 @@ test('game setup example 2', async () => {
   } = await createManyUsersConnectedToOneServerAndConnectedToOneGame();
 
   expect(gameManager1.signals.gameMode()).toBe(PB_GameMode.SINGLES_4);
-  expect(gameManager1.signals.userIds()).toEqual([1, null, null, null]);
+  expect(gameManager1.signals.users()).toEqual([user1, null, null, null]);
   expectEqualGameSetups(gameManager1, server);
 
   gameManager1.gameSetupActions.changeGameMode(PB_GameMode.TEAMS_3_VS_3);
   expect(gameManager1.signals.gameMode()).toBe(PB_GameMode.TEAMS_3_VS_3);
-  expect(gameManager1.signals.userIds()).toEqual([1, null, null, null, null, null]);
+  expect(gameManager1.signals.users()).toEqual([user1, null, null, null, null, null]);
   expectEqualGameSetups(gameManager1, server);
 
   gameManager1.gameSetupActions.changePlayerArrangementMode(PB_PlayerArrangementMode.SPECIFY_TEAMS);
@@ -279,23 +278,23 @@ test('game setup example 2', async () => {
   expectEqualGameSetups(gameManager1, server);
 
   gameManager6.gameSetupActions.sitDown();
-  expect(gameManager1.signals.userIds()).toEqual([1, 2, 3, 4, 5, 6]);
+  expect(gameManager1.signals.users()).toEqual([user1, user2, user3, user4, user5, user6]);
   expectEqualGameSetups(gameManager1, server);
 
   gameManager1.gameSetupActions.swapPositions(0, 5);
-  expect(gameManager1.signals.userIds()).toEqual([6, 2, 3, 4, 5, 1]);
+  expect(gameManager1.signals.users()).toEqual([user6, user2, user3, user4, user5, user1]);
   expectEqualGameSetups(gameManager1, server);
 
   gameManager6.gameSetupActions.standUp();
   gameManager4.gameSetupActions.standUp();
-  expect(gameManager1.signals.userIds()).toEqual([null, 2, 3, null, 5, 1]);
+  expect(gameManager1.signals.users()).toEqual([null, user2, user3, null, user5, user1]);
   expectEqualGameSetups(gameManager1, server);
 
   gameManager1.gameSetupActions.changeGameMode(PB_GameMode.SINGLES_4);
   expect(gameManager1.signals.playerArrangementMode()).toEqual(
     PB_PlayerArrangementMode.RANDOM_ORDER,
   );
-  expect(gameManager1.signals.userIds()).toEqual([5, 2, 3, 1]);
+  expect(gameManager1.signals.users()).toEqual([user5, user2, user3, user1]);
   expectEqualGameSetups(gameManager1, server);
 
   gameManager5.gameSetupActions.approve();
@@ -381,11 +380,15 @@ function expectEqualGameSetups(gameManager: GameManager, server: Server) {
   expect(clientGameSetupLiteSignals.playerArrangementMode()).toEqual(
     serverGameSetup.playerArrangementMode,
   );
-  expect(clientGameSetupLiteSignals.usernames()).toEqual(serverGameSetup.usernames);
-  expect(clientGameSetupLiteSignals.usernamesWithoutNulls()).toEqual(
-    serverGameSetup.usernames.map((username) => username ?? ''),
-  );
-  expect(clientGameSetupLiteSignals.userIds()).toEqual(serverGameSetup.userIds);
+  expect(clientGameSetupLiteSignals.users()).toEqual(serverGameSetup.users);
   expect(clientGameSetupLiteSignals.approvals()).toEqual(serverGameSetup.approvals);
-  expect(clientGameSetupLiteSignals.hostUserId()).toEqual(serverGameSetup.hostUserId);
+  expect(clientGameSetupLiteSignals.hostUser()).toEqual(serverGameSetup.hostUser);
 }
+
+const user1 = new User(1, 'user 1');
+const user2 = new User(2, 'user 2');
+const user3 = new User(3, 'user 3');
+const user4 = new User(4, 'user 4');
+const user5 = new User(5, 'user 5');
+const user6 = new User(6, 'user 6');
+const dummyUser = new User(-1, '?');

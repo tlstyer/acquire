@@ -13,6 +13,7 @@ import {
   type PB_MessageToServer_LoginLogout_LoginWithPassword,
   type PB_MessageToServer_LoginLogout_LoginWithToken,
 } from '../common/pb';
+import { User } from '../common/user';
 import { Client } from './client';
 import { GameRoomsManager } from './gameRoomsManager';
 import { LobbyRoom } from './lobbyRoom';
@@ -26,6 +27,8 @@ export class Server {
 
   lobbyRoom = new LobbyRoom();
   gameRoomsManager = new GameRoomsManager();
+
+  userIdToUser = new Map<number, User>(); // unique User objects for everybody who ever logged in. TODO: purge unused users sometimes.
 
   constructor(
     public serverCommunication: ServerCommunication,
@@ -110,7 +113,7 @@ export class Server {
     client: Client,
     message: PB_MessageToServer_LoginLogout_LoginWithPassword,
   ) {
-    if (client.userId !== undefined) {
+    if (client.user !== null) {
       // ignore attempt to login while already logged in
       return;
     }
@@ -147,7 +150,7 @@ export class Server {
     client: Client,
     message: PB_MessageToServer_LoginLogout_LoginWithToken,
   ) {
-    if (client.userId !== undefined) {
+    if (client.user !== null) {
       // ignore attempt to login while already logged in
       return;
     }
@@ -184,7 +187,7 @@ export class Server {
     client: Client,
     message: PB_MessageToServer_LoginLogout_CreateUserAndLogin,
   ) {
-    if (client.userId !== undefined) {
+    if (client.user !== null) {
       // ignore attempt to login while already logged in
       return;
     }
@@ -229,7 +232,13 @@ export class Server {
   }
 
   private loginUser(client: Client, userData: UserData) {
-    client.loggedIn(userData.userId, userData.username);
+    let user = this.userIdToUser.get(userData.userId);
+    if (user === undefined) {
+      user = new User(userData.userId, userData.username);
+      this.userIdToUser.set(userData.userId, user);
+    }
+
+    client.loggedIn(user);
 
     this.sendLoginLogoutMessage(
       client,
@@ -241,7 +250,7 @@ export class Server {
   }
 
   private onMessage_LoginLogout_Logout(client: Client) {
-    if (client.userId === undefined) {
+    if (client.user === null) {
       // ignore attempt to log out while already logged out
       return;
     }

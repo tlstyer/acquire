@@ -1,6 +1,7 @@
 import { expect, test } from 'vitest';
 import { createLoginLogoutMessage } from '../helpers';
 import { PB_MessageToClient_LoginLogout_ResponseCode, PB_MessageToServer } from '../pb';
+import { User } from '../user';
 import {
   createOneClientConnectedToOneServer,
   userIdToTestUserData,
@@ -23,11 +24,10 @@ test('can log out while logged in', async () => {
     createLoginLogoutMessage(PB_MessageToClient_LoginLogout_ResponseCode.SUCCESS),
   );
 
-  expect(client.signals.username()).toEqual(null);
-  expect(client.signals.userId()).toEqual(null);
+  expect(client.signals.user()).toEqual(null);
   expect(client.myToken).toEqual(undefined);
 
-  expect([...server.clientIdToClient.values()].filter((c) => c.userId !== undefined).length).toBe(
+  expect([...server.clientIdToClient.values()].filter((c) => c.user?.id !== undefined).length).toBe(
     0,
   );
 });
@@ -45,11 +45,10 @@ test('logout data changes are made on the server when a client disconnects', asy
 
   expect(clientCommunication.communicatedMessages.length).toBe(0);
 
-  expect(client.signals.username()).toEqual('user 4');
-  expect(client.signals.userId()).toEqual(4);
+  expect(client.signals.user()).toEqual(new User(4, 'user 4'));
   expect(client.myToken).toEqual(userIdToTestUserData[4].passwordHash);
 
-  expect([...server.clientIdToClient.values()].filter((c) => c.userId !== undefined).length).toBe(
+  expect([...server.clientIdToClient.values()].filter((c) => c.user?.id !== undefined).length).toBe(
     0,
   );
 });
@@ -64,7 +63,7 @@ test('no message sent when trying to log out while already logged out', async ()
 
   expect(clientCommunication.communicatedMessages.length).toBe(0);
 
-  expect([...server.clientIdToClient.values()].filter((c) => c.userId !== undefined).length).toBe(
+  expect([...server.clientIdToClient.values()].filter((c) => c.user?.id !== undefined).length).toBe(
     0,
   );
 });
@@ -85,7 +84,7 @@ test('no reply when trying to log out while already logged out when sending mess
 
   expect(clientCommunication.communicatedMessages.length).toBe(1);
 
-  expect([...server.clientIdToClient.values()].filter((c) => c.userId !== undefined).length).toBe(
+  expect([...server.clientIdToClient.values()].filter((c) => c.user?.id !== undefined).length).toBe(
     0,
   );
 });

@@ -1,11 +1,12 @@
 import { For } from 'solid-js';
 import { PB_GameMode } from '../../../common/pb';
+import { User } from '../../../common/user';
 import { ScoreBoard } from '../../components/ScoreBoard';
 
 export function ScoreBoardExamples() {
   const allProps = [
     {
-      usernames: ['winning player', 'losing player'],
+      users: [new User(1, 'winning player'), new User(2, 'losing player')],
       scoreBoard: [
         [6, 1, 13, 10, 4, 4, 6, 207, 785],
         [1, 0, 11, 0, 3, 1, 1, 256, 533],
@@ -20,11 +21,11 @@ export function ScoreBoardExamples() {
       cellWidth: 30,
     },
     {
-      usernames: [
-        'tlstyer',
-        'REALLY, REALLY, REALLY, REALLY, REALLY LONG NAME',
-        'Somebody Else',
-        'hi!',
+      users: [
+        new User(1, 'tlstyer'),
+        new User(2, 'REALLY, REALLY, REALLY, REALLY, REALLY LONG NAME'),
+        new User(3, 'Somebody Else'),
+        new User(4, 'hi!'),
       ],
       scoreBoard: [
         [4, 0, 0, 0, 0, 0, 0, 74, 82],
@@ -42,7 +43,12 @@ export function ScoreBoardExamples() {
       cellWidth: 30,
     },
     {
-      usernames: ['player 1', 'player 2', 'player 3', 'player 4'],
+      users: [
+        new User(1, 'player 1'),
+        new User(2, 'player 2'),
+        new User(3, 'player 3'),
+        new User(4, 'player 4'),
+      ],
       scoreBoard: [
         [0, 0, 5, 9, 0, 13, 0, 0, 427],
         [8, 1, 0, 13, 0, 12, 0, 63, 474],
@@ -59,7 +65,14 @@ export function ScoreBoardExamples() {
       cellWidth: 30,
     },
     {
-      usernames: ['player 1', 'player 2', 'player 3', 'player 4', 'player 5', 'player 6'],
+      users: [
+        new User(1, 'player 1'),
+        new User(2, 'player 2'),
+        new User(3, 'player 3'),
+        new User(4, 'player 4'),
+        new User(5, 'player 5'),
+        new User(6, 'player 6'),
+      ],
       scoreBoard: [
         [1, 0, 0, 9, 2, 3, 0, 188, 386],
         [0, 3, 7, 0, 0, 0, 0, 35, 121],
@@ -88,7 +101,7 @@ export function ScoreBoardExamples() {
       {(props) => (
         <p>
           <ScoreBoard
-            usernames={props.usernames}
+            users={props.users}
             scoreBoard={props.scoreBoard}
             scoreBoardAvailable={props.scoreBoardAvailable}
             scoreBoardChainSize={props.scoreBoardChainSize}

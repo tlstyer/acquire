@@ -1,5 +1,6 @@
 import { createSignal, For } from 'solid-js';
 import { type GameState } from '../../../common/gameState';
+import { type User } from '../../../common/user';
 import { GameHistory } from '../../components/GameHistory';
 import { processBrowserMyKeyboardEvents } from '../../myKeyboardEvents';
 import { EnableKeyboardShortcutsButton } from './EnableKeyboardShortcutsButton';
@@ -12,27 +13,27 @@ export function GameHistoryExamples() {
   const game2 = getExampleGame2();
 
   const allProps: {
-    usernames: string[];
+    users: User[];
     gameStateHistory: GameState[];
     onMoveSelected: (index: number) => void;
   }[] = [
     {
-      usernames: gameForGameHistory.usernames,
+      users: gameForGameHistory.users,
       gameStateHistory: gameForGameHistory.gameStateHistory,
       onMoveSelected,
     },
     {
-      usernames: game1.usernames,
+      users: game1.users,
       gameStateHistory: game1.gameStateHistory,
       onMoveSelected,
     },
     {
-      usernames: game2.usernames,
+      users: game2.users,
       gameStateHistory: game2.gameStateHistory,
       onMoveSelected,
     },
     {
-      usernames: gameForGameHistory.usernames,
+      users: gameForGameHistory.users,
       gameStateHistory: [gameForGameHistory.gameStateHistory[0]],
       onMoveSelected,
     },
@@ -55,7 +56,7 @@ export function GameHistoryExamples() {
             <div class={styles.gameHistoryWrapper}>
               <GameHistory
                 ref={(ref) => processBrowserMyKeyboardEvents(keyboardShortcutsEnabled, ref)}
-                usernames={props.usernames}
+                users={props.users}
                 gameStateHistory={props.gameStateHistory}
                 onMoveSelected={props.onMoveSelected}
               />

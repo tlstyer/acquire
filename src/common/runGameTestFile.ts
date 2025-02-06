@@ -46,16 +46,16 @@ import {
   PB_PlayerArrangementMode,
   type PB_GameState,
 } from './pb';
+import { User } from './user';
 
 export function runGameTestFile(inputLines: string[]) {
   let game: Game | null = null;
   let gameMode = PB_GameMode.SINGLES_1;
   let playerArrangementMode = PB_PlayerArrangementMode.VERSION_1;
   let tileBag: number[] = [];
-  const userIds: number[] = [];
-  const usernames: string[] = [];
-  let hostUserId = 0;
-  let myUserId: number | null = null;
+  const userIdToUser = new Map<number, User>();
+  let hostUser: User | null = null;
+  let myUser: User | null = null;
 
   const outputLines: string[] = [];
 
@@ -90,21 +90,29 @@ export function runGameTestFile(inputLines: string[]) {
           }
           case 'user': {
             const userParts = value.split(' ');
-            userIds.push(parseInt(userParts[0], 10));
-            usernames.push(userParts.slice(1).join(' '));
+            const userId = parseInt(userParts[0], 10);
+            const username = userParts.slice(1).join(' ');
+            userIdToUser.set(userId, new User(userId, username));
             break;
           }
           case 'host':
-            hostUserId = parseInt(value, 10);
+            hostUser = userIdToUser.get(parseInt(value, 10)) ?? null;
             break;
           case 'me':
-            myUserId = value === 'null' ? null : parseInt(value, 10);
+            if (value !== 'null') {
+              const userId = parseInt(value, 10);
+              myUser = userIdToUser.get(userId) ?? null;
+              if (myUser === null) {
+                myUser = new User(userId, 'watcher');
+              }
+            }
             break;
           default:
             outputLines.push(`unrecognized line: ${line}`);
             break;
         }
       } else {
+        const users = [...userIdToUser.values()];
         outputLines.push(`game mode: ${PB_GameMode[gameMode]}`);
         outputLines.push(
           `player arrangement mode: ${PB_PlayerArrangementMode[playerArrangementMode]}`,
@@ -112,28 +120,21 @@ export function runGameTestFile(inputLines: string[]) {
         if (tileBag.length > 0) {
           outputLines.push(`tile bag: ${toTilesString(tileBag)}`);
         }
-        for (let i = 0; i < userIds.length; i++) {
-          const userId = userIds[i];
-          const username = usernames[i];
-          outputLines.push(`user: ${userId} ${username}`);
+        for (const user of users) {
+          outputLines.push(`user: ${user.id} ${user.name}`);
         }
-        outputLines.push(`host: ${hostUserId}`);
-        if (myUserId !== null) {
-          outputLines.push(`me: ${myUserId}`);
+        if (hostUser === null) {
+          throw new Error('no host user specified or host user is not in game');
+        }
+        outputLines.push(`host: ${hostUser.id}`);
+        if (myUser !== null) {
+          outputLines.push(`me: ${myUser.id}`);
         }
 
-        game = new Game(
-          gameMode,
-          playerArrangementMode,
-          tileBag,
-          userIds,
-          usernames,
-          hostUserId,
-          myUserId,
-        );
+        game = new Game(gameMode, playerArrangementMode, tileBag, users, hostUser, myUser);
 
-        if (myUserId !== null) {
-          myPlayerId = userIds.indexOf(myUserId);
+        if (myUser !== null) {
+          myPlayerId = users.indexOf(myUser);
         }
       }
     } else {

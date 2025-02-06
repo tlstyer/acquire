@@ -30,6 +30,7 @@ import {
   type PB_GameState_RevealedTileRackTile,
   type PB_PlayerArrangementMode,
 } from './pb';
+import { type User } from './user';
 
 export class Game {
   nextTileBagIndex = 0;
@@ -58,10 +59,9 @@ export class Game {
     public gameMode: PB_GameMode,
     public playerArrangementMode: PB_PlayerArrangementMode,
     public tileBag: number[],
-    public userIds: number[],
-    public usernames: string[],
-    public hostUserId: number,
-    public myUserId: number | null,
+    public users: User[],
+    public hostUser: User,
+    public myUser: User | null,
   ) {
     // initialize this.gameBoardTypeCounts
     this.gameBoardTypeCounts = new Array(PB_GameBoardType.MAX);
@@ -69,13 +69,13 @@ export class Game {
     this.gameBoardTypeCounts[PB_GameBoardType.NOTHING] = 108;
 
     // initialize this.gameActionStack
-    this.gameActionStack.push(new ActionStartGame(this, userIds.indexOf(hostUserId)));
+    this.gameActionStack.push(new ActionStartGame(this, users.indexOf(hostUser)));
 
     // initialize this.tileRacks, this.tileRackTypes, this.scoreBoard
     this.tileRacks = [];
     this.tileRackTypes = [];
     this.scoreBoard = [];
-    for (let playerId = 0; playerId < userIds.length; playerId++) {
+    for (let playerId = 0; playerId < users.length; playerId++) {
       this.tileRacks.push(defaultTileRack);
       this.tileRackTypes.push(defaultTileRackTypes);
       this.scoreBoard.push(defaultScoreBoardRow);
@@ -186,7 +186,7 @@ export class Game {
   }
 
   drawTiles(playerId: number) {
-    const addDrewTileMessage = this.myUserId === null || this.myUserId === this.userIds[playerId];
+    const addDrewTileMessage = this.myUser === null || this.myUser === this.users[playerId];
 
     for (let i = 0; i < 6; i++) {
       if (this.tileRacks[playerId][i] !== null) {
@@ -264,7 +264,7 @@ export class Game {
   }
 
   determineTileRackTypesForEverybody() {
-    for (let playerId = 0; playerId < this.userIds.length; playerId++) {
+    for (let playerId = 0; playerId < this.users.length; playerId++) {
       this.determineTileRackTypesForPlayer(playerId);
     }
   }
@@ -418,8 +418,8 @@ export class Game {
   }
 
   getScoreBoardColumnArray(scoreBoardIndex: PB_GameBoardType | ScoreBoardIndexEnum) {
-    const column: number[] = new Array(this.userIds.length);
-    for (let playerId = 0; playerId < this.userIds.length; playerId++) {
+    const column: number[] = new Array(this.users.length);
+    for (let playerId = 0; playerId < this.users.length; playerId++) {
       column[playerId] = this.scoreBoard[playerId][scoreBoardIndex];
     }
     return column;

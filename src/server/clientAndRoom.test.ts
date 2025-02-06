@@ -1,17 +1,19 @@
 import { describe, expect, test } from 'vitest';
+import { User } from '../common/user';
 import { Client } from './client';
 import { Room } from './room';
 
-describe('no other clients in room', () => {
-  const clientId = 1;
-  const userId = 2;
-  const username = 'username';
+const clientId = 1;
+const user = new User(2, 'username');
 
+const otherClientId = 3;
+const otherUser = new User(4, 'other username');
+
+describe('no other clients in room', () => {
   function expectStuff(client: Client, room: TestRoom, loggedIn: boolean, inRoom: boolean) {
     expect(client.clientId).toBe(clientId);
     expect(client.room).toBe(inRoom ? room : undefined);
-    expect(client.userId).toBe(loggedIn ? userId : undefined);
-    expect(client.username).toBe(loggedIn ? username : undefined);
+    expect(client.user).toBe(loggedIn ? user : null);
 
     const clients = new Set<Client>();
     if (inRoom) {
@@ -19,11 +21,11 @@ describe('no other clients in room', () => {
     }
     expect(room.clients).toEqual(clients);
 
-    const userIdToClients = new Map<number, Set<Client>>();
+    const userToClients = new Map<User, Set<Client>>();
     if (loggedIn && inRoom) {
-      userIdToClients.set(userId, new Set([client]));
+      userToClients.set(user, new Set([client]));
     }
-    expect(room.userIdToClients).toEqual(userIdToClients);
+    expect(room.userToClients).toEqual(userToClients);
   }
 
   test('never logs in', () => {
@@ -55,7 +57,7 @@ describe('no other clients in room', () => {
     expect(room.usersConnected.length).toBe(0);
     expect(room.usersDisconnected.length).toBe(0);
 
-    client.loggedIn(userId, username);
+    client.loggedIn(user);
 
     expectStuff(client, room, true, false);
     expect(room.usersConnected.length).toBe(0);
@@ -64,7 +66,7 @@ describe('no other clients in room', () => {
     client.connectToRoom(room);
 
     expectStuff(client, room, true, true);
-    expect(room.usersConnected).toEqual([{ userId, username }]);
+    expect(room.usersConnected).toEqual([user]);
     expect(room.usersDisconnected.length).toBe(0);
     room.usersConnected.length = 0;
 
@@ -72,7 +74,7 @@ describe('no other clients in room', () => {
 
     expectStuff(client, room, true, false);
     expect(room.usersConnected.length).toBe(0);
-    expect(room.usersDisconnected).toEqual([{ userId, username }]);
+    expect(room.usersDisconnected).toEqual([user]);
     room.usersDisconnected.length = 0;
   });
 
@@ -90,10 +92,10 @@ describe('no other clients in room', () => {
     expect(room.usersConnected.length).toBe(0);
     expect(room.usersDisconnected.length).toBe(0);
 
-    client.loggedIn(userId, username);
+    client.loggedIn(user);
 
     expectStuff(client, room, true, true);
-    expect(room.usersConnected).toEqual([{ userId, username }]);
+    expect(room.usersConnected).toEqual([user]);
     expect(room.usersDisconnected.length).toBe(0);
     room.usersConnected.length = 0;
 
@@ -101,7 +103,7 @@ describe('no other clients in room', () => {
 
     expectStuff(client, room, true, false);
     expect(room.usersConnected.length).toBe(0);
-    expect(room.usersDisconnected).toEqual([{ userId, username }]);
+    expect(room.usersDisconnected).toEqual([user]);
     room.usersDisconnected.length = 0;
   });
 
@@ -113,7 +115,7 @@ describe('no other clients in room', () => {
     expect(room.usersConnected.length).toBe(0);
     expect(room.usersDisconnected.length).toBe(0);
 
-    client.loggedIn(userId, username);
+    client.loggedIn(user);
 
     expectStuff(client, room, true, false);
     expect(room.usersConnected.length).toBe(0);
@@ -122,7 +124,7 @@ describe('no other clients in room', () => {
     client.connectToRoom(room);
 
     expectStuff(client, room, true, true);
-    expect(room.usersConnected).toEqual([{ userId, username }]);
+    expect(room.usersConnected).toEqual([user]);
     expect(room.usersDisconnected.length).toBe(0);
     room.usersConnected.length = 0;
 
@@ -130,7 +132,7 @@ describe('no other clients in room', () => {
 
     expectStuff(client, room, false, true);
     expect(room.usersConnected.length).toBe(0);
-    expect(room.usersDisconnected).toEqual([{ userId, username }]);
+    expect(room.usersDisconnected).toEqual([user]);
     room.usersDisconnected.length = 0;
 
     client.disconnectFromRoom();
@@ -154,10 +156,10 @@ describe('no other clients in room', () => {
     expect(room.usersConnected.length).toBe(0);
     expect(room.usersDisconnected.length).toBe(0);
 
-    client.loggedIn(userId, username);
+    client.loggedIn(user);
 
     expectStuff(client, room, true, true);
-    expect(room.usersConnected).toEqual([{ userId, username }]);
+    expect(room.usersConnected).toEqual([user]);
     expect(room.usersDisconnected.length).toBe(0);
     room.usersConnected.length = 0;
 
@@ -165,7 +167,7 @@ describe('no other clients in room', () => {
 
     expectStuff(client, room, false, true);
     expect(room.usersConnected.length).toBe(0);
-    expect(room.usersDisconnected).toEqual([{ userId, username }]);
+    expect(room.usersDisconnected).toEqual([user]);
     room.usersDisconnected.length = 0;
 
     client.disconnectFromRoom();
@@ -177,14 +179,8 @@ describe('no other clients in room', () => {
 });
 
 describe('same user already in room', () => {
-  const clientId = 1;
-  const userId = 2;
-  const username = 'username';
-
-  const otherClientId = 3;
-
   function initialStuffForOtherClient(otherClient: Client, room: TestRoom) {
-    otherClient.loggedIn(userId, username);
+    otherClient.loggedIn(user);
     otherClient.connectToRoom(room);
     room.usersConnected.length = 0;
   }
@@ -198,8 +194,7 @@ describe('same user already in room', () => {
   ) {
     expect(client.clientId).toBe(clientId);
     expect(client.room).toBe(inRoom ? room : undefined);
-    expect(client.userId).toBe(loggedIn ? userId : undefined);
-    expect(client.username).toBe(loggedIn ? username : undefined);
+    expect(client.user).toBe(loggedIn ? user : null);
 
     const clients = new Set([otherClient]);
     if (inRoom) {
@@ -207,11 +202,11 @@ describe('same user already in room', () => {
     }
     expect(room.clients).toEqual(clients);
 
-    const userIdToClients = new Map([[userId, new Set([otherClient])]]);
+    const userToClients = new Map([[user, new Set([otherClient])]]);
     if (loggedIn && inRoom) {
-      userIdToClients.get(userId)!.add(client);
+      userToClients.get(user)!.add(client);
     }
-    expect(room.userIdToClients).toEqual(userIdToClients);
+    expect(room.userToClients).toEqual(userToClients);
   }
 
   test('never logs in', () => {
@@ -247,7 +242,7 @@ describe('same user already in room', () => {
     expect(room.usersConnected.length).toBe(0);
     expect(room.usersDisconnected.length).toBe(0);
 
-    client.loggedIn(userId, username);
+    client.loggedIn(user);
 
     expectStuff(client, otherClient, room, true, false);
     expect(room.usersConnected.length).toBe(0);
@@ -282,7 +277,7 @@ describe('same user already in room', () => {
     expect(room.usersConnected.length).toBe(0);
     expect(room.usersDisconnected.length).toBe(0);
 
-    client.loggedIn(userId, username);
+    client.loggedIn(user);
 
     expectStuff(client, otherClient, room, true, true);
     expect(room.usersConnected.length).toBe(0);
@@ -305,7 +300,7 @@ describe('same user already in room', () => {
     expect(room.usersConnected.length).toBe(0);
     expect(room.usersDisconnected.length).toBe(0);
 
-    client.loggedIn(userId, username);
+    client.loggedIn(user);
 
     expectStuff(client, otherClient, room, true, false);
     expect(room.usersConnected.length).toBe(0);
@@ -346,7 +341,7 @@ describe('same user already in room', () => {
     expect(room.usersConnected.length).toBe(0);
     expect(room.usersDisconnected.length).toBe(0);
 
-    client.loggedIn(userId, username);
+    client.loggedIn(user);
 
     expectStuff(client, otherClient, room, true, true);
     expect(room.usersConnected.length).toBe(0);
@@ -367,16 +362,8 @@ describe('same user already in room', () => {
 });
 
 describe('different user already in room', () => {
-  const clientId = 1;
-  const userId = 2;
-  const username = 'username';
-
-  const otherClientId = 3;
-  const otherUserId = 4;
-  const otherUsername = 'other username';
-
   function initialStuffForOtherClient(otherClient: Client, room: TestRoom) {
-    otherClient.loggedIn(otherUserId, otherUsername);
+    otherClient.loggedIn(otherUser);
     otherClient.connectToRoom(room);
     room.usersConnected.length = 0;
   }
@@ -390,8 +377,7 @@ describe('different user already in room', () => {
   ) {
     expect(client.clientId).toBe(clientId);
     expect(client.room).toBe(inRoom ? room : undefined);
-    expect(client.userId).toBe(loggedIn ? userId : undefined);
-    expect(client.username).toBe(loggedIn ? username : undefined);
+    expect(client.user).toBe(loggedIn ? user : null);
 
     const clients = new Set([otherClient]);
     if (inRoom) {
@@ -399,11 +385,11 @@ describe('different user already in room', () => {
     }
     expect(room.clients).toEqual(clients);
 
-    const userIdToClients = new Map([[otherUserId, new Set([otherClient])]]);
+    const userToClients = new Map([[otherUser, new Set([otherClient])]]);
     if (loggedIn && inRoom) {
-      userIdToClients.set(userId, new Set([client]));
+      userToClients.set(user, new Set([client]));
     }
-    expect(room.userIdToClients).toEqual(userIdToClients);
+    expect(room.userToClients).toEqual(userToClients);
   }
 
   test('never logs in', () => {
@@ -439,7 +425,7 @@ describe('different user already in room', () => {
     expect(room.usersConnected.length).toBe(0);
     expect(room.usersDisconnected.length).toBe(0);
 
-    client.loggedIn(userId, username);
+    client.loggedIn(user);
 
     expectStuff(client, otherClient, room, true, false);
     expect(room.usersConnected.length).toBe(0);
@@ -448,7 +434,7 @@ describe('different user already in room', () => {
     client.connectToRoom(room);
 
     expectStuff(client, otherClient, room, true, true);
-    expect(room.usersConnected).toEqual([{ userId, username }]);
+    expect(room.usersConnected).toEqual([user]);
     expect(room.usersDisconnected.length).toBe(0);
     room.usersConnected.length = 0;
 
@@ -456,7 +442,7 @@ describe('different user already in room', () => {
 
     expectStuff(client, otherClient, room, true, false);
     expect(room.usersConnected.length).toBe(0);
-    expect(room.usersDisconnected).toEqual([{ userId, username }]);
+    expect(room.usersDisconnected).toEqual([user]);
     room.usersDisconnected.length = 0;
   });
 
@@ -476,10 +462,10 @@ describe('different user already in room', () => {
     expect(room.usersConnected.length).toBe(0);
     expect(room.usersDisconnected.length).toBe(0);
 
-    client.loggedIn(userId, username);
+    client.loggedIn(user);
 
     expectStuff(client, otherClient, room, true, true);
-    expect(room.usersConnected).toEqual([{ userId, username }]);
+    expect(room.usersConnected).toEqual([user]);
     expect(room.usersDisconnected.length).toBe(0);
     room.usersConnected.length = 0;
 
@@ -487,7 +473,7 @@ describe('different user already in room', () => {
 
     expectStuff(client, otherClient, room, true, false);
     expect(room.usersConnected.length).toBe(0);
-    expect(room.usersDisconnected).toEqual([{ userId, username }]);
+    expect(room.usersDisconnected).toEqual([user]);
     room.usersDisconnected.length = 0;
   });
 
@@ -501,7 +487,7 @@ describe('different user already in room', () => {
     expect(room.usersConnected.length).toBe(0);
     expect(room.usersDisconnected.length).toBe(0);
 
-    client.loggedIn(userId, username);
+    client.loggedIn(user);
 
     expectStuff(client, otherClient, room, true, false);
     expect(room.usersConnected.length).toBe(0);
@@ -510,7 +496,7 @@ describe('different user already in room', () => {
     client.connectToRoom(room);
 
     expectStuff(client, otherClient, room, true, true);
-    expect(room.usersConnected).toEqual([{ userId, username }]);
+    expect(room.usersConnected).toEqual([user]);
     expect(room.usersDisconnected.length).toBe(0);
     room.usersConnected.length = 0;
 
@@ -518,7 +504,7 @@ describe('different user already in room', () => {
 
     expectStuff(client, otherClient, room, false, true);
     expect(room.usersConnected.length).toBe(0);
-    expect(room.usersDisconnected).toEqual([{ userId, username }]);
+    expect(room.usersDisconnected).toEqual([user]);
     room.usersDisconnected.length = 0;
 
     client.disconnectFromRoom();
@@ -544,10 +530,10 @@ describe('different user already in room', () => {
     expect(room.usersConnected.length).toBe(0);
     expect(room.usersDisconnected.length).toBe(0);
 
-    client.loggedIn(userId, username);
+    client.loggedIn(user);
 
     expectStuff(client, otherClient, room, true, true);
-    expect(room.usersConnected).toEqual([{ userId, username }]);
+    expect(room.usersConnected).toEqual([user]);
     expect(room.usersDisconnected.length).toBe(0);
     room.usersConnected.length = 0;
 
@@ -555,7 +541,7 @@ describe('different user already in room', () => {
 
     expectStuff(client, otherClient, room, false, true);
     expect(room.usersConnected.length).toBe(0);
-    expect(room.usersDisconnected).toEqual([{ userId, username }]);
+    expect(room.usersDisconnected).toEqual([user]);
     room.usersDisconnected.length = 0;
 
     client.disconnectFromRoom();
@@ -567,13 +553,13 @@ describe('different user already in room', () => {
 });
 
 class TestRoom extends Room {
-  usersConnected: { userId: number; username: string }[] = [];
-  userConnected(userId: number, username: string) {
-    this.usersConnected.push({ userId, username });
+  usersConnected: User[] = [];
+  userConnected(user: User) {
+    this.usersConnected.push(user);
   }
 
-  usersDisconnected: { userId: number; username: string }[] = [];
-  userDisconnected(userId: number, username: string) {
-    this.usersDisconnected.push({ userId, username });
+  usersDisconnected: User[] = [];
+  userDisconnected(user: User) {
+    this.usersDisconnected.push(user);
   }
 }

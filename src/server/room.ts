@@ -1,8 +1,9 @@
+import { type User } from '../common/user';
 import type { Client } from './client';
 
 export class Room {
   clients = new Set<Client>();
-  userIdToClients = new Map<number, Set<Client>>();
+  userToClients = new Map<User, Set<Client>>();
 
   /**
    * These methods are called by Client.
@@ -11,7 +12,7 @@ export class Room {
   clientConnected(client: Client) {
     this.clients.add(client);
 
-    if (client.userId !== undefined) {
+    if (client.user !== null) {
       this.clientLoggedIn(client);
     }
   }
@@ -19,27 +20,27 @@ export class Room {
   clientDisconnected(client: Client) {
     this.clients.delete(client);
 
-    if (client.userId !== undefined) {
+    if (client.user !== null) {
       this.clientLoggedOut(client);
     }
   }
 
   clientLoggedIn(client: Client) {
-    const clients = this.userIdToClients.get(client.userId!);
+    const clients = this.userToClients.get(client.user!);
     if (clients !== undefined) {
       clients.add(client);
     } else {
-      this.userIdToClients.set(client.userId!, new Set([client]));
-      this.userConnected(client.userId!, client.username!);
+      this.userToClients.set(client.user!, new Set([client]));
+      this.userConnected(client.user!);
     }
   }
 
   clientLoggedOut(client: Client) {
-    const clients = this.userIdToClients.get(client.userId!)!;
+    const clients = this.userToClients.get(client.user!)!;
     clients.delete(client);
     if (clients.size === 0) {
-      this.userIdToClients.delete(client.userId!);
-      this.userDisconnected(client.userId!, client.username!);
+      this.userToClients.delete(client.user!);
+      this.userDisconnected(client.user!);
     }
   }
 
@@ -49,12 +50,12 @@ export class Room {
    */
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  userConnected(userId: number, username: string) {
+  userConnected(user: User) {
     // nothing here
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  userDisconnected(userId: number, username: string) {
+  userDisconnected(user: User) {
     // nothing here
   }
 }

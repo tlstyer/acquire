@@ -95,7 +95,7 @@ test('no message sent when trying to create user and login while already logged 
 
   expect(clientCommunication.communicatedMessages.length).toBe(0);
 
-  expect([...server.clientIdToClient.values()].filter((c) => c.userId !== undefined).length).toBe(
+  expect([...server.clientIdToClient.values()].filter((c) => c.user?.id !== undefined).length).toBe(
     1,
   );
 });
@@ -122,7 +122,7 @@ test('no reply when trying to create user and login while already logged in when
 
   expect(clientCommunication.communicatedMessages.length).toBe(1);
 
-  expect([...server.clientIdToClient.values()].filter((c) => c.userId !== undefined).length).toBe(
+  expect([...server.clientIdToClient.values()].filter((c) => c.user?.id !== undefined).length).toBe(
     1,
   );
 });

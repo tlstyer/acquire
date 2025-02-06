@@ -25,6 +25,7 @@ import {
 import { gameFromJSON } from '../../../common/gameSerialization';
 import { getNewTileBag } from '../../../common/helpers';
 import { PB_GameAction, PB_GameMode, PB_PlayerArrangementMode } from '../../../common/pb';
+import { User } from '../../../common/user';
 
 let game1: Game | undefined;
 export function getExampleGame1() {
@@ -45,14 +46,15 @@ export function getExampleGame2() {
 let gameForGameHistory: Game | undefined = undefined;
 export function getExampleGameForGameHistory() {
   if (!gameForGameHistory) {
+    const hostUser = new User(8, 'Mom');
+    const myUser = new User(3, 'Rita');
     gameForGameHistory = new Game(
       PB_GameMode.SINGLES_4,
       PB_PlayerArrangementMode.EXACT_ORDER,
       getNewTileBag(),
-      [2, 3, 5, 8],
-      ['Tim', 'Rita', 'Dad', 'Mom'],
-      8,
-      3,
+      [new User(2, 'Tim'), myUser, new User(5, 'Dad'), hostUser],
+      hostUser,
+      myUser,
     );
     gameForGameHistory.doGameAction(
       PB_GameAction.create({

@@ -5,6 +5,7 @@ import { Server } from '../../server/server';
 import { TestServerCommunication } from '../../server/serverCommunication';
 import { TestUserData, TestUserDataProvider, getPasswordHash } from '../../server/userDataProvider';
 import { type PB_MessageToClient } from '../pb';
+import { User } from '../user';
 
 export const numTestUsers = 7;
 export const userIdToTestUserData = [new TestUserData('', 0, '')];
@@ -59,17 +60,16 @@ export function testLogin(
     );
 
     const loginLogoutMessage = expectedMessageToClient.loginLogout!;
-    expect(client.signals.username()).toEqual(
-      loginLogoutMessage.username !== '' ? loginLogoutMessage.username : null,
-    );
-    expect(client.signals.userId()).toEqual(
-      loginLogoutMessage.userId !== 0 ? loginLogoutMessage.userId : null,
+    expect(client.signals.user()).toEqual(
+      loginLogoutMessage.username !== ''
+        ? new User(loginLogoutMessage.userId, loginLogoutMessage.username)
+        : null,
     );
     expect(client.myToken).toEqual(
       loginLogoutMessage.token !== '' ? loginLogoutMessage.token : undefined,
     );
 
-    expect([...server.clientIdToClient.values()].filter((c) => c.userId !== undefined).length).toBe(
+    expect([...server.clientIdToClient.values()].filter((c) => c.user !== null).length).toBe(
       clientIdToUserIdSize,
     );
   });

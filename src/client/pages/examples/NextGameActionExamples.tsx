@@ -9,18 +9,25 @@ import { ActionSelectMergerSurvivor } from '../../../common/gameActions/selectMe
 import { ActionSelectNewChain } from '../../../common/gameActions/selectNewChain';
 import { ActionStartGame } from '../../../common/gameActions/startGame';
 import { PB_GameBoardType, PB_GameMode, PB_PlayerArrangementMode } from '../../../common/pb';
+import { User } from '../../../common/user';
 import { NextGameAction } from '../../components/NextGameAction';
 import { allChains } from '../../helpers';
 
 export function NextGameActionExamples() {
+  const hostUser = new User(1, 'Tim');
   const game = new Game(
     PB_GameMode.SINGLES_5,
     PB_PlayerArrangementMode.RANDOM_ORDER,
     [],
-    [1, 2, 3, 4, 5],
-    ['Tim', 'Rita', 'Dad', 'Mom', 'REALLY, REALLY, REALLY, REALLY, REALLY LONG NAME'],
-    1,
-    6,
+    [
+      hostUser,
+      new User(2, 'Rita'),
+      new User(3, 'Dad'),
+      new User(4, 'Mom'),
+      new User(5, 'REALLY, REALLY, REALLY, REALLY, REALLY LONG NAME'),
+    ],
+    hostUser,
+    new User(6, 'user 6'),
   );
   const actions = [
     new ActionStartGame(game, 4),

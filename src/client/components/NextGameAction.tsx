@@ -49,7 +49,7 @@ export function NextGameAction(props: { action: ActionBase }) {
 function NextGameActionStartGame(props: { action: ActionStartGame }) {
   return (
     <>
-      Waiting for <Username username={props.action.game.usernames[props.action.playerId]} /> to
+      Waiting for <Username username={props.action.game.users[props.action.playerId].name} /> to
       start the game.
     </>
   );
@@ -58,8 +58,8 @@ function NextGameActionStartGame(props: { action: ActionStartGame }) {
 function NextGameActionPlayTile(props: { action: ActionPlayTile }) {
   return (
     <>
-      Waiting for <Username username={props.action.game.usernames[props.action.playerId]} /> to play
-      a tile.
+      Waiting for <Username username={props.action.game.users[props.action.playerId].name} /> to
+      play a tile.
     </>
   );
 }
@@ -67,7 +67,7 @@ function NextGameActionPlayTile(props: { action: ActionPlayTile }) {
 function NextGameActionSelectNewChain(props: { action: ActionSelectNewChain }) {
   return (
     <>
-      Waiting for <Username username={props.action.game.usernames[props.action.playerId]} /> to
+      Waiting for <Username username={props.action.game.users[props.action.playerId].name} /> to
       select new chain (<NextGameActionHotelInitialsList chains={props.action.availableChains} />
       ).
     </>
@@ -77,7 +77,7 @@ function NextGameActionSelectNewChain(props: { action: ActionSelectNewChain }) {
 function NextGameActionSelectMergerSurvivor(props: { action: ActionSelectMergerSurvivor }) {
   return (
     <>
-      Waiting for <Username username={props.action.game.usernames[props.action.playerId]} /> to
+      Waiting for <Username username={props.action.game.users[props.action.playerId].name} /> to
       select merger survivor (
       <NextGameActionHotelInitialsList chains={props.action.chainsBySize[0]} />
       ).
@@ -90,7 +90,7 @@ function NextGameActionSelectChainToDisposeOfNext(props: {
 }) {
   return (
     <>
-      Waiting for <Username username={props.action.game.usernames[props.action.playerId]} /> to
+      Waiting for <Username username={props.action.game.users[props.action.playerId].name} /> to
       select chain to dispose of next (
       <NextGameActionHotelInitialsList chains={props.action.defunctChains} />
       ).
@@ -101,7 +101,7 @@ function NextGameActionSelectChainToDisposeOfNext(props: {
 function NextGameActionDisposeOfShares(props: { action: ActionDisposeOfShares }) {
   return (
     <>
-      Waiting for <Username username={props.action.game.usernames[props.action.playerId]} /> to
+      Waiting for <Username username={props.action.game.users[props.action.playerId].name} /> to
       dispose of <HotelName chain={props.action.defunctChain} /> shares.
     </>
   );
@@ -110,7 +110,7 @@ function NextGameActionDisposeOfShares(props: { action: ActionDisposeOfShares })
 function NextGameActionPurchaseShares(props: { action: ActionPurchaseShares }) {
   return (
     <>
-      Waiting for <Username username={props.action.game.usernames[props.action.playerId]} /> to
+      Waiting for <Username username={props.action.game.users[props.action.playerId].name} /> to
       purchase shares.
     </>
   );

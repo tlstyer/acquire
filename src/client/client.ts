@@ -8,6 +8,7 @@ import {
   PB_MessageToClient_LoginLogout_ResponseCode,
   PB_MessageToServer,
 } from '../common/pb';
+import { User } from '../common/user';
 import type { ClientCommunication } from './clientCommunication';
 import { type DialogType } from './components/Dialog';
 import { createGamesManager } from './gamesManager';
@@ -27,8 +28,9 @@ export function createClient(clientCommunication: ClientCommunication, version: 
 
   let loginMessage: Uint8Array | undefined;
 
-  const [username, setUsername] = createSignal<string | null>(null);
-  const [userId, setUserId] = createSignal<number | null>(null);
+  const userIdToUser = new Map<number, User>();
+
+  const [user, setUser] = createSignal<User | null>(null);
   const [loginState, setLoginState] = createSignal(LoginState.LoggedOut);
   const [loginLogoutResponseCode, setLoginLogoutResponseCode] = createSignal<
     PB_MessageToClient_LoginLogout_ResponseCode | undefined
@@ -51,8 +53,8 @@ export function createClient(clientCommunication: ClientCommunication, version: 
   );
 
   let currentPage = CurrentPage.None;
-  const lobbyManager = createLobbyManager(clientCommunication);
-  const gamesManager = createGamesManager(clientCommunication);
+  const lobbyManager = createLobbyManager(clientCommunication, userIdToUser);
+  const gamesManager = createGamesManager(clientCommunication, userIdToUser);
 
   function loginWithPassword(username: string, password: string) {
     if (loginMessage !== undefined) {
@@ -219,8 +221,13 @@ export function createClient(clientCommunication: ClientCommunication, version: 
         },
       });
 
-      setUsername(message.username);
-      setUserId(message.userId);
+      let user = userIdToUser.get(message.userId);
+      if (!user) {
+        user = new User(message.userId, message.username);
+        userIdToUser.set(message.userId, user);
+      }
+
+      setUser(user);
       setLoginState(LoginState.LoggedIn);
 
       setUsernameAndToken(new UsernameAndToken(message.username, message.token));
@@ -242,8 +249,7 @@ export function createClient(clientCommunication: ClientCommunication, version: 
 
     loginMessage = undefined;
 
-    setUsername(null);
-    setUserId(null);
+    setUser(null);
     setLoginState(LoginState.LoggedOut);
 
     setUsernameAndToken(undefined);
@@ -262,10 +268,12 @@ export function createClient(clientCommunication: ClientCommunication, version: 
     get myToken() {
       return myToken;
     },
+    get userIdToUser() {
+      return userIdToUser;
+    },
     signals: {
       connected,
-      username,
-      userId,
+      user,
       loginState,
       loginLogoutResponseCode,
       usernameAndToken,

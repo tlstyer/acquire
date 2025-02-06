@@ -14,23 +14,25 @@ import {
   PB_MessageToServer,
   PB_PlayerArrangementMode,
 } from '../common/pb';
+import { User } from '../common/user';
 import { type ClientCommunication } from './clientCommunication';
 import { GameStatus } from './helpers';
 
 export type LobbyManager = ReturnType<typeof createLobbyManager>;
 
-export function createLobbyManager(clientCommunication: ClientCommunication) {
+export function createLobbyManager(
+  clientCommunication: ClientCommunication,
+  userIdToUser: Map<number, User>,
+) {
   let lastEventIndex = 0;
 
-  const userIdToUsername = new Map<number, string>();
-  const getUsernameForUserId = (userId: number) => userIdToUsername.get(userId) ?? '?';
   const userIds = new Set<number>();
   const gameDisplayNumberToLobbyGame = new Map<number, LobbyGame>();
 
   const [connected, setConnected] = createSignal(false);
 
-  let shouldUpdateUsernamesSignal = false;
-  const [usernames, setUsernames] = createSignal<string[]>([]);
+  let shouldUpdateUsersSignal = false;
+  const [users, setUsers] = createSignal<User[]>([]);
 
   let shouldUpdateLobbyGamesSignal = false;
   const [lobbyGames, setLobbyGames] = createSignal<LobbyGame[]>([]);
@@ -80,9 +82,9 @@ export function createLobbyManager(clientCommunication: ClientCommunication) {
 
       setConnected(true);
 
-      if (shouldUpdateUsernamesSignal) {
-        setUsernames([...userIds].map((userId) => userIdToUsername.get(userId) ?? '?'));
-        shouldUpdateUsernamesSignal = false;
+      if (shouldUpdateUsersSignal) {
+        setUsers([...userIds].map((userId) => userIdToUser.get(userId) ?? unknownUser));
+        shouldUpdateUsersSignal = false;
       }
       if (shouldUpdateLobbyGamesSignal) {
         const newLobbyGames = [...gameDisplayNumberToLobbyGame.values()];
@@ -94,7 +96,6 @@ export function createLobbyManager(clientCommunication: ClientCommunication) {
   }
 
   function onMessage_LastStateCheckpoint(message: PB_MessageToClient_Lobby_LastStateCheckpoint) {
-    userIdToUsername.clear();
     userIds.clear();
     gameDisplayNumberToLobbyGame.clear();
 
@@ -102,7 +103,9 @@ export function createLobbyManager(clientCommunication: ClientCommunication) {
     for (let i = 0; i < users.length; i++) {
       const user = users[i];
 
-      userIdToUsername.set(user.userId, user.username);
+      if (!userIdToUser.has(user.userId)) {
+        userIdToUser.set(user.userId, new User(user.userId, user.username));
+      }
       if (user.isInLobby) {
         userIds.add(user.userId);
       }
@@ -118,16 +121,16 @@ export function createLobbyManager(clientCommunication: ClientCommunication) {
           game.gameNumber,
           game.gameDisplayNumber,
           game.gameMode,
-          game.hostUserId,
-          game.userIds,
-          getUsernameForUserId,
+          userIdToUser.get(game.hostUserId)!,
+          game.userIds.map((userId) => userIdToUser.get(userId) ?? null),
+          userIdToUser,
         ),
       );
     }
 
     lastEventIndex = message.lastEventIndex;
 
-    shouldUpdateUsernamesSignal = true;
+    shouldUpdateUsersSignal = true;
     shouldUpdateLobbyGamesSignal = true;
   }
 
@@ -158,9 +161,9 @@ export function createLobbyManager(clientCommunication: ClientCommunication) {
         event.gameNumber,
         event.gameDisplayNumber,
         event.gameMode,
-        event.hostUserId,
-        userIds,
-        getUsernameForUserId,
+        userIdToUser.get(event.hostUserId)!,
+        userIds.map((userId) => userIdToUser.get(userId) ?? null),
+        userIdToUser,
       ),
     );
 
@@ -168,13 +171,13 @@ export function createLobbyManager(clientCommunication: ClientCommunication) {
   }
 
   function onMessage_Event_AddUserToLobby(event: PB_MessageToClient_Lobby_Event_AddUserToLobby) {
-    if (event.username) {
-      userIdToUsername.set(event.userId, event.username);
+    if (event.username && !userIdToUser.has(event.userId)) {
+      userIdToUser.set(event.userId, new User(event.userId, event.username));
     }
 
     userIds.add(event.userId);
 
-    shouldUpdateUsernamesSignal = true;
+    shouldUpdateUsersSignal = true;
   }
 
   function onMessage_Event_RemoveUserFromLobby(
@@ -182,7 +185,7 @@ export function createLobbyManager(clientCommunication: ClientCommunication) {
   ) {
     userIds.delete(event.userId);
 
-    shouldUpdateUsernamesSignal = true;
+    shouldUpdateUsersSignal = true;
   }
 
   function onMessage_CreateGameResponse(message: PB_MessageToClient_Lobby_CreateGameResponse) {
@@ -197,18 +200,12 @@ export function createLobbyManager(clientCommunication: ClientCommunication) {
     get lastEventIndex() {
       return lastEventIndex;
     },
-    get userIdToUsername() {
-      return userIdToUsername;
-    },
-    get userIds() {
-      return userIds;
-    },
     get gameDisplayNumberToLobbyGame() {
       return gameDisplayNumberToLobbyGame;
     },
     signals: {
       connected,
-      usernames,
+      users,
       lobbyGames,
       createdGameNumber,
     },
@@ -221,24 +218,21 @@ function createLobbyGame(
   gameNumber: number,
   gameDisplayNumber: number,
   initialGameMode: PB_GameMode,
-  hostUserId: number,
-  initialUserIds: number[],
-  getUsernameForUserId: (userId: number) => string,
+  hostUser: User,
+  initialUsers: (User | null)[],
+  userIdToUser: Map<number, User>,
 ) {
   const gameSetup = createGameSetupLite(
     initialGameMode,
     PB_PlayerArrangementMode.EXACT_ORDER,
-    hostUserId,
-    initialUserIds?.map((userId) => (userId !== 0 ? userId : null)),
+    hostUser,
+    initialUsers,
     defaultApprovals[gameModeToNumPlayers.get(initialGameMode)!],
+    userIdToUser,
   );
 
   const [gameBoard, setGameBoard] = createSignal(defaultGameBoard);
-  const [usernames, setUsernames] = createSignal(
-    gameSetup.userIds.map((userId) =>
-      userId !== null ? (getUsernameForUserId(userId) ?? '?') : null,
-    ),
-  );
+  const [users, setUsers] = createSignal(gameSetup.users);
   const [gameMode, setGameMode] = createSignal(gameSetup.gameMode);
   const [gameStatus, setGameStatus] = createSignal(GameStatus.SETTING_UP);
 
@@ -247,9 +241,11 @@ function createLobbyGame(
     gameDisplayNumber,
     signals: {
       gameBoard,
-      usernames,
+      users,
       gameMode,
       gameStatus,
     },
   };
 }
+
+const unknownUser = new User(-1, '?');

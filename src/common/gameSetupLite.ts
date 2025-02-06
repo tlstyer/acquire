@@ -1,31 +1,35 @@
 import { defaultApprovals, gameModeToNumPlayers, gameModeToTeamSize } from './helpers';
 import { PB_PlayerArrangementMode, type PB_GameMode, type PB_GameSetupChange } from './pb';
+import { type User } from './user';
 
 export type GameSetupLite = ReturnType<typeof createGameSetupLite>;
 
 export function createGameSetupLite(
   gameMode: PB_GameMode,
   playerArrangementMode: PB_PlayerArrangementMode,
-  hostUserId: number,
-  userIds: (number | null)[],
+  hostUser: User,
+  users: (User | null)[],
   approvals: boolean[],
+  userIdToUser: Map<number, User>,
 ) {
-  let finalUserIds: number[] | undefined;
+  let finalUsers: User[] | undefined;
 
   function processChange(gameSetupChange: PB_GameSetupChange) {
     if (gameSetupChange.userAdded) {
-      addUser(gameSetupChange.userAdded.userId);
+      addUser(userIdToUser.get(gameSetupChange.userAdded.userId)!);
     } else if (gameSetupChange.userRemoved) {
-      removeUser(gameSetupChange.userRemoved.userId);
+      removeUser(userIdToUser.get(gameSetupChange.userRemoved.userId)!);
     } else if (gameSetupChange.userApprovedOfGameSetup) {
-      approve(gameSetupChange.userApprovedOfGameSetup.userId);
+      approve(userIdToUser.get(gameSetupChange.userApprovedOfGameSetup.userId)!);
 
       if (gameSetupChange.userApprovedOfGameSetup.approvedByEverybody) {
         if (gameSetupChange.userApprovedOfGameSetup.finalUserIds.length > 0) {
-          finalUserIds = gameSetupChange.userApprovedOfGameSetup.finalUserIds;
+          finalUsers = gameSetupChange.userApprovedOfGameSetup.finalUserIds.map(
+            (userId) => userIdToUser.get(userId)!,
+          );
         } else {
           // @ts-expect-error userIds has no nulls
-          finalUserIds = userIds;
+          finalUsers = users;
         }
       }
     } else if (gameSetupChange.gameModeChanged) {
@@ -40,25 +44,25 @@ export function createGameSetupLite(
         gameSetupChange.positionsSwapped.position2,
       );
     } else if (gameSetupChange.userKicked) {
-      removeUser(gameSetupChange.userKicked.userId);
+      removeUser(userIdToUser.get(gameSetupChange.userKicked.userId)!);
     }
   }
 
-  function addUser(userId: number) {
-    userIds = [...userIds];
-    userIds[userIds.indexOf(null)] = userId;
+  function addUser(user: User) {
+    users = [...users];
+    users[users.indexOf(null)] = user;
     approvals = defaultApprovals[gameModeToNumPlayers.get(gameMode)!];
   }
 
-  function removeUser(userId: number) {
-    userIds = [...userIds];
-    userIds[userIds.indexOf(userId)] = null;
+  function removeUser(user: User) {
+    users = [...users];
+    users[users.indexOf(user)] = null;
     approvals = defaultApprovals[gameModeToNumPlayers.get(gameMode)!];
   }
 
-  function approve(userId: number) {
+  function approve(user: User) {
     approvals = [...approvals];
-    approvals[userIds.indexOf(userId)] = true;
+    approvals[users.indexOf(user)] = true;
   }
 
   function changeGameMode(newGameMode: PB_GameMode) {
@@ -66,25 +70,25 @@ export function createGameSetupLite(
     const oldNumPlayers = gameModeToNumPlayers.get(gameMode)!;
 
     if (newNumPlayers !== oldNumPlayers) {
-      userIds = [...userIds];
+      users = [...users];
 
       if (newNumPlayers > oldNumPlayers) {
         const numSpotsToAdd = newNumPlayers - oldNumPlayers;
         for (let i = 0; i < numSpotsToAdd; i++) {
-          userIds.push(null);
+          users.push(null);
         }
       } else {
         for (let oldPosition = oldNumPlayers - 1; oldPosition >= newNumPlayers; oldPosition--) {
-          if (userIds[oldPosition] !== null) {
+          if (users[oldPosition] !== null) {
             for (let newPosition = newNumPlayers - 1; newPosition >= 0; newPosition--) {
-              if (userIds[newPosition] === null) {
-                userIds[newPosition] = userIds[oldPosition];
+              if (users[newPosition] === null) {
+                users[newPosition] = users[oldPosition];
                 break;
               }
             }
           }
 
-          userIds.pop();
+          users.pop();
         }
       }
     }
@@ -105,10 +109,10 @@ export function createGameSetupLite(
   }
 
   function swapPositions(position1: number, position2: number) {
-    const newUserIds = [...userIds];
-    newUserIds[position1] = userIds[position2];
-    newUserIds[position2] = userIds[position1];
-    userIds = newUserIds;
+    const newUserIds = [...users];
+    newUserIds[position1] = users[position2];
+    newUserIds[position2] = users[position1];
+    users = newUserIds;
 
     approvals = defaultApprovals[gameModeToNumPlayers.get(gameMode)!];
   }
@@ -121,17 +125,17 @@ export function createGameSetupLite(
     get playerArrangementMode() {
       return playerArrangementMode;
     },
-    get hostUserId() {
-      return hostUserId;
+    get hostUser() {
+      return hostUser;
     },
-    get userIds() {
-      return userIds;
+    get users() {
+      return users;
     },
     get approvals() {
       return approvals;
     },
-    get finalUserIds() {
-      return finalUserIds;
+    get finalUsers() {
+      return finalUsers;
     },
   };
 }

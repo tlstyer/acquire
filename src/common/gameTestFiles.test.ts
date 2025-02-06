@@ -43,15 +43,14 @@ function processDirectory(base: string, dir: string) {
         expect(outputLines).toEqual(inputLines);
 
         if (dir === "from a user's perspective") {
-          const playerId = game.userIds.indexOf(game.myUserId ?? -1);
+          const playerId = game.myUser !== null ? game.users.indexOf(game.myUser) : -1;
           const game2 = new Game(
             game.gameMode,
             game.playerArrangementMode,
             [],
-            game.userIds,
-            game.usernames,
-            game.hostUserId,
-            game.myUserId,
+            game.users,
+            game.hostUser,
+            game.myUser,
           );
 
           game.gameStateHistory.forEach((gameState) => {

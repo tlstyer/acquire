@@ -1,6 +1,7 @@
 import { Game } from './game';
 import { ActionGameOver } from './gameActions/gameOver';
 import { type PB_GameAction, PB_GameReview } from './pb';
+import { User } from './user';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function gameToJSON(game: Game): any {
@@ -16,9 +17,9 @@ export function gameToProtocolBuffer(game: Game) {
   const gameReview = PB_GameReview.create({
     gameMode: game.gameMode,
     playerArrangementMode: game.playerArrangementMode,
-    userIds: game.userIds,
-    usernames: game.usernames,
-    hostUserId: game.hostUserId,
+    userIds: game.users.map((user) => user.id),
+    usernames: game.users.map((user) => user.name),
+    hostUserId: game.hostUser.id,
     tileBag: game.tileBag,
   });
 
@@ -63,13 +64,21 @@ export function gameToProtocolBuffer(game: Game) {
 }
 
 export function gameFromProtocolBuffer(gameReview: PB_GameReview) {
+  const users: User[] = [];
+  for (let i = 0; i < gameReview.userIds.length; i++) {
+    const userId = gameReview.userIds[i];
+    const username = gameReview.usernames[i];
+    users.push(new User(userId, username));
+  }
+
+  const hostUser = users[gameReview.userIds.indexOf(gameReview.hostUserId)];
+
   const game = new Game(
     gameReview.gameMode,
     gameReview.playerArrangementMode,
     gameReview.tileBag,
-    gameReview.userIds,
-    gameReview.usernames,
-    gameReview.hostUserId,
+    users,
+    hostUser,
     null,
   );
 

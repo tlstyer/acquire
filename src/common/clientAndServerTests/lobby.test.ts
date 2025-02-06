@@ -5,6 +5,7 @@ import { GameStatus } from '../../client/helpers';
 import { GameRoom } from '../../server/gameRoom';
 import { GameSetup } from '../gameSetup';
 import { PB_GameMode, PB_MessageToClient, PB_MessageToServer } from '../pb';
+import { User } from '../user';
 import {
   createOneClientConnectedToOneServer,
   userIdToTestUserData,
@@ -79,8 +80,9 @@ test('users are added and removed', async () => {
   const lobbyManager = client.connectToLobby();
   clientCommunication.communicatedMessages.length = 0;
 
-  expect(lobbyManager.userIdToUsername.size).toBe(0);
-  expect(lobbyManager.userIds.size).toBe(0);
+  const expectedUserIdToUser = new Map([[3, new User(3, 'user 3')]]);
+  expect(client.userIdToUser).toEqual(expectedUserIdToUser);
+  expect(lobbyManager.signals.users().length).toBe(0);
 
   server.lobbyRoom.sendQueuedEvents();
 
@@ -88,9 +90,8 @@ test('users are added and removed', async () => {
   expect(clientCommunication.communicatedMessages[0].receivedMessage).toEqual({
     lobby: { events: [{ addUserToLobby: { userId: 3, username: 'user 3' } }] },
   });
-  const expectedUserIdToUsername = new Map([[3, 'user 3']]);
-  expect(lobbyManager.userIdToUsername).toEqual(expectedUserIdToUsername);
-  expect(lobbyManager.userIds).toEqual(new Set([3]));
+  expect(client.userIdToUser).toEqual(expectedUserIdToUser);
+  expect(lobbyManager.signals.users()).toEqual([user3]);
 
   // another client connects to lobby and then logs in
 
@@ -127,11 +128,11 @@ test('users are added and removed', async () => {
   expect(clientCommunication4.communicatedMessages[0].receivedMessage).toEqual(
     expectedAddUserToLobbyMessage,
   );
-  expectedUserIdToUsername.set(4, 'user 4');
-  expect(lobbyManager.userIdToUsername).toEqual(expectedUserIdToUsername);
-  expect(lobbyManager.userIds).toEqual(new Set([3, 4]));
-  expect(lobbyManager4.userIdToUsername).toEqual(expectedUserIdToUsername);
-  expect(lobbyManager4.userIds).toEqual(new Set([3, 4]));
+  expectedUserIdToUser.set(4, new User(4, 'user 4'));
+  expect(client.userIdToUser).toEqual(expectedUserIdToUser);
+  expect(lobbyManager.signals.users()).toEqual([user3, user4]);
+  expect(client4.userIdToUser).toEqual(expectedUserIdToUser);
+  expect(lobbyManager4.signals.users()).toEqual([user3, user4]);
 
   // client logs out
 
@@ -152,10 +153,10 @@ test('users are added and removed', async () => {
   expect(clientCommunication4.communicatedMessages[0].receivedMessage).toEqual(
     expectedRemoveUserFromLobbyMessage,
   );
-  expect(lobbyManager.userIdToUsername).toEqual(expectedUserIdToUsername);
-  expect(lobbyManager.userIds).toEqual(new Set([4]));
-  expect(lobbyManager4.userIdToUsername).toEqual(expectedUserIdToUsername);
-  expect(lobbyManager4.userIds).toEqual(new Set([4]));
+  expect(client.userIdToUser).toEqual(expectedUserIdToUser);
+  expect(lobbyManager.signals.users()).toEqual([user4]);
+  expect(client4.userIdToUser).toEqual(expectedUserIdToUser);
+  expect(lobbyManager4.signals.users()).toEqual([user4]);
 
   // anonymous client 1 connects to lobby
 
@@ -177,8 +178,8 @@ test('users are added and removed', async () => {
       ],
     },
   });
-  expect(lobbyManagerAnon1.userIdToUsername).toEqual(expectedUserIdToUsername);
-  expect(lobbyManagerAnon1.userIds).toEqual(new Set([4]));
+  expect(clientAnon1.userIdToUser).toEqual(expectedUserIdToUser);
+  expect(lobbyManagerAnon1.signals.users()).toEqual([user4]);
 
   // create last state checkpoint
 
@@ -206,9 +207,9 @@ test('users are added and removed', async () => {
       events: [],
     },
   });
-  expectedUserIdToUsername.delete(3);
-  expect(lobbyManagerAnon2.userIdToUsername).toEqual(expectedUserIdToUsername);
-  expect(lobbyManagerAnon2.userIds).toEqual(new Set([4]));
+  expectedUserIdToUser.delete(3);
+  expect(clientAnon2.userIdToUser).toEqual(expectedUserIdToUser);
+  expect(lobbyManagerAnon2.signals.users()).toEqual([user4]);
 });
 
 describe('create game', () => {
@@ -312,7 +313,14 @@ describe('create game', () => {
     expect(lobbyGame.gameNumber).toBe(1);
     expect(lobbyGame.gameDisplayNumber).toBe(1);
     expect(lobbyGame.signals.gameMode()).toBe(PB_GameMode.TEAMS_3_VS_3);
-    expect(lobbyGame.signals.usernames()).toEqual(['user 3', null, null, null, null, null]);
+    expect(lobbyGame.signals.users()).toEqual([
+      new User(3, 'user 3'),
+      null,
+      null,
+      null,
+      null,
+      null,
+    ]);
     expect(lobbyGame.signals.gameStatus()).toBe(GameStatus.SETTING_UP);
   });
 
@@ -345,10 +353,20 @@ describe('create game', () => {
           expect(lobbyGame.gameNumber).toBe(1);
           expect(lobbyGame.gameDisplayNumber).toBe(1);
           expect(lobbyGame.signals.gameMode()).toBe(PB_GameMode.TEAMS_3_VS_3);
-          expect(lobbyGame.signals.usernames()).toEqual(['user 3', null, null, null, null, null]);
+          expect(lobbyGame.signals.users()).toEqual([
+            new User(3, 'user 3'),
+            null,
+            null,
+            null,
+            null,
+            null,
+          ]);
           expect(lobbyGame.signals.gameStatus()).toBe(GameStatus.SETTING_UP);
         },
       );
     }
   });
 });
+
+const user3 = new User(3, 'user 3');
+const user4 = new User(4, 'user 4');
