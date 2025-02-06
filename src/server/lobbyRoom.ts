@@ -104,7 +104,7 @@ export class LobbyRoom extends Room {
       },
     }),
   );
-  private lscKnownUsers = new Set<User>();
+  lscKnownUsers = new Set<User>();
 
   private noUpdatesMessage = PB_MessageToClient.toBinary(
     PB_MessageToClient.create({
@@ -169,6 +169,13 @@ export class LobbyRoom extends Room {
       const gameCheckpoint = PB_MessageToClient_Lobby_LastStateCheckpoint_Game.create();
       gameCheckpoint.gameNumber = gameRoom.gameNumber;
       gameCheckpoint.gameDisplayNumber = gameRoom.gameDisplayNumber;
+
+      for (const client of gameRoom.clients) {
+        if (client.user !== null) {
+          const user = addUserToUserToUserMessageIfNotThere(client.user);
+          user.gameDisplayNumbersWherePresent.push(gameRoom.gameDisplayNumber);
+        }
+      }
 
       if (gameRoom.gameSetup) {
         const gameSetup = gameRoom.gameSetup;

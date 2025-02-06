@@ -7,8 +7,10 @@ import {
   type PB_MessageToClient_Lobby,
   type PB_MessageToClient_Lobby_CreateGameResponse,
   type PB_MessageToClient_Lobby_Event,
+  type PB_MessageToClient_Lobby_Event_AddUserToGameRoom,
   type PB_MessageToClient_Lobby_Event_AddUserToLobby,
   type PB_MessageToClient_Lobby_Event_GameCreated,
+  type PB_MessageToClient_Lobby_Event_RemoveUserFromGameRoom,
   type PB_MessageToClient_Lobby_Event_RemoveUserFromLobby,
   type PB_MessageToClient_Lobby_LastStateCheckpoint,
   PB_MessageToServer,
@@ -144,6 +146,10 @@ export function createLobbyManager(
         onMessage_Event_AddUserToLobby(event.addUserToLobby);
       } else if (event.removeUserFromLobby) {
         onMessage_Event_RemoveUserFromLobby(event.removeUserFromLobby);
+      } else if (event.addUserToGameRoom) {
+        onMessage_Event_AddUserToGameRoom(event.addUserToGameRoom);
+      } else if (event.removeUserFromGameRoom) {
+        onMessage_Event_RemoveUserFromGameRoom(event.removeUserFromGameRoom);
       }
     }
 
@@ -186,6 +192,26 @@ export function createLobbyManager(
     userIds.delete(event.userId);
 
     shouldUpdateUsersSignal = true;
+  }
+
+  function onMessage_Event_AddUserToGameRoom(
+    event: PB_MessageToClient_Lobby_Event_AddUserToGameRoom,
+  ) {
+    let user = userIdToUser.get(event.userId);
+    if (!user) {
+      user = new User(event.userId, event.username);
+      userIdToUser.set(event.userId, user);
+    }
+
+    gameDisplayNumberToLobbyGame.get(event.gameDisplayNumber)!.private.addUserToRoom(user);
+  }
+
+  function onMessage_Event_RemoveUserFromGameRoom(
+    event: PB_MessageToClient_Lobby_Event_RemoveUserFromGameRoom,
+  ) {
+    const user = userIdToUser.get(event.userId)!;
+
+    gameDisplayNumberToLobbyGame.get(event.gameDisplayNumber)!.private.removeUserFromRoom(user);
   }
 
   function onMessage_CreateGameResponse(message: PB_MessageToClient_Lobby_CreateGameResponse) {
@@ -235,6 +261,18 @@ function createLobbyGame(
   const [users, setUsers] = createSignal(gameSetup.users);
   const [gameMode, setGameMode] = createSignal(gameSetup.gameMode);
   const [gameStatus, setGameStatus] = createSignal(GameStatus.SETTING_UP);
+  const internalUsersInRoom = new Set<User>();
+  const [usersInRoom, setUsersInRoom] = createSignal(internalUsersInRoom, { equals: false });
+
+  function addUserToRoom(user: User) {
+    internalUsersInRoom.add(user);
+    setUsersInRoom(internalUsersInRoom);
+  }
+
+  function removeUserFromRoom(user: User) {
+    internalUsersInRoom.delete(user);
+    setUsersInRoom(internalUsersInRoom);
+  }
 
   return {
     gameNumber,
@@ -244,6 +282,11 @@ function createLobbyGame(
       users,
       gameMode,
       gameStatus,
+      usersInRoom,
+    },
+    private: {
+      addUserToRoom,
+      removeUserFromRoom,
     },
   };
 }

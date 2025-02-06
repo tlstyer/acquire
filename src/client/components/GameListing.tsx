@@ -2,6 +2,7 @@ import { createMemo, Index } from 'solid-js';
 import { gameModeToNumPlayers, gameModeToTeamSize } from '../../common/helpers';
 import { type PB_GameBoardType, type PB_GameMode } from '../../common/pb';
 import { type User } from '../../common/user';
+import stylesApp from '../App.module.css';
 import {
   gameModeToString,
   type GameStatus,
@@ -17,6 +18,7 @@ export function GameListing(props: {
   gameDisplayNumber: number;
   gameMode: PB_GameMode;
   gameStatus: GameStatus;
+  usersInRoom: Set<User>;
 }) {
   const isTeamGame = createMemo(() => gameModeToTeamSize.get(props.gameMode)! > 1);
 
@@ -35,11 +37,11 @@ export function GameListing(props: {
             {(user, playerId) => (
               <tr>
                 <td
-                  class={
-                    isTeamGame()
-                      ? teamNumberToCSSClassName.get((playerId % numTeams()) + 1)
-                      : styles.player
-                  }
+                  classList={{
+                    [teamNumberToCSSClassName.get((playerId % numTeams()) + 1) ?? '']: isTeamGame(),
+                    [styles.player]: !isTeamGame(),
+                    [stylesApp.playerMissing]: user() !== null && !props.usersInRoom.has(user()!),
+                  }}
                   title={user()?.name}
                 >
                   {user()?.name ?? ''}

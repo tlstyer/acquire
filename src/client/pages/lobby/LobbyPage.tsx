@@ -35,6 +35,7 @@ export function LobbyPage(props: { client: Client }) {
               gameDisplayNumber={0}
               gameMode={PB_GameMode.TEAMS_2_VS_2_VS_2}
               gameStatus={GameStatus.SETTING_UP}
+              usersInRoom={new Set()}
             />
           </div>
           <TransitionGroup
@@ -53,6 +54,7 @@ export function LobbyPage(props: { client: Client }) {
                       gameDisplayNumber={lobbyGame.gameDisplayNumber}
                       gameMode={lobbyGame.signals.gameMode()}
                       gameStatus={lobbyGame.signals.gameStatus()}
+                      usersInRoom={lobbyGame.signals.usersInRoom()}
                     />
                   </a>
                 </div>

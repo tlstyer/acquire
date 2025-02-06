@@ -53,6 +53,13 @@ export function GameListingExamples() {
             gameDisplayNumber={props.gameDisplayNumber}
             gameMode={props.gameMode}
             gameStatus={props.gameStatus}
+            usersInRoom={
+              new Set(
+                props.users
+                  .filter((user) => user !== null)
+                  .filter((user, index) => index % 2 === 0),
+              )
+            }
           />
         </p>
       )}

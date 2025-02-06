@@ -170,6 +170,22 @@ export class GameRoom extends Room {
         client.sendMessage(messageToClientBinary);
       }
     }
+
+    const isKnownUser = this.lobbyRoom.lscKnownUsers.has(user);
+
+    this.lobbyRoom.queueEvent(
+      PB_MessageToClient_Lobby_Event.create({
+        addUserToGameRoom: {
+          userId: user.id,
+          gameDisplayNumber: this.gameDisplayNumber,
+          username: isKnownUser ? undefined : user.name,
+        },
+      }),
+    );
+
+    if (!isKnownUser) {
+      this.lobbyRoom.lscKnownUsers.add(user);
+    }
   }
 
   userDisconnected(user: User) {
@@ -184,6 +200,15 @@ export class GameRoom extends Room {
     for (const client of this.clients) {
       client.sendMessage(messageToClientBinary);
     }
+
+    this.lobbyRoom.queueEvent(
+      PB_MessageToClient_Lobby_Event.create({
+        removeUserFromGameRoom: {
+          userId: user.id,
+          gameDisplayNumber: this.gameDisplayNumber,
+        },
+      }),
+    );
   }
 }
 

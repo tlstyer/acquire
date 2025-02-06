@@ -54,11 +54,17 @@ test('client is disconnected from room upon trying to enter a game that is not f
 });
 
 test('client knows what user IDs and usernames are and were in the game room', async () => {
-  const { client, clientCommunication, serverCommunication } =
+  const { client, clientCommunication, server, serverCommunication } =
     createOneClientConnectedToOneServer();
 
   const clientsInGame = new Set<Client>();
   const gameManagersInGame = new Set<GameManager>();
+
+  // clientLobby connects to lobby
+  const clientCommunicationLobby = new TestClientCommunication(serverCommunication);
+  const clientLobby = createClient(clientCommunicationLobby, 2);
+  clientCommunicationLobby.connect();
+  const lobbyManagerLobby = clientLobby.connectToLobby();
 
   // client logs in as "user 1", creates game, connects to game
   client.loginWithPassword('user 1', 'password');
@@ -177,6 +183,11 @@ test('client knows what user IDs and usernames are and were in the game room', a
     for (const gameManager of gameManagersInGame) {
       expect(gameManager.signals.usersInRoom()).toEqual(expectedUsersInRoom);
     }
+
+    server.lobbyRoom.createLastStateCheckpoint();
+    expect(
+      lobbyManagerLobby.gameDisplayNumberToLobbyGame.get(gameNumber)!.signals.usersInRoom(),
+    ).toEqual(expectedUsersInRoom);
   }
 });
 
