@@ -1,4 +1,5 @@
 declare const styles: {
+  readonly "createGameWrapper": string;
   readonly "gameListingEnter": string;
   readonly "gameListingEnterActive": string;
   readonly "gameListingExitActive": string;

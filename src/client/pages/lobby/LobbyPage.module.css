@@ -10,9 +10,13 @@
   overflow-y: scroll;
 }
 
+.createGameWrapper {
+  margin-bottom: 1em;
+}
+
 .invisibleGameListing {
   visibility: hidden;
-  height: 1em;
+  height: 0;
   overflow: hidden;
 }
 

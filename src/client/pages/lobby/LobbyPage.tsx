@@ -26,7 +26,14 @@ export function LobbyPage(props: { client: Client }) {
     <Show when={lobbyManager.signals.connected()}>
       <div class={styles.root}>
         <div class={styles.gameListings}>
-          <CreateGame initialGameMode={PB_GameMode.SINGLES_4} onSubmit={lobbyManager.createGame} />
+          <Show when={props.client.signals.user() !== null}>
+            <div class={styles.createGameWrapper}>
+              <CreateGame
+                initialGameMode={PB_GameMode.SINGLES_4}
+                onSubmit={lobbyManager.createGame}
+              />
+            </div>
+          </Show>
           {/* This makes the game listings div always have the maximum width of an individual GameListing component */}
           <div class={styles.invisibleGameListing}>
             <GameListing
