@@ -66,7 +66,6 @@ test('client is disconnected from room upon trying to enter a game that is not f
 
 test('client knows what user IDs and usernames are and were in the game room', async () => {
   const serverStuff = createServerStuff();
-  const clientStuff = createClientStuffAndConnectToTestServer(serverStuff);
 
   const clientsInGame = new Set<Client>();
   const gameManagersInGame = new Set<GameManager>();
@@ -75,14 +74,15 @@ test('client knows what user IDs and usernames are and were in the game room', a
   const clientStuffLobby = createClientStuffAndConnectToTestServer(serverStuff);
   const lobbyManagerLobby = clientStuffLobby.client.connectToLobby();
 
-  // client logs in as "user 1", creates game, connects to game
-  await loginAsUser(clientStuff, 1);
-  const lobbyManager = clientStuff.client.connectToLobby();
-  lobbyManager.createGame(PB_GameMode.SINGLES_2);
-  const gameNumber = lobbyManager.signals.createdGameNumber() ?? -1;
-  const gameManager = clientStuff.client.connectToGame(clientStuff.client.logTime, gameNumber);
-  clientsInGame.add(clientStuff.client);
-  gameManagersInGame.add(gameManager);
+  // client1 logs in as "user 1", creates game, connects to game
+  const clientStuff1 = createClientStuffAndConnectToTestServer(serverStuff);
+  await loginAsUser(clientStuff1, 1);
+  const lobbyManager1 = clientStuff1.client.connectToLobby();
+  lobbyManager1.createGame(PB_GameMode.SINGLES_2);
+  const gameNumber = lobbyManager1.signals.createdGameNumber() ?? -1;
+  const gameManager1 = clientStuff1.client.connectToGame(clientStuff1.client.logTime, gameNumber);
+  clientsInGame.add(clientStuff1.client);
+  gameManagersInGame.add(gameManager1);
   expectUsers(new Map([[1, user1]]), new Set([user1]));
 
   // client2 connects to game
@@ -163,10 +163,10 @@ test('client knows what user IDs and usernames are and were in the game room', a
     new Set([user1]),
   );
 
-  // client disconnects
-  clientStuff.clientCommunication.disconnect();
-  clientsInGame.delete(clientStuff.client);
-  gameManagersInGame.delete(gameManager);
+  // client1 disconnects
+  clientStuff1.clientCommunication.disconnect();
+  clientsInGame.delete(clientStuff1.client);
+  gameManagersInGame.delete(gameManager1);
   expectUsers(
     new Map([
       [1, user1],
@@ -194,13 +194,13 @@ test('client knows what user IDs and usernames are and were in the game room', a
 
 test('game setup example 1', async () => {
   const serverStuff = createServerStuff();
-  const clientStuff = createClientStuffAndConnectToTestServer(serverStuff);
 
-  await loginAsUser(clientStuff, 1);
-  const lobbyManager = clientStuff.client.connectToLobby();
-  lobbyManager.createGame(PB_GameMode.SINGLES_4);
-  const gameNumber = lobbyManager.signals.createdGameNumber() ?? -1;
-  const gameManager1 = clientStuff.client.connectToGame(clientStuff.client.logTime, gameNumber);
+  const clientStuff1 = createClientStuffAndConnectToTestServer(serverStuff);
+  await loginAsUser(clientStuff1, 1);
+  const lobbyManager1 = clientStuff1.client.connectToLobby();
+  lobbyManager1.createGame(PB_GameMode.SINGLES_4);
+  const gameNumber = lobbyManager1.signals.createdGameNumber() ?? -1;
+  const gameManager1 = clientStuff1.client.connectToGame(clientStuff1.client.logTime, gameNumber);
 
   const clientStuff2 = createClientStuffAndConnectToTestServer(serverStuff);
   await loginAsUser(clientStuff2, 2);
