@@ -3,7 +3,6 @@ import { GameStatus } from '../../client/helpers';
 import { GameRoom } from '../../server/gameRoom';
 import { GameSetup } from '../gameSetup';
 import { PB_GameMode, PB_MessageToClient, PB_MessageToServer } from '../pb';
-import { User } from '../user';
 import {
   createClientStuffAndConnectToTestServer,
   createServerStuff,
@@ -83,7 +82,7 @@ test('users are added and removed', async () => {
   const lobbyManager = clientStuff.client.connectToLobby();
   clientStuff.clientCommunication.communicatedMessages.length = 0;
 
-  const expectedUserIdToUser = new Map([[3, new User(3, 'user 3')]]);
+  const expectedUserIdToUser = new Map([[3, user3]]);
   expect(clientStuff.client.userIdToUser).toEqual(expectedUserIdToUser);
   expect(lobbyManager.signals.users().length).toBe(0);
 
@@ -129,7 +128,7 @@ test('users are added and removed', async () => {
   expect(clientStuff4.clientCommunication.communicatedMessages[0].receivedMessage).toEqual(
     expectedAddUserToLobbyMessage,
   );
-  expectedUserIdToUser.set(4, new User(4, 'user 4'));
+  expectedUserIdToUser.set(4, user4);
   expect(clientStuff.client.userIdToUser).toEqual(expectedUserIdToUser);
   expect(lobbyManager.signals.users()).toEqual([user3, user4]);
   expect(clientStuff4.client.userIdToUser).toEqual(expectedUserIdToUser);
@@ -316,14 +315,7 @@ describe('create game', () => {
     expect(lobbyGame.gameNumber).toBe(1);
     expect(lobbyGame.gameDisplayNumber).toBe(1);
     expect(lobbyGame.signals.gameMode()).toBe(PB_GameMode.TEAMS_3_VS_3);
-    expect(lobbyGame.signals.users()).toEqual([
-      new User(3, 'user 3'),
-      null,
-      null,
-      null,
-      null,
-      null,
-    ]);
+    expect(lobbyGame.signals.users()).toEqual([user3, null, null, null, null, null]);
     expect(lobbyGame.signals.gameStatus()).toBe(GameStatus.SETTING_UP);
   });
 
@@ -355,14 +347,7 @@ describe('create game', () => {
           expect(lobbyGame.gameNumber).toBe(1);
           expect(lobbyGame.gameDisplayNumber).toBe(1);
           expect(lobbyGame.signals.gameMode()).toBe(PB_GameMode.TEAMS_3_VS_3);
-          expect(lobbyGame.signals.users()).toEqual([
-            new User(3, 'user 3'),
-            null,
-            null,
-            null,
-            null,
-            null,
-          ]);
+          expect(lobbyGame.signals.users()).toEqual([user3, null, null, null, null, null]);
           expect(lobbyGame.signals.gameStatus()).toBe(GameStatus.SETTING_UP);
         },
       );
