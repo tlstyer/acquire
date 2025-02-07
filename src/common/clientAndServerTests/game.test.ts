@@ -192,22 +192,36 @@ test('client knows what user IDs and usernames are and were in the game room', a
 });
 
 test('game setup example 1', async () => {
-  const {
-    gameManager1,
-    gameManager2,
-    gameManager3,
-    gameManager4,
-    gameManager5,
-    gameManager6,
-    server,
-  } = await createManyUsersConnectedToOneServerAndConnectedToOneGame();
+  const { client, server, serverCommunication } = createOneClientConnectedToOneServer();
 
+  client.loginWithPassword('user 1', 'password');
+  await waitForAsyncServerStuff();
+  const lobbyManager = client.connectToLobby();
+  lobbyManager.createGame(PB_GameMode.SINGLES_4);
+  const gameNumber = lobbyManager.signals.createdGameNumber() ?? -1;
+  const gameManager1 = client.connectToGame(client.logTime, gameNumber);
+
+  const gameManager2 = await connectToServerAndLoginAndConnectToGame(
+    serverCommunication,
+    gameNumber,
+    'user 2',
+  );
   gameManager2.gameSetupActions.sitDown();
   expectEqualGameSetups(gameManager1, server);
 
+  const gameManager3 = await connectToServerAndLoginAndConnectToGame(
+    serverCommunication,
+    gameNumber,
+    'user 3',
+  );
   gameManager3.gameSetupActions.sitDown();
   expectEqualGameSetups(gameManager1, server);
 
+  const gameManager4 = await connectToServerAndLoginAndConnectToGame(
+    serverCommunication,
+    gameNumber,
+    'user 4',
+  );
   gameManager4.gameSetupActions.sitDown();
   expectEqualGameSetups(gameManager1, server);
 
@@ -226,9 +240,19 @@ test('game setup example 1', async () => {
   gameManager1.gameSetupActions.kickUser(2);
   expectEqualGameSetups(gameManager1, server);
 
+  const gameManager5 = await connectToServerAndLoginAndConnectToGame(
+    serverCommunication,
+    gameNumber,
+    'user 5',
+  );
   gameManager5.gameSetupActions.sitDown();
   expectEqualGameSetups(gameManager1, server);
 
+  const gameManager6 = await connectToServerAndLoginAndConnectToGame(
+    serverCommunication,
+    gameNumber,
+    'user 6',
+  );
   gameManager6.gameSetupActions.sitDown();
   expectEqualGameSetups(gameManager1, server);
 
@@ -254,15 +278,14 @@ test('game setup example 1', async () => {
 });
 
 test('game setup example 2', async () => {
-  const {
-    gameManager1,
-    gameManager2,
-    gameManager3,
-    gameManager4,
-    gameManager5,
-    gameManager6,
-    server,
-  } = await createManyUsersConnectedToOneServerAndConnectedToOneGame();
+  const { client, server, serverCommunication } = createOneClientConnectedToOneServer();
+
+  client.loginWithPassword('user 1', 'password');
+  await waitForAsyncServerStuff();
+  const lobbyManager = client.connectToLobby();
+  lobbyManager.createGame(PB_GameMode.SINGLES_4);
+  const gameNumber = lobbyManager.signals.createdGameNumber() ?? -1;
+  const gameManager1 = client.connectToGame(client.logTime, gameNumber);
 
   expect(gameManager1.signals.gameMode()).toBe(PB_GameMode.SINGLES_4);
   expect(gameManager1.signals.users()).toEqual([user1, null, null, null]);
@@ -276,18 +299,43 @@ test('game setup example 2', async () => {
   gameManager1.gameSetupActions.changePlayerArrangementMode(PB_PlayerArrangementMode.SPECIFY_TEAMS);
   expectEqualGameSetups(gameManager1, server);
 
+  const gameManager2 = await connectToServerAndLoginAndConnectToGame(
+    serverCommunication,
+    gameNumber,
+    'user 2',
+  );
   gameManager2.gameSetupActions.sitDown();
   expectEqualGameSetups(gameManager1, server);
 
+  const gameManager3 = await connectToServerAndLoginAndConnectToGame(
+    serverCommunication,
+    gameNumber,
+    'user 3',
+  );
   gameManager3.gameSetupActions.sitDown();
   expectEqualGameSetups(gameManager1, server);
 
+  const gameManager4 = await connectToServerAndLoginAndConnectToGame(
+    serverCommunication,
+    gameNumber,
+    'user 4',
+  );
   gameManager4.gameSetupActions.sitDown();
   expectEqualGameSetups(gameManager1, server);
 
+  const gameManager5 = await connectToServerAndLoginAndConnectToGame(
+    serverCommunication,
+    gameNumber,
+    'user 5',
+  );
   gameManager5.gameSetupActions.sitDown();
   expectEqualGameSetups(gameManager1, server);
 
+  const gameManager6 = await connectToServerAndLoginAndConnectToGame(
+    serverCommunication,
+    gameNumber,
+    'user 6',
+  );
   gameManager6.gameSetupActions.sitDown();
   expect(gameManager1.signals.users()).toEqual([user1, user2, user3, user4, user5, user6]);
   expectEqualGameSetups(gameManager1, server);
@@ -320,54 +368,6 @@ test('game setup example 2', async () => {
   gameManager1.gameSetupActions.approve();
   expectEqualGameSetups(gameManager1, server);
 });
-
-async function createManyUsersConnectedToOneServerAndConnectedToOneGame() {
-  const { client, server, serverCommunication } = createOneClientConnectedToOneServer();
-
-  // users 1 through 6 connect to game
-  client.loginWithPassword('user 1', 'password');
-  await waitForAsyncServerStuff();
-  const lobbyManager = client.connectToLobby();
-  lobbyManager.createGame(PB_GameMode.SINGLES_4);
-  const gameNumber = lobbyManager.signals.createdGameNumber() ?? -1;
-  const gameManager1 = client.connectToGame(client.logTime, gameNumber);
-
-  const gameManager2 = await connectToServerAndLoginAndConnectToGame(
-    serverCommunication,
-    gameNumber,
-    'user 2',
-  );
-  const gameManager3 = await connectToServerAndLoginAndConnectToGame(
-    serverCommunication,
-    gameNumber,
-    'user 3',
-  );
-  const gameManager4 = await connectToServerAndLoginAndConnectToGame(
-    serverCommunication,
-    gameNumber,
-    'user 4',
-  );
-  const gameManager5 = await connectToServerAndLoginAndConnectToGame(
-    serverCommunication,
-    gameNumber,
-    'user 5',
-  );
-  const gameManager6 = await connectToServerAndLoginAndConnectToGame(
-    serverCommunication,
-    gameNumber,
-    'user 6',
-  );
-
-  return {
-    gameManager1,
-    gameManager2,
-    gameManager3,
-    gameManager4,
-    gameManager5,
-    gameManager6,
-    server,
-  };
-}
 
 async function connectToServerAndLoginAndConnectToGame(
   serverCommunication: TestServerCommunication,
