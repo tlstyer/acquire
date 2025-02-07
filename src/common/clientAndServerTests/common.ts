@@ -90,3 +90,12 @@ export function testLogin(
     ).toBe(clientIdToUserIdSize);
   });
 }
+
+export const user1 = new User(1, 'user 1');
+export const user2 = new User(2, 'user 2');
+export const user3 = new User(3, 'user 3');
+export const user4 = new User(4, 'user 4');
+export const user5 = new User(5, 'user 5');
+export const user6 = new User(6, 'user 6');
+export const user7 = new User(7, 'user 7');
+export const dummyUser = new User(-1, '?');

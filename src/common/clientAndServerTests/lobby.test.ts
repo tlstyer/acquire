@@ -7,6 +7,8 @@ import { User } from '../user';
 import {
   createClientStuffAndConnectToTestServer,
   createServerStuff,
+  user3,
+  user4,
   userIdToTestUserData,
   waitForAsyncServerStuff,
 } from './common';
@@ -367,6 +369,3 @@ describe('create game', () => {
     }
   });
 });
-
-const user3 = new User(3, 'user 3');
-const user4 = new User(4, 'user 4');

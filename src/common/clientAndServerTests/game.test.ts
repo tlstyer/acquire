@@ -3,11 +3,18 @@ import { type Client } from '../../client/client';
 import { type GameManager, GameManagerStatus } from '../../client/gamesManager';
 import { type Server } from '../../server/server';
 import { PB_GameMode, PB_PlayerArrangementMode } from '../pb';
-import { User } from '../user';
+import { type User } from '../user';
 import {
   createClientStuffAndConnectToTestServer,
   createServerStuff,
+  dummyUser,
   type ServerStuff,
+  user1,
+  user2,
+  user3,
+  user4,
+  user5,
+  user6,
   waitForAsyncServerStuff,
 } from './common';
 
@@ -395,11 +402,3 @@ function expectEqualGameSetups(gameManager: GameManager, server: Server) {
   expect(clientGameSetupLiteSignals.approvals()).toEqual(serverGameSetup.approvals);
   expect(clientGameSetupLiteSignals.hostUser()).toEqual(serverGameSetup.hostUser);
 }
-
-const user1 = new User(1, 'user 1');
-const user2 = new User(2, 'user 2');
-const user3 = new User(3, 'user 3');
-const user4 = new User(4, 'user 4');
-const user5 = new User(5, 'user 5');
-const user6 = new User(6, 'user 6');
-const dummyUser = new User(-1, '?');

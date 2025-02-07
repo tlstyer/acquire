@@ -1,18 +1,10 @@
 import seedrandom from 'seedrandom';
 import { describe, expect, test } from 'vitest';
+import { user1, user2, user3, user4, user5, user6, user7 } from './clientAndServerTests/common';
 import { GameSetup } from './gameSetup';
 import { PB_GameMode, PB_GameSetupChange, PB_PlayerArrangementMode } from './pb';
-import { User } from './user';
 
 const dummyApprovals = [true];
-
-const user1 = new User(1, 'user 1');
-const user2 = new User(2, 'user 2');
-const user3 = new User(3, 'user 3');
-const user4 = new User(4, 'user 4');
-const user5 = new User(5, 'user 5');
-const user6 = new User(6, 'user 6');
-const user7 = new User(7, 'user 7');
 
 const userIdToUser = new Map([
   [1, user1],
