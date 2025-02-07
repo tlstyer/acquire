@@ -205,6 +205,7 @@ test('game setup example 1', async () => {
   lobbyManager1.createGame(PB_GameMode.SINGLES_4);
   const gameNumber = lobbyManager1.signals.createdGameNumber() ?? -1;
   const gameManager1 = clientStuff1.client.connectToGame(clientStuff1.client.logTime, gameNumber);
+  expectEqualGameSetups(lobbyManagerLobby, gameManager1, serverStuff.server);
 
   const clientStuff2 = createClientStuffAndConnectToTestServer(serverStuff);
   await loginAsUser(clientStuff2, 2);
@@ -284,6 +285,7 @@ test('game setup example 2', async () => {
   lobbyManager.createGame(PB_GameMode.SINGLES_4);
   const gameNumber = lobbyManager.signals.createdGameNumber() ?? -1;
   const gameManager1 = clientStuff.client.connectToGame(clientStuff.client.logTime, gameNumber);
+  expectEqualGameSetups(lobbyManagerLobby, gameManager1, serverStuff.server);
 
   expect(gameManager1.signals.gameMode()).toBe(PB_GameMode.SINGLES_4);
   expect(gameManager1.signals.users()).toEqual([user1, null, null, null]);
