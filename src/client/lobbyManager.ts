@@ -130,6 +130,19 @@ export function createLobbyManager(
       );
     }
 
+    for (let i = 0; i < users.length; i++) {
+      const userMessage = users[i];
+      const user = userIdToUser.get(userMessage.userId)!;
+
+      for (let j = 0; j < userMessage.gameDisplayNumbersWherePresent.length; j++) {
+        const gameDisplayNumberWherePresent = userMessage.gameDisplayNumbersWherePresent[j];
+
+        gameDisplayNumberToLobbyGame
+          .get(gameDisplayNumberWherePresent)!
+          .private.addUserToRoom(user);
+      }
+    }
+
     lastEventIndex = message.lastEventIndex;
 
     shouldUpdateUsersSignal = true;

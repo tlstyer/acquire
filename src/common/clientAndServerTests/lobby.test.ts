@@ -6,6 +6,8 @@ import { PB_GameMode, PB_MessageToClient, PB_MessageToServer } from '../pb';
 import {
   createClientStuffAndConnectToTestServer,
   createServerStuff,
+  loginAsUser,
+  user1,
   user3,
   user4,
   userIdToTestUserData,
@@ -353,4 +355,24 @@ describe('create game', () => {
       );
     }
   });
+});
+
+test('gameDisplayNumbersWherePresent is processed correctly', async () => {
+  const serverStuff = createServerStuff();
+
+  const clientStuff1 = createClientStuffAndConnectToTestServer(serverStuff);
+  await loginAsUser(clientStuff1, 1);
+  const lobbyManager = clientStuff1.client.connectToLobby();
+  lobbyManager.createGame(PB_GameMode.SINGLES_4);
+  const gameNumber = lobbyManager.signals.createdGameNumber() ?? -1;
+  clientStuff1.client.connectToGame(clientStuff1.client.logTime, gameNumber);
+
+  serverStuff.server.lobbyRoom.sendQueuedEvents();
+  serverStuff.server.lobbyRoom.createLastStateCheckpoint();
+
+  const clientStuff2 = createClientStuffAndConnectToTestServer(serverStuff);
+  const lobbyManager2 = clientStuff2.client.connectToLobby();
+  expect(lobbyManager2.gameDisplayNumberToLobbyGame.get(gameNumber)!.signals.usersInRoom()).toEqual(
+    new Set([user1]),
+  );
 });
