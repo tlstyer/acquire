@@ -4,6 +4,7 @@ import { PB_MessageToClient_LoginLogout_ResponseCode, PB_MessageToServer } from 
 import {
   createClientStuffAndConnectToTestServer,
   createServerStuff,
+  loginAsUser,
   testLogin,
   userIdToTestUserData,
   waitForAsyncServerStuff,
@@ -58,13 +59,11 @@ test('no message sent when trying to login with password while already logged in
   const serverStuff = createServerStuff();
   const clientStuff = createClientStuffAndConnectToTestServer(serverStuff);
 
-  clientStuff.client.loginWithPassword('user 1', 'password');
-  await waitForAsyncServerStuff();
+  await loginAsUser(clientStuff, 1);
 
   clientStuff.clientCommunication.communicatedMessages.length = 0;
 
-  clientStuff.client.loginWithPassword('user 1', 'password');
-  await waitForAsyncServerStuff();
+  await loginAsUser(clientStuff, 1);
 
   expect(clientStuff.clientCommunication.communicatedMessages.length).toBe(0);
 
@@ -78,8 +77,7 @@ test('no reply when trying to login with password while already logged in when s
   const serverStuff = createServerStuff();
   const clientStuff = createClientStuffAndConnectToTestServer(serverStuff);
 
-  clientStuff.client.loginWithPassword('user 1', 'password');
-  await waitForAsyncServerStuff();
+  await loginAsUser(clientStuff, 1);
 
   clientStuff.clientCommunication.communicatedMessages.length = 0;
 

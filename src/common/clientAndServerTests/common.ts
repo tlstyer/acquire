@@ -55,6 +55,11 @@ export async function waitForAsyncServerStuff() {
   await new Promise((resolve) => setTimeout(resolve, 0));
 }
 
+export async function loginAsUser(clientStuff: ClientStuff, userId: number) {
+  clientStuff.client.loginWithPassword(`user ${userId}`, 'password');
+  await waitForAsyncServerStuff();
+}
+
 export function testLogin(
   name: string,
   login: (client: Client) => void,
