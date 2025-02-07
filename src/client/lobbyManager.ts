@@ -4,12 +4,14 @@ import { createGameSetupLite } from '../common/gameSetupLite';
 import { defaultApprovals, gameModeToNumPlayers } from '../common/helpers';
 import {
   type PB_GameMode,
+  type PB_GameSetupChange,
   type PB_MessageToClient_Lobby,
   type PB_MessageToClient_Lobby_CreateGameResponse,
   type PB_MessageToClient_Lobby_Event,
   type PB_MessageToClient_Lobby_Event_AddUserToGameRoom,
   type PB_MessageToClient_Lobby_Event_AddUserToLobby,
   type PB_MessageToClient_Lobby_Event_GameCreated,
+  type PB_MessageToClient_Lobby_Event_GameSetupChange,
   type PB_MessageToClient_Lobby_Event_RemoveUserFromGameRoom,
   type PB_MessageToClient_Lobby_Event_RemoveUserFromLobby,
   type PB_MessageToClient_Lobby_LastStateCheckpoint,
@@ -155,6 +157,8 @@ export function createLobbyManager(
 
       if (event.gameCreated) {
         onMessage_Event_GameCreated(event.gameCreated);
+      } else if (event.gameSetupChange) {
+        onMessage_Event_GameSetupChange(event.gameSetupChange);
       } else if (event.addUserToLobby) {
         onMessage_Event_AddUserToLobby(event.addUserToLobby);
       } else if (event.removeUserFromLobby) {
@@ -187,6 +191,12 @@ export function createLobbyManager(
     );
 
     shouldUpdateLobbyGamesSignal = true;
+  }
+
+  function onMessage_Event_GameSetupChange(event: PB_MessageToClient_Lobby_Event_GameSetupChange) {
+    gameDisplayNumberToLobbyGame
+      .get(event.gameDisplayNumber)!
+      .private.changeGameSetup(event.gameSetupChange!);
   }
 
   function onMessage_Event_AddUserToLobby(event: PB_MessageToClient_Lobby_Event_AddUserToLobby) {
@@ -274,6 +284,12 @@ function createLobbyGame(
   const internalUsersInRoom = new Set<User>();
   const [usersInRoom, setUsersInRoom] = createSignal(internalUsersInRoom, { equals: false });
 
+  function changeGameSetup(gameSetupChange: PB_GameSetupChange) {
+    gameSetup.processChange(gameSetupChange);
+    setUsers(gameSetup.users);
+    setGameMode(gameSetup.gameMode);
+  }
+
   function addUserToRoom(user: User) {
     internalUsersInRoom.add(user);
     setUsersInRoom(internalUsersInRoom);
@@ -287,6 +303,7 @@ function createLobbyGame(
   return {
     gameNumber,
     gameDisplayNumber,
+    hostUser,
     signals: {
       gameBoard,
       users,
@@ -295,6 +312,7 @@ function createLobbyGame(
       usersInRoom,
     },
     private: {
+      changeGameSetup,
       addUserToRoom,
       removeUserFromRoom,
     },
