@@ -1,14 +1,13 @@
 import { expect, test } from 'vitest';
-import { type Client, createClient } from '../../client/client';
-import { TestClientCommunication } from '../../client/clientCommunication';
+import { type Client } from '../../client/client';
 import { type GameManager, GameManagerStatus } from '../../client/gamesManager';
 import { type Server } from '../../server/server';
-import { type TestServerCommunication } from '../../server/serverCommunication';
 import { PB_GameMode, PB_PlayerArrangementMode } from '../pb';
 import { User } from '../user';
 import {
   createClientStuffAndConnectToTestServer,
   createServerStuff,
+  type ServerStuff,
   waitForAsyncServerStuff,
 } from './common';
 
@@ -68,10 +67,8 @@ test('client knows what user IDs and usernames are and were in the game room', a
   const gameManagersInGame = new Set<GameManager>();
 
   // clientLobby connects to lobby
-  const clientCommunicationLobby = new TestClientCommunication(serverStuff.serverCommunication);
-  const clientLobby = createClient(clientCommunicationLobby, 2);
-  clientCommunicationLobby.connect();
-  const lobbyManagerLobby = clientLobby.connectToLobby();
+  const clientStuffLobby = createClientStuffAndConnectToTestServer(serverStuff);
+  const lobbyManagerLobby = clientStuffLobby.client.connectToLobby();
 
   // client logs in as "user 1", creates game, connects to game
   clientStuff.client.loginWithPassword('user 1', 'password');
@@ -85,22 +82,18 @@ test('client knows what user IDs and usernames are and were in the game room', a
   expectUsers(new Map([[1, user1]]), new Set([user1]));
 
   // client2 connects to game
-  const clientCommunication2 = new TestClientCommunication(serverStuff.serverCommunication);
-  const client2 = createClient(clientCommunication2, 2);
-  clientCommunication2.connect();
-  const gameManager2 = client2.connectToGame(client2.logTime, gameNumber);
-  clientsInGame.add(client2);
+  const clientStuff2 = createClientStuffAndConnectToTestServer(serverStuff);
+  const gameManager2 = clientStuff2.client.connectToGame(clientStuff2.client.logTime, gameNumber);
+  clientsInGame.add(clientStuff2.client);
   gameManagersInGame.add(gameManager2);
   expectUsers(new Map([[1, user1]]), new Set([user1]));
 
   // client3 logs in as "user 3", connects to game
-  const clientCommunication3 = new TestClientCommunication(serverStuff.serverCommunication);
-  const client3 = createClient(clientCommunication3, 2);
-  clientCommunication3.connect();
-  client3.loginWithPassword('user 3', 'password');
+  const clientStuff3 = createClientStuffAndConnectToTestServer(serverStuff);
+  clientStuff3.client.loginWithPassword('user 3', 'password');
   await waitForAsyncServerStuff();
-  const gameManager3 = client3.connectToGame(client3.logTime, gameNumber);
-  clientsInGame.add(client3);
+  const gameManager3 = clientStuff3.client.connectToGame(clientStuff3.client.logTime, gameNumber);
+  clientsInGame.add(clientStuff3.client);
   gameManagersInGame.add(gameManager3);
   expectUsers(
     new Map([
@@ -111,7 +104,7 @@ test('client knows what user IDs and usernames are and were in the game room', a
   );
 
   // client2 logs in as "user 2"
-  client2.loginWithPassword('user 2', 'password');
+  clientStuff2.client.loginWithPassword('user 2', 'password');
   await waitForAsyncServerStuff();
   expectUsers(
     new Map([
@@ -123,7 +116,7 @@ test('client knows what user IDs and usernames are and were in the game room', a
   );
 
   // client3 logs out
-  client3.logout();
+  clientStuff3.client.logout();
   expectUsers(
     new Map([
       [1, user1],
@@ -134,7 +127,7 @@ test('client knows what user IDs and usernames are and were in the game room', a
   );
 
   // client3 logs in as "user 2"
-  client3.loginWithPassword('user 2', 'password');
+  clientStuff3.client.loginWithPassword('user 2', 'password');
   await waitForAsyncServerStuff();
   expectUsers(
     new Map([
@@ -146,7 +139,7 @@ test('client knows what user IDs and usernames are and were in the game room', a
   );
 
   // client2 logs out
-  client2.logout();
+  clientStuff2.client.logout();
   expectUsers(
     new Map([
       [1, user1],
@@ -157,8 +150,8 @@ test('client knows what user IDs and usernames are and were in the game room', a
   );
 
   // client3 disconnects
-  clientCommunication3.disconnect();
-  clientsInGame.delete(client3);
+  clientStuff3.clientCommunication.disconnect();
+  clientsInGame.delete(clientStuff3.client);
   gameManagersInGame.delete(gameManager3);
   expectUsers(
     new Map([
@@ -210,7 +203,7 @@ test('game setup example 1', async () => {
   const gameManager1 = clientStuff.client.connectToGame(clientStuff.client.logTime, gameNumber);
 
   const gameManager2 = await connectToServerAndLoginAndConnectToGame(
-    serverStuff.serverCommunication,
+    serverStuff,
     gameNumber,
     'user 2',
   );
@@ -218,7 +211,7 @@ test('game setup example 1', async () => {
   expectEqualGameSetups(gameManager1, serverStuff.server);
 
   const gameManager3 = await connectToServerAndLoginAndConnectToGame(
-    serverStuff.serverCommunication,
+    serverStuff,
     gameNumber,
     'user 3',
   );
@@ -226,7 +219,7 @@ test('game setup example 1', async () => {
   expectEqualGameSetups(gameManager1, serverStuff.server);
 
   const gameManager4 = await connectToServerAndLoginAndConnectToGame(
-    serverStuff.serverCommunication,
+    serverStuff,
     gameNumber,
     'user 4',
   );
@@ -249,7 +242,7 @@ test('game setup example 1', async () => {
   expectEqualGameSetups(gameManager1, serverStuff.server);
 
   const gameManager5 = await connectToServerAndLoginAndConnectToGame(
-    serverStuff.serverCommunication,
+    serverStuff,
     gameNumber,
     'user 5',
   );
@@ -257,7 +250,7 @@ test('game setup example 1', async () => {
   expectEqualGameSetups(gameManager1, serverStuff.server);
 
   const gameManager6 = await connectToServerAndLoginAndConnectToGame(
-    serverStuff.serverCommunication,
+    serverStuff,
     gameNumber,
     'user 6',
   );
@@ -309,7 +302,7 @@ test('game setup example 2', async () => {
   expectEqualGameSetups(gameManager1, serverStuff.server);
 
   const gameManager2 = await connectToServerAndLoginAndConnectToGame(
-    serverStuff.serverCommunication,
+    serverStuff,
     gameNumber,
     'user 2',
   );
@@ -317,7 +310,7 @@ test('game setup example 2', async () => {
   expectEqualGameSetups(gameManager1, serverStuff.server);
 
   const gameManager3 = await connectToServerAndLoginAndConnectToGame(
-    serverStuff.serverCommunication,
+    serverStuff,
     gameNumber,
     'user 3',
   );
@@ -325,7 +318,7 @@ test('game setup example 2', async () => {
   expectEqualGameSetups(gameManager1, serverStuff.server);
 
   const gameManager4 = await connectToServerAndLoginAndConnectToGame(
-    serverStuff.serverCommunication,
+    serverStuff,
     gameNumber,
     'user 4',
   );
@@ -333,7 +326,7 @@ test('game setup example 2', async () => {
   expectEqualGameSetups(gameManager1, serverStuff.server);
 
   const gameManager5 = await connectToServerAndLoginAndConnectToGame(
-    serverStuff.serverCommunication,
+    serverStuff,
     gameNumber,
     'user 5',
   );
@@ -341,7 +334,7 @@ test('game setup example 2', async () => {
   expectEqualGameSetups(gameManager1, serverStuff.server);
 
   const gameManager6 = await connectToServerAndLoginAndConnectToGame(
-    serverStuff.serverCommunication,
+    serverStuff,
     gameNumber,
     'user 6',
   );
@@ -379,16 +372,14 @@ test('game setup example 2', async () => {
 });
 
 async function connectToServerAndLoginAndConnectToGame(
-  serverCommunication: TestServerCommunication,
+  serverStuff: ServerStuff,
   gameNumber: number,
   username: string,
 ) {
-  const clientCommunicationNew = new TestClientCommunication(serverCommunication);
-  const clientNew = createClient(clientCommunicationNew, 2);
-  clientCommunicationNew.connect();
-  clientNew.loginWithPassword(username, 'password');
+  const clientStuff = createClientStuffAndConnectToTestServer(serverStuff);
+  clientStuff.client.loginWithPassword(username, 'password');
   await waitForAsyncServerStuff();
-  const gameManagerNew = clientNew.connectToGame(clientNew.logTime, gameNumber);
+  const gameManagerNew = clientStuff.client.connectToGame(clientStuff.client.logTime, gameNumber);
   return gameManagerNew;
 }
 
