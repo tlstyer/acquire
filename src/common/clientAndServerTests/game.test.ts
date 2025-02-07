@@ -9,7 +9,6 @@ import {
   createServerStuff,
   dummyUser,
   loginAsUser,
-  type ServerStuff,
   user1,
   user2,
   user3,
@@ -203,15 +202,21 @@ test('game setup example 1', async () => {
   const gameNumber = lobbyManager.signals.createdGameNumber() ?? -1;
   const gameManager1 = clientStuff.client.connectToGame(clientStuff.client.logTime, gameNumber);
 
-  const gameManager2 = await connectToServerAndLoginAndConnectToGame(serverStuff, gameNumber, 2);
+  const clientStuff2 = createClientStuffAndConnectToTestServer(serverStuff);
+  await loginAsUser(clientStuff2, 2);
+  const gameManager2 = clientStuff2.client.connectToGame(clientStuff2.client.logTime, gameNumber);
   gameManager2.gameSetupActions.sitDown();
   expectEqualGameSetups(gameManager1, serverStuff.server);
 
-  const gameManager3 = await connectToServerAndLoginAndConnectToGame(serverStuff, gameNumber, 3);
+  const clientStuff3 = createClientStuffAndConnectToTestServer(serverStuff);
+  await loginAsUser(clientStuff3, 3);
+  const gameManager3 = clientStuff3.client.connectToGame(clientStuff3.client.logTime, gameNumber);
   gameManager3.gameSetupActions.sitDown();
   expectEqualGameSetups(gameManager1, serverStuff.server);
 
-  const gameManager4 = await connectToServerAndLoginAndConnectToGame(serverStuff, gameNumber, 4);
+  const clientStuff4 = createClientStuffAndConnectToTestServer(serverStuff);
+  await loginAsUser(clientStuff4, 4);
+  const gameManager4 = clientStuff4.client.connectToGame(clientStuff4.client.logTime, gameNumber);
   gameManager4.gameSetupActions.sitDown();
   expectEqualGameSetups(gameManager1, serverStuff.server);
 
@@ -230,11 +235,15 @@ test('game setup example 1', async () => {
   gameManager1.gameSetupActions.kickUser(2);
   expectEqualGameSetups(gameManager1, serverStuff.server);
 
-  const gameManager5 = await connectToServerAndLoginAndConnectToGame(serverStuff, gameNumber, 5);
+  const clientStuff5 = createClientStuffAndConnectToTestServer(serverStuff);
+  await loginAsUser(clientStuff5, 5);
+  const gameManager5 = clientStuff5.client.connectToGame(clientStuff5.client.logTime, gameNumber);
   gameManager5.gameSetupActions.sitDown();
   expectEqualGameSetups(gameManager1, serverStuff.server);
 
-  const gameManager6 = await connectToServerAndLoginAndConnectToGame(serverStuff, gameNumber, 6);
+  const clientStuff6 = createClientStuffAndConnectToTestServer(serverStuff);
+  await loginAsUser(clientStuff6, 6);
+  const gameManager6 = clientStuff6.client.connectToGame(clientStuff6.client.logTime, gameNumber);
   gameManager6.gameSetupActions.sitDown();
   expectEqualGameSetups(gameManager1, serverStuff.server);
 
@@ -281,23 +290,33 @@ test('game setup example 2', async () => {
   gameManager1.gameSetupActions.changePlayerArrangementMode(PB_PlayerArrangementMode.SPECIFY_TEAMS);
   expectEqualGameSetups(gameManager1, serverStuff.server);
 
-  const gameManager2 = await connectToServerAndLoginAndConnectToGame(serverStuff, gameNumber, 2);
+  const clientStuff2 = createClientStuffAndConnectToTestServer(serverStuff);
+  await loginAsUser(clientStuff2, 2);
+  const gameManager2 = clientStuff2.client.connectToGame(clientStuff2.client.logTime, gameNumber);
   gameManager2.gameSetupActions.sitDown();
   expectEqualGameSetups(gameManager1, serverStuff.server);
 
-  const gameManager3 = await connectToServerAndLoginAndConnectToGame(serverStuff, gameNumber, 3);
+  const clientStuff3 = createClientStuffAndConnectToTestServer(serverStuff);
+  await loginAsUser(clientStuff3, 3);
+  const gameManager3 = clientStuff3.client.connectToGame(clientStuff3.client.logTime, gameNumber);
   gameManager3.gameSetupActions.sitDown();
   expectEqualGameSetups(gameManager1, serverStuff.server);
 
-  const gameManager4 = await connectToServerAndLoginAndConnectToGame(serverStuff, gameNumber, 4);
+  const clientStuff4 = createClientStuffAndConnectToTestServer(serverStuff);
+  await loginAsUser(clientStuff4, 4);
+  const gameManager4 = clientStuff4.client.connectToGame(clientStuff4.client.logTime, gameNumber);
   gameManager4.gameSetupActions.sitDown();
   expectEqualGameSetups(gameManager1, serverStuff.server);
 
-  const gameManager5 = await connectToServerAndLoginAndConnectToGame(serverStuff, gameNumber, 5);
+  const clientStuff5 = createClientStuffAndConnectToTestServer(serverStuff);
+  await loginAsUser(clientStuff5, 5);
+  const gameManager5 = clientStuff5.client.connectToGame(clientStuff5.client.logTime, gameNumber);
   gameManager5.gameSetupActions.sitDown();
   expectEqualGameSetups(gameManager1, serverStuff.server);
 
-  const gameManager6 = await connectToServerAndLoginAndConnectToGame(serverStuff, gameNumber, 6);
+  const clientStuff6 = createClientStuffAndConnectToTestServer(serverStuff);
+  await loginAsUser(clientStuff6, 6);
+  const gameManager6 = clientStuff6.client.connectToGame(clientStuff6.client.logTime, gameNumber);
   gameManager6.gameSetupActions.sitDown();
   expect(gameManager1.signals.users()).toEqual([user1, user2, user3, user4, user5, user6]);
   expectEqualGameSetups(gameManager1, serverStuff.server);
@@ -330,17 +349,6 @@ test('game setup example 2', async () => {
   gameManager1.gameSetupActions.approve();
   expectEqualGameSetups(gameManager1, serverStuff.server);
 });
-
-async function connectToServerAndLoginAndConnectToGame(
-  serverStuff: ServerStuff,
-  gameNumber: number,
-  userId: number,
-) {
-  const clientStuff = createClientStuffAndConnectToTestServer(serverStuff);
-  await loginAsUser(clientStuff, userId);
-  const gameManagerNew = clientStuff.client.connectToGame(clientStuff.client.logTime, gameNumber);
-  return gameManagerNew;
-}
 
 function expectEqualGameSetups(gameManager: GameManager, server: Server) {
   const clientGameSetupLiteSignals = gameManager.signals;
