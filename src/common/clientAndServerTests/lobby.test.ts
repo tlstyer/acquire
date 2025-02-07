@@ -313,7 +313,7 @@ describe('create game', () => {
     lobbyManager.createGame(PB_GameMode.TEAMS_3_VS_3);
     serverStuff.server.lobbyRoom.sendQueuedEvents();
 
-    const lobbyGame = lobbyManager.gameDisplayNumberToLobbyGame.get(1)!;
+    const lobbyGame = lobbyManager.signals.lobbyGames()[0];
     expect(lobbyGame.gameNumber).toBe(1);
     expect(lobbyGame.gameDisplayNumber).toBe(1);
     expect(lobbyGame.signals.gameMode()).toBe(PB_GameMode.TEAMS_3_VS_3);
@@ -345,7 +345,7 @@ describe('create game', () => {
           clientStuffAnon1.clientCommunication.communicatedMessages.length = 0;
           const lobbyManagerAnon1 = clientStuffAnon1.client.connectToLobby();
 
-          const lobbyGame = lobbyManagerAnon1.gameDisplayNumberToLobbyGame.get(1)!;
+          const lobbyGame = lobbyManagerAnon1.signals.lobbyGames()[0];
           expect(lobbyGame.gameNumber).toBe(1);
           expect(lobbyGame.gameDisplayNumber).toBe(1);
           expect(lobbyGame.signals.gameMode()).toBe(PB_GameMode.TEAMS_3_VS_3);
@@ -372,7 +372,5 @@ test('gameDisplayNumbersWherePresent is processed correctly', async () => {
 
   const clientStuff2 = createClientStuffAndConnectToTestServer(serverStuff);
   const lobbyManager2 = clientStuff2.client.connectToLobby();
-  expect(lobbyManager2.gameDisplayNumberToLobbyGame.get(gameNumber)!.signals.usersInRoom()).toEqual(
-    new Set([user1]),
-  );
+  expect(lobbyManager2.signals.lobbyGames()[0].signals.usersInRoom()).toEqual(new Set([user1]));
 });

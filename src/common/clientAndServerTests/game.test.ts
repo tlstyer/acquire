@@ -186,9 +186,9 @@ test('client knows what user IDs and usernames are and were in the game room', a
     }
 
     serverStuff.server.lobbyRoom.createLastStateCheckpoint();
-    expect(
-      lobbyManagerLobby.gameDisplayNumberToLobbyGame.get(gameNumber)!.signals.usersInRoom(),
-    ).toEqual(expectedUsersInRoom);
+    expect(lobbyManagerLobby.signals.lobbyGames()[0].signals.usersInRoom()).toEqual(
+      expectedUsersInRoom,
+    );
   }
 });
 

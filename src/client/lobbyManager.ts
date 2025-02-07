@@ -239,9 +239,6 @@ export function createLobbyManager(
     get lastEventIndex() {
       return lastEventIndex;
     },
-    get gameDisplayNumberToLobbyGame() {
-      return gameDisplayNumberToLobbyGame;
-    },
     signals: {
       connected,
       users,
