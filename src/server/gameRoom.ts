@@ -18,6 +18,8 @@ export class GameRoom extends Room {
   gameSetup: GameSetup | undefined;
   game: Game | undefined;
 
+  private numberOfGameSetupChanges = 0;
+
   private clientFromConnectMessage: Client | null = null;
   private userIdToUser = new Map<number, User>();
   private userIdsAndUsernames: PB_MessageToClient_Game_UserIdAndUsername[] = [];
@@ -83,7 +85,7 @@ export class GameRoom extends Room {
                 (user) => user?.id ?? 0,
               ),
               approvals: this.gameSetup ? this.gameSetup.approvals : dummyApprovals,
-              numberOfGameSetupChanges: this.gameSetup ? this.gameSetup.history.length : 0,
+              numberOfGameSetupChanges: this.gameSetup ? this.numberOfGameSetupChanges : 0,
               userIdsInRoom: [...this.userToClients.keys()].map((user) => user.id),
             },
             userIdsAndUsernames:
@@ -98,8 +100,6 @@ export class GameRoom extends Room {
 
   onMessage_GameSetupAction(client: Client, message: PB_MessageToServer_Game_GameSetupAction) {
     if (this.gameSetup && client.user !== null) {
-      const historyLengthBefore = this.gameSetup.history.length;
-
       if (message.sitDown) {
         this.gameSetup.addUser(client.user);
       } else if (message.standUp) {
@@ -132,11 +132,11 @@ export class GameRoom extends Room {
         }
       }
 
-      if (this.gameSetup.history.length !== historyLengthBefore) {
+      if (this.gameSetup.history.length > 0) {
         const messageToGameClients = PB_MessageToClient.toBinary(
           PB_MessageToClient.create({
             game: {
-              gameSetupChange: this.gameSetup.history[this.gameSetup.history.length - 1],
+              gameSetupChange: this.gameSetup.history[0],
             },
           }),
         );
@@ -144,6 +144,9 @@ export class GameRoom extends Room {
         for (const client of this.clients) {
           client.sendMessage(messageToGameClients);
         }
+
+        this.gameSetup.clearHistory();
+        this.numberOfGameSetupChanges++;
       }
     }
   }

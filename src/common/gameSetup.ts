@@ -318,7 +318,7 @@ export class GameSetup {
   }
 
   clearHistory() {
-    this.history = [];
+    this.history.length = 0;
   }
 
   private getFinalUsers(): User[] {
