@@ -3,7 +3,8 @@ import { getPasswordHash } from '../../server/userDataProvider';
 import { createLoginLogoutMessage } from '../helpers';
 import { PB_MessageToClient_LoginLogout_ResponseCode, PB_MessageToServer } from '../pb';
 import {
-  createOneClientConnectedToOneServer,
+  createClientStuffAndConnectToTestServer,
+  createServerStuff,
   numTestUsers,
   testLogin,
   waitForAsyncServerStuff,
@@ -83,32 +84,35 @@ testLogin(
 );
 
 test('no message sent when trying to create user and login while already logged in', async () => {
-  const { client, clientCommunication, server } = createOneClientConnectedToOneServer();
+  const serverStuff = createServerStuff();
+  const clientStuff = createClientStuffAndConnectToTestServer(serverStuff);
 
-  client.createUserAndLogin('username', 'super secret password');
+  clientStuff.client.createUserAndLogin('username', 'super secret password');
   await waitForAsyncServerStuff();
 
-  clientCommunication.communicatedMessages.length = 0;
+  clientStuff.clientCommunication.communicatedMessages.length = 0;
 
-  client.createUserAndLogin('username', 'super secret password');
+  clientStuff.client.createUserAndLogin('username', 'super secret password');
   await waitForAsyncServerStuff();
 
-  expect(clientCommunication.communicatedMessages.length).toBe(0);
+  expect(clientStuff.clientCommunication.communicatedMessages.length).toBe(0);
 
-  expect([...server.clientIdToClient.values()].filter((c) => c.user?.id !== undefined).length).toBe(
-    1,
-  );
+  expect(
+    [...serverStuff.server.clientIdToClient.values()].filter((c) => c.user?.id !== undefined)
+      .length,
+  ).toBe(1);
 });
 
 test('no reply when trying to create user and login while already logged in when sending message client would not send', async () => {
-  const { client, clientCommunication, server } = createOneClientConnectedToOneServer();
+  const serverStuff = createServerStuff();
+  const clientStuff = createClientStuffAndConnectToTestServer(serverStuff);
 
-  client.createUserAndLogin('username', 'super secret password');
+  clientStuff.client.createUserAndLogin('username', 'super secret password');
   await waitForAsyncServerStuff();
 
-  clientCommunication.communicatedMessages.length = 0;
+  clientStuff.clientCommunication.communicatedMessages.length = 0;
 
-  clientCommunication.sendMessage(
+  clientStuff.clientCommunication.sendMessage(
     PB_MessageToServer.toBinary({
       loginLogout: {
         createUserAndLogin: {
@@ -120,9 +124,10 @@ test('no reply when trying to create user and login while already logged in when
   );
   await waitForAsyncServerStuff();
 
-  expect(clientCommunication.communicatedMessages.length).toBe(1);
+  expect(clientStuff.clientCommunication.communicatedMessages.length).toBe(1);
 
-  expect([...server.clientIdToClient.values()].filter((c) => c.user?.id !== undefined).length).toBe(
-    1,
-  );
+  expect(
+    [...serverStuff.server.clientIdToClient.values()].filter((c) => c.user?.id !== undefined)
+      .length,
+  ).toBe(1);
 });

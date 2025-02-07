@@ -5,7 +5,7 @@ import { Server } from '../../server/server';
 import { TestServerCommunication } from '../../server/serverCommunication';
 import { TestUserDataProvider } from '../../server/userDataProvider';
 import { PB_MessageToClient } from '../pb';
-import { createOneClientConnectedToOneServer } from './common';
+import { createClientStuffAndConnectToTestServer, createServerStuff } from './common';
 
 test('client should reload window when version is different', () => {
   const mock = vi.fn();
@@ -31,20 +31,21 @@ test('client should not reload window when version is the same', () => {
   // @ts-expect-error the other required properties of global.location aren't used in this test
   global.location = { reload: mock };
 
-  const { clientCommunication, serverCommunication } = createOneClientConnectedToOneServer();
+  const serverStuff = createServerStuff();
+  const clientStuff = createClientStuffAndConnectToTestServer(serverStuff);
 
-  expectInitialMessageToBeCorrect(clientCommunication, serverCommunication);
+  expectInitialMessageToBeCorrect(clientStuff.clientCommunication, serverStuff.serverCommunication);
 
   expect(mock).not.toHaveBeenCalled();
 });
 
 test("client's logTime is set to server's logTime", () => {
-  const { client, clientCommunication, serverCommunication } =
-    createOneClientConnectedToOneServer();
+  const serverStuff = createServerStuff();
+  const clientStuff = createClientStuffAndConnectToTestServer(serverStuff);
 
-  expectInitialMessageToBeCorrect(clientCommunication, serverCommunication);
+  expectInitialMessageToBeCorrect(clientStuff.clientCommunication, serverStuff.serverCommunication);
 
-  expect(client.logTime).toBe(123);
+  expect(clientStuff.client.logTime).toBe(123);
 });
 
 function expectInitialMessageToBeCorrect(

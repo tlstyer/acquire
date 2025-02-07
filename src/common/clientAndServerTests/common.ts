@@ -16,7 +16,9 @@ for (let userId = 1; userId <= numTestUsers; userId++) {
   );
 }
 
-export function createOneClientConnectedToOneServer() {
+export type ServerStuff = ReturnType<typeof createServerStuff>;
+
+export function createServerStuff() {
   const userDataProvider = new TestUserDataProvider();
 
   for (let userId = 1; userId <= numTestUsers; userId++) {
@@ -28,12 +30,25 @@ export function createOneClientConnectedToOneServer() {
   const serverCommunication = new TestServerCommunication();
   const server = new Server(serverCommunication, userDataProvider, 2, 123);
 
-  const clientCommunication = new TestClientCommunication(serverCommunication);
+  return {
+    server,
+    serverCommunication,
+    userDataProvider,
+  };
+}
+
+export type ClientStuff = ReturnType<typeof createClientStuffAndConnectToTestServer>;
+
+export function createClientStuffAndConnectToTestServer(serverStuff: ServerStuff) {
+  const clientCommunication = new TestClientCommunication(serverStuff.serverCommunication);
   const client = createClient(clientCommunication, 2);
 
   clientCommunication.connect();
 
-  return { client, clientCommunication, server, serverCommunication, userDataProvider };
+  return {
+    client,
+    clientCommunication,
+  };
 }
 
 export async function waitForAsyncServerStuff() {
@@ -47,30 +62,31 @@ export function testLogin(
   clientIdToUserIdSize: number,
 ) {
   test(name, async () => {
-    const { client, clientCommunication, server } = createOneClientConnectedToOneServer();
+    const serverStuff = createServerStuff();
+    const clientStuff = createClientStuffAndConnectToTestServer(serverStuff);
 
-    clientCommunication.communicatedMessages.length = 0;
+    clientStuff.clientCommunication.communicatedMessages.length = 0;
 
-    login(client);
+    login(clientStuff.client);
     await waitForAsyncServerStuff();
 
-    expect(clientCommunication.communicatedMessages.length).toBe(2);
-    expect(clientCommunication.communicatedMessages[1].receivedMessage).toEqual(
+    expect(clientStuff.clientCommunication.communicatedMessages.length).toBe(2);
+    expect(clientStuff.clientCommunication.communicatedMessages[1].receivedMessage).toEqual(
       expectedMessageToClient,
     );
 
     const loginLogoutMessage = expectedMessageToClient.loginLogout!;
-    expect(client.signals.user()).toEqual(
+    expect(clientStuff.client.signals.user()).toEqual(
       loginLogoutMessage.username !== ''
         ? new User(loginLogoutMessage.userId, loginLogoutMessage.username)
         : null,
     );
-    expect(client.myToken).toEqual(
+    expect(clientStuff.client.myToken).toEqual(
       loginLogoutMessage.token !== '' ? loginLogoutMessage.token : undefined,
     );
 
-    expect([...server.clientIdToClient.values()].filter((c) => c.user !== null).length).toBe(
-      clientIdToUserIdSize,
-    );
+    expect(
+      [...serverStuff.server.clientIdToClient.values()].filter((c) => c.user !== null).length,
+    ).toBe(clientIdToUserIdSize);
   });
 }

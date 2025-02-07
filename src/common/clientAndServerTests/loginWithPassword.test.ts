@@ -2,7 +2,8 @@ import { expect, test } from 'vitest';
 import { createLoginLogoutMessage } from '../helpers';
 import { PB_MessageToClient_LoginLogout_ResponseCode, PB_MessageToServer } from '../pb';
 import {
-  createOneClientConnectedToOneServer,
+  createClientStuffAndConnectToTestServer,
+  createServerStuff,
   testLogin,
   userIdToTestUserData,
   waitForAsyncServerStuff,
@@ -54,32 +55,35 @@ testLogin(
 );
 
 test('no message sent when trying to login with password while already logged in', async () => {
-  const { client, clientCommunication, server } = createOneClientConnectedToOneServer();
+  const serverStuff = createServerStuff();
+  const clientStuff = createClientStuffAndConnectToTestServer(serverStuff);
 
-  client.loginWithPassword('user 1', 'password');
+  clientStuff.client.loginWithPassword('user 1', 'password');
   await waitForAsyncServerStuff();
 
-  clientCommunication.communicatedMessages.length = 0;
+  clientStuff.clientCommunication.communicatedMessages.length = 0;
 
-  client.loginWithPassword('user 1', 'password');
+  clientStuff.client.loginWithPassword('user 1', 'password');
   await waitForAsyncServerStuff();
 
-  expect(clientCommunication.communicatedMessages.length).toBe(0);
+  expect(clientStuff.clientCommunication.communicatedMessages.length).toBe(0);
 
-  expect([...server.clientIdToClient.values()].filter((c) => c.user?.id !== undefined).length).toBe(
-    1,
-  );
+  expect(
+    [...serverStuff.server.clientIdToClient.values()].filter((c) => c.user?.id !== undefined)
+      .length,
+  ).toBe(1);
 });
 
 test('no reply when trying to login with password while already logged in when sending message client would not send', async () => {
-  const { client, clientCommunication, server } = createOneClientConnectedToOneServer();
+  const serverStuff = createServerStuff();
+  const clientStuff = createClientStuffAndConnectToTestServer(serverStuff);
 
-  client.loginWithPassword('user 1', 'password');
+  clientStuff.client.loginWithPassword('user 1', 'password');
   await waitForAsyncServerStuff();
 
-  clientCommunication.communicatedMessages.length = 0;
+  clientStuff.clientCommunication.communicatedMessages.length = 0;
 
-  clientCommunication.sendMessage(
+  clientStuff.clientCommunication.sendMessage(
     PB_MessageToServer.toBinary({
       loginLogout: {
         loginWithPassword: {
@@ -91,9 +95,10 @@ test('no reply when trying to login with password while already logged in when s
   );
   await waitForAsyncServerStuff();
 
-  expect(clientCommunication.communicatedMessages.length).toBe(1);
+  expect(clientStuff.clientCommunication.communicatedMessages.length).toBe(1);
 
-  expect([...server.clientIdToClient.values()].filter((c) => c.user?.id !== undefined).length).toBe(
-    1,
-  );
+  expect(
+    [...serverStuff.server.clientIdToClient.values()].filter((c) => c.user?.id !== undefined)
+      .length,
+  ).toBe(1);
 });
