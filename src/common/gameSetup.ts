@@ -291,6 +291,8 @@ export class GameSetup {
     } else if (gameSetupChange.userApprovedOfGameSetup) {
       this.approve(this.userIdToUser.get(gameSetupChange.userApprovedOfGameSetup.userId)!);
 
+      this.history[this.history.length - 1] = gameSetupChange; // in case finalUserIds is different
+
       if (gameSetupChange.userApprovedOfGameSetup.approvedByEverybody) {
         if (gameSetupChange.userApprovedOfGameSetup.finalUserIds.length > 0) {
           this.finalUsers = gameSetupChange.userApprovedOfGameSetup.finalUserIds.map(

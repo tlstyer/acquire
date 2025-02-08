@@ -35,8 +35,7 @@ test('can construct', () => {
   expect(gameSetup.finalUsers).toBe(null);
   expect(gameSetup.history).toEqual([]);
 
-  gameSetupChangeVerifier.processChangesThenClearHistory();
-  gameSetupChangeVerifier.expectEqual();
+  gameSetupChangeVerifier.processChangesAndExpectEqualAndClearHistories();
 });
 
 describe('addUser', () => {
@@ -60,8 +59,7 @@ describe('addUser', () => {
       PB_GameSetupChange.create({ userAdded: { userId: 4 } }),
     ]);
 
-    gameSetupChangeVerifier.processChangesThenClearHistory();
-    gameSetupChangeVerifier.expectEqual();
+    gameSetupChangeVerifier.processChangesAndExpectEqualAndClearHistories();
   });
 
   test('duplicate users are rejected', () => {
@@ -80,8 +78,7 @@ describe('addUser', () => {
     expect(gameSetup.usersSet).toEqual(new Set([user1, user6]));
     expect(gameSetup.history).toEqual([PB_GameSetupChange.create({ userAdded: { userId: 6 } })]);
 
-    gameSetupChangeVerifier.processChangesThenClearHistory();
-    gameSetupChangeVerifier.expectEqual();
+    gameSetupChangeVerifier.processChangesAndExpectEqualAndClearHistories();
   });
 
   test('approvals are reset', () => {
@@ -101,8 +98,7 @@ describe('addUser', () => {
     expect(gameSetup.approvals).toEqual([false, false, false]);
     expect(gameSetup.finalUsers).toBe(null);
 
-    gameSetupChangeVerifier.processChangesThenClearHistory();
-    gameSetupChangeVerifier.expectEqual();
+    gameSetupChangeVerifier.processChangesAndExpectEqualAndClearHistories();
   });
 });
 
@@ -118,7 +114,7 @@ describe('removeUser', () => {
 
     gameSetup.addUser(user7);
     gameSetup.addUser(user2);
-    gameSetupChangeVerifier.processChangesThenClearHistory();
+    gameSetupChangeVerifier.processChangesAndExpectEqualAndClearHistories();
 
     gameSetup.removeUser(user7);
 
@@ -135,8 +131,7 @@ describe('removeUser', () => {
       PB_GameSetupChange.create({ userRemoved: { userId: 2 } }),
     ]);
 
-    gameSetupChangeVerifier.processChangesThenClearHistory();
-    gameSetupChangeVerifier.expectEqual();
+    gameSetupChangeVerifier.processChangesAndExpectEqualAndClearHistories();
   });
 
   test('cannot remove host', () => {
@@ -149,7 +144,7 @@ describe('removeUser', () => {
     const gameSetupChangeVerifier = new GameSetupChangeVerifier(gameSetup);
 
     gameSetup.addUser(user2);
-    gameSetupChangeVerifier.processChangesThenClearHistory();
+    gameSetupChangeVerifier.processChangesAndExpectEqualAndClearHistories();
 
     gameSetup.removeUser(user1);
 
@@ -157,8 +152,7 @@ describe('removeUser', () => {
     expect(gameSetup.usersSet).toEqual(new Set([user1, user2]));
     expect(gameSetup.history).toEqual([]);
 
-    gameSetupChangeVerifier.processChangesThenClearHistory();
-    gameSetupChangeVerifier.expectEqual();
+    gameSetupChangeVerifier.processChangesAndExpectEqualAndClearHistories();
   });
 
   test('approvals are reset', () => {
@@ -179,8 +173,7 @@ describe('removeUser', () => {
     expect(gameSetup.approvals).toEqual([false, false, false]);
     expect(gameSetup.finalUsers).toBe(null);
 
-    gameSetupChangeVerifier.processChangesThenClearHistory();
-    gameSetupChangeVerifier.expectEqual();
+    gameSetupChangeVerifier.processChangesAndExpectEqualAndClearHistories();
   });
 });
 
@@ -195,7 +188,7 @@ describe('approve', () => {
     const gameSetupChangeVerifier = new GameSetupChangeVerifier(gameSetup);
 
     gameSetup.addUser(user2);
-    gameSetupChangeVerifier.processChangesThenClearHistory();
+    gameSetupChangeVerifier.processChangesAndExpectEqualAndClearHistories();
 
     expect(gameSetup.approvals).toEqual([false, false]);
     expect(gameSetup.finalUsers).toBe(null);
@@ -206,8 +199,7 @@ describe('approve', () => {
     expect(gameSetup.finalUsers).toBe(null);
     expect(gameSetup.history).toEqual([]);
 
-    gameSetupChangeVerifier.processChangesThenClearHistory();
-    gameSetupChangeVerifier.expectEqual();
+    gameSetupChangeVerifier.processChangesAndExpectEqualAndClearHistories();
   });
 
   test('cannot approve if game is not full', () => {
@@ -220,7 +212,7 @@ describe('approve', () => {
     const gameSetupChangeVerifier = new GameSetupChangeVerifier(gameSetup);
 
     gameSetup.addUser(user2);
-    gameSetupChangeVerifier.processChangesThenClearHistory();
+    gameSetupChangeVerifier.processChangesAndExpectEqualAndClearHistories();
 
     expect(gameSetup.approvals).toEqual([false, false, false]);
     expect(gameSetup.finalUsers).toBe(null);
@@ -231,8 +223,7 @@ describe('approve', () => {
     expect(gameSetup.finalUsers).toBe(null);
     expect(gameSetup.history).toEqual([]);
 
-    gameSetupChangeVerifier.processChangesThenClearHistory();
-    gameSetupChangeVerifier.expectEqual();
+    gameSetupChangeVerifier.processChangesAndExpectEqualAndClearHistories();
   });
 
   test('cannot approve if already approved', () => {
@@ -246,7 +237,7 @@ describe('approve', () => {
 
     gameSetup.addUser(user2);
     gameSetup.approve(user2);
-    gameSetupChangeVerifier.processChangesThenClearHistory();
+    gameSetupChangeVerifier.processChangesAndExpectEqualAndClearHistories();
 
     expect(gameSetup.approvals).toEqual([false, true]);
     expect(gameSetup.finalUsers).toBe(null);
@@ -257,8 +248,7 @@ describe('approve', () => {
     expect(gameSetup.finalUsers).toBe(null);
     expect(gameSetup.history).toEqual([]);
 
-    gameSetupChangeVerifier.processChangesThenClearHistory();
-    gameSetupChangeVerifier.expectEqual();
+    gameSetupChangeVerifier.processChangesAndExpectEqualAndClearHistories();
   });
 
   test('can approve', () => {
@@ -271,7 +261,7 @@ describe('approve', () => {
     const gameSetupChangeVerifier = new GameSetupChangeVerifier(gameSetup);
 
     gameSetup.addUser(user2);
-    gameSetupChangeVerifier.processChangesThenClearHistory();
+    gameSetupChangeVerifier.processChangesAndExpectEqualAndClearHistories();
 
     expect(gameSetup.approvals).toEqual([false, false]);
     expect(gameSetup.finalUsers).toBe(null);
@@ -284,8 +274,7 @@ describe('approve', () => {
       PB_GameSetupChange.create({ userApprovedOfGameSetup: { userId: 2 } }),
     ]);
 
-    gameSetupChangeVerifier.processChangesThenClearHistory();
-    gameSetupChangeVerifier.expectEqual();
+    gameSetupChangeVerifier.processChangesAndExpectEqualAndClearHistories();
   });
 
   describe('finalUserIds and finalUsernames are set when everybody approves', () => {
@@ -307,7 +296,7 @@ describe('approve', () => {
         gameSetup.approve(user1);
         gameSetup.approve(user2);
         gameSetup.approve(user3);
-        gameSetupChangeVerifier.processChangesThenClearHistory();
+        gameSetupChangeVerifier.processChangesAndExpectEqualAndClearHistories();
 
         gameSetup.approve(user4);
         expect(gameSetup.history).toEqual([
@@ -324,8 +313,7 @@ describe('approve', () => {
 
         expect(gameSetup.finalUsers).toEqual([user3, user1, user4, user2]);
 
-        gameSetupChangeVerifier.processChangesThenClearHistory();
-        gameSetupChangeVerifier.expectEqual();
+        gameSetupChangeVerifier.processChangesAndExpectEqualAndClearHistories();
       });
 
       test('finalUserIds is excluded from PB_GameSetupChange when user order is the same', () => {
@@ -341,7 +329,7 @@ describe('approve', () => {
 
         gameSetup.addUser(user2);
         gameSetup.approve(user1);
-        gameSetupChangeVerifier.processChangesThenClearHistory();
+        gameSetupChangeVerifier.processChangesAndExpectEqualAndClearHistories();
         gameSetup.approve(user2);
         expect(gameSetup.history).toEqual([
           PB_GameSetupChange.create({
@@ -356,8 +344,7 @@ describe('approve', () => {
 
         expect(gameSetup.finalUsers).toBe(gameSetup.users);
 
-        gameSetupChangeVerifier.processChangesThenClearHistory();
-        gameSetupChangeVerifier.expectEqual();
+        gameSetupChangeVerifier.processChangesAndExpectEqualAndClearHistories();
       });
     });
 
@@ -377,7 +364,7 @@ describe('approve', () => {
         gameSetup.approve(user1);
         gameSetup.approve(user3);
         gameSetup.approve(user4);
-        gameSetupChangeVerifier.processChangesThenClearHistory();
+        gameSetupChangeVerifier.processChangesAndExpectEqualAndClearHistories();
         gameSetup.approve(user2);
         expect(gameSetup.history).toEqual([
           PB_GameSetupChange.create({
@@ -392,8 +379,7 @@ describe('approve', () => {
 
         expect(gameSetup.finalUsers).toEqual([user1, user2, user3, user4]);
 
-        gameSetupChangeVerifier.processChangesThenClearHistory();
-        gameSetupChangeVerifier.expectEqual();
+        gameSetupChangeVerifier.processChangesAndExpectEqualAndClearHistories();
       });
     });
 
@@ -415,7 +401,7 @@ describe('approve', () => {
         gameSetup.approve(user2);
         gameSetup.approve(user3);
         gameSetup.approve(user4);
-        gameSetupChangeVerifier.processChangesThenClearHistory();
+        gameSetupChangeVerifier.processChangesAndExpectEqualAndClearHistories();
         gameSetup.approve(user1);
         expect(gameSetup.history).toEqual([
           PB_GameSetupChange.create({
@@ -431,8 +417,7 @@ describe('approve', () => {
 
         expect(gameSetup.finalUsers).toEqual([user2, user3, user4, user1]);
 
-        gameSetupChangeVerifier.processChangesThenClearHistory();
-        gameSetupChangeVerifier.expectEqual();
+        gameSetupChangeVerifier.processChangesAndExpectEqualAndClearHistories();
       });
 
       test('teams and players within teams are randomized when gameMode is Teams2vs2vs2', () => {
@@ -456,7 +441,7 @@ describe('approve', () => {
         gameSetup.approve(user2);
         gameSetup.approve(user4);
         gameSetup.approve(user1);
-        gameSetupChangeVerifier.processChangesThenClearHistory();
+        gameSetupChangeVerifier.processChangesAndExpectEqualAndClearHistories();
         gameSetup.approve(user5);
         expect(gameSetup.history).toEqual([
           PB_GameSetupChange.create({
@@ -472,8 +457,7 @@ describe('approve', () => {
 
         expect(gameSetup.finalUsers).toEqual([user4, user3, user2, user1, user6, user5]);
 
-        gameSetupChangeVerifier.processChangesThenClearHistory();
-        gameSetupChangeVerifier.expectEqual();
+        gameSetupChangeVerifier.processChangesAndExpectEqualAndClearHistories();
       });
 
       test('teams and players within teams are randomized when gameMode is Teams3vs3', () => {
@@ -497,7 +481,7 @@ describe('approve', () => {
         gameSetup.approve(user3);
         gameSetup.approve(user6);
         gameSetup.approve(user1);
-        gameSetupChangeVerifier.processChangesThenClearHistory();
+        gameSetupChangeVerifier.processChangesAndExpectEqualAndClearHistories();
         gameSetup.approve(user5);
         expect(gameSetup.history).toEqual([
           PB_GameSetupChange.create({
@@ -513,8 +497,7 @@ describe('approve', () => {
 
         expect(gameSetup.finalUsers).toEqual([user5, user4, user1, user6, user3, user2]);
 
-        gameSetupChangeVerifier.processChangesThenClearHistory();
-        gameSetupChangeVerifier.expectEqual();
+        gameSetupChangeVerifier.processChangesAndExpectEqualAndClearHistories();
       });
 
       test('finalUserIds is excluded from PB_GameSetupChange when user order is the same', () => {
@@ -534,7 +517,7 @@ describe('approve', () => {
         gameSetup.approve(user2);
         gameSetup.approve(user3);
         gameSetup.approve(user4);
-        gameSetupChangeVerifier.processChangesThenClearHistory();
+        gameSetupChangeVerifier.processChangesAndExpectEqualAndClearHistories();
         gameSetup.approve(user1);
         expect(gameSetup.history).toEqual([
           PB_GameSetupChange.create({
@@ -549,8 +532,7 @@ describe('approve', () => {
 
         expect(gameSetup.finalUsers).toBe(gameSetup.users);
 
-        gameSetupChangeVerifier.processChangesThenClearHistory();
-        gameSetupChangeVerifier.expectEqual();
+        gameSetupChangeVerifier.processChangesAndExpectEqualAndClearHistories();
       });
     });
   });
@@ -581,8 +563,7 @@ describe('changeGameMode', () => {
     expect(gameSetup.gameMode).toBe(PB_GameMode.TEAMS_2_VS_2);
     expect(gameSetup.history).toEqual([]);
 
-    gameSetupChangeVerifier.processChangesThenClearHistory();
-    gameSetupChangeVerifier.expectEqual();
+    gameSetupChangeVerifier.processChangesAndExpectEqualAndClearHistories();
   });
 
   test('cannot change to the same mode', () => {
@@ -595,7 +576,7 @@ describe('changeGameMode', () => {
     const gameSetupChangeVerifier = new GameSetupChangeVerifier(gameSetup);
 
     gameSetup.addUser(user2);
-    gameSetupChangeVerifier.processChangesThenClearHistory();
+    gameSetupChangeVerifier.processChangesAndExpectEqualAndClearHistories();
 
     expect(gameSetup.gameMode).toBe(PB_GameMode.TEAMS_2_VS_2);
     expect(gameSetup.users).toEqual([user1, user2, null, null]);
@@ -606,8 +587,7 @@ describe('changeGameMode', () => {
     expect(gameSetup.users).toEqual([user1, user2, null, null]);
     expect(gameSetup.history).toEqual([]);
 
-    gameSetupChangeVerifier.processChangesThenClearHistory();
-    gameSetupChangeVerifier.expectEqual();
+    gameSetupChangeVerifier.processChangesAndExpectEqualAndClearHistories();
   });
 
   test('cannot change to a mode where fewer players are needed than are currently in the game', () => {
@@ -623,7 +603,7 @@ describe('changeGameMode', () => {
     gameSetup.addUser(user3);
     gameSetup.addUser(user4);
     gameSetup.removeUser(user3);
-    gameSetupChangeVerifier.processChangesThenClearHistory();
+    gameSetupChangeVerifier.processChangesAndExpectEqualAndClearHistories();
 
     expect(gameSetup.gameMode).toBe(PB_GameMode.SINGLES_4);
     expect(gameSetup.users).toEqual([user1, user2, null, user4]);
@@ -634,8 +614,7 @@ describe('changeGameMode', () => {
     expect(gameSetup.users).toEqual([user1, user2, null, user4]);
     expect(gameSetup.history).toEqual([]);
 
-    gameSetupChangeVerifier.processChangesThenClearHistory();
-    gameSetupChangeVerifier.expectEqual();
+    gameSetupChangeVerifier.processChangesAndExpectEqualAndClearHistories();
   });
 
   test('can change mode', () => {
@@ -648,7 +627,7 @@ describe('changeGameMode', () => {
     const gameSetupChangeVerifier = new GameSetupChangeVerifier(gameSetup);
 
     gameSetup.addUser(user2);
-    gameSetupChangeVerifier.processChangesThenClearHistory();
+    gameSetupChangeVerifier.processChangesAndExpectEqualAndClearHistories();
 
     expect(gameSetup.gameMode).toBe(PB_GameMode.TEAMS_2_VS_2);
     expect(gameSetup.users).toEqual([user1, user2, null, null]);
@@ -661,8 +640,7 @@ describe('changeGameMode', () => {
       PB_GameSetupChange.create({ gameModeChanged: { gameMode: PB_GameMode.SINGLES_4 } }),
     ]);
 
-    gameSetupChangeVerifier.processChangesThenClearHistory();
-    gameSetupChangeVerifier.expectEqual();
+    gameSetupChangeVerifier.processChangesAndExpectEqualAndClearHistories();
   });
 
   test('spots added for added player positions', () => {
@@ -675,7 +653,7 @@ describe('changeGameMode', () => {
     const gameSetupChangeVerifier = new GameSetupChangeVerifier(gameSetup);
 
     gameSetup.addUser(user2);
-    gameSetupChangeVerifier.processChangesThenClearHistory();
+    gameSetupChangeVerifier.processChangesAndExpectEqualAndClearHistories();
 
     expect(gameSetup.gameMode).toBe(PB_GameMode.SINGLES_2);
     expect(gameSetup.users).toEqual([user1, user2]);
@@ -688,8 +666,7 @@ describe('changeGameMode', () => {
       PB_GameSetupChange.create({ gameModeChanged: { gameMode: PB_GameMode.SINGLES_4 } }),
     ]);
 
-    gameSetupChangeVerifier.processChangesThenClearHistory();
-    gameSetupChangeVerifier.expectEqual();
+    gameSetupChangeVerifier.processChangesAndExpectEqualAndClearHistories();
   });
 
   test('spots removed for removed player positions', () => {
@@ -702,7 +679,7 @@ describe('changeGameMode', () => {
     const gameSetupChangeVerifier = new GameSetupChangeVerifier(gameSetup);
 
     gameSetup.addUser(user2);
-    gameSetupChangeVerifier.processChangesThenClearHistory();
+    gameSetupChangeVerifier.processChangesAndExpectEqualAndClearHistories();
 
     expect(gameSetup.gameMode).toBe(PB_GameMode.SINGLES_4);
     expect(gameSetup.users).toEqual([user1, user2, null, null]);
@@ -715,8 +692,7 @@ describe('changeGameMode', () => {
       PB_GameSetupChange.create({ gameModeChanged: { gameMode: PB_GameMode.SINGLES_2 } }),
     ]);
 
-    gameSetupChangeVerifier.processChangesThenClearHistory();
-    gameSetupChangeVerifier.expectEqual();
+    gameSetupChangeVerifier.processChangesAndExpectEqualAndClearHistories();
   });
 
   test('spots removed and positions shifted for removed player positions', () => {
@@ -735,7 +711,7 @@ describe('changeGameMode', () => {
     gameSetup.addUser(user6);
     gameSetup.removeUser(user2);
     gameSetup.removeUser(user4);
-    gameSetupChangeVerifier.processChangesThenClearHistory();
+    gameSetupChangeVerifier.processChangesAndExpectEqualAndClearHistories();
 
     expect(gameSetup.gameMode).toBe(PB_GameMode.TEAMS_3_VS_3);
     expect(gameSetup.users).toEqual([user1, null, user3, null, user5, user6]);
@@ -748,8 +724,7 @@ describe('changeGameMode', () => {
       PB_GameSetupChange.create({ gameModeChanged: { gameMode: PB_GameMode.TEAMS_2_VS_2 } }),
     ]);
 
-    gameSetupChangeVerifier.processChangesThenClearHistory();
-    gameSetupChangeVerifier.expectEqual();
+    gameSetupChangeVerifier.processChangesAndExpectEqualAndClearHistories();
   });
 
   test('player arrangement mode changed to RandomOrder from SpecifyTeams when switching to a Singles game', () => {
@@ -774,8 +749,7 @@ describe('changeGameMode', () => {
       PB_GameSetupChange.create({ gameModeChanged: { gameMode: PB_GameMode.SINGLES_4 } }),
     ]);
 
-    gameSetupChangeVerifier.processChangesThenClearHistory();
-    gameSetupChangeVerifier.expectEqual();
+    gameSetupChangeVerifier.processChangesAndExpectEqualAndClearHistories();
   });
 
   test('approvals are reset', () => {
@@ -795,8 +769,7 @@ describe('changeGameMode', () => {
     expect(gameSetup.approvals).toEqual([false, false, false, false]);
     expect(gameSetup.finalUsers).toBe(null);
 
-    gameSetupChangeVerifier.processChangesThenClearHistory();
-    gameSetupChangeVerifier.expectEqual();
+    gameSetupChangeVerifier.processChangesAndExpectEqualAndClearHistories();
   });
 });
 
@@ -827,8 +800,7 @@ describe('changePlayerArrangementMode', () => {
     expect(gameSetup.playerArrangementMode).toBe(PB_PlayerArrangementMode.RANDOM_ORDER);
     expect(gameSetup.history).toEqual([]);
 
-    gameSetupChangeVerifier.processChangesThenClearHistory();
-    gameSetupChangeVerifier.expectEqual();
+    gameSetupChangeVerifier.processChangesAndExpectEqualAndClearHistories();
   });
 
   test('cannot change to the same mode', () => {
@@ -847,8 +819,7 @@ describe('changePlayerArrangementMode', () => {
     expect(gameSetup.playerArrangementMode).toBe(PB_PlayerArrangementMode.SPECIFY_TEAMS);
     expect(gameSetup.history).toEqual([]);
 
-    gameSetupChangeVerifier.processChangesThenClearHistory();
-    gameSetupChangeVerifier.expectEqual();
+    gameSetupChangeVerifier.processChangesAndExpectEqualAndClearHistories();
   });
 
   test('cannot change to SpecifyTeams when game is not a teams game', () => {
@@ -867,8 +838,7 @@ describe('changePlayerArrangementMode', () => {
     expect(gameSetup.playerArrangementMode).toBe(PB_PlayerArrangementMode.RANDOM_ORDER);
     expect(gameSetup.history).toEqual([]);
 
-    gameSetupChangeVerifier.processChangesThenClearHistory();
-    gameSetupChangeVerifier.expectEqual();
+    gameSetupChangeVerifier.processChangesAndExpectEqualAndClearHistories();
   });
 
   test('can change mode', () => {
@@ -893,8 +863,7 @@ describe('changePlayerArrangementMode', () => {
       }),
     ]);
 
-    gameSetupChangeVerifier.processChangesThenClearHistory();
-    gameSetupChangeVerifier.expectEqual();
+    gameSetupChangeVerifier.processChangesAndExpectEqualAndClearHistories();
   });
 
   test('approvals are reset', () => {
@@ -914,8 +883,7 @@ describe('changePlayerArrangementMode', () => {
     expect(gameSetup.approvals).toEqual([false, false, false, false]);
     expect(gameSetup.finalUsers).toBe(null);
 
-    gameSetupChangeVerifier.processChangesThenClearHistory();
-    gameSetupChangeVerifier.expectEqual();
+    gameSetupChangeVerifier.processChangesAndExpectEqualAndClearHistories();
   });
 });
 
@@ -932,7 +900,7 @@ describe('swapPositions', () => {
     gameSetup.addUser(user2);
     gameSetup.addUser(user3);
     gameSetup.addUser(user4);
-    gameSetupChangeVerifier.processChangesThenClearHistory();
+    gameSetupChangeVerifier.processChangesAndExpectEqualAndClearHistories();
 
     expect(gameSetup.users).toEqual([user1, user2, user3, user4]);
 
@@ -945,8 +913,7 @@ describe('swapPositions', () => {
     expect(gameSetup.users).toEqual([user1, user2, user3, user4]);
     expect(gameSetup.history).toEqual([]);
 
-    gameSetupChangeVerifier.processChangesThenClearHistory();
-    gameSetupChangeVerifier.expectEqual();
+    gameSetupChangeVerifier.processChangesAndExpectEqualAndClearHistories();
   });
 
   test('cannot swap position with itself', () => {
@@ -959,7 +926,7 @@ describe('swapPositions', () => {
     const gameSetupChangeVerifier = new GameSetupChangeVerifier(gameSetup);
 
     gameSetup.addUser(user2);
-    gameSetupChangeVerifier.processChangesThenClearHistory();
+    gameSetupChangeVerifier.processChangesAndExpectEqualAndClearHistories();
 
     expect(gameSetup.users).toEqual([user1, user2, null]);
 
@@ -973,8 +940,7 @@ describe('swapPositions', () => {
     expect(gameSetup.users).toEqual([user1, user2, null]);
     expect(gameSetup.history).toEqual([]);
 
-    gameSetupChangeVerifier.processChangesThenClearHistory();
-    gameSetupChangeVerifier.expectEqual();
+    gameSetupChangeVerifier.processChangesAndExpectEqualAndClearHistories();
   });
 
   test('cannot swap empty positions', () => {
@@ -993,8 +959,7 @@ describe('swapPositions', () => {
     expect(gameSetup.users).toEqual([user1, null, null]);
     expect(gameSetup.history).toEqual([]);
 
-    gameSetupChangeVerifier.processChangesThenClearHistory();
-    gameSetupChangeVerifier.expectEqual();
+    gameSetupChangeVerifier.processChangesAndExpectEqualAndClearHistories();
   });
 
   test('can swap positions', () => {
@@ -1009,7 +974,7 @@ describe('swapPositions', () => {
     gameSetup.addUser(user2);
     gameSetup.addUser(user3);
     gameSetup.addUser(user4);
-    gameSetupChangeVerifier.processChangesThenClearHistory();
+    gameSetupChangeVerifier.processChangesAndExpectEqualAndClearHistories();
 
     expect(gameSetup.users).toEqual([user1, user2, user3, user4]);
     gameSetup.swapPositions(0, 1);
@@ -1017,23 +982,21 @@ describe('swapPositions', () => {
     expect(gameSetup.history).toEqual([
       PB_GameSetupChange.create({ positionsSwapped: { position1: 0, position2: 1 } }),
     ]);
-    gameSetupChangeVerifier.processChangesThenClearHistory();
+    gameSetupChangeVerifier.processChangesAndExpectEqualAndClearHistories();
 
     gameSetup.swapPositions(2, 3);
     expect(gameSetup.users).toEqual([user2, user1, user4, user3]);
     expect(gameSetup.history).toEqual([
       PB_GameSetupChange.create({ positionsSwapped: { position1: 2, position2: 3 } }),
     ]);
-    gameSetupChangeVerifier.processChangesThenClearHistory();
+    gameSetupChangeVerifier.processChangesAndExpectEqualAndClearHistories();
 
     gameSetup.swapPositions(0, 3);
     expect(gameSetup.users).toEqual([user3, user1, user4, user2]);
     expect(gameSetup.history).toEqual([
       PB_GameSetupChange.create({ positionsSwapped: { position1: 0, position2: 3 } }),
     ]);
-    gameSetupChangeVerifier.processChangesThenClearHistory();
-
-    gameSetupChangeVerifier.expectEqual();
+    gameSetupChangeVerifier.processChangesAndExpectEqualAndClearHistories();
   });
 
   test('approvals are reset', () => {
@@ -1056,8 +1019,7 @@ describe('swapPositions', () => {
     expect(gameSetup.approvals).toEqual([false, false, false, false]);
     expect(gameSetup.finalUsers).toBe(null);
 
-    gameSetupChangeVerifier.processChangesThenClearHistory();
-    gameSetupChangeVerifier.expectEqual();
+    gameSetupChangeVerifier.processChangesAndExpectEqualAndClearHistories();
   });
 });
 
@@ -1074,7 +1036,7 @@ describe('kickUser', () => {
     gameSetup.addUser(user2);
     gameSetup.addUser(user3);
     gameSetup.addUser(user4);
-    gameSetupChangeVerifier.processChangesThenClearHistory();
+    gameSetupChangeVerifier.processChangesAndExpectEqualAndClearHistories();
 
     expect(gameSetup.users).toEqual([user1, user2, user3, user4]);
 
@@ -1090,8 +1052,7 @@ describe('kickUser', () => {
     expect(gameSetup.users).toEqual([user1, user2, user3, user4]);
     expect(gameSetup.history).toEqual([]);
 
-    gameSetupChangeVerifier.processChangesThenClearHistory();
-    gameSetupChangeVerifier.expectEqual();
+    gameSetupChangeVerifier.processChangesAndExpectEqualAndClearHistories();
   });
 
   test('cannot kick user that is not in the game', () => {
@@ -1105,7 +1066,7 @@ describe('kickUser', () => {
 
     gameSetup.addUser(user2);
     gameSetup.addUser(user3);
-    gameSetupChangeVerifier.processChangesThenClearHistory();
+    gameSetupChangeVerifier.processChangesAndExpectEqualAndClearHistories();
 
     expect(gameSetup.users).toEqual([user1, user2, user3, null]);
 
@@ -1114,8 +1075,7 @@ describe('kickUser', () => {
     expect(gameSetup.users).toEqual([user1, user2, user3, null]);
     expect(gameSetup.history).toEqual([]);
 
-    gameSetupChangeVerifier.processChangesThenClearHistory();
-    gameSetupChangeVerifier.expectEqual();
+    gameSetupChangeVerifier.processChangesAndExpectEqualAndClearHistories();
   });
 
   test('cannot kick the host', () => {
@@ -1129,7 +1089,7 @@ describe('kickUser', () => {
 
     gameSetup.addUser(user2);
     gameSetup.addUser(user3);
-    gameSetupChangeVerifier.processChangesThenClearHistory();
+    gameSetupChangeVerifier.processChangesAndExpectEqualAndClearHistories();
 
     expect(gameSetup.users).toEqual([user1, user2, user3, null]);
 
@@ -1138,8 +1098,7 @@ describe('kickUser', () => {
     expect(gameSetup.users).toEqual([user1, user2, user3, null]);
     expect(gameSetup.history).toEqual([]);
 
-    gameSetupChangeVerifier.processChangesThenClearHistory();
-    gameSetupChangeVerifier.expectEqual();
+    gameSetupChangeVerifier.processChangesAndExpectEqualAndClearHistories();
   });
 
   test('can kick user', () => {
@@ -1153,7 +1112,7 @@ describe('kickUser', () => {
 
     gameSetup.addUser(user2);
     gameSetup.addUser(user3);
-    gameSetupChangeVerifier.processChangesThenClearHistory();
+    gameSetupChangeVerifier.processChangesAndExpectEqualAndClearHistories();
 
     expect(gameSetup.users).toEqual([user1, user2, user3, null]);
     expect(gameSetup.usersSet).toEqual(new Set([user1, user2, user3]));
@@ -1164,8 +1123,7 @@ describe('kickUser', () => {
     expect(gameSetup.usersSet).toEqual(new Set([user1, user3]));
     expect(gameSetup.history).toEqual([PB_GameSetupChange.create({ userKicked: { userId: 2 } })]);
 
-    gameSetupChangeVerifier.processChangesThenClearHistory();
-    gameSetupChangeVerifier.expectEqual();
+    gameSetupChangeVerifier.processChangesAndExpectEqualAndClearHistories();
   });
 
   test('approvals are reset', () => {
@@ -1187,8 +1145,7 @@ describe('kickUser', () => {
     expect(gameSetup.approvals).toEqual([false, false, false, false]);
     expect(gameSetup.finalUsers).toBe(null);
 
-    gameSetupChangeVerifier.processChangesThenClearHistory();
-    gameSetupChangeVerifier.expectEqual();
+    gameSetupChangeVerifier.processChangesAndExpectEqualAndClearHistories();
   });
 });
 
@@ -1205,8 +1162,7 @@ describe('processChange', () => {
     gameSetup.processChange(PB_GameSetupChange.create());
     expect(gameSetup.history).toEqual([]);
 
-    gameSetupChangeVerifier.processChangesThenClearHistory();
-    gameSetupChangeVerifier.expectEqual();
+    gameSetupChangeVerifier.processChangesAndExpectEqualAndClearHistories();
   });
 
   test('changes are processed', () => {
@@ -1255,8 +1211,7 @@ describe('processChange', () => {
     expect(gameSetup.approvals).toEqual([true, true, true, true]);
     expect(gameSetup.finalUsers).toBe(gameSetup.users);
 
-    gameSetupChangeVerifier.processChangesThenClearHistory();
-    gameSetupChangeVerifier.expectEqual();
+    gameSetupChangeVerifier.processChangesAndExpectEqualAndClearHistories();
   });
 });
 
@@ -1282,26 +1237,27 @@ class GameSetupChangeVerifier {
     );
   }
 
-  processChangesThenClearHistory() {
+  processChangesAndExpectEqualAndClearHistories() {
     for (const gameSetupChange of this.initialGameSetup.history) {
       this.gameSetup.processChange(gameSetupChange);
       this.gameSetupLite.processChange(gameSetupChange);
+
+      expectGameSetupLiteToEqualGameSetup(this.gameSetupLite, this.gameSetup);
     }
+
+    expect(this.gameSetup).toEqual(this.initialGameSetup);
+    expectGameSetupLiteToEqualGameSetup(this.gameSetupLite, this.initialGameSetup);
 
     this.initialGameSetup.clearHistory();
     this.gameSetup.clearHistory();
   }
+}
 
-  expectEqual() {
-    expect(this.gameSetup).toEqual(this.initialGameSetup);
-
-    expect(this.gameSetupLite.gameMode).toEqual(this.initialGameSetup.gameMode);
-    expect(this.gameSetupLite.playerArrangementMode).toEqual(
-      this.initialGameSetup.playerArrangementMode,
-    );
-    expect(this.gameSetupLite.hostUser).toEqual(this.initialGameSetup.hostUser);
-    expect(this.gameSetupLite.users).toEqual(this.initialGameSetup.users);
-    expect(this.gameSetupLite.approvals).toEqual(this.initialGameSetup.approvals);
-    expect(this.gameSetupLite.finalUsers).toEqual(this.initialGameSetup.finalUsers);
-  }
+function expectGameSetupLiteToEqualGameSetup(gameSetupLite: GameSetupLite, gameSetup: GameSetup) {
+  expect(gameSetupLite.gameMode).toEqual(gameSetup.gameMode);
+  expect(gameSetupLite.playerArrangementMode).toEqual(gameSetup.playerArrangementMode);
+  expect(gameSetupLite.hostUser).toEqual(gameSetup.hostUser);
+  expect(gameSetupLite.users).toEqual(gameSetup.users);
+  expect(gameSetupLite.approvals).toEqual(gameSetup.approvals);
+  expect(gameSetupLite.finalUsers).toEqual(gameSetup.finalUsers);
 }
