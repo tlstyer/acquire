@@ -2,6 +2,7 @@ import seedrandom from 'seedrandom';
 import { describe, expect, test } from 'vitest';
 import { user1, user2, user3, user4, user5, user6, user7 } from './clientAndServerTests/common';
 import { GameSetup } from './gameSetup';
+import { createGameSetupLite, type GameSetupLite } from './gameSetupLite';
 import { PB_GameMode, PB_GameSetupChange, PB_PlayerArrangementMode } from './pb';
 
 const dummyApprovals = [true];
@@ -15,10 +16,6 @@ const userIdToUser = new Map([
   [6, user6],
   [7, user7],
 ]);
-
-function expectEqualGameSetups(gameSetup1: GameSetup, gameSetup2: GameSetup) {
-  expect(gameSetup2).toEqual(gameSetup1);
-}
 
 test('can construct', () => {
   const gameSetup = new GameSetup(
@@ -1265,6 +1262,7 @@ describe('processChange', () => {
 
 class GameSetupChangeVerifier {
   private gameSetup: GameSetup;
+  private gameSetupLite: GameSetupLite;
 
   constructor(private initialGameSetup: GameSetup) {
     this.gameSetup = new GameSetup(
@@ -1273,11 +1271,21 @@ class GameSetupChangeVerifier {
       initialGameSetup.hostUser,
       userIdToUser,
     );
+
+    this.gameSetupLite = createGameSetupLite(
+      initialGameSetup.gameMode,
+      initialGameSetup.playerArrangementMode,
+      initialGameSetup.hostUser,
+      initialGameSetup.users,
+      initialGameSetup.approvals,
+      userIdToUser,
+    );
   }
 
   processChangesThenClearHistory() {
     for (const gameSetupChange of this.initialGameSetup.history) {
       this.gameSetup.processChange(gameSetupChange);
+      this.gameSetupLite.processChange(gameSetupChange);
     }
 
     this.initialGameSetup.clearHistory();
@@ -1285,6 +1293,15 @@ class GameSetupChangeVerifier {
   }
 
   expectEqual() {
-    expectEqualGameSetups(this.gameSetup, this.initialGameSetup);
+    expect(this.gameSetup).toEqual(this.initialGameSetup);
+
+    expect(this.gameSetupLite.gameMode).toEqual(this.initialGameSetup.gameMode);
+    expect(this.gameSetupLite.playerArrangementMode).toEqual(
+      this.initialGameSetup.playerArrangementMode,
+    );
+    expect(this.gameSetupLite.hostUser).toEqual(this.initialGameSetup.hostUser);
+    expect(this.gameSetupLite.users).toEqual(this.initialGameSetup.users);
+    expect(this.gameSetupLite.approvals).toEqual(this.initialGameSetup.approvals);
+    expect(this.gameSetupLite.finalUsers).toEqual(this.initialGameSetup.finalUsers);
   }
 }

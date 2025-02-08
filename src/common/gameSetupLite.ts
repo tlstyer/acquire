@@ -12,7 +12,7 @@ export function createGameSetupLite(
   approvals: boolean[],
   userIdToUser: Map<number, User>,
 ) {
-  let finalUsers: User[] | undefined;
+  let finalUsers: User[] | null = null;
 
   function processChange(gameSetupChange: PB_GameSetupChange) {
     if (gameSetupChange.userAdded) {
