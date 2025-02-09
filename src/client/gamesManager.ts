@@ -10,12 +10,11 @@ import {
   PB_PlayerArrangementMode,
 } from '../common/pb';
 import { User } from '../common/user';
-import { type ClientCommunication } from './clientCommunication';
 
 export type GamesManager = ReturnType<typeof createGamesManager>;
 
 export function createGamesManager(
-  clientCommunication: ClientCommunication,
+  sendMessage: (message: Uint8Array) => void,
   userIdToUser: Map<number, User>,
 ) {
   const gameIdToGameManager = new Map<string, GameManager>();
@@ -28,7 +27,7 @@ export function createGamesManager(
 
     let gameManager = gameIdToGameManager.get(lastRequestedGameId);
     if (gameManager === undefined) {
-      gameManager = createGameManager(clientCommunication, userIdToUser, logTime, gameNumber);
+      gameManager = createGameManager(sendMessage, userIdToUser, logTime, gameNumber);
       gameIdToGameManager.set(lastRequestedGameId, gameManager);
     }
 
@@ -69,7 +68,7 @@ export function createGamesManager(
 export type GameManager = ReturnType<typeof createGameManager>;
 
 export function createGameManager(
-  clientCommunication: ClientCommunication,
+  sendMessage: (message: Uint8Array) => void,
   userIdToUser: Map<number, User>,
   logTime: number,
   gameNumber: number,
@@ -98,7 +97,7 @@ export function createGameManager(
   function connect() {
     setStatus(GameManagerStatus.Connecting);
 
-    clientCommunication.sendMessage(getConnectMessage());
+    sendMessage(getConnectMessage());
   }
 
   function getConnectMessage() {
@@ -201,7 +200,7 @@ export function createGameManager(
   }
 
   function sitDown() {
-    clientCommunication.sendMessage(
+    sendMessage(
       PB_MessageToServer.toBinary({
         game: {
           gameSetupAction: {
@@ -214,7 +213,7 @@ export function createGameManager(
   }
 
   function standUp() {
-    clientCommunication.sendMessage(
+    sendMessage(
       PB_MessageToServer.toBinary({
         game: {
           gameSetupAction: {
@@ -227,7 +226,7 @@ export function createGameManager(
   }
 
   function approve() {
-    clientCommunication.sendMessage(
+    sendMessage(
       PB_MessageToServer.toBinary({
         game: {
           gameSetupAction: {
@@ -240,7 +239,7 @@ export function createGameManager(
   }
 
   function changeGameMode(gameMode: PB_GameMode) {
-    clientCommunication.sendMessage(
+    sendMessage(
       PB_MessageToServer.toBinary({
         game: {
           gameSetupAction: {
@@ -255,7 +254,7 @@ export function createGameManager(
   }
 
   function changePlayerArrangementMode(playerArrangementMode: PB_PlayerArrangementMode) {
-    clientCommunication.sendMessage(
+    sendMessage(
       PB_MessageToServer.toBinary({
         game: {
           gameSetupAction: {
@@ -270,7 +269,7 @@ export function createGameManager(
   }
 
   function swapPositions(position1: number, position2: number) {
-    clientCommunication.sendMessage(
+    sendMessage(
       PB_MessageToServer.toBinary({
         game: {
           gameSetupAction: {
@@ -286,7 +285,7 @@ export function createGameManager(
   }
 
   function kickUser(userId: number) {
-    clientCommunication.sendMessage(
+    sendMessage(
       PB_MessageToServer.toBinary({
         game: {
           gameSetupAction: {

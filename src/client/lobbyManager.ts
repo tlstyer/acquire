@@ -19,13 +19,12 @@ import {
   PB_PlayerArrangementMode,
 } from '../common/pb';
 import { User } from '../common/user';
-import { type ClientCommunication } from './clientCommunication';
 import { GameStatus } from './helpers';
 
 export type LobbyManager = ReturnType<typeof createLobbyManager>;
 
 export function createLobbyManager(
-  clientCommunication: ClientCommunication,
+  sendMessage: (message: Uint8Array) => void,
   userIdToUser: Map<number, User>,
 ) {
   let lastEventIndex = 0;
@@ -47,7 +46,7 @@ export function createLobbyManager(
     setConnected(false);
     setCreatedGameNumber(undefined);
 
-    clientCommunication.sendMessage(getConnectMessage());
+    sendMessage(getConnectMessage());
   }
 
   function getConnectMessage() {
@@ -61,7 +60,7 @@ export function createLobbyManager(
   }
 
   function createGame(gameMode: PB_GameMode) {
-    clientCommunication.sendMessage(
+    sendMessage(
       PB_MessageToServer.toBinary({
         lobby: {
           createGame: {

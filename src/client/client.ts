@@ -18,6 +18,8 @@ import { createLobbyManager } from './lobbyManager';
 export type Client = ReturnType<typeof createClient>;
 
 export function createClient(clientCommunication: ClientCommunication, version: number) {
+  const sendMessage = clientCommunication.sendMessage.bind(clientCommunication);
+
   clientCommunication.setCallbacks(onConnect, onDisconnect, onMessage);
 
   let logTime = 0;
@@ -53,8 +55,8 @@ export function createClient(clientCommunication: ClientCommunication, version: 
   );
 
   let currentPage = CurrentPage.None;
-  const lobbyManager = createLobbyManager(clientCommunication, userIdToUser);
-  const gamesManager = createGamesManager(clientCommunication, userIdToUser);
+  const lobbyManager = createLobbyManager(sendMessage, userIdToUser);
+  const gamesManager = createGamesManager(sendMessage, userIdToUser);
 
   function loginWithPassword(username: string, password: string) {
     if (loginMessage !== undefined) {
@@ -73,7 +75,7 @@ export function createClient(clientCommunication: ClientCommunication, version: 
     setLoginState(LoginState.TryingToLogIn);
     setLoginLogoutResponseCode(undefined);
 
-    clientCommunication.sendMessage(loginMessage);
+    sendMessage(loginMessage);
   }
 
   function loginWithToken(username: string, token: string) {
