@@ -810,9 +810,9 @@ export interface PB_MessageToClient_Lobby_Event_GameBoardChanges {
      */
     gameDisplayNumber: number;
     /**
-     * @generated from protobuf field: PB.MessageToClient.Lobby.Event.GameBoardChanges game_board_changes = 2;
+     * @generated from protobuf field: PB.GameBoardChanges game_board_changes = 2;
      */
-    gameBoardChanges?: PB_MessageToClient_Lobby_Event_GameBoardChanges;
+    gameBoardChanges?: PB_GameBoardChanges;
 }
 /**
  * @generated from protobuf message PB.MessageToClient.Lobby.Event.GameCompleted
@@ -4100,7 +4100,7 @@ class PB_MessageToClient_Lobby_Event_GameBoardChanges$Type extends MessageType<P
     constructor() {
         super("PB.MessageToClient.Lobby.Event.GameBoardChanges", [
             { no: 1, name: "game_display_number", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 2, name: "game_board_changes", kind: "message", T: () => PB_MessageToClient_Lobby_Event_GameBoardChanges }
+            { no: 2, name: "game_board_changes", kind: "message", T: () => PB_GameBoardChanges }
         ]);
     }
     create(value?: PartialMessage<PB_MessageToClient_Lobby_Event_GameBoardChanges>): PB_MessageToClient_Lobby_Event_GameBoardChanges {
@@ -4118,8 +4118,8 @@ class PB_MessageToClient_Lobby_Event_GameBoardChanges$Type extends MessageType<P
                 case /* int32 game_display_number */ 1:
                     message.gameDisplayNumber = reader.int32();
                     break;
-                case /* PB.MessageToClient.Lobby.Event.GameBoardChanges game_board_changes */ 2:
-                    message.gameBoardChanges = PB_MessageToClient_Lobby_Event_GameBoardChanges.internalBinaryRead(reader, reader.uint32(), options, message.gameBoardChanges);
+                case /* PB.GameBoardChanges game_board_changes */ 2:
+                    message.gameBoardChanges = PB_GameBoardChanges.internalBinaryRead(reader, reader.uint32(), options, message.gameBoardChanges);
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -4136,9 +4136,9 @@ class PB_MessageToClient_Lobby_Event_GameBoardChanges$Type extends MessageType<P
         /* int32 game_display_number = 1; */
         if (message.gameDisplayNumber !== 0)
             writer.tag(1, WireType.Varint).int32(message.gameDisplayNumber);
-        /* PB.MessageToClient.Lobby.Event.GameBoardChanges game_board_changes = 2; */
+        /* PB.GameBoardChanges game_board_changes = 2; */
         if (message.gameBoardChanges)
-            PB_MessageToClient_Lobby_Event_GameBoardChanges.internalBinaryWrite(message.gameBoardChanges, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+            PB_GameBoardChanges.internalBinaryWrite(message.gameBoardChanges, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

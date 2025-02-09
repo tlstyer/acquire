@@ -1,8 +1,10 @@
 import { expect, test } from 'vitest';
 import { type Client } from '../../client/client';
 import { type GameManager, GameManagerStatus } from '../../client/gamesManager';
+import { GameStatus } from '../../client/helpers';
 import { type LobbyManager } from '../../client/lobbyManager';
 import { type Server } from '../../server/server';
+import { defaultGameBoard } from '../defaults';
 import { PB_GameMode, PB_PlayerArrangementMode } from '../pb';
 import { type User } from '../user';
 import {
@@ -339,6 +341,9 @@ test('game setup example 2', async () => {
   expect(gameManager1.signals.users()).toEqual([null, user2, user3, null, user5, user1]);
   expectEqualGameSetups(lobbyManagerLobby, gameManager1, serverStuff.server);
 
+  gameManager5.gameSetupActions.approve();
+  expectEqualGameSetups(lobbyManagerLobby, gameManager1, serverStuff.server);
+
   gameManager1.gameSetupActions.changeGameMode(PB_GameMode.SINGLES_4);
   expect(gameManager1.signals.playerArrangementMode()).toEqual(
     PB_PlayerArrangementMode.RANDOM_ORDER,
@@ -373,8 +378,10 @@ function expectEqualGameSetups(
 
   if (gameRoom.gameSetup) {
     expect(lobbyManagerGame.hostUser).toEqual(gameRoom.gameSetup.hostUser);
+    expect(lobbyManagerGameSignals.gameBoard()).toEqual(defaultGameBoard);
     expect(lobbyManagerGameSignals.users()).toEqual(gameRoom.gameSetup.users);
     expect(lobbyManagerGameSignals.gameMode()).toEqual(gameRoom.gameSetup.gameMode);
+    expect(lobbyManagerGameSignals.gameStatus()).toEqual(GameStatus.SETTING_UP);
     expect(gameManagerSignals.gameMode()).toEqual(gameRoom.gameSetup.gameMode);
     expect(gameManagerSignals.playerArrangementMode()).toEqual(
       gameRoom.gameSetup.playerArrangementMode,
@@ -384,8 +391,10 @@ function expectEqualGameSetups(
     expect(gameManagerSignals.hostUser()).toEqual(gameRoom.gameSetup.hostUser);
   } else if (gameRoom.game) {
     expect(lobbyManagerGame.hostUser).toEqual(gameRoom.game.hostUser);
-    // expect(lobbyManagerGameSignals.users()).toEqual(gameRoom.game.users); // TODO
+    expect(lobbyManagerGameSignals.gameBoard()).toEqual(gameRoom.game.gameBoard);
+    expect(lobbyManagerGameSignals.users()).toEqual(gameRoom.game.users);
     expect(lobbyManagerGameSignals.gameMode()).toEqual(gameRoom.game.gameMode);
+    expect(lobbyManagerGameSignals.gameStatus()).toEqual(GameStatus.IN_PROGRESS);
     expect(gameManagerSignals.gameMode()).toEqual(gameRoom.game.gameMode);
     expect(gameManagerSignals.playerArrangementMode()).toEqual(gameRoom.game.playerArrangementMode);
     expect(gameManagerSignals.users()).toEqual(gameRoom.game.users);

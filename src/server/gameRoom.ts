@@ -112,6 +112,10 @@ export class GameRoom extends Room {
         queueLobbyEvent = true;
       } else if (message.approve) {
         this.gameSetup.approve(client.user);
+
+        if (this.gameSetup.history[0]?.userApprovedOfGameSetup?.approvedByEverybody) {
+          queueLobbyEvent = true;
+        }
       } else if (message.changeGameMode) {
         if (client.user === this.gameSetup.hostUser) {
           this.gameSetup.changeGameMode(message.changeGameMode.gameMode);
@@ -296,6 +300,17 @@ export class GameRoom extends Room {
           client.sendMessage(message);
         }
       }
+    }
+
+    if (gameState.gameBoardChanges) {
+      this.lobbyRoom.queueEvent(
+        PB_MessageToClient_Lobby_Event.create({
+          gameBoardChanges: {
+            gameDisplayNumber: this.gameDisplayNumber,
+            gameBoardChanges: gameState.gameBoardChanges,
+          },
+        }),
+      );
     }
   }
 }

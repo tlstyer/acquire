@@ -3,6 +3,8 @@ import { defaultGameBoard } from '../common/defaults';
 import { createGameSetupLite } from '../common/gameSetupLite';
 import { defaultApprovals, gameModeToNumPlayers } from '../common/helpers';
 import {
+  type PB_GameBoardChanges,
+  PB_GameBoardType,
   type PB_GameMode,
   type PB_GameSetupChange,
   type PB_MessageToClient_Lobby,
@@ -10,6 +12,7 @@ import {
   type PB_MessageToClient_Lobby_Event,
   type PB_MessageToClient_Lobby_Event_AddUserToGameRoom,
   type PB_MessageToClient_Lobby_Event_AddUserToLobby,
+  type PB_MessageToClient_Lobby_Event_GameBoardChanges,
   type PB_MessageToClient_Lobby_Event_GameCreated,
   type PB_MessageToClient_Lobby_Event_GameSetupChange,
   type PB_MessageToClient_Lobby_Event_RemoveUserFromGameRoom,
@@ -158,6 +161,8 @@ export function createLobbyManager(
         onMessage_Event_GameCreated(event.gameCreated);
       } else if (event.gameSetupChange) {
         onMessage_Event_GameSetupChange(event.gameSetupChange);
+      } else if (event.gameBoardChanges) {
+        onMessage_Event_GameBoardChanges(event.gameBoardChanges);
       } else if (event.addUserToLobby) {
         onMessage_Event_AddUserToLobby(event.addUserToLobby);
       } else if (event.removeUserFromLobby) {
@@ -196,6 +201,14 @@ export function createLobbyManager(
     gameDisplayNumberToLobbyGame
       .get(event.gameDisplayNumber)!
       .private.changeGameSetup(event.gameSetupChange!);
+  }
+
+  function onMessage_Event_GameBoardChanges(
+    event: PB_MessageToClient_Lobby_Event_GameBoardChanges,
+  ) {
+    gameDisplayNumberToLobbyGame
+      .get(event.gameDisplayNumber)!
+      .private.processGameBoardChanges(event.gameBoardChanges!);
   }
 
   function onMessage_Event_AddUserToLobby(event: PB_MessageToClient_Lobby_Event_AddUserToLobby) {
@@ -276,10 +289,12 @@ function createLobbyGame(
     userIdToUser,
   );
 
-  const [gameBoard, setGameBoard] = createSignal(defaultGameBoard);
+  let internalGameBoard = defaultGameBoard;
+  const [gameBoard, setGameBoard] = createSignal(internalGameBoard);
   const [users, setUsers] = createSignal(gameSetup.users);
   const [gameMode, setGameMode] = createSignal(gameSetup.gameMode);
-  const [gameStatus, setGameStatus] = createSignal(GameStatus.SETTING_UP);
+  let internalGameStatus = GameStatus.SETTING_UP;
+  const [gameStatus, setGameStatus] = createSignal<GameStatus>(internalGameStatus);
   const internalUsersInRoom = new Set<User>();
   const [usersInRoom, setUsersInRoom] = createSignal(internalUsersInRoom, { equals: false });
 
@@ -287,6 +302,18 @@ function createLobbyGame(
     gameSetup.processChange(gameSetupChange);
     setUsers(gameSetup.users);
     setGameMode(gameSetup.gameMode);
+  }
+
+  function processGameBoardChanges(gameBoardChanges: PB_GameBoardChanges) {
+    if (internalGameStatus === GameStatus.SETTING_UP) {
+      setUsers(gameSetup.finalUsers!);
+
+      internalGameStatus = GameStatus.IN_PROGRESS;
+      setGameStatus(internalGameStatus);
+    }
+
+    internalGameBoard = doGameBoardChanges(internalGameBoard, gameBoardChanges);
+    setGameBoard(internalGameBoard);
   }
 
   function addUserToRoom(user: User) {
@@ -312,6 +339,7 @@ function createLobbyGame(
     },
     private: {
       changeGameSetup,
+      processGameBoardChanges,
       addUserToRoom,
       removeUserFromRoom,
     },
@@ -319,3 +347,58 @@ function createLobbyGame(
 }
 
 const unknownUser = new User(-1, '?');
+
+class GameBoardCellChange {
+  constructor(
+    public gameBoardType: PB_GameBoardType,
+    public x: number,
+  ) {}
+}
+
+function doGameBoardChanges(
+  currentGameBoard: PB_GameBoardType[][],
+  gameBoardChanges: PB_GameBoardChanges,
+) {
+  const rowChanges: (GameBoardCellChange[] | undefined)[] = new Array(9);
+  rowChanges.fill(undefined);
+
+  processGameBoardType(PB_GameBoardType.LUXOR, gameBoardChanges.luxorTiles);
+  processGameBoardType(PB_GameBoardType.TOWER, gameBoardChanges.towerTiles);
+  processGameBoardType(PB_GameBoardType.AMERICAN, gameBoardChanges.americanTiles);
+  processGameBoardType(PB_GameBoardType.FESTIVAL, gameBoardChanges.festivalTiles);
+  processGameBoardType(PB_GameBoardType.WORLDWIDE, gameBoardChanges.worldwideTiles);
+  processGameBoardType(PB_GameBoardType.CONTINENTAL, gameBoardChanges.continentalTiles);
+  processGameBoardType(PB_GameBoardType.IMPERIAL, gameBoardChanges.imperialTiles);
+  processGameBoardType(PB_GameBoardType.NOTHING_YET, gameBoardChanges.nothingYetTiles);
+  processGameBoardType(PB_GameBoardType.CANT_PLAY_EVER, gameBoardChanges.cantPlayEverTiles);
+
+  const newGameBoard = [...currentGameBoard];
+  for (let y = 0; y < rowChanges.length; y++) {
+    const gameBoardCellChanges = rowChanges[y];
+    if (gameBoardCellChanges) {
+      const row = [...newGameBoard[y]];
+
+      for (let i = 0; i < gameBoardCellChanges.length; i++) {
+        const gameBoardCellChange = gameBoardCellChanges[i];
+        row[gameBoardCellChange.x] = gameBoardCellChange.gameBoardType;
+      }
+      newGameBoard[y] = row;
+    }
+  }
+
+  return newGameBoard;
+
+  function processGameBoardType(gameBoardType: PB_GameBoardType, tiles: number[]) {
+    for (let i = 0; i < tiles.length; i++) {
+      const tile = tiles[i];
+      const y = tile % 9;
+      const x = (tile - y) / 9;
+
+      if (rowChanges[y] === undefined) {
+        rowChanges[y] = [];
+      }
+
+      rowChanges[y]!.push(new GameBoardCellChange(gameBoardType, x));
+    }
+  }
+}

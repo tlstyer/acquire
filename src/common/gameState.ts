@@ -14,6 +14,7 @@ import type { ActionBase } from './gameActions/base';
 import type { GameHistoryMessage } from './gameHistoryMessage';
 import {
   PB_GameAction,
+  PB_GameBoardChanges,
   PB_GameBoardType,
   PB_GameState,
   PB_GameState_RevealedTileRackTile,
@@ -49,9 +50,7 @@ export class GameState {
   playerGameStates = dummyPlayerGameStates;
   watcherGameState = dummyWatcherGameState;
 
-  gameBoardChangeGameBoardType: PB_GameBoardType | undefined = undefined;
-  gameBoardChangeTiles: number[] = [];
-  gameBoardCantPlayEverTiles: number[] = [];
+  gameBoardChanges: PB_GameBoardChanges | null = null;
 
   constructor(
     public game: Game,
@@ -95,20 +94,47 @@ export class GameState {
   }
 
   addGameBoardChange(tile: number, gameBoardType: PB_GameBoardType) {
-    if (gameBoardType === PB_GameBoardType.CANT_PLAY_EVER) {
-      this.gameBoardCantPlayEverTiles.push(tile);
-    } else {
-      if (this.gameBoardChangeGameBoardType !== undefined) {
-        if (gameBoardType !== this.gameBoardChangeGameBoardType) {
-          throw new Error(
-            'different gameBoardType than other game board changes for this game state',
-          );
-        }
-      } else {
-        this.gameBoardChangeGameBoardType = gameBoardType;
-      }
+    if (this.gameBoardChanges === null) {
+      this.gameBoardChanges = PB_GameBoardChanges.create();
+    }
 
-      this.gameBoardChangeTiles.push(tile);
+    switch (gameBoardType) {
+      case PB_GameBoardType.LUXOR: {
+        this.gameBoardChanges.luxorTiles.push(tile);
+        break;
+      }
+      case PB_GameBoardType.TOWER: {
+        this.gameBoardChanges.towerTiles.push(tile);
+        break;
+      }
+      case PB_GameBoardType.AMERICAN: {
+        this.gameBoardChanges.americanTiles.push(tile);
+        break;
+      }
+      case PB_GameBoardType.FESTIVAL: {
+        this.gameBoardChanges.festivalTiles.push(tile);
+        break;
+      }
+      case PB_GameBoardType.WORLDWIDE: {
+        this.gameBoardChanges.worldwideTiles.push(tile);
+        break;
+      }
+      case PB_GameBoardType.CONTINENTAL: {
+        this.gameBoardChanges.continentalTiles.push(tile);
+        break;
+      }
+      case PB_GameBoardType.IMPERIAL: {
+        this.gameBoardChanges.imperialTiles.push(tile);
+        break;
+      }
+      case PB_GameBoardType.NOTHING_YET: {
+        this.gameBoardChanges.nothingYetTiles.push(tile);
+        break;
+      }
+      case PB_GameBoardType.CANT_PLAY_EVER: {
+        this.gameBoardChanges.cantPlayEverTiles.push(tile);
+        break;
+      }
     }
   }
 

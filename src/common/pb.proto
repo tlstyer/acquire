@@ -305,7 +305,7 @@ message PB {
 
         message GameBoardChanges {
           int32 game_display_number = 1;
-          GameBoardChanges game_board_changes = 2;
+          PB.GameBoardChanges game_board_changes = 2;
         }
 
         message GameCompleted {
