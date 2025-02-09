@@ -32,7 +32,8 @@ export function createClient(clientCommunication: ClientCommunication, version: 
 
   const userIdToUser = new Map<number, User>();
 
-  const [user, setUser] = createSignal<User | null>(null);
+  let internalUser: User | null = null;
+  const [user, setUser] = createSignal<User | null>(internalUser);
   const [loginState, setLoginState] = createSignal(LoginState.LoggedOut);
   const [loginLogoutResponseCode, setLoginLogoutResponseCode] = createSignal<
     PB_MessageToClient_LoginLogout_ResponseCode | undefined
@@ -56,7 +57,7 @@ export function createClient(clientCommunication: ClientCommunication, version: 
 
   let currentPage = CurrentPage.None;
   const lobbyManager = createLobbyManager(sendMessage, userIdToUser);
-  const gamesManager = createGamesManager(sendMessage, userIdToUser);
+  const gamesManager = createGamesManager(sendMessage, () => internalUser, userIdToUser);
 
   function loginWithPassword(username: string, password: string) {
     if (loginMessage !== undefined) {
@@ -223,13 +224,13 @@ export function createClient(clientCommunication: ClientCommunication, version: 
         },
       });
 
-      let user = userIdToUser.get(message.userId);
-      if (!user) {
-        user = new User(message.userId, message.username);
-        userIdToUser.set(message.userId, user);
+      internalUser = userIdToUser.get(message.userId) ?? null;
+      if (!internalUser) {
+        internalUser = new User(message.userId, message.username);
+        userIdToUser.set(message.userId, internalUser);
       }
 
-      setUser(user);
+      setUser(internalUser);
       setLoginState(LoginState.LoggedIn);
 
       setUsernameAndToken(new UsernameAndToken(message.username, message.token));
@@ -251,7 +252,9 @@ export function createClient(clientCommunication: ClientCommunication, version: 
 
     loginMessage = undefined;
 
-    setUser(null);
+    internalUser = null;
+
+    setUser(internalUser);
     setLoginState(LoginState.LoggedOut);
 
     setUsernameAndToken(undefined);

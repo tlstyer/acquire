@@ -15,6 +15,7 @@ export type GamesManager = ReturnType<typeof createGamesManager>;
 
 export function createGamesManager(
   sendMessage: (message: Uint8Array) => void,
+  myUser: () => User | null,
   userIdToUser: Map<number, User>,
 ) {
   const gameIdToGameManager = new Map<string, GameManager>();
@@ -27,7 +28,7 @@ export function createGamesManager(
 
     let gameManager = gameIdToGameManager.get(lastRequestedGameId);
     if (gameManager === undefined) {
-      gameManager = createGameManager(sendMessage, userIdToUser, logTime, gameNumber);
+      gameManager = createGameManager(sendMessage, myUser, userIdToUser, logTime, gameNumber);
       gameIdToGameManager.set(lastRequestedGameId, gameManager);
     }
 
@@ -69,6 +70,7 @@ export type GameManager = ReturnType<typeof createGameManager>;
 
 export function createGameManager(
   sendMessage: (message: Uint8Array) => void,
+  myUser: () => User | null,
   userIdToUser: Map<number, User>,
   logTime: number,
   gameNumber: number,
