@@ -174,6 +174,25 @@ export function createGameManager(
       numberOfGameSetupChanges++;
     }
 
+    if (message.gameStates.length > 0) {
+      if (gameSetup && !game) {
+        game = new Game(
+          gameSetup.gameMode,
+          gameSetup.playerArrangementMode,
+          [],
+          gameSetup.finalUsers!,
+          gameSetup.hostUser,
+          myUser(),
+        );
+
+        gameSetup = null;
+      }
+
+      for (let i = 0; i < message.gameStates.length; i++) {
+        game!.processGameState(message.gameStates[i]);
+      }
+    }
+
     batch(() => {
       if (gameSetup) {
         setStatus(GameManagerStatus.SettingUp);

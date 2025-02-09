@@ -1,6 +1,8 @@
-import type { Game } from '../common/game';
+import { Game } from '../common/game';
 import { GameSetup } from '../common/gameSetup';
+import { getNewTileBag } from '../common/helpers';
 import {
+  PB_GameAction,
   PB_MessageToClient,
   PB_MessageToClient_Game_UserIdAndUsername,
   PB_MessageToClient_Lobby_Event,
@@ -15,8 +17,8 @@ import type { LobbyRoom } from './lobbyRoom';
 import { Room } from './room';
 
 export class GameRoom extends Room {
-  gameSetup: GameSetup | undefined;
-  game: Game | undefined;
+  gameSetup: GameSetup | null = null;
+  game: Game | null = null;
 
   private numberOfGameSetupChanges = 0;
 
@@ -168,6 +170,22 @@ export class GameRoom extends Room {
         this.gameSetup.clearHistory();
         this.numberOfGameSetupChanges++;
       }
+
+      if (this.gameSetup.finalUsers) {
+        this.game = new Game(
+          this.gameSetup.gameMode,
+          this.gameSetup.playerArrangementMode,
+          getNewTileBag(),
+          this.gameSetup.finalUsers,
+          this.gameSetup.hostUser,
+          null,
+        );
+        this.gameSetup = null;
+
+        this.game.doGameAction(PB_GameAction.create({ startGame: {} }), Date.now());
+
+        this.sendLastGameStateToClients();
+      }
     }
   }
 
@@ -235,6 +253,50 @@ export class GameRoom extends Room {
         },
       }),
     );
+  }
+
+  private sendLastGameStateToClients() {
+    const game = this.game!;
+    const gameState = game.gameStateHistory[game.gameStateHistory.length - 1];
+
+    gameState.createPlayerAndWatcherGameStates();
+
+    const clientsInGame = new Set<Client>();
+
+    for (let playerId = 0; playerId < gameState.playerGameStates.length; playerId++) {
+      const clients = this.userToClients.get(game.users[playerId]);
+
+      if (clients) {
+        const message = PB_MessageToClient.toBinary(
+          PB_MessageToClient.create({
+            game: {
+              gameStates: [gameState.playerGameStates[playerId]],
+            },
+          }),
+        );
+
+        for (const client of clients) {
+          client.sendMessage(message);
+          clientsInGame.add(client);
+        }
+      }
+    }
+
+    if (this.clients.size !== clientsInGame.size) {
+      const message = PB_MessageToClient.toBinary(
+        PB_MessageToClient.create({
+          game: {
+            gameStates: [gameState.watcherGameState],
+          },
+        }),
+      );
+
+      for (const client of this.clients) {
+        if (!clientsInGame.has(client)) {
+          client.sendMessage(message);
+        }
+      }
+    }
   }
 }
 

@@ -300,7 +300,7 @@ describe('create game', () => {
     const gameRoom = serverStuff.server.gameRoomsManager.gameNumberToGameRoom.get(1);
     expect(gameRoom).toBeInstanceOf(GameRoom);
     expect(gameRoom!.gameSetup).toBeInstanceOf(GameSetup);
-    expect(gameRoom!.game).toBe(undefined);
+    expect(gameRoom!.game).toBe(null);
   });
 
   test("client's lobby manager correctly processes event", async () => {

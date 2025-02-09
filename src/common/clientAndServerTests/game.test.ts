@@ -268,7 +268,7 @@ test('game setup example 1', async () => {
   expect(gameManager1.signals.playerArrangementMode()).toBe(PB_PlayerArrangementMode.EXACT_ORDER);
   expect(gameManager1.signals.hostUser()).toEqual(user1);
   expect(gameManager1.signals.users()).toEqual([user4, user5, user6, user1]);
-  expect(gameManager1.signals.usersWithoutNulls()).toEqual([]); // not set during game setup
+  expect(gameManager1.signals.usersWithoutNulls()).toEqual([user4, user5, user6, user1]);
   expect(gameManager1.signals.approvals()).toEqual([true, true, true, true]);
   expect(gameManager1.signals.hostUser()).toEqual(user1);
 });
@@ -368,17 +368,30 @@ function expectEqualGameSetups(
 
   const lobbyManagerGame = lobbyManager.signals.lobbyGames()[0];
   const lobbyManagerGameSignals = lobbyManagerGame.signals;
-  const clientGameSetupLiteSignals = gameManager.signals;
-  const serverGameSetup = server.gameRoomsManager.gameNumberToGameRoom.get(1)!.gameSetup!;
+  const gameManagerSignals = gameManager.signals;
+  const gameRoom = server.gameRoomsManager.gameNumberToGameRoom.get(1)!;
 
-  expect(lobbyManagerGame.hostUser).toEqual(serverGameSetup.hostUser);
-  expect(lobbyManagerGameSignals.users()).toEqual(serverGameSetup.users);
-  expect(lobbyManagerGameSignals.gameMode()).toEqual(serverGameSetup.gameMode);
-  expect(clientGameSetupLiteSignals.gameMode()).toEqual(serverGameSetup.gameMode);
-  expect(clientGameSetupLiteSignals.playerArrangementMode()).toEqual(
-    serverGameSetup.playerArrangementMode,
-  );
-  expect(clientGameSetupLiteSignals.users()).toEqual(serverGameSetup.users);
-  expect(clientGameSetupLiteSignals.approvals()).toEqual(serverGameSetup.approvals);
-  expect(clientGameSetupLiteSignals.hostUser()).toEqual(serverGameSetup.hostUser);
+  if (gameRoom.gameSetup) {
+    expect(lobbyManagerGame.hostUser).toEqual(gameRoom.gameSetup.hostUser);
+    expect(lobbyManagerGameSignals.users()).toEqual(gameRoom.gameSetup.users);
+    expect(lobbyManagerGameSignals.gameMode()).toEqual(gameRoom.gameSetup.gameMode);
+    expect(gameManagerSignals.gameMode()).toEqual(gameRoom.gameSetup.gameMode);
+    expect(gameManagerSignals.playerArrangementMode()).toEqual(
+      gameRoom.gameSetup.playerArrangementMode,
+    );
+    expect(gameManagerSignals.users()).toEqual(gameRoom.gameSetup.users);
+    expect(gameManagerSignals.approvals()).toEqual(gameRoom.gameSetup.approvals);
+    expect(gameManagerSignals.hostUser()).toEqual(gameRoom.gameSetup.hostUser);
+  } else if (gameRoom.game) {
+    expect(lobbyManagerGame.hostUser).toEqual(gameRoom.game.hostUser);
+    // expect(lobbyManagerGameSignals.users()).toEqual(gameRoom.game.users); // TODO
+    expect(lobbyManagerGameSignals.gameMode()).toEqual(gameRoom.game.gameMode);
+    expect(gameManagerSignals.gameMode()).toEqual(gameRoom.game.gameMode);
+    expect(gameManagerSignals.playerArrangementMode()).toEqual(gameRoom.game.playerArrangementMode);
+    expect(gameManagerSignals.users()).toEqual(gameRoom.game.users);
+    expect(gameManagerSignals.usersWithoutNulls()).toEqual(gameRoom.game.users);
+    expect(gameManagerSignals.hostUser()).toEqual(gameRoom.game.hostUser);
+  } else {
+    throw new Error('gameRoom does not have gameSetup or game');
+  }
 }
