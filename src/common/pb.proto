@@ -191,7 +191,7 @@ message PB {
 
     message Game {
       message Connect {
-        int32 log_time = 1;
+        int64 log_time = 1 [ jstype = JS_NUMBER ];
         int32 game_number = 2;
         int32 number_of_user_id_and_username_messages = 3;
       }
@@ -245,7 +245,7 @@ message PB {
   message MessageToClient {
     message Initial {
       int32 version = 1;
-      int32 log_time = 2;
+      int64 log_time = 2 [ jstype = JS_NUMBER ];
     }
 
     message LoginLogout {
@@ -372,7 +372,7 @@ message PB {
         string username = 2;
       }
 
-      int32 log_time = 1;
+      int64 log_time = 1 [ jstype = JS_NUMBER ];
       int32 game_number = 2;
       Metadata metadata = 3;
       GameReview game_review = 4;

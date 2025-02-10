@@ -442,7 +442,7 @@ export interface PB_MessageToServer_Game {
  */
 export interface PB_MessageToServer_Game_Connect {
     /**
-     * @generated from protobuf field: int32 log_time = 1;
+     * @generated from protobuf field: int64 log_time = 1 [jstype = JS_NUMBER];
      */
     logTime: number;
     /**
@@ -576,7 +576,7 @@ export interface PB_MessageToClient_Initial {
      */
     version: number;
     /**
-     * @generated from protobuf field: int32 log_time = 2;
+     * @generated from protobuf field: int64 log_time = 2 [jstype = JS_NUMBER];
      */
     logTime: number;
 }
@@ -898,7 +898,7 @@ export interface PB_MessageToClient_Lobby_CreateGameResponse {
  */
 export interface PB_MessageToClient_Game {
     /**
-     * @generated from protobuf field: int32 log_time = 1;
+     * @generated from protobuf field: int64 log_time = 1 [jstype = JS_NUMBER];
      */
     logTime: number;
     /**
@@ -2944,7 +2944,7 @@ export const PB_MessageToServer_Game = new PB_MessageToServer_Game$Type();
 class PB_MessageToServer_Game_Connect$Type extends MessageType<PB_MessageToServer_Game_Connect> {
     constructor() {
         super("PB.MessageToServer.Game.Connect", [
-            { no: 1, name: "log_time", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 1, name: "log_time", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "game_number", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
             { no: 3, name: "number_of_user_id_and_username_messages", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
         ]);
@@ -2963,8 +2963,8 @@ class PB_MessageToServer_Game_Connect$Type extends MessageType<PB_MessageToServe
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* int32 log_time */ 1:
-                    message.logTime = reader.int32();
+                case /* int64 log_time = 1 [jstype = JS_NUMBER];*/ 1:
+                    message.logTime = reader.int64().toNumber();
                     break;
                 case /* int32 game_number */ 2:
                     message.gameNumber = reader.int32();
@@ -2984,9 +2984,9 @@ class PB_MessageToServer_Game_Connect$Type extends MessageType<PB_MessageToServe
         return message;
     }
     internalBinaryWrite(message: PB_MessageToServer_Game_Connect, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* int32 log_time = 1; */
+        /* int64 log_time = 1 [jstype = JS_NUMBER]; */
         if (message.logTime !== 0)
-            writer.tag(1, WireType.Varint).int32(message.logTime);
+            writer.tag(1, WireType.Varint).int64(message.logTime);
         /* int32 game_number = 2; */
         if (message.gameNumber !== 0)
             writer.tag(2, WireType.Varint).int32(message.gameNumber);
@@ -3442,7 +3442,7 @@ class PB_MessageToClient_Initial$Type extends MessageType<PB_MessageToClient_Ini
     constructor() {
         super("PB.MessageToClient.Initial", [
             { no: 1, name: "version", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 2, name: "log_time", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
+            { no: 2, name: "log_time", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ }
         ]);
     }
     create(value?: PartialMessage<PB_MessageToClient_Initial>): PB_MessageToClient_Initial {
@@ -3461,8 +3461,8 @@ class PB_MessageToClient_Initial$Type extends MessageType<PB_MessageToClient_Ini
                 case /* int32 version */ 1:
                     message.version = reader.int32();
                     break;
-                case /* int32 log_time */ 2:
-                    message.logTime = reader.int32();
+                case /* int64 log_time = 2 [jstype = JS_NUMBER];*/ 2:
+                    message.logTime = reader.int64().toNumber();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -3479,9 +3479,9 @@ class PB_MessageToClient_Initial$Type extends MessageType<PB_MessageToClient_Ini
         /* int32 version = 1; */
         if (message.version !== 0)
             writer.tag(1, WireType.Varint).int32(message.version);
-        /* int32 log_time = 2; */
+        /* int64 log_time = 2 [jstype = JS_NUMBER]; */
         if (message.logTime !== 0)
-            writer.tag(2, WireType.Varint).int32(message.logTime);
+            writer.tag(2, WireType.Varint).int64(message.logTime);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -4514,7 +4514,7 @@ export const PB_MessageToClient_Lobby_CreateGameResponse = new PB_MessageToClien
 class PB_MessageToClient_Game$Type extends MessageType<PB_MessageToClient_Game> {
     constructor() {
         super("PB.MessageToClient.Game", [
-            { no: 1, name: "log_time", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 1, name: "log_time", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "game_number", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
             { no: 3, name: "metadata", kind: "message", T: () => PB_MessageToClient_Game_Metadata },
             { no: 4, name: "game_review", kind: "message", T: () => PB_GameReview },
@@ -4546,8 +4546,8 @@ class PB_MessageToClient_Game$Type extends MessageType<PB_MessageToClient_Game> 
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* int32 log_time */ 1:
-                    message.logTime = reader.int32();
+                case /* int64 log_time = 1 [jstype = JS_NUMBER];*/ 1:
+                    message.logTime = reader.int64().toNumber();
                     break;
                 case /* int32 game_number */ 2:
                     message.gameNumber = reader.int32();
@@ -4595,9 +4595,9 @@ class PB_MessageToClient_Game$Type extends MessageType<PB_MessageToClient_Game> 
         return message;
     }
     internalBinaryWrite(message: PB_MessageToClient_Game, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* int32 log_time = 1; */
+        /* int64 log_time = 1 [jstype = JS_NUMBER]; */
         if (message.logTime !== 0)
-            writer.tag(1, WireType.Varint).int32(message.logTime);
+            writer.tag(1, WireType.Varint).int64(message.logTime);
         /* int32 game_number = 2; */
         if (message.gameNumber !== 0)
             writer.tag(2, WireType.Varint).int32(message.gameNumber);
