@@ -1,3 +1,5 @@
+import chalk from 'chalk';
+import { isServer } from 'solid-js/web';
 import { PB_MessageToClient, PB_MessageToServer } from '../common/pb';
 import {
   TestServerCommunicatedMessage,
@@ -49,11 +51,19 @@ export class WebSocketClientCommunication extends ClientCommunication {
 
   sendMessage(message: Uint8Array) {
     if (this.connected) {
-      if (import.meta.env.VITE_LOG_MESSAGES_TO_BROWSER_CONSOLE === 'yes') {
-        console.log(
-          `%c${uint8ArrayToHexString(message)}\n${JSON.stringify(PB_MessageToServer.fromBinary(message), null, 2)}`,
-          'color: green',
-        );
+      if (
+        (isServer
+          ? process.env.VITE_LOG_MESSAGES_TO_BROWSER_CONSOLE
+          : import.meta.env.VITE_LOG_MESSAGES_TO_BROWSER_CONSOLE) === 'yes'
+      ) {
+        const string = `${uint8ArrayToHexString(message)}\n${JSON.stringify(PB_MessageToServer.fromBinary(message), null, 2)}`;
+        const hexColor = '#008000';
+
+        if (isServer) {
+          console.log(chalk.hex(hexColor)(string));
+        } else {
+          console.log(`%c${string}`, `color: ${hexColor}`);
+        }
       }
 
       this.socket?.send(message);
@@ -82,11 +92,19 @@ export class WebSocketClientCommunication extends ClientCommunication {
   private onSocketMessage(ev: MessageEvent) {
     const message = new Uint8Array(ev.data);
 
-    if (import.meta.env.VITE_LOG_MESSAGES_TO_BROWSER_CONSOLE === 'yes') {
-      console.log(
-        `%c${uint8ArrayToHexString(message)}\n${JSON.stringify(PB_MessageToClient.fromBinary(message), null, 2)}`,
-        'color: red',
-      );
+    if (
+      (isServer
+        ? process.env.VITE_LOG_MESSAGES_TO_BROWSER_CONSOLE
+        : import.meta.env.VITE_LOG_MESSAGES_TO_BROWSER_CONSOLE) === 'yes'
+    ) {
+      const string = `${uint8ArrayToHexString(message)}\n${JSON.stringify(PB_MessageToClient.fromBinary(message), null, 2)}`;
+      const hexColor = '#ff0000';
+
+      if (isServer) {
+        console.log(chalk.hex(hexColor)(string));
+      } else {
+        console.log(`%c${string}`, `color: ${hexColor}`);
+      }
     }
 
     this.onMessage(message);
