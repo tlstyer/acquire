@@ -1,11 +1,8 @@
 import { createMemo, Index } from 'solid-js';
 import { toTileString } from '../../common/helpers';
 import { PB_GameBoardType } from '../../common/pb';
-import {
-  GameBoardLabelMode,
-  gameBoardTypeToCSSClassName,
-  gameBoardTypeToHotelInitial,
-} from '../helpers';
+import { GameBoardLabelMode, gameBoardTypeToHotelInitial } from '../helpers';
+import { gameBoardTypeToCSSClassName } from '../styleHelpers';
 import styles from './GameBoard.module.css';
 
 export function GameBoard(props: {

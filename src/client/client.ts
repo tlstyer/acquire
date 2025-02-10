@@ -10,9 +10,8 @@ import {
 } from '../common/pb';
 import { User } from '../common/user';
 import type { ClientCommunication } from './clientCommunication';
-import { type DialogType } from './components/Dialog';
 import { createGamesManager } from './gamesManager';
-import { GameBoardLabelMode } from './helpers';
+import { type DialogType, GameBoardLabelMode } from './helpers';
 import { createLobbyManager } from './lobbyManager';
 
 export type Client = ReturnType<typeof createClient>;

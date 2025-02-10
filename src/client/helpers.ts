@@ -3,7 +3,6 @@ import {
   PB_GameMode,
   PB_MessageToClient_LoginLogout_ResponseCode,
 } from '../common/pb';
-import styles from './App.module.css';
 
 export const allChains = [
   PB_GameBoardType.LUXOR,
@@ -14,25 +13,6 @@ export const allChains = [
   PB_GameBoardType.CONTINENTAL,
   PB_GameBoardType.IMPERIAL,
 ];
-
-export const gameBoardTypeToCSSClassName = new Map([
-  [PB_GameBoardType.LUXOR, styles.colorLuxor],
-  [PB_GameBoardType.TOWER, styles.colorTower],
-  [PB_GameBoardType.AMERICAN, styles.colorAmerican],
-  [PB_GameBoardType.FESTIVAL, styles.colorFestival],
-  [PB_GameBoardType.WORLDWIDE, styles.colorWorldwide],
-  [PB_GameBoardType.CONTINENTAL, styles.colorContinental],
-  [PB_GameBoardType.IMPERIAL, styles.colorImperial],
-  [PB_GameBoardType.NOTHING, styles.colorNothing],
-  [PB_GameBoardType.NOTHING_YET, styles.colorNothingYet],
-  [PB_GameBoardType.CANT_PLAY_EVER, styles.colorCantPlayEver],
-  [PB_GameBoardType.I_HAVE_THIS, styles.colorIHaveThis],
-  [PB_GameBoardType.WILL_PUT_LONELY_TILE_DOWN, styles.colorWillPutLonelyTileDown],
-  [PB_GameBoardType.HAVE_NEIGHBORING_TILE_TOO, styles.colorHaveNeighboringTileToo],
-  [PB_GameBoardType.WILL_FORM_NEW_CHAIN, styles.colorWillFormNewChain],
-  [PB_GameBoardType.WILL_MERGE_CHAINS, styles.colorWillMergeChains],
-  [PB_GameBoardType.CANT_PLAY_NOW, styles.colorCantPlayNow],
-]);
 
 export const gameBoardTypeToHotelInitial = new Map([
   [PB_GameBoardType.LUXOR, 'L'],
@@ -52,12 +32,6 @@ export const gameBoardTypeToHotelName = new Map([
   [PB_GameBoardType.WORLDWIDE, 'Worldwide'],
   [PB_GameBoardType.CONTINENTAL, 'Continental'],
   [PB_GameBoardType.IMPERIAL, 'Imperial'],
-]);
-
-export const teamNumberToCSSClassName = new Map([
-  [1, styles.colorTeam1],
-  [2, styles.colorTeam2],
-  [3, styles.colorTeam3],
 ]);
 
 export enum GameBoardLabelMode {
@@ -155,3 +129,10 @@ export const loginLogoutResponseCodeToString = new Map<
   ],
   [PB_MessageToClient_LoginLogout_ResponseCode.USER_EXISTS, 'User already exists.'],
 ]);
+
+export enum DialogType {
+  Login,
+  CreateUser,
+  Logout,
+  Settings,
+}

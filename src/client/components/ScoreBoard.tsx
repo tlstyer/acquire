@@ -3,12 +3,8 @@ import { ScoreBoardIndexEnum } from '../../common/enums';
 import { gameModeToNumPlayers, gameModeToTeamSize } from '../../common/helpers';
 import { type PB_GameMode } from '../../common/pb';
 import { type User } from '../../common/user';
-import {
-  allChains,
-  gameBoardTypeToCSSClassName,
-  gameBoardTypeToHotelInitial,
-  teamNumberToCSSClassName,
-} from '../helpers';
+import { allChains, gameBoardTypeToHotelInitial } from '../helpers';
+import { gameBoardTypeToCSSClassName, teamNumberToCSSClassName } from '../styleHelpers';
 import styles from './ScoreBoard.module.css';
 
 export function ScoreBoard(props: {

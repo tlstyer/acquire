@@ -3,7 +3,8 @@ import { gameModeToNumPlayers, gameModeToTeamSize } from '../../common/helpers';
 import { PB_GameMode, PB_PlayerArrangementMode } from '../../common/pb';
 import { type User } from '../../common/user';
 import stylesApp from '../App.module.css';
-import { allGameModes, gameModeToString, teamNumberToCSSClassName } from '../helpers';
+import { allGameModes, gameModeToString } from '../helpers';
+import { teamNumberToCSSClassName } from '../styleHelpers';
 import styles from './GameSetupUI.module.css';
 
 export function GameSetupUI(props: {

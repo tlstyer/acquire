@@ -12,11 +12,11 @@ import { type PB_GameBoardType } from '../../common/pb';
 import stylesApp from '../App.module.css';
 import {
   allChains,
-  gameBoardTypeToCSSClassName,
   gameBoardTypeToHotelInitial,
   keyboardEventCodeToGameBoardType,
 } from '../helpers';
 import { KEY_SHIFT, type ProcessMyKeyboardEventRef } from '../myKeyboardEvents';
+import { gameBoardTypeToCSSClassName } from '../styleHelpers';
 import styles from './PurchaseShares.module.css';
 
 export function PurchaseShares(props: {

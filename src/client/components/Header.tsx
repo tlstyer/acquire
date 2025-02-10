@@ -1,7 +1,7 @@
 import { Match, Show, Switch } from 'solid-js';
 import { type DOMElement } from 'solid-js/jsx-runtime';
 import { type Client, LoginState } from '../client';
-import { DialogType } from './Dialog';
+import { DialogType } from '../helpers';
 import styles from './Header.module.css';
 import { Username } from './Username';
 

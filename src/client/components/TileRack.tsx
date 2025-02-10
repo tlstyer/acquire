@@ -3,8 +3,8 @@ import { createStore } from 'solid-js/store';
 import { toTileString } from '../../common/helpers';
 import { PB_GameBoardType } from '../../common/pb';
 import stylesApp from '../App.module.css';
-import { gameBoardTypeToCSSClassName } from '../helpers';
 import { type ProcessMyKeyboardEventRef } from '../myKeyboardEvents';
+import { gameBoardTypeToCSSClassName } from '../styleHelpers';
 import styles from './TileRack.module.css';
 
 export function TileRack(props: {

@@ -1,6 +1,7 @@
 import { createMemo, Index } from 'solid-js';
 import { type PB_GameBoardType } from '../../common/pb';
-import { gameBoardTypeToCSSClassName, gameBoardTypeToHotelInitial } from '../helpers';
+import { gameBoardTypeToHotelInitial } from '../helpers';
+import { gameBoardTypeToCSSClassName } from '../styleHelpers';
 
 export function NextGameActionHotelInitialsList(props: { chains: PB_GameBoardType[] }) {
   const chainsData = createMemo(() => {

@@ -6,8 +6,7 @@ import {
 } from '../../common/helpers';
 import { PB_MessageToClient_LoginLogout_ResponseCode } from '../../common/pb';
 import { type Client, LoginState } from '../client';
-import { loginLogoutResponseCodeToString } from '../helpers';
-import { DialogType } from './Dialog';
+import { DialogType, loginLogoutResponseCodeToString } from '../helpers';
 import styles from './Login.module.css';
 
 export function CreateUser(props: { client: Client }) {

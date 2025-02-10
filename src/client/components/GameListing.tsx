@@ -3,12 +3,8 @@ import { gameModeToNumPlayers, gameModeToTeamSize } from '../../common/helpers';
 import { type PB_GameBoardType, type PB_GameMode } from '../../common/pb';
 import { type User } from '../../common/user';
 import stylesApp from '../App.module.css';
-import {
-  gameModeToString,
-  type GameStatus,
-  gameStatusToString,
-  teamNumberToCSSClassName,
-} from '../helpers';
+import { gameModeToString, type GameStatus, gameStatusToString } from '../helpers';
+import { teamNumberToCSSClassName } from '../styleHelpers';
 import styles from './GameListing.module.css';
 import { MiniGameBoard } from './MiniGameBoard';
 

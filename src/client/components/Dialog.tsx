@@ -1,5 +1,6 @@
 import { createMemo, Match, onCleanup, onMount, Show, Switch } from 'solid-js';
 import { type Client } from '../client';
+import { DialogType } from '../helpers';
 import { type ProcessMyKeyboardEventRef } from '../myKeyboardEvents';
 import { CreateUser } from './CreateUser';
 import styles from './Dialog.module.css';
@@ -70,13 +71,6 @@ export function Dialog(props: { ref: (ref: ProcessMyKeyboardEventRef) => void; c
       </div>
     </Show>
   );
-}
-
-export enum DialogType {
-  Login,
-  CreateUser,
-  Logout,
-  Settings,
 }
 
 const dialogTypeToTitle = new Map([
