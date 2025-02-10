@@ -8,13 +8,13 @@ function main() {
   const serverCommunication = new WebSocketServerCommunication();
   const userDataProvider = new TestUserDataProvider();
 
-  userDataProvider.createUser('username', 'password');
+  const logTime = Math.floor(Date.now() / 1000);
 
   const server = new Server(
     serverCommunication,
     userDataProvider,
     parseDecimalInteger(process.env.VITE_VERSION) ?? 0,
-    parseDecimalInteger(process.env.LOG_TIME) ?? 0,
+    logTime,
   );
   serverCommunication.begin();
 

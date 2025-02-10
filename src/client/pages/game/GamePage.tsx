@@ -17,7 +17,7 @@ export function GamePage(props: { client: Client }) {
   const params = useParams();
   const idParts = params.id.split('-');
   const idHasCorrectNumberOfParts = idParts.length === 2;
-  const logTime = idHasCorrectNumberOfParts ? (parseDecimalInteger(idParts[0]) ?? 0) : 0; // TODO: the default of 0 might be the same as the server's current log time
+  const logTime = idHasCorrectNumberOfParts ? (parseDecimalInteger(idParts[0]) ?? 0) : 0;
   const gameNumber = idHasCorrectNumberOfParts ? (parseDecimalInteger(idParts[1]) ?? 0) : 0;
 
   // eslint-disable-next-line solid/reactivity
