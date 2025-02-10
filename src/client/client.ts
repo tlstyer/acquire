@@ -203,7 +203,7 @@ export function createClient(clientCommunication: ClientCommunication, version: 
   }
 
   function onMessage_Initial(message: PB_MessageToClient_Initial) {
-    if (message.version !== version) {
+    if (message.version !== version || (logTime !== 0 && message.logTime !== logTime)) {
       location.reload();
     }
 
