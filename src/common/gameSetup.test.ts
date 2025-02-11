@@ -1,9 +1,9 @@
 import seedrandom from 'seedrandom';
 import { describe, expect, test } from 'vitest';
-import { user1, user2, user3, user4, user5, user6, user7 } from './clientAndServerTests/common';
-import { GameSetup } from './gameSetup';
-import { createGameSetupLite, type GameSetupLite } from './gameSetupLite';
-import { PB_GameMode, PB_GameSetupChange, PB_PlayerArrangementMode } from './pb';
+import { user1, user2, user3, user4, user5, user6, user7 } from './clientAndServerTests/common.js';
+import { GameSetup } from './gameSetup.js';
+import { createGameSetupLite, type GameSetupLite } from './gameSetupLite.js';
+import { PB_GameMode, PB_GameSetupChange, PB_PlayerArrangementMode } from './pb.js';
 
 const dummyApprovals = [true];
 

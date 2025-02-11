@@ -1,16 +1,16 @@
-import { CreateGameExamples } from './CreateGameExamples';
-import { DisposeOfSharesExamples } from './DisposeOfSharesExamples';
+import { CreateGameExamples } from './CreateGameExamples.js';
+import { DisposeOfSharesExamples } from './DisposeOfSharesExamples.js';
 import styles from './ExamplesPage.module.css';
-import { GameBoardExamples } from './GameBoardExamples';
-import { GameHistoryExamples } from './GameHistoryExamples';
-import { GameListingExamples } from './GameListingExamples';
-import { GameSetupUIExamples } from './GameSetupUIExamples';
-import { NextGameActionExamples } from './NextGameActionExamples';
-import { PurchaseSharesExamples } from './PurchaseSharesExamples';
-import { ScoreBoardExamples } from './ScoreBoardExamples';
-import { SelectChainExamples } from './SelectChainExamples';
-import { TileRackExamples } from './TileRackExamples';
-import { TileRackReadOnlyExamples } from './TileRackReadOnlyExamples';
+import { GameBoardExamples } from './GameBoardExamples.js';
+import { GameHistoryExamples } from './GameHistoryExamples.js';
+import { GameListingExamples } from './GameListingExamples.js';
+import { GameSetupUIExamples } from './GameSetupUIExamples.js';
+import { NextGameActionExamples } from './NextGameActionExamples.js';
+import { PurchaseSharesExamples } from './PurchaseSharesExamples.js';
+import { ScoreBoardExamples } from './ScoreBoardExamples.js';
+import { SelectChainExamples } from './SelectChainExamples.js';
+import { TileRackExamples } from './TileRackExamples.js';
+import { TileRackReadOnlyExamples } from './TileRackReadOnlyExamples.js';
 
 export function ExamplesPage() {
   return (

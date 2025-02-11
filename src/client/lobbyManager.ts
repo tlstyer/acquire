@@ -1,7 +1,7 @@
 import { batch, createSignal } from 'solid-js';
-import { defaultGameBoard } from '../common/defaults';
-import { createGameSetupLite } from '../common/gameSetupLite';
-import { defaultApprovals, gameModeToNumPlayers } from '../common/helpers';
+import { defaultGameBoard } from '../common/defaults.js';
+import { createGameSetupLite } from '../common/gameSetupLite.js';
+import { defaultApprovals, gameModeToNumPlayers } from '../common/helpers.js';
 import {
   type PB_GameBoardChanges,
   PB_GameBoardType,
@@ -20,9 +20,9 @@ import {
   type PB_MessageToClient_Lobby_LastStateCheckpoint,
   PB_MessageToServer,
   PB_PlayerArrangementMode,
-} from '../common/pb';
-import { User } from '../common/user';
-import { GameStatus } from './helpers';
+} from '../common/pb.js';
+import { User } from '../common/user.js';
+import { GameStatus } from './helpers.js';
 
 export type LobbyManager = ReturnType<typeof createLobbyManager>;
 

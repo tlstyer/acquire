@@ -1,8 +1,8 @@
 import { describe, expect, test } from 'vitest';
-import { GameStatus } from '../../client/helpers';
-import { GameRoom } from '../../server/gameRoom';
-import { GameSetup } from '../gameSetup';
-import { PB_GameMode, PB_MessageToClient, PB_MessageToServer } from '../pb';
+import { GameStatus } from '../../client/helpers.js';
+import { GameRoom } from '../../server/gameRoom.js';
+import { GameSetup } from '../gameSetup.js';
+import { PB_GameMode, PB_MessageToClient, PB_MessageToServer } from '../pb.js';
 import {
   createClientStuffAndConnectToTestServer,
   createServerStuff,
@@ -12,7 +12,7 @@ import {
   user4,
   userIdToTestUserData,
   waitForAsyncServerStuff,
-} from './common';
+} from './common.js';
 
 test('connect to lobby in its initial state', () => {
   const serverStuff = createServerStuff();

@@ -1,9 +1,9 @@
 import { createSignal, For } from 'solid-js';
-import { toTileString } from '../../../common/helpers';
-import { PB_GameBoardType } from '../../../common/pb';
-import { TileRack } from '../../components/TileRack';
-import { processBrowserMyKeyboardEvents } from '../../myKeyboardEvents';
-import { EnableKeyboardShortcutsButton } from './EnableKeyboardShortcutsButton';
+import { toTileString } from '../../../common/helpers.js';
+import { PB_GameBoardType } from '../../../common/pb.js';
+import { TileRack } from '../../components/TileRack.js';
+import { processBrowserMyKeyboardEvents } from '../../myKeyboardEvents.js';
+import { EnableKeyboardShortcutsButton } from './EnableKeyboardShortcutsButton.js';
 
 export function TileRackExamples() {
   const allProps = [

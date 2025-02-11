@@ -1,11 +1,11 @@
 import { createSignal, For } from 'solid-js';
-import { type GameState } from '../../../common/gameState';
-import { type User } from '../../../common/user';
-import { GameHistory } from '../../components/GameHistory';
-import { processBrowserMyKeyboardEvents } from '../../myKeyboardEvents';
-import { EnableKeyboardShortcutsButton } from './EnableKeyboardShortcutsButton';
+import { type GameState } from '../../../common/gameState.js';
+import { type User } from '../../../common/user.js';
+import { GameHistory } from '../../components/GameHistory.js';
+import { processBrowserMyKeyboardEvents } from '../../myKeyboardEvents.js';
+import { EnableKeyboardShortcutsButton } from './EnableKeyboardShortcutsButton.js';
 import styles from './GameHistoryExamples.module.css';
-import { getExampleGame1, getExampleGame2, getExampleGameForGameHistory } from './games';
+import { getExampleGame1, getExampleGame2, getExampleGameForGameHistory } from './games.js';
 
 export function GameHistoryExamples() {
   const gameForGameHistory = getExampleGameForGameHistory();

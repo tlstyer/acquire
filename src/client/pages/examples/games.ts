@@ -1,5 +1,5 @@
-import { defaultGameStateHistory } from '../../../common/defaults';
-import { Game } from '../../../common/game';
+import { defaultGameStateHistory } from '../../../common/defaults.js';
+import { Game } from '../../../common/game.js';
 import {
   ChainAndCount,
   GameHistoryMessageAllTilesPlayed,
@@ -21,11 +21,11 @@ import {
   GameHistoryMessageSelectedMergerSurvivor,
   GameHistoryMessageStartedGame,
   GameHistoryMessageTurnBegan,
-} from '../../../common/gameHistoryMessage';
-import { gameFromJSON } from '../../../common/gameSerialization';
-import { getNewTileBag } from '../../../common/helpers';
-import { PB_GameAction, PB_GameMode, PB_PlayerArrangementMode } from '../../../common/pb';
-import { User } from '../../../common/user';
+} from '../../../common/gameHistoryMessage.js';
+import { gameFromJSON } from '../../../common/gameSerialization.js';
+import { getNewTileBag } from '../../../common/helpers.js';
+import { PB_GameAction, PB_GameMode, PB_PlayerArrangementMode } from '../../../common/pb.js';
+import { User } from '../../../common/user.js';
 
 let game1: Game | undefined;
 export function getExampleGame1() {

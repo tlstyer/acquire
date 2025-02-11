@@ -1,9 +1,9 @@
 import { batch, createSignal, For, onCleanup } from 'solid-js';
-import { type PB_GameBoardType } from '../../../common/pb';
-import { PurchaseShares } from '../../components/PurchaseShares';
-import { gameBoardTypeToHotelInitial } from '../../helpers';
-import { processBrowserMyKeyboardEvents } from '../../myKeyboardEvents';
-import { EnableKeyboardShortcutsButton } from './EnableKeyboardShortcutsButton';
+import { type PB_GameBoardType } from '../../../common/pb.js';
+import { PurchaseShares } from '../../components/PurchaseShares.js';
+import { gameBoardTypeToHotelInitial } from '../../helpers.js';
+import { processBrowserMyKeyboardEvents } from '../../myKeyboardEvents.js';
+import { EnableKeyboardShortcutsButton } from './EnableKeyboardShortcutsButton.js';
 
 export function PurchaseSharesExamples() {
   const allProps = [

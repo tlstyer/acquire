@@ -5,7 +5,7 @@ import {
   calculateBonuses,
   getNewTileBag,
   neighboringTilesLookup,
-} from './helpers';
+} from './helpers.js';
 
 describe('getNewTileBag', () => {
   test('should return a shuffled array containing all integers between 0 and 107 inclusive', () => {

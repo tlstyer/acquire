@@ -2,21 +2,21 @@ import { type RouteDefinition, Router } from '@solidjs/router';
 import 'normalize.css';
 import { createEffect, onCleanup } from 'solid-js';
 import { isServer } from 'solid-js/web';
-import { parseDecimalInteger } from '../common/helpers';
-import { TestServerCommunication } from '../server/serverCommunication';
+import { parseDecimalInteger } from '../common/helpers.js';
+import { TestServerCommunication } from '../server/serverCommunication.js';
 import styles from './App.module.css';
-import { createClient } from './client';
+import { createClient } from './client.js';
 import {
   type ClientCommunication,
   TestClientCommunication,
   WebSocketClientCommunication,
-} from './clientCommunication';
-import { Dialog } from './components/Dialog';
-import { Header } from './components/Header';
-import { processBrowserMyKeyboardEvents } from './myKeyboardEvents';
-import { ExamplesPage } from './pages/examples/ExamplesPage';
-import { GamePage } from './pages/game/GamePage';
-import { LobbyPage } from './pages/lobby/LobbyPage';
+} from './clientCommunication.js';
+import { Dialog } from './components/Dialog.js';
+import { Header } from './components/Header.js';
+import { processBrowserMyKeyboardEvents } from './myKeyboardEvents.js';
+import { ExamplesPage } from './pages/examples/ExamplesPage.js';
+import { GamePage } from './pages/game/GamePage.js';
+import { LobbyPage } from './pages/lobby/LobbyPage.js';
 
 export function App() {
   let clientCommunication: ClientCommunication;

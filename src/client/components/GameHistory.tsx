@@ -1,9 +1,9 @@
 import { createEffect, createSelector, createSignal, For, onMount } from 'solid-js';
-import { type GameState } from '../../common/gameState';
-import { type User } from '../../common/user';
-import { type ProcessMyKeyboardEventRef } from '../myKeyboardEvents';
+import { type GameState } from '../../common/gameState.js';
+import { type User } from '../../common/user.js';
+import { type ProcessMyKeyboardEventRef } from '../myKeyboardEvents.js';
 import styles from './GameHistory.module.css';
-import { GameHistoryMessageUI } from './GameHistoryMessageUI';
+import { GameHistoryMessageUI } from './GameHistoryMessageUI.js';
 
 export function GameHistory(props: {
   ref: (ref: ProcessMyKeyboardEventRef) => void;

@@ -20,12 +20,12 @@ import {
   GameHistoryMessageSelectedMergerSurvivor,
   GameHistoryMessageStartedGame,
   GameHistoryMessageTurnBegan,
-} from '../../common/gameHistoryMessage';
-import { toTileString } from '../../common/helpers';
-import { type User } from '../../common/user';
+} from '../../common/gameHistoryMessage.js';
+import { toTileString } from '../../common/helpers.js';
+import { type User } from '../../common/user.js';
 import styles from './GameHistoryMessageUI.module.css';
-import { HotelName } from './HotelName';
-import { Username } from './Username';
+import { HotelName } from './HotelName.js';
+import { Username } from './Username.js';
 
 export function GameHistoryMessageUI(props: {
   users: User[];

@@ -1,12 +1,12 @@
-import { GameActionEnum, ScoreBoardIndexEnum, TileEnum } from './enums';
-import { UserInputError } from './error';
-import { Game } from './game';
-import type { ActionBase } from './gameActions/base';
-import { ActionDisposeOfShares } from './gameActions/disposeOfShares';
-import { ActionGameOver } from './gameActions/gameOver';
-import { ActionSelectChainToDisposeOfNext } from './gameActions/selectChainToDisposeOfNext';
-import { ActionSelectMergerSurvivor } from './gameActions/selectMergerSurvivor';
-import { ActionSelectNewChain } from './gameActions/selectNewChain';
+import { GameActionEnum, ScoreBoardIndexEnum, TileEnum } from './enums.js';
+import { UserInputError } from './error.js';
+import { Game } from './game.js';
+import type { ActionBase } from './gameActions/base.js';
+import { ActionDisposeOfShares } from './gameActions/disposeOfShares.js';
+import { ActionGameOver } from './gameActions/gameOver.js';
+import { ActionSelectChainToDisposeOfNext } from './gameActions/selectChainToDisposeOfNext.js';
+import { ActionSelectMergerSurvivor } from './gameActions/selectMergerSurvivor.js';
+import { ActionSelectNewChain } from './gameActions/selectNewChain.js';
 import {
   GameHistoryMessageAllTilesPlayed,
   GameHistoryMessageCouldNotAffordAnyShares,
@@ -28,10 +28,10 @@ import {
   GameHistoryMessageStartedGame,
   GameHistoryMessageTurnBegan,
   type GameHistoryMessage,
-} from './gameHistoryMessage';
-import { gameToJSON } from './gameSerialization';
-import type { GameState, GameStateTileBagTile } from './gameState';
-import { getValueOfKey, lowercaseFirstLetter, toTileString, yTileNames } from './helpers';
+} from './gameHistoryMessage.js';
+import { gameToJSON } from './gameSerialization.js';
+import type { GameState, GameStateTileBagTile } from './gameState.js';
+import { getValueOfKey, lowercaseFirstLetter, toTileString, yTileNames } from './helpers.js';
 import {
   PB_GameAction,
   PB_GameAction_DisposeOfShares,
@@ -45,8 +45,8 @@ import {
   PB_GameState_RevealedTileRackTile,
   PB_PlayerArrangementMode,
   type PB_GameState,
-} from './pb';
-import { User } from './user';
+} from './pb.js';
+import { User } from './user.js';
 
 export function runGameTestFile(inputLines: string[]) {
   let game: Game | null = null;

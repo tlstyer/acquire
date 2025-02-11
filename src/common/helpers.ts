@@ -1,9 +1,9 @@
-import { TileEnum } from './enums';
+import { TileEnum } from './enums.js';
 import {
   PB_GameMode,
   PB_MessageToClient,
   type PB_MessageToClient_LoginLogout_ResponseCode,
-} from './pb';
+} from './pb.js';
 
 export function getNewTileBag() {
   const tileBag: number[] = new Array(108);

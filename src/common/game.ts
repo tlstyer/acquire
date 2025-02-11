@@ -11,17 +11,17 @@ import {
   defaultTileRacks,
   defaultTileRackTypes,
   defaultTileRackTypesList,
-} from './defaults';
-import { ScoreBoardIndexEnum, TileEnum } from './enums';
-import type { ActionBase } from './gameActions/base';
-import { ActionStartGame } from './gameActions/startGame';
+} from './defaults.js';
+import { ScoreBoardIndexEnum, TileEnum } from './enums.js';
+import type { ActionBase } from './gameActions/base.js';
+import { ActionStartGame } from './gameActions/startGame.js';
 import {
   GameHistoryMessageDrewLastTile,
   GameHistoryMessageDrewTile,
   GameHistoryMessageReplacedDeadTile,
-} from './gameHistoryMessage';
-import { GameState } from './gameState';
-import { calculateBonuses, neighboringTilesLookup } from './helpers';
+} from './gameHistoryMessage.js';
+import { GameState } from './gameState.js';
+import { calculateBonuses, neighboringTilesLookup } from './helpers.js';
 import {
   type PB_GameAction,
   PB_GameBoardType,
@@ -29,8 +29,8 @@ import {
   type PB_GameState,
   type PB_GameState_RevealedTileRackTile,
   type PB_PlayerArrangementMode,
-} from './pb';
-import { type User } from './user';
+} from './pb.js';
+import { type User } from './user.js';
 
 export class Game {
   nextTileBagIndex = 0;

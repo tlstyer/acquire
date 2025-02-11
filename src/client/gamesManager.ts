@@ -1,15 +1,15 @@
 import { batch, createSignal } from 'solid-js';
-import { Game } from '../common/game';
-import { gameFromProtocolBuffer } from '../common/gameSerialization';
-import { createGameSetupLite, type GameSetupLite } from '../common/gameSetupLite';
-import { GameState } from '../common/gameState';
+import { Game } from '../common/game.js';
+import { gameFromProtocolBuffer } from '../common/gameSerialization.js';
+import { createGameSetupLite, type GameSetupLite } from '../common/gameSetupLite.js';
+import { GameState } from '../common/gameState.js';
 import {
   PB_GameMode,
   type PB_MessageToClient_Game,
   PB_MessageToServer,
   PB_PlayerArrangementMode,
-} from '../common/pb';
-import { User } from '../common/user';
+} from '../common/pb.js';
+import { User } from '../common/user.js';
 
 export type GamesManager = ReturnType<typeof createGamesManager>;
 

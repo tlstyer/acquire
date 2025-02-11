@@ -1,16 +1,16 @@
 import { useParams } from '@solidjs/router';
 import { batch, createMemo, createSignal, Index, Match, onCleanup, Show, Switch } from 'solid-js';
-import { ActionGameOver } from '../../../common/gameActions/gameOver';
-import { parseDecimalInteger } from '../../../common/helpers';
-import { type Client } from '../../client';
-import { GameBoard } from '../../components/GameBoard';
-import { GameHistory } from '../../components/GameHistory';
-import { GameSetupUI } from '../../components/GameSetupUI';
-import { NextGameAction } from '../../components/NextGameAction';
-import { ScoreBoard } from '../../components/ScoreBoard';
-import { TileRackReadOnly } from '../../components/TileRackReadOnly';
-import { GameManagerStatus } from '../../gamesManager';
-import { processBrowserMyKeyboardEvents } from '../../myKeyboardEvents';
+import { ActionGameOver } from '../../../common/gameActions/gameOver.js';
+import { parseDecimalInteger } from '../../../common/helpers.js';
+import { type Client } from '../../client.js';
+import { GameBoard } from '../../components/GameBoard.js';
+import { GameHistory } from '../../components/GameHistory.js';
+import { GameSetupUI } from '../../components/GameSetupUI.js';
+import { NextGameAction } from '../../components/NextGameAction.js';
+import { ScoreBoard } from '../../components/ScoreBoard.js';
+import { TileRackReadOnly } from '../../components/TileRackReadOnly.js';
+import { GameManagerStatus } from '../../gamesManager.js';
+import { processBrowserMyKeyboardEvents } from '../../myKeyboardEvents.js';
 import styles from './GamePage.module.css';
 
 export function GamePage(props: { client: Client }) {

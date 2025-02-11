@@ -1,4 +1,4 @@
-import { PB_GameBoardType } from '../common/pb';
+import { PB_GameBoardType } from '../common/pb.js';
 import styles from './App.module.css';
 
 export const gameBoardTypeToCSSClassName = new Map([

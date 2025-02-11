@@ -1,6 +1,6 @@
 import { createSignal, For } from 'solid-js';
-import { type PB_GameMode } from '../../common/pb';
-import { allGameModes, gameModeToString } from '../helpers';
+import { type PB_GameMode } from '../../common/pb.js';
+import { allGameModes, gameModeToString } from '../helpers.js';
 
 export function CreateGame(props: {
   initialGameMode: PB_GameMode;

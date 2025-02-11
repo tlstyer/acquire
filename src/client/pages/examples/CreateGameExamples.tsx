@@ -1,7 +1,7 @@
 import { For } from 'solid-js';
-import { PB_GameMode } from '../../../common/pb';
-import { CreateGame } from '../../components/CreateGame';
-import { gameModeToString } from '../../helpers';
+import { PB_GameMode } from '../../../common/pb.js';
+import { CreateGame } from '../../components/CreateGame.js';
+import { gameModeToString } from '../../helpers.js';
 
 export function CreateGameExamples() {
   const allProps = [

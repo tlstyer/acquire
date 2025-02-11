@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'vitest';
-import { User } from '../common/user';
-import { Client } from './client';
-import { Room } from './room';
+import { User } from '../common/user.js';
+import { Client } from './client.js';
+import { Room } from './room.js';
 
 const clientId = 1;
 const user = new User(2, 'username');

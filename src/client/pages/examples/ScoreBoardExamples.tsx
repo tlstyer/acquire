@@ -1,7 +1,7 @@
 import { For } from 'solid-js';
-import { PB_GameMode } from '../../../common/pb';
-import { User } from '../../../common/user';
-import { ScoreBoard } from '../../components/ScoreBoard';
+import { PB_GameMode } from '../../../common/pb.js';
+import { User } from '../../../common/user.js';
+import { ScoreBoard } from '../../components/ScoreBoard.js';
 
 export function ScoreBoardExamples() {
   const allProps = [

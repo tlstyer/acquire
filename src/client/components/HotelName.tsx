@@ -1,6 +1,6 @@
-import { type PB_GameBoardType } from '../../common/pb';
-import { gameBoardTypeToHotelName } from '../helpers';
-import { gameBoardTypeToCSSClassName } from '../styleHelpers';
+import { type PB_GameBoardType } from '../../common/pb.js';
+import { gameBoardTypeToHotelName } from '../helpers.js';
+import { gameBoardTypeToCSSClassName } from '../styleHelpers.js';
 
 export function HotelName(props: { chain: PB_GameBoardType }) {
   return (

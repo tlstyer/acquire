@@ -3,9 +3,9 @@ import { type WebSocket, WebSocketServer } from 'ws';
 import {
   TestClientCommunicatedMessage,
   type TestClientCommunication,
-} from '../client/clientCommunication';
-import { PB_MessageToClient, type PB_MessageToServer } from '../common/pb';
-import { ReuseIdManager } from './reuseIdManager';
+} from '../client/clientCommunication.js';
+import { PB_MessageToClient, type PB_MessageToServer } from '../common/pb.js';
+import { ReuseIdManager } from './reuseIdManager.js';
 
 export abstract class ServerCommunication {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

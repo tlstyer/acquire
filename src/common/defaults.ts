@@ -1,5 +1,5 @@
-import type { GameState } from './gameState';
-import { PB_GameBoardType } from './pb';
+import type { GameState } from './gameState.js';
+import { PB_GameBoardType } from './pb.js';
 
 export const defaultGameStateHistory: GameState[] = [];
 

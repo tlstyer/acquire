@@ -1,9 +1,9 @@
 import { createMemo, Index, type JSX } from 'solid-js';
-import { toTileString } from '../../common/helpers';
-import { type PB_GameBoardType } from '../../common/pb';
+import { toTileString } from '../../common/helpers.js';
+import { type PB_GameBoardType } from '../../common/pb.js';
 import stylesApp from '../App.module.css';
-import { gameBoardTypeToCSSClassName } from '../styleHelpers';
-import { allTileDataFromTilesAndTypes } from './TileRack';
+import { gameBoardTypeToCSSClassName } from '../styleHelpers.js';
+import { allTileDataFromTilesAndTypes } from './TileRack.js';
 import styles from './TileRackReadOnly.module.css';
 
 export function TileRackReadOnly(props: {

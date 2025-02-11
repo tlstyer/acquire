@@ -5,12 +5,12 @@ import {
   type PB_GameMode,
   type PB_MessageToServer_Game,
   type PB_MessageToServer_Game_Connect,
-} from '../common/pb';
-import { PBWithBinaryAlready_MessageToClient } from '../common/pbWithBinaryAlready';
-import type { Client } from './client';
-import { GameRoom } from './gameRoom';
-import type { LobbyRoom } from './lobbyRoom';
-import { ReuseIdManager } from './reuseIdManager';
+} from '../common/pb.js';
+import { PBWithBinaryAlready_MessageToClient } from '../common/pbWithBinaryAlready.js';
+import type { Client } from './client.js';
+import { GameRoom } from './gameRoom.js';
+import type { LobbyRoom } from './lobbyRoom.js';
+import { ReuseIdManager } from './reuseIdManager.js';
 
 export class GameRoomsManager {
   nextGameNumber = 1;

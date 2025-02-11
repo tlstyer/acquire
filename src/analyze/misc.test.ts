@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import { MovingAverage, calculatePlacings } from './misc';
+import { MovingAverage, calculatePlacings } from './misc.js';
 
 describe('calculatePlacings', () => {
   test('distinct scores', () => {

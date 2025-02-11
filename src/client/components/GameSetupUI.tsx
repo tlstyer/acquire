@@ -1,10 +1,10 @@
 import { createMemo, For, Match, Show, Switch } from 'solid-js';
-import { gameModeToNumPlayers, gameModeToTeamSize } from '../../common/helpers';
-import { PB_GameMode, PB_PlayerArrangementMode } from '../../common/pb';
-import { type User } from '../../common/user';
+import { gameModeToNumPlayers, gameModeToTeamSize } from '../../common/helpers.js';
+import { PB_GameMode, PB_PlayerArrangementMode } from '../../common/pb.js';
+import { type User } from '../../common/user.js';
 import stylesApp from '../App.module.css';
-import { allGameModes, gameModeToString } from '../helpers';
-import { teamNumberToCSSClassName } from '../styleHelpers';
+import { allGameModes, gameModeToString } from '../helpers.js';
+import { teamNumberToCSSClassName } from '../styleHelpers.js';
 import styles from './GameSetupUI.module.css';
 
 export function GameSetupUI(props: {

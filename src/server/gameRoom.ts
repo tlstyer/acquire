@@ -1,6 +1,6 @@
-import { Game } from '../common/game';
-import { GameSetup } from '../common/gameSetup';
-import { getNewTileBag } from '../common/helpers';
+import { Game } from '../common/game.js';
+import { GameSetup } from '../common/gameSetup.js';
+import { getNewTileBag } from '../common/helpers.js';
 import {
   PB_GameAction,
   PB_MessageToClient,
@@ -10,11 +10,11 @@ import {
   type PB_GameMode,
   type PB_MessageToServer_Game_Connect,
   type PB_MessageToServer_Game_GameSetupAction,
-} from '../common/pb';
-import { type User } from '../common/user';
-import type { Client } from './client';
-import type { LobbyRoom } from './lobbyRoom';
-import { Room } from './room';
+} from '../common/pb.js';
+import { type User } from '../common/user.js';
+import type { Client } from './client.js';
+import type { LobbyRoom } from './lobbyRoom.js';
+import { Room } from './room.js';
 
 export class GameRoom extends Room {
   gameSetup: GameSetup | null = null;

@@ -1,5 +1,5 @@
 import { expect, test } from 'vitest';
-import { ReuseIdManager } from './reuseIdManager';
+import { ReuseIdManager } from './reuseIdManager.js';
 
 test('new IDs are sequential starting with 1', () => {
   const reuseIdManager = new ReuseIdManager(60000);

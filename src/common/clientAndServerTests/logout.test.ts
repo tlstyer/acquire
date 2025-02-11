@@ -1,13 +1,13 @@
 import { expect, test } from 'vitest';
-import { createLoginLogoutMessage } from '../helpers';
-import { PB_MessageToClient_LoginLogout_ResponseCode, PB_MessageToServer } from '../pb';
-import { User } from '../user';
+import { createLoginLogoutMessage } from '../helpers.js';
+import { PB_MessageToClient_LoginLogout_ResponseCode, PB_MessageToServer } from '../pb.js';
+import { User } from '../user.js';
 import {
   createClientStuffAndConnectToTestServer,
   createServerStuff,
   userIdToTestUserData,
   waitForAsyncServerStuff,
-} from './common';
+} from './common.js';
 
 test('can log out while logged in', async () => {
   const serverStuff = createServerStuff();

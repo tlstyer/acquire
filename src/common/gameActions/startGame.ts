@@ -1,13 +1,13 @@
-import { GameActionEnum } from '../enums';
-import type { Game } from '../game';
+import { GameActionEnum } from '../enums.js';
+import type { Game } from '../game.js';
 import {
   GameHistoryMessageDrewPositionTile,
   GameHistoryMessageStartedGame,
-} from '../gameHistoryMessage';
-import { PB_GameBoardType } from '../pb';
-import { ActionBase } from './base';
-import { ActionPlayTile } from './playTile';
-import { ActionPurchaseShares } from './purchaseShares';
+} from '../gameHistoryMessage.js';
+import { PB_GameBoardType } from '../pb.js';
+import { ActionBase } from './base.js';
+import { ActionPlayTile } from './playTile.js';
+import { ActionPurchaseShares } from './purchaseShares.js';
 
 export class ActionStartGame extends ActionBase {
   constructor(game: Game, playerId: number) {

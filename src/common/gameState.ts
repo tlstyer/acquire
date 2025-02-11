@@ -7,18 +7,18 @@ import {
   defaultScoreBoardPrice,
   defaultTileRacks,
   defaultTileRackTypesList,
-} from './defaults';
-import { GameActionEnum, TileEnum } from './enums';
-import type { Game } from './game';
-import type { ActionBase } from './gameActions/base';
-import type { GameHistoryMessage } from './gameHistoryMessage';
+} from './defaults.js';
+import { GameActionEnum, TileEnum } from './enums.js';
+import type { Game } from './game.js';
+import type { ActionBase } from './gameActions/base.js';
+import type { GameHistoryMessage } from './gameHistoryMessage.js';
 import {
   PB_GameAction,
   PB_GameBoardChanges,
   PB_GameBoardType,
   PB_GameState,
   PB_GameState_RevealedTileRackTile,
-} from './pb';
+} from './pb.js';
 
 const dummyGameAction = PB_GameAction.create();
 const dummyPlayerGameStates: PB_GameState[] = [];

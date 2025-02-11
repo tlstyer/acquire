@@ -1,12 +1,12 @@
 import { expect, test } from 'vitest';
-import { type Client } from '../../client/client';
-import { type GameManager, GameManagerStatus } from '../../client/gamesManager';
-import { GameStatus } from '../../client/helpers';
-import { type LobbyManager } from '../../client/lobbyManager';
-import { type Server } from '../../server/server';
-import { defaultGameBoard } from '../defaults';
-import { PB_GameMode, PB_PlayerArrangementMode } from '../pb';
-import { type User } from '../user';
+import { type Client } from '../../client/client.js';
+import { type GameManager, GameManagerStatus } from '../../client/gamesManager.js';
+import { GameStatus } from '../../client/helpers.js';
+import { type LobbyManager } from '../../client/lobbyManager.js';
+import { type Server } from '../../server/server.js';
+import { defaultGameBoard } from '../defaults.js';
+import { PB_GameMode, PB_PlayerArrangementMode } from '../pb.js';
+import { type User } from '../user.js';
 import {
   createClientStuffAndConnectToTestServer,
   createServerStuff,
@@ -18,7 +18,7 @@ import {
   user4,
   user5,
   user6,
-} from './common';
+} from './common.js';
 
 test('newly created game has correct signals', async () => {
   const serverStuff = createServerStuff();

@@ -1,11 +1,11 @@
 import { expect, test, vi } from 'vitest';
-import { createClient } from '../../client/client';
-import { TestClientCommunication } from '../../client/clientCommunication';
-import { Server } from '../../server/server';
-import { TestServerCommunication } from '../../server/serverCommunication';
-import { TestUserDataProvider } from '../../server/userDataProvider';
-import { PB_MessageToClient } from '../pb';
-import { createClientStuffAndConnectToTestServer, createServerStuff } from './common';
+import { createClient } from '../../client/client.js';
+import { TestClientCommunication } from '../../client/clientCommunication.js';
+import { Server } from '../../server/server.js';
+import { TestServerCommunication } from '../../server/serverCommunication.js';
+import { TestUserDataProvider } from '../../server/userDataProvider.js';
+import { PB_MessageToClient } from '../pb.js';
+import { createClientStuffAndConnectToTestServer, createServerStuff } from './common.js';
 
 test('client should reload window when version is different', () => {
   const mock = vi.fn();

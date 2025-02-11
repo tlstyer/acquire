@@ -1,16 +1,16 @@
-import { GameActionEnum } from '../enums';
-import { UserInputError } from '../error';
-import type { Game } from '../game';
+import { GameActionEnum } from '../enums.js';
+import { UserInputError } from '../error.js';
+import type { Game } from '../game.js';
 import {
   GameHistoryMessageHasNoPlayableTile,
   GameHistoryMessagePlayedTile,
   GameHistoryMessageTurnBegan,
-} from '../gameHistoryMessage';
-import { neighboringTilesLookup } from '../helpers';
-import { type PB_GameAction, PB_GameBoardType } from '../pb';
-import { ActionBase } from './base';
-import { ActionSelectMergerSurvivor } from './selectMergerSurvivor';
-import { ActionSelectNewChain } from './selectNewChain';
+} from '../gameHistoryMessage.js';
+import { neighboringTilesLookup } from '../helpers.js';
+import { type PB_GameAction, PB_GameBoardType } from '../pb.js';
+import { ActionBase } from './base.js';
+import { ActionSelectMergerSurvivor } from './selectMergerSurvivor.js';
+import { ActionSelectNewChain } from './selectNewChain.js';
 
 export class ActionPlayTile extends ActionBase {
   constructor(game: Game, playerId: number) {

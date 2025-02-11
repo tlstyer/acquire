@@ -1,5 +1,5 @@
-import { type Client } from '../client';
-import { GameBoardLabelMode } from '../helpers';
+import { type Client } from '../client.js';
+import { GameBoardLabelMode } from '../helpers.js';
 import styles from './Login.module.css';
 
 export function Settings(props: { client: Client }) {

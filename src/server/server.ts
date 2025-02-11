@@ -3,7 +3,7 @@ import {
   createLoginLogoutMessage,
   isValidPassword,
   isValidUsername,
-} from '../common/helpers';
+} from '../common/helpers.js';
 import {
   PB_MessageToClient,
   PB_MessageToClient_LoginLogout_ResponseCode,
@@ -12,13 +12,13 @@ import {
   type PB_MessageToServer_LoginLogout_CreateUserAndLogin,
   type PB_MessageToServer_LoginLogout_LoginWithPassword,
   type PB_MessageToServer_LoginLogout_LoginWithToken,
-} from '../common/pb';
-import { User } from '../common/user';
-import { Client } from './client';
-import { GameRoomsManager } from './gameRoomsManager';
-import { LobbyRoom } from './lobbyRoom';
-import type { ServerCommunication } from './serverCommunication';
-import type { UserData, UserDataProvider } from './userDataProvider';
+} from '../common/pb.js';
+import { User } from '../common/user.js';
+import { Client } from './client.js';
+import { GameRoomsManager } from './gameRoomsManager.js';
+import { LobbyRoom } from './lobbyRoom.js';
+import type { ServerCommunication } from './serverCommunication.js';
+import type { UserData, UserDataProvider } from './userDataProvider.js';
 
 export class Server {
   private initialMessage: Uint8Array;

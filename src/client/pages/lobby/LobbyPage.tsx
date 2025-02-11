@@ -1,13 +1,13 @@
 import { useNavigate } from '@solidjs/router';
 import { createEffect, For, Show } from 'solid-js';
 import { TransitionGroup } from 'solid-transition-group';
-import { PB_GameBoardType, PB_GameMode } from '../../../common/pb';
-import { User } from '../../../common/user';
-import { type Client } from '../../client';
-import { CreateGame } from '../../components/CreateGame';
-import { GameListing } from '../../components/GameListing';
-import { Username } from '../../components/Username';
-import { GameStatus } from '../../helpers';
+import { PB_GameBoardType, PB_GameMode } from '../../../common/pb.js';
+import { User } from '../../../common/user.js';
+import { type Client } from '../../client.js';
+import { CreateGame } from '../../components/CreateGame.js';
+import { GameListing } from '../../components/GameListing.js';
+import { Username } from '../../components/Username.js';
+import { GameStatus } from '../../helpers.js';
 import styles from './LobbyPage.module.css';
 
 export function LobbyPage(props: { client: Client }) {

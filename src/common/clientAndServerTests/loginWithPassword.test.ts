@@ -1,6 +1,6 @@
 import { expect, test } from 'vitest';
-import { createLoginLogoutMessage } from '../helpers';
-import { PB_MessageToClient_LoginLogout_ResponseCode, PB_MessageToServer } from '../pb';
+import { createLoginLogoutMessage } from '../helpers.js';
+import { PB_MessageToClient_LoginLogout_ResponseCode, PB_MessageToServer } from '../pb.js';
 import {
   createClientStuffAndConnectToTestServer,
   createServerStuff,
@@ -8,7 +8,7 @@ import {
   testLogin,
   userIdToTestUserData,
   waitForAsyncServerStuff,
-} from './common';
+} from './common.js';
 
 testLogin(
   'error from user data provider is sent to client and user stays logged out',

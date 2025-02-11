@@ -1,6 +1,6 @@
-import { defaultApprovals, gameModeToNumPlayers, gameModeToTeamSize } from './helpers';
-import { PB_PlayerArrangementMode, type PB_GameMode, type PB_GameSetupChange } from './pb';
-import { type User } from './user';
+import { defaultApprovals, gameModeToNumPlayers, gameModeToTeamSize } from './helpers.js';
+import { PB_PlayerArrangementMode, type PB_GameMode, type PB_GameSetupChange } from './pb.js';
+import { type User } from './user.js';
 
 export type GameSetupLite = ReturnType<typeof createGameSetupLite>;
 

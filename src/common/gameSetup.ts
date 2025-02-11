@@ -3,9 +3,9 @@ import {
   gameModeToNumPlayers,
   gameModeToTeamSize,
   shuffleArray,
-} from './helpers';
-import { PB_GameMode, PB_GameSetupChange, PB_PlayerArrangementMode } from './pb';
-import { type User } from './user';
+} from './helpers.js';
+import { PB_GameMode, PB_GameSetupChange, PB_PlayerArrangementMode } from './pb.js';
+import { type User } from './user.js';
 
 export class GameSetup {
   users: (User | null)[];

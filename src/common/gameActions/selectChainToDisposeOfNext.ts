@@ -1,10 +1,10 @@
-import { GameActionEnum } from '../enums';
-import { UserInputError } from '../error';
-import type { Game } from '../game';
-import { GameHistoryMessageSelectedChainToDisposeOfNext } from '../gameHistoryMessage';
-import { type PB_GameAction, PB_GameBoardType } from '../pb';
-import { ActionBase } from './base';
-import { ActionDisposeOfShares } from './disposeOfShares';
+import { GameActionEnum } from '../enums.js';
+import { UserInputError } from '../error.js';
+import type { Game } from '../game.js';
+import { GameHistoryMessageSelectedChainToDisposeOfNext } from '../gameHistoryMessage.js';
+import { type PB_GameAction, PB_GameBoardType } from '../pb.js';
+import { ActionBase } from './base.js';
+import { ActionDisposeOfShares } from './disposeOfShares.js';
 
 export class ActionSelectChainToDisposeOfNext extends ActionBase {
   constructor(

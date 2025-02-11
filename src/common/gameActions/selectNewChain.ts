@@ -1,9 +1,9 @@
-import { GameActionEnum } from '../enums';
-import { UserInputError } from '../error';
-import { ScoreBoardAdjustment, type Game } from '../game';
-import { GameHistoryMessageFormedChain } from '../gameHistoryMessage';
-import { PB_GameBoardType, type PB_GameAction } from '../pb';
-import { ActionBase } from './base';
+import { GameActionEnum } from '../enums.js';
+import { UserInputError } from '../error.js';
+import { ScoreBoardAdjustment, type Game } from '../game.js';
+import { GameHistoryMessageFormedChain } from '../gameHistoryMessage.js';
+import { PB_GameBoardType, type PB_GameAction } from '../pb.js';
+import { ActionBase } from './base.js';
 
 export class ActionSelectNewChain extends ActionBase {
   constructor(

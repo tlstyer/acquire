@@ -1,5 +1,5 @@
 import path from 'path';
-import type { Game } from '../common/game';
+import type { Game } from '../common/game.js';
 import {
   calculateFinalTeamScores,
   calculatePlacings,
@@ -9,7 +9,7 @@ import {
   getMaxGameHistoryMessageCountsPerMove,
   getMaxGameHistoryMessageCountsPerTurn,
   iterateGamesInDirectory,
-} from './misc';
+} from './misc.js';
 
 function main(dirPath: string) {
   for (const { game, filePath } of iterateGamesInDirectory(dirPath, true)) {

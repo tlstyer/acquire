@@ -1,9 +1,9 @@
 import fs from 'fs';
 import path from 'path';
 import readline from 'readline';
-import { ScoreBoardIndexEnum } from '../common/enums';
-import type { Game } from '../common/game';
-import { ActionGameOver } from '../common/gameActions/gameOver';
+import { ScoreBoardIndexEnum } from '../common/enums.js';
+import type { Game } from '../common/game.js';
+import { ActionGameOver } from '../common/gameActions/gameOver.js';
 import {
   GameHistoryMessageAllTilesPlayed,
   GameHistoryMessageCouldNotAffordAnyShares,
@@ -25,11 +25,11 @@ import {
   GameHistoryMessageStartedGame,
   GameHistoryMessageTurnBegan,
   type GameHistoryMessage,
-} from '../common/gameHistoryMessage';
-import { gameFromProtocolBuffer } from '../common/gameSerialization';
-import { gameModeToNumPlayers, gameModeToTeamSize } from '../common/helpers';
-import { PB_GameReview, type PB_GameMode } from '../common/pb';
-import type { ProcessedGameDataType } from './outputProcessedGameData';
+} from '../common/gameHistoryMessage.js';
+import { gameFromProtocolBuffer } from '../common/gameSerialization.js';
+import { gameModeToNumPlayers, gameModeToTeamSize } from '../common/helpers.js';
+import { PB_GameReview, type PB_GameMode } from '../common/pb.js';
+import type { ProcessedGameDataType } from './outputProcessedGameData.js';
 
 export function* iterateGamesInDirectory(dirPath: string, completedGamesOnly = false) {
   for (const file of fs.readdirSync(dirPath)) {

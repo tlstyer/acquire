@@ -1,14 +1,14 @@
 import { expect, test } from 'vitest';
-import { getPasswordHash } from '../../server/userDataProvider';
-import { createLoginLogoutMessage } from '../helpers';
-import { PB_MessageToClient_LoginLogout_ResponseCode, PB_MessageToServer } from '../pb';
+import { getPasswordHash } from '../../server/userDataProvider.js';
+import { createLoginLogoutMessage } from '../helpers.js';
+import { PB_MessageToClient_LoginLogout_ResponseCode, PB_MessageToServer } from '../pb.js';
 import {
   createClientStuffAndConnectToTestServer,
   createServerStuff,
   numTestUsers,
   testLogin,
   waitForAsyncServerStuff,
-} from './common';
+} from './common.js';
 
 testLogin(
   'username of length 0 is an invalid username',

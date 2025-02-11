@@ -1,12 +1,12 @@
 import { createMemo, Index } from 'solid-js';
-import { gameModeToNumPlayers, gameModeToTeamSize } from '../../common/helpers';
-import { type PB_GameBoardType, type PB_GameMode } from '../../common/pb';
-import { type User } from '../../common/user';
+import { gameModeToNumPlayers, gameModeToTeamSize } from '../../common/helpers.js';
+import { type PB_GameBoardType, type PB_GameMode } from '../../common/pb.js';
+import { type User } from '../../common/user.js';
 import stylesApp from '../App.module.css';
-import { gameModeToString, type GameStatus, gameStatusToString } from '../helpers';
-import { teamNumberToCSSClassName } from '../styleHelpers';
+import { gameModeToString, type GameStatus, gameStatusToString } from '../helpers.js';
+import { teamNumberToCSSClassName } from '../styleHelpers.js';
 import styles from './GameListing.module.css';
-import { MiniGameBoard } from './MiniGameBoard';
+import { MiniGameBoard } from './MiniGameBoard.js';
 
 export function GameListing(props: {
   gameBoard: PB_GameBoardType[][];

@@ -1,8 +1,8 @@
 import 'dotenv/config';
-import { parseDecimalInteger } from '../common/helpers';
-import { Server } from './server';
-import { WebSocketServerCommunication } from './serverCommunication';
-import { TestUserDataProvider } from './userDataProvider';
+import { parseDecimalInteger } from '../common/helpers.js';
+import { Server } from './server.js';
+import { WebSocketServerCommunication } from './serverCommunication.js';
+import { TestUserDataProvider } from './userDataProvider.js';
 
 function main() {
   const serverCommunication = new WebSocketServerCommunication();

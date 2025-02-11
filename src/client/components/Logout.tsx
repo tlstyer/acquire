@@ -1,7 +1,7 @@
 import { createSignal, Show } from 'solid-js';
-import { PB_MessageToClient_LoginLogout_ResponseCode } from '../../common/pb';
-import { type Client, LoginState } from '../client';
-import { loginLogoutResponseCodeToString } from '../helpers';
+import { PB_MessageToClient_LoginLogout_ResponseCode } from '../../common/pb.js';
+import { type Client, LoginState } from '../client.js';
+import { loginLogoutResponseCodeToString } from '../helpers.js';
 import styles from './Login.module.css';
 
 export function Logout(props: { client: Client }) {

@@ -1,17 +1,17 @@
 import { For } from 'solid-js';
-import { Game } from '../../../common/game';
-import { ActionDisposeOfShares } from '../../../common/gameActions/disposeOfShares';
-import { ActionGameOver } from '../../../common/gameActions/gameOver';
-import { ActionPlayTile } from '../../../common/gameActions/playTile';
-import { ActionPurchaseShares } from '../../../common/gameActions/purchaseShares';
-import { ActionSelectChainToDisposeOfNext } from '../../../common/gameActions/selectChainToDisposeOfNext';
-import { ActionSelectMergerSurvivor } from '../../../common/gameActions/selectMergerSurvivor';
-import { ActionSelectNewChain } from '../../../common/gameActions/selectNewChain';
-import { ActionStartGame } from '../../../common/gameActions/startGame';
-import { PB_GameBoardType, PB_GameMode, PB_PlayerArrangementMode } from '../../../common/pb';
-import { User } from '../../../common/user';
-import { NextGameAction } from '../../components/NextGameAction';
-import { allChains } from '../../helpers';
+import { Game } from '../../../common/game.js';
+import { ActionDisposeOfShares } from '../../../common/gameActions/disposeOfShares.js';
+import { ActionGameOver } from '../../../common/gameActions/gameOver.js';
+import { ActionPlayTile } from '../../../common/gameActions/playTile.js';
+import { ActionPurchaseShares } from '../../../common/gameActions/purchaseShares.js';
+import { ActionSelectChainToDisposeOfNext } from '../../../common/gameActions/selectChainToDisposeOfNext.js';
+import { ActionSelectMergerSurvivor } from '../../../common/gameActions/selectMergerSurvivor.js';
+import { ActionSelectNewChain } from '../../../common/gameActions/selectNewChain.js';
+import { ActionStartGame } from '../../../common/gameActions/startGame.js';
+import { PB_GameBoardType, PB_GameMode, PB_PlayerArrangementMode } from '../../../common/pb.js';
+import { User } from '../../../common/user.js';
+import { NextGameAction } from '../../components/NextGameAction.js';
+import { allChains } from '../../helpers.js';
 
 export function NextGameActionExamples() {
   const hostUser = new User(1, 'Tim');

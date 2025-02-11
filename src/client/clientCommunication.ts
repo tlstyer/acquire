@@ -1,10 +1,10 @@
 import chalk from 'chalk';
 import { isServer } from 'solid-js/web';
-import { PB_MessageToClient, PB_MessageToServer } from '../common/pb';
+import { PB_MessageToClient, PB_MessageToServer } from '../common/pb.js';
 import {
   TestServerCommunicatedMessage,
   type TestServerCommunication,
-} from '../server/serverCommunication';
+} from '../server/serverCommunication.js';
 
 export abstract class ClientCommunication {
   protected onConnect = () => {};

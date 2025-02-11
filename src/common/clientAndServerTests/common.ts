@@ -1,11 +1,15 @@
 import { expect, test } from 'vitest';
-import { type Client, createClient } from '../../client/client';
-import { TestClientCommunication } from '../../client/clientCommunication';
-import { Server } from '../../server/server';
-import { TestServerCommunication } from '../../server/serverCommunication';
-import { TestUserData, TestUserDataProvider, getPasswordHash } from '../../server/userDataProvider';
-import { type PB_MessageToClient } from '../pb';
-import { User } from '../user';
+import { type Client, createClient } from '../../client/client.js';
+import { TestClientCommunication } from '../../client/clientCommunication.js';
+import { Server } from '../../server/server.js';
+import { TestServerCommunication } from '../../server/serverCommunication.js';
+import {
+  TestUserData,
+  TestUserDataProvider,
+  getPasswordHash,
+} from '../../server/userDataProvider.js';
+import { type PB_MessageToClient } from '../pb.js';
+import { User } from '../user.js';
 
 export const numTestUsers = 7;
 export const userIdToTestUserData = [new TestUserData('', 0, '')];

@@ -1,11 +1,11 @@
 import { batch, createEffect, createSignal, on, onMount } from 'solid-js';
-import { type PB_GameBoardType } from '../../common/pb';
+import { type PB_GameBoardType } from '../../common/pb.js';
 import {
   KEY_SHIFT,
   type MyKeyboardEvent,
   type ProcessMyKeyboardEventRef,
-} from '../myKeyboardEvents';
-import { gameBoardTypeToCSSClassName } from '../styleHelpers';
+} from '../myKeyboardEvents.js';
+import { gameBoardTypeToCSSClassName } from '../styleHelpers.js';
 import styles from './DisposeOfShares.module.css';
 
 export function DisposeOfShares(props: {

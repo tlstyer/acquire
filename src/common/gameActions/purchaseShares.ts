@@ -1,6 +1,6 @@
-import { GameActionEnum, ScoreBoardIndexEnum } from '../enums';
-import { UserInputError } from '../error';
-import { ScoreBoardAdjustment, type Game } from '../game';
+import { GameActionEnum, ScoreBoardIndexEnum } from '../enums.js';
+import { UserInputError } from '../error.js';
+import { ScoreBoardAdjustment, type Game } from '../game.js';
 import {
   ChainAndCount,
   GameHistoryMessageAllTilesPlayed,
@@ -8,11 +8,11 @@ import {
   GameHistoryMessageEndedGame,
   GameHistoryMessageNoTilesPlayedForEntireRound,
   GameHistoryMessagePurchasedShares,
-} from '../gameHistoryMessage';
-import { PB_GameBoardType, type PB_GameAction } from '../pb';
-import { ActionBase } from './base';
-import { ActionGameOver } from './gameOver';
-import { ActionPlayTile } from './playTile';
+} from '../gameHistoryMessage.js';
+import { PB_GameBoardType, type PB_GameAction } from '../pb.js';
+import { ActionBase } from './base.js';
+import { ActionGameOver } from './gameOver.js';
+import { ActionPlayTile } from './playTile.js';
 
 export class ActionPurchaseShares extends ActionBase {
   cannotAffordAnyShares = false;

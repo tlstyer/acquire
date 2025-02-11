@@ -1,5 +1,5 @@
 import CryptoJS from 'crypto-js';
-import { PB_MessageToClient_LoginLogout_ResponseCode } from '../common/pb';
+import { PB_MessageToClient_LoginLogout_ResponseCode } from '../common/pb.js';
 
 export interface UserDataProvider {
   createUser(username: string, password: string): Promise<UserDataProviderResponse>;

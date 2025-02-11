@@ -1,10 +1,10 @@
 import { createMemo, For, Index, Match, Switch } from 'solid-js';
-import { ScoreBoardIndexEnum } from '../../common/enums';
-import { gameModeToNumPlayers, gameModeToTeamSize } from '../../common/helpers';
-import { type PB_GameMode } from '../../common/pb';
-import { type User } from '../../common/user';
-import { allChains, gameBoardTypeToHotelInitial } from '../helpers';
-import { gameBoardTypeToCSSClassName, teamNumberToCSSClassName } from '../styleHelpers';
+import { ScoreBoardIndexEnum } from '../../common/enums.js';
+import { gameModeToNumPlayers, gameModeToTeamSize } from '../../common/helpers.js';
+import { type PB_GameMode } from '../../common/pb.js';
+import { type User } from '../../common/user.js';
+import { allChains, gameBoardTypeToHotelInitial } from '../helpers.js';
+import { gameBoardTypeToCSSClassName, teamNumberToCSSClassName } from '../styleHelpers.js';
 import styles from './ScoreBoard.module.css';
 
 export function ScoreBoard(props: {

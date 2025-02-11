@@ -1,17 +1,17 @@
 import { Match, Switch } from 'solid-js';
-import { type ActionBase } from '../../common/gameActions/base';
-import { ActionDisposeOfShares } from '../../common/gameActions/disposeOfShares';
-import { ActionGameOver } from '../../common/gameActions/gameOver';
-import { ActionPlayTile } from '../../common/gameActions/playTile';
-import { ActionPurchaseShares } from '../../common/gameActions/purchaseShares';
-import { ActionSelectChainToDisposeOfNext } from '../../common/gameActions/selectChainToDisposeOfNext';
-import { ActionSelectMergerSurvivor } from '../../common/gameActions/selectMergerSurvivor';
-import { ActionSelectNewChain } from '../../common/gameActions/selectNewChain';
-import { ActionStartGame } from '../../common/gameActions/startGame';
-import { HotelName } from './HotelName';
+import { type ActionBase } from '../../common/gameActions/base.js';
+import { ActionDisposeOfShares } from '../../common/gameActions/disposeOfShares.js';
+import { ActionGameOver } from '../../common/gameActions/gameOver.js';
+import { ActionPlayTile } from '../../common/gameActions/playTile.js';
+import { ActionPurchaseShares } from '../../common/gameActions/purchaseShares.js';
+import { ActionSelectChainToDisposeOfNext } from '../../common/gameActions/selectChainToDisposeOfNext.js';
+import { ActionSelectMergerSurvivor } from '../../common/gameActions/selectMergerSurvivor.js';
+import { ActionSelectNewChain } from '../../common/gameActions/selectNewChain.js';
+import { ActionStartGame } from '../../common/gameActions/startGame.js';
+import { HotelName } from './HotelName.js';
 import styles from './NextGameAction.module.css';
-import { NextGameActionHotelInitialsList } from './NextGameActionHotelInitialsList';
-import { Username } from './Username';
+import { NextGameActionHotelInitialsList } from './NextGameActionHotelInitialsList.js';
+import { Username } from './Username.js';
 
 export function NextGameAction(props: { action: ActionBase }) {
   return (

@@ -1,9 +1,9 @@
-import { GameActionEnum, ScoreBoardIndexEnum } from '../enums';
-import { UserInputError } from '../error';
-import { ScoreBoardAdjustment, type Game } from '../game';
-import { GameHistoryMessageDisposedOfShares } from '../gameHistoryMessage';
-import type { PB_GameAction, PB_GameBoardType } from '../pb';
-import { ActionBase } from './base';
+import { GameActionEnum, ScoreBoardIndexEnum } from '../enums.js';
+import { UserInputError } from '../error.js';
+import { ScoreBoardAdjustment, type Game } from '../game.js';
+import { GameHistoryMessageDisposedOfShares } from '../gameHistoryMessage.js';
+import type { PB_GameAction, PB_GameBoardType } from '../pb.js';
+import { ActionBase } from './base.js';
 
 export class ActionDisposeOfShares extends ActionBase {
   sharesOwnedInDefunctChain: number;

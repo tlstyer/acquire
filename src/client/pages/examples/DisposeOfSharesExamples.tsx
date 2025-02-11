@@ -1,8 +1,8 @@
 import { batch, createSignal, For, onCleanup } from 'solid-js';
-import { PB_GameBoardType } from '../../../common/pb';
-import { DisposeOfShares } from '../../components/DisposeOfShares';
-import { processBrowserMyKeyboardEvents } from '../../myKeyboardEvents';
-import { EnableKeyboardShortcutsButton } from './EnableKeyboardShortcutsButton';
+import { PB_GameBoardType } from '../../../common/pb.js';
+import { DisposeOfShares } from '../../components/DisposeOfShares.js';
+import { processBrowserMyKeyboardEvents } from '../../myKeyboardEvents.js';
+import { EnableKeyboardShortcutsButton } from './EnableKeyboardShortcutsButton.js';
 
 export function DisposeOfSharesExamples() {
   const allProps = [

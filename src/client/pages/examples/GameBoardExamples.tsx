@@ -1,8 +1,8 @@
 import { For } from 'solid-js';
-import { toTileString } from '../../../common/helpers';
-import { type PB_GameBoardType } from '../../../common/pb';
-import { GameBoard } from '../../components/GameBoard';
-import { GameBoardLabelMode } from '../../helpers';
+import { toTileString } from '../../../common/helpers.js';
+import { type PB_GameBoardType } from '../../../common/pb.js';
+import { GameBoard } from '../../components/GameBoard.js';
+import { GameBoardLabelMode } from '../../helpers.js';
 
 export function GameBoardExamples() {
   const baseProps = {

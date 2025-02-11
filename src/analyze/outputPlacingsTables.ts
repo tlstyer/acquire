@@ -1,5 +1,5 @@
-import { PB_GameMode } from '../common/pb';
-import { iterateProcessedGameData } from './misc';
+import { PB_GameMode } from '../common/pb.js';
+import { iterateProcessedGameData } from './misc.js';
 
 async function main(processedGameDataFilePath: string) {
   const gameModeToPlacingsForGameMode = new Map<PB_GameMode, PlacingsForGameMode>();

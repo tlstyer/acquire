@@ -1,13 +1,13 @@
 import { createMemo, For, type JSX, onMount } from 'solid-js';
-import { type PB_GameBoardType } from '../../common/pb';
+import { type PB_GameBoardType } from '../../common/pb.js';
 import stylesApp from '../App.module.css';
 import {
   allChains,
   gameBoardTypeToHotelInitial,
   keyboardEventCodeToGameBoardType,
-} from '../helpers';
-import { type ProcessMyKeyboardEventRef } from '../myKeyboardEvents';
-import { gameBoardTypeToCSSClassName } from '../styleHelpers';
+} from '../helpers.js';
+import { type ProcessMyKeyboardEventRef } from '../myKeyboardEvents.js';
+import { gameBoardTypeToCSSClassName } from '../styleHelpers.js';
 import styles from './SelectChain.module.css';
 
 export function SelectChain(props: {

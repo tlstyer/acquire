@@ -1,10 +1,10 @@
 import { For } from 'solid-js';
-import { defaultGameBoard } from '../../../common/defaults';
-import { PB_GameMode } from '../../../common/pb';
-import { User } from '../../../common/user';
-import { GameListing } from '../../components/GameListing';
-import { GameStatus } from '../../helpers';
-import { getExampleGame1, getExampleGame2 } from './games';
+import { defaultGameBoard } from '../../../common/defaults.js';
+import { PB_GameMode } from '../../../common/pb.js';
+import { User } from '../../../common/user.js';
+import { GameListing } from '../../components/GameListing.js';
+import { GameStatus } from '../../helpers.js';
+import { getExampleGame1, getExampleGame2 } from './games.js';
 
 export function GameListingExamples() {
   const allProps = [

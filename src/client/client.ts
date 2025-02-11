@@ -1,18 +1,18 @@
 import { type Accessor, createSignal } from 'solid-js';
 import { isServer } from 'solid-js/web';
-import { concatenateUint8Arrays, parseDecimalInteger } from '../common/helpers';
+import { concatenateUint8Arrays, parseDecimalInteger } from '../common/helpers.js';
 import {
   PB_MessageToClient,
   type PB_MessageToClient_Initial,
   type PB_MessageToClient_LoginLogout,
   PB_MessageToClient_LoginLogout_ResponseCode,
   PB_MessageToServer,
-} from '../common/pb';
-import { User } from '../common/user';
-import type { ClientCommunication } from './clientCommunication';
-import { createGamesManager } from './gamesManager';
-import { type DialogType, GameBoardLabelMode } from './helpers';
-import { createLobbyManager } from './lobbyManager';
+} from '../common/pb.js';
+import { User } from '../common/user.js';
+import type { ClientCommunication } from './clientCommunication.js';
+import { createGamesManager } from './gamesManager.js';
+import { type DialogType, GameBoardLabelMode } from './helpers.js';
+import { createLobbyManager } from './lobbyManager.js';
 
 export type Client = ReturnType<typeof createClient>;
 

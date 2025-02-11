@@ -1,15 +1,15 @@
-import { GameActionEnum, ScoreBoardIndexEnum } from '../enums';
-import { UserInputError } from '../error';
-import type { Game } from '../game';
+import { GameActionEnum, ScoreBoardIndexEnum } from '../enums.js';
+import { UserInputError } from '../error.js';
+import type { Game } from '../game.js';
 import {
   GameHistoryMessageMergedChains,
   GameHistoryMessageReceivedBonus,
   GameHistoryMessageSelectedMergerSurvivor,
-} from '../gameHistoryMessage';
-import { calculateBonuses } from '../helpers';
-import { type PB_GameAction, PB_GameBoardType } from '../pb';
-import { ActionBase } from './base';
-import { ActionSelectChainToDisposeOfNext } from './selectChainToDisposeOfNext';
+} from '../gameHistoryMessage.js';
+import { calculateBonuses } from '../helpers.js';
+import { type PB_GameAction, PB_GameBoardType } from '../pb.js';
+import { ActionBase } from './base.js';
+import { ActionSelectChainToDisposeOfNext } from './selectChainToDisposeOfNext.js';
 
 export class ActionSelectMergerSurvivor extends ActionBase {
   chainsBySize: PB_GameBoardType[][];

@@ -1,9 +1,9 @@
 import { Match, Show, Switch } from 'solid-js';
 import { type DOMElement } from 'solid-js/jsx-runtime';
-import { type Client, LoginState } from '../client';
-import { DialogType } from '../helpers';
+import { type Client, LoginState } from '../client.js';
+import { DialogType } from '../helpers.js';
 import styles from './Header.module.css';
-import { Username } from './Username';
+import { Username } from './Username.js';
 
 export function Header(props: { client: Client }) {
   function dialogClickHandler(

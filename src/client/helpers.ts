@@ -2,7 +2,7 @@ import {
   PB_GameBoardType,
   PB_GameMode,
   PB_MessageToClient_LoginLogout_ResponseCode,
-} from '../common/pb';
+} from '../common/pb.js';
 
 export const allChains = [
   PB_GameBoardType.LUXOR,

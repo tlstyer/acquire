@@ -1,7 +1,7 @@
-import { Game } from './game';
-import { ActionGameOver } from './gameActions/gameOver';
-import { type PB_GameAction, PB_GameReview } from './pb';
-import { User } from './user';
+import { Game } from './game.js';
+import { ActionGameOver } from './gameActions/gameOver.js';
+import { type PB_GameAction, PB_GameReview } from './pb.js';
+import { User } from './user.js';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function gameToJSON(game: Game): any {

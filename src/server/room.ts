@@ -1,5 +1,5 @@
-import { type User } from '../common/user';
-import type { Client } from './client';
+import { type User } from '../common/user.js';
+import type { Client } from './client.js';
 
 export class Room {
   clients = new Set<Client>();

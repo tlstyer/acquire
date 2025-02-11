@@ -1,4 +1,4 @@
-import type { PB_GameBoardType } from './pb';
+import type { PB_GameBoardType } from './pb.js';
 
 export type GameHistoryMessage =
   | GameHistoryMessageTurnBegan

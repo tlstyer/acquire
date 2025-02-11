@@ -1,5 +1,5 @@
-import { parseDecimalInteger } from '../common/helpers';
-import { iterateProcessedGameData, MovingAverage } from './misc';
+import { parseDecimalInteger } from '../common/helpers.js';
+import { iterateProcessedGameData, MovingAverage } from './misc.js';
 
 async function main(processedGameDataFilePath: string, movingAverageLengthStr: string | undefined) {
   let movingAverageLength = parseDecimalInteger(movingAverageLengthStr);
