@@ -1,12 +1,24 @@
 import path from 'path';
-import { defineConfig } from 'vite';
+import { visualizer } from 'rollup-plugin-visualizer';
+import { defineConfig, type PluginOption } from 'vite';
 import solidPlugin from 'vite-plugin-solid';
 import { configDefaults } from 'vitest/config';
 
 const buildDir = path.join(import.meta.dirname, 'build');
 
+const enableVisualizer = false;
+
 export default defineConfig({
-  plugins: [solidPlugin()],
+  plugins: [
+    solidPlugin(),
+    enableVisualizer
+      ? (visualizer({
+          filename: path.join(buildDir, 'stats.html'),
+          sourcemap: true,
+          open: true,
+        }) as PluginOption)
+      : undefined,
+  ],
   server: {
     port: 3000,
   },
@@ -21,6 +33,7 @@ export default defineConfig({
   },
   build: {
     target: 'esnext',
+    sourcemap: enableVisualizer,
     outDir: path.join(buildDir, 'client'),
   },
   resolve: {
