@@ -1,5 +1,3 @@
-declare const styles: {
-  readonly "root": string;
-};
-export = styles;
+export const __esModule: true;
+export const root: string;
 

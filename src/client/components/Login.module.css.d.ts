@@ -1,9 +1,7 @@
-declare const styles: {
-  readonly "error": string;
-  readonly "inProgress": string;
-  readonly "inputError": string;
-  readonly "root": string;
-  readonly "success": string;
-};
-export = styles;
+export const __esModule: true;
+export const error: string;
+export const inProgress: string;
+export const inputError: string;
+export const root: string;
+export const success: string;
 

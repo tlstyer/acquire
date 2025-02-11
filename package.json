@@ -7,7 +7,7 @@
     "test": "vitest",
     "lint": "eslint --fix",
     "format": "prettier --write .",
-    "css": "tcm src/client/",
+    "css": "tcm -e src/client/",
     "protobuf": "protoc --ts_out src/common --proto_path src/common src/common/*.proto",
     "protobuf:format": "clang-format -i src/common/*.proto",
     "buildServer": "tsc",

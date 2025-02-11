@@ -1,6 +1,4 @@
-declare const styles: {
-  readonly "clickable": string;
-  readonly "root": string;
-};
-export = styles;
+export const __esModule: true;
+export const clickable: string;
+export const root: string;
 

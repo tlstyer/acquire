@@ -1,5 +1,3 @@
-declare const styles: {
-  readonly "gameHistoryWrapper": string;
-};
-export = styles;
+export const __esModule: true;
+export const gameHistoryWrapper: string;
 

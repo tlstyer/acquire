@@ -1,6 +1,4 @@
-declare const styles: {
-  readonly "root": string;
-  readonly "topRow": string;
-};
-export = styles;
+export const __esModule: true;
+export const root: string;
+export const topRow: string;
 

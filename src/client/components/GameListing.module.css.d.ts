@@ -1,8 +1,6 @@
-declare const styles: {
-  readonly "miniGameBoardWrapper": string;
-  readonly "other": string;
-  readonly "player": string;
-  readonly "usernames": string;
-};
-export = styles;
+export const __esModule: true;
+export const miniGameBoardWrapper: string;
+export const other: string;
+export const player: string;
+export const usernames: string;
 
