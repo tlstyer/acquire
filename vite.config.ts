@@ -35,6 +35,7 @@ export default defineConfig({
     target: 'esnext',
     sourcemap: enableVisualizer,
     outDir: path.join(buildDir, 'client'),
+    minify: 'terser',
   },
   resolve: {
     conditions: ['development', 'browser'],
