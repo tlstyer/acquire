@@ -1,5 +1,9 @@
+import path from 'path';
 import { defineConfig } from 'vite';
 import solidPlugin from 'vite-plugin-solid';
+import { configDefaults } from 'vitest/config';
+
+const buildDir = path.join(import.meta.dirname, 'build');
 
 export default defineConfig({
   plugins: [solidPlugin()],
@@ -13,9 +17,11 @@ export default defineConfig({
     // if you have few tests, try commenting this
     // out to improve performance:
     isolate: false,
+    exclude: [...configDefaults.exclude, 'build/**/*'],
   },
   build: {
     target: 'esnext',
+    outDir: path.join(buildDir, 'client'),
   },
   resolve: {
     conditions: ['development', 'browser'],
