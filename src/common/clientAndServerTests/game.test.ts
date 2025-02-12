@@ -201,9 +201,9 @@ test('game setup example 1', async () => {
   const lobbyManagers = new Set<LobbyManager>();
   const gameManagers = new Set<GameManager>();
 
-  const clientStuffLobby = createClientStuffAndConnectToTestServer(serverStuff);
-  const lobbyManagerLobby = clientStuffLobby.client.connectToLobby();
-  lobbyManagers.add(lobbyManagerLobby);
+  const clientStuffLobby1 = createClientStuffAndConnectToTestServer(serverStuff);
+  const lobbyManagerLobby1 = clientStuffLobby1.client.connectToLobby();
+  lobbyManagers.add(lobbyManagerLobby1);
 
   const clientStuff1 = createClientStuffAndConnectToTestServer(serverStuff);
   await loginAsUser(clientStuff1, 1);
@@ -276,6 +276,13 @@ test('game setup example 1', async () => {
   gameManager6.gameSetupActions.approve();
   expectEqualGameStuff(lobbyManagers, gameManagers, serverStuff.server);
 
+  serverStuff.server.lobbyRoom.createLastStateCheckpoint();
+
+  const clientStuffLobby2 = createClientStuffAndConnectToTestServer(serverStuff);
+  const lobbyManagerLobby2 = clientStuffLobby2.client.connectToLobby();
+  lobbyManagers.add(lobbyManagerLobby2);
+  expectEqualGameStuff(lobbyManagers, gameManagers, serverStuff.server);
+
   expect(gameManager1.signals.gameMode()).toBe(PB_GameMode.TEAMS_2_VS_2);
   expect(gameManager1.signals.playerArrangementMode()).toBe(PB_PlayerArrangementMode.EXACT_ORDER);
   expect(gameManager1.signals.hostUser()).toEqual(user1);
@@ -291,9 +298,9 @@ test('game setup example 2', async () => {
   const lobbyManagers = new Set<LobbyManager>();
   const gameManagers = new Set<GameManager>();
 
-  const clientStuffLobby = createClientStuffAndConnectToTestServer(serverStuff);
-  const lobbyManagerLobby = clientStuffLobby.client.connectToLobby();
-  lobbyManagers.add(lobbyManagerLobby);
+  const clientStuffLobby1 = createClientStuffAndConnectToTestServer(serverStuff);
+  const lobbyManagerLobby1 = clientStuffLobby1.client.connectToLobby();
+  lobbyManagers.add(lobbyManagerLobby1);
 
   const clientStuff1 = createClientStuffAndConnectToTestServer(serverStuff);
   await loginAsUser(clientStuff1, 1);
@@ -381,6 +388,13 @@ test('game setup example 2', async () => {
   expectEqualGameStuff(lobbyManagers, gameManagers, serverStuff.server);
 
   gameManager1.gameSetupActions.approve();
+  expectEqualGameStuff(lobbyManagers, gameManagers, serverStuff.server);
+
+  serverStuff.server.lobbyRoom.createLastStateCheckpoint();
+
+  const clientStuffLobby2 = createClientStuffAndConnectToTestServer(serverStuff);
+  const lobbyManagerLobby2 = clientStuffLobby2.client.connectToLobby();
+  lobbyManagers.add(lobbyManagerLobby2);
   expectEqualGameStuff(lobbyManagers, gameManagers, serverStuff.server);
 });
 

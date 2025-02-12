@@ -129,6 +129,8 @@ export function createLobbyManager(
           game.gameMode,
           userIdToUser.get(game.hostUserId)!,
           game.userIds.map((userId) => userIdToUser.get(userId) ?? null),
+          game.gameBoardChanges,
+          game.isCompleted,
           userIdToUser,
         ),
       );
@@ -190,6 +192,8 @@ export function createLobbyManager(
         event.gameMode,
         userIdToUser.get(event.hostUserId)!,
         userIds.map((userId) => userIdToUser.get(userId) ?? null),
+        undefined,
+        false,
         userIdToUser,
       ),
     );
@@ -278,6 +282,8 @@ function createLobbyGame(
   initialGameMode: PB_GameMode,
   hostUser: User,
   initialUsers: (User | null)[],
+  gameBoardChanges: PB_GameBoardChanges | undefined,
+  isCompleted: boolean,
   userIdToUser: Map<number, User>,
 ) {
   const gameSetup = createGameSetupLite(
@@ -289,11 +295,17 @@ function createLobbyGame(
     userIdToUser,
   );
 
-  let internalGameBoard = defaultGameBoard;
+  let internalGameBoard = gameBoardChanges
+    ? doGameBoardChanges(defaultGameBoard, gameBoardChanges)
+    : defaultGameBoard;
   const [gameBoard, setGameBoard] = createSignal(internalGameBoard);
   const [users, setUsers] = createSignal(gameSetup.users);
   const [gameMode, setGameMode] = createSignal(gameSetup.gameMode);
-  let internalGameStatus = GameStatus.SETTING_UP;
+  let internalGameStatus = isCompleted
+    ? GameStatus.COMPLETED
+    : gameBoardChanges
+      ? GameStatus.IN_PROGRESS
+      : GameStatus.SETTING_UP;
   const [gameStatus, setGameStatus] = createSignal<GameStatus>(internalGameStatus);
   const internalUsersInRoom = new Set<User>();
   const [usersInRoom, setUsersInRoom] = createSignal(internalUsersInRoom, { equals: false });

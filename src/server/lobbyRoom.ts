@@ -1,4 +1,7 @@
+import { ActionGameOver } from '../common/gameActions/gameOver.js';
 import {
+  PB_GameBoardChanges,
+  PB_GameBoardType,
   PB_GameMode,
   PB_MessageToClient,
   PB_MessageToClient_Lobby_Event,
@@ -192,8 +195,20 @@ export class LobbyRoom extends Room {
           }
         }
       } else if (gameRoom.game) {
-        console.log('TODO');
-        continue;
+        const game = gameRoom.game;
+
+        gameCheckpoint.gameMode = game.gameMode;
+        gameCheckpoint.hostUserId = game.hostUser.id;
+        gameCheckpoint.userIds = game.users.map((user) => user.id);
+        gameCheckpoint.gameBoardChanges = gameBoardChangesFromGameBoard(game.gameBoard);
+        gameCheckpoint.isCompleted =
+          game.gameActionStack.length === 1 && game.gameActionStack[0] instanceof ActionGameOver;
+
+        for (let playerId = 0; playerId < game.users.length; playerId++) {
+          const user = game.users[playerId];
+
+          addUserToUserToUserMessageIfNotThere(user);
+        }
       } else {
         console.log('huh?');
         continue;
@@ -317,4 +332,59 @@ class BatchOfEvents {
       },
     });
   }
+}
+
+function gameBoardChangesFromGameBoard(gameBoard: PB_GameBoardType[][]) {
+  const gameBoardChanges = PB_GameBoardChanges.create();
+
+  for (let x = 0; x < 12; x++) {
+    for (let y = 0; y < 9; y++) {
+      const gameBoardType = gameBoard[y][x];
+
+      if (gameBoardType !== PB_GameBoardType.NOTHING) {
+        const tile = x * 9 + y;
+
+        switch (gameBoardType) {
+          case PB_GameBoardType.LUXOR: {
+            gameBoardChanges.luxorTiles.push(tile);
+            break;
+          }
+          case PB_GameBoardType.TOWER: {
+            gameBoardChanges.towerTiles.push(tile);
+            break;
+          }
+          case PB_GameBoardType.AMERICAN: {
+            gameBoardChanges.americanTiles.push(tile);
+            break;
+          }
+          case PB_GameBoardType.FESTIVAL: {
+            gameBoardChanges.festivalTiles.push(tile);
+            break;
+          }
+          case PB_GameBoardType.WORLDWIDE: {
+            gameBoardChanges.worldwideTiles.push(tile);
+            break;
+          }
+          case PB_GameBoardType.CONTINENTAL: {
+            gameBoardChanges.continentalTiles.push(tile);
+            break;
+          }
+          case PB_GameBoardType.IMPERIAL: {
+            gameBoardChanges.imperialTiles.push(tile);
+            break;
+          }
+          case PB_GameBoardType.NOTHING_YET: {
+            gameBoardChanges.nothingYetTiles.push(tile);
+            break;
+          }
+          case PB_GameBoardType.CANT_PLAY_EVER: {
+            gameBoardChanges.cantPlayEverTiles.push(tile);
+            break;
+          }
+        }
+      }
+    }
+  }
+
+  return gameBoardChanges;
 }
