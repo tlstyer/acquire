@@ -898,6 +898,39 @@ export interface PB_MessageToClient_Lobby_CreateGameResponse {
  */
 export interface PB_MessageToClient_Game {
     /**
+     * @generated from protobuf field: PB.MessageToClient.Game.ConnectResponse connect_response = 1;
+     */
+    connectResponse?: PB_MessageToClient_Game_ConnectResponse;
+    /**
+     * @generated from protobuf field: repeated PB.MessageToClient.Game.UserIdAndUsername user_ids_and_usernames = 2;
+     */
+    userIdsAndUsernames: PB_MessageToClient_Game_UserIdAndUsername[];
+    /**
+     * @generated from protobuf field: int32 user_id_who_entered_room = 3;
+     */
+    userIdWhoEnteredRoom: number;
+    /**
+     * @generated from protobuf field: int32 user_id_who_exited_room = 4;
+     */
+    userIdWhoExitedRoom: number;
+    /**
+     * @generated from protobuf field: PB.GameSetupChange game_setup_change = 5;
+     */
+    gameSetupChange?: PB_GameSetupChange;
+    /**
+     * @generated from protobuf field: repeated PB.GameState game_states = 6;
+     */
+    gameStates: PB_GameState[];
+    /**
+     * @generated from protobuf field: repeated int32 tile_bag = 7;
+     */
+    tileBag: number[];
+}
+/**
+ * @generated from protobuf message PB.MessageToClient.Game.ConnectResponse
+ */
+export interface PB_MessageToClient_Game_ConnectResponse {
+    /**
      * @generated from protobuf field: int64 log_time = 1 [jstype = JS_NUMBER];
      */
     logTime: number;
@@ -906,9 +939,9 @@ export interface PB_MessageToClient_Game {
      */
     gameNumber: number;
     /**
-     * @generated from protobuf field: PB.MessageToClient.Game.Metadata metadata = 3;
+     * @generated from protobuf field: PB.MessageToClient.Game.ConnectResponse.Metadata metadata = 3;
      */
-    metadata?: PB_MessageToClient_Game_Metadata;
+    metadata?: PB_MessageToClient_Game_ConnectResponse_Metadata;
     /**
      * @generated from protobuf field: PB.GameReview game_review = 4;
      */
@@ -917,35 +950,11 @@ export interface PB_MessageToClient_Game {
      * @generated from protobuf field: bool game_not_found = 5;
      */
     gameNotFound: boolean;
-    /**
-     * @generated from protobuf field: repeated PB.MessageToClient.Game.UserIdAndUsername user_ids_and_usernames = 6;
-     */
-    userIdsAndUsernames: PB_MessageToClient_Game_UserIdAndUsername[];
-    /**
-     * @generated from protobuf field: int32 user_id_who_entered_room = 7;
-     */
-    userIdWhoEnteredRoom: number;
-    /**
-     * @generated from protobuf field: int32 user_id_who_exited_room = 8;
-     */
-    userIdWhoExitedRoom: number;
-    /**
-     * @generated from protobuf field: PB.GameSetupChange game_setup_change = 9;
-     */
-    gameSetupChange?: PB_GameSetupChange;
-    /**
-     * @generated from protobuf field: repeated PB.GameState game_states = 10;
-     */
-    gameStates: PB_GameState[];
-    /**
-     * @generated from protobuf field: repeated int32 tile_bag = 11;
-     */
-    tileBag: number[];
 }
 /**
- * @generated from protobuf message PB.MessageToClient.Game.Metadata
+ * @generated from protobuf message PB.MessageToClient.Game.ConnectResponse.Metadata
  */
-export interface PB_MessageToClient_Game_Metadata {
+export interface PB_MessageToClient_Game_ConnectResponse_Metadata {
     /**
      * @generated from protobuf field: PB.GameMode game_mode = 1;
      */
@@ -4514,24 +4523,17 @@ export const PB_MessageToClient_Lobby_CreateGameResponse = new PB_MessageToClien
 class PB_MessageToClient_Game$Type extends MessageType<PB_MessageToClient_Game> {
     constructor() {
         super("PB.MessageToClient.Game", [
-            { no: 1, name: "log_time", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 2, name: "game_number", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 3, name: "metadata", kind: "message", T: () => PB_MessageToClient_Game_Metadata },
-            { no: 4, name: "game_review", kind: "message", T: () => PB_GameReview },
-            { no: 5, name: "game_not_found", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 6, name: "user_ids_and_usernames", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => PB_MessageToClient_Game_UserIdAndUsername },
-            { no: 7, name: "user_id_who_entered_room", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 8, name: "user_id_who_exited_room", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 9, name: "game_setup_change", kind: "message", T: () => PB_GameSetupChange },
-            { no: 10, name: "game_states", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => PB_GameState },
-            { no: 11, name: "tile_bag", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ }
+            { no: 1, name: "connect_response", kind: "message", T: () => PB_MessageToClient_Game_ConnectResponse },
+            { no: 2, name: "user_ids_and_usernames", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => PB_MessageToClient_Game_UserIdAndUsername },
+            { no: 3, name: "user_id_who_entered_room", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 4, name: "user_id_who_exited_room", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 5, name: "game_setup_change", kind: "message", T: () => PB_GameSetupChange },
+            { no: 6, name: "game_states", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => PB_GameState },
+            { no: 7, name: "tile_bag", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ }
         ]);
     }
     create(value?: PartialMessage<PB_MessageToClient_Game>): PB_MessageToClient_Game {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.logTime = 0;
-        message.gameNumber = 0;
-        message.gameNotFound = false;
         message.userIdsAndUsernames = [];
         message.userIdWhoEnteredRoom = 0;
         message.userIdWhoExitedRoom = 0;
@@ -4546,37 +4548,25 @@ class PB_MessageToClient_Game$Type extends MessageType<PB_MessageToClient_Game> 
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* int64 log_time = 1 [jstype = JS_NUMBER];*/ 1:
-                    message.logTime = reader.int64().toNumber();
+                case /* PB.MessageToClient.Game.ConnectResponse connect_response */ 1:
+                    message.connectResponse = PB_MessageToClient_Game_ConnectResponse.internalBinaryRead(reader, reader.uint32(), options, message.connectResponse);
                     break;
-                case /* int32 game_number */ 2:
-                    message.gameNumber = reader.int32();
-                    break;
-                case /* PB.MessageToClient.Game.Metadata metadata */ 3:
-                    message.metadata = PB_MessageToClient_Game_Metadata.internalBinaryRead(reader, reader.uint32(), options, message.metadata);
-                    break;
-                case /* PB.GameReview game_review */ 4:
-                    message.gameReview = PB_GameReview.internalBinaryRead(reader, reader.uint32(), options, message.gameReview);
-                    break;
-                case /* bool game_not_found */ 5:
-                    message.gameNotFound = reader.bool();
-                    break;
-                case /* repeated PB.MessageToClient.Game.UserIdAndUsername user_ids_and_usernames */ 6:
+                case /* repeated PB.MessageToClient.Game.UserIdAndUsername user_ids_and_usernames */ 2:
                     message.userIdsAndUsernames.push(PB_MessageToClient_Game_UserIdAndUsername.internalBinaryRead(reader, reader.uint32(), options));
                     break;
-                case /* int32 user_id_who_entered_room */ 7:
+                case /* int32 user_id_who_entered_room */ 3:
                     message.userIdWhoEnteredRoom = reader.int32();
                     break;
-                case /* int32 user_id_who_exited_room */ 8:
+                case /* int32 user_id_who_exited_room */ 4:
                     message.userIdWhoExitedRoom = reader.int32();
                     break;
-                case /* PB.GameSetupChange game_setup_change */ 9:
+                case /* PB.GameSetupChange game_setup_change */ 5:
                     message.gameSetupChange = PB_GameSetupChange.internalBinaryRead(reader, reader.uint32(), options, message.gameSetupChange);
                     break;
-                case /* repeated PB.GameState game_states */ 10:
+                case /* repeated PB.GameState game_states */ 6:
                     message.gameStates.push(PB_GameState.internalBinaryRead(reader, reader.uint32(), options));
                     break;
-                case /* repeated int32 tile_bag */ 11:
+                case /* repeated int32 tile_bag */ 7:
                     if (wireType === WireType.LengthDelimited)
                         for (let e = reader.int32() + reader.pos; reader.pos < e;)
                             message.tileBag.push(reader.int32());
@@ -4595,39 +4585,27 @@ class PB_MessageToClient_Game$Type extends MessageType<PB_MessageToClient_Game> 
         return message;
     }
     internalBinaryWrite(message: PB_MessageToClient_Game, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* int64 log_time = 1 [jstype = JS_NUMBER]; */
-        if (message.logTime !== 0)
-            writer.tag(1, WireType.Varint).int64(message.logTime);
-        /* int32 game_number = 2; */
-        if (message.gameNumber !== 0)
-            writer.tag(2, WireType.Varint).int32(message.gameNumber);
-        /* PB.MessageToClient.Game.Metadata metadata = 3; */
-        if (message.metadata)
-            PB_MessageToClient_Game_Metadata.internalBinaryWrite(message.metadata, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        /* PB.GameReview game_review = 4; */
-        if (message.gameReview)
-            PB_GameReview.internalBinaryWrite(message.gameReview, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
-        /* bool game_not_found = 5; */
-        if (message.gameNotFound !== false)
-            writer.tag(5, WireType.Varint).bool(message.gameNotFound);
-        /* repeated PB.MessageToClient.Game.UserIdAndUsername user_ids_and_usernames = 6; */
+        /* PB.MessageToClient.Game.ConnectResponse connect_response = 1; */
+        if (message.connectResponse)
+            PB_MessageToClient_Game_ConnectResponse.internalBinaryWrite(message.connectResponse, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* repeated PB.MessageToClient.Game.UserIdAndUsername user_ids_and_usernames = 2; */
         for (let i = 0; i < message.userIdsAndUsernames.length; i++)
-            PB_MessageToClient_Game_UserIdAndUsername.internalBinaryWrite(message.userIdsAndUsernames[i], writer.tag(6, WireType.LengthDelimited).fork(), options).join();
-        /* int32 user_id_who_entered_room = 7; */
+            PB_MessageToClient_Game_UserIdAndUsername.internalBinaryWrite(message.userIdsAndUsernames[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* int32 user_id_who_entered_room = 3; */
         if (message.userIdWhoEnteredRoom !== 0)
-            writer.tag(7, WireType.Varint).int32(message.userIdWhoEnteredRoom);
-        /* int32 user_id_who_exited_room = 8; */
+            writer.tag(3, WireType.Varint).int32(message.userIdWhoEnteredRoom);
+        /* int32 user_id_who_exited_room = 4; */
         if (message.userIdWhoExitedRoom !== 0)
-            writer.tag(8, WireType.Varint).int32(message.userIdWhoExitedRoom);
-        /* PB.GameSetupChange game_setup_change = 9; */
+            writer.tag(4, WireType.Varint).int32(message.userIdWhoExitedRoom);
+        /* PB.GameSetupChange game_setup_change = 5; */
         if (message.gameSetupChange)
-            PB_GameSetupChange.internalBinaryWrite(message.gameSetupChange, writer.tag(9, WireType.LengthDelimited).fork(), options).join();
-        /* repeated PB.GameState game_states = 10; */
+            PB_GameSetupChange.internalBinaryWrite(message.gameSetupChange, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        /* repeated PB.GameState game_states = 6; */
         for (let i = 0; i < message.gameStates.length; i++)
-            PB_GameState.internalBinaryWrite(message.gameStates[i], writer.tag(10, WireType.LengthDelimited).fork(), options).join();
-        /* repeated int32 tile_bag = 11; */
+            PB_GameState.internalBinaryWrite(message.gameStates[i], writer.tag(6, WireType.LengthDelimited).fork(), options).join();
+        /* repeated int32 tile_bag = 7; */
         if (message.tileBag.length) {
-            writer.tag(11, WireType.LengthDelimited).fork();
+            writer.tag(7, WireType.LengthDelimited).fork();
             for (let i = 0; i < message.tileBag.length; i++)
                 writer.int32(message.tileBag[i]);
             writer.join();
@@ -4643,9 +4621,86 @@ class PB_MessageToClient_Game$Type extends MessageType<PB_MessageToClient_Game> 
  */
 export const PB_MessageToClient_Game = new PB_MessageToClient_Game$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class PB_MessageToClient_Game_Metadata$Type extends MessageType<PB_MessageToClient_Game_Metadata> {
+class PB_MessageToClient_Game_ConnectResponse$Type extends MessageType<PB_MessageToClient_Game_ConnectResponse> {
     constructor() {
-        super("PB.MessageToClient.Game.Metadata", [
+        super("PB.MessageToClient.Game.ConnectResponse", [
+            { no: 1, name: "log_time", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 2, name: "game_number", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 3, name: "metadata", kind: "message", T: () => PB_MessageToClient_Game_ConnectResponse_Metadata },
+            { no: 4, name: "game_review", kind: "message", T: () => PB_GameReview },
+            { no: 5, name: "game_not_found", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+        ]);
+    }
+    create(value?: PartialMessage<PB_MessageToClient_Game_ConnectResponse>): PB_MessageToClient_Game_ConnectResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.logTime = 0;
+        message.gameNumber = 0;
+        message.gameNotFound = false;
+        if (value !== undefined)
+            reflectionMergePartial<PB_MessageToClient_Game_ConnectResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PB_MessageToClient_Game_ConnectResponse): PB_MessageToClient_Game_ConnectResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* int64 log_time = 1 [jstype = JS_NUMBER];*/ 1:
+                    message.logTime = reader.int64().toNumber();
+                    break;
+                case /* int32 game_number */ 2:
+                    message.gameNumber = reader.int32();
+                    break;
+                case /* PB.MessageToClient.Game.ConnectResponse.Metadata metadata */ 3:
+                    message.metadata = PB_MessageToClient_Game_ConnectResponse_Metadata.internalBinaryRead(reader, reader.uint32(), options, message.metadata);
+                    break;
+                case /* PB.GameReview game_review */ 4:
+                    message.gameReview = PB_GameReview.internalBinaryRead(reader, reader.uint32(), options, message.gameReview);
+                    break;
+                case /* bool game_not_found */ 5:
+                    message.gameNotFound = reader.bool();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: PB_MessageToClient_Game_ConnectResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int64 log_time = 1 [jstype = JS_NUMBER]; */
+        if (message.logTime !== 0)
+            writer.tag(1, WireType.Varint).int64(message.logTime);
+        /* int32 game_number = 2; */
+        if (message.gameNumber !== 0)
+            writer.tag(2, WireType.Varint).int32(message.gameNumber);
+        /* PB.MessageToClient.Game.ConnectResponse.Metadata metadata = 3; */
+        if (message.metadata)
+            PB_MessageToClient_Game_ConnectResponse_Metadata.internalBinaryWrite(message.metadata, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* PB.GameReview game_review = 4; */
+        if (message.gameReview)
+            PB_GameReview.internalBinaryWrite(message.gameReview, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* bool game_not_found = 5; */
+        if (message.gameNotFound !== false)
+            writer.tag(5, WireType.Varint).bool(message.gameNotFound);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message PB.MessageToClient.Game.ConnectResponse
+ */
+export const PB_MessageToClient_Game_ConnectResponse = new PB_MessageToClient_Game_ConnectResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class PB_MessageToClient_Game_ConnectResponse_Metadata$Type extends MessageType<PB_MessageToClient_Game_ConnectResponse_Metadata> {
+    constructor() {
+        super("PB.MessageToClient.Game.ConnectResponse.Metadata", [
             { no: 1, name: "game_mode", kind: "enum", T: () => ["PB.GameMode", PB_GameMode] },
             { no: 2, name: "player_arrangement_mode", kind: "enum", T: () => ["PB.PlayerArrangementMode", PB_PlayerArrangementMode] },
             { no: 3, name: "host_user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
@@ -4655,7 +4710,7 @@ class PB_MessageToClient_Game_Metadata$Type extends MessageType<PB_MessageToClie
             { no: 7, name: "user_ids_in_room", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ }
         ]);
     }
-    create(value?: PartialMessage<PB_MessageToClient_Game_Metadata>): PB_MessageToClient_Game_Metadata {
+    create(value?: PartialMessage<PB_MessageToClient_Game_ConnectResponse_Metadata>): PB_MessageToClient_Game_ConnectResponse_Metadata {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.gameMode = 0;
         message.playerArrangementMode = 0;
@@ -4665,10 +4720,10 @@ class PB_MessageToClient_Game_Metadata$Type extends MessageType<PB_MessageToClie
         message.numberOfGameSetupChanges = 0;
         message.userIdsInRoom = [];
         if (value !== undefined)
-            reflectionMergePartial<PB_MessageToClient_Game_Metadata>(this, message, value);
+            reflectionMergePartial<PB_MessageToClient_Game_ConnectResponse_Metadata>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PB_MessageToClient_Game_Metadata): PB_MessageToClient_Game_Metadata {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PB_MessageToClient_Game_ConnectResponse_Metadata): PB_MessageToClient_Game_ConnectResponse_Metadata {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -4717,7 +4772,7 @@ class PB_MessageToClient_Game_Metadata$Type extends MessageType<PB_MessageToClie
         }
         return message;
     }
-    internalBinaryWrite(message: PB_MessageToClient_Game_Metadata, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: PB_MessageToClient_Game_ConnectResponse_Metadata, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* PB.GameMode game_mode = 1; */
         if (message.gameMode !== 0)
             writer.tag(1, WireType.Varint).int32(message.gameMode);
@@ -4758,9 +4813,9 @@ class PB_MessageToClient_Game_Metadata$Type extends MessageType<PB_MessageToClie
     }
 }
 /**
- * @generated MessageType for protobuf message PB.MessageToClient.Game.Metadata
+ * @generated MessageType for protobuf message PB.MessageToClient.Game.ConnectResponse.Metadata
  */
-export const PB_MessageToClient_Game_Metadata = new PB_MessageToClient_Game_Metadata$Type();
+export const PB_MessageToClient_Game_ConnectResponse_Metadata = new PB_MessageToClient_Game_ConnectResponse_Metadata$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class PB_MessageToClient_Game_UserIdAndUsername$Type extends MessageType<PB_MessageToClient_Game_UserIdAndUsername> {
     constructor() {

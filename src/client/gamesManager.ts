@@ -47,8 +47,9 @@ export function createGamesManager(
   }
 
   function onMessage(message: PB_MessageToClient_Game) {
-    if (message.metadata || message.gameReview || message.gameNotFound) {
-      lastReceivedGameId = `${message.logTime}-${message.gameNumber}`;
+    if (message.connectResponse) {
+      const connectResponse = message.connectResponse;
+      lastReceivedGameId = `${connectResponse.logTime}-${connectResponse.gameNumber}`;
     }
 
     const gameManager = gameIdToGameManager.get(lastReceivedGameId);
@@ -130,9 +131,11 @@ export function createGameManager(
 
     numberOfUserIdAndUsernameMessages += message.userIdsAndUsernames.length;
 
-    if (message.metadata || message.gameReview || message.gameNotFound) {
-      if (message.metadata) {
-        const metadata = message.metadata;
+    if (message.connectResponse) {
+      const connectResponse = message.connectResponse;
+
+      if (connectResponse.metadata) {
+        const metadata = connectResponse.metadata;
 
         gameSetup = createGameSetupLite(
           metadata.gameMode,
@@ -151,10 +154,10 @@ export function createGameManager(
         }
 
         game = null;
-      } else if (message.gameReview) {
+      } else if (connectResponse.gameReview) {
         gameSetup = null;
-        game = gameFromProtocolBuffer(message.gameReview);
-      } else if (message.gameNotFound) {
+        game = gameFromProtocolBuffer(connectResponse.gameReview);
+      } else if (connectResponse.gameNotFound) {
         gameSetup = null;
         game = null;
       }

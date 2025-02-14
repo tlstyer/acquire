@@ -191,16 +191,19 @@ Send chat message:
 
 One or more of:
 
-- log time (only in initial response to a Connect message)
-- game number (only in initial response to a Connect message)
-- metadata (only in initial response to a Connect message AND when game shown in lobby)
-  - game mode
-  - player arrangement mode
-  - host user ID
-  - user IDs
-  - approvals (if Setting Up)
-- game review data (only in initial response to a Connect message AND when game not shown in lobby)
-- not found (only in initial response to a Connect message AND when game not found)
+- connect response
+  - log time
+  - game number
+  - metadata (when game shown in lobby)
+    - game mode
+    - player arrangement mode
+    - host user ID
+    - user IDs
+    - approvals (if Setting Up)
+    - user IDs in room
+    - number of game setup changes
+  - game review data (when game not shown in lobby)
+  - not found (when game not found)
 - game setup change (only in subsequent messages)
 - array of game state objects
 - array of chat messages and user IDs of senders

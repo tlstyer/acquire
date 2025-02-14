@@ -75,20 +75,22 @@ export class GameRoom extends Room {
       PB_MessageToClient.toBinary(
         PB_MessageToClient.create({
           game: {
-            logTime: message.logTime,
-            gameNumber: message.gameNumber,
-            metadata: {
-              gameMode: this.gameSetup ? this.gameSetup.gameMode : this.game!.gameMode,
-              playerArrangementMode: this.gameSetup
-                ? this.gameSetup.playerArrangementMode
-                : this.game!.playerArrangementMode,
-              hostUserId: this.gameSetup ? this.gameSetup.hostUser.id : this.game!.hostUser.id,
-              userIds: (this.gameSetup ? this.gameSetup : this.game!).users.map(
-                (user) => user?.id ?? 0,
-              ),
-              approvals: this.gameSetup ? this.gameSetup.approvals : dummyApprovals,
-              numberOfGameSetupChanges: this.gameSetup ? this.numberOfGameSetupChanges : 0,
-              userIdsInRoom: [...this.userToClients.keys()].map((user) => user.id),
+            connectResponse: {
+              logTime: message.logTime,
+              gameNumber: message.gameNumber,
+              metadata: {
+                gameMode: this.gameSetup ? this.gameSetup.gameMode : this.game!.gameMode,
+                playerArrangementMode: this.gameSetup
+                  ? this.gameSetup.playerArrangementMode
+                  : this.game!.playerArrangementMode,
+                hostUserId: this.gameSetup ? this.gameSetup.hostUser.id : this.game!.hostUser.id,
+                userIds: (this.gameSetup ? this.gameSetup : this.game!).users.map(
+                  (user) => user?.id ?? 0,
+                ),
+                approvals: this.gameSetup ? this.gameSetup.approvals : dummyApprovals,
+                numberOfGameSetupChanges: this.gameSetup ? this.numberOfGameSetupChanges : 0,
+                userIdsInRoom: [...this.userToClients.keys()].map((user) => user.id),
+              },
             },
             userIdsAndUsernames:
               message.numberOfUserIdAndUsernameMessages === 0

@@ -29,7 +29,16 @@ export interface PBWithBinaryAlready_MessageToClient {
  */
 export interface PBWithBinaryAlready_MessageToClient_Game {
     /**
-     * @generated from protobuf field: int32 log_time = 1;
+     * @generated from protobuf field: PBWithBinaryAlready.MessageToClient.Game.ConnectResponse connect_response = 1;
+     */
+    connectResponse?: PBWithBinaryAlready_MessageToClient_Game_ConnectResponse;
+}
+/**
+ * @generated from protobuf message PBWithBinaryAlready.MessageToClient.Game.ConnectResponse
+ */
+export interface PBWithBinaryAlready_MessageToClient_Game_ConnectResponse {
+    /**
+     * @generated from protobuf field: int64 log_time = 1 [jstype = JS_NUMBER];
      */
     logTime: number;
     /**
@@ -116,16 +125,11 @@ export const PBWithBinaryAlready_MessageToClient = new PBWithBinaryAlready_Messa
 class PBWithBinaryAlready_MessageToClient_Game$Type extends MessageType<PBWithBinaryAlready_MessageToClient_Game> {
     constructor() {
         super("PBWithBinaryAlready.MessageToClient.Game", [
-            { no: 1, name: "log_time", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 2, name: "game_number", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 4, name: "game_review", kind: "scalar", T: 12 /*ScalarType.BYTES*/ }
+            { no: 1, name: "connect_response", kind: "message", T: () => PBWithBinaryAlready_MessageToClient_Game_ConnectResponse }
         ]);
     }
     create(value?: PartialMessage<PBWithBinaryAlready_MessageToClient_Game>): PBWithBinaryAlready_MessageToClient_Game {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.logTime = 0;
-        message.gameNumber = 0;
-        message.gameReview = new Uint8Array(0);
         if (value !== undefined)
             reflectionMergePartial<PBWithBinaryAlready_MessageToClient_Game>(this, message, value);
         return message;
@@ -135,8 +139,59 @@ class PBWithBinaryAlready_MessageToClient_Game$Type extends MessageType<PBWithBi
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* int32 log_time */ 1:
-                    message.logTime = reader.int32();
+                case /* PBWithBinaryAlready.MessageToClient.Game.ConnectResponse connect_response */ 1:
+                    message.connectResponse = PBWithBinaryAlready_MessageToClient_Game_ConnectResponse.internalBinaryRead(reader, reader.uint32(), options, message.connectResponse);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: PBWithBinaryAlready_MessageToClient_Game, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* PBWithBinaryAlready.MessageToClient.Game.ConnectResponse connect_response = 1; */
+        if (message.connectResponse)
+            PBWithBinaryAlready_MessageToClient_Game_ConnectResponse.internalBinaryWrite(message.connectResponse, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message PBWithBinaryAlready.MessageToClient.Game
+ */
+export const PBWithBinaryAlready_MessageToClient_Game = new PBWithBinaryAlready_MessageToClient_Game$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class PBWithBinaryAlready_MessageToClient_Game_ConnectResponse$Type extends MessageType<PBWithBinaryAlready_MessageToClient_Game_ConnectResponse> {
+    constructor() {
+        super("PBWithBinaryAlready.MessageToClient.Game.ConnectResponse", [
+            { no: 1, name: "log_time", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 2, name: "game_number", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 4, name: "game_review", kind: "scalar", T: 12 /*ScalarType.BYTES*/ }
+        ]);
+    }
+    create(value?: PartialMessage<PBWithBinaryAlready_MessageToClient_Game_ConnectResponse>): PBWithBinaryAlready_MessageToClient_Game_ConnectResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.logTime = 0;
+        message.gameNumber = 0;
+        message.gameReview = new Uint8Array(0);
+        if (value !== undefined)
+            reflectionMergePartial<PBWithBinaryAlready_MessageToClient_Game_ConnectResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PBWithBinaryAlready_MessageToClient_Game_ConnectResponse): PBWithBinaryAlready_MessageToClient_Game_ConnectResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* int64 log_time = 1 [jstype = JS_NUMBER];*/ 1:
+                    message.logTime = reader.int64().toNumber();
                     break;
                 case /* int32 game_number */ 2:
                     message.gameNumber = reader.int32();
@@ -155,10 +210,10 @@ class PBWithBinaryAlready_MessageToClient_Game$Type extends MessageType<PBWithBi
         }
         return message;
     }
-    internalBinaryWrite(message: PBWithBinaryAlready_MessageToClient_Game, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* int32 log_time = 1; */
+    internalBinaryWrite(message: PBWithBinaryAlready_MessageToClient_Game_ConnectResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int64 log_time = 1 [jstype = JS_NUMBER]; */
         if (message.logTime !== 0)
-            writer.tag(1, WireType.Varint).int32(message.logTime);
+            writer.tag(1, WireType.Varint).int64(message.logTime);
         /* int32 game_number = 2; */
         if (message.gameNumber !== 0)
             writer.tag(2, WireType.Varint).int32(message.gameNumber);
@@ -172,6 +227,6 @@ class PBWithBinaryAlready_MessageToClient_Game$Type extends MessageType<PBWithBi
     }
 }
 /**
- * @generated MessageType for protobuf message PBWithBinaryAlready.MessageToClient.Game
+ * @generated MessageType for protobuf message PBWithBinaryAlready.MessageToClient.Game.ConnectResponse
  */
-export const PBWithBinaryAlready_MessageToClient_Game = new PBWithBinaryAlready_MessageToClient_Game$Type();
+export const PBWithBinaryAlready_MessageToClient_Game_ConnectResponse = new PBWithBinaryAlready_MessageToClient_Game_ConnectResponse$Type();

@@ -3,9 +3,13 @@ syntax = "proto3";
 message PBWithBinaryAlready {
   message MessageToClient {
     message Game {
-      int32 log_time = 1;
-      int32 game_number = 2;
-      bytes game_review = 4;
+      message ConnectResponse {
+        int64 log_time = 1 [ jstype = JS_NUMBER ];
+        int32 game_number = 2;
+        bytes game_review = 4;
+      }
+
+      ConnectResponse connect_response = 1;
     }
 
     Game game = 3;

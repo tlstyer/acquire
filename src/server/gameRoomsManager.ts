@@ -69,9 +69,11 @@ export class GameRoomsManager {
           PBWithBinaryAlready_MessageToClient.toBinary(
             PBWithBinaryAlready_MessageToClient.create({
               game: {
-                logTime: message.logTime,
-                gameNumber: message.gameNumber,
-                gameReview: fileContents,
+                connectResponse: {
+                  logTime: message.logTime,
+                  gameNumber: message.gameNumber,
+                  gameReview: fileContents,
+                },
               },
             }),
           ),
@@ -87,9 +89,11 @@ export class GameRoomsManager {
       PB_MessageToClient.toBinary(
         PB_MessageToClient.create({
           game: {
-            logTime: message.logTime,
-            gameNumber: message.gameNumber,
-            gameNotFound: true,
+            connectResponse: {
+              logTime: message.logTime,
+              gameNumber: message.gameNumber,
+              gameNotFound: true,
+            },
           },
         }),
       ),

@@ -357,14 +357,22 @@ message PB {
     }
 
     message Game {
-      message Metadata {
-        GameMode game_mode = 1;
-        PlayerArrangementMode player_arrangement_mode = 2;
-        int32 host_user_id = 3;
-        repeated int32 user_ids = 4;
-        repeated bool approvals = 5;
-        int32 number_of_game_setup_changes = 6;
-        repeated int32 user_ids_in_room = 7;
+      message ConnectResponse {
+        message Metadata {
+          GameMode game_mode = 1;
+          PlayerArrangementMode player_arrangement_mode = 2;
+          int32 host_user_id = 3;
+          repeated int32 user_ids = 4;
+          repeated bool approvals = 5;
+          int32 number_of_game_setup_changes = 6;
+          repeated int32 user_ids_in_room = 7;
+        }
+
+        int64 log_time = 1 [ jstype = JS_NUMBER ];
+        int32 game_number = 2;
+        Metadata metadata = 3;
+        GameReview game_review = 4;
+        bool game_not_found = 5;
       }
 
       message UserIdAndUsername {
@@ -372,17 +380,13 @@ message PB {
         string username = 2;
       }
 
-      int64 log_time = 1 [ jstype = JS_NUMBER ];
-      int32 game_number = 2;
-      Metadata metadata = 3;
-      GameReview game_review = 4;
-      bool game_not_found = 5;
-      repeated UserIdAndUsername user_ids_and_usernames = 6;
-      int32 user_id_who_entered_room = 7;
-      int32 user_id_who_exited_room = 8;
-      GameSetupChange game_setup_change = 9;
-      repeated GameState game_states = 10;
-      repeated int32 tile_bag = 11;
+      ConnectResponse connect_response = 1;
+      repeated UserIdAndUsername user_ids_and_usernames = 2;
+      int32 user_id_who_entered_room = 3;
+      int32 user_id_who_exited_room = 4;
+      GameSetupChange game_setup_change = 5;
+      repeated GameState game_states = 6;
+      repeated int32 tile_bag = 7;
     }
 
     Initial initial = 15;
