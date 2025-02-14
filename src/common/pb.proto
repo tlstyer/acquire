@@ -365,7 +365,6 @@ message PB {
           repeated int32 user_ids = 4;
           repeated bool approvals = 5;
           int32 number_of_game_setup_changes = 6;
-          repeated int32 user_ids_in_room = 7;
         }
 
         int64 log_time = 1 [ jstype = JS_NUMBER ];
@@ -373,6 +372,7 @@ message PB {
         Metadata metadata = 3;
         GameReview game_review = 4;
         bool game_not_found = 5;
+        repeated int32 user_ids_in_room = 6;
       }
 
       message UserIdAndUsername {

@@ -200,10 +200,10 @@ One or more of:
     - host user ID
     - user IDs
     - approvals (if Setting Up)
-    - user IDs in room
     - number of game setup changes
   - game review data (when game not shown in lobby)
   - not found (when game not found)
+  - user IDs in room
 - game setup change (only in subsequent messages)
 - array of game state objects
 - array of chat messages and user IDs of senders

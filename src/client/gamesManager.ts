@@ -148,11 +148,6 @@ export function createGameManager(
 
         numberOfGameSetupChanges = metadata.numberOfGameSetupChanges;
 
-        for (let i = 0; i < metadata.userIdsInRoom.length; i++) {
-          internalUsersInRoom.add(userIdToUser.get(metadata.userIdsInRoom[i])!);
-          updatedUsersInRoom = true;
-        }
-
         game = null;
       } else if (connectResponse.gameReview) {
         gameSetup = null;
@@ -160,6 +155,12 @@ export function createGameManager(
       } else if (connectResponse.gameNotFound) {
         gameSetup = null;
         game = null;
+      }
+
+      const userIdsInRoom = connectResponse.userIdsInRoom;
+      for (let i = 0; i < userIdsInRoom.length; i++) {
+        internalUsersInRoom.add(userIdToUser.get(userIdsInRoom[i])!);
+        updatedUsersInRoom = true;
       }
     }
 

@@ -950,6 +950,10 @@ export interface PB_MessageToClient_Game_ConnectResponse {
      * @generated from protobuf field: bool game_not_found = 5;
      */
     gameNotFound: boolean;
+    /**
+     * @generated from protobuf field: repeated int32 user_ids_in_room = 6;
+     */
+    userIdsInRoom: number[];
 }
 /**
  * @generated from protobuf message PB.MessageToClient.Game.ConnectResponse.Metadata
@@ -979,10 +983,6 @@ export interface PB_MessageToClient_Game_ConnectResponse_Metadata {
      * @generated from protobuf field: int32 number_of_game_setup_changes = 6;
      */
     numberOfGameSetupChanges: number;
-    /**
-     * @generated from protobuf field: repeated int32 user_ids_in_room = 7;
-     */
-    userIdsInRoom: number[];
 }
 /**
  * @generated from protobuf message PB.MessageToClient.Game.UserIdAndUsername
@@ -4628,7 +4628,8 @@ class PB_MessageToClient_Game_ConnectResponse$Type extends MessageType<PB_Messag
             { no: 2, name: "game_number", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
             { no: 3, name: "metadata", kind: "message", T: () => PB_MessageToClient_Game_ConnectResponse_Metadata },
             { no: 4, name: "game_review", kind: "message", T: () => PB_GameReview },
-            { no: 5, name: "game_not_found", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+            { no: 5, name: "game_not_found", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 6, name: "user_ids_in_room", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ }
         ]);
     }
     create(value?: PartialMessage<PB_MessageToClient_Game_ConnectResponse>): PB_MessageToClient_Game_ConnectResponse {
@@ -4636,6 +4637,7 @@ class PB_MessageToClient_Game_ConnectResponse$Type extends MessageType<PB_Messag
         message.logTime = 0;
         message.gameNumber = 0;
         message.gameNotFound = false;
+        message.userIdsInRoom = [];
         if (value !== undefined)
             reflectionMergePartial<PB_MessageToClient_Game_ConnectResponse>(this, message, value);
         return message;
@@ -4659,6 +4661,13 @@ class PB_MessageToClient_Game_ConnectResponse$Type extends MessageType<PB_Messag
                     break;
                 case /* bool game_not_found */ 5:
                     message.gameNotFound = reader.bool();
+                    break;
+                case /* repeated int32 user_ids_in_room */ 6:
+                    if (wireType === WireType.LengthDelimited)
+                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
+                            message.userIdsInRoom.push(reader.int32());
+                    else
+                        message.userIdsInRoom.push(reader.int32());
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -4687,6 +4696,13 @@ class PB_MessageToClient_Game_ConnectResponse$Type extends MessageType<PB_Messag
         /* bool game_not_found = 5; */
         if (message.gameNotFound !== false)
             writer.tag(5, WireType.Varint).bool(message.gameNotFound);
+        /* repeated int32 user_ids_in_room = 6; */
+        if (message.userIdsInRoom.length) {
+            writer.tag(6, WireType.LengthDelimited).fork();
+            for (let i = 0; i < message.userIdsInRoom.length; i++)
+                writer.int32(message.userIdsInRoom[i]);
+            writer.join();
+        }
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -4706,8 +4722,7 @@ class PB_MessageToClient_Game_ConnectResponse_Metadata$Type extends MessageType<
             { no: 3, name: "host_user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
             { no: 4, name: "user_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ },
             { no: 5, name: "approvals", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 8 /*ScalarType.BOOL*/ },
-            { no: 6, name: "number_of_game_setup_changes", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 7, name: "user_ids_in_room", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ }
+            { no: 6, name: "number_of_game_setup_changes", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
         ]);
     }
     create(value?: PartialMessage<PB_MessageToClient_Game_ConnectResponse_Metadata>): PB_MessageToClient_Game_ConnectResponse_Metadata {
@@ -4718,7 +4733,6 @@ class PB_MessageToClient_Game_ConnectResponse_Metadata$Type extends MessageType<
         message.userIds = [];
         message.approvals = [];
         message.numberOfGameSetupChanges = 0;
-        message.userIdsInRoom = [];
         if (value !== undefined)
             reflectionMergePartial<PB_MessageToClient_Game_ConnectResponse_Metadata>(this, message, value);
         return message;
@@ -4753,13 +4767,6 @@ class PB_MessageToClient_Game_ConnectResponse_Metadata$Type extends MessageType<
                     break;
                 case /* int32 number_of_game_setup_changes */ 6:
                     message.numberOfGameSetupChanges = reader.int32();
-                    break;
-                case /* repeated int32 user_ids_in_room */ 7:
-                    if (wireType === WireType.LengthDelimited)
-                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
-                            message.userIdsInRoom.push(reader.int32());
-                    else
-                        message.userIdsInRoom.push(reader.int32());
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -4799,13 +4806,6 @@ class PB_MessageToClient_Game_ConnectResponse_Metadata$Type extends MessageType<
         /* int32 number_of_game_setup_changes = 6; */
         if (message.numberOfGameSetupChanges !== 0)
             writer.tag(6, WireType.Varint).int32(message.numberOfGameSetupChanges);
-        /* repeated int32 user_ids_in_room = 7; */
-        if (message.userIdsInRoom.length) {
-            writer.tag(7, WireType.LengthDelimited).fork();
-            for (let i = 0; i < message.userIdsInRoom.length; i++)
-                writer.int32(message.userIdsInRoom[i]);
-            writer.join();
-        }
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

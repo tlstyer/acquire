@@ -89,8 +89,8 @@ export class GameRoom extends Room {
                 ),
                 approvals: this.gameSetup ? this.gameSetup.approvals : dummyApprovals,
                 numberOfGameSetupChanges: this.gameSetup ? this.numberOfGameSetupChanges : 0,
-                userIdsInRoom: [...this.userToClients.keys()].map((user) => user.id),
               },
+              userIdsInRoom: [...this.userToClients.keys()].map((user) => user.id),
             },
             userIdsAndUsernames:
               message.numberOfUserIdAndUsernameMessages === 0
