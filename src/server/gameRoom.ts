@@ -8,6 +8,7 @@ import {
   PB_MessageToClient_Lobby_Event,
   PB_PlayerArrangementMode,
   type PB_GameMode,
+  type PB_GameState,
   type PB_MessageToServer_Game_Connect,
   type PB_MessageToServer_Game_GameSetupAction,
 } from '../common/pb.js';
@@ -71,35 +72,51 @@ export class GameRoom extends Room {
     client.connectToRoom(this);
     this.clientFromConnectMessage = null;
 
-    client.sendMessage(
-      PB_MessageToClient.toBinary(
-        PB_MessageToClient.create({
-          game: {
-            connectResponse: {
-              logTime: message.logTime,
-              gameNumber: message.gameNumber,
-              metadata: {
-                gameMode: this.gameSetup ? this.gameSetup.gameMode : this.game!.gameMode,
-                playerArrangementMode: this.gameSetup
-                  ? this.gameSetup.playerArrangementMode
-                  : this.game!.playerArrangementMode,
-                hostUserId: this.gameSetup ? this.gameSetup.hostUser.id : this.game!.hostUser.id,
-                userIds: (this.gameSetup ? this.gameSetup : this.game!).users.map(
-                  (user) => user?.id ?? 0,
-                ),
-                approvals: this.gameSetup ? this.gameSetup.approvals : dummyApprovals,
-                numberOfGameSetupChanges: this.gameSetup ? this.numberOfGameSetupChanges : 0,
-              },
-              userIdsInRoom: [...this.userToClients.keys()].map((user) => user.id),
-            },
-            userIdsAndUsernames:
-              message.numberOfUserIdAndUsernameMessages === 0
-                ? this.userIdsAndUsernames
-                : this.userIdsAndUsernames.slice(message.numberOfUserIdAndUsernameMessages),
-          },
-        }),
-      ),
-    );
+    const messageToClient = PB_MessageToClient.create({
+      game: {
+        connectResponse: {
+          logTime: message.logTime,
+          gameNumber: message.gameNumber,
+          metadata:
+            message.numberOfGameStates === 0
+              ? {
+                  gameMode: this.gameSetup ? this.gameSetup.gameMode : this.game!.gameMode,
+                  playerArrangementMode: this.gameSetup
+                    ? this.gameSetup.playerArrangementMode
+                    : this.game!.playerArrangementMode,
+                  hostUserId: this.gameSetup ? this.gameSetup.hostUser.id : this.game!.hostUser.id,
+                  userIds: (this.gameSetup ? this.gameSetup : this.game!).users.map(
+                    (user) => user?.id ?? 0,
+                  ),
+                  approvals: this.gameSetup ? this.gameSetup.approvals : dummyApprovals,
+                  numberOfGameSetupChanges: this.gameSetup ? this.numberOfGameSetupChanges : 0,
+                }
+              : undefined,
+          userIdsInRoom: [...this.userToClients.keys()].map((user) => user.id),
+        },
+        userIdsAndUsernames:
+          message.numberOfUserIdAndUsernameMessages === 0
+            ? this.userIdsAndUsernames
+            : this.userIdsAndUsernames.slice(message.numberOfUserIdAndUsernameMessages),
+      },
+    });
+
+    if (this.game) {
+      const gameStateMessages: PB_GameState[] = [];
+
+      const playerId = client.user ? this.game.users.indexOf(client.user) : -1;
+
+      for (let i = message.numberOfGameStates; i < this.game.gameStateHistory.length; i++) {
+        const gameState = this.game.gameStateHistory[i];
+        gameStateMessages.push(
+          playerId >= 0 ? gameState.playerGameStates[playerId] : gameState.watcherGameState,
+        );
+      }
+
+      messageToClient.game!.gameStates = gameStateMessages;
+    }
+
+    client.sendMessage(PB_MessageToClient.toBinary(messageToClient));
   }
 
   onMessage_GameSetupAction(client: Client, message: PB_MessageToServer_Game_GameSetupAction) {

@@ -76,8 +76,9 @@ export function createGameManager(
   logTime: number,
   gameNumber: number,
 ) {
-  let gameSetup: GameSetupLite | null;
-  let game: Game | null;
+  let gameSetup: GameSetupLite | null = null;
+  let game: Game | null = null;
+  let gameReview: Game | null = null;
 
   let numberOfUserIdAndUsernameMessages = 0;
 
@@ -110,6 +111,7 @@ export function createGameManager(
           logTime,
           gameNumber,
           numberOfUserIdAndUsernameMessages,
+          numberOfGameStates: game ? game.gameStateHistory.length : 0,
         },
       },
     });
@@ -149,12 +151,15 @@ export function createGameManager(
         numberOfGameSetupChanges = metadata.numberOfGameSetupChanges;
 
         game = null;
+        gameReview = null;
       } else if (connectResponse.gameReview) {
         gameSetup = null;
-        game = gameFromProtocolBuffer(connectResponse.gameReview);
+        game = null;
+        gameReview = gameFromProtocolBuffer(connectResponse.gameReview);
       } else if (connectResponse.gameNotFound) {
         gameSetup = null;
         game = null;
+        gameReview = null;
       }
 
       const userIdsInRoom = connectResponse.userIdsInRoom;
@@ -184,7 +189,8 @@ export function createGameManager(
           gameSetup.gameMode,
           gameSetup.playerArrangementMode,
           [],
-          gameSetup.finalUsers!,
+          // @ts-expect-error gameSetup's users has no nulls when starting a game
+          gameSetup.finalUsers ?? gameSetup.users,
           gameSetup.hostUser,
           myUser(),
         );
@@ -205,15 +211,17 @@ export function createGameManager(
         setUsers(gameSetup.users);
         setApprovals(gameSetup.approvals);
         setHostUser(gameSetup.hostUser);
-      } else if (game) {
-        setStatus(GameManagerStatus.Review);
-        setGameMode(game.gameMode);
-        setPlayerArrangementMode(game.playerArrangementMode);
-        setUsers(game.users);
-        setUsersWithoutNulls(game.users);
-        setHostUser(game.hostUser);
+      } else if (game || gameReview) {
+        const g = game || gameReview!;
 
-        setGameStateHistory(game.gameStateHistory);
+        setStatus(game ? GameManagerStatus.Game : GameManagerStatus.Review);
+        setGameMode(g.gameMode);
+        setPlayerArrangementMode(g.playerArrangementMode);
+        setUsers(g.users);
+        setUsersWithoutNulls(g.users);
+        setHostUser(g.hostUser);
+
+        setGameStateHistory(g.gameStateHistory);
       } else {
         setStatus(GameManagerStatus.NotFound);
       }
@@ -355,7 +363,7 @@ export const enum GameManagerStatus {
   Connecting,
   NotFound,
   SettingUp,
-  // Game,
+  Game,
   Review,
 }
 

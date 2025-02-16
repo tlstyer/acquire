@@ -283,6 +283,14 @@ test('game setup example 1', async () => {
   lobbyManagers.add(lobbyManagerLobby2);
   expectEqualGameStuff(lobbyManagers, gameManagers, serverStuff.server);
 
+  const clientStuffAnon = createClientStuffAndConnectToTestServer(serverStuff);
+  const gameManagerAnon = clientStuffAnon.client.connectToGame(
+    clientStuffAnon.client.logTime,
+    gameNumber,
+  );
+  gameManagers.add(gameManagerAnon);
+  expectEqualGameStuff(lobbyManagers, gameManagers, serverStuff.server);
+
   expect(gameManager1.signals.gameMode()).toBe(PB_GameMode.TEAMS_2_VS_2);
   expect(gameManager1.signals.playerArrangementMode()).toBe(PB_PlayerArrangementMode.EXACT_ORDER);
   expect(gameManager1.signals.hostUser()).toEqual(user1);
@@ -395,6 +403,14 @@ test('game setup example 2', async () => {
   const clientStuffLobby2 = createClientStuffAndConnectToTestServer(serverStuff);
   const lobbyManagerLobby2 = clientStuffLobby2.client.connectToLobby();
   lobbyManagers.add(lobbyManagerLobby2);
+  expectEqualGameStuff(lobbyManagers, gameManagers, serverStuff.server);
+
+  const clientStuffAnon = createClientStuffAndConnectToTestServer(serverStuff);
+  const gameManagerAnon = clientStuffAnon.client.connectToGame(
+    clientStuffAnon.client.logTime,
+    gameNumber,
+  );
+  gameManagers.add(gameManagerAnon);
   expectEqualGameStuff(lobbyManagers, gameManagers, serverStuff.server);
 });
 

@@ -169,9 +169,9 @@ Connect:
 
 - log time
 - game number
-- game state history size
-- number of chat messages
 - number of user IDs and usernames
+- number of game states
+- number of chat messages
 
 Game setup action:
 
@@ -180,7 +180,7 @@ Game setup action:
 
 Game action:
 
-- game state history size
+- number of game states
 - game action
 
 Send chat message:
@@ -204,10 +204,10 @@ One or more of:
   - game review data (when game not shown in lobby)
   - not found (when game not found)
   - user IDs in room
-- game setup change (only in subsequent messages)
-- array of game state objects
-- array of chat messages and user IDs of senders
 - array of user IDs and usernames
 - user ID who entered game room (only in subsequent messages)
 - user ID who exited game room (only in subsequent messages)
+- game setup change (only in subsequent messages)
+- array of game state objects
 - tile bag (after game completed)
+- array of chat messages and user IDs of senders

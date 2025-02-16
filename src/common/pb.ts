@@ -453,6 +453,10 @@ export interface PB_MessageToServer_Game_Connect {
      * @generated from protobuf field: int32 number_of_user_id_and_username_messages = 3;
      */
     numberOfUserIdAndUsernameMessages: number;
+    /**
+     * @generated from protobuf field: int32 number_of_game_states = 4;
+     */
+    numberOfGameStates: number;
 }
 /**
  * @generated from protobuf message PB.MessageToServer.Game.GameSetupAction
@@ -2955,7 +2959,8 @@ class PB_MessageToServer_Game_Connect$Type extends MessageType<PB_MessageToServe
         super("PB.MessageToServer.Game.Connect", [
             { no: 1, name: "log_time", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "game_number", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 3, name: "number_of_user_id_and_username_messages", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
+            { no: 3, name: "number_of_user_id_and_username_messages", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 4, name: "number_of_game_states", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
         ]);
     }
     create(value?: PartialMessage<PB_MessageToServer_Game_Connect>): PB_MessageToServer_Game_Connect {
@@ -2963,6 +2968,7 @@ class PB_MessageToServer_Game_Connect$Type extends MessageType<PB_MessageToServe
         message.logTime = 0;
         message.gameNumber = 0;
         message.numberOfUserIdAndUsernameMessages = 0;
+        message.numberOfGameStates = 0;
         if (value !== undefined)
             reflectionMergePartial<PB_MessageToServer_Game_Connect>(this, message, value);
         return message;
@@ -2980,6 +2986,9 @@ class PB_MessageToServer_Game_Connect$Type extends MessageType<PB_MessageToServe
                     break;
                 case /* int32 number_of_user_id_and_username_messages */ 3:
                     message.numberOfUserIdAndUsernameMessages = reader.int32();
+                    break;
+                case /* int32 number_of_game_states */ 4:
+                    message.numberOfGameStates = reader.int32();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -3002,6 +3011,9 @@ class PB_MessageToServer_Game_Connect$Type extends MessageType<PB_MessageToServe
         /* int32 number_of_user_id_and_username_messages = 3; */
         if (message.numberOfUserIdAndUsernameMessages !== 0)
             writer.tag(3, WireType.Varint).int32(message.numberOfUserIdAndUsernameMessages);
+        /* int32 number_of_game_states = 4; */
+        if (message.numberOfGameStates !== 0)
+            writer.tag(4, WireType.Varint).int32(message.numberOfGameStates);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
