@@ -1,4 +1,4 @@
-import type { GameState } from './gameState.js';
+import { type GameState } from './gameState.js';
 import { PB_GameBoardType } from './pb.js';
 
 export const defaultGameStateHistory: GameState[] = [];

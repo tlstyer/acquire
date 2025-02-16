@@ -2,7 +2,7 @@ import { GameActionEnum, ScoreBoardIndexEnum } from '../enums.js';
 import { UserInputError } from '../error.js';
 import { ScoreBoardAdjustment, type Game } from '../game.js';
 import { GameHistoryMessageDisposedOfShares } from '../gameHistoryMessage.js';
-import type { PB_GameAction, PB_GameBoardType } from '../pb.js';
+import { type PB_GameAction, type PB_GameBoardType } from '../pb.js';
 import { ActionBase } from './base.js';
 
 export class ActionDisposeOfShares extends ActionBase {

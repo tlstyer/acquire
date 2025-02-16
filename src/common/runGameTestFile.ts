@@ -1,7 +1,7 @@
 import { GameActionEnum, ScoreBoardIndexEnum, TileEnum } from './enums.js';
 import { UserInputError } from './error.js';
 import { Game } from './game.js';
-import type { ActionBase } from './gameActions/base.js';
+import { type ActionBase } from './gameActions/base.js';
 import { ActionDisposeOfShares } from './gameActions/disposeOfShares.js';
 import { ActionGameOver } from './gameActions/gameOver.js';
 import { ActionSelectChainToDisposeOfNext } from './gameActions/selectChainToDisposeOfNext.js';
@@ -30,7 +30,7 @@ import {
   type GameHistoryMessage,
 } from './gameHistoryMessage.js';
 import { gameToJSON } from './gameSerialization.js';
-import type { GameState, GameStateTileBagTile } from './gameState.js';
+import { type GameState, type GameStateTileBagTile } from './gameState.js';
 import { getValueOfKey, lowercaseFirstLetter, toTileString, yTileNames } from './helpers.js';
 import {
   PB_GameAction,

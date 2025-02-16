@@ -9,7 +9,7 @@ import {
   PB_MessageToServer,
 } from '../common/pb.js';
 import { User } from '../common/user.js';
-import type { ClientCommunication } from './clientCommunication.js';
+import { type ClientCommunication } from './clientCommunication.js';
 import { createGamesManager } from './gamesManager.js';
 import { type DialogType, GameBoardLabelMode } from './helpers.js';
 import { createLobbyManager } from './lobbyManager.js';

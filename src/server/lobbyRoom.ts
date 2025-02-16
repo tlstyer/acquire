@@ -12,8 +12,8 @@ import {
   type PB_MessageToServer_Lobby_CreateGame,
 } from '../common/pb.js';
 import { type User } from '../common/user.js';
-import type { Client } from './client.js';
-import type { GameRoomsManager } from './gameRoomsManager.js';
+import { type Client } from './client.js';
+import { type GameRoomsManager } from './gameRoomsManager.js';
 import { Room } from './room.js';
 
 export class LobbyRoom extends Room {

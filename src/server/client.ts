@@ -1,5 +1,5 @@
 import { type User } from '../common/user.js';
-import type { Room } from './room.js';
+import { type Room } from './room.js';
 
 export class Client {
   room: Room | undefined;

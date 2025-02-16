@@ -9,9 +9,9 @@ import {
   defaultTileRackTypesList,
 } from './defaults.js';
 import { GameActionEnum, TileEnum } from './enums.js';
-import type { Game } from './game.js';
-import type { ActionBase } from './gameActions/base.js';
-import type { GameHistoryMessage } from './gameHistoryMessage.js';
+import { type Game } from './game.js';
+import { type ActionBase } from './gameActions/base.js';
+import { type GameHistoryMessage } from './gameHistoryMessage.js';
 import {
   PB_GameAction,
   PB_GameBoardChanges,

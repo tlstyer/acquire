@@ -13,7 +13,7 @@ import {
   defaultTileRackTypesList,
 } from './defaults.js';
 import { ScoreBoardIndexEnum, TileEnum } from './enums.js';
-import type { ActionBase } from './gameActions/base.js';
+import { type ActionBase } from './gameActions/base.js';
 import { ActionStartGame } from './gameActions/startGame.js';
 import {
   GameHistoryMessageDrewLastTile,

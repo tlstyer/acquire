@@ -1,6 +1,6 @@
-import type { GameActionEnum } from '../enums.js';
-import type { Game } from '../game.js';
-import type { PB_GameAction } from '../pb.js';
+import { type GameActionEnum } from '../enums.js';
+import { type Game } from '../game.js';
+import { type PB_GameAction } from '../pb.js';
 
 export abstract class ActionBase {
   constructor(

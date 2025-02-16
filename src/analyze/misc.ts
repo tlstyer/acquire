@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import readline from 'readline';
 import { ScoreBoardIndexEnum } from '../common/enums.js';
-import type { Game } from '../common/game.js';
+import { type Game } from '../common/game.js';
 import { ActionGameOver } from '../common/gameActions/gameOver.js';
 import {
   GameHistoryMessageAllTilesPlayed,
@@ -29,7 +29,7 @@ import {
 import { gameFromProtocolBuffer } from '../common/gameSerialization.js';
 import { gameModeToNumPlayers, gameModeToTeamSize } from '../common/helpers.js';
 import { PB_GameReview, type PB_GameMode } from '../common/pb.js';
-import type { ProcessedGameDataType } from './outputProcessedGameData.js';
+import { type ProcessedGameDataType } from './outputProcessedGameData.js';
 
 export function* iterateGamesInDirectory(dirPath: string, completedGamesOnly = false) {
   for (const file of fs.readdirSync(dirPath)) {

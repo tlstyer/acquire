@@ -7,9 +7,9 @@ import {
   type PB_MessageToServer_Game_Connect,
 } from '../common/pb.js';
 import { PBWithBinaryAlready_MessageToClient } from '../common/pbWithBinaryAlready.js';
-import type { Client } from './client.js';
+import { type Client } from './client.js';
 import { GameRoom } from './gameRoom.js';
-import type { LobbyRoom } from './lobbyRoom.js';
+import { type LobbyRoom } from './lobbyRoom.js';
 import { ReuseIdManager } from './reuseIdManager.js';
 
 export class GameRoomsManager {

@@ -1,5 +1,5 @@
 import path from 'path';
-import type { Game } from '../common/game.js';
+import { type Game } from '../common/game.js';
 import {
   calculateFinalTeamScores,
   calculatePlacings,

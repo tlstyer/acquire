@@ -17,8 +17,8 @@ import { User } from '../common/user.js';
 import { Client } from './client.js';
 import { GameRoomsManager } from './gameRoomsManager.js';
 import { LobbyRoom } from './lobbyRoom.js';
-import type { ServerCommunication } from './serverCommunication.js';
-import type { UserData, UserDataProvider } from './userDataProvider.js';
+import { type ServerCommunication } from './serverCommunication.js';
+import { type UserData, type UserDataProvider } from './userDataProvider.js';
 
 export class Server {
   private initialMessage: Uint8Array;

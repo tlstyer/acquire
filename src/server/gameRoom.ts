@@ -13,8 +13,8 @@ import {
   type PB_MessageToServer_Game_GameSetupAction,
 } from '../common/pb.js';
 import { type User } from '../common/user.js';
-import type { Client } from './client.js';
-import type { LobbyRoom } from './lobbyRoom.js';
+import { type Client } from './client.js';
+import { type LobbyRoom } from './lobbyRoom.js';
 import { Room } from './room.js';
 
 export class GameRoom extends Room {
