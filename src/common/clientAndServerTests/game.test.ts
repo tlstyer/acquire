@@ -1,3 +1,4 @@
+import { type Accessor } from 'solid-js';
 import { expect, test } from 'vitest';
 import { type Client } from '../../client/client.js';
 import { type GameManager, GameManagerStatus } from '../../client/gamesManager.js';
@@ -199,7 +200,7 @@ test('game setup example 1', async () => {
   const serverStuff = createServerStuff();
 
   const lobbyManagers = new Set<LobbyManager>();
-  const gameManagers = new Set<GameManager>();
+  const gameManagersAndUserAccessors = new Set<GameManagerAndUserAccessor>();
 
   const clientStuffLobby1 = createClientStuffAndConnectToTestServer(serverStuff);
   const lobbyManagerLobby1 = clientStuffLobby1.client.connectToLobby();
@@ -211,85 +212,99 @@ test('game setup example 1', async () => {
   lobbyManager1.createGame(PB_GameMode.SINGLES_4);
   const gameNumber = lobbyManager1.signals.createdGameNumber() ?? -1;
   const gameManager1 = clientStuff1.client.connectToGame(clientStuff1.client.logTime, gameNumber);
-  gameManagers.add(gameManager1);
-  expectEqualGameStuff(lobbyManagers, gameManagers, serverStuff.server);
+  gameManagersAndUserAccessors.add(
+    new GameManagerAndUserAccessor(gameManager1, clientStuff1.client.signals.user),
+  );
+  expectEqualGameStuff(lobbyManagers, gameManagersAndUserAccessors, serverStuff.server);
 
   const clientStuff2 = createClientStuffAndConnectToTestServer(serverStuff);
   await loginAsUser(clientStuff2, 2);
   const gameManager2 = clientStuff2.client.connectToGame(clientStuff2.client.logTime, gameNumber);
-  gameManagers.add(gameManager2);
+  gameManagersAndUserAccessors.add(
+    new GameManagerAndUserAccessor(gameManager2, clientStuff2.client.signals.user),
+  );
   gameManager2.gameSetupActions.sitDown();
-  expectEqualGameStuff(lobbyManagers, gameManagers, serverStuff.server);
+  expectEqualGameStuff(lobbyManagers, gameManagersAndUserAccessors, serverStuff.server);
 
   const clientStuff3 = createClientStuffAndConnectToTestServer(serverStuff);
   await loginAsUser(clientStuff3, 3);
   const gameManager3 = clientStuff3.client.connectToGame(clientStuff3.client.logTime, gameNumber);
-  gameManagers.add(gameManager3);
+  gameManagersAndUserAccessors.add(
+    new GameManagerAndUserAccessor(gameManager3, clientStuff3.client.signals.user),
+  );
   gameManager3.gameSetupActions.sitDown();
-  expectEqualGameStuff(lobbyManagers, gameManagers, serverStuff.server);
+  expectEqualGameStuff(lobbyManagers, gameManagersAndUserAccessors, serverStuff.server);
 
   const clientStuff4 = createClientStuffAndConnectToTestServer(serverStuff);
   await loginAsUser(clientStuff4, 4);
   const gameManager4 = clientStuff4.client.connectToGame(clientStuff4.client.logTime, gameNumber);
-  gameManagers.add(gameManager4);
+  gameManagersAndUserAccessors.add(
+    new GameManagerAndUserAccessor(gameManager4, clientStuff4.client.signals.user),
+  );
   gameManager4.gameSetupActions.sitDown();
-  expectEqualGameStuff(lobbyManagers, gameManagers, serverStuff.server);
+  expectEqualGameStuff(lobbyManagers, gameManagersAndUserAccessors, serverStuff.server);
 
   gameManager3.gameSetupActions.standUp();
-  expectEqualGameStuff(lobbyManagers, gameManagers, serverStuff.server);
+  expectEqualGameStuff(lobbyManagers, gameManagersAndUserAccessors, serverStuff.server);
 
   gameManager1.gameSetupActions.changeGameMode(PB_GameMode.TEAMS_2_VS_2);
-  expectEqualGameStuff(lobbyManagers, gameManagers, serverStuff.server);
+  expectEqualGameStuff(lobbyManagers, gameManagersAndUserAccessors, serverStuff.server);
 
   gameManager1.gameSetupActions.changePlayerArrangementMode(PB_PlayerArrangementMode.EXACT_ORDER);
-  expectEqualGameStuff(lobbyManagers, gameManagers, serverStuff.server);
+  expectEqualGameStuff(lobbyManagers, gameManagersAndUserAccessors, serverStuff.server);
 
   gameManager1.gameSetupActions.swapPositions(0, 3);
-  expectEqualGameStuff(lobbyManagers, gameManagers, serverStuff.server);
+  expectEqualGameStuff(lobbyManagers, gameManagersAndUserAccessors, serverStuff.server);
 
   gameManager1.gameSetupActions.kickUser(2);
-  expectEqualGameStuff(lobbyManagers, gameManagers, serverStuff.server);
+  expectEqualGameStuff(lobbyManagers, gameManagersAndUserAccessors, serverStuff.server);
 
   const clientStuff5 = createClientStuffAndConnectToTestServer(serverStuff);
   await loginAsUser(clientStuff5, 5);
   const gameManager5 = clientStuff5.client.connectToGame(clientStuff5.client.logTime, gameNumber);
-  gameManagers.add(gameManager5);
+  gameManagersAndUserAccessors.add(
+    new GameManagerAndUserAccessor(gameManager5, clientStuff5.client.signals.user),
+  );
   gameManager5.gameSetupActions.sitDown();
-  expectEqualGameStuff(lobbyManagers, gameManagers, serverStuff.server);
+  expectEqualGameStuff(lobbyManagers, gameManagersAndUserAccessors, serverStuff.server);
 
   const clientStuff6 = createClientStuffAndConnectToTestServer(serverStuff);
   await loginAsUser(clientStuff6, 6);
   const gameManager6 = clientStuff6.client.connectToGame(clientStuff6.client.logTime, gameNumber);
-  gameManagers.add(gameManager6);
+  gameManagersAndUserAccessors.add(
+    new GameManagerAndUserAccessor(gameManager6, clientStuff6.client.signals.user),
+  );
   gameManager6.gameSetupActions.sitDown();
-  expectEqualGameStuff(lobbyManagers, gameManagers, serverStuff.server);
+  expectEqualGameStuff(lobbyManagers, gameManagersAndUserAccessors, serverStuff.server);
 
   gameManager1.gameSetupActions.approve();
-  expectEqualGameStuff(lobbyManagers, gameManagers, serverStuff.server);
+  expectEqualGameStuff(lobbyManagers, gameManagersAndUserAccessors, serverStuff.server);
 
   gameManager4.gameSetupActions.approve();
-  expectEqualGameStuff(lobbyManagers, gameManagers, serverStuff.server);
+  expectEqualGameStuff(lobbyManagers, gameManagersAndUserAccessors, serverStuff.server);
 
   gameManager5.gameSetupActions.approve();
-  expectEqualGameStuff(lobbyManagers, gameManagers, serverStuff.server);
+  expectEqualGameStuff(lobbyManagers, gameManagersAndUserAccessors, serverStuff.server);
 
   gameManager6.gameSetupActions.approve();
-  expectEqualGameStuff(lobbyManagers, gameManagers, serverStuff.server);
+  expectEqualGameStuff(lobbyManagers, gameManagersAndUserAccessors, serverStuff.server);
 
   serverStuff.server.lobbyRoom.createLastStateCheckpoint();
 
   const clientStuffLobby2 = createClientStuffAndConnectToTestServer(serverStuff);
   const lobbyManagerLobby2 = clientStuffLobby2.client.connectToLobby();
   lobbyManagers.add(lobbyManagerLobby2);
-  expectEqualGameStuff(lobbyManagers, gameManagers, serverStuff.server);
+  expectEqualGameStuff(lobbyManagers, gameManagersAndUserAccessors, serverStuff.server);
 
   const clientStuffAnon = createClientStuffAndConnectToTestServer(serverStuff);
   const gameManagerAnon = clientStuffAnon.client.connectToGame(
     clientStuffAnon.client.logTime,
     gameNumber,
   );
-  gameManagers.add(gameManagerAnon);
-  expectEqualGameStuff(lobbyManagers, gameManagers, serverStuff.server);
+  gameManagersAndUserAccessors.add(
+    new GameManagerAndUserAccessor(gameManagerAnon, clientStuffAnon.client.signals.user),
+  );
+  expectEqualGameStuff(lobbyManagers, gameManagersAndUserAccessors, serverStuff.server);
 
   expect(gameManager1.signals.gameMode()).toBe(PB_GameMode.TEAMS_2_VS_2);
   expect(gameManager1.signals.playerArrangementMode()).toBe(PB_PlayerArrangementMode.EXACT_ORDER);
@@ -304,7 +319,7 @@ test('game setup example 2', async () => {
   const serverStuff = createServerStuff();
 
   const lobbyManagers = new Set<LobbyManager>();
-  const gameManagers = new Set<GameManager>();
+  const gameManagersAndUserAccessors = new Set<GameManagerAndUserAccessor>();
 
   const clientStuffLobby1 = createClientStuffAndConnectToTestServer(serverStuff);
   const lobbyManagerLobby1 = clientStuffLobby1.client.connectToLobby();
@@ -316,107 +331,128 @@ test('game setup example 2', async () => {
   lobbyManager.createGame(PB_GameMode.SINGLES_4);
   const gameNumber = lobbyManager.signals.createdGameNumber() ?? -1;
   const gameManager1 = clientStuff1.client.connectToGame(clientStuff1.client.logTime, gameNumber);
-  gameManagers.add(gameManager1);
-  expectEqualGameStuff(lobbyManagers, gameManagers, serverStuff.server);
+  gameManagersAndUserAccessors.add(
+    new GameManagerAndUserAccessor(gameManager1, clientStuff1.client.signals.user),
+  );
+  expectEqualGameStuff(lobbyManagers, gameManagersAndUserAccessors, serverStuff.server);
 
   expect(gameManager1.signals.gameMode()).toBe(PB_GameMode.SINGLES_4);
   expect(gameManager1.signals.users()).toEqual([user1, null, null, null]);
-  expectEqualGameStuff(lobbyManagers, gameManagers, serverStuff.server);
+  expectEqualGameStuff(lobbyManagers, gameManagersAndUserAccessors, serverStuff.server);
 
   gameManager1.gameSetupActions.changeGameMode(PB_GameMode.TEAMS_3_VS_3);
   expect(gameManager1.signals.gameMode()).toBe(PB_GameMode.TEAMS_3_VS_3);
   expect(gameManager1.signals.users()).toEqual([user1, null, null, null, null, null]);
-  expectEqualGameStuff(lobbyManagers, gameManagers, serverStuff.server);
+  expectEqualGameStuff(lobbyManagers, gameManagersAndUserAccessors, serverStuff.server);
 
   gameManager1.gameSetupActions.changePlayerArrangementMode(PB_PlayerArrangementMode.SPECIFY_TEAMS);
-  expectEqualGameStuff(lobbyManagers, gameManagers, serverStuff.server);
+  expectEqualGameStuff(lobbyManagers, gameManagersAndUserAccessors, serverStuff.server);
 
   const clientStuff2 = createClientStuffAndConnectToTestServer(serverStuff);
   await loginAsUser(clientStuff2, 2);
   const gameManager2 = clientStuff2.client.connectToGame(clientStuff2.client.logTime, gameNumber);
-  gameManagers.add(gameManager2);
+  gameManagersAndUserAccessors.add(
+    new GameManagerAndUserAccessor(gameManager2, clientStuff2.client.signals.user),
+  );
   gameManager2.gameSetupActions.sitDown();
-  expectEqualGameStuff(lobbyManagers, gameManagers, serverStuff.server);
+  expectEqualGameStuff(lobbyManagers, gameManagersAndUserAccessors, serverStuff.server);
 
   const clientStuff3 = createClientStuffAndConnectToTestServer(serverStuff);
   await loginAsUser(clientStuff3, 3);
   const gameManager3 = clientStuff3.client.connectToGame(clientStuff3.client.logTime, gameNumber);
-  gameManagers.add(gameManager3);
+  gameManagersAndUserAccessors.add(
+    new GameManagerAndUserAccessor(gameManager3, clientStuff3.client.signals.user),
+  );
   gameManager3.gameSetupActions.sitDown();
-  expectEqualGameStuff(lobbyManagers, gameManagers, serverStuff.server);
+  expectEqualGameStuff(lobbyManagers, gameManagersAndUserAccessors, serverStuff.server);
 
   const clientStuff4 = createClientStuffAndConnectToTestServer(serverStuff);
   await loginAsUser(clientStuff4, 4);
   const gameManager4 = clientStuff4.client.connectToGame(clientStuff4.client.logTime, gameNumber);
-  gameManagers.add(gameManager4);
+  gameManagersAndUserAccessors.add(
+    new GameManagerAndUserAccessor(gameManager4, clientStuff4.client.signals.user),
+  );
   gameManager4.gameSetupActions.sitDown();
-  expectEqualGameStuff(lobbyManagers, gameManagers, serverStuff.server);
+  expectEqualGameStuff(lobbyManagers, gameManagersAndUserAccessors, serverStuff.server);
 
   const clientStuff5 = createClientStuffAndConnectToTestServer(serverStuff);
   await loginAsUser(clientStuff5, 5);
   const gameManager5 = clientStuff5.client.connectToGame(clientStuff5.client.logTime, gameNumber);
-  gameManagers.add(gameManager5);
+  gameManagersAndUserAccessors.add(
+    new GameManagerAndUserAccessor(gameManager5, clientStuff5.client.signals.user),
+  );
   gameManager5.gameSetupActions.sitDown();
-  expectEqualGameStuff(lobbyManagers, gameManagers, serverStuff.server);
+  expectEqualGameStuff(lobbyManagers, gameManagersAndUserAccessors, serverStuff.server);
 
   const clientStuff6 = createClientStuffAndConnectToTestServer(serverStuff);
   await loginAsUser(clientStuff6, 6);
   const gameManager6 = clientStuff6.client.connectToGame(clientStuff6.client.logTime, gameNumber);
-  gameManagers.add(gameManager6);
+  gameManagersAndUserAccessors.add(
+    new GameManagerAndUserAccessor(gameManager6, clientStuff6.client.signals.user),
+  );
   gameManager6.gameSetupActions.sitDown();
   expect(gameManager1.signals.users()).toEqual([user1, user2, user3, user4, user5, user6]);
-  expectEqualGameStuff(lobbyManagers, gameManagers, serverStuff.server);
+  expectEqualGameStuff(lobbyManagers, gameManagersAndUserAccessors, serverStuff.server);
 
   gameManager1.gameSetupActions.swapPositions(0, 5);
   expect(gameManager1.signals.users()).toEqual([user6, user2, user3, user4, user5, user1]);
-  expectEqualGameStuff(lobbyManagers, gameManagers, serverStuff.server);
+  expectEqualGameStuff(lobbyManagers, gameManagersAndUserAccessors, serverStuff.server);
 
   gameManager6.gameSetupActions.standUp();
   gameManager4.gameSetupActions.standUp();
   expect(gameManager1.signals.users()).toEqual([null, user2, user3, null, user5, user1]);
-  expectEqualGameStuff(lobbyManagers, gameManagers, serverStuff.server);
+  expectEqualGameStuff(lobbyManagers, gameManagersAndUserAccessors, serverStuff.server);
 
   gameManager5.gameSetupActions.approve();
-  expectEqualGameStuff(lobbyManagers, gameManagers, serverStuff.server);
+  expectEqualGameStuff(lobbyManagers, gameManagersAndUserAccessors, serverStuff.server);
 
   gameManager1.gameSetupActions.changeGameMode(PB_GameMode.SINGLES_4);
   expect(gameManager1.signals.playerArrangementMode()).toEqual(
     PB_PlayerArrangementMode.RANDOM_ORDER,
   );
   expect(gameManager1.signals.users()).toEqual([user5, user2, user3, user1]);
-  expectEqualGameStuff(lobbyManagers, gameManagers, serverStuff.server);
+  expectEqualGameStuff(lobbyManagers, gameManagersAndUserAccessors, serverStuff.server);
 
   gameManager5.gameSetupActions.approve();
-  expectEqualGameStuff(lobbyManagers, gameManagers, serverStuff.server);
+  expectEqualGameStuff(lobbyManagers, gameManagersAndUserAccessors, serverStuff.server);
 
   gameManager2.gameSetupActions.approve();
-  expectEqualGameStuff(lobbyManagers, gameManagers, serverStuff.server);
+  expectEqualGameStuff(lobbyManagers, gameManagersAndUserAccessors, serverStuff.server);
 
   gameManager3.gameSetupActions.approve();
-  expectEqualGameStuff(lobbyManagers, gameManagers, serverStuff.server);
+  expectEqualGameStuff(lobbyManagers, gameManagersAndUserAccessors, serverStuff.server);
 
   gameManager1.gameSetupActions.approve();
-  expectEqualGameStuff(lobbyManagers, gameManagers, serverStuff.server);
+  expectEqualGameStuff(lobbyManagers, gameManagersAndUserAccessors, serverStuff.server);
 
   serverStuff.server.lobbyRoom.createLastStateCheckpoint();
 
   const clientStuffLobby2 = createClientStuffAndConnectToTestServer(serverStuff);
   const lobbyManagerLobby2 = clientStuffLobby2.client.connectToLobby();
   lobbyManagers.add(lobbyManagerLobby2);
-  expectEqualGameStuff(lobbyManagers, gameManagers, serverStuff.server);
+  expectEqualGameStuff(lobbyManagers, gameManagersAndUserAccessors, serverStuff.server);
 
   const clientStuffAnon = createClientStuffAndConnectToTestServer(serverStuff);
   const gameManagerAnon = clientStuffAnon.client.connectToGame(
     clientStuffAnon.client.logTime,
     gameNumber,
   );
-  gameManagers.add(gameManagerAnon);
-  expectEqualGameStuff(lobbyManagers, gameManagers, serverStuff.server);
+  gameManagersAndUserAccessors.add(
+    new GameManagerAndUserAccessor(gameManagerAnon, clientStuffAnon.client.signals.user),
+  );
+  expectEqualGameStuff(lobbyManagers, gameManagersAndUserAccessors, serverStuff.server);
 });
+
+class GameManagerAndUserAccessor {
+  constructor(
+    public gameManager: GameManager,
+    public userAccessor: Accessor<User | null>,
+  ) {}
+}
 
 function expectEqualGameStuff(
   lobbyManagers: Set<LobbyManager>,
-  gameManagers: Set<GameManager>,
+  gameManagersAndUserAccessors: Set<GameManagerAndUserAccessor>,
   server: Server,
 ) {
   server.lobbyRoom.sendQueuedEvents();
@@ -444,8 +480,8 @@ function expectEqualGameStuff(
     }
   }
 
-  for (const gameManager of gameManagers) {
-    const gameManagerSignals = gameManager.signals;
+  for (const gameManagerAndUserAccessor of gameManagersAndUserAccessors) {
+    const gameManagerSignals = gameManagerAndUserAccessor.gameManager.signals;
 
     if (gameRoom.gameSetup) {
       expect(gameManagerSignals.gameMode()).toEqual(gameRoom.gameSetup.gameMode);
@@ -463,6 +499,21 @@ function expectEqualGameStuff(
       expect(gameManagerSignals.users()).toEqual(gameRoom.game.users);
       expect(gameManagerSignals.usersWithoutNulls()).toEqual(gameRoom.game.users);
       expect(gameManagerSignals.hostUser()).toEqual(gameRoom.game.hostUser);
+
+      const user = gameManagerAndUserAccessor.userAccessor();
+      const playerId = user ? gameRoom.game.users.indexOf(user) : -1;
+      expect(
+        gameManagerSignals.gameStateHistory().map((gameState) => {
+          if (gameState.playerGameStates.length === 0) {
+            gameState.createPlayerAndWatcherGameStates();
+          }
+          return playerId >= 0 ? gameState.playerGameStates[playerId] : gameState.watcherGameState;
+        }),
+      ).toEqual(
+        gameRoom.game.gameStateHistory.map((gs) =>
+          playerId >= 0 ? gs.playerGameStates[playerId] : gs.watcherGameState,
+        ),
+      );
     } else {
       throw new Error('gameRoom does not have gameSetup or game');
     }
