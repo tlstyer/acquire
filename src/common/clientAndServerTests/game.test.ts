@@ -464,16 +464,20 @@ function expectEqualGameStuff(
     const lobbyManagerGameSignals = lobbyManagerGame.signals;
 
     if (gameRoom.gameSetup) {
-      expect(lobbyManagerGame.hostUser).toEqual(gameRoom.gameSetup.hostUser);
+      const gameSetup = gameRoom.gameSetup;
+
+      expect(lobbyManagerGame.hostUser).toEqual(gameSetup.hostUser);
       expect(lobbyManagerGameSignals.gameBoard()).toEqual(defaultGameBoard);
-      expect(lobbyManagerGameSignals.users()).toEqual(gameRoom.gameSetup.users);
-      expect(lobbyManagerGameSignals.gameMode()).toEqual(gameRoom.gameSetup.gameMode);
+      expect(lobbyManagerGameSignals.users()).toEqual(gameSetup.users);
+      expect(lobbyManagerGameSignals.gameMode()).toEqual(gameSetup.gameMode);
       expect(lobbyManagerGameSignals.gameStatus()).toEqual(GameStatus.SETTING_UP);
     } else if (gameRoom.game) {
-      expect(lobbyManagerGame.hostUser).toEqual(gameRoom.game.hostUser);
-      expect(lobbyManagerGameSignals.gameBoard()).toEqual(gameRoom.game.gameBoard);
-      expect(lobbyManagerGameSignals.users()).toEqual(gameRoom.game.users);
-      expect(lobbyManagerGameSignals.gameMode()).toEqual(gameRoom.game.gameMode);
+      const game = gameRoom.game;
+
+      expect(lobbyManagerGame.hostUser).toEqual(game.hostUser);
+      expect(lobbyManagerGameSignals.gameBoard()).toEqual(game.gameBoard);
+      expect(lobbyManagerGameSignals.users()).toEqual(game.users);
+      expect(lobbyManagerGameSignals.gameMode()).toEqual(game.gameMode);
       expect(lobbyManagerGameSignals.gameStatus()).toEqual(GameStatus.IN_PROGRESS);
     } else {
       throw new Error('gameRoom does not have gameSetup or game');
@@ -484,24 +488,24 @@ function expectEqualGameStuff(
     const gameManagerSignals = gameManagerAndUserAccessor.gameManager.signals;
 
     if (gameRoom.gameSetup) {
-      expect(gameManagerSignals.gameMode()).toEqual(gameRoom.gameSetup.gameMode);
-      expect(gameManagerSignals.playerArrangementMode()).toEqual(
-        gameRoom.gameSetup.playerArrangementMode,
-      );
-      expect(gameManagerSignals.users()).toEqual(gameRoom.gameSetup.users);
-      expect(gameManagerSignals.approvals()).toEqual(gameRoom.gameSetup.approvals);
-      expect(gameManagerSignals.hostUser()).toEqual(gameRoom.gameSetup.hostUser);
+      const gameSetup = gameRoom.gameSetup;
+
+      expect(gameManagerSignals.gameMode()).toEqual(gameSetup.gameMode);
+      expect(gameManagerSignals.playerArrangementMode()).toEqual(gameSetup.playerArrangementMode);
+      expect(gameManagerSignals.users()).toEqual(gameSetup.users);
+      expect(gameManagerSignals.approvals()).toEqual(gameSetup.approvals);
+      expect(gameManagerSignals.hostUser()).toEqual(gameSetup.hostUser);
     } else if (gameRoom.game) {
-      expect(gameManagerSignals.gameMode()).toEqual(gameRoom.game.gameMode);
-      expect(gameManagerSignals.playerArrangementMode()).toEqual(
-        gameRoom.game.playerArrangementMode,
-      );
-      expect(gameManagerSignals.users()).toEqual(gameRoom.game.users);
-      expect(gameManagerSignals.usersWithoutNulls()).toEqual(gameRoom.game.users);
-      expect(gameManagerSignals.hostUser()).toEqual(gameRoom.game.hostUser);
+      const game = gameRoom.game;
+
+      expect(gameManagerSignals.gameMode()).toEqual(game.gameMode);
+      expect(gameManagerSignals.playerArrangementMode()).toEqual(game.playerArrangementMode);
+      expect(gameManagerSignals.users()).toEqual(game.users);
+      expect(gameManagerSignals.usersWithoutNulls()).toEqual(game.users);
+      expect(gameManagerSignals.hostUser()).toEqual(game.hostUser);
 
       const user = gameManagerAndUserAccessor.userAccessor();
-      const playerId = user ? gameRoom.game.users.indexOf(user) : -1;
+      const playerId = user ? game.users.indexOf(user) : -1;
       expect(
         gameManagerSignals.gameStateHistory().map((gameState) => {
           if (gameState.playerGameStates.length === 0) {
@@ -510,7 +514,7 @@ function expectEqualGameStuff(
           return playerId >= 0 ? gameState.playerGameStates[playerId] : gameState.watcherGameState;
         }),
       ).toEqual(
-        gameRoom.game.gameStateHistory.map((gs) =>
+        game.gameStateHistory.map((gs) =>
           playerId >= 0 ? gs.playerGameStates[playerId] : gs.watcherGameState,
         ),
       );
