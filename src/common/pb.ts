@@ -576,7 +576,7 @@ export interface PB_MessageToClient {
  */
 export interface PB_MessageToClient_Initial {
     /**
-     * @generated from protobuf field: int32 version = 1;
+     * @generated from protobuf field: int64 version = 1 [jstype = JS_NUMBER];
      */
     version: number;
     /**
@@ -3462,7 +3462,7 @@ export const PB_MessageToClient = new PB_MessageToClient$Type();
 class PB_MessageToClient_Initial$Type extends MessageType<PB_MessageToClient_Initial> {
     constructor() {
         super("PB.MessageToClient.Initial", [
-            { no: 1, name: "version", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 1, name: "version", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "log_time", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ }
         ]);
     }
@@ -3479,8 +3479,8 @@ class PB_MessageToClient_Initial$Type extends MessageType<PB_MessageToClient_Ini
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* int32 version */ 1:
-                    message.version = reader.int32();
+                case /* int64 version = 1 [jstype = JS_NUMBER];*/ 1:
+                    message.version = reader.int64().toNumber();
                     break;
                 case /* int64 log_time = 2 [jstype = JS_NUMBER];*/ 2:
                     message.logTime = reader.int64().toNumber();
@@ -3497,9 +3497,9 @@ class PB_MessageToClient_Initial$Type extends MessageType<PB_MessageToClient_Ini
         return message;
     }
     internalBinaryWrite(message: PB_MessageToClient_Initial, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* int32 version = 1; */
+        /* int64 version = 1 [jstype = JS_NUMBER]; */
         if (message.version !== 0)
-            writer.tag(1, WireType.Varint).int32(message.version);
+            writer.tag(1, WireType.Varint).int64(message.version);
         /* int64 log_time = 2 [jstype = JS_NUMBER]; */
         if (message.logTime !== 0)
             writer.tag(2, WireType.Varint).int64(message.logTime);
