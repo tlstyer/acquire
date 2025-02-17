@@ -3,14 +3,9 @@ import 'normalize.css';
 import { createEffect, onCleanup } from 'solid-js';
 import { isServer } from 'solid-js/web';
 import { parseDecimalInteger } from '../common/helpers.js';
-import { TestServerCommunication } from '../server/serverCommunication.js';
 import styles from './App.module.css';
 import { createClient } from './client.js';
-import {
-  type ClientCommunication,
-  TestClientCommunication,
-  WebSocketClientCommunication,
-} from './clientCommunication.js';
+import { WebSocketClientCommunication } from './clientCommunication.js';
 import { Dialog } from './components/Dialog.js';
 import { Header } from './components/Header.js';
 import { processBrowserMyKeyboardEvents } from './myKeyboardEvents.js';
@@ -19,21 +14,11 @@ import { GamePage } from './pages/game/GamePage.js';
 import { LobbyPage } from './pages/lobby/LobbyPage.js';
 
 export function App() {
-  let clientCommunication: ClientCommunication;
-  if (isServer) {
-    const serverCommunication = new TestServerCommunication();
-
-    clientCommunication = new TestClientCommunication(serverCommunication);
-  } else {
-    const webSocketClientCommunication = new WebSocketClientCommunication();
-    webSocketClientCommunication.begin();
-
-    onCleanup(() => {
-      webSocketClientCommunication.end();
-    });
-
-    clientCommunication = webSocketClientCommunication;
-  }
+  const clientCommunication = new WebSocketClientCommunication();
+  clientCommunication.begin();
+  onCleanup(() => {
+    clientCommunication.end();
+  });
 
   const client = createClient(
     clientCommunication,
