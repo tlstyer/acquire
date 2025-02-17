@@ -162,6 +162,7 @@ export function createGameManager(
         gameReview = null;
       }
 
+      internalUsersInRoom.clear();
       const userIdsInRoom = connectResponse.userIdsInRoom;
       for (let i = 0; i < userIdsInRoom.length; i++) {
         internalUsersInRoom.add(userIdToUser.get(userIdsInRoom[i])!);

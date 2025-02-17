@@ -443,6 +443,66 @@ test('game setup example 2', async () => {
   expectEqualGameStuff(lobbyManagers, gameManagersAndUserAccessors, serverStuff.server);
 });
 
+test('users in room is correct in lobby and in game room', async () => {
+  const serverStuff = createServerStuff();
+
+  const lobbyManagers = new Set<LobbyManager>();
+  const gameManagersAndUserAccessors = new Set<GameManagerAndUserAccessor>();
+
+  // anonymous client enters lobby
+  const clientStuffLobbyAnon1 = createClientStuffAndConnectToTestServer(serverStuff);
+  const lobbyManagerLobbyAnon1 = clientStuffLobbyAnon1.client.connectToLobby();
+  lobbyManagers.add(lobbyManagerLobbyAnon1);
+
+  // user 1 creates game, enters game room, and starts game
+  const clientStuff1 = createClientStuffAndConnectToTestServer(serverStuff);
+  await loginAsUser(clientStuff1, 1);
+  const lobbyManager1a = clientStuff1.client.connectToLobby();
+  lobbyManager1a.createGame(PB_GameMode.SINGLES_1);
+  const gameNumber = lobbyManager1a.signals.createdGameNumber() ?? -1;
+  const gameManager1a = clientStuff1.client.connectToGame(clientStuff1.client.logTime, gameNumber);
+  gameManager1a.gameSetupActions.approve();
+  const gameManagerAndUserAccessor1a = new GameManagerAndUserAccessor(
+    gameManager1a,
+    clientStuff1.client.signals.user,
+  );
+  gameManagersAndUserAccessors.add(gameManagerAndUserAccessor1a);
+  expectEqualGameStuff(lobbyManagers, gameManagersAndUserAccessors, serverStuff.server);
+
+  // user 2 enters game room
+  const clientStuff2 = createClientStuffAndConnectToTestServer(serverStuff);
+  await loginAsUser(clientStuff2, 2);
+  const gameManager2 = clientStuff2.client.connectToGame(clientStuff2.client.logTime, gameNumber);
+  const gameManagerAndUserAccessor2 = new GameManagerAndUserAccessor(
+    gameManager2,
+    clientStuff2.client.signals.user,
+  );
+  gameManagersAndUserAccessors.add(gameManagerAndUserAccessor2);
+  expectEqualGameStuff(lobbyManagers, gameManagersAndUserAccessors, serverStuff.server);
+
+  // user 1 leaves game room and enters lobby
+  const lobbyManager1b = clientStuff1.client.connectToLobby();
+  lobbyManagers.add(lobbyManager1b);
+  gameManagersAndUserAccessors.delete(gameManagerAndUserAccessor1a);
+  expectEqualGameStuff(lobbyManagers, gameManagersAndUserAccessors, serverStuff.server);
+
+  // user 2 leaves game room and enters lobby
+  const lobbyManager2 = clientStuff2.client.connectToLobby();
+  lobbyManagers.add(lobbyManager2);
+  gameManagersAndUserAccessors.delete(gameManagerAndUserAccessor2);
+  expectEqualGameStuff(lobbyManagers, gameManagersAndUserAccessors, serverStuff.server);
+
+  // user 1 enters game room
+  const gameManager1b = clientStuff1.client.connectToGame(clientStuff1.client.logTime, gameNumber);
+  lobbyManagers.delete(lobbyManager1b);
+  const gameManagerAndUserAccessor1b = new GameManagerAndUserAccessor(
+    gameManager1b,
+    clientStuff1.client.signals.user,
+  );
+  gameManagersAndUserAccessors.add(gameManagerAndUserAccessor1b);
+  expectEqualGameStuff(lobbyManagers, gameManagersAndUserAccessors, serverStuff.server);
+});
+
 class GameManagerAndUserAccessor {
   constructor(
     public gameManager: GameManager,
@@ -458,10 +518,13 @@ function expectEqualGameStuff(
   server.lobbyRoom.sendQueuedEvents();
 
   const gameRoom = server.gameRoomsManager.gameNumberToGameRoom.get(1)!;
+  const usersInGameRoom = new Set(gameRoom.userToClients.keys());
 
   for (const lobbyManager of lobbyManagers) {
     const lobbyManagerGame = lobbyManager.signals.lobbyGames()[0];
     const lobbyManagerGameSignals = lobbyManagerGame.signals;
+
+    expect(lobbyManagerGameSignals.usersInRoom()).toEqual(usersInGameRoom);
 
     if (gameRoom.gameSetup) {
       const gameSetup = gameRoom.gameSetup;
@@ -486,6 +549,8 @@ function expectEqualGameStuff(
 
   for (const gameManagerAndUserAccessor of gameManagersAndUserAccessors) {
     const gameManagerSignals = gameManagerAndUserAccessor.gameManager.signals;
+
+    expect(gameManagerSignals.usersInRoom()).toEqual(usersInGameRoom);
 
     if (gameRoom.gameSetup) {
       const gameSetup = gameRoom.gameSetup;
