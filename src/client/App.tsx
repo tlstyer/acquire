@@ -5,13 +5,13 @@ import { isServer } from 'solid-js/web';
 import { parseDecimalInteger } from '../common/helpers.js';
 import styles from './App.module.css';
 import { createClient } from './client.js';
-import { WebSocketClientCommunication } from './clientCommunication.js';
 import { Dialog } from './components/Dialog.js';
 import { Header } from './components/Header.js';
 import { processBrowserMyKeyboardEvents } from './myKeyboardEvents.js';
 import { ExamplesPage } from './pages/examples/ExamplesPage.js';
 import { GamePage } from './pages/game/GamePage.js';
 import { LobbyPage } from './pages/lobby/LobbyPage.js';
+import { WebSocketClientCommunication } from './webSocketClientCommunication.js';
 
 export function App() {
   const clientCommunication = new WebSocketClientCommunication();

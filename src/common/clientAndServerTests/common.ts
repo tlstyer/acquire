@@ -1,8 +1,8 @@
 import { expect, test } from 'vitest';
 import { type Client, createClient } from '../../client/client.js';
-import { TestClientCommunication } from '../../client/clientCommunication.js';
+import { TestClientCommunication } from '../../client/testClientCommunication.js';
 import { Server } from '../../server/server.js';
-import { TestServerCommunication } from '../../server/serverCommunication.js';
+import { TestServerCommunication } from '../../server/testServerCommunication.js';
 import {
   TestUserData,
   TestUserDataProvider,
