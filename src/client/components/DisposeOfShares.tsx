@@ -15,7 +15,7 @@ export function DisposeOfShares(props: {
   sharesOwnedInDefunctChain: number;
   sharesAvailableInControllingChain: number;
   buttonSize: number;
-  onSharesDisposed: (traded: number, sold: number) => void;
+  onSharesDisposed: (tradeAmount: number, sellAmount: number) => void;
 }) {
   const [keep, setKeep] = createSignal(0);
   const [trade, setTrade] = createSignal(0);

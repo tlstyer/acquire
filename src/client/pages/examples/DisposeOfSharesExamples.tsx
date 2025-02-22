@@ -40,8 +40,8 @@ export function DisposeOfSharesExamples() {
     },
   ];
 
-  function onSharesDisposed(traded: number, sold: number) {
-    console.log('onSharesDisposed', traded, sold);
+  function onSharesDisposed(tradeAmount: number, sellAmount: number) {
+    console.log('onSharesDisposed', tradeAmount, sellAmount);
   }
 
   return (
@@ -108,8 +108,8 @@ function TestDisposeOfSharesPropsChanging() {
     });
   }
 
-  function onSharesDisposed(traded: number, sold: number) {
-    console.log('onSharesDisposed', traded, sold);
+  function onSharesDisposed(tradeAmount: number, sellAmount: number) {
+    console.log('onSharesDisposed', tradeAmount, sellAmount);
   }
 
   const [keyboardShortcutsEnabled, setKeyboardShortcutsEnabled] = createSignal(false);
