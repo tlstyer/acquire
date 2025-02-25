@@ -1,5 +1,16 @@
 import { useParams } from '@solidjs/router';
-import { batch, createMemo, createSignal, Index, Match, onCleanup, Show, Switch } from 'solid-js';
+import {
+  batch,
+  createEffect,
+  createMemo,
+  createSignal,
+  Index,
+  Match,
+  onCleanup,
+  Show,
+  Switch,
+  untrack,
+} from 'solid-js';
 import { defaultScoreBoardAvailable, defaultScoreBoardPrice } from '../../../common/defaults.js';
 import { GameActionEnum, ScoreBoardIndexEnum } from '../../../common/enums.js';
 import { type ActionDisposeOfShares } from '../../../common/gameActions/disposeOfShares.js';
@@ -42,14 +53,35 @@ export function GamePage(props: { client: Client }) {
   );
 
   const [selectedMoveIndex, setSelectedMoveIndex] = createSignal(0);
+  let previousGameStateHistoryLength = 0;
+  createEffect(() => {
+    const currentGameStateHistoryLength = gameManager.signals.gameStateHistory().length;
+    if (
+      currentGameStateHistoryLength !== previousGameStateHistoryLength &&
+      (previousGameStateHistoryLength === 0 ||
+        untrack(selectedMoveIndex) === previousGameStateHistoryLength - 1)
+    ) {
+      setSelectedMoveIndex(currentGameStateHistoryLength - 1);
+    }
+
+    previousGameStateHistoryLength = currentGameStateHistoryLength;
+  });
 
   const gameState = createMemo(() => gameManager.signals.gameStateHistory()[selectedMoveIndex()]);
 
   const turnPlayerId = createMemo(() =>
-    gameState().nextGameAction instanceof ActionGameOver ? -1 : gameState().turnPlayerId,
+    gameState()
+      ? gameState().nextGameAction instanceof ActionGameOver
+        ? -1
+        : gameState().turnPlayerId
+      : -1,
   );
   const movePlayerId = createMemo(() =>
-    gameState().nextGameAction instanceof ActionGameOver ? -1 : gameState().nextGameAction.playerId,
+    gameState()
+      ? gameState().nextGameAction instanceof ActionGameOver
+        ? -1
+        : gameState().nextGameAction.playerId
+      : -1,
   );
 
   const [followedPlayerId, setFollowedPlayerId] = createSignal<number | null>(null);

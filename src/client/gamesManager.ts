@@ -3,7 +3,7 @@ import { Game } from '../common/game.js';
 import { type ActionBase } from '../common/gameActions/base.js';
 import { gameFromProtocolBuffer } from '../common/gameSerialization.js';
 import { createGameSetupLite, type GameSetupLite } from '../common/gameSetupLite.js';
-import { GameState } from '../common/gameState.js';
+import { type GameState } from '../common/gameState.js';
 import {
   type PB_GameBoardType,
   PB_GameMode,
@@ -505,19 +505,7 @@ export const enum GameManagerStatus {
 }
 
 const dummyUser = new User(-1, '?');
-
-const dummyGame = new Game(
-  PB_GameMode.SINGLES_1,
-  PB_PlayerArrangementMode.VERSION_1,
-  [],
-  [],
-  dummyUser,
-  null,
-);
-
-const dummyGameState = new GameState(dummyGame, null);
-
 const dummyUsers: (User | null)[] = [];
 const dummyUsersWithoutNulls: User[] = [];
 const dummyApprovals: boolean[] = [];
-const dummyGameStateHistory = [dummyGameState];
+const dummyGameStateHistory: GameState[] = [];
