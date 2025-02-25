@@ -1,4 +1,3 @@
-import { GameActionEnum } from '../enums.js';
 import { type Game } from '../game.js';
 import {
   GameHistoryMessageDrewPositionTile,
@@ -11,7 +10,7 @@ import { ActionPurchaseShares } from './purchaseShares.js';
 
 export class ActionStartGame extends ActionBase {
   constructor(game: Game, playerId: number) {
-    super(game, playerId, GameActionEnum.StartGame);
+    super(game, playerId);
   }
 
   prepare() {

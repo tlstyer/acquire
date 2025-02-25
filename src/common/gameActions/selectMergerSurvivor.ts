@@ -1,4 +1,4 @@
-import { GameActionEnum, ScoreBoardIndexEnum } from '../enums.js';
+import { ScoreBoardIndexEnum } from '../enums.js';
 import { UserInputError } from '../error.js';
 import { type Game } from '../game.js';
 import {
@@ -20,7 +20,7 @@ export class ActionSelectMergerSurvivor extends ActionBase {
     public chains: PB_GameBoardType[],
     public tile: number,
   ) {
-    super(game, playerId, GameActionEnum.SelectMergerSurvivor);
+    super(game, playerId);
 
     const sizeToChains = new Map<number, PB_GameBoardType[]>();
     const sizes: number[] = [];

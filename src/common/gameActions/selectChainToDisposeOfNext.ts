@@ -1,4 +1,3 @@
-import { GameActionEnum } from '../enums.js';
 import { UserInputError } from '../error.js';
 import { type Game } from '../game.js';
 import { GameHistoryMessageSelectedChainToDisposeOfNext } from '../gameHistoryMessage.js';
@@ -13,7 +12,7 @@ export class ActionSelectChainToDisposeOfNext extends ActionBase {
     public defunctChains: PB_GameBoardType[],
     public controllingChain: PB_GameBoardType,
   ) {
-    super(game, playerId, GameActionEnum.SelectChainToDisposeOfNext);
+    super(game, playerId);
   }
 
   prepare() {

@@ -1,4 +1,3 @@
-import { GameActionEnum } from '../enums.js';
 import { UserInputError } from '../error.js';
 import { ScoreBoardAdjustment, type Game } from '../game.js';
 import { GameHistoryMessageFormedChain } from '../gameHistoryMessage.js';
@@ -12,7 +11,7 @@ export class ActionSelectNewChain extends ActionBase {
     public availableChains: PB_GameBoardType[],
     public tile: number,
   ) {
-    super(game, playerId, GameActionEnum.SelectNewChain);
+    super(game, playerId);
   }
 
   prepare() {

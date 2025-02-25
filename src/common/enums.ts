@@ -1,14 +1,3 @@
-export enum GameActionEnum {
-  StartGame,
-  PlayTile,
-  SelectNewChain,
-  SelectMergerSurvivor,
-  SelectChainToDisposeOfNext,
-  DisposeOfShares,
-  PurchaseShares,
-  GameOver,
-}
-
 export enum ScoreBoardIndexEnum {
   Luxor,
   Tower,

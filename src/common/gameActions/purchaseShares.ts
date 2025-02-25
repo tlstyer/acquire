@@ -1,4 +1,4 @@
-import { GameActionEnum, ScoreBoardIndexEnum } from '../enums.js';
+import { ScoreBoardIndexEnum } from '../enums.js';
 import { UserInputError } from '../error.js';
 import { ScoreBoardAdjustment, type Game } from '../game.js';
 import {
@@ -19,7 +19,7 @@ export class ActionPurchaseShares extends ActionBase {
   canEndGame = false;
 
   constructor(game: Game, playerId: number) {
-    super(game, playerId, GameActionEnum.PurchaseShares);
+    super(game, playerId);
   }
 
   prepare() {

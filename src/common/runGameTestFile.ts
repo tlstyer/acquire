@@ -1,4 +1,4 @@
-import { GameActionEnum, ScoreBoardIndexEnum, TileEnum } from './enums.js';
+import { ScoreBoardIndexEnum, TileEnum } from './enums.js';
 import { UserInputError } from './error.js';
 import { Game } from './game.js';
 import { type ActionBase } from './gameActions/base.js';
@@ -384,8 +384,9 @@ function getGameStateLines(
   if (arr.length > 0) {
     stringParameters = ` ${arr.join(' ')}`;
   }
+  const gameActionEnum = gameActionEnumForGameAction(gameState.gameAction);
   lines.push(
-    `action: ${gameState.playerId} ${GameActionEnum[gameState.gameActionEnum]}${stringParameters}`,
+    `action: ${gameState.playerId} ${gameActionEnum !== undefined ? GameActionEnum[gameActionEnum] : '?'}${stringParameters}`,
   );
 
   if (detailed) {
@@ -811,4 +812,35 @@ function getFormattedGameJSONLines(game: Game) {
   }
 
   return ['{', ...entries.join(',\n').split('\n'), '}'];
+}
+
+function gameActionEnumForGameAction(gameAction: PB_GameAction) {
+  if (gameAction.startGame) {
+    return GameActionEnum.StartGame;
+  } else if (gameAction.playTile) {
+    return GameActionEnum.PlayTile;
+  } else if (gameAction.selectNewChain) {
+    return GameActionEnum.SelectNewChain;
+  } else if (gameAction.selectMergerSurvivor) {
+    return GameActionEnum.SelectMergerSurvivor;
+  } else if (gameAction.selectChainToDisposeOfNext) {
+    return GameActionEnum.SelectChainToDisposeOfNext;
+  } else if (gameAction.disposeOfShares) {
+    return GameActionEnum.DisposeOfShares;
+  } else if (gameAction.purchaseShares) {
+    return GameActionEnum.PurchaseShares;
+  } else if (gameAction.gameOver) {
+    return GameActionEnum.GameOver;
+  }
+}
+
+enum GameActionEnum {
+  StartGame,
+  PlayTile,
+  SelectNewChain,
+  SelectMergerSurvivor,
+  SelectChainToDisposeOfNext,
+  DisposeOfShares,
+  PurchaseShares,
+  GameOver,
 }

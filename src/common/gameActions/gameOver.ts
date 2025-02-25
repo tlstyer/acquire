@@ -1,11 +1,10 @@
-import { GameActionEnum } from '../enums.js';
 import { UserInputError } from '../error.js';
 import { type Game } from '../game.js';
 import { ActionBase } from './base.js';
 
 export class ActionGameOver extends ActionBase {
   constructor(game: Game, playerId: number) {
-    super(game, playerId, GameActionEnum.GameOver);
+    super(game, playerId);
   }
 
   prepare() {

@@ -1,4 +1,3 @@
-import { GameActionEnum } from '../enums.js';
 import { UserInputError } from '../error.js';
 import { type Game } from '../game.js';
 import {
@@ -14,7 +13,7 @@ import { ActionSelectNewChain } from './selectNewChain.js';
 
 export class ActionPlayTile extends ActionBase {
   constructor(game: Game, playerId: number) {
-    super(game, playerId, GameActionEnum.PlayTile);
+    super(game, playerId);
   }
 
   prepare() {

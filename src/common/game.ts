@@ -166,12 +166,7 @@ export class Game {
     let currentAction = this.gameActionStack[this.gameActionStack.length - 1];
 
     let newActions: ActionBase[] | null = currentAction.execute(gameAction);
-    this.getCurrentGameState().setGameAction(
-      currentAction.playerId,
-      currentAction.gameAction,
-      gameAction,
-      timestamp,
-    );
+    this.getCurrentGameState().setGameAction(currentAction.playerId, gameAction, timestamp);
 
     while (newActions !== null) {
       this.gameActionStack.pop();

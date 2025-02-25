@@ -1,4 +1,4 @@
-import { GameActionEnum, ScoreBoardIndexEnum } from '../enums.js';
+import { ScoreBoardIndexEnum } from '../enums.js';
 import { UserInputError } from '../error.js';
 import { ScoreBoardAdjustment, type Game } from '../game.js';
 import { GameHistoryMessageDisposedOfShares } from '../gameHistoryMessage.js';
@@ -15,7 +15,7 @@ export class ActionDisposeOfShares extends ActionBase {
     public defunctChain: PB_GameBoardType,
     public controllingChain: PB_GameBoardType,
   ) {
-    super(game, playerId, GameActionEnum.DisposeOfShares);
+    super(game, playerId);
 
     this.sharesOwnedInDefunctChain = this.game.scoreBoard[playerId][defunctChain];
   }

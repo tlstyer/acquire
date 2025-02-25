@@ -12,13 +12,14 @@ import {
   untrack,
 } from 'solid-js';
 import { defaultScoreBoardAvailable, defaultScoreBoardPrice } from '../../../common/defaults.js';
-import { GameActionEnum, ScoreBoardIndexEnum } from '../../../common/enums.js';
-import { type ActionDisposeOfShares } from '../../../common/gameActions/disposeOfShares.js';
+import { ScoreBoardIndexEnum } from '../../../common/enums.js';
+import { ActionDisposeOfShares } from '../../../common/gameActions/disposeOfShares.js';
 import { ActionGameOver } from '../../../common/gameActions/gameOver.js';
-import { type ActionPurchaseShares } from '../../../common/gameActions/purchaseShares.js';
-import { type ActionSelectChainToDisposeOfNext } from '../../../common/gameActions/selectChainToDisposeOfNext.js';
-import { type ActionSelectMergerSurvivor } from '../../../common/gameActions/selectMergerSurvivor.js';
-import { type ActionSelectNewChain } from '../../../common/gameActions/selectNewChain.js';
+import { ActionPlayTile } from '../../../common/gameActions/playTile.js';
+import { ActionPurchaseShares } from '../../../common/gameActions/purchaseShares.js';
+import { ActionSelectChainToDisposeOfNext } from '../../../common/gameActions/selectChainToDisposeOfNext.js';
+import { ActionSelectMergerSurvivor } from '../../../common/gameActions/selectMergerSurvivor.js';
+import { ActionSelectNewChain } from '../../../common/gameActions/selectNewChain.js';
 import { parseDecimalInteger } from '../../../common/helpers.js';
 import { type Client } from '../../client.js';
 import { DisposeOfShares } from '../../components/DisposeOfShares.jsx';
@@ -154,7 +155,7 @@ export function GamePage(props: { client: Client }) {
               labelMode={props.client.signals.gameBoardLabelMode()}
               cellSize={gameBoardCellSize()}
               onCellClicked={
-                myRequiredGameAction()?.gameAction === GameActionEnum.PlayTile
+                myRequiredGameAction() instanceof ActionPlayTile
                   ? gameManager.gameActions.playTile
                   : undefined
               }
@@ -223,7 +224,7 @@ export function GamePage(props: { client: Client }) {
                         types={gameState().tileRackTypes[gameManager.signals.myPlayerId()]}
                         buttonSize={gameBoardCellSize()}
                         onTileClicked={
-                          myRequiredGameAction()?.gameAction === GameActionEnum.PlayTile
+                          myRequiredGameAction() instanceof ActionPlayTile
                             ? gameManager.gameActions.playTile
                             : () => {}
                         }
@@ -231,11 +232,7 @@ export function GamePage(props: { client: Client }) {
                       <div>
                         <div class={styles.actionComponent}>
                           <Switch>
-                            <Match
-                              when={
-                                myRequiredGameAction()?.gameAction === GameActionEnum.SelectNewChain
-                              }
-                            >
+                            <Match when={myRequiredGameAction() instanceof ActionSelectNewChain}>
                               <SelectChain
                                 ref={(ref) =>
                                   processBrowserMyKeyboardEvents(keyboardShortcutsEnabled, ref)
@@ -249,10 +246,7 @@ export function GamePage(props: { client: Client }) {
                               />
                             </Match>
                             <Match
-                              when={
-                                myRequiredGameAction()?.gameAction ===
-                                GameActionEnum.SelectMergerSurvivor
-                              }
+                              when={myRequiredGameAction() instanceof ActionSelectMergerSurvivor}
                             >
                               <SelectChain
                                 ref={(ref) =>
@@ -269,8 +263,7 @@ export function GamePage(props: { client: Client }) {
                             </Match>
                             <Match
                               when={
-                                myRequiredGameAction()?.gameAction ===
-                                GameActionEnum.SelectChainToDisposeOfNext
+                                myRequiredGameAction() instanceof ActionSelectChainToDisposeOfNext
                               }
                             >
                               <SelectChain
@@ -286,12 +279,7 @@ export function GamePage(props: { client: Client }) {
                                 onChainSelected={gameManager.gameActions.selectChainToDisposeOfNext}
                               />
                             </Match>
-                            <Match
-                              when={
-                                myRequiredGameAction()?.gameAction ===
-                                GameActionEnum.DisposeOfShares
-                              }
-                            >
+                            <Match when={myRequiredGameAction() instanceof ActionDisposeOfShares}>
                               <DisposeOfShares
                                 ref={(ref) =>
                                   processBrowserMyKeyboardEvents(keyboardShortcutsEnabled, ref)
@@ -314,11 +302,7 @@ export function GamePage(props: { client: Client }) {
                                 onSharesDisposed={gameManager.gameActions.disposeOfShares}
                               />
                             </Match>
-                            <Match
-                              when={
-                                myRequiredGameAction()?.gameAction === GameActionEnum.PurchaseShares
-                              }
-                            >
+                            <Match when={myRequiredGameAction() instanceof ActionPurchaseShares}>
                               <PurchaseShares
                                 ref={(ref) =>
                                   processBrowserMyKeyboardEvents(keyboardShortcutsEnabled, ref)

@@ -8,9 +8,10 @@ import {
   defaultTileRacks,
   defaultTileRackTypesList,
 } from './defaults.js';
-import { GameActionEnum, TileEnum } from './enums.js';
+import { TileEnum } from './enums.js';
 import { type Game } from './game.js';
 import { type ActionBase } from './gameActions/base.js';
+import { ActionPlayTile } from './gameActions/playTile.js';
 import { type GameHistoryMessage } from './gameHistoryMessage.js';
 import {
   PB_GameAction,
@@ -26,7 +27,6 @@ const dummyWatcherGameState = PB_GameState.create();
 
 export class GameState {
   playerId = -1;
-  gameActionEnum = GameActionEnum.StartGame;
   gameAction = dummyGameAction;
   timestamp: number | null = null;
   revealedTileRackTiles: PB_GameState_RevealedTileRackTile[] = [];
@@ -60,14 +60,8 @@ export class GameState {
     this.nextGameAction = game.gameActionStack[game.gameActionStack.length - 1];
   }
 
-  setGameAction(
-    playerId: number,
-    gameActionEnum: GameActionEnum,
-    gameAction: PB_GameAction,
-    timestamp: number | null,
-  ) {
+  setGameAction(playerId: number, gameAction: PB_GameAction, timestamp: number | null) {
     this.playerId = playerId;
-    this.gameActionEnum = gameActionEnum;
     this.gameAction = gameAction;
     this.timestamp = timestamp;
   }
@@ -154,7 +148,7 @@ export class GameState {
     this.safeChains = this.game.safeChains;
     this.nextGameAction = this.game.gameActionStack[this.game.gameActionStack.length - 1];
 
-    if (this.nextGameAction.gameAction === GameActionEnum.PlayTile) {
+    if (this.nextGameAction instanceof ActionPlayTile) {
       this.playerIdWithPlayableTile = this.nextGameAction.playerId;
     }
 
