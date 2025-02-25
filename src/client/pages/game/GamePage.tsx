@@ -188,6 +188,7 @@ export function GamePage(props: { client: Client }) {
                   ref={(ref) => processBrowserMyKeyboardEvents(keyboardShortcutsEnabled, ref)}
                   users={gameManager.signals.usersWithoutNulls()}
                   gameStateHistory={gameManager.signals.gameStateHistory()}
+                  selectedMoveIndex={selectedMoveIndex()}
                   onMoveSelected={setSelectedMoveIndex}
                 />
                 <NextGameAction action={gameState().nextGameAction} />

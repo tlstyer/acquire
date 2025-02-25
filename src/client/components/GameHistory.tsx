@@ -1,4 +1,4 @@
-import { createEffect, createSelector, createSignal, For, onMount } from 'solid-js';
+import { createEffect, createSelector, For, onMount } from 'solid-js';
 import { type GameState } from '../../common/gameState.js';
 import { type User } from '../../common/user.js';
 import { type ProcessMyKeyboardEventRef } from '../myKeyboardEvents.js';
@@ -9,20 +9,20 @@ export function GameHistory(props: {
   ref: (ref: ProcessMyKeyboardEventRef) => void;
   users: User[];
   gameStateHistory: GameState[];
+  selectedMoveIndex: number;
   onMoveSelected: (index: number) => void;
 }) {
   const lastMoveIndex = () => props.gameStateHistory.length - 1;
-  const [selectedMoveIndex, setSelectedMoveIndex] = createSignal(-1);
   let lastSelectedMoveIndex = -1;
 
-  const isMoveSelected = createSelector(selectedMoveIndex);
+  const isMoveSelected = createSelector(() => props.selectedMoveIndex);
 
   let movesElement!: HTMLDivElement;
   const moveElements: HTMLDivElement[] = []; // TODO: maybe should reset this when props.gameStateHistory becomes shorter than before
 
   createEffect(() => {
-    if (selectedMoveIndex() !== lastSelectedMoveIndex) {
-      const selectedMoveElement = moveElements[selectedMoveIndex()];
+    if (props.selectedMoveIndex !== lastSelectedMoveIndex) {
+      const selectedMoveElement = moveElements[props.selectedMoveIndex];
 
       // scroll so that selected move element is in view
 
@@ -43,16 +43,8 @@ export function GameHistory(props: {
       }
     }
 
-    lastSelectedMoveIndex = selectedMoveIndex();
+    lastSelectedMoveIndex = props.selectedMoveIndex;
   });
-
-  // eslint-disable-next-line solid/reactivity
-  onMoveSelected(lastMoveIndex());
-
-  function onMoveSelected(moveIndex: number) {
-    setSelectedMoveIndex(moveIndex);
-    props.onMoveSelected(moveIndex);
-  }
 
   let fastBackwardButton!: HTMLButtonElement;
   let stepBackwardButton!: HTMLButtonElement;
@@ -85,8 +77,8 @@ export function GameHistory(props: {
       <div>
         <button
           ref={fastBackwardButton}
-          onClick={() => onMoveSelected(0)}
-          disabled={selectedMoveIndex() === 0}
+          onClick={() => props.onMoveSelected(0)}
+          disabled={props.selectedMoveIndex === 0}
         >
           {/* adapted from https://www.svgrepo.com/svg/391832/fast-backward */}
           <svg viewBox="0 0 120 120">
@@ -95,8 +87,8 @@ export function GameHistory(props: {
         </button>{' '}
         <button
           ref={stepBackwardButton}
-          onClick={() => onMoveSelected(Math.max(selectedMoveIndex() - 1, 0))}
-          disabled={selectedMoveIndex() === 0}
+          onClick={() => props.onMoveSelected(Math.max(props.selectedMoveIndex - 1, 0))}
+          disabled={props.selectedMoveIndex === 0}
         >
           {/* adapted from https://www.svgrepo.com/svg/391700/step-backward */}
           <svg viewBox="0 0 120 120">
@@ -105,8 +97,10 @@ export function GameHistory(props: {
         </button>{' '}
         <button
           ref={stepForwardButton}
-          onClick={() => onMoveSelected(Math.min(selectedMoveIndex() + 1, lastMoveIndex()))}
-          disabled={selectedMoveIndex() === lastMoveIndex()}
+          onClick={() =>
+            props.onMoveSelected(Math.min(props.selectedMoveIndex + 1, lastMoveIndex()))
+          }
+          disabled={props.selectedMoveIndex === lastMoveIndex()}
         >
           {/* adapted from https://www.svgrepo.com/svg/391701/step-forward */}
           <svg viewBox="0 0 120 120">
@@ -115,8 +109,8 @@ export function GameHistory(props: {
         </button>{' '}
         <button
           ref={fastForwardButton}
-          onClick={() => onMoveSelected(lastMoveIndex())}
-          disabled={selectedMoveIndex() === lastMoveIndex()}
+          onClick={() => props.onMoveSelected(lastMoveIndex())}
+          disabled={props.selectedMoveIndex === lastMoveIndex()}
         >
           {/* adapted from https://www.svgrepo.com/svg/391834/fast-forward */}
           <svg viewBox="0 0 120 120">
@@ -137,7 +131,7 @@ export function GameHistory(props: {
                   ? new Date(gameState.timestamp).toLocaleString()
                   : undefined
               }
-              onClick={() => onMoveSelected(moveIndex())}
+              onClick={() => props.onMoveSelected(moveIndex())}
               ref={moveElements[moveIndex()]}
             >
               <For each={gameState.gameHistoryMessages}>
