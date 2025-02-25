@@ -1,9 +1,11 @@
 import { batch, createSignal } from 'solid-js';
 import { Game } from '../common/game.js';
+import { type ActionBase } from '../common/gameActions/base.js';
 import { gameFromProtocolBuffer } from '../common/gameSerialization.js';
 import { createGameSetupLite, type GameSetupLite } from '../common/gameSetupLite.js';
 import { GameState } from '../common/gameState.js';
 import {
+  type PB_GameBoardType,
   PB_GameMode,
   type PB_MessageToClient_Game,
   PB_MessageToServer,
@@ -15,7 +17,7 @@ export type GamesManager = ReturnType<typeof createGamesManager>;
 
 export function createGamesManager(
   sendMessage: (message: Uint8Array) => void,
-  myUser: () => User | null,
+  myUserAccessor: () => User | null,
   userIdToUser: Map<number, User>,
 ) {
   const gameIdToGameManager = new Map<string, GameManager>();
@@ -28,7 +30,13 @@ export function createGamesManager(
 
     let gameManager = gameIdToGameManager.get(lastRequestedGameId);
     if (gameManager === undefined) {
-      gameManager = createGameManager(sendMessage, myUser, userIdToUser, logTime, gameNumber);
+      gameManager = createGameManager(
+        sendMessage,
+        myUserAccessor,
+        userIdToUser,
+        logTime,
+        gameNumber,
+      );
       gameIdToGameManager.set(lastRequestedGameId, gameManager);
     }
 
@@ -71,7 +79,7 @@ export type GameManager = ReturnType<typeof createGameManager>;
 
 export function createGameManager(
   sendMessage: (message: Uint8Array) => void,
-  myUser: () => User | null,
+  myUserAccessor: () => User | null,
   userIdToUser: Map<number, User>,
   logTime: number,
   gameNumber: number,
@@ -98,6 +106,9 @@ export function createGameManager(
 
   const [gameStateHistory, setGameStateHistory] = createSignal(dummyGameStateHistory);
 
+  const [myPlayerId, setMyPlayerId] = createSignal(-1);
+  const [myRequiredGameAction, setMyRequiredGameAction] = createSignal<ActionBase | null>(null);
+
   function connect() {
     setStatus(GameManagerStatus.Connecting);
 
@@ -118,6 +129,8 @@ export function createGameManager(
   }
 
   function onMessage(message: PB_MessageToClient_Game) {
+    const myUser = myUserAccessor();
+
     let updatedUsersInRoom = false;
 
     for (let i = 0; i < message.userIdsAndUsernames.length; i++) {
@@ -193,7 +206,7 @@ export function createGameManager(
           // @ts-expect-error gameSetup's users has no nulls when starting a game
           gameSetup.finalUsers ?? gameSetup.users,
           gameSetup.hostUser,
-          myUser(),
+          myUser ?? dummyUser,
         );
 
         gameSetup = null;
@@ -223,6 +236,15 @@ export function createGameManager(
         setHostUser(g.hostUser);
 
         setGameStateHistory(g.gameStateHistory);
+
+        if (game) {
+          const playerId = myUser !== null ? game.users.indexOf(myUser) : -1;
+          setMyPlayerId(playerId);
+
+          const nextGameAction =
+            game.gameStateHistory[game.gameStateHistory.length - 1].nextGameAction;
+          setMyRequiredGameAction(nextGameAction.playerId === playerId ? nextGameAction : null);
+        }
       } else {
         setStatus(GameManagerStatus.NotFound);
       }
@@ -333,6 +355,110 @@ export function createGameManager(
     );
   }
 
+  function playTile(tile: number) {
+    sendMessage(
+      PB_MessageToServer.toBinary({
+        game: {
+          gameAction: {
+            numberOfGameStates: game!.gameStateHistory.length,
+            gameAction: {
+              playTile: {
+                tile,
+              },
+            },
+          },
+        },
+      }),
+    );
+  }
+
+  function selectNewChain(chain: PB_GameBoardType) {
+    sendMessage(
+      PB_MessageToServer.toBinary({
+        game: {
+          gameAction: {
+            numberOfGameStates: game!.gameStateHistory.length,
+            gameAction: {
+              selectNewChain: {
+                chain,
+              },
+            },
+          },
+        },
+      }),
+    );
+  }
+
+  function selectMergerSurvivor(chain: PB_GameBoardType) {
+    sendMessage(
+      PB_MessageToServer.toBinary({
+        game: {
+          gameAction: {
+            numberOfGameStates: game!.gameStateHistory.length,
+            gameAction: {
+              selectMergerSurvivor: {
+                chain,
+              },
+            },
+          },
+        },
+      }),
+    );
+  }
+
+  function selectChainToDisposeOfNext(chain: PB_GameBoardType) {
+    sendMessage(
+      PB_MessageToServer.toBinary({
+        game: {
+          gameAction: {
+            numberOfGameStates: game!.gameStateHistory.length,
+            gameAction: {
+              selectChainToDisposeOfNext: {
+                chain,
+              },
+            },
+          },
+        },
+      }),
+    );
+  }
+
+  function disposeOfShares(tradeAmount: number, sellAmount: number) {
+    sendMessage(
+      PB_MessageToServer.toBinary({
+        game: {
+          gameAction: {
+            numberOfGameStates: game!.gameStateHistory.length,
+            gameAction: {
+              disposeOfShares: {
+                tradeAmount,
+                sellAmount,
+              },
+            },
+          },
+        },
+      }),
+    );
+  }
+
+  function purchaseShares(chains: PB_GameBoardType[], endGame: boolean) {
+    sendMessage(
+      PB_MessageToServer.toBinary({
+        game: {
+          gameAction: {
+            numberOfGameStates: game!.gameStateHistory.length,
+            gameAction: {
+              purchaseShares: {
+                chains,
+                endGame,
+              },
+            },
+          },
+        },
+      }),
+    );
+  }
+
   return {
     connect,
     getConnectMessage,
@@ -346,6 +472,14 @@ export function createGameManager(
       swapPositions,
       kickUser,
     },
+    gameActions: {
+      playTile,
+      selectNewChain,
+      selectMergerSurvivor,
+      selectChainToDisposeOfNext,
+      disposeOfShares,
+      purchaseShares,
+    },
     signals: {
       status,
       gameMode,
@@ -356,6 +490,8 @@ export function createGameManager(
       hostUser,
       usersInRoom,
       gameStateHistory,
+      myPlayerId,
+      myRequiredGameAction,
     },
   };
 }

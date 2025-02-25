@@ -234,8 +234,14 @@ message PB {
         KickUser kick_user = 8;
       }
 
+      message GameAction {
+        int32 number_of_game_states = 1;
+        PB.GameAction game_action = 2;
+      }
+
       Connect connect = 1;
       GameSetupAction game_setup_action = 2;
+      GameAction game_action = 3;
     }
 
     LoginLogout login_logout = 1;

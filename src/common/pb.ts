@@ -436,6 +436,10 @@ export interface PB_MessageToServer_Game {
      * @generated from protobuf field: PB.MessageToServer.Game.GameSetupAction game_setup_action = 2;
      */
     gameSetupAction?: PB_MessageToServer_Game_GameSetupAction;
+    /**
+     * @generated from protobuf field: PB.MessageToServer.Game.GameAction game_action = 3;
+     */
+    gameAction?: PB_MessageToServer_Game_GameAction;
 }
 /**
  * @generated from protobuf message PB.MessageToServer.Game.Connect
@@ -549,6 +553,19 @@ export interface PB_MessageToServer_Game_GameSetupAction_KickUser {
      * @generated from protobuf field: int32 user_id = 1;
      */
     userId: number;
+}
+/**
+ * @generated from protobuf message PB.MessageToServer.Game.GameAction
+ */
+export interface PB_MessageToServer_Game_GameAction {
+    /**
+     * @generated from protobuf field: int32 number_of_game_states = 1;
+     */
+    numberOfGameStates: number;
+    /**
+     * @generated from protobuf field: PB.GameAction game_action = 2;
+     */
+    gameAction?: PB_GameAction;
 }
 /**
  * @generated from protobuf message PB.MessageToClient
@@ -2905,7 +2922,8 @@ class PB_MessageToServer_Game$Type extends MessageType<PB_MessageToServer_Game> 
     constructor() {
         super("PB.MessageToServer.Game", [
             { no: 1, name: "connect", kind: "message", T: () => PB_MessageToServer_Game_Connect },
-            { no: 2, name: "game_setup_action", kind: "message", T: () => PB_MessageToServer_Game_GameSetupAction }
+            { no: 2, name: "game_setup_action", kind: "message", T: () => PB_MessageToServer_Game_GameSetupAction },
+            { no: 3, name: "game_action", kind: "message", T: () => PB_MessageToServer_Game_GameAction }
         ]);
     }
     create(value?: PartialMessage<PB_MessageToServer_Game>): PB_MessageToServer_Game {
@@ -2925,6 +2943,9 @@ class PB_MessageToServer_Game$Type extends MessageType<PB_MessageToServer_Game> 
                 case /* PB.MessageToServer.Game.GameSetupAction game_setup_action */ 2:
                     message.gameSetupAction = PB_MessageToServer_Game_GameSetupAction.internalBinaryRead(reader, reader.uint32(), options, message.gameSetupAction);
                     break;
+                case /* PB.MessageToServer.Game.GameAction game_action */ 3:
+                    message.gameAction = PB_MessageToServer_Game_GameAction.internalBinaryRead(reader, reader.uint32(), options, message.gameAction);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -2943,6 +2964,9 @@ class PB_MessageToServer_Game$Type extends MessageType<PB_MessageToServer_Game> 
         /* PB.MessageToServer.Game.GameSetupAction game_setup_action = 2; */
         if (message.gameSetupAction)
             PB_MessageToServer_Game_GameSetupAction.internalBinaryWrite(message.gameSetupAction, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* PB.MessageToServer.Game.GameAction game_action = 3; */
+        if (message.gameAction)
+            PB_MessageToServer_Game_GameAction.internalBinaryWrite(message.gameAction, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -3391,6 +3415,60 @@ class PB_MessageToServer_Game_GameSetupAction_KickUser$Type extends MessageType<
  * @generated MessageType for protobuf message PB.MessageToServer.Game.GameSetupAction.KickUser
  */
 export const PB_MessageToServer_Game_GameSetupAction_KickUser = new PB_MessageToServer_Game_GameSetupAction_KickUser$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class PB_MessageToServer_Game_GameAction$Type extends MessageType<PB_MessageToServer_Game_GameAction> {
+    constructor() {
+        super("PB.MessageToServer.Game.GameAction", [
+            { no: 1, name: "number_of_game_states", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 2, name: "game_action", kind: "message", T: () => PB_GameAction }
+        ]);
+    }
+    create(value?: PartialMessage<PB_MessageToServer_Game_GameAction>): PB_MessageToServer_Game_GameAction {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.numberOfGameStates = 0;
+        if (value !== undefined)
+            reflectionMergePartial<PB_MessageToServer_Game_GameAction>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PB_MessageToServer_Game_GameAction): PB_MessageToServer_Game_GameAction {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* int32 number_of_game_states */ 1:
+                    message.numberOfGameStates = reader.int32();
+                    break;
+                case /* PB.GameAction game_action */ 2:
+                    message.gameAction = PB_GameAction.internalBinaryRead(reader, reader.uint32(), options, message.gameAction);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: PB_MessageToServer_Game_GameAction, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int32 number_of_game_states = 1; */
+        if (message.numberOfGameStates !== 0)
+            writer.tag(1, WireType.Varint).int32(message.numberOfGameStates);
+        /* PB.GameAction game_action = 2; */
+        if (message.gameAction)
+            PB_GameAction.internalBinaryWrite(message.gameAction, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message PB.MessageToServer.Game.GameAction
+ */
+export const PB_MessageToServer_Game_GameAction = new PB_MessageToServer_Game_GameAction$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class PB_MessageToClient$Type extends MessageType<PB_MessageToClient> {
     constructor() {

@@ -1,13 +1,24 @@
 import { useParams } from '@solidjs/router';
 import { batch, createMemo, createSignal, Index, Match, onCleanup, Show, Switch } from 'solid-js';
+import { defaultScoreBoardAvailable, defaultScoreBoardPrice } from '../../../common/defaults.js';
+import { GameActionEnum, ScoreBoardIndexEnum } from '../../../common/enums.js';
+import { type ActionDisposeOfShares } from '../../../common/gameActions/disposeOfShares.js';
 import { ActionGameOver } from '../../../common/gameActions/gameOver.js';
+import { type ActionPurchaseShares } from '../../../common/gameActions/purchaseShares.js';
+import { type ActionSelectChainToDisposeOfNext } from '../../../common/gameActions/selectChainToDisposeOfNext.js';
+import { type ActionSelectMergerSurvivor } from '../../../common/gameActions/selectMergerSurvivor.js';
+import { type ActionSelectNewChain } from '../../../common/gameActions/selectNewChain.js';
 import { parseDecimalInteger } from '../../../common/helpers.js';
 import { type Client } from '../../client.js';
+import { DisposeOfShares } from '../../components/DisposeOfShares.jsx';
 import { GameBoard } from '../../components/GameBoard.js';
 import { GameHistory } from '../../components/GameHistory.js';
 import { GameSetupUI } from '../../components/GameSetupUI.js';
 import { NextGameAction } from '../../components/NextGameAction.js';
+import { PurchaseShares } from '../../components/PurchaseShares.jsx';
 import { ScoreBoard } from '../../components/ScoreBoard.js';
+import { SelectChain, SelectChainTitle } from '../../components/SelectChain.jsx';
+import { TileRack } from '../../components/TileRack.jsx';
 import { TileRackReadOnly } from '../../components/TileRackReadOnly.js';
 import { GameManagerStatus } from '../../gamesManager.js';
 import { processBrowserMyKeyboardEvents } from '../../myKeyboardEvents.js';
@@ -43,18 +54,26 @@ export function GamePage(props: { client: Client }) {
 
   const [followedPlayerId, setFollowedPlayerId] = createSignal<number | null>(null);
   const gameBoardTileRack = createMemo(() => {
-    if (gameManager.signals.usersWithoutNulls().length > 1) {
-      const fpid = followedPlayerId();
-      if (fpid !== null) {
-        return gameState().tileRacks[fpid];
+    const status = gameManager.signals.status();
+    if (status === GameManagerStatus.Game) {
+      const playerId = gameManager.signals.myPlayerId();
+      if (playerId >= 0) {
+        return gameState().tileRacks[playerId];
       }
+    } else if (status === GameManagerStatus.Review) {
+      if (gameManager.signals.usersWithoutNulls().length > 1) {
+        const fpid = followedPlayerId();
+        if (fpid !== null) {
+          return gameState().tileRacks[fpid];
+        }
 
-      const mpid = movePlayerId();
-      if (mpid !== -1) {
-        return gameState().tileRacks[mpid];
+        const mpid = movePlayerId();
+        if (mpid !== -1) {
+          return gameState().tileRacks[mpid];
+        }
+      } else {
+        return gameState().tileRacks[0];
       }
-    } else {
-      return gameState().tileRacks[0];
     }
   });
 
@@ -84,6 +103,8 @@ export function GamePage(props: { client: Client }) {
 
   const keyboardShortcutsEnabled = () => props.client.signals.dialogType() === undefined;
 
+  const myRequiredGameAction = gameManager.signals.myRequiredGameAction;
+
   return (
     <div class={styles.root}>
       <Switch>
@@ -100,7 +121,11 @@ export function GamePage(props: { client: Client }) {
               tileRack={gameBoardTileRack()}
               labelMode={props.client.signals.gameBoardLabelMode()}
               cellSize={gameBoardCellSize()}
-              onCellClicked={undefined}
+              onCellClicked={
+                myRequiredGameAction()?.gameAction === GameActionEnum.PlayTile
+                  ? gameManager.gameActions.playTile
+                  : undefined
+              }
             />
           </div>
           <Switch>
@@ -157,33 +182,179 @@ export function GamePage(props: { client: Client }) {
                   gameMode={gameManager.signals.gameMode()}
                   cellWidth={scoreBoardCellWidth()}
                 />
-                <Index each={gameState().tileRacks}>
-                  {(tileRack, playerId) => (
-                    <div>
-                      <div class={styles.tileRackWrapper}>
-                        <TileRackReadOnly
-                          tiles={tileRack()}
-                          types={gameState().tileRackTypes[playerId]}
-                          buttonSize={gameBoardCellSize()}
-                        />
-                      </div>
-                      <Show when={gameManager.signals.usersWithoutNulls().length > 1}>
-                        <div
-                          class={styles.buttonWrapper}
-                          style={{ height: `${gameBoardCellSize()}px` }}
-                        >
-                          <input
-                            type="button"
-                            value={playerId === followedPlayerId() ? 'Unlock' : 'Lock'}
-                            onClick={() =>
-                              setFollowedPlayerId((fpid) => (playerId === fpid ? null : playerId))
-                            }
+                <Switch>
+                  <Match when={gameManager.signals.status() === GameManagerStatus.Game}>
+                    <Show when={gameManager.signals.myPlayerId() !== -1}>
+                      <TileRack
+                        ref={(ref) => processBrowserMyKeyboardEvents(keyboardShortcutsEnabled, ref)}
+                        tiles={gameState().tileRacks[gameManager.signals.myPlayerId()]}
+                        types={gameState().tileRackTypes[gameManager.signals.myPlayerId()]}
+                        buttonSize={gameBoardCellSize()}
+                        onTileClicked={
+                          myRequiredGameAction()?.gameAction === GameActionEnum.PlayTile
+                            ? gameManager.gameActions.playTile
+                            : () => {}
+                        }
+                      />
+                      <div>
+                        <div class={styles.actionComponent}>
+                          <Switch>
+                            <Match
+                              when={
+                                myRequiredGameAction()?.gameAction === GameActionEnum.SelectNewChain
+                              }
+                            >
+                              <SelectChain
+                                ref={(ref) =>
+                                  processBrowserMyKeyboardEvents(keyboardShortcutsEnabled, ref)
+                                }
+                                type={SelectChainTitle.SelectNewChain}
+                                availableChains={
+                                  (myRequiredGameAction() as ActionSelectNewChain).availableChains
+                                }
+                                buttonSize={gameBoardCellSize()}
+                                onChainSelected={gameManager.gameActions.selectNewChain}
+                              />
+                            </Match>
+                            <Match
+                              when={
+                                myRequiredGameAction()?.gameAction ===
+                                GameActionEnum.SelectMergerSurvivor
+                              }
+                            >
+                              <SelectChain
+                                ref={(ref) =>
+                                  processBrowserMyKeyboardEvents(keyboardShortcutsEnabled, ref)
+                                }
+                                type={SelectChainTitle.SelectMergerSurvivor}
+                                availableChains={
+                                  (myRequiredGameAction() as ActionSelectMergerSurvivor)
+                                    .chainsBySize[0]
+                                }
+                                buttonSize={gameBoardCellSize()}
+                                onChainSelected={gameManager.gameActions.selectMergerSurvivor}
+                              />
+                            </Match>
+                            <Match
+                              when={
+                                myRequiredGameAction()?.gameAction ===
+                                GameActionEnum.SelectChainToDisposeOfNext
+                              }
+                            >
+                              <SelectChain
+                                ref={(ref) =>
+                                  processBrowserMyKeyboardEvents(keyboardShortcutsEnabled, ref)
+                                }
+                                type={SelectChainTitle.SelectChainToDisposeOfNext}
+                                availableChains={
+                                  (myRequiredGameAction() as ActionSelectChainToDisposeOfNext)
+                                    .defunctChains
+                                }
+                                buttonSize={gameBoardCellSize()}
+                                onChainSelected={gameManager.gameActions.selectChainToDisposeOfNext}
+                              />
+                            </Match>
+                            <Match
+                              when={
+                                myRequiredGameAction()?.gameAction ===
+                                GameActionEnum.DisposeOfShares
+                              }
+                            >
+                              <DisposeOfShares
+                                ref={(ref) =>
+                                  processBrowserMyKeyboardEvents(keyboardShortcutsEnabled, ref)
+                                }
+                                defunctChain={
+                                  (myRequiredGameAction() as ActionDisposeOfShares).defunctChain
+                                }
+                                controllingChain={
+                                  (myRequiredGameAction() as ActionDisposeOfShares).controllingChain
+                                }
+                                sharesOwnedInDefunctChain={
+                                  (myRequiredGameAction() as ActionDisposeOfShares)
+                                    .sharesOwnedInDefunctChain
+                                }
+                                sharesAvailableInControllingChain={
+                                  (myRequiredGameAction() as ActionDisposeOfShares)
+                                    .sharesAvailableInControllingChain
+                                }
+                                buttonSize={gameBoardCellSize()}
+                                onSharesDisposed={gameManager.gameActions.disposeOfShares}
+                              />
+                            </Match>
+                            <Match
+                              when={
+                                myRequiredGameAction()?.gameAction === GameActionEnum.PurchaseShares
+                              }
+                            >
+                              <PurchaseShares
+                                ref={(ref) =>
+                                  processBrowserMyKeyboardEvents(keyboardShortcutsEnabled, ref)
+                                }
+                                scoreBoardAvailable={
+                                  (myRequiredGameAction() as ActionPurchaseShares).game
+                                    .scoreBoardAvailable
+                                }
+                                scoreBoardPrice={
+                                  (myRequiredGameAction() as ActionPurchaseShares).game
+                                    .scoreBoardPrice
+                                }
+                                cash={
+                                  (myRequiredGameAction() as ActionPurchaseShares).game.scoreBoard[
+                                    gameManager.signals.myPlayerId()
+                                  ][ScoreBoardIndexEnum.Cash]
+                                }
+                                buttonSize={gameBoardCellSize()}
+                                onSharesPurchased={gameManager.gameActions.purchaseShares}
+                              />
+                            </Match>
+                          </Switch>
+                        </div>
+                        <div class={styles.claimSpaceForActionComponents}>
+                          <PurchaseShares
+                            ref={(ref) => processBrowserMyKeyboardEvents(() => false, ref)}
+                            scoreBoardAvailable={defaultScoreBoardAvailable}
+                            scoreBoardPrice={defaultScoreBoardPrice}
+                            cash={0}
+                            buttonSize={gameBoardCellSize()}
+                            onSharesPurchased={() => {}}
                           />
                         </div>
-                      </Show>
-                    </div>
-                  )}
-                </Index>
+                      </div>
+                    </Show>
+                  </Match>
+                  <Match when={gameManager.signals.status() === GameManagerStatus.Review}>
+                    <Index each={gameState().tileRacks}>
+                      {(tileRack, playerId) => (
+                        <div>
+                          <div class={styles.tileRackWrapper}>
+                            <TileRackReadOnly
+                              tiles={tileRack()}
+                              types={gameState().tileRackTypes[playerId]}
+                              buttonSize={gameBoardCellSize()}
+                            />
+                          </div>
+                          <Show when={gameManager.signals.usersWithoutNulls().length > 1}>
+                            <div
+                              class={styles.buttonWrapper}
+                              style={{ height: `${gameBoardCellSize()}px` }}
+                            >
+                              <input
+                                type="button"
+                                value={playerId === followedPlayerId() ? 'Unlock' : 'Lock'}
+                                onClick={() =>
+                                  setFollowedPlayerId((fpid) =>
+                                    playerId === fpid ? null : playerId,
+                                  )
+                                }
+                              />
+                            </div>
+                          </Show>
+                        </div>
+                      )}
+                    </Index>
+                  </Match>
+                </Switch>
                 <GameHistory
                   ref={(ref) => processBrowserMyKeyboardEvents(keyboardShortcutsEnabled, ref)}
                   users={gameManager.signals.usersWithoutNulls()}

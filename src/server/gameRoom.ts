@@ -10,6 +10,7 @@ import {
   type PB_GameMode,
   type PB_GameState,
   type PB_MessageToServer_Game_Connect,
+  type PB_MessageToServer_Game_GameAction,
   type PB_MessageToServer_Game_GameSetupAction,
 } from '../common/pb.js';
 import { type User } from '../common/user.js';
@@ -210,6 +211,31 @@ export class GameRoom extends Room {
         this.sendLastGameStateToClients();
       }
     }
+  }
+
+  onMessage_GameAction(client: Client, message: PB_MessageToServer_Game_GameAction) {
+    if (
+      !this.game ||
+      !client.user ||
+      !message.gameAction ||
+      message.numberOfGameStates !== this.game.gameStateHistory.length
+    ) {
+      return;
+    }
+
+    const playerId = this.game.users.indexOf(client.user);
+    const currentAction = this.game.gameActionStack[this.game.gameActionStack.length - 1];
+    if (playerId !== currentAction.playerId) {
+      return;
+    }
+
+    try {
+      this.game.doGameAction(message.gameAction, Date.now());
+    } catch {
+      return;
+    }
+
+    this.sendLastGameStateToClients();
   }
 
   userConnected(user: User) {

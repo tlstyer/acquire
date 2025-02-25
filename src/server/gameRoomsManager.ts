@@ -44,6 +44,9 @@ export class GameRoomsManager {
     if (message.gameSetupAction && client.room instanceof GameRoom) {
       client.room.onMessage_GameSetupAction(client, message.gameSetupAction);
     }
+    if (message.gameAction && client.room instanceof GameRoom) {
+      client.room.onMessage_GameAction(client, message.gameAction);
+    }
   }
 
   async onMessage_Connect(client: Client, message: PB_MessageToServer_Game_Connect) {
