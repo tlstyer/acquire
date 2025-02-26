@@ -34,7 +34,7 @@ export class WebSocketClientCommunication extends ClientCommunication {
           ? process.env.VITE_LOG_MESSAGES_TO_BROWSER_CONSOLE
           : import.meta.env.VITE_LOG_MESSAGES_TO_BROWSER_CONSOLE) === 'yes'
       ) {
-        const string = `${uint8ArrayToHexString(message)}\n${JSON.stringify(PB_MessageToServer.fromBinary(message), null, 2)}`;
+        const string = `${uint8ArrayToHexString(message)} (${message.length} bytes)\n${JSON.stringify(PB_MessageToServer.fromBinary(message), null, 2)}`;
         const hexColor = '#008000';
 
         if (isServer) {
@@ -75,7 +75,7 @@ export class WebSocketClientCommunication extends ClientCommunication {
         ? process.env.VITE_LOG_MESSAGES_TO_BROWSER_CONSOLE
         : import.meta.env.VITE_LOG_MESSAGES_TO_BROWSER_CONSOLE) === 'yes'
     ) {
-      const string = `${uint8ArrayToHexString(message)}\n${JSON.stringify(PB_MessageToClient.fromBinary(message), null, 2)}`;
+      const string = `${uint8ArrayToHexString(message)} (${message.length} bytes)\n${JSON.stringify(PB_MessageToClient.fromBinary(message), null, 2)}`;
       const hexColor = '#ff0000';
 
       if (isServer) {
