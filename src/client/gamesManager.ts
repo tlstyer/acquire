@@ -5,6 +5,7 @@ import { gameFromProtocolBuffer } from '../common/gameSerialization.js';
 import { createGameSetupLite, type GameSetupLite } from '../common/gameSetupLite.js';
 import { type GameState } from '../common/gameState.js';
 import {
+  PB_GameAction,
   type PB_GameBoardType,
   PB_GameMode,
   type PB_MessageToClient_Game,
@@ -355,105 +356,76 @@ export function createGameManager(
     );
   }
 
-  function playTile(tile: number) {
+  function sendGameActionMessage(gameAction: PB_GameAction) {
     sendMessage(
       PB_MessageToServer.toBinary({
         game: {
           gameAction: {
             numberOfGameStates: game!.gameStateHistory.length,
-            gameAction: {
-              playTile: {
-                tile,
-              },
-            },
+            gameAction,
           },
+        },
+      }),
+    );
+  }
+
+  function playTile(tile: number) {
+    sendGameActionMessage(
+      PB_GameAction.create({
+        playTile: {
+          tile,
         },
       }),
     );
   }
 
   function selectNewChain(chain: PB_GameBoardType) {
-    sendMessage(
-      PB_MessageToServer.toBinary({
-        game: {
-          gameAction: {
-            numberOfGameStates: game!.gameStateHistory.length,
-            gameAction: {
-              selectNewChain: {
-                chain,
-              },
-            },
-          },
+    sendGameActionMessage(
+      PB_GameAction.create({
+        selectNewChain: {
+          chain,
         },
       }),
     );
   }
 
   function selectMergerSurvivor(chain: PB_GameBoardType) {
-    sendMessage(
-      PB_MessageToServer.toBinary({
-        game: {
-          gameAction: {
-            numberOfGameStates: game!.gameStateHistory.length,
-            gameAction: {
-              selectMergerSurvivor: {
-                chain,
-              },
-            },
-          },
+    sendGameActionMessage(
+      PB_GameAction.create({
+        selectMergerSurvivor: {
+          chain,
         },
       }),
     );
   }
 
   function selectChainToDisposeOfNext(chain: PB_GameBoardType) {
-    sendMessage(
-      PB_MessageToServer.toBinary({
-        game: {
-          gameAction: {
-            numberOfGameStates: game!.gameStateHistory.length,
-            gameAction: {
-              selectChainToDisposeOfNext: {
-                chain,
-              },
-            },
-          },
+    sendGameActionMessage(
+      PB_GameAction.create({
+        selectChainToDisposeOfNext: {
+          chain,
         },
       }),
     );
   }
 
   function disposeOfShares(tradeAmount: number, sellAmount: number) {
-    sendMessage(
-      PB_MessageToServer.toBinary({
-        game: {
-          gameAction: {
-            numberOfGameStates: game!.gameStateHistory.length,
-            gameAction: {
-              disposeOfShares: {
-                tradeAmount,
-                sellAmount,
-              },
-            },
-          },
+    sendGameActionMessage(
+      PB_GameAction.create({
+        disposeOfShares: {
+          tradeAmount,
+          sellAmount,
         },
       }),
     );
   }
 
   function purchaseShares(chains: PB_GameBoardType[], endGame: boolean) {
-    sendMessage(
-      PB_MessageToServer.toBinary({
-        game: {
-          gameAction: {
-            numberOfGameStates: game!.gameStateHistory.length,
-            gameAction: {
-              purchaseShares: {
-                chains,
-                endGame,
-              },
-            },
-          },
+    sendGameActionMessage(
+      PB_GameAction.create({
+        purchaseShares: {
+          chains,
+          endGame,
         },
       }),
     );
