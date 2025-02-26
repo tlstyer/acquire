@@ -188,7 +188,7 @@ export function PurchaseShares(props: {
                       }
                     }
                   }}
-                />{' '}
+                />
               </>
             )}
           </Index>
@@ -230,7 +230,7 @@ export function PurchaseShares(props: {
                     newCart[i] = null;
                     updateValues(newCart);
                   }}
-                />{' '}
+                />
               </>
             )}
           </Index>
