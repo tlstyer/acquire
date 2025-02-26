@@ -11,7 +11,11 @@ import {
   Switch,
   untrack,
 } from 'solid-js';
-import { defaultScoreBoardAvailable, defaultScoreBoardPrice } from '../../../common/defaults.js';
+import {
+  defaultGameBoard,
+  defaultScoreBoardAvailable,
+  defaultScoreBoardPrice,
+} from '../../../common/defaults.js';
 import { ScoreBoardIndexEnum } from '../../../common/enums.js';
 import { ActionDisposeOfShares } from '../../../common/gameActions/disposeOfShares.js';
 import { ActionGameOver } from '../../../common/gameActions/gameOver.js';
@@ -166,7 +170,7 @@ export function GamePage(props: { client: Client }) {
         <Match when={true}>
           <div>
             <GameBoard
-              gameBoard={gameState().gameBoard}
+              gameBoard={gameState()?.gameBoard ?? defaultGameBoard}
               tileRack={gameBoardTileRack()}
               labelMode={props.client.signals.gameBoardLabelMode()}
               cellSize={gameBoardCellSize()}
