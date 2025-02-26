@@ -111,6 +111,7 @@ export function ScoreBoardExamples() {
             movePlayerId={props.movePlayerId}
             gameMode={props.gameMode}
             cellWidth={props.cellWidth}
+            usersInRoom={new Set(props.users.filter((user, index) => index % 2 === 0))}
           />
         </p>
       )}

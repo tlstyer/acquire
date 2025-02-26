@@ -230,6 +230,7 @@ export function GamePage(props: { client: Client }) {
                   movePlayerId={movePlayerId()}
                   gameMode={gameManager.signals.gameMode()}
                   cellWidth={scoreBoardCellWidth()}
+                  usersInRoom={gameManager.signals.usersInRoom()}
                 />
                 <Switch>
                   <Match when={gameManager.signals.status() === GameManagerStatus.Game}>

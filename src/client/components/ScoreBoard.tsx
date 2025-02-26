@@ -3,6 +3,7 @@ import { ScoreBoardIndexEnum } from '../../common/enums.js';
 import { gameModeToNumPlayers, gameModeToTeamSize } from '../../common/helpers.js';
 import { type PB_GameMode } from '../../common/pb.js';
 import { type User } from '../../common/user.js';
+import stylesApp from '../App.module.css';
 import { allChains, gameBoardTypeToHotelInitial } from '../helpers.js';
 import { gameBoardTypeToCSSClassName, teamNumberToCSSClassName } from '../styleHelpers.js';
 import styles from './ScoreBoard.module.css';
@@ -18,6 +19,7 @@ export function ScoreBoard(props: {
   movePlayerId: number;
   gameMode: PB_GameMode;
   cellWidth: number;
+  usersInRoom: Set<User>;
 }) {
   const isTeamGame = createMemo(() => gameModeToTeamSize.get(props.gameMode)! > 1);
 
@@ -80,6 +82,7 @@ export function ScoreBoard(props: {
               title={user().name}
               isPlayersTurn={playerId === props.turnPlayerId}
               isPlayersMove={playerId === props.movePlayerId}
+              isPlayerInRoom={props.usersInRoom.has(user())}
               scoreBoardRow={props.scoreBoard[playerId]}
               safeChains={props.safeChains}
               defaultClassName={
@@ -99,6 +102,7 @@ export function ScoreBoard(props: {
           title="Available"
           isPlayersTurn={false}
           isPlayersMove={false}
+          isPlayerInRoom={false}
           scoreBoardRow={props.scoreBoardAvailable}
           safeChains={props.safeChains}
           defaultClassName={styles.availableChainSizeAndPrice}
@@ -111,6 +115,7 @@ export function ScoreBoard(props: {
           title="Chain Size"
           isPlayersTurn={false}
           isPlayersMove={false}
+          isPlayerInRoom={false}
           scoreBoardRow={props.scoreBoardChainSize}
           safeChains={props.safeChains}
           defaultClassName={styles.availableChainSizeAndPrice}
@@ -123,6 +128,7 @@ export function ScoreBoard(props: {
           title="Price ($00)"
           isPlayersTurn={false}
           isPlayersMove={false}
+          isPlayerInRoom={false}
           scoreBoardRow={props.scoreBoardPrice}
           safeChains={props.safeChains}
           defaultClassName={styles.availableChainSizeAndPrice}
@@ -140,6 +146,7 @@ function ScoreBoardRow(props: {
   title: string;
   isPlayersTurn: boolean;
   isPlayersMove: boolean;
+  isPlayerInRoom: boolean;
   scoreBoardRow: number[];
   safeChains: boolean[];
   defaultClassName: string;
@@ -150,15 +157,16 @@ function ScoreBoardRow(props: {
   return (
     <tr class={props.defaultClassName}>
       <td
-        class={
-          props.isPlayersTurn
+        classList={{
+          [props.isPlayersTurn
             ? styles.isPlayersTurn
             : props.isPlayersMove
               ? styles.isPlayersMove
               : props.isPlayerRow
                 ? styles.player
-                : undefined
-        }
+                : '']: true,
+          [stylesApp.playerMissing]: props.isPlayerRow && !props.isPlayerInRoom,
+        }}
         title={props.isPlayerRow ? props.title : undefined}
       >
         {props.title}
