@@ -46,14 +46,58 @@ export function GamePage(props: { client: Client }) {
   // eslint-disable-next-line solid/reactivity
   const gameManager = props.client.connectToGame(logTime, gameNumber);
 
+  // when status is SettingUp or Game or Review
+
+  const [windowInnerWidth, setWindowInnerWidth] = createSignal(innerWidth);
+  const [windowInnerHeight, setWindowInnerHeight] = createSignal(innerHeight);
+
+  function updateWindowSizes() {
+    batch(() => {
+      setWindowInnerWidth(innerWidth);
+      setWindowInnerHeight(innerHeight);
+    });
+  }
+  addEventListener('resize', updateWindowSizes);
+  onCleanup(() => removeEventListener('resize', updateWindowSizes));
+
+  const gameBoardCellSize = createMemo(() => {
+    const gameBoardCellSizeBasedOnWindowWidth = windowInnerWidth() / 2 / 12;
+    const gameBoardCellSizeBasedOnWindowHeight = (windowInnerHeight() - 129) / 9;
+    return Math.floor(
+      Math.min(gameBoardCellSizeBasedOnWindowWidth, gameBoardCellSizeBasedOnWindowHeight),
+    );
+  });
+
+  const scoreBoardCellWidth = createMemo(() => {
+    const gameBoardWidth = gameBoardCellSize() * 12 + 2;
+    const rightSideWidth = windowInnerWidth() - gameBoardWidth - 2;
+    return Math.floor(Math.min(rightSideWidth - 2, gameBoardWidth) / 18);
+  });
+
+  const keyboardShortcutsEnabled = () => props.client.signals.dialogType() === undefined;
+
+  // when status is SettingUp
+
   const iAmHost = createMemo(() => gameManager.signals.hostUser() === props.client.signals.user());
+
   const iAmInGame = createMemo(
     () =>
       props.client.signals.user() !== null &&
       gameManager.signals.users().includes(props.client.signals.user()),
   );
 
+  // when status is Game
+
+  const myRequiredGameAction = gameManager.signals.myRequiredGameAction;
+
+  // when status is Review
+
+  const [followedPlayerId, setFollowedPlayerId] = createSignal<number | null>(null);
+
+  // when status is Game or Review
+
   const [selectedMoveIndex, setSelectedMoveIndex] = createSignal(0);
+
   let previousGameStateHistoryLength = 0;
   createEffect(() => {
     const currentGameStateHistoryLength = gameManager.signals.gameStateHistory().length;
@@ -77,6 +121,7 @@ export function GamePage(props: { client: Client }) {
         : gameState().turnPlayerId
       : -1,
   );
+
   const movePlayerId = createMemo(() =>
     gameState()
       ? gameState().nextGameAction instanceof ActionGameOver
@@ -85,7 +130,6 @@ export function GamePage(props: { client: Client }) {
       : -1,
   );
 
-  const [followedPlayerId, setFollowedPlayerId] = createSignal<number | null>(null);
   const gameBoardTileRack = createMemo(() => {
     const status = gameManager.signals.status();
     if (status === GameManagerStatus.Game) {
@@ -109,34 +153,6 @@ export function GamePage(props: { client: Client }) {
       }
     }
   });
-
-  const [windowInnerWidth, setWindowInnerWidth] = createSignal(innerWidth);
-  const [windowInnerHeight, setWindowInnerHeight] = createSignal(innerHeight);
-  const gameBoardCellSize = createMemo(() => {
-    const gameBoardCellSizeBasedOnWindowWidth = windowInnerWidth() / 2 / 12;
-    const gameBoardCellSizeBasedOnWindowHeight = (windowInnerHeight() - 129) / 9;
-    return Math.floor(
-      Math.min(gameBoardCellSizeBasedOnWindowWidth, gameBoardCellSizeBasedOnWindowHeight),
-    );
-  });
-  const scoreBoardCellWidth = createMemo(() => {
-    const gameBoardWidth = gameBoardCellSize() * 12 + 2;
-    const rightSideWidth = windowInnerWidth() - gameBoardWidth - 2;
-    return Math.floor(Math.min(rightSideWidth - 2, gameBoardWidth) / 18);
-  });
-
-  function updateWindowSizes() {
-    batch(() => {
-      setWindowInnerWidth(innerWidth);
-      setWindowInnerHeight(innerHeight);
-    });
-  }
-  addEventListener('resize', updateWindowSizes);
-  onCleanup(() => removeEventListener('resize', updateWindowSizes));
-
-  const keyboardShortcutsEnabled = () => props.client.signals.dialogType() === undefined;
-
-  const myRequiredGameAction = gameManager.signals.myRequiredGameAction;
 
   return (
     <div class={styles.root}>
