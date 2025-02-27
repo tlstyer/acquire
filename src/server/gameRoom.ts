@@ -121,95 +121,97 @@ export class GameRoom extends Room {
   }
 
   onMessage_GameSetupAction(client: Client, message: PB_MessageToServer_Game_GameSetupAction) {
-    if (this.gameSetup && client.user !== null) {
-      let queueLobbyEvent = false;
+    if (!this.gameSetup || !client.user) {
+      return;
+    }
 
-      if (message.sitDown) {
-        this.gameSetup.addUser(client.user);
-        queueLobbyEvent = true;
-      } else if (message.standUp) {
-        this.gameSetup.removeUser(client.user);
-        queueLobbyEvent = true;
-      } else if (message.approve) {
-        this.gameSetup.approve(client.user);
+    let queueLobbyEvent = false;
 
-        if (this.gameSetup.history[0]?.userApprovedOfGameSetup?.approvedByEverybody) {
+    if (message.sitDown) {
+      this.gameSetup.addUser(client.user);
+      queueLobbyEvent = true;
+    } else if (message.standUp) {
+      this.gameSetup.removeUser(client.user);
+      queueLobbyEvent = true;
+    } else if (message.approve) {
+      this.gameSetup.approve(client.user);
+
+      if (this.gameSetup.history[0]?.userApprovedOfGameSetup?.approvedByEverybody) {
+        queueLobbyEvent = true;
+      }
+    } else if (message.changeGameMode) {
+      if (client.user === this.gameSetup.hostUser) {
+        this.gameSetup.changeGameMode(message.changeGameMode.gameMode);
+        queueLobbyEvent = true;
+      }
+    } else if (message.changePlayerArrangementMode) {
+      if (client.user === this.gameSetup.hostUser) {
+        this.gameSetup.changePlayerArrangementMode(
+          message.changePlayerArrangementMode.playerArrangementMode,
+        );
+      }
+    } else if (message.swapPositions) {
+      if (client.user === this.gameSetup.hostUser) {
+        this.gameSetup.swapPositions(
+          message.swapPositions.position1,
+          message.swapPositions.position2,
+        );
+        queueLobbyEvent = true;
+      }
+    } else if (message.kickUser) {
+      if (client.user === this.gameSetup.hostUser) {
+        const user = this.userIdToUser.get(message.kickUser.userId);
+        if (user) {
+          this.gameSetup.kickUser(user);
           queueLobbyEvent = true;
-        }
-      } else if (message.changeGameMode) {
-        if (client.user === this.gameSetup.hostUser) {
-          this.gameSetup.changeGameMode(message.changeGameMode.gameMode);
-          queueLobbyEvent = true;
-        }
-      } else if (message.changePlayerArrangementMode) {
-        if (client.user === this.gameSetup.hostUser) {
-          this.gameSetup.changePlayerArrangementMode(
-            message.changePlayerArrangementMode.playerArrangementMode,
-          );
-        }
-      } else if (message.swapPositions) {
-        if (client.user === this.gameSetup.hostUser) {
-          this.gameSetup.swapPositions(
-            message.swapPositions.position1,
-            message.swapPositions.position2,
-          );
-          queueLobbyEvent = true;
-        }
-      } else if (message.kickUser) {
-        if (client.user === this.gameSetup.hostUser) {
-          const user = this.userIdToUser.get(message.kickUser.userId);
-          if (user) {
-            this.gameSetup.kickUser(user);
-            queueLobbyEvent = true;
-          }
         }
       }
+    }
 
-      if (this.gameSetup.history.length > 0) {
-        const gameSetupChange = this.gameSetup.history[0];
+    if (this.gameSetup.history.length > 0) {
+      const gameSetupChange = this.gameSetup.history[0];
 
-        const messageToGameClients = PB_MessageToClient.toBinary(
-          PB_MessageToClient.create({
-            game: {
+      const messageToGameClients = PB_MessageToClient.toBinary(
+        PB_MessageToClient.create({
+          game: {
+            gameSetupChange,
+          },
+        }),
+      );
+
+      for (const client of this.clients) {
+        client.sendMessage(messageToGameClients);
+      }
+
+      if (queueLobbyEvent) {
+        this.lobbyRoom.queueEvent(
+          PB_MessageToClient_Lobby_Event.create({
+            gameSetupChange: {
+              gameDisplayNumber: this.gameDisplayNumber,
               gameSetupChange,
             },
           }),
         );
-
-        for (const client of this.clients) {
-          client.sendMessage(messageToGameClients);
-        }
-
-        if (queueLobbyEvent) {
-          this.lobbyRoom.queueEvent(
-            PB_MessageToClient_Lobby_Event.create({
-              gameSetupChange: {
-                gameDisplayNumber: this.gameDisplayNumber,
-                gameSetupChange,
-              },
-            }),
-          );
-        }
-
-        this.gameSetup.clearHistory();
-        this.numberOfGameSetupChanges++;
       }
 
-      if (this.gameSetup.finalUsers) {
-        this.game = new Game(
-          this.gameSetup.gameMode,
-          this.gameSetup.playerArrangementMode,
-          getNewTileBag(),
-          this.gameSetup.finalUsers,
-          this.gameSetup.hostUser,
-          null,
-        );
-        this.gameSetup = null;
+      this.gameSetup.clearHistory();
+      this.numberOfGameSetupChanges++;
+    }
 
-        this.game.doGameAction(PB_GameAction.create({ startGame: {} }), Date.now());
+    if (this.gameSetup.finalUsers) {
+      this.game = new Game(
+        this.gameSetup.gameMode,
+        this.gameSetup.playerArrangementMode,
+        getNewTileBag(),
+        this.gameSetup.finalUsers,
+        this.gameSetup.hostUser,
+        null,
+      );
+      this.gameSetup = null;
 
-        this.sendLastGameStateToClients();
-      }
+      this.game.doGameAction(PB_GameAction.create({ startGame: {} }), Date.now());
+
+      this.sendLastGameStateToClients();
     }
   }
 
