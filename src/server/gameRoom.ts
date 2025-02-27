@@ -28,6 +28,9 @@ export class GameRoom extends Room {
   private userIdToUser = new Map<number, User>();
   private userIdsAndUsernames: PB_MessageToClient_Game_UserIdAndUsername[] = [];
 
+  getNewTileBag = getNewTileBag;
+  dateNow: () => number | null = Date.now;
+
   constructor(
     public lobbyRoom: LobbyRoom,
     public gameNumber: number,
@@ -202,14 +205,14 @@ export class GameRoom extends Room {
       this.game = new Game(
         this.gameSetup.gameMode,
         this.gameSetup.playerArrangementMode,
-        getNewTileBag(),
+        this.getNewTileBag(),
         this.gameSetup.finalUsers,
         this.gameSetup.hostUser,
         null,
       );
       this.gameSetup = null;
 
-      this.game.doGameAction(PB_GameAction.create({ startGame: {} }), Date.now());
+      this.game.doGameAction(PB_GameAction.create({ startGame: {} }), this.dateNow());
 
       this.sendLastGameStateToClients();
     }
@@ -232,7 +235,7 @@ export class GameRoom extends Room {
     }
 
     try {
-      this.game.doGameAction(message.gameAction, Date.now());
+      this.game.doGameAction(message.gameAction, this.dateNow());
     } catch {
       return;
     }

@@ -5,12 +5,18 @@ import { GameHistory } from '../../components/GameHistory.js';
 import { processBrowserMyKeyboardEvents } from '../../myKeyboardEvents.js';
 import { EnableKeyboardShortcutsButton } from './EnableKeyboardShortcutsButton.js';
 import styles from './GameHistoryExamples.module.css';
-import { getExampleGame1, getExampleGame2, getExampleGameForGameHistory } from './games.js';
+import {
+  getExampleGame1,
+  getExampleGame2,
+  getExampleGame3,
+  getExampleGameForGameHistory,
+} from './games.js';
 
 export function GameHistoryExamples() {
   const gameForGameHistory = getExampleGameForGameHistory();
   const game1 = getExampleGame1();
   const game2 = getExampleGame2();
+  const game3 = getExampleGame3();
 
   const allProps: {
     users: User[];
@@ -27,6 +33,10 @@ export function GameHistoryExamples() {
     {
       users: game2.users,
       gameStateHistory: game2.gameStateHistory,
+    },
+    {
+      users: game3.users,
+      gameStateHistory: game3.gameStateHistory,
     },
     {
       users: gameForGameHistory.users,
