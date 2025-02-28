@@ -5,8 +5,10 @@ import { type Client } from '../../client/client.js';
 import { type GameManager, GameManagerStatus } from '../../client/gamesManager.js';
 import { GameStatus } from '../../client/helpers.js';
 import { type LobbyManager } from '../../client/lobbyManager.js';
+import { getExampleGame1 } from '../../client/pages/examples/games.js';
 import { type Server } from '../../server/server.js';
 import { defaultGameBoard } from '../defaults.js';
+import { ActionGameOver } from '../gameActions/gameOver.js';
 import { PB_GameMode, PB_MessageToServer, PB_PlayerArrangementMode } from '../pb.js';
 import { type User } from '../user.js';
 import {
@@ -619,6 +621,61 @@ test('game action permissions', async () => {
   expectEqualGameStuff(lobbyManagers, gameManagersAndUserAccessors, serverStuff.server);
 });
 
+test('lobby is told when a game completes', async () => {
+  const serverStuff = createServerStuff();
+
+  const lobbyManagers = new Set<LobbyManager>();
+  const gameManagersAndUserAccessors = new Set<GameManagerAndUserAccessor>();
+
+  const clientStuffLobbyAnon1 = createClientStuffAndConnectToTestServer(serverStuff);
+  const lobbyManagerLobbyAnon1 = clientStuffLobbyAnon1.client.connectToLobby();
+  lobbyManagers.add(lobbyManagerLobbyAnon1);
+
+  const clientStuff1 = createClientStuffAndConnectToTestServer(serverStuff);
+  await loginAsUser(clientStuff1, 1);
+  const lobbyManager = clientStuff1.client.connectToLobby();
+  lobbyManager.createGame(PB_GameMode.SINGLES_2);
+  const gameNumber = lobbyManager.signals.createdGameNumber() ?? -1;
+  const gameManager1 = clientStuff1.client.connectToGame(clientStuff1.client.logTime, gameNumber);
+  gameManagersAndUserAccessors.add(
+    new GameManagerAndUserAccessor(gameManager1, clientStuff1.client.signals.user),
+  );
+  expectEqualGameStuff(lobbyManagers, gameManagersAndUserAccessors, serverStuff.server);
+
+  const clientStuff2 = createClientStuffAndConnectToTestServer(serverStuff);
+  await loginAsUser(clientStuff2, 2);
+  const gameManager2 = clientStuff2.client.connectToGame(clientStuff2.client.logTime, gameNumber);
+  gameManagersAndUserAccessors.add(
+    new GameManagerAndUserAccessor(gameManager2, clientStuff2.client.signals.user),
+  );
+  gameManager2.gameSetupActions.sitDown();
+  expectEqualGameStuff(lobbyManagers, gameManagersAndUserAccessors, serverStuff.server);
+
+  const gameToReplay = getExampleGame1();
+
+  const gameRoom = serverStuff.server.gameRoomsManager.gameNumberToGameRoom.get(gameNumber)!;
+  gameRoom.getNewTileBag = () => gameToReplay.tileBag;
+
+  gameManager1.gameSetupActions.approve();
+  gameManager2.gameSetupActions.approve();
+  expectEqualGameStuff(lobbyManagers, gameManagersAndUserAccessors, serverStuff.server);
+
+  for (let i = 1; i < gameToReplay.gameStateHistory.length; i++) {
+    const gameState = gameToReplay.gameStateHistory[i];
+
+    const gameManager = [...gameManagersAndUserAccessors][gameState.playerId].gameManager;
+
+    const action = Object.keys(gameState.gameAction)[0];
+    // @ts-expect-error action is a key of gameState.gameAction
+    const parameters = Object.values(gameState.gameAction[action]);
+
+    // @ts-expect-error action and parameters are correct
+    gameManager.gameActions[action](...parameters);
+  }
+
+  expectEqualGameStuff(lobbyManagers, gameManagersAndUserAccessors, serverStuff.server);
+});
+
 class GameManagerAndUserAccessor {
   constructor(
     public gameManager: GameManager,
@@ -657,7 +714,11 @@ function expectEqualGameStuff(
       expect(lobbyManagerGameSignals.gameBoard()).toEqual(game.gameBoard);
       expect(lobbyManagerGameSignals.users()).toEqual(game.users);
       expect(lobbyManagerGameSignals.gameMode()).toEqual(game.gameMode);
-      expect(lobbyManagerGameSignals.gameStatus()).toEqual(GameStatus.IN_PROGRESS);
+      expect(lobbyManagerGameSignals.gameStatus()).toEqual(
+        game.gameActionStack.length === 1 && game.gameActionStack[0] instanceof ActionGameOver
+          ? GameStatus.COMPLETED
+          : GameStatus.IN_PROGRESS,
+      );
     } else {
       throw new Error('gameRoom does not have gameSetup or game');
     }

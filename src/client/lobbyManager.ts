@@ -13,6 +13,7 @@ import {
   type PB_MessageToClient_Lobby_Event_AddUserToGameRoom,
   type PB_MessageToClient_Lobby_Event_AddUserToLobby,
   type PB_MessageToClient_Lobby_Event_GameBoardChanges,
+  type PB_MessageToClient_Lobby_Event_GameCompleted,
   type PB_MessageToClient_Lobby_Event_GameCreated,
   type PB_MessageToClient_Lobby_Event_GameSetupChange,
   type PB_MessageToClient_Lobby_Event_RemoveUserFromGameRoom,
@@ -165,6 +166,8 @@ export function createLobbyManager(
         onMessage_Event_GameSetupChange(event.gameSetupChange);
       } else if (event.gameBoardChanges) {
         onMessage_Event_GameBoardChanges(event.gameBoardChanges);
+      } else if (event.gameCompleted) {
+        onMessage_Event_GameCompleted(event.gameCompleted);
       } else if (event.addUserToLobby) {
         onMessage_Event_AddUserToLobby(event.addUserToLobby);
       } else if (event.removeUserFromLobby) {
@@ -213,6 +216,10 @@ export function createLobbyManager(
     gameDisplayNumberToLobbyGame
       .get(event.gameDisplayNumber)!
       .private.processGameBoardChanges(event.gameBoardChanges!);
+  }
+
+  function onMessage_Event_GameCompleted(event: PB_MessageToClient_Lobby_Event_GameCompleted) {
+    gameDisplayNumberToLobbyGame.get(event.gameDisplayNumber)!.private.completed();
   }
 
   function onMessage_Event_AddUserToLobby(event: PB_MessageToClient_Lobby_Event_AddUserToLobby) {
@@ -328,6 +335,11 @@ function createLobbyGame(
     setGameBoard(internalGameBoard);
   }
 
+  function completed() {
+    internalGameStatus = GameStatus.COMPLETED;
+    setGameStatus(internalGameStatus);
+  }
+
   function addUserToRoom(user: User) {
     internalUsersInRoom.add(user);
     setUsersInRoom(internalUsersInRoom);
@@ -352,6 +364,7 @@ function createLobbyGame(
     private: {
       changeGameSetup,
       processGameBoardChanges,
+      completed,
       addUserToRoom,
       removeUserFromRoom,
     },

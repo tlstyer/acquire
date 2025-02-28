@@ -1,4 +1,5 @@
 import { Game } from '../common/game.js';
+import { ActionGameOver } from '../common/gameActions/gameOver.js';
 import { GameSetup } from '../common/gameSetup.js';
 import { getNewTileBag } from '../common/helpers.js';
 import {
@@ -358,6 +359,16 @@ export class GameRoom extends Room {
           gameBoardChanges: {
             gameDisplayNumber: this.gameDisplayNumber,
             gameBoardChanges: gameState.gameBoardChanges,
+          },
+        }),
+      );
+    }
+
+    if (gameState.nextGameAction instanceof ActionGameOver) {
+      this.lobbyRoom.queueEvent(
+        PB_MessageToClient_Lobby_Event.create({
+          gameCompleted: {
+            gameDisplayNumber: this.gameDisplayNumber,
           },
         }),
       );
