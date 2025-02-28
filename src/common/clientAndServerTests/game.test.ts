@@ -1,3 +1,4 @@
+import seedrandom from 'seedrandom';
 import { type Accessor } from 'solid-js';
 import { expect, test } from 'vitest';
 import { type Client } from '../../client/client.js';
@@ -6,7 +7,7 @@ import { GameStatus } from '../../client/helpers.js';
 import { type LobbyManager } from '../../client/lobbyManager.js';
 import { type Server } from '../../server/server.js';
 import { defaultGameBoard } from '../defaults.js';
-import { PB_GameMode, PB_PlayerArrangementMode } from '../pb.js';
+import { PB_GameMode, PB_MessageToServer, PB_PlayerArrangementMode } from '../pb.js';
 import { type User } from '../user.js';
 import {
   createClientStuffAndConnectToTestServer,
@@ -500,6 +501,121 @@ test('users in room is correct in lobby and in game room', async () => {
     clientStuff1.client.signals.user,
   );
   gameManagersAndUserAccessors.add(gameManagerAndUserAccessor1b);
+  expectEqualGameStuff(lobbyManagers, gameManagersAndUserAccessors, serverStuff.server);
+});
+
+test('game action permissions', async () => {
+  Math.random = seedrandom('random');
+
+  const serverStuff = createServerStuff();
+
+  const lobbyManagers = new Set<LobbyManager>();
+  const gameManagersAndUserAccessors = new Set<GameManagerAndUserAccessor>();
+
+  const clientStuff1 = createClientStuffAndConnectToTestServer(serverStuff);
+  await loginAsUser(clientStuff1, 1);
+  const lobbyManager = clientStuff1.client.connectToLobby();
+  lobbyManager.createGame(PB_GameMode.SINGLES_2);
+  const gameNumber = lobbyManager.signals.createdGameNumber() ?? -1;
+  const gameManager1 = clientStuff1.client.connectToGame(clientStuff1.client.logTime, gameNumber);
+  gameManagersAndUserAccessors.add(
+    new GameManagerAndUserAccessor(gameManager1, clientStuff1.client.signals.user),
+  );
+  expectEqualGameStuff(lobbyManagers, gameManagersAndUserAccessors, serverStuff.server);
+
+  const clientStuff2 = createClientStuffAndConnectToTestServer(serverStuff);
+  await loginAsUser(clientStuff2, 2);
+  const gameManager2 = clientStuff2.client.connectToGame(clientStuff2.client.logTime, gameNumber);
+  gameManagersAndUserAccessors.add(
+    new GameManagerAndUserAccessor(gameManager2, clientStuff2.client.signals.user),
+  );
+  gameManager2.gameSetupActions.sitDown();
+  expectEqualGameStuff(lobbyManagers, gameManagersAndUserAccessors, serverStuff.server);
+
+  const clientStuffAnon1 = createClientStuffAndConnectToTestServer(serverStuff);
+  const gameManagerAnon1 = clientStuffAnon1.client.connectToGame(
+    clientStuffAnon1.client.logTime,
+    gameNumber,
+  );
+  gameManagersAndUserAccessors.add(
+    new GameManagerAndUserAccessor(gameManagerAnon1, clientStuffAnon1.client.signals.user),
+  );
+
+  gameManager1.gameSetupActions.approve();
+  expectEqualGameStuff(lobbyManagers, gameManagersAndUserAccessors, serverStuff.server);
+
+  gameManager2.gameSetupActions.approve();
+  expectEqualGameStuff(lobbyManagers, gameManagersAndUserAccessors, serverStuff.server);
+
+  // anonymous client tries to do a move
+  clientStuff1.clientCommunication.communicatedMessages.length = 0;
+  clientStuff2.clientCommunication.communicatedMessages.length = 0;
+  clientStuffAnon1.clientCommunication.communicatedMessages.length = 0;
+  gameManagerAnon1.gameActions.playTile(1);
+  expect(clientStuff1.clientCommunication.communicatedMessages.length).toBe(0);
+  expect(clientStuff2.clientCommunication.communicatedMessages.length).toBe(0);
+  expect(clientStuffAnon1.clientCommunication.communicatedMessages.length).toBe(1);
+  expectEqualGameStuff(lobbyManagers, gameManagersAndUserAccessors, serverStuff.server);
+
+  // user in game tries to do a game action with a missing gameAction message
+  clientStuff1.clientCommunication.communicatedMessages.length = 0;
+  clientStuff2.clientCommunication.communicatedMessages.length = 0;
+  clientStuffAnon1.clientCommunication.communicatedMessages.length = 0;
+  clientStuff1.clientCommunication.sendMessage(
+    PB_MessageToServer.toBinary({
+      game: {
+        gameAction: {
+          numberOfGameStates: 1,
+        },
+      },
+    }),
+  );
+  expect(clientStuff1.clientCommunication.communicatedMessages.length).toBe(1);
+  expect(clientStuff2.clientCommunication.communicatedMessages.length).toBe(0);
+  expect(clientStuffAnon1.clientCommunication.communicatedMessages.length).toBe(0);
+  expectEqualGameStuff(lobbyManagers, gameManagersAndUserAccessors, serverStuff.server);
+
+  // user tries to do a correct game action when it is not their turn
+  clientStuff1.clientCommunication.communicatedMessages.length = 0;
+  clientStuff2.clientCommunication.communicatedMessages.length = 0;
+  clientStuffAnon1.clientCommunication.communicatedMessages.length = 0;
+  gameManager1.gameActions.playTile(44);
+  expect(clientStuff1.clientCommunication.communicatedMessages.length).toBe(1);
+  expect(clientStuff2.clientCommunication.communicatedMessages.length).toBe(0);
+  expect(clientStuffAnon1.clientCommunication.communicatedMessages.length).toBe(0);
+  expectEqualGameStuff(lobbyManagers, gameManagersAndUserAccessors, serverStuff.server);
+
+  // user tries to do a correct game action when it is their turn but number of game states is wrong
+  clientStuff1.clientCommunication.communicatedMessages.length = 0;
+  clientStuff2.clientCommunication.communicatedMessages.length = 0;
+  clientStuffAnon1.clientCommunication.communicatedMessages.length = 0;
+  clientStuff2.clientCommunication.sendMessage(
+    PB_MessageToServer.toBinary({
+      game: {
+        gameAction: {
+          numberOfGameStates: 2,
+          gameAction: {
+            playTile: {
+              tile: 44,
+            },
+          },
+        },
+      },
+    }),
+  );
+  expect(clientStuff1.clientCommunication.communicatedMessages.length).toBe(0);
+  expect(clientStuff2.clientCommunication.communicatedMessages.length).toBe(1);
+  expect(clientStuffAnon1.clientCommunication.communicatedMessages.length).toBe(0);
+  expectEqualGameStuff(lobbyManagers, gameManagersAndUserAccessors, serverStuff.server);
+
+  // user correctly does a game action when it is their turn
+  clientStuff1.clientCommunication.communicatedMessages.length = 0;
+  clientStuff2.clientCommunication.communicatedMessages.length = 0;
+  clientStuffAnon1.clientCommunication.communicatedMessages.length = 0;
+  gameManager2.gameActions.playTile(44);
+  expect(clientStuff1.clientCommunication.communicatedMessages.length).toBe(1);
+  expect(clientStuff2.clientCommunication.communicatedMessages.length).toBe(2);
+  expect(clientStuffAnon1.clientCommunication.communicatedMessages.length).toBe(1);
   expectEqualGameStuff(lobbyManagers, gameManagersAndUserAccessors, serverStuff.server);
 });
 
