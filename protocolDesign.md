@@ -170,7 +170,7 @@ Connect:
 - log time
 - game number
 - number of user IDs and usernames
-- number of game states
+- number of game states per player and watcher
 - number of chat messages
 
 Game setup action:

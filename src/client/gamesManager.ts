@@ -86,7 +86,7 @@ export function createGameManager(
   gameNumber: number,
 ) {
   let gameSetup: GameSetupLite | null = null;
-  let game: Game | null = null;
+  const games: (Game | null)[] = [];
   let gameReview: Game | null = null;
 
   let numberOfUserIdAndUsernameMessages = 0;
@@ -123,15 +123,15 @@ export function createGameManager(
           logTime,
           gameNumber,
           numberOfUserIdAndUsernameMessages,
-          numberOfGameStates: game ? game.gameStateHistory.length : 0,
+          numberOfGameStatesPerPlayerAndWatcher: games.map((game) =>
+            game ? game.gameStateHistory.length : 0,
+          ),
         },
       },
     });
   }
 
   function onMessage(message: PB_MessageToClient_Game) {
-    const myUser = myUserAccessor();
-
     let updatedUsersInRoom = false;
 
     for (let i = 0; i < message.userIdsAndUsernames.length; i++) {
@@ -163,17 +163,8 @@ export function createGameManager(
         );
 
         numberOfGameSetupChanges = metadata.numberOfGameSetupChanges;
-
-        game = null;
-        gameReview = null;
       } else if (connectResponse.gameReview) {
-        gameSetup = null;
-        game = null;
         gameReview = gameFromProtocolBuffer(connectResponse.gameReview);
-      } else if (connectResponse.gameNotFound) {
-        gameSetup = null;
-        game = null;
-        gameReview = null;
       }
 
       internalUsersInRoom.clear();
@@ -198,54 +189,59 @@ export function createGameManager(
       numberOfGameSetupChanges++;
     }
 
-    if (message.gameStates.length > 0) {
-      if (gameSetup && !game) {
-        game = new Game(
-          gameSetup.gameMode,
-          gameSetup.playerArrangementMode,
-          [],
-          // @ts-expect-error gameSetup's users has no nulls when starting a game
-          gameSetup.finalUsers ?? gameSetup.users,
-          gameSetup.hostUser,
-          myUser ?? dummyUser,
-        );
+    const myUser = myUserAccessor();
+    const playerId = myUser && gameSetup ? gameSetup.users.indexOf(myUser) : -1;
+    const gamesIndex = gameSetup ? (playerId === -1 ? gameSetup.users.length : playerId) : -1;
 
-        gameSetup = null;
+    if (message.gameStates.length > 0) {
+      if (games.length === 0) {
+        const numGames = gameSetup!.users.length + 1;
+        for (let i = 0; i < numGames; i++) {
+          games.push(null);
+        }
       }
 
+      if (games[gamesIndex] === null) {
+        games[gamesIndex] = new Game(
+          gameSetup!.gameMode,
+          gameSetup!.playerArrangementMode,
+          [],
+          // @ts-expect-error gameSetup's users has no nulls when starting a game
+          gameSetup!.finalUsers ?? gameSetup!.users,
+          gameSetup!.hostUser,
+          myUser ?? dummyUser,
+        );
+      }
+
+      const game = games[gamesIndex];
+
       for (let i = 0; i < message.gameStates.length; i++) {
-        game!.processGameState(message.gameStates[i]);
+        game.processGameState(message.gameStates[i]);
       }
     }
 
     batch(() => {
-      if (gameSetup) {
+      if (gameReview) {
+        setStatus(GameManagerStatus.Review);
+        setCommonGameSignals(gameReview);
+      } else if (games.length > 0) {
+        const game = games[gamesIndex]!;
+
+        setStatus(GameManagerStatus.Game);
+        setCommonGameSignals(game);
+
+        setMyPlayerId(playerId);
+
+        const nextGameAction =
+          game.gameStateHistory[game.gameStateHistory.length - 1].nextGameAction;
+        setMyRequiredGameAction(nextGameAction.playerId === playerId ? nextGameAction : null);
+      } else if (gameSetup) {
         setStatus(GameManagerStatus.SettingUp);
         setGameMode(gameSetup.gameMode);
         setPlayerArrangementMode(gameSetup.playerArrangementMode);
         setUsers(gameSetup.users);
         setApprovals(gameSetup.approvals);
         setHostUser(gameSetup.hostUser);
-      } else if (game || gameReview) {
-        const g = game || gameReview!;
-
-        setStatus(game ? GameManagerStatus.Game : GameManagerStatus.Review);
-        setGameMode(g.gameMode);
-        setPlayerArrangementMode(g.playerArrangementMode);
-        setUsers(g.users);
-        setUsersWithoutNulls(g.users);
-        setHostUser(g.hostUser);
-
-        setGameStateHistory(g.gameStateHistory);
-
-        if (game) {
-          const playerId = myUser !== null ? game.users.indexOf(myUser) : -1;
-          setMyPlayerId(playerId);
-
-          const nextGameAction =
-            game.gameStateHistory[game.gameStateHistory.length - 1].nextGameAction;
-          setMyRequiredGameAction(nextGameAction.playerId === playerId ? nextGameAction : null);
-        }
       } else {
         setStatus(GameManagerStatus.NotFound);
       }
@@ -254,6 +250,16 @@ export function createGameManager(
         setUsersInRoom(internalUsersInRoom);
       }
     });
+  }
+
+  function setCommonGameSignals(game: Game) {
+    setGameMode(game.gameMode);
+    setPlayerArrangementMode(game.playerArrangementMode);
+    setUsers(game.users);
+    setUsersWithoutNulls(game.users);
+    setHostUser(game.hostUser);
+
+    setGameStateHistory(game.gameStateHistory);
   }
 
   function sitDown() {
@@ -357,11 +363,15 @@ export function createGameManager(
   }
 
   function sendGameActionMessage(gameAction: PB_GameAction) {
+    const myUser = myUserAccessor();
+    const playerId = myUser && gameSetup ? gameSetup.users.indexOf(myUser) : -1;
+    const gamesIndex = gameSetup ? (playerId === -1 ? gameSetup.users.length : playerId) : -1;
+
     sendMessage(
       PB_MessageToServer.toBinary({
         game: {
           gameAction: {
-            numberOfGameStates: game!.gameStateHistory.length,
+            numberOfGameStates: games[gamesIndex]!.gameStateHistory.length,
             gameAction,
           },
         },

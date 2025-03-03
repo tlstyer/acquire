@@ -56,13 +56,12 @@ export class Client {
 
   loggedIn(user: User) {
     this.user = user;
-
     this.room?.clientLoggedIn(this);
   }
 
   loggedOut() {
-    this.room?.clientLoggedOut(this);
-
+    const previousUser = this.user!;
     this.user = null;
+    this.room?.clientLoggedOut(this, previousUser);
   }
 }

@@ -28,6 +28,7 @@ export class GameRoom extends Room {
   private clientFromConnectMessage: Client | null = null;
   private userIdToUser = new Map<number, User>();
   private userIdsAndUsernames: PB_MessageToClient_Game_UserIdAndUsername[] = [];
+  private clientToNumberOfGameStatesPerPlayerAndWatcher = new WeakMap<Client, number[]>();
 
   getNewTileBag = getNewTileBag;
   dateNow: () => number | null = Date.now;
@@ -77,26 +78,37 @@ export class GameRoom extends Room {
     client.connectToRoom(this);
     this.clientFromConnectMessage = null;
 
+    const numEntriesRequired = this.game ? this.game.users.length + 1 : 0;
+    const numberOfGameStatesPerPlayerAndWatcher =
+      message.numberOfGameStatesPerPlayerAndWatcher.slice(0, numEntriesRequired);
+    for (let i = numberOfGameStatesPerPlayerAndWatcher.length; i < numEntriesRequired; i++) {
+      numberOfGameStatesPerPlayerAndWatcher.push(0);
+    }
+
+    this.clientToNumberOfGameStatesPerPlayerAndWatcher.set(
+      client,
+      numberOfGameStatesPerPlayerAndWatcher,
+    );
+
     const messageToClient = PB_MessageToClient.create({
       game: {
         connectResponse: {
           logTime: message.logTime,
           gameNumber: message.gameNumber,
-          metadata:
-            message.numberOfGameStates === 0
-              ? {
-                  gameMode: this.gameSetup ? this.gameSetup.gameMode : this.game!.gameMode,
-                  playerArrangementMode: this.gameSetup
-                    ? this.gameSetup.playerArrangementMode
-                    : this.game!.playerArrangementMode,
-                  hostUserId: this.gameSetup ? this.gameSetup.hostUser.id : this.game!.hostUser.id,
-                  userIds: (this.gameSetup ? this.gameSetup : this.game!).users.map(
-                    (user) => user?.id ?? 0,
-                  ),
-                  approvals: this.gameSetup ? this.gameSetup.approvals : dummyApprovals,
-                  numberOfGameSetupChanges: this.gameSetup ? this.numberOfGameSetupChanges : 0,
-                }
-              : undefined,
+          metadata: numberOfGameStatesPerPlayerAndWatcher.every((entry) => entry === 0)
+            ? {
+                gameMode: this.gameSetup ? this.gameSetup.gameMode : this.game!.gameMode,
+                playerArrangementMode: this.gameSetup
+                  ? this.gameSetup.playerArrangementMode
+                  : this.game!.playerArrangementMode,
+                hostUserId: this.gameSetup ? this.gameSetup.hostUser.id : this.game!.hostUser.id,
+                userIds: (this.gameSetup ? this.gameSetup : this.game!).users.map(
+                  (user) => user?.id ?? 0,
+                ),
+                approvals: this.gameSetup ? this.gameSetup.approvals : dummyApprovals,
+                numberOfGameSetupChanges: this.gameSetup ? this.numberOfGameSetupChanges : 0,
+              }
+            : undefined,
           userIdsInRoom: [...this.userToClients.keys()].map((user) => user.id),
         },
         userIdsAndUsernames:
@@ -106,18 +118,8 @@ export class GameRoom extends Room {
       },
     });
 
-    if (this.game) {
-      const gameStateMessages: PB_GameState[] = [];
-
-      const playerId = client.user ? this.game.users.indexOf(client.user) : -1;
-
-      for (let i = message.numberOfGameStates; i < this.game.gameStateHistory.length; i++) {
-        const gameState = this.game.gameStateHistory[i];
-        gameStateMessages.push(
-          playerId >= 0 ? gameState.playerGameStates[playerId] : gameState.watcherGameState,
-        );
-      }
-
+    const gameStateMessages = this.gameStateMessagesClientDoesNotHave(client);
+    if (gameStateMessages) {
       messageToClient.game!.gameStates = gameStateMessages;
     }
 
@@ -215,6 +217,16 @@ export class GameRoom extends Room {
 
       this.game.doGameAction(PB_GameAction.create({ startGame: {} }), this.dateNow());
 
+      for (const client of this.clients) {
+        const initialNumberOfGameStatesPerPlayerAndWatcher = new Array(this.game.users.length + 1);
+        initialNumberOfGameStatesPerPlayerAndWatcher.fill(0);
+
+        this.clientToNumberOfGameStatesPerPlayerAndWatcher.set(
+          client,
+          initialNumberOfGameStatesPerPlayerAndWatcher,
+        );
+      }
+
       this.sendLastGameStateToClients();
     }
   }
@@ -242,6 +254,69 @@ export class GameRoom extends Room {
     }
 
     this.sendLastGameStateToClients();
+  }
+
+  clientLoggedIn(client: Client) {
+    super.clientLoggedIn(client);
+
+    this.sendClientGameStateMessagesTheyDoNotHave(client);
+  }
+
+  clientLoggedOut(client: Client, previousUser: User) {
+    super.clientLoggedOut(client, previousUser);
+
+    this.sendClientGameStateMessagesTheyDoNotHave(client);
+  }
+
+  sendClientGameStateMessagesTheyDoNotHave(client: Client) {
+    if (client === this.clientFromConnectMessage) {
+      return;
+    }
+
+    const gameStateMessages = this.gameStateMessagesClientDoesNotHave(client);
+
+    if (gameStateMessages) {
+      client.sendMessage(
+        PB_MessageToClient.toBinary(
+          PB_MessageToClient.create({
+            game: {
+              gameStates: gameStateMessages,
+            },
+          }),
+        ),
+      );
+    }
+  }
+
+  gameStateMessagesClientDoesNotHave(client: Client) {
+    if (!this.game) {
+      return;
+    }
+
+    const numberOfGameStatesPerPlayerAndWatcher =
+      this.clientToNumberOfGameStatesPerPlayerAndWatcher.get(client)!;
+
+    const playerId = client.user ? this.game.users.indexOf(client.user) : -1;
+    const numberOfGameStates =
+      numberOfGameStatesPerPlayerAndWatcher[playerId === -1 ? this.game.users.length : playerId];
+
+    if (numberOfGameStates === this.game.gameStateHistory.length) {
+      return;
+    }
+
+    const gameStateMessages: PB_GameState[] = [];
+
+    for (let i = numberOfGameStates; i < this.game.gameStateHistory.length; i++) {
+      const gameState = this.game.gameStateHistory[i];
+      gameStateMessages.push(
+        playerId >= 0 ? gameState.playerGameStates[playerId] : gameState.watcherGameState,
+      );
+    }
+
+    numberOfGameStatesPerPlayerAndWatcher[playerId === -1 ? this.game.users.length : playerId] =
+      this.game.gameStateHistory.length;
+
+    return gameStateMessages;
   }
 
   userConnected(user: User) {
@@ -333,6 +408,8 @@ export class GameRoom extends Room {
         for (const client of clients) {
           client.sendMessage(message);
           clientsInGame.add(client);
+
+          this.clientToNumberOfGameStatesPerPlayerAndWatcher.get(client)![playerId]++;
         }
       }
     }
@@ -349,6 +426,8 @@ export class GameRoom extends Room {
       for (const client of this.clients) {
         if (!clientsInGame.has(client)) {
           client.sendMessage(message);
+
+          this.clientToNumberOfGameStatesPerPlayerAndWatcher.get(client)![game.users.length]++;
         }
       }
     }

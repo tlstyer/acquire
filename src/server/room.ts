@@ -21,7 +21,7 @@ export class Room {
     this.clients.delete(client);
 
     if (client.user !== null) {
-      this.clientLoggedOut(client);
+      this.clientLoggedOut(client, client.user);
     }
   }
 
@@ -35,12 +35,12 @@ export class Room {
     }
   }
 
-  clientLoggedOut(client: Client) {
-    const clients = this.userToClients.get(client.user!)!;
+  clientLoggedOut(client: Client, previousUser: User) {
+    const clients = this.userToClients.get(previousUser)!;
     clients.delete(client);
     if (clients.size === 0) {
-      this.userToClients.delete(client.user!);
-      this.userDisconnected(client.user!);
+      this.userToClients.delete(previousUser);
+      this.userDisconnected(previousUser);
     }
   }
 

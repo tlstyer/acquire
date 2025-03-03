@@ -9,6 +9,7 @@ import { getExampleGame1 } from '../../client/pages/examples/games.js';
 import { type Server } from '../../server/server.js';
 import { defaultGameBoard } from '../defaults.js';
 import { ActionGameOver } from '../gameActions/gameOver.js';
+import { type GameState } from '../gameState.js';
 import { PB_GameMode, PB_MessageToServer, PB_PlayerArrangementMode } from '../pb.js';
 import { type User } from '../user.js';
 import {
@@ -625,6 +626,128 @@ test('game action permissions', async () => {
 });
 
 test('lobby is told when a game completes', async () => {
+  const { serverStuff, lobbyManagers, gameManagersAndUserAccessors, gameToReplay } =
+    await prepareToReplayExampleGame();
+
+  for (let i = 1; i < gameToReplay.gameStateHistory.length; i++) {
+    replayGameState(gameToReplay.gameStateHistory[i], gameManagersAndUserAccessors);
+  }
+  expectEqualGameStuff(lobbyManagers, gameManagersAndUserAccessors, serverStuff.server);
+});
+
+test('game manager signals are correct when a user in a game logs in or out', async () => {
+  const {
+    serverStuff,
+    lobbyManagers,
+    clientStuff1,
+    clientStuff2,
+    gameManagersAndUserAccessors,
+    gameNumber,
+    gameToReplay,
+  } = await prepareToReplayExampleGame();
+
+  replayGameState(gameToReplay.gameStateHistory[1], gameManagersAndUserAccessors);
+  expectEqualGameStuff(lobbyManagers, gameManagersAndUserAccessors, serverStuff.server);
+
+  // connect to server and game
+  const clientStuff = createClientStuffAndConnectToTestServer(serverStuff);
+  const gameManager = clientStuff.client.connectToGame(clientStuff.client.logTime, gameNumber);
+  const gameManagerAndUserAccessor = new GameManagerAndUserAccessor(
+    gameManager,
+    clientStuff.client.signals.user,
+  );
+  gameManagersAndUserAccessors.add(gameManagerAndUserAccessor);
+  expectEqualGameStuff(lobbyManagers, gameManagersAndUserAccessors, serverStuff.server);
+
+  replayGameState(gameToReplay.gameStateHistory[2], gameManagersAndUserAccessors);
+  expectEqualGameStuff(lobbyManagers, gameManagersAndUserAccessors, serverStuff.server);
+
+  // login as user 3
+  await loginAsUser(clientStuff, 3);
+  expectEqualGameStuff(lobbyManagers, gameManagersAndUserAccessors, serverStuff.server);
+
+  replayGameState(gameToReplay.gameStateHistory[3], gameManagersAndUserAccessors);
+  expectEqualGameStuff(lobbyManagers, gameManagersAndUserAccessors, serverStuff.server);
+
+  // logout
+  clientStuff.client.logout();
+  await waitForAsyncServerStuff();
+  expectEqualGameStuff(lobbyManagers, gameManagersAndUserAccessors, serverStuff.server);
+
+  replayGameState(gameToReplay.gameStateHistory[4], gameManagersAndUserAccessors);
+  expectEqualGameStuff(lobbyManagers, gameManagersAndUserAccessors, serverStuff.server);
+
+  // login as user 2
+  await loginAsUser(clientStuff, 2);
+  expectEqualGameStuff(lobbyManagers, gameManagersAndUserAccessors, serverStuff.server);
+
+  replayGameState(gameToReplay.gameStateHistory[5], gameManagersAndUserAccessors);
+  expectEqualGameStuff(lobbyManagers, gameManagersAndUserAccessors, serverStuff.server);
+
+  // logout
+  clientStuff.client.logout();
+  await waitForAsyncServerStuff();
+  expectEqualGameStuff(lobbyManagers, gameManagersAndUserAccessors, serverStuff.server);
+
+  replayGameState(gameToReplay.gameStateHistory[6], gameManagersAndUserAccessors);
+  expectEqualGameStuff(lobbyManagers, gameManagersAndUserAccessors, serverStuff.server);
+
+  // login as user 1
+  await loginAsUser(clientStuff, 1);
+  expectEqualGameStuff(lobbyManagers, gameManagersAndUserAccessors, serverStuff.server);
+
+  replayGameState(gameToReplay.gameStateHistory[7], gameManagersAndUserAccessors);
+  expectEqualGameStuff(lobbyManagers, gameManagersAndUserAccessors, serverStuff.server);
+
+  // disconnect from server
+  clientStuff.clientCommunication.disconnect();
+  await waitForAsyncServerStuff();
+  gameManagersAndUserAccessors.delete(gameManagerAndUserAccessor);
+  expectEqualGameStuff(lobbyManagers, gameManagersAndUserAccessors, serverStuff.server);
+
+  replayGameState(gameToReplay.gameStateHistory[8], gameManagersAndUserAccessors);
+  expectEqualGameStuff(lobbyManagers, gameManagersAndUserAccessors, serverStuff.server);
+
+  // reconnect to server
+  clientStuff.clientCommunication.connect();
+  await waitForAsyncServerStuff();
+  gameManagersAndUserAccessors.add(gameManagerAndUserAccessor);
+  expectEqualGameStuff(lobbyManagers, gameManagersAndUserAccessors, serverStuff.server);
+
+  // client2 logs out
+  clientStuff2.client.logout();
+  await waitForAsyncServerStuff();
+  expectEqualGameStuff(lobbyManagers, gameManagersAndUserAccessors, serverStuff.server);
+
+  replayGameState(gameToReplay.gameStateHistory[9], gameManagersAndUserAccessors);
+  expectEqualGameStuff(lobbyManagers, gameManagersAndUserAccessors, serverStuff.server);
+
+  // client1 logs out
+  clientStuff1.client.logout();
+  await waitForAsyncServerStuff();
+  expectEqualGameStuff(lobbyManagers, gameManagersAndUserAccessors, serverStuff.server);
+
+  // client logs out
+  clientStuff.client.logout();
+  await waitForAsyncServerStuff();
+  expectEqualGameStuff(lobbyManagers, gameManagersAndUserAccessors, serverStuff.server);
+
+  // client1 logs in as a different player
+  await loginAsUser(clientStuff1, 2);
+  expectEqualGameStuff(lobbyManagers, gameManagersAndUserAccessors, serverStuff.server);
+
+  replayGameState(gameToReplay.gameStateHistory[10], gameManagersAndUserAccessors);
+  expectEqualGameStuff(lobbyManagers, gameManagersAndUserAccessors, serverStuff.server);
+
+  // client2 logs in as a different player
+  await loginAsUser(clientStuff2, 1);
+  expectEqualGameStuff(lobbyManagers, gameManagersAndUserAccessors, serverStuff.server);
+
+  replayGameState(gameToReplay.gameStateHistory[11], gameManagersAndUserAccessors);
+  expectEqualGameStuff(lobbyManagers, gameManagersAndUserAccessors, serverStuff.server);
+});
+
+async function prepareToReplayExampleGame() {
   const serverStuff = createServerStuff();
 
   const lobbyManagers = new Set<LobbyManager>();
@@ -663,21 +786,38 @@ test('lobby is told when a game completes', async () => {
   gameManager2.gameSetupActions.approve();
   expectEqualGameStuff(lobbyManagers, gameManagersAndUserAccessors, serverStuff.server);
 
-  for (let i = 1; i < gameToReplay.gameStateHistory.length; i++) {
-    const gameState = gameToReplay.gameStateHistory[i];
+  return {
+    serverStuff,
+    lobbyManagers,
+    clientStuff1,
+    clientStuff2,
+    gameManagersAndUserAccessors,
+    gameNumber,
+    gameToReplay,
+  };
+}
 
-    const gameManager = [...gameManagersAndUserAccessors][gameState.playerId].gameManager;
+function replayGameState(
+  gameState: GameState,
+  gameManagersAndUserAccessors: Set<GameManagerAndUserAccessor>,
+) {
+  for (const gameManagerAndUserAccessor of gameManagersAndUserAccessors) {
+    const gameManager = gameManagerAndUserAccessor.gameManager;
 
-    const action = Object.keys(gameState.gameAction)[0];
-    // @ts-expect-error action is a key of gameState.gameAction
-    const parameters = Object.values(gameState.gameAction[action]);
+    if (gameManager.signals.myPlayerId() === gameState.playerId) {
+      const action = Object.keys(gameState.gameAction)[0];
+      // @ts-expect-error action is a key of gameState.gameAction
+      const parameters = Object.values(gameState.gameAction[action]);
 
-    // @ts-expect-error action and parameters are correct
-    gameManager.gameActions[action](...parameters);
+      // @ts-expect-error action and parameters are correct
+      gameManager.gameActions[action](...parameters);
+
+      return;
+    }
   }
 
-  expectEqualGameStuff(lobbyManagers, gameManagersAndUserAccessors, serverStuff.server);
-});
+  throw new Error('player not in room');
+}
 
 class GameManagerAndUserAccessor {
   constructor(
@@ -750,7 +890,17 @@ function expectEqualGameStuff(
       expect(gameManagerSignals.hostUser()).toEqual(game.hostUser);
 
       const user = gameManagerAndUserAccessor.userAccessor();
-      const playerId = user ? game.users.indexOf(user) : -1;
+      let playerId = -1;
+      if (user) {
+        for (let pid = 0; pid < game.users.length; pid++) {
+          const u = game.users[pid];
+          if (u.id === user.id) {
+            playerId = pid;
+            break;
+          }
+        }
+      }
+
       expect(
         gameManagerSignals.gameStateHistory().map((gameState) => {
           if (gameState.playerGameStates.length === 0) {

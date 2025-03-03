@@ -194,7 +194,7 @@ message PB {
         int64 log_time = 1 [ jstype = JS_NUMBER ];
         int32 game_number = 2;
         int32 number_of_user_id_and_username_messages = 3;
-        int32 number_of_game_states = 4;
+        repeated int32 number_of_game_states_per_player_and_watcher = 4;
       }
 
       message GameSetupAction {
