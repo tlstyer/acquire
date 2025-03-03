@@ -34,7 +34,33 @@ export class LobbyRoom extends Room {
   onMessage_Connect(client: Client, message: PB_MessageToServer_Lobby_Connect) {
     client.connectToRoom(this);
 
-    client.sendMessage(this.getConnectionResponse(message));
+    const clientLastEventIndex = message.lastEventIndex;
+    const serverLastEventIndex =
+      this.batchesOfEvents[this.batchesOfEvents.length - 1].lastEventIndex;
+
+    // is client up-to-date?
+    if (clientLastEventIndex === serverLastEventIndex) {
+      client.sendMessage(this.noUpdatesMessage);
+      return;
+    }
+
+    // is client a ways behind and we have events to catch them up?
+    const indexOfBatchAfterClientsLastEvent = this.findInBatchesOfEvents(clientLastEventIndex + 1);
+    if (indexOfBatchAfterClientsLastEvent !== undefined) {
+      for (let i = indexOfBatchAfterClientsLastEvent; i < this.batchesOfEvents.length; i++) {
+        client.sendMessage(this.batchesOfEvents[i].message);
+      }
+      return;
+    }
+
+    // refresh client with last state checkpoint and following batches of events
+    client.sendMessage(this.lscMessage);
+    const indexOfBatchAfterLSC = this.findInBatchesOfEvents(this.lscLastEventIndex + 1);
+    if (indexOfBatchAfterLSC !== undefined) {
+      for (let i = indexOfBatchAfterLSC; i < this.batchesOfEvents.length; i++) {
+        client.sendMessage(this.batchesOfEvents[i].message);
+      }
+    }
   }
 
   onMessage_CreateGame(client: Client, message: PB_MessageToServer_Lobby_CreateGame) {
@@ -232,30 +258,6 @@ export class LobbyRoom extends Room {
     this.lscKnownUsers = new Set(userToUserMessage.keys());
   }
 
-  private getConnectionResponse(message: PB_MessageToServer_Lobby_Connect) {
-    const clientLastEventIndex = message.lastEventIndex;
-    const serverLastEventIndex =
-      this.batchesOfEvents[this.batchesOfEvents.length - 1].lastEventIndex;
-
-    // is client is up-to-date?
-    if (clientLastEventIndex === serverLastEventIndex) {
-      return this.noUpdatesMessage;
-    }
-
-    // is client a ways behind and we have events to catch them up?
-    const indexOfBatchAfterClientsLastEvent = this.findInBatchesOfEvents(clientLastEventIndex + 1);
-    if (indexOfBatchAfterClientsLastEvent !== undefined) {
-      return this.concatenateMessages(false, indexOfBatchAfterClientsLastEvent);
-    }
-
-    // refresh client with last state checkpoint and following batches of events
-    const indexOfBatchAfterLSC = this.findInBatchesOfEvents(this.lscLastEventIndex + 1);
-    return this.concatenateMessages(
-      true,
-      indexOfBatchAfterLSC !== undefined ? indexOfBatchAfterLSC : this.batchesOfEvents.length,
-    );
-  }
-
   private findInBatchesOfEvents(firstEventIndex: number) {
     let begin = 0;
     let end = this.batchesOfEvents.length - 1;
@@ -272,47 +274,6 @@ export class LobbyRoom extends Room {
       } else {
         return middle;
       }
-    }
-  }
-
-  private concatenateMessages(
-    includeLastStateCheckpoint: boolean,
-    beginningBatchesOfEventsIndex: number,
-  ) {
-    let numberOfMessages = 0;
-    let lengthOfConcatenatedMessages = 0;
-    if (includeLastStateCheckpoint) {
-      numberOfMessages++;
-      lengthOfConcatenatedMessages += this.lscMessage.length;
-    }
-    for (let i = beginningBatchesOfEventsIndex; i < this.batchesOfEvents.length; i++) {
-      numberOfMessages++;
-      lengthOfConcatenatedMessages += this.batchesOfEvents[i].message.length;
-    }
-
-    if (numberOfMessages === 0) {
-      throw new Error('no messages to concatenate');
-    } else if (numberOfMessages === 1) {
-      if (includeLastStateCheckpoint) {
-        return this.lscMessage;
-      } else {
-        return this.batchesOfEvents[beginningBatchesOfEventsIndex].message;
-      }
-    } else {
-      const concatenatedMessages = new Uint8Array(lengthOfConcatenatedMessages);
-      let offset = 0;
-      if (includeLastStateCheckpoint) {
-        const message = this.lscMessage;
-        concatenatedMessages.set(message, offset);
-        offset += message.length;
-      }
-      for (let i = beginningBatchesOfEventsIndex; i < this.batchesOfEvents.length; i++) {
-        const message = this.batchesOfEvents[i].message;
-        concatenatedMessages.set(message, offset);
-        offset += message.length;
-      }
-
-      return concatenatedMessages;
     }
   }
 }
