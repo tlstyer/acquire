@@ -1,3 +1,4 @@
+import { concatenateUint8Arrays } from '../common/helpers.js';
 import { type User } from '../common/user.js';
 import { type Room } from './room.js';
 
@@ -10,8 +11,34 @@ export class Client {
 
   constructor(
     public clientId: number,
-    public sendMessage: (message: Uint8Array) => void,
+    private actuallySendMessage: (message: Uint8Array) => void,
   ) {}
+
+  private responseMessages: Uint8Array[] | null = null;
+
+  beginResponse() {
+    if (!this.responseMessages) {
+      this.responseMessages = [];
+    }
+  }
+
+  endResponse() {
+    if (this.responseMessages) {
+      if (this.responseMessages.length > 0) {
+        this.actuallySendMessage(concatenateUint8Arrays(this.responseMessages));
+      }
+
+      this.responseMessages = null;
+    }
+  }
+
+  sendMessage(message: Uint8Array) {
+    if (this.responseMessages) {
+      this.responseMessages.push(message);
+    } else {
+      this.actuallySendMessage(message);
+    }
+  }
 
   connectToRoom(room: Room) {
     this.disconnectFromRoom();

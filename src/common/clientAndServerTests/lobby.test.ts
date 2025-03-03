@@ -139,6 +139,7 @@ test('users are added and removed', async () => {
   // client logs out
 
   clientStuff.client.logout();
+  await waitForAsyncServerStuff();
   clientStuff.clientCommunication.communicatedMessages.length = 0;
   clientStuff4.clientCommunication.communicatedMessages.length = 0;
 

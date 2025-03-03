@@ -22,6 +22,7 @@ import {
   user4,
   user5,
   user6,
+  waitForAsyncServerStuff,
 } from './common.js';
 
 test('newly created game has correct signals', async () => {
@@ -126,6 +127,7 @@ test('client knows what user IDs and usernames are and were in the game room', a
 
   // client3 logs out
   clientStuff3.client.logout();
+  await waitForAsyncServerStuff();
   expectUsers(
     new Map([
       [1, user1],
@@ -148,6 +150,7 @@ test('client knows what user IDs and usernames are and were in the game room', a
 
   // client2 logs out
   clientStuff2.client.logout();
+  await waitForAsyncServerStuff();
   expectUsers(
     new Map([
       [1, user1],

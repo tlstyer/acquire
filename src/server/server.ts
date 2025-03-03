@@ -80,12 +80,17 @@ export class Server {
     if (messageToServer.loginLogout) {
       await this.onMessage_LoginLogout(client, messageToServer.loginLogout);
     }
+
+    client.beginResponse(); // here so that the response is begun and ended with no wait time in between
+
     if (messageToServer.lobby) {
       this.lobbyRoom.onMessage(client, messageToServer.lobby);
     }
     if (messageToServer.game) {
       this.gameRoomsManager.onMessage(client, messageToServer.game);
     }
+
+    client.endResponse();
   }
 
   private async onMessage_LoginLogout(client: Client, message: PB_MessageToServer_LoginLogout) {
@@ -238,8 +243,6 @@ export class Server {
       this.userIdToUser.set(userData.userId, user);
     }
 
-    client.loggedIn(user);
-
     this.sendLoginLogoutMessage(
       client,
       PB_MessageToClient_LoginLogout_ResponseCode.SUCCESS,
@@ -247,6 +250,8 @@ export class Server {
       userData.userId,
       userData.passwordHash,
     );
+
+    client.loggedIn(user);
   }
 
   private onMessage_LoginLogout_Logout(client: Client) {
@@ -255,9 +260,9 @@ export class Server {
       return;
     }
 
-    client.loggedOut();
-
     this.sendLoginLogoutMessage(client, PB_MessageToClient_LoginLogout_ResponseCode.SUCCESS);
+
+    client.loggedOut();
   }
 
   private sendLoginLogoutMessage(
@@ -267,6 +272,8 @@ export class Server {
     userId?: number,
     token?: string,
   ) {
+    client.beginResponse();
+
     client.sendMessage(
       PB_MessageToClient.toBinary(createLoginLogoutMessage(responseCode, username, userId, token)),
     );
