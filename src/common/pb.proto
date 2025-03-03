@@ -378,8 +378,7 @@ message PB {
         int32 game_number = 2;
         Metadata metadata = 3;
         GameReview game_review = 4;
-        bool game_not_found = 5;
-        repeated int32 user_ids_in_room = 6;
+        repeated int32 user_ids_in_room = 5;
       }
 
       message UserIdAndUsername {

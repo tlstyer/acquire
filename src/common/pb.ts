@@ -968,11 +968,7 @@ export interface PB_MessageToClient_Game_ConnectResponse {
      */
     gameReview?: PB_GameReview;
     /**
-     * @generated from protobuf field: bool game_not_found = 5;
-     */
-    gameNotFound: boolean;
-    /**
-     * @generated from protobuf field: repeated int32 user_ids_in_room = 6;
+     * @generated from protobuf field: repeated int32 user_ids_in_room = 5;
      */
     userIdsInRoom: number[];
 }
@@ -4726,15 +4722,13 @@ class PB_MessageToClient_Game_ConnectResponse$Type extends MessageType<PB_Messag
             { no: 2, name: "game_number", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
             { no: 3, name: "metadata", kind: "message", T: () => PB_MessageToClient_Game_ConnectResponse_Metadata },
             { no: 4, name: "game_review", kind: "message", T: () => PB_GameReview },
-            { no: 5, name: "game_not_found", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 6, name: "user_ids_in_room", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ }
+            { no: 5, name: "user_ids_in_room", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ }
         ]);
     }
     create(value?: PartialMessage<PB_MessageToClient_Game_ConnectResponse>): PB_MessageToClient_Game_ConnectResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.logTime = 0;
         message.gameNumber = 0;
-        message.gameNotFound = false;
         message.userIdsInRoom = [];
         if (value !== undefined)
             reflectionMergePartial<PB_MessageToClient_Game_ConnectResponse>(this, message, value);
@@ -4757,10 +4751,7 @@ class PB_MessageToClient_Game_ConnectResponse$Type extends MessageType<PB_Messag
                 case /* PB.GameReview game_review */ 4:
                     message.gameReview = PB_GameReview.internalBinaryRead(reader, reader.uint32(), options, message.gameReview);
                     break;
-                case /* bool game_not_found */ 5:
-                    message.gameNotFound = reader.bool();
-                    break;
-                case /* repeated int32 user_ids_in_room */ 6:
+                case /* repeated int32 user_ids_in_room */ 5:
                     if (wireType === WireType.LengthDelimited)
                         for (let e = reader.int32() + reader.pos; reader.pos < e;)
                             message.userIdsInRoom.push(reader.int32());
@@ -4791,12 +4782,9 @@ class PB_MessageToClient_Game_ConnectResponse$Type extends MessageType<PB_Messag
         /* PB.GameReview game_review = 4; */
         if (message.gameReview)
             PB_GameReview.internalBinaryWrite(message.gameReview, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
-        /* bool game_not_found = 5; */
-        if (message.gameNotFound !== false)
-            writer.tag(5, WireType.Varint).bool(message.gameNotFound);
-        /* repeated int32 user_ids_in_room = 6; */
+        /* repeated int32 user_ids_in_room = 5; */
         if (message.userIdsInRoom.length) {
-            writer.tag(6, WireType.LengthDelimited).fork();
+            writer.tag(5, WireType.LengthDelimited).fork();
             for (let i = 0; i < message.userIdsInRoom.length; i++)
                 writer.int32(message.userIdsInRoom[i]);
             writer.join();

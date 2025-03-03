@@ -202,7 +202,6 @@ One or more of:
     - approvals (if Setting Up)
     - number of game setup changes
   - game review data (when game not shown in lobby)
-  - not found (when game not found)
   - user IDs in room
 - array of user IDs and usernames
 - user ID who entered game room (only in subsequent messages)

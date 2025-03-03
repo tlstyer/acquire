@@ -95,7 +95,6 @@ export class GameRoomsManager {
             connectResponse: {
               logTime: message.logTime,
               gameNumber: message.gameNumber,
-              gameNotFound: true,
             },
           },
         }),
