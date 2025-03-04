@@ -10,7 +10,7 @@ import { ActionSelectNewChain } from '../../../common/gameActions/selectNewChain
 import { ActionStartGame } from '../../../common/gameActions/startGame.js';
 import { PB_GameBoardType, PB_GameMode, PB_PlayerArrangementMode } from '../../../common/pb.js';
 import { User } from '../../../common/user.js';
-import { NextGameAction } from '../../components/NextGameAction.js';
+import { NextGameAction } from '../../components/NextGameAction.jsx';
 import { allChains } from '../../helpers.js';
 
 export function NextGameActionExamples() {

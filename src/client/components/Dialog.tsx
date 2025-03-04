@@ -2,11 +2,11 @@ import { createMemo, Match, onCleanup, onMount, Show, Switch } from 'solid-js';
 import { type Client } from '../client.js';
 import { DialogType } from '../helpers.js';
 import { type ProcessMyKeyboardEventRef } from '../myKeyboardEvents.js';
-import { CreateUser } from './CreateUser.js';
+import { CreateUser } from './CreateUser.jsx';
 import styles from './Dialog.module.css';
-import { Login } from './Login.js';
-import { Logout } from './Logout.js';
-import { Settings } from './Settings.js';
+import { Login } from './Login.jsx';
+import { Logout } from './Logout.jsx';
+import { Settings } from './Settings.jsx';
 
 export function Dialog(props: { ref: (ref: ProcessMyKeyboardEventRef) => void; client: Client }) {
   let rootElement!: HTMLDivElement;

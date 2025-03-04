@@ -2,7 +2,7 @@ import { createMemo, createSignal, For } from 'solid-js';
 import { GameSetup } from '../../../common/gameSetup.js';
 import { PB_GameMode, PB_PlayerArrangementMode } from '../../../common/pb.js';
 import { User } from '../../../common/user.js';
-import { GameSetupUI } from '../../components/GameSetupUI.js';
+import { GameSetupUI } from '../../components/GameSetupUI.jsx';
 
 export function GameSetupUIExamples() {
   const hostUser = new User(1, 'Host');

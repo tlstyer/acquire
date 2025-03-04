@@ -1,9 +1,9 @@
 import { createSignal, For } from 'solid-js';
 import { type PB_GameBoardType } from '../../../common/pb.js';
-import { SelectChain, SelectChainTitle } from '../../components/SelectChain.js';
+import { SelectChain, SelectChainTitle } from '../../components/SelectChain.jsx';
 import { gameBoardTypeToHotelInitial } from '../../helpers.js';
 import { processBrowserMyKeyboardEvents } from '../../myKeyboardEvents.js';
-import { EnableKeyboardShortcutsButton } from './EnableKeyboardShortcutsButton.js';
+import { EnableKeyboardShortcutsButton } from './EnableKeyboardShortcutsButton.jsx';
 
 export function SelectChainExamples() {
   const allProps = [

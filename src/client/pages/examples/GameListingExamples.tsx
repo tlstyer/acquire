@@ -2,7 +2,7 @@ import { For } from 'solid-js';
 import { defaultGameBoard } from '../../../common/defaults.js';
 import { PB_GameMode } from '../../../common/pb.js';
 import { User } from '../../../common/user.js';
-import { GameListing } from '../../components/GameListing.js';
+import { GameListing } from '../../components/GameListing.jsx';
 import { GameStatus } from '../../helpers.js';
 import { getExampleGame1, getExampleGame2 } from './games.js';
 

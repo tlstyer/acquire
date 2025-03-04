@@ -4,9 +4,9 @@ import { TransitionGroup } from 'solid-transition-group';
 import { PB_GameBoardType, PB_GameMode } from '../../../common/pb.js';
 import { User } from '../../../common/user.js';
 import { type Client } from '../../client.js';
-import { CreateGame } from '../../components/CreateGame.js';
-import { GameListing } from '../../components/GameListing.js';
-import { Username } from '../../components/Username.js';
+import { CreateGame } from '../../components/CreateGame.jsx';
+import { GameListing } from '../../components/GameListing.jsx';
+import { Username } from '../../components/Username.jsx';
 import { GameStatus } from '../../helpers.js';
 import styles from './LobbyPage.module.css';
 

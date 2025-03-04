@@ -24,8 +24,8 @@ import {
 import { toTileString } from '../../common/helpers.js';
 import { type User } from '../../common/user.js';
 import styles from './GameHistoryMessageUI.module.css';
-import { HotelName } from './HotelName.js';
-import { Username } from './Username.js';
+import { HotelName } from './HotelName.jsx';
+import { Username } from './Username.jsx';
 
 export function GameHistoryMessageUI(props: {
   users: User[];

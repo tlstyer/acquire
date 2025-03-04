@@ -8,10 +8,10 @@ import { ActionSelectChainToDisposeOfNext } from '../../common/gameActions/selec
 import { ActionSelectMergerSurvivor } from '../../common/gameActions/selectMergerSurvivor.js';
 import { ActionSelectNewChain } from '../../common/gameActions/selectNewChain.js';
 import { ActionStartGame } from '../../common/gameActions/startGame.js';
-import { HotelName } from './HotelName.js';
+import { HotelName } from './HotelName.jsx';
 import styles from './NextGameAction.module.css';
-import { NextGameActionHotelInitialsList } from './NextGameActionHotelInitialsList.js';
-import { Username } from './Username.js';
+import { NextGameActionHotelInitialsList } from './NextGameActionHotelInitialsList.jsx';
+import { Username } from './Username.jsx';
 
 export function NextGameAction(props: { action: ActionBase }) {
   return (

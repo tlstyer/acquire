@@ -1,6 +1,6 @@
 import { For } from 'solid-js';
 import { PB_GameBoardType } from '../../../common/pb.js';
-import { TileRackReadOnly } from '../../components/TileRackReadOnly.js';
+import { TileRackReadOnly } from '../../components/TileRackReadOnly.jsx';
 
 export function TileRackReadOnlyExamples() {
   const allProps = [

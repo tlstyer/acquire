@@ -1,20 +1,20 @@
-import { CreateGameExamples } from './CreateGameExamples.js';
-import { DisposeOfSharesExamples } from './DisposeOfSharesExamples.js';
+import { CreateGameExamples } from './CreateGameExamples.jsx';
+import { DisposeOfSharesExamples } from './DisposeOfSharesExamples.jsx';
 import {
   EnableKeyboardShortcutsButtonContext,
   makeEnableKeyboardShortcutsButtonContext,
 } from './EnableKeyboardShortcutsButton.jsx';
 import styles from './ExamplesPage.module.css';
-import { GameBoardExamples } from './GameBoardExamples.js';
-import { GameHistoryExamples } from './GameHistoryExamples.js';
-import { GameListingExamples } from './GameListingExamples.js';
-import { GameSetupUIExamples } from './GameSetupUIExamples.js';
-import { NextGameActionExamples } from './NextGameActionExamples.js';
-import { PurchaseSharesExamples } from './PurchaseSharesExamples.js';
-import { ScoreBoardExamples } from './ScoreBoardExamples.js';
-import { SelectChainExamples } from './SelectChainExamples.js';
-import { TileRackExamples } from './TileRackExamples.js';
-import { TileRackReadOnlyExamples } from './TileRackReadOnlyExamples.js';
+import { GameBoardExamples } from './GameBoardExamples.jsx';
+import { GameHistoryExamples } from './GameHistoryExamples.jsx';
+import { GameListingExamples } from './GameListingExamples.jsx';
+import { GameSetupUIExamples } from './GameSetupUIExamples.jsx';
+import { NextGameActionExamples } from './NextGameActionExamples.jsx';
+import { PurchaseSharesExamples } from './PurchaseSharesExamples.jsx';
+import { ScoreBoardExamples } from './ScoreBoardExamples.jsx';
+import { SelectChainExamples } from './SelectChainExamples.jsx';
+import { TileRackExamples } from './TileRackExamples.jsx';
+import { TileRackReadOnlyExamples } from './TileRackReadOnlyExamples.jsx';
 
 export function ExamplesPage() {
   return (

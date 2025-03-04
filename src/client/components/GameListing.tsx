@@ -6,7 +6,7 @@ import stylesApp from '../App.module.css';
 import { gameModeToString, type GameStatus, gameStatusToString } from '../helpers.js';
 import { teamNumberToCSSClassName } from '../styleHelpers.js';
 import styles from './GameListing.module.css';
-import { MiniGameBoard } from './MiniGameBoard.js';
+import { MiniGameBoard } from './MiniGameBoard.jsx';
 
 export function GameListing(props: {
   gameBoard: PB_GameBoardType[][];

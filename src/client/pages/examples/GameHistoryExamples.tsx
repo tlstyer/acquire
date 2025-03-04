@@ -1,9 +1,9 @@
 import { createSignal, For } from 'solid-js';
 import { type GameState } from '../../../common/gameState.js';
 import { type User } from '../../../common/user.js';
-import { GameHistory } from '../../components/GameHistory.js';
+import { GameHistory } from '../../components/GameHistory.jsx';
 import { processBrowserMyKeyboardEvents } from '../../myKeyboardEvents.js';
-import { EnableKeyboardShortcutsButton } from './EnableKeyboardShortcutsButton.js';
+import { EnableKeyboardShortcutsButton } from './EnableKeyboardShortcutsButton.jsx';
 import styles from './GameHistoryExamples.module.css';
 import {
   getExampleGame1,

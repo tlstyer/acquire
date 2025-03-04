@@ -3,7 +3,7 @@ import { type GameState } from '../../common/gameState.js';
 import { type User } from '../../common/user.js';
 import { type ProcessMyKeyboardEventRef } from '../myKeyboardEvents.js';
 import styles from './GameHistory.module.css';
-import { GameHistoryMessageUI } from './GameHistoryMessageUI.js';
+import { GameHistoryMessageUI } from './GameHistoryMessageUI.jsx';
 
 export function GameHistory(props: {
   ref: (ref: ProcessMyKeyboardEventRef) => void;

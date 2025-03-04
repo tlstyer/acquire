@@ -1,6 +1,6 @@
 import { For } from 'solid-js';
 import { PB_GameMode } from '../../../common/pb.js';
-import { CreateGame } from '../../components/CreateGame.js';
+import { CreateGame } from '../../components/CreateGame.jsx';
 import { gameModeToString } from '../../helpers.js';
 
 export function CreateGameExamples() {
