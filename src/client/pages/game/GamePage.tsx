@@ -378,7 +378,7 @@ export function GamePage(props: { client: Client }) {
                             >
                               <input
                                 type="button"
-                                value={playerId === followedPlayerId() ? 'Unlock' : 'Lock'}
+                                value={playerId === followedPlayerId() ? 'Unfollow' : 'Follow'}
                                 onClick={() =>
                                   setFollowedPlayerId((fpid) =>
                                     playerId === fpid ? null : playerId,
