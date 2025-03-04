@@ -39,7 +39,6 @@
     "eslint-plugin-solid": "^0.14.5",
     "globals": "^15.14.0",
     "jsdom": "^26.0.0",
-    "normalize.css": "^8.0.1",
     "prettier": "^3.5.0",
     "prettier-plugin-organize-imports": "^4.1.0",
     "protoc": "^1.1.3",

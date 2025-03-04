@@ -1,5 +1,4 @@
 import { type RouteDefinition, Router } from '@solidjs/router';
-import 'normalize.css';
 import { createEffect, onCleanup } from 'solid-js';
 import { isServer } from 'solid-js/web';
 import { parseDecimalInteger } from '../common/helpers.js';
