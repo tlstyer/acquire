@@ -1,13 +1,15 @@
-.root fieldset {
-  border-bottom: none;
-  border-left: none;
-  border-right: none;
-  border-top: 1px solid #000000;
-  margin: 0;
-  padding: 0;
-  text-align: center;
+.turnBegan {
+  display: flex;
+  flex-direction: row;
+  height: 1lh;
 }
 
-.root legend {
-  padding: 0 5px;
+.turnBegan hr:first-child {
+  flex-grow: 1;
+  margin: 0.5lh 5px 0.5lh 0;
+}
+
+.turnBegan hr:last-child {
+  flex-grow: 1;
+  margin: 0.5lh 0 0.5lh 5px;
 }

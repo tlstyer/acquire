@@ -32,19 +32,18 @@ export function GameHistoryMessageUI(props: {
   gameHistoryMessage: GameHistoryMessage;
 }) {
   return (
-    <div class={styles.root}>
+    <div>
       <Switch fallback={<>Mystery message!</>}>
         <Match when={props.gameHistoryMessage instanceof GameHistoryMessageTurnBegan}>
-          <fieldset>
-            <legend>
-              <Username
-                username={
-                  props.users[(props.gameHistoryMessage as GameHistoryMessageTurnBegan).playerId]
-                    .name
-                }
-              />
-            </legend>
-          </fieldset>
+          <div class={styles.turnBegan}>
+            <hr />
+            <Username
+              username={
+                props.users[(props.gameHistoryMessage as GameHistoryMessageTurnBegan).playerId].name
+              }
+            />
+            <hr />
+          </div>
         </Match>
         <Match when={props.gameHistoryMessage instanceof GameHistoryMessageDrewPositionTile}>
           <Username
