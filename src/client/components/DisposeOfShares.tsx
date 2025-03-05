@@ -6,7 +6,7 @@ import {
   type ProcessMyKeyboardEventRef,
 } from '../myKeyboardEvents.js';
 import { gameBoardTypeToCSSClassName } from '../styleHelpers.js';
-import styles from './DisposeOfShares.module.css';
+import * as styles from './DisposeOfShares.module.css';
 
 export function DisposeOfShares(props: {
   ref: (ref: ProcessMyKeyboardEventRef) => void;

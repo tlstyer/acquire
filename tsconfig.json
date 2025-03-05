@@ -4,6 +4,7 @@
     "target": "ESNext",
     "module": "NodeNext",
     "allowSyntheticDefaultImports": true,
+    "allowArbitraryExtensions": true,
     "esModuleInterop": true,
     "jsx": "preserve",
     "jsxImportSource": "solid-js",

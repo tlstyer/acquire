@@ -4,7 +4,7 @@ import { type User } from '../../../common/user.js';
 import { GameHistory } from '../../components/GameHistory.jsx';
 import { processBrowserMyKeyboardEvents } from '../../myKeyboardEvents.js';
 import { EnableKeyboardShortcutsButton } from './EnableKeyboardShortcutsButton.jsx';
-import styles from './GameHistoryExamples.module.css';
+import * as styles from './GameHistoryExamples.module.css';
 import {
   getExampleGame1,
   getExampleGame2,

@@ -1,7 +1,7 @@
 import { Index } from 'solid-js';
 import { type PB_GameBoardType } from '../../common/pb.js';
 import { gameBoardTypeToCSSClassName } from '../styleHelpers.js';
-import styles from './MiniGameBoard.module.css';
+import * as styles from './MiniGameBoard.module.css';
 
 export function MiniGameBoard(props: { gameBoard: PB_GameBoardType[][]; cellSize: number }) {
   return (

@@ -38,7 +38,7 @@ import { TileRack } from '../../components/TileRack.jsx';
 import { TileRackReadOnly } from '../../components/TileRackReadOnly.jsx';
 import { GameManagerStatus } from '../../gamesManager.js';
 import { processBrowserMyKeyboardEvents } from '../../myKeyboardEvents.js';
-import styles from './GamePage.module.css';
+import * as styles from './GamePage.module.css';
 
 export function GamePage(props: { client: Client }) {
   const params = useParams();

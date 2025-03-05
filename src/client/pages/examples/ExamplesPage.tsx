@@ -4,7 +4,7 @@ import {
   EnableKeyboardShortcutsButtonContext,
   makeEnableKeyboardShortcutsButtonContext,
 } from './EnableKeyboardShortcutsButton.jsx';
-import styles from './ExamplesPage.module.css';
+import * as styles from './ExamplesPage.module.css';
 import { GameBoardExamples } from './GameBoardExamples.jsx';
 import { GameHistoryExamples } from './GameHistoryExamples.jsx';
 import { GameListingExamples } from './GameListingExamples.jsx';

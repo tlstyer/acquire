@@ -3,7 +3,7 @@ import { toTileString } from '../../common/helpers.js';
 import { PB_GameBoardType } from '../../common/pb.js';
 import { GameBoardLabelMode, gameBoardTypeToHotelInitial } from '../helpers.js';
 import { gameBoardTypeToCSSClassName } from '../styleHelpers.js';
-import styles from './GameBoard.module.css';
+import * as styles from './GameBoard.module.css';
 
 export function GameBoard(props: {
   gameBoard: PB_GameBoardType[][];

@@ -2,7 +2,7 @@ import { createSignal, Show } from 'solid-js';
 import { PB_MessageToClient_LoginLogout_ResponseCode } from '../../common/pb.js';
 import { type Client, LoginState } from '../client.js';
 import { loginLogoutResponseCodeToString } from '../helpers.js';
-import styles from './Login.module.css';
+import * as styles from './Login.module.css';
 
 export function Logout(props: { client: Client }) {
   const [submitted, setSubmitted] = createSignal(false);

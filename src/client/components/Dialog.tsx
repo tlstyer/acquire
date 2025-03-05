@@ -3,7 +3,7 @@ import { type Client } from '../client.js';
 import { DialogType } from '../helpers.js';
 import { type ProcessMyKeyboardEventRef } from '../myKeyboardEvents.js';
 import { CreateUser } from './CreateUser.jsx';
-import styles from './Dialog.module.css';
+import * as styles from './Dialog.module.css';
 import { Login } from './Login.jsx';
 import { Logout } from './Logout.jsx';
 import { Settings } from './Settings.jsx';

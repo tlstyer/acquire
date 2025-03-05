@@ -9,7 +9,7 @@ import { ActionSelectMergerSurvivor } from '../../common/gameActions/selectMerge
 import { ActionSelectNewChain } from '../../common/gameActions/selectNewChain.js';
 import { ActionStartGame } from '../../common/gameActions/startGame.js';
 import { HotelName } from './HotelName.jsx';
-import styles from './NextGameAction.module.css';
+import * as styles from './NextGameAction.module.css';
 import { NextGameActionHotelInitialsList } from './NextGameActionHotelInitialsList.jsx';
 import { Username } from './Username.jsx';
 

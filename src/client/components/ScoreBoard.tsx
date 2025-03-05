@@ -3,10 +3,10 @@ import { ScoreBoardIndexEnum } from '../../common/enums.js';
 import { gameModeToNumPlayers, gameModeToTeamSize } from '../../common/helpers.js';
 import { type PB_GameMode } from '../../common/pb.js';
 import { type User } from '../../common/user.js';
-import stylesApp from '../App.module.css';
+import * as stylesApp from '../App.module.css';
 import { allChains, gameBoardTypeToHotelInitial } from '../helpers.js';
 import { gameBoardTypeToCSSClassName, teamNumberToCSSClassName } from '../styleHelpers.js';
-import styles from './ScoreBoard.module.css';
+import * as styles from './ScoreBoard.module.css';
 
 export function ScoreBoard(props: {
   users: User[];

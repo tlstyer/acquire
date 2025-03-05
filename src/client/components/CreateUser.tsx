@@ -7,7 +7,7 @@ import {
 import { PB_MessageToClient_LoginLogout_ResponseCode } from '../../common/pb.js';
 import { type Client, LoginState } from '../client.js';
 import { DialogType, loginLogoutResponseCodeToString } from '../helpers.js';
-import styles from './Login.module.css';
+import * as styles from './Login.module.css';
 
 export function CreateUser(props: { client: Client }) {
   const [username, setUsername] = createSignal('');

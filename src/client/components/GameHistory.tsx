@@ -2,7 +2,7 @@ import { createEffect, createSelector, For, onMount } from 'solid-js';
 import { type GameState } from '../../common/gameState.js';
 import { type User } from '../../common/user.js';
 import { type ProcessMyKeyboardEventRef } from '../myKeyboardEvents.js';
-import styles from './GameHistory.module.css';
+import * as styles from './GameHistory.module.css';
 import { GameHistoryMessageUI } from './GameHistoryMessageUI.jsx';
 
 export function GameHistory(props: {

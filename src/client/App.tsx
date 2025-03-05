@@ -2,7 +2,7 @@ import { type RouteDefinition, Router } from '@solidjs/router';
 import { createEffect, onCleanup } from 'solid-js';
 import { isServer } from 'solid-js/web';
 import { parseDecimalInteger } from '../common/helpers.js';
-import styles from './App.module.css';
+import * as styles from './App.module.css';
 import { createClient } from './client.js';
 import { Dialog } from './components/Dialog.jsx';
 import { Header } from './components/Header.jsx';

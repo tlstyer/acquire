@@ -1,5 +1,5 @@
 import { PB_GameBoardType } from '../common/pb.js';
-import styles from './App.module.css';
+import * as styles from './App.module.css';
 
 export const gameBoardTypeToCSSClassName = new Map([
   [PB_GameBoardType.LUXOR, styles.colorLuxor],

@@ -5,4 +5,4 @@
 /package-lock.json
 /pnpm-lock.yaml
 /yarn.lock
-*.module.css.d.ts
+*.d.css.ts

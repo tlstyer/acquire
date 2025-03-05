@@ -2,7 +2,7 @@ import { Match, Show, Switch } from 'solid-js';
 import { type DOMElement } from 'solid-js/jsx-runtime';
 import { type Client, LoginState } from '../client.js';
 import { DialogType } from '../helpers.js';
-import styles from './Header.module.css';
+import * as styles from './Header.module.css';
 import { Username } from './Username.jsx';
 
 export function Header(props: { client: Client }) {

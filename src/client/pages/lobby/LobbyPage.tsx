@@ -8,7 +8,7 @@ import { CreateGame } from '../../components/CreateGame.jsx';
 import { GameListing } from '../../components/GameListing.jsx';
 import { Username } from '../../components/Username.jsx';
 import { GameStatus } from '../../helpers.js';
-import styles from './LobbyPage.module.css';
+import * as styles from './LobbyPage.module.css';
 
 export function LobbyPage(props: { client: Client }) {
   // eslint-disable-next-line solid/reactivity

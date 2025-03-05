@@ -9,7 +9,7 @@ import {
   onMount,
 } from 'solid-js';
 import { type PB_GameBoardType } from '../../common/pb.js';
-import stylesApp from '../App.module.css';
+import * as stylesApp from '../App.module.css';
 import {
   allChains,
   gameBoardTypeToHotelInitial,
@@ -17,7 +17,7 @@ import {
 } from '../helpers.js';
 import { KEY_SHIFT, type ProcessMyKeyboardEventRef } from '../myKeyboardEvents.js';
 import { gameBoardTypeToCSSClassName } from '../styleHelpers.js';
-import styles from './PurchaseShares.module.css';
+import * as styles from './PurchaseShares.module.css';
 
 export function PurchaseShares(props: {
   ref: (ref: ProcessMyKeyboardEventRef) => void;

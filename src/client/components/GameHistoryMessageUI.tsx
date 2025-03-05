@@ -23,7 +23,7 @@ import {
 } from '../../common/gameHistoryMessage.js';
 import { toTileString } from '../../common/helpers.js';
 import { type User } from '../../common/user.js';
-import styles from './GameHistoryMessageUI.module.css';
+import * as styles from './GameHistoryMessageUI.module.css';
 import { HotelName } from './HotelName.jsx';
 import { Username } from './Username.jsx';
 

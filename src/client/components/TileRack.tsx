@@ -2,10 +2,10 @@ import { type Accessor, createEffect, createMemo, Index, type JSX, onMount } fro
 import { createStore } from 'solid-js/store';
 import { toTileString } from '../../common/helpers.js';
 import { PB_GameBoardType } from '../../common/pb.js';
-import stylesApp from '../App.module.css';
+import * as stylesApp from '../App.module.css';
 import { type ProcessMyKeyboardEventRef } from '../myKeyboardEvents.js';
 import { gameBoardTypeToCSSClassName } from '../styleHelpers.js';
-import styles from './TileRack.module.css';
+import * as styles from './TileRack.module.css';
 
 export function TileRack(props: {
   ref: (ref: ProcessMyKeyboardEventRef) => void;
