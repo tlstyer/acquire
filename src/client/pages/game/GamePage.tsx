@@ -42,6 +42,7 @@ import * as styles from './GamePage.module.css';
 
 export function GamePage(props: { client: Client }) {
   const params = useParams();
+  // @ts-expect-error "id" is a parameter src/client/App.tsx
   const idParts = params.id.split('-');
   const idHasCorrectNumberOfParts = idParts.length === 2;
   const logTime = idHasCorrectNumberOfParts ? (parseDecimalInteger(idParts[0]) ?? 0) : 0;
