@@ -194,14 +194,20 @@ class Record(Base):
 
 class User(Base):
     __tablename__ = "user"
+
     user_id = Column(INTEGER(unsigned=True), primary_key=True, nullable=False)
     name = Column(String(32, convert_unicode="force"), nullable=False)
     password = Column(String(64, convert_unicode="force"))
-    __table_args__ = (UniqueConstraint("name"),)
+    block_list = Column(Text(convert_unicode="force"))
 
     def __repr__(self):
-        params = (repr(self.user_id), repr(self.name), repr(self.password))
-        return "User(user_id=%s, name=%s, password=%s)" % params
+        params = (
+            repr(self.user_id),
+            repr(self.name),
+            repr(self.password),
+            repr(self.block_list),
+        )
+        return "User(user_id=%s, name=%s, password=%s, block_list=%s)" % params
 
 
 class Lookup:
