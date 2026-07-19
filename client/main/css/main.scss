@@ -455,3 +455,28 @@ span.username {
     box-shadow: 0px 0px 2px 0px rgba(50, 50, 50, 1);
   }
 }
+
+/* Added or updated by Jam  */
+#options-flex-layout {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+#options-original {
+  flex: 1 1 220px;
+}
+
+#options-blocklist {
+    flex: 1 1 175px;
+    max-width: 340px;
+    height: 195px;
+}
+
+#option-block-list {
+    width: 100%;
+    min-width: 175px;
+    max-width: 340px;
+    height: clamp(104px, calc(100% - 1em - 28px), 123px);
+    box-sizing: border-box;
+}

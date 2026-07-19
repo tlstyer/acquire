@@ -433,6 +433,11 @@ function reset() {
   initial_loading = true;
 }
 
+function joinGameBlocked(game_id) {
+  $('#lobby-game-' + game_id + ' .button-join-game')
+    .prop('disabled', true);
+}
+
 function onInitializationComplete() {
   initializeCreateGameForm();
   $('#cg-mode').change(createGameModeChanged);
@@ -455,6 +460,7 @@ pubsub.subscribe(enums.PubSub.Server_DestroyGame, destroyGame);
 pubsub.subscribe(enums.PubSub.Network_MessageProcessingComplete, messageProcessingComplete);
 pubsub.subscribe(enums.PubSub.Network_Disconnect, reset);
 pubsub.subscribe(enums.PubSub.Client_InitializationComplete, onInitializationComplete);
+pubsub.subscribe(enums.PubSub.Server_JoinGameBlocked, joinGameBlocked);
 
 module.exports = {
   setShowOnGamePage: setShowOnGamePage,
