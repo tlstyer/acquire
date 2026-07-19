@@ -26,6 +26,9 @@ class CommandsToClient(enum.Enum):
     AddGlobalChatMessage = 21
     AddGameChatMessage = 22
     DestroyGame = 23
+    SetBlockList = 24
+    SetBlockListError = 25
+    JoinGameBlocked = 26
 
 
 class CommandsToServer(enum.Enum):
@@ -37,7 +40,7 @@ class CommandsToServer(enum.Enum):
     DoGameAction = 5
     SendGlobalChatMessage = 6
     SendGameChatMessage = 7
-
+    SetBlockList = 8
 
 class Errors(enum.Enum):
     NotUsingLatestVersion = 0

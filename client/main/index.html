@@ -317,56 +317,68 @@
       <div id="lobby-games"></div>
     </div>
     <div id="options">
-      <div class="header">Options</div>
-      <div>
-        <input id="option-enable-page-title-notifications" type="checkbox" />
-        <label for="option-enable-page-title-notifications">Enable page title notifications</label>
-      </div>
-      <div>
-        Sound:
-        <select id="option-sound">
-          <option value="beep">Beep</option>
-          <option value="cha-ching">Cha-Ching</option>
-        </select>
-      </div>
-      <div>
-        Volume:
-        <select id="option-volume">
-          <option value="100">100%</option>
-          <option value="90">90%</option>
-          <option value="80">80%</option>
-          <option value="70">70%</option>
-          <option value="60">60%</option>
-          <option value="50">50%</option>
-          <option value="40">40%</option>
-          <option value="30">30%</option>
-          <option value="20">20%</option>
-          <option value="10">10%</option>
-          <option value="0">0%</option>
-        </select>
-      </div>
-      <div>
-        <input id="option-enable-high-contrast-colors" type="checkbox" />
-        <label for="option-enable-high-contrast-colors">Enable high contrast colors</label>
-      </div>
-      <div>
-        <input id="option-enable-text-background-colors" type="checkbox" />
-        <label for="option-enable-text-background-colors">Enable text background colors</label>
-      </div>
-      <div>
-        Color scheme:
-        <select id="option-color-scheme">
-          <option value="netacquire">NetAcquire</option>
-          <option value="white">White</option>
-        </select>
-      </div>
-      <div>
-        Game board label mode:
-        <select id="option-game-board-label-mode">
-          <option value="nothing">Show nothing</option>
-          <option value="coordinates">Show coordinates</option>
-          <option value="hotel initials">Show hotel initials</option>
-        </select>
+      <div id="options-flex-layout"> <!-- avoids need to alter js when accomodating new layout -->
+        <div id="options-original">
+          <div class="header">Options</div>
+          <div>
+            <input id="option-enable-page-title-notifications" type="checkbox" />
+            <label for="option-enable-page-title-notifications">Enable page title notifications</label>
+          </div>
+          <div>
+            Sound:
+            <select id="option-sound">
+              <option value="beep">Beep</option>
+              <option value="cha-ching">Cha-Ching</option>
+            </select>
+          </div>
+          <div>
+            Volume:
+            <select id="option-volume">
+              <option value="100">100%</option>
+              <option value="90">90%</option>
+              <option value="80">80%</option>
+              <option value="70">70%</option>
+              <option value="60">60%</option>
+              <option value="50">50%</option>
+              <option value="40">40%</option>
+              <option value="30">30%</option>
+              <option value="20">20%</option>
+              <option value="10">10%</option>
+              <option value="0">0%</option>
+            </select>
+          </div>
+          <div>
+            <input id="option-enable-high-contrast-colors" type="checkbox" />
+            <label for="option-enable-high-contrast-colors">Enable high contrast colors</label>
+          </div>
+          <div>
+            <input id="option-enable-text-background-colors" type="checkbox" />
+            <label for="option-enable-text-background-colors">Enable text background colors</label>
+          </div>
+          <div>
+            Color scheme:
+            <select id="option-color-scheme">
+              <option value="netacquire">NetAcquire</option>
+              <option value="white">White</option>
+            </select>
+          </div>
+          <div>
+            Game board label mode:<BR>
+            <select id="option-game-board-label-mode">
+              <option value="nothing">Show nothing</option>
+              <option value="coordinates">Show coordinates</option>
+              <option value="hotel initials">Show hotel initials</option>
+            </select>
+          </div>
+        </div>
+        <div id="options-blocklist">
+          <div>Blocked players and IP addresses, one per line:</div>
+          <textarea id="option-block-list" rows="5" style="box-sizing: border-box;"></textarea>
+          <div>
+            <input id="button-save-block-list" type="button" value="Save Block List" />
+            <span id="block-list-status"></span>
+          </div>
+        </div>
       </div>
     </div>
     <div id="global-chat">

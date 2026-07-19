@@ -1,5 +1,6 @@
 var common_functions = require('./common_functions'),
   enums = require('./enums'),
+  network = require('./network'),
   pubsub = require('./pubsub'),
   current_page = null,
   show_on_game_page = false,
@@ -176,12 +177,47 @@ function processChange() {
   pubsub.publish(enums.PubSub.Client_SetOption, option_id, value);
 }
 
+var blockListInitialized = false;
+
+function setBlockList(block_list) {
+  $('#option-block-list').val(block_list);
+  $('#button-save-block-list').prop('disabled', false);
+
+  if (blockListInitialized) {
+    $('#block-list-status').text('Saved.');
+  } else {
+    $('#block-list-status').text('');
+    blockListInitialized = true;
+  }
+}
+
+
+function setBlockListError() {
+  $('#button-save-block-list').prop('disabled', false);
+  $('#block-list-status').text('Save failed.');
+}
+
+function saveBlockList() {
+  var block_list = $('#option-block-list').val();
+
+  $('#button-save-block-list').prop('disabled', true);
+  $('#block-list-status').text('Saving...');
+
+  network.sendMessage(
+    enums.CommandsToServer.SetBlockList,
+    block_list
+  );
+}
+
 function onInitializationComplete() {
   initialize();
 
-  $('#options input, #options select').change(processChange);
+  $('#options input[type="checkbox"], #options select').change(processChange);
+  $('#button-save-block-list').click(saveBlockList);
 }
 
+pubsub.subscribe(enums.PubSub.Server_SetBlockList, setBlockList);
+pubsub.subscribe(enums.PubSub.Server_SetBlockListError, setBlockListError);
 pubsub.subscribe(enums.PubSub.Client_SetPage, setPage);
 pubsub.subscribe(enums.PubSub.Client_InitializationComplete, onInitializationComplete);
 

@@ -41,6 +41,47 @@
     return true;
   }
 
+function normalizeBlockList(block_list) {
+  var lines,
+    normalized_lines = [],
+    seen = {},
+    i,
+    line;
+
+  if (typeof block_list !== 'string') {
+    return null;
+  }
+
+  block_list = block_list.replace(/\r\n?/g, '\n');
+
+  if (block_list.length > 4096) {
+    return null;
+  }
+
+  lines = block_list.split('\n');
+
+  for (i = 0; i < lines.length; i++) {
+    line = lines[i].trim();
+
+    if (line.length === 0) {
+      continue;
+    }
+
+    // Only allow:
+    //   A-Z a-z 0-9 space . - _
+    if (!/^[A-Za-z0-9._ -]+$/.test(line)) {
+      return null;
+    }
+
+    if (!Object.prototype.hasOwnProperty.call(seen, line)) {
+      seen[line] = true;
+      normalized_lines.push(line);
+    }
+  }
+
+  return normalized_lines.join('\n');
+}
+
   app.use(
     body_parser.urlencoded({
       extended: false,
@@ -190,6 +231,7 @@
 
   var socket_id_to_socket = {};
   var socket_id_to_client_id = {};
+  var socket_id_to_username = {};
   var client_id_to_socket = {};
 
   function handle_login(socket, version, username, password) {
@@ -210,10 +252,24 @@
       socket.close();
     };
 
-    var pass_to_python = function (replace_existing_user) {
-      console.log(socket.id, 'pass_to_python');
-      python_server.write('connect ' + JSON.stringify([username, ip_address, socket.id, replace_existing_user]) + '\n');
-    };
+var pass_to_python = function (replace_existing_user, block_list) {
+  console.log(socket.id, 'pass_to_python');
+
+  socket_id_to_username[socket.id] = username;
+
+  python_server.write(
+    'connect ' +
+      JSON.stringify([
+        username,
+        ip_address,
+        socket.id,
+        replace_existing_user,
+        block_list || '',
+      ]) +
+      '\n'
+  );
+};
+
 
     if (version !== server_version) {
       return_fatal_error(enums.Errors.NotUsingLatestVersion);
@@ -228,7 +284,7 @@
               if (password.length > 0) {
                 return_fatal_error(enums.Errors.ProvidedPassword);
               } else {
-                pass_to_python(false);
+                pass_to_python(false, results[0].block_list);
               }
             } else {
               if (password.length === 0) {
@@ -236,14 +292,14 @@
               } else if (password !== results[0].password) {
                 return_fatal_error(enums.Errors.IncorrectPassword);
               } else {
-                pass_to_python(true);
+                pass_to_python(true, results[0].block_list);
               }
             }
           } else {
             if (password.length > 0) {
               return_fatal_error(enums.Errors.ProvidedPassword);
             } else {
-              pass_to_python(false);
+              pass_to_python(false, '');
             }
           }
         } else {
@@ -289,10 +345,65 @@
 
         initializing = false;
       } else {
-        var client_id = socket_id_to_client_id[socket.id];
+        var client_id = socket_id_to_client_id[socket.id],
+          parsed_data,
+          block_list,
+          username;
 
         if (client_id) {
-          python_server.write(client_id + ' ' + data.replace(/\s+/g, ' ') + '\n');
+          try {
+            parsed_data = JSON.parse(data);
+          } catch (e) {
+            console.log(socket.id, 'invalid command JSON', JSON.stringify(e));
+            socket.close();
+            return;
+          }
+
+          if (
+            parsed_data[0] === enums.CommandsToServer.SetBlockList &&
+            parsed_data.length === 2
+          ) {
+            block_list = normalizeBlockList(parsed_data[1]);
+            username = socket_id_to_username[socket.id];
+
+            if (block_list === null || username === undefined) {
+              socket.write(
+                JSON.stringify([
+                  [enums.CommandsToClient.SetBlockListError],
+                ])
+              );
+            } else {
+              pool.query(
+                'insert into user (name, block_list) values (?, ?) ' +
+                  'on duplicate key update block_list = values(block_list)',
+                [username, block_list],
+                function (err) {
+                  if (err === null) {
+                    python_server.write(
+                      client_id +
+                        ' ' +
+                        JSON.stringify([
+                          enums.CommandsToServer.SetBlockList,
+                          block_list,
+                        ]) +
+                        '\n'
+                    );
+                  } else {
+                    console.log(socket.id, 'set block list error', err);
+                    socket.write(
+                      JSON.stringify([
+                        [enums.CommandsToClient.SetBlockListError],
+                      ])
+                    );
+                  }
+                }
+              );
+            }
+          } else {
+            python_server.write(
+              client_id + ' ' + data.replace(/\s+/g, ' ') + '\n'
+            );
+          }
         }
       }
     });

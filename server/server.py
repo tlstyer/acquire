@@ -180,10 +180,24 @@ class Server:
 
 
 class Client:
-    def __init__(self, server, username, ip_address, socket_id, replace_existing_user):
+    def __init__(
+        self,
+        server,
+        username,
+        ip_address,
+        socket_id,
+        replace_existing_user,
+        block_list,
+    ):
+
         self._server = server
         self.username = username
         self.ip_address = ip_address
+        self.block_list = ""
+        self.blocked_usernames = set()
+        self.blocked_ip_addresses = set()
+        self.blocked_ip_prefixes = set()
+        self._set_block_list(block_list)
         self.client_id = self._server.next_client_id_manager.get_id()
         self._logged_in = False
         self.game_id = None
@@ -242,6 +256,10 @@ class Client:
 
         messages_client.append(
             [enums.CommandsToClient.SetClientId.value, self.client_id]
+        )
+
+        messages_client.append(
+            [enums.CommandsToClient.SetBlockList.value, self.block_list]
         )
 
         # tell client about other clients' data
@@ -319,6 +337,56 @@ class Client:
 
         self._server.flush_pending_messages()
 
+    @staticmethod
+    def _is_ipv4_address(value):
+        parts = value.split(".")
+        return (
+            len(parts) == 4
+            and all(
+                part.isdigit()
+                and 0 <= int(part) <= 255
+                and str(int(part)) == part
+                for part in parts
+            )
+        )
+
+    @staticmethod
+    def _is_ipv4_prefix(value):
+        if not value.endswith("."):
+            return False
+
+        parts = value[:-1].split(".")
+        return (
+            1 <= len(parts) <= 3
+            and all(
+                part.isdigit()
+                and 0 <= int(part) <= 255
+                and str(int(part)) == part
+                for part in parts
+            )
+        )
+
+    def _set_block_list(self, block_list):
+        self.block_list = block_list if isinstance(block_list, str) else ""
+
+        self.blocked_usernames = set()
+        self.blocked_ip_addresses = set()
+        self.blocked_ip_prefixes = set()
+
+        for rule in self.block_list.splitlines():
+            rule = rule.strip()
+
+            if not rule:
+                continue
+
+            if self._is_ipv4_address(rule):
+                self.blocked_ip_addresses.add(rule)
+            elif self._is_ipv4_prefix(rule):
+                self.blocked_ip_prefixes.add(rule)
+            else:
+                self.blocked_usernames.add(rule)
+
+
     def disconnect(self):
         print("time:", time.time())
         print(self.client_id, "disconnect")
@@ -387,6 +455,11 @@ class Client:
                 max_players,
                 self._server.add_pending_messages,
             )
+            game.creator_blocked_usernames = self.blocked_usernames.copy()
+            game.creator_blocked_ip_addresses = (
+                self.blocked_ip_addresses.copy()
+            )
+            game.creator_blocked_ip_prefixes = self.blocked_ip_prefixes.copy()
             game.join_game(self)
             self._server.game_id_to_game[game_id] = game
 
@@ -440,6 +513,18 @@ class Client:
                     self._server.game_id_to_game[self.game_id].client_ids,
                 )
 
+    def _on_message_set_block_list(self, block_list):
+        if isinstance(block_list, str) and len(block_list) <= 4096:
+            self._set_block_list(block_list)
+            self._server.add_pending_messages(
+                [
+                    [
+                        enums.CommandsToClient.SetBlockList.value,
+                        self.block_list,
+                    ]
+                ],
+                {self.client_id},
+            )
 
 class GameBoard:
     def __init__(self, game, board=None):
@@ -1483,6 +1568,9 @@ class Game:
         self.num_players = 0
         self.client_ids = set()
         self.watcher_client_ids = set()
+        self.creator_blocked_usernames = set()
+        self.creator_blocked_ip_addresses = set()
+        self.creator_blocked_ip_prefixes = set()
 
         self.game_board = GameBoard(self)
         self.score_sheet = ScoreSheet(self)
@@ -1504,7 +1592,35 @@ class Game:
 
         self.set_state(self.state, self.mode, self.max_players)
 
+    def is_client_blocked(self, client):
+        if self.num_players == 0:
+            return False
+
+        if client.username in self.creator_blocked_usernames:
+            return True
+
+        if client.ip_address in self.creator_blocked_ip_addresses:
+            return True
+
+        for prefix in self.creator_blocked_ip_prefixes:
+            if client.ip_address.startswith(prefix):
+                return True
+
+        return False
+
     def join_game(self, client):
+        if self.is_client_blocked(client):
+            self.add_pending_messages(
+                [
+                    [
+                        enums.CommandsToClient.JoinGameBlocked.value,
+                        self.game_id,
+                    ]
+                ],
+                {client.client_id},
+            )
+            return
+
         if (
             self.state == enums.GameStates.Starting.value
             and not self.score_sheet.is_username_in_game(client.username)
